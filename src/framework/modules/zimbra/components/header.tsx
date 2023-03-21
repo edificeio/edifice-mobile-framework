@@ -16,10 +16,9 @@ import * as React from 'react';
 import { Alert, ColorValue, Platform, TextProps, TouchableOpacity, View, ViewProps, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-
-import { UI_SIZES } from './constants';
-import { Icon } from './icon';
-import { BodyBoldText, SmallInverseText, SmallText } from './text';
+import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/icon';
+import { BodyBoldText, SmallInverseText, SmallText } from '~/framework/components/text';
 
 /**
  * FakeHeader_Container
@@ -52,7 +51,9 @@ export const FakeHeader = (props: React.PropsWithChildren<FakeHeaderProps>) => {
       <FakeHeader_Row>
         {left ? <HeaderLeft>{left}</HeaderLeft> : null}
         {title ? (
-          <HeaderCenter>{typeof title === 'string' ? <HeaderTitle>{title}</HeaderTitle> : title}</HeaderCenter>
+          <HeaderCenter>
+            {typeof title === 'string' ? <DEPRECATED_HeaderTitle>{title}</DEPRECATED_HeaderTitle> : title}
+          </HeaderCenter>
         ) : (
           <HeaderCenter />
         )}
@@ -91,7 +92,10 @@ const iconSpecificSizes = {
 };
 const iconDefaultSize = 20;
 
-export const HeaderIcon = (props: {
+/**
+ * @deprecated use NavBarAction
+ */
+export const DEPRECATED_HeaderIcon = (props: {
   name: string | null;
   hidden?: boolean;
   iconSize?: number;
@@ -153,7 +157,10 @@ const HeaderActionText = styled(SmallInverseText)({
   alignItems: 'center',
 });
 
-export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
+/**
+ * @deprecated use NavBarAction
+ */
+export const DEPRECATED_HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCustomProps) => {
   const ActionComponent: React.ComponentClass<ViewProps> = props.disabled ? View : TouchableOpacity;
   return (
     <ActionComponent
@@ -164,7 +171,7 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
       ) : (
         <>
           {(props as IHeaderActionGenericProps).iconName ? (
-            <HeaderIcon
+            <DEPRECATED_HeaderIcon
               name={(props as IHeaderActionGenericProps).iconName || null}
               iconSize={(props as IHeaderActionGenericProps).iconSize}
               hidden={(props as IHeaderActionGenericProps).hidden}
@@ -181,7 +188,7 @@ export const HeaderAction = (props: IHeaderActionGenericProps | IHeaderActionCus
 };
 
 export const HeaderBackAction = ({ navigation, onPress }: { navigation?: any; onPress?: () => void }) => (
-  <HeaderAction
+  <DEPRECATED_HeaderAction
     iconName={Platform.OS === 'ios' ? 'chevron-left1' : 'back'}
     iconSize={24}
     onPress={onPress ? onPress : navigation ? () => Alert.alert('GO BACK') : () => {}}
@@ -193,7 +200,11 @@ export const HeaderTitle_Style = styled(BodyBoldText)({
   textAlignVertical: 'center',
   color: theme.ui.text.inverse,
 });
-export const HeaderTitle = (props: TextProps) => {
+
+/**
+ * @deprecated use title props of computeNavBar
+ */
+export const DEPRECATED_HeaderTitle = (props: TextProps) => {
   return <HeaderTitle_Style numberOfLines={1} {...props} />;
 };
 export const HeaderSubtitle_Style = styled(SmallText)({
@@ -207,7 +218,7 @@ export const HeaderSubtitle = (props: TextProps) => {
 export const HeaderTitleAndSubtitle = (props: { title?: string; subtitle?: string }) => (
   <>
     {props.subtitle ? <HeaderSubtitle>{props.subtitle}</HeaderSubtitle> : null}
-    {props.title ? <HeaderTitle>{props.title}</HeaderTitle> : null}
+    {props.title ? <DEPRECATED_HeaderTitle>{props.title}</DEPRECATED_HeaderTitle> : null}
   </>
 );
 

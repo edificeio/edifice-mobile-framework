@@ -17,7 +17,6 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
-import { HeaderAction, HeaderIcon, HeaderTitle } from '~/framework/components/header';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -28,6 +27,11 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
 import { MailListItem } from '~/framework/modules/zimbra/components/MailListItem';
 import { MailListSearchbar } from '~/framework/modules/zimbra/components/MailListSearchbar';
+import {
+  DEPRECATED_HeaderAction,
+  DEPRECATED_HeaderIcon,
+  DEPRECATED_HeaderTitle,
+} from '~/framework/modules/zimbra/components/header';
 import MoveMailsModal from '~/framework/modules/zimbra/components/modals/MoveMailsModal';
 import { DraftType, IMail } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
@@ -332,7 +336,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         headerLeft: ({ tintColor }) => (
           <View style={styles.headerLeftContainer}>
             <HeaderBackButton tintColor={tintColor} onPress={onGoBack} />
-            <HeaderTitle>{selectedMails.length}</HeaderTitle>
+            <DEPRECATED_HeaderTitle>{selectedMails.length}</DEPRECATED_HeaderTitle>
           </View>
         ),
         headerRight: () => (
@@ -340,10 +344,10 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
             {navBarActions.map(action =>
               action.icon === 'more_vert' ? (
                 <PopupMenu actions={getDropdownActions()}>
-                  <HeaderIcon name={action.icon} iconSize={24} />
+                  <DEPRECATED_HeaderIcon name={action.icon} iconSize={24} />
                 </PopupMenu>
               ) : (
-                <HeaderAction iconName={action.icon} iconSize={24} onPress={action.onPress} style={styles.rightMargin} />
+                <DEPRECATED_HeaderAction iconName={action.icon} iconSize={24} onPress={action.onPress} style={styles.rightMargin} />
               ),
             )}
           </View>
