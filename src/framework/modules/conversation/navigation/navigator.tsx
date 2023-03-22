@@ -24,11 +24,13 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={conversationMailContentNavBar}
         initialParams={{}}
       />
-      <Stack.Screen
-        name={conversationRouteNames.newMail}
-        component={ConversationNewMailScreen}
-        options={conversationNewMailNavBar}
-        initialParams={{}}
-      />
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen
+          name={conversationRouteNames.newMail}
+          component={ConversationNewMailScreen}
+          options={conversationNewMailNavBar}
+          initialParams={{}}
+        />
+      </Stack.Group>
     </>
   ));

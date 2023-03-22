@@ -1,4 +1,4 @@
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, UNSTABLE_usePreventRemove, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
@@ -108,6 +108,16 @@ const styles = StyleSheet.create({
   scrollView: { flex: 1 },
 });
 
+const HandleBack = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
+  UNSTABLE_usePreventRemove(true, ({ data }) => {
+    route?.params?.onGoBack?.();
+    navigation.dispatch(data.action);
+  });
+  return null;
+};
+
 class MailContentScreen extends React.PureComponent<ConversationMailContentScreenProps, ConversationMailContentScreenState> {
   _subjectRef?: React.Ref<any> = undefined;
 
@@ -192,9 +202,8 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   mailMoved = () => {
-    const { route } = this.props;
-    route.params.onGoBack();
-    this.goBack();
+    const { navigation } = this.props;
+    navigation.dispatch(CommonActions.goBack());
     Toast.show(I18n.t('conversation.messageMoved'), {
       position: Toast.position.BOTTOM,
       mask: false,
@@ -204,9 +213,9 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   markAsRead = async () => {
-    const { toggleRead, mail } = this.props;
+    const { toggleRead, mail, navigation } = this.props;
     await toggleRead([mail.id], false);
-    this.goBack();
+    navigation.dispatch(CommonActions.goBack());
   };
 
   move = () => {
@@ -215,7 +224,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   };
 
   delete = async () => {
-    const { deleteMails, trashMails, mail, route } = this.props;
+    const { deleteMails, trashMails, mail, route, navigation } = this.props;
     const mailId = mail.id;
     const currentFolder = route.params.currentFolder;
     const isFolderDrafts = currentFolder === 'drafts';
@@ -228,7 +237,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         await trashMails([mailId]);
         await deleteMails([mailId]);
       } else await trashMails([mailId]);
-      this.goBack();
+      navigation.dispatch(CommonActions.goBack());
       Toast.show(I18n.t(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`), {
         position: Toast.position.BOTTOM,
         mask: false,
@@ -240,22 +249,16 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     }
   };
 
-  goBack = () => {
-    const { navigation, route } = this.props;
-    route.params.onGoBack?.();
-    navigation.dispatch(CommonActions.goBack());
-  };
-
   public render() {
     const { route, mail, error, isFetching, moveToFolder, moveToInbox, restoreToFolder, restoreToInbox } = this.props;
     const { showModal, htmlError } = this.state;
     const currentFolder = route.params.currentFolder;
     const ViewportAwareSubject = Viewport.Aware(View);
 
-    // Ignore onBack error (will be managed later on)
     return (
       <>
-        <PageView onBack={this.goBack.bind(this)}>
+        <HandleBack />
+        <PageView>
           <PageContainer style={{ backgroundColor: theme.ui.background.page }}>
             {isFetching ? (
               <Loading />

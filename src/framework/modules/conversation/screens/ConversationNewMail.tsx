@@ -1,3 +1,4 @@
+import { CommonActions, UNSTABLE_usePreventRemove, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -116,6 +117,16 @@ const styles = StyleSheet.create({
   headerRightContainer: { flexDirection: 'row' },
   sendDraftAction: { width: 48, alignItems: 'center' },
 });
+
+const HandleBack = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
+  UNSTABLE_usePreventRemove(true, ({ data }) => {
+    route?.params?.onGoBack?.();
+    navigation.dispatch(data.action);
+  });
+  return null;
+};
 
 class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, ConversationNewMailScreenState> {
   constructor(props) {
@@ -306,7 +317,6 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       const draftType = route.params.type;
       const isNewDraft = draftType === DraftType.NEW;
       const isSavedDraft = draftType === DraftType.DRAFT;
-      const onGoBack = route.params.onGoBack;
       const isUploadingAttachment = tempAttachment && tempAttachment !== null;
       const isDraftEmpty =
         to.length === 0 && cc.length === 0 && cci.length === 0 && subject === '' && body === '' && attachments.length === 0;
@@ -335,7 +345,6 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                         await trashMessage([id]);
                         await deleteMessage([id]);
                       }
-                      if (onGoBack) onGoBack();
                       Trackers.trackEventOfModule(
                         moduleConfig,
                         'Ecrire un mail',
@@ -348,7 +357,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                         'Rédaction mail - Sortir - Supprimer le brouillon - Échec',
                       );
                     }
-                    navigation.goBack();
+                    navigation.dispatch(CommonActions.goBack());
                   },
                   style: 'destructive',
                 },
@@ -362,7 +371,6 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   await trashMessage([id]);
                   await deleteMessage([id]);
                 }
-                if (onGoBack) onGoBack();
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -379,7 +387,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                     : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
                 );
               }
-              navigation.goBack();
+              navigation.dispatch(CommonActions.goBack());
             },
             style: isSavedDraft ? 'default' : 'destructive',
           },
@@ -388,7 +396,6 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             onPress: async () => {
               try {
                 await this.saveDraft();
-                if (onGoBack) onGoBack();
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -401,7 +408,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec',
                 );
               }
-              navigation.goBack();
+              navigation.dispatch(CommonActions.goBack());
             },
             style: 'default',
           },
@@ -421,8 +428,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         } else if (isSavedDraft) {
           await this.saveDraft();
         }
-        if (onGoBack) onGoBack();
-        navigation.goBack();
+        navigation.dispatch(CommonActions.goBack());
       }
     },
   };
@@ -663,19 +669,18 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   sendDraft = async () => {
     try {
-      const { navigation, sendMail, route } = this.props;
+      const { navigation, sendMail } = this.props;
       const { id, replyTo } = this.state;
 
-      sendMail(this.getMailData(), id, replyTo);
       Keyboard.dismiss();
+      await sendMail(this.getMailData(), id, replyTo);
       Toast.show(I18n.t('conversation.sendMail'), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         ...UI_ANIMATIONS.toast,
       });
-      if (route.params.onGoBack) route.params.onGoBack();
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
     } catch {
       // TODO: Manage error
     }
@@ -688,27 +693,29 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
 
-    // Ignore onBack error (will be managed later on)
     return (
-      <PageView
-        onBack={() => (route.params.getGoBack ?? navigation.goBack)()}
-        style={{ backgroundColor: theme.ui.background.card }}>
-        <NewMailComponent
-          isFetching={isFetching || !!isPrefilling}
-          headers={headers}
-          onDraftSave={this.saveDraft}
-          onHeaderChange={changedHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...changedHeaders } }))}
-          body={mail.body.replace(/<br>/gs, '\n')}
-          onBodyChange={changedBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: changedBody } }))}
-          attachments={tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments}
-          onAttachmentChange={changedAttachments =>
-            this.setState(prevState => ({ mail: { ...prevState.mail, attachments: changedAttachments } }))
-          }
-          onAttachmentDelete={attachmentId => deleteAttachment(id, attachmentId)}
-          prevBody={prevBody}
-          isReplyDraft={isReplyDraft}
-        />
-      </PageView>
+      <>
+        <HandleBack />
+        <PageView
+          onBack={() => (route.params.getGoBack ?? navigation.goBack)()}
+          style={{ backgroundColor: theme.ui.background.card }}>
+          <NewMailComponent
+            isFetching={isFetching || !!isPrefilling}
+            headers={headers}
+            onDraftSave={this.saveDraft}
+            onHeaderChange={changedHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...changedHeaders } }))}
+            body={mail.body.replace(/<br>/gs, '\n')}
+            onBodyChange={changedBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: changedBody } }))}
+            attachments={tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments}
+            onAttachmentChange={changedAttachments =>
+              this.setState(prevState => ({ mail: { ...prevState.mail, attachments: changedAttachments } }))
+            }
+            onAttachmentDelete={attachmentId => deleteAttachment(id, attachmentId)}
+            prevBody={prevBody}
+            isReplyDraft={isReplyDraft}
+          />
+        </PageView>
+      </>
     );
   }
 }
