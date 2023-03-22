@@ -152,7 +152,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
 };
 
 export default connect((state: IGlobalState) => {
-  const session = getSession(state);
+  const session = getSession();
 
   return {
     session,

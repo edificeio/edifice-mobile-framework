@@ -108,7 +108,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 export default connect(
   (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       courses: getCoursesListState(state),

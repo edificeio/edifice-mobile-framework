@@ -404,6 +404,6 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
 // MAPPING ========================================================================================
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(state),
+  session: getSession(),
   initialLoadingState: AsyncPagedLoadingState.PRISTINE,
 }))(SchoolbookWordListScreen);

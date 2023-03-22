@@ -210,7 +210,7 @@ export default connect(
           value: school.id,
         };
       }),
-      session: getSession(gs),
+      session: getSession(),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>

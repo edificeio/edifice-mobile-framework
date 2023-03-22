@@ -217,7 +217,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
 };
 
 export default connect((state: IGlobalState) => {
-  const session = getSession(state);
+  const session = getSession();
   const child = getSelectedChild(state);
 
   return {

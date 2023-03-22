@@ -188,7 +188,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const edtState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
 

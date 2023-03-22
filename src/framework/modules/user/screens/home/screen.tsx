@@ -397,7 +397,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
 export default connect(
   (state: IGlobalState) => {
     return {
-      session: getSession(state),
+      session: getSession(),
     };
   },
   dispatch =>

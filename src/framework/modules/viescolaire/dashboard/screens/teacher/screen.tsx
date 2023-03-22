@@ -74,7 +74,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
 };
 
 export default connect((state: IGlobalState) => {
-  const session = getSession(state);
+  const session = getSession();
 
   return {
     authorizedViescoApps: {

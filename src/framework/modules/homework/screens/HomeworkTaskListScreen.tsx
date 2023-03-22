@@ -12,7 +12,7 @@ import {
 
 const mapStateToProps: (state: any) => IHomeworkTaskListScreenDataProps = state => {
   // Extract data from state
-  const session = getSession(state);
+  const session = getSession();
   const localState = state.homework;
   const selectedDiaryId = localState.selectedDiary;
   const currentDiaryTasks = localState.tasks[selectedDiaryId];

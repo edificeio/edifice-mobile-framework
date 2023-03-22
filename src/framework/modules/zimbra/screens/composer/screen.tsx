@@ -588,7 +588,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 export default connect(
   (state: IGlobalState) => {
     const zimbraState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       hasRightToSendExternalMails: session?.authorizedActions.some(
