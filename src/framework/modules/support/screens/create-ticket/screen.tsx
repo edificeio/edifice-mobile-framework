@@ -1,8 +1,8 @@
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, TextInput, View } from 'react-native';
+import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -18,7 +18,6 @@ import { cameraAction, documentAction, galleryAction } from '~/framework/compone
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, NestedBoldText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
@@ -76,22 +75,6 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       Toast.show(I18n.t('support.supportCreateTicketScreen.failure'), { ...UI_ANIMATIONS.toast });
     }
   };
-
-  // const handleGoBack = () => {
-  //   const { navigation } = props;
-  //   if (!subject && !description) return true;
-  //   Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
-  //     {
-  //       text: I18n.t('common.cancel'),
-  //       style: 'cancel',
-  //     },
-  //     {
-  //       text: I18n.t('common.quit'),
-  //       style: 'destructive',
-  //       onPress: () => navigation.dispatch(CommonActions.goBack()),
-  //     },
-  //   ]);
-  // };
 
   const renderPage = () => {
     const { apps, structures } = props;
@@ -169,18 +152,26 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             ))}
           </View>
         </View>
-        <ActionButton
-          text={I18n.t('common.send')}
-          action={sendTicket}
-          disabled={isActionDisabled}
-          loading={isSending}
-          style={styles.actionContainer}
-        />
+        <ActionButton text={I18n.t('common.send')} action={sendTicket} disabled={isActionDisabled} loading={isSending} />
       </ScrollView>
     ) : (
       <EmptyScreen svgImage="empty-support" title={I18n.t('support.supportCreateTicketScreen.emptyScreen.title')} />
     );
   };
+
+  UNSTABLE_usePreventRemove(!!(subject || description), ({ data }) => {
+    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+      {
+        text: I18n.t('common.cancel'),
+        style: 'cancel',
+      },
+      {
+        text: I18n.t('common.quit'),
+        onPress: () => props.navigation.dispatch(data.action),
+        style: 'destructive',
+      },
+    ]);
+  });
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
@@ -190,8 +181,6 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
 export default connect(
   (gs: IGlobalState) => {
     const apps = [] as any[];
-    //console.debug(gs);
-    console.debug(gs.auth.session.user.structures);
     for (const app of gs.auth.session.apps) {
       if (app.address && app.name && app.address.length > 0 && app.name.length > 0) {
         const translation = I18n.t('modules-names.' + app.displayName.toLowerCase());

@@ -10,11 +10,6 @@ import { SupportNavigationParams, supportRouteNames } from '.';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<SupportNavigationParams>(moduleConfig.name, Stack => (
     <>
-      <Stack.Screen
-        name={supportRouteNames.home}
-        component={SupportCreateTicketScreen}
-        options={supportNavBar}
-        initialParams={undefined}
-      />
+      <Stack.Screen name={supportRouteNames.home} component={SupportCreateTicketScreen} options={supportNavBar} />
     </>
   ));

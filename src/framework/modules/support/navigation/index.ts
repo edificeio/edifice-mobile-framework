@@ -9,5 +9,3 @@ export const supportRouteNames = {
 export interface SupportNavigationParams extends ParamListBase {
   home: SupportScreenNavParams;
 }
-
-// home screen have back handler (handleGoBack)
