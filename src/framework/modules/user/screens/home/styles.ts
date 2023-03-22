@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   page: {
@@ -17,6 +17,9 @@ export default StyleSheet.create({
   },
   sectionBottom: {
     marginVertical: UI_SIZES.spacing.large,
+  },
+  sectionLast: {
+    marginBottom: 0,
   },
   sectionUserInfo: {
     alignItems: 'center',

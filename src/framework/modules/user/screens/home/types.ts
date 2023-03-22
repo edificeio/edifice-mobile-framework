@@ -4,7 +4,6 @@ import type { logoutAction } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';
 
 import type { UserNavigationParams } from '../../navigation';
-import type { UserState } from '../../reducer';
 
 export enum ModificationType {
   EMAIL = 'email',

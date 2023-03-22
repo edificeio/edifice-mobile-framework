@@ -23,14 +23,13 @@ import { IAuthContext } from '~/framework/modules/auth/model';
 import { AuthRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType, getAuthContext } from '~/framework/modules/auth/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
 import { tryAction } from '~/framework/util/redux/actions';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-import moduleConfig from '../../module-config';
-import { UserNavigationParams, userRouteNames } from '../../navigation';
 import styles from './styles';
 import { ModificationType, UserHomeScreenPrivateProps } from './types';
 
@@ -192,6 +191,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
   }, [fetchAuthContext, isFocused, navigation, session]);
 
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
+  const isStudent = session?.user.type === UserType.Student;
+  const isRelative = session?.user.type === UserType.Relative;
+  const showWhoAreWe = session?.platform.showWhoAreWe;
 
   return React.useMemo(
     () => (
@@ -233,11 +235,55 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
                 navigation.navigate(userRouteNames.structures, {});
               }}
             />
+            {isStudent ? (
+              <LineButton
+                title="directory-relativesTitle"
+                onPress={() => {
+                  navigation.navigate(userRouteNames.family, { mode: 'relatives' });
+                }}
+              />
+            ) : isRelative ? (
+              <LineButton
+                title="directory-childrenTitle"
+                onPress={() => {
+                  navigation.navigate(userRouteNames.family, { mode: 'children' });
+                }}
+              />
+            ) : null}
+          </ButtonLineGroup>
+        </View>
+        <View style={[styles.section, styles.sectionLast]}>
+          <HeadingSText style={styles.sectionTitle}>{I18n.t('user.page.others')}</HeadingSText>
+          <ButtonLineGroup>
+            {showWhoAreWe ? (
+              <LineButton
+                title="directory-whoAreWeTitle"
+                onPress={() => {
+                  navigation.navigate(userRouteNames.whoAreWe, {});
+                }}
+              />
+            ) : null}
+            <LineButton
+              title="directory-legalNoticeTitle"
+              onPress={() => {
+                navigation.navigate(userRouteNames.legalNotice, {});
+              }}
+            />
           </ButtonLineGroup>
         </View>
       </>
     ),
-    [canEditPersonalInfo, currentLoadingMenu, doLoadChangeEmail, doLoadChangeMobile, doLoadChangePassword, navigation],
+    [
+      currentLoadingMenu,
+      doLoadChangePassword,
+      canEditPersonalInfo,
+      doLoadChangeEmail,
+      doLoadChangeMobile,
+      isStudent,
+      isRelative,
+      showWhoAreWe,
+      navigation,
+    ],
   );
 }
 
@@ -302,7 +348,7 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
         </SmallBoldText>
         {isVersionDetailsShown ? (
           <SmallBoldText style={styles.versionButton}>
-            {isVersionDetailsShown ? `${useVersionFeature.versionOverride} ${currentPlatform}` : null}
+            {isVersionDetailsShown ? `${useVersionFeature.versionOverride} – ${currentPlatform}` : null}
           </SmallBoldText>
         ) : null}
       </TouchableOpacity>

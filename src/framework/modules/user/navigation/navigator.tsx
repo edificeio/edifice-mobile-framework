@@ -5,10 +5,13 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { UserNavigationParams, userRouteNames } from '.';
 import moduleConfig from '../module-config';
+import UserFamilyScreen, { computeNavBar as familyNavBar } from '../screens/family';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
+import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '../screens/legal-notice';
 import UserNotifPrefsScreen, { computeNavBar as notifPrefsNavBar } from '../screens/notif-prefs';
 import UserProfileScreen, { computeNavBar as profileNavBar } from '../screens/profile';
 import UserStructuresScreen, { computeNavBar as structuresNavBar } from '../screens/structures';
+import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '../screens/who-are-we';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
@@ -25,6 +28,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         name={userRouteNames.structures}
         component={UserStructuresScreen}
         options={structuresNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen name={userRouteNames.family} component={UserFamilyScreen} options={familyNavBar} initialParams={{}} />
+      <Stack.Screen name={userRouteNames.whoAreWe} component={UserWhoAreWeScreen} options={whoAreWeNavBar} initialParams={{}} />
+      <Stack.Screen
+        name={userRouteNames.legalNotice}
+        component={UserLegalNoticeScreen}
+        options={legalNoticeNavBar}
         initialParams={{}}
       />
     </>
