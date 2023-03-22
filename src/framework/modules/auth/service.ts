@@ -82,6 +82,10 @@ export interface UserPrivateData {
   structureNodes?: StructureNode[];
 }
 
+export interface UserPersonData {
+  photo?: string;
+}
+
 export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
   if (!platform) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
@@ -182,7 +186,10 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
       throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', 'User type has not being returned by the server');
     }
 
-    const userdata = (await fetchJSONWithCache(`/directory/user/${userinfo.userId}`, {}, true, platform.url)) as any;
+    const [userdata, userPublicInfo] = await Promise.all([
+      fetchJSONWithCache(`/directory/user/${userinfo.userId}`, {}, true, platform.url) as any,
+      fetchJSONWithCache('/userbook/api/person?id=' + userinfo.userId, {}, true, platform.url),
+    ]);
 
     // We fetch children information only for relative users
     const childrenStructure: UserPrivateData['childrenStructure'] =
@@ -198,9 +205,10 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
       userdata.parents = undefined;
     }
 
-    // currently, userPublicInfo is not used anywhere. Uncomment this whenever the data becomes useful.
-    // const userPublicInfo = await fetchJSONWithCache('/userbook/api/person?id=' + userinfo.userId, {}, true, platform.url);
-    return { userdata, userPublicInfo: { result: [] } } as { userdata?: UserPrivateData; userPublicInfo?: any };
+    return { userdata, userPublicInfo: userPublicInfo.result?.[0] } as {
+      userdata?: UserPrivateData;
+      userPublicInfo?: UserPersonData;
+    };
   } catch (err) {
     throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', '', err as Error);
   }
@@ -217,7 +225,12 @@ export async function saveSession() {
   }
 }
 
-export function formatSession(platform: Platform, userinfo: IUserInfoBackend, userPrivateData?: UserPrivateData): ISession {
+export function formatSession(
+  platform: Platform,
+  userinfo: IUserInfoBackend,
+  userPrivateData?: UserPrivateData,
+  userPublicInfo?: UserPersonData,
+): ISession {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
   }
@@ -246,6 +259,7 @@ export function formatSession(platform: Platform, userinfo: IUserInfoBackend, us
     classes: userinfo.classes,
     structures: userPrivateData?.structureNodes,
     uniqueId: userinfo.uniqueId,
+    photo: userPublicInfo?.photo,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
   // compute here detailed data about children (laborious)

@@ -55,6 +55,7 @@ export interface ILoggedUser extends IUser {
   classes?: string[];
   relatives?: UserPrivateData['parents'];
   structures?: StructureNode[];
+  photo?: string;
 }
 
 export interface UserChild {
