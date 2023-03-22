@@ -12,7 +12,6 @@ import { bindActionCreators } from 'redux';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
-import { HeaderAction, HeaderIcon } from '~/framework/components/header';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
@@ -33,7 +32,7 @@ import NewMailComponent from '~/framework/modules/conversation/components/NewMai
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -115,7 +114,6 @@ export const computeNavBar = ({
 const styles = StyleSheet.create({
   addAttchmentMenuContainer: { width: 48, alignItems: 'center' },
   headerRightContainer: { flexDirection: 'row' },
-  sendDraftAction: { width: 48, alignItems: 'center' },
 });
 
 const HandleBack = () => {
@@ -181,11 +179,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
                   documentAction({ callback: addGivenAttachment }),
                 ]}>
-                <HeaderIcon name="attachment" />
+                <NavBarAction iconName="ui-attachment" />
               </PopupMenu>
             </View>
           )}
-          {sendDraft && <HeaderAction style={styles.sendDraftAction} onPress={sendDraft} iconName="outbox" />}
+          {sendDraft && <NavBarAction onPress={sendDraft} iconName="ui-send" />}
         </View>
       ),
     });

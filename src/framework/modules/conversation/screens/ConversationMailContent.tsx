@@ -13,7 +13,6 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { HeaderIcon } from '~/framework/components/header';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
@@ -33,7 +32,7 @@ import moduleConfig from '~/framework/modules/conversation/module-config';
 import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -171,7 +170,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 ? popupActionsMenu.splice(2, 1)
                 : popupActionsMenu
             }>
-            <HeaderIcon name="more_vert" iconSize={24} />
+            <NavBarAction iconName="ui-options" />
           </PopupMenu>
         ),
     });
