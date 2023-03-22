@@ -11,6 +11,7 @@ import PlatformSelectScreen from '~/framework/modules/auth/screens/PlatformSelec
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthChangeEmailScreen, { computeNavBar as changeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
+import AuthChangeMobileScreen, { computeNavBar as changeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
@@ -81,6 +82,12 @@ export default function () {
         name={AuthRouteNames.changeEmail}
         component={AuthChangeEmailScreen}
         options={changeEmailNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={AuthRouteNames.changeMobile}
+        component={AuthChangeMobileScreen}
+        options={changeMobileNavBar}
         initialParams={{}}
       />
     </Stack.Group>

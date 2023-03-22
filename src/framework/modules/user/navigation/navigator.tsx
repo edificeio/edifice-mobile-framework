@@ -6,7 +6,7 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { UserNavigationParams, userRouteNames } from '.';
 import moduleConfig from '../module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
-import UserNotifPrefsScreen, { computeNavBar as notifPrefsNavBar } from '../screens/notifPrefs';
+import UserNotifPrefsScreen, { computeNavBar as notifPrefsNavBar } from '../screens/notif-prefs';
 import UserProfileScreen, { computeNavBar as profileNavBar } from '../screens/profile';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>

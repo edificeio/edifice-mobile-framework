@@ -162,8 +162,8 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     setCurrentLoadingMenu(ModificationType.PASSWORD);
     // ToDo : manage MFA here instead of direct navigate
     if (!(await fetchAuthContext())) return;
-    navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context: authContextRef.current });
     setCurrentLoadingMenu(undefined);
+    navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context: authContextRef.current });
   }, [fetchAuthContext, navigation, session]);
 
   const doLoadChangeEmail = React.useCallback(async () => {
@@ -171,8 +171,17 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     setCurrentLoadingMenu(ModificationType.EMAIL);
     // ToDo : manage MFA here instead of direct navigate
     if (!(await fetchAuthContext())) return;
-    navigation.navigate(AuthRouteNames.changeEmail, { platform: session.platform, context: authContextRef.current });
     setCurrentLoadingMenu(undefined);
+    navigation.navigate(AuthRouteNames.changeEmail, { platform: session.platform, context: authContextRef.current });
+  }, [fetchAuthContext, navigation, session]);
+
+  const doLoadChangeMobile = React.useCallback(async () => {
+    if (!session) return;
+    setCurrentLoadingMenu(ModificationType.MOBILE);
+    // ToDo : manage MFA here instead of direct navigate
+    if (!(await fetchAuthContext())) return;
+    setCurrentLoadingMenu(undefined);
+    navigation.navigate(AuthRouteNames.changeMobile, { platform: session.platform, context: authContextRef.current });
   }, [fetchAuthContext, navigation, session]);
 
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
@@ -203,11 +212,20 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
                 onPress={doLoadChangeEmail}
               />
             ) : null}
+            {canEditPersonalInfo ? (
+              <LineButton
+                loading={currentLoadingMenu === ModificationType.MOBILE}
+                disabled={currentLoadingMenu !== undefined}
+                title="user.page.editMobile"
+                onPress={doLoadChangeMobile}
+              />
+            ) : null}
+            {/* <LineButton title="directory-structuresTitle" onPress={() => navigation.navigate('Structures')} /> */}
           </ButtonLineGroup>
         </View>
       </>
     ),
-    [canEditPersonalInfo, currentLoadingMenu, doLoadChangeEmail, doLoadChangePassword, navigation],
+    [canEditPersonalInfo, currentLoadingMenu, doLoadChangeEmail, doLoadChangeMobile, doLoadChangePassword, navigation],
   );
 }
 
