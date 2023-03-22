@@ -22,16 +22,11 @@ import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { TextFontStyle } from '~/framework/components/text';
+import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
 import { MailListItem } from '~/framework/modules/zimbra/components/MailListItem';
 import { MailListSearchbar } from '~/framework/modules/zimbra/components/MailListSearchbar';
-import {
-  DEPRECATED_HeaderAction,
-  DEPRECATED_HeaderIcon,
-  DEPRECATED_HeaderTitle,
-} from '~/framework/modules/zimbra/components/header';
 import MoveMailsModal from '~/framework/modules/zimbra/components/modals/MoveMailsModal';
 import { DraftType, IMail } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
@@ -235,6 +230,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       const isSelectedMailUnread = getIsSelectedMailUnread();
       await zimbraService.mails.toggleUnread(session, selectedMails, !isSelectedMailUnread);
       setSelectedMails([]);
+      refresh();
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
@@ -247,6 +243,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.trash(session, selectedMails);
       setSelectedMails([]);
+      refresh();
       Toast.show(I18n.t(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'), {
         ...UI_ANIMATIONS.toast,
       });
@@ -262,6 +259,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.delete(session, selectedMails);
       setSelectedMails([]);
+      refresh();
       Toast.show(I18n.t(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'), {
         ...UI_ANIMATIONS.toast,
       });
@@ -290,27 +288,6 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     refresh();
   };
 
-  const getNavBarActions = () => {
-    const { folderPath } = props.route.params;
-
-    return folderPath === '/Trash'
-      ? [
-          { icon: 'delete-restore', onPress: () => moveModalRef.current?.doShowModal() },
-          { icon: 'delete', onPress: alertPermanentDeletion },
-        ]
-      : [
-          ...(folderPath !== '/Sent' && folderPath !== '/Drafts'
-            ? [
-                {
-                  icon: getIsSelectedMailUnread() ? 'email-open' : 'email',
-                  onPress: markSelectedMailsAsUnread,
-                },
-              ]
-            : []),
-          { icon: 'more_vert' },
-        ];
-  };
-
   const getDropdownActions = () => {
     const { folderPath } = props.route.params;
 
@@ -331,24 +308,37 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   const getNavBarOptions = (): Partial<NativeStackNavigationOptions> => {
     if (selectedMails.length) {
-      const navBarActions = getNavBarActions();
+      const { folderPath } = props.route.params;
       return {
         headerLeft: ({ tintColor }) => (
-          <View style={styles.headerLeftContainer}>
+          <View style={styles.navBarLeftContainer}>
             <HeaderBackButton tintColor={tintColor} onPress={onGoBack} />
-            <DEPRECATED_HeaderTitle>{selectedMails.length}</DEPRECATED_HeaderTitle>
+            <BodyBoldText style={styles.navBarCountText}>{selectedMails.length}</BodyBoldText>
           </View>
         ),
         headerRight: () => (
-          <View style={styles.headerRightContainer}>
-            {navBarActions.map(action =>
-              action.icon === 'more_vert' ? (
+          <View style={styles.navBarRightContainer}>
+            {folderPath === '/Trash' ? (
+              <>
+                <View style={styles.rightMargin}>
+                  <NavBarAction iconName="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
+                </View>
+                <NavBarAction iconName="ui-delete" onPress={alertPermanentDeletion} />
+              </>
+            ) : (
+              <>
+                {folderPath !== '/Sent' && folderPath !== '/Drafts' ? (
+                  <View style={styles.rightMargin}>
+                    <NavBarAction
+                      iconName={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
+                      onPress={markSelectedMailsAsUnread}
+                    />
+                  </View>
+                ) : null}
                 <PopupMenu actions={getDropdownActions()}>
-                  <DEPRECATED_HeaderIcon name={action.icon} iconSize={24} />
+                  <NavBarAction iconName="ui-options" />
                 </PopupMenu>
-              ) : (
-                <DEPRECATED_HeaderAction iconName={action.icon} iconSize={24} onPress={action.onPress} style={styles.rightMargin} />
-              ),
+              </>
             )}
           </View>
         ),
@@ -357,7 +347,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     return {
       headerLeft: undefined,
       headerRight: () => (
-        <View style={styles.headerRightContainer}>
+        <View style={styles.navBarRightContainer}>
           <NavBarAction iconName="ui-write" onPress={openComposer} />
         </View>
       ),

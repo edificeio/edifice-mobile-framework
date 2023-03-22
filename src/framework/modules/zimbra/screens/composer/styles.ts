@@ -3,11 +3,11 @@ import { StyleSheet } from 'react-native';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  navbarActionsContainer: {
+  navBarActionsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  navbarSendAction: {
+  navBarSendAction: {
     marginHorizontal: UI_SIZES.spacing.medium,
   },
 });

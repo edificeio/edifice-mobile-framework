@@ -467,18 +467,18 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   // HEADER, MENU, COMPONENT AND SIGNATURE -------------------------
 
   setSignatureState = async (isSettingNewSignature: boolean = false, isFirstSet: boolean = false) => {
-    let { signature } = this.props;
+    let { data } = this.props.signature;
     if (isFirstSet) {
       this.setState({ isNewSignature: true });
     }
     if (isSettingNewSignature) {
-      signature = await this.props.fetchSignature();
+      data = await this.props.fetchSignature();
     }
 
-    if (signature !== undefined) {
+    if (data !== undefined) {
       let signatureText = '' as string;
       let isGlobal = false as boolean;
-      const signaturePref = signature.data.preference;
+      const signaturePref = data.preference;
       if (signaturePref !== undefined) {
         if (typeof signaturePref === 'object') {
           signatureText = signaturePref.signature;
@@ -521,7 +521,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
-        <View style={styles.navbarActionsContainer}>
+        <View style={styles.navBarActionsContainer}>
           <PopupMenu
             actions={[
               cameraAction({ callback: this.addGivenAttachment }),
@@ -530,7 +530,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
             ]}>
             <NavBarAction iconName="ui-attachment" />
           </PopupMenu>
-          <View style={styles.navbarSendAction}>
+          <View style={styles.navBarSendAction}>
             <NavBarAction iconName="ui-send" onPress={this.sendMail} />
           </View>
           <PopupMenu actions={menuActions}>
@@ -575,7 +575,10 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           session={this.props.session}
           signatureText={signature.text}
           signatureData={this.props.signature.data}
-          successCallback={() => this.setSignatureState(true, true)}
+          successCallback={() => {
+            this.setSignatureState(true, true);
+            this.state.signatureModalRef.current?.doDismissModal();
+          }}
         />
       </PageView>
     );
