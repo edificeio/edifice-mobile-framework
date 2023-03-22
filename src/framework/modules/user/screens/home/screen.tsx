@@ -2,6 +2,9 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
+import RNConfigReader from 'react-native-config-reader';
+import DeviceInfo from 'react-native-device-info';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -29,6 +32,11 @@ export const computeNavBar = ({
   title: I18n.t('MyAccount'),
 });
 
+/**
+ * Setup a Logout button feature
+ * @param handleLogout a callback supposed to log the user out.
+ * @returns the React Element of the logout button
+ */
 function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout']) {
   /**
    * Displays an Alert to the user that allows logging out
@@ -51,29 +59,70 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
   /**
    * renders the logout button
    */
-  const logoutButton = React.useMemo(() => {
+  return React.useMemo(() => {
     return (
-      <SmallBoldText style={styles.logoutButton} onPress={() => doLogout()}>
-        {I18n.t('directory-disconnectButton')}
-      </SmallBoldText>
+      <TouchableOpacity onPress={() => doLogout()}>
+        <SmallBoldText style={styles.logoutButton}>{I18n.t('directory-disconnectButton')}</SmallBoldText>
+      </TouchableOpacity>
     );
   }, [doLogout]);
-
-  return logoutButton;
 }
 
-function UserHomeScreen(props: UserHomeScreenPrivateProps) {
-  const { handleLogout } = props;
+/**
+ * Setup a version number feature that can secretly display detailed information when long pressed.
+ * @returns the React Element of the touchable version text
+ */
+function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
   /**
    * When true, version number display more info about build / platform / override / etc
    */
   const [isVersionDetailsShown, setIsVersionDetailsShown] = React.useState<boolean>(false);
 
+  const toggleVersionDetails = React.useCallback(() => {
+    setIsVersionDetailsShown(oldState => !oldState);
+  }, []);
+
+  const currentPlatform = session?.platform.displayName;
+
+  return React.useMemo(() => {
+    return (
+      <TouchableOpacity onLongPress={toggleVersionDetails}>
+        <SmallBoldText style={styles.versionButton}>
+          {I18n.t('version-number')} {useVersionFeature.versionNumber}
+          {isVersionDetailsShown ? ` ${useVersionFeature.versionType} (${useVersionFeature.buildNumber})` : null}
+        </SmallBoldText>
+        {isVersionDetailsShown ? (
+          <SmallBoldText style={styles.versionButton}>
+            {isVersionDetailsShown ? `${useVersionFeature.versionOverride} ${currentPlatform}` : null}
+          </SmallBoldText>
+        ) : null}
+      </TouchableOpacity>
+    );
+  }, [currentPlatform, isVersionDetailsShown, toggleVersionDetails]);
+}
+// All these values are compile-time constants. So we decalre them as function statics.
+useVersionFeature.versionNumber = DeviceInfo.getVersion();
+useVersionFeature.buildNumber = DeviceInfo.getBuildNumber();
+useVersionFeature.versionType = RNConfigReader.BundleVersionType as string;
+useVersionFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
+
+/**
+ * UserHomeScreen component
+ * @param props
+ * @returns
+ */
+function UserHomeScreen(props: UserHomeScreenPrivateProps) {
+  const { handleLogout, session } = props;
+
   const logoutButton = useLogoutFeature(handleLogout);
+  const versionButton = useVersionFeature(session);
 
   return (
     <PageView>
-      <View style={styles.sectionBottom}>{logoutButton}</View>
+      <View style={styles.sectionBottom}>
+        {logoutButton}
+        {versionButton}
+      </View>
     </PageView>
   );
 }

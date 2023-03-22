@@ -11,4 +11,8 @@ export default StyleSheet.create({
     color: theme.palette.status.failure.regular,
     textAlign: 'center',
   },
+  versionButton: {
+    color: theme.palette.grey.graphite,
+    textAlign: 'center',
+  },
 });
