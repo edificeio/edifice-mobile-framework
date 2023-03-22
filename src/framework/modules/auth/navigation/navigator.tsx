@@ -75,7 +75,7 @@ export default function () {
         name={AuthRouteNames.changePassword}
         component={ChangePasswordScreen}
         options={({ route }) => ({
-          title: I18n.t('PasswordChange'),
+          title: I18n.t('user.page.editPassword'),
         })}
       />
       <Stack.Screen

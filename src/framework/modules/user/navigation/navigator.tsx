@@ -8,6 +8,7 @@ import moduleConfig from '../module-config';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
 import UserNotifPrefsScreen, { computeNavBar as notifPrefsNavBar } from '../screens/notif-prefs';
 import UserProfileScreen, { computeNavBar as profileNavBar } from '../screens/profile';
+import UserStructuresScreen, { computeNavBar as structuresNavBar } from '../screens/structures';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
@@ -18,6 +19,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         name={userRouteNames.notifPrefs}
         component={UserNotifPrefsScreen}
         options={notifPrefsNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={userRouteNames.structures}
+        component={UserStructuresScreen}
+        options={structuresNavBar}
         initialParams={{}}
       />
     </>

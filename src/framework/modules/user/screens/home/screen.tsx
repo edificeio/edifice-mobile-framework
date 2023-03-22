@@ -1,5 +1,5 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -148,6 +148,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
+  const isFocused = useIsFocused();
 
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
@@ -163,8 +164,10 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     // ToDo : manage MFA here instead of direct navigate
     if (!(await fetchAuthContext())) return;
     setCurrentLoadingMenu(undefined);
-    navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context: authContextRef.current });
-  }, [fetchAuthContext, navigation, session]);
+    if (isFocused) {
+      navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context: authContextRef.current });
+    }
+  }, [fetchAuthContext, isFocused, navigation, session]);
 
   const doLoadChangeEmail = React.useCallback(async () => {
     if (!session) return;
@@ -172,8 +175,10 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     // ToDo : manage MFA here instead of direct navigate
     if (!(await fetchAuthContext())) return;
     setCurrentLoadingMenu(undefined);
-    navigation.navigate(AuthRouteNames.changeEmail, { platform: session.platform, context: authContextRef.current });
-  }, [fetchAuthContext, navigation, session]);
+    if (isFocused) {
+      navigation.navigate(AuthRouteNames.changeEmail, { platform: session.platform, context: authContextRef.current });
+    }
+  }, [fetchAuthContext, isFocused, navigation, session]);
 
   const doLoadChangeMobile = React.useCallback(async () => {
     if (!session) return;
@@ -181,8 +186,10 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     // ToDo : manage MFA here instead of direct navigate
     if (!(await fetchAuthContext())) return;
     setCurrentLoadingMenu(undefined);
-    navigation.navigate(AuthRouteNames.changeMobile, { platform: session.platform, context: authContextRef.current });
-  }, [fetchAuthContext, navigation, session]);
+    if (isFocused) {
+      navigation.navigate(AuthRouteNames.changeMobile, { platform: session.platform, context: authContextRef.current });
+    }
+  }, [fetchAuthContext, isFocused, navigation, session]);
 
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
 
@@ -220,7 +227,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
                 onPress={doLoadChangeMobile}
               />
             ) : null}
-            {/* <LineButton title="directory-structuresTitle" onPress={() => navigation.navigate('Structures')} /> */}
+            <LineButton
+              title="directory-structuresTitle"
+              onPress={() => {
+                navigation.navigate(userRouteNames.structures, {});
+              }}
+            />
           </ButtonLineGroup>
         </View>
       </>

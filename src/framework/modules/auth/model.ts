@@ -43,6 +43,10 @@ export interface StructureNode {
   zipCode: string;
 }
 
+export interface UserStructureWithClasses extends StructureNode {
+  classes: string[];
+}
+
 /**
  * Describes the user that is logged in currently (private info)
  */
@@ -54,7 +58,7 @@ export interface ILoggedUser extends IUser {
   children?: UserChildren;
   classes?: string[];
   relatives?: UserPrivateData['parents'];
-  structures?: StructureNode[];
+  structures?: UserStructureWithClasses[];
   photo?: string;
 }
 

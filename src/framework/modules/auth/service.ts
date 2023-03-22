@@ -18,6 +18,7 @@ import {
   StructureNode,
   UserChild,
   UserChildren,
+  UserStructureWithClasses,
   createAuthError,
 } from './model';
 
@@ -82,8 +83,14 @@ export interface UserPrivateData {
   structureNodes?: StructureNode[];
 }
 
-export interface UserPersonData {
+export type UserPersonDataStructureWithClasses = Pick<StructureNode, 'UAI' | 'id' | 'name'> & {
+  classes?: string[];
+  exports?: null;
+};
+
+export interface UserPersonDataBackend {
   photo?: string;
+  schools?: UserPersonDataStructureWithClasses[];
 }
 
 export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
@@ -207,7 +214,7 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
 
     return { userdata, userPublicInfo: userPublicInfo.result?.[0] } as {
       userdata?: UserPrivateData;
-      userPublicInfo?: UserPersonData;
+      userPublicInfo?: UserPersonDataBackend;
     };
   } catch (err) {
     throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', '', err as Error);
@@ -225,11 +232,21 @@ export async function saveSession() {
   }
 }
 
+export function formatStructuresWithClasses(
+  structureNodes?: StructureNode[],
+  structuresWithClasses?: UserPersonDataStructureWithClasses[],
+) {
+  return structureNodes?.map(structure => ({
+    ...structure,
+    classes: structuresWithClasses?.find(sc => sc.id === structure.id)?.classes ?? [],
+  }));
+}
+
 export function formatSession(
   platform: Platform,
   userinfo: IUserInfoBackend,
   userPrivateData?: UserPrivateData,
-  userPublicInfo?: UserPersonData,
+  userPublicInfo?: UserPersonDataBackend,
 ): ISession {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
@@ -257,7 +274,7 @@ export function formatSession(
     lastName: userinfo.lastName,
     groups: userinfo.groupsIds,
     classes: userinfo.classes,
-    structures: userPrivateData?.structureNodes,
+    structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
     uniqueId: userinfo.uniqueId,
     photo: userPublicInfo?.photo,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
