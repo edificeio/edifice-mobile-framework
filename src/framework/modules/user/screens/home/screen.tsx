@@ -12,12 +12,17 @@ import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import ActionButton from '~/framework/components/buttons/action';
+import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line/component';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
+import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { logoutAction } from '~/framework/modules/auth/actions';
+import { IAuthContext } from '~/framework/modules/auth/model';
+import { AuthRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { UserType, getAuthContext } from '~/framework/modules/auth/service';
 import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -27,7 +32,7 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 import moduleConfig from '../../module-config';
 import { UserNavigationParams, userRouteNames } from '../../navigation';
 import styles from './styles';
-import type { UserHomeScreenPrivateProps } from './types';
+import { ModificationType, UserHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -106,6 +111,87 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
       <Avatar sourceOrId={userProfilePicture} size={Size.verylarge} id="" />
     );
   }, [navigation, userProfilePicture]);
+}
+
+/**
+ * Setup the menu for Profile section of Account screen
+ * @param session
+ * @returns the React Element of the menu
+ */
+function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
+  const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
+  return React.useMemo(
+    () => (
+      <>
+        <BodyBoldText style={styles.userInfoName}>{session?.user.displayName}</BodyBoldText>
+        <SmallText style={styles.userInfoType}>{I18n.t(`profileTypes.${session?.user.type}`)}</SmallText>
+        <ActionButton
+          text={I18n.t('user.page.userFileButton')}
+          type="secondary"
+          action={() => {
+            navigation.navigate(userRouteNames.profile, {});
+          }}
+          style={styles.userInfoButton}
+        />
+      </>
+    ),
+    [navigation, session?.user.displayName, session?.user.type],
+  );
+}
+
+/**
+ * Setup the menu for Account screen
+ * @param session
+ * @returns the React Element of the menus
+ */
+function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
+  const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
+  const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
+
+  const doLoadChangePassword = React.useCallback(async () => {
+    if (!session) return;
+    setCurrentLoadingMenu(ModificationType.PASSWORD);
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    // ToDo : manage MFA here instead of direct navigate
+    const context = await getAuthContext(session.platform);
+    navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context });
+    setCurrentLoadingMenu(undefined);
+  }, [navigation, session]);
+
+  const canEditPersonalInfo = session?.user.type !== UserType.Student;
+
+  return React.useMemo(
+    () => (
+      <>
+        <View style={styles.section}>
+          <HeadingSText style={styles.sectionTitle}>{I18n.t('user.page.configuration')}</HeadingSText>
+          <ButtonLineGroup>
+            <LineButton
+              title="directory-notificationsTitle"
+              onPress={() => {
+                navigation.navigate(userRouteNames.notifPrefs, {});
+              }}
+            />
+            <LineButton
+              loading={currentLoadingMenu === ModificationType.PASSWORD}
+              disabled={currentLoadingMenu !== undefined}
+              title="user.page.editPassword"
+              onPress={doLoadChangePassword}
+            />
+            {/* {canEditPersonalInfo ? (
+              <LineButton
+                loading={currentLoadingMenu === ModificationType.EMAIL}
+                disabled={currentLoadingMenu !== undefined}
+                title="user.page.editEmail"
+                onPress={() => this.getMFARequirementAndRedirect(ModificationType.EMAIL)}
+              />
+            ) : null} */}
+          </ButtonLineGroup>
+        </View>
+      </>
+    ),
+    [currentLoadingMenu, doLoadChangePassword, navigation],
+  );
 }
 
 /**
@@ -192,6 +278,8 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
 
   const navBarDecoration = useCurvedNavBarFeature();
   const avatarButton = useProfileAvatarFeature(session);
+  const profileMenu = useProfileMenuFeature(session);
+  const accountMenu = useAccountMenuFeature(session);
   const logoutButton = useLogoutFeature(handleLogout);
   const versionButton = useVersionFeature(session);
 
@@ -201,7 +289,9 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         <View style={styles.sectionUserInfo}>
           {navBarDecoration}
           {avatarButton}
+          {profileMenu}
         </View>
+        {accountMenu}
         <View style={styles.sectionBottom}>
           {logoutButton}
           {versionButton}

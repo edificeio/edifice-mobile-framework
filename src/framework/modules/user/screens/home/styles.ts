@@ -7,6 +7,14 @@ export default StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
   },
+  section: {
+    marginHorizontal: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.big,
+  },
+  sectionTitle: {
+    color: theme.palette.grey.black,
+    marginBottom: UI_SIZES.spacing.small,
+  },
   sectionBottom: {
     marginVertical: UI_SIZES.spacing.large,
   },
@@ -25,5 +33,14 @@ export default StyleSheet.create({
   },
   navBarSvgDecoration: {
     position: 'absolute',
+  },
+  userInfoButton: {
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  userInfoName: {
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  userInfoType: {
+    color: theme.ui.text.light,
   },
 });
