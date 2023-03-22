@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, RefreshControl, TextInput, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -17,7 +17,6 @@ import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallText } from '~/framework/components/text';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -176,7 +175,13 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
           />
           <View style={styles.rowContainer}>
             <SmallText>{I18n.t('homeworkAssistance.dateOfCall')}</SmallText>
-            <DateTimePicker mode="date" value={date} onChange={value => setDate(value)} color={theme.palette.secondary.regular} />
+            <DateTimePicker
+              mode="date"
+              value={date}
+              onChange={value => setDate(value)}
+              minimumDate={moment().startOf('day')}
+              color={theme.palette.secondary.regular}
+            />
           </View>
           <View style={styles.rowContainer}>
             <SmallText>{I18n.t('homeworkAssistance.time')}</SmallText>

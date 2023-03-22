@@ -15,7 +15,7 @@ export default StyleSheet.create({
   backgroundImage: {
     position: 'absolute',
     right: -UI_SIZES.spacing.major,
-    bottom: '10%',
+    bottom: '12%',
     maxHeight: 300,
   },
   rowContainer: {

@@ -2,10 +2,11 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
   container: {
-    padding: UI_SIZES.spacing.medium,
+    padding: pageGutterSize,
     flexGrow: 1,
     justifyContent: 'space-between',
   },
