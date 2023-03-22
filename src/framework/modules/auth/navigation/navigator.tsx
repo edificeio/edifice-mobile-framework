@@ -10,6 +10,7 @@ import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import PlatformSelectScreen from '~/framework/modules/auth/screens/PlatformSelectScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
+import AuthChangeEmailScreen, { computeNavBar as changeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
@@ -75,6 +76,12 @@ export default function () {
         options={({ route }) => ({
           title: I18n.t('PasswordChange'),
         })}
+      />
+      <Stack.Screen
+        name={AuthRouteNames.changeEmail}
+        component={AuthChangeEmailScreen}
+        options={changeEmailNavBar}
+        initialParams={{}}
       />
     </Stack.Group>
   );

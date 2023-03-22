@@ -147,16 +147,33 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
 function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
+  const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
+
+  const fetchAuthContext = React.useCallback(async () => {
+    if (!session) return;
+    if (!authContextRef.current) {
+      authContextRef.current = await getAuthContext(session.platform);
+    }
+    return authContextRef.current;
+  }, [session]);
 
   const doLoadChangePassword = React.useCallback(async () => {
     if (!session) return;
     setCurrentLoadingMenu(ModificationType.PASSWORD);
-    await new Promise(resolve => setTimeout(resolve, 3000));
     // ToDo : manage MFA here instead of direct navigate
-    const context = await getAuthContext(session.platform);
-    navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context });
+    if (!(await fetchAuthContext())) return;
+    navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context: authContextRef.current });
     setCurrentLoadingMenu(undefined);
-  }, [navigation, session]);
+  }, [fetchAuthContext, navigation, session]);
+
+  const doLoadChangeEmail = React.useCallback(async () => {
+    if (!session) return;
+    setCurrentLoadingMenu(ModificationType.EMAIL);
+    // ToDo : manage MFA here instead of direct navigate
+    if (!(await fetchAuthContext())) return;
+    navigation.navigate(AuthRouteNames.changeEmail, { platform: session.platform, context: authContextRef.current });
+    setCurrentLoadingMenu(undefined);
+  }, [fetchAuthContext, navigation, session]);
 
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
 
@@ -178,19 +195,19 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
               title="user.page.editPassword"
               onPress={doLoadChangePassword}
             />
-            {/* {canEditPersonalInfo ? (
+            {canEditPersonalInfo ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.EMAIL}
                 disabled={currentLoadingMenu !== undefined}
                 title="user.page.editEmail"
-                onPress={() => this.getMFARequirementAndRedirect(ModificationType.EMAIL)}
+                onPress={doLoadChangeEmail}
               />
-            ) : null} */}
+            ) : null}
           </ButtonLineGroup>
         </View>
       </>
     ),
-    [currentLoadingMenu, doLoadChangePassword, navigation],
+    [canEditPersonalInfo, currentLoadingMenu, doLoadChangeEmail, doLoadChangePassword, navigation],
   );
 }
 
