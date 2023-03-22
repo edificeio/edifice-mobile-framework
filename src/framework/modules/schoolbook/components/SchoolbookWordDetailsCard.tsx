@@ -43,6 +43,7 @@ const responsesString = (responses: number) =>
 export interface ISchoolBookWordDetailsCardProps {
   action: () => void;
   onPublishReply: (comment: string, commentId?: string) => any;
+  onEditComment: (data) => any;
   isPublishingReply: boolean;
   isAcknowledgingWord: boolean;
   userType: UserType | undefined;
@@ -55,6 +56,7 @@ const SchoolbookWordDetailsCard = (
   {
     action,
     onPublishReply,
+    onEditComment,
     isPublishingReply,
     isAcknowledgingWord,
     userType,
@@ -346,6 +348,7 @@ const SchoolbookWordDetailsCard = (
                 index={index}
                 isPublishingComment={isPublishingReply}
                 onPublishComment={(comment, commentId) => onPublishReply(comment, commentId)}
+                onChangeText={data => onEditComment(data)}
                 editCommentCallback={() => {
                   const otherSchoolbookWordResponses = responses?.filter(response => response.id !== item.id);
                   setEditedCommentId(item.id?.toString());
@@ -391,6 +394,7 @@ const SchoolbookWordDetailsCard = (
             displayShadow={doesContentExceedView}
             isPublishingComment={isPublishingReply}
             onPublishComment={comment => onPublishReply(comment)}
+            onChangeText={data => onEditComment(data)}
             isResponse
           />
         ) : null

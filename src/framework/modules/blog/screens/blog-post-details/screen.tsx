@@ -1,4 +1,4 @@
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
@@ -14,7 +14,7 @@ import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
-import CommentField from '~/framework/components/commentField';
+import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -72,6 +72,29 @@ export const computeNavBar = ({
   title: I18n.t('timeline.blogPostDetailsScreen.title'),
 });
 
+function PreventBack(props: { infoComment: InfoCommentField }) {
+  const { infoComment } = props;
+  const navigation = useNavigation();
+  UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
+    Alert.alert(
+      I18n.t(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.t(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      [
+        {
+          text: I18n.t('common.quit'),
+          style: 'destructive',
+          onPress: () => navigation.dispatch(data.action),
+        },
+        {
+          text: I18n.t('common.continue'),
+          style: 'default',
+        },
+      ],
+    );
+  });
+  return null;
+}
+
 export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsScreenProps, BlogPostDetailsScreenState> {
   _titleRef?: React.Ref<any> = undefined;
 
@@ -102,6 +125,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     errorState: false,
     showHeaderTitle: false,
     isCommentFieldFocused: false,
+    infoComment: {
+      type: '',
+      isPublication: false,
+      changed: false,
+      value: '',
+    },
   };
 
   listHeight = 0;
@@ -458,6 +487,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           ref={this.bottomEditorSheetRef}
           onPublishComment={(comment, commentId) => this.doCreateComment(comment, commentId)}
           isPublishingComment={isPublishingComment}
+          onChangeText={data => this.setState({ infoComment: data })}
         />
       ) : (
         <View style={styles.footerNoComment} />
@@ -581,6 +611,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
             : undefined
         }
+        onChangeText={data => this.setState({ infoComment: data })}
         editCommentCallback={() => {
           const blogPostComments = blogPostData?.comments;
           const otherBlogPostComments = blogPostComments?.filter(comment => comment.id !== blogPostComment.id);
@@ -620,6 +651,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
     return (
       <>
+        <PreventBack infoComment={this.state.infoComment} />
         <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
             <LoadingIndicator />

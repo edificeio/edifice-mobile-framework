@@ -2,7 +2,7 @@ import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/nati
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
+import { Alert, Platform, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -75,6 +75,22 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       Toast.show(I18n.t('support.supportCreateTicketScreen.failure'), { ...UI_ANIMATIONS.toast });
     }
   };
+
+  const noContent = !subject && !description;
+
+  UNSTABLE_usePreventRemove(!noContent, ({ data }) => {
+    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+      {
+        text: I18n.t('common.cancel'),
+        style: 'cancel',
+      },
+      {
+        text: I18n.t('common.quit'),
+        style: 'destructive',
+        onPress: () => props.navigation.dispatch(data.action),
+      },
+    ]);
+  });
 
   const renderPage = () => {
     const { apps, structures } = props;

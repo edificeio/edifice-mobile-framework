@@ -22,5 +22,3 @@ export const blogRouteNames = {
   blogPostDetails: `${moduleConfig.routeName}/details` as 'blogPostDetails',
   blogCreatePost: `${moduleConfig.routeName}/create` as 'blogCreatePost',
 };
-
-// blogCreatePost screen have back handler (doHandleGoBack)

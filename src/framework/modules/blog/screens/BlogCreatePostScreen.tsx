@@ -1,3 +1,4 @@
+import { UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -138,6 +139,29 @@ export const computeNavBar = ({
   title: I18n.t('blog.blogCreatePostScreen.title'),
 });
 
+function PreventBack(props: { isCreatingPost: string | number }) {
+  const navigation = useNavigation();
+  UNSTABLE_usePreventRemove(true, ({ data }) => {
+    if (!props.isCreatingPost) return navigation.dispatch(data.action);
+    Alert.alert(
+      I18n.t('common.confirmationUnsavedPublication'),
+      I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
+      [
+        {
+          text: I18n.t('common.quit'),
+          onPress: () => navigation.dispatch(data.action),
+          style: 'destructive',
+        },
+        {
+          text: I18n.t('common.continue'),
+          style: 'default',
+        },
+      ],
+    );
+  });
+  return null;
+}
+
 export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScreenProps, BlogCreatePostScreenState> {
   state: BlogCreatePostScreenState = {
     sendLoadingState: false,
@@ -151,31 +175,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
   imageCallback = image => {
     this.setState(prevState => ({ images: [...prevState.images, image] }));
   };
-
-  // doHandleGoBack() {
-  //   const { navigation } = this.props;
-  //   const { content, title, images } = this.state;
-  //   const isCreatingPost = content || title || images.length;
-  //   if (isCreatingPost) {
-  //     Alert.alert(
-  //       I18n.t('common.confirmationUnsavedPublication'),
-  //       I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
-  //       [
-  //         {
-  //           text: I18n.t('common.quit'),
-  //           onPress: () => navigation.dispatch(CommonActions.goBack()),
-  //           style: 'destructive',
-  //         },
-  //         {
-  //           text: I18n.t('common.continue'),
-  //           style: 'default',
-  //         },
-  //       ],
-  //     );
-  //   } else {
-  //     navigation.dispatch(CommonActions.goBack());
-  //   }
-  // }
 
   async doSend() {
     Keyboard.dismiss();
@@ -409,13 +408,16 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   render() {
     return (
-      <KeyboardPageView scrollable={false}>
-        <Notifier id="createPost" />
-        {/* ToDo : don't use magic keywords like this. */}
-        <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.scrollView}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
-        </ScrollView>
-      </KeyboardPageView>
+      <>
+        <PreventBack isCreatingPost={this.state.content || this.state.title || this.state.images.length} />
+        <KeyboardPageView scrollable={false}>
+          <Notifier id="createPost" />
+          {/* ToDo : don't use magic keywords like this. */}
+          <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.scrollView}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
+          </ScrollView>
+        </KeyboardPageView>
+      </>
     );
   }
 }

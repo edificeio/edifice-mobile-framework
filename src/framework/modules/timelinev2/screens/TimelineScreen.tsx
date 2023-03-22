@@ -151,18 +151,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     );
   }
 
-  renderNavBarAction(session: ISession) {
-    let workflows;
-    if (getTimelineWorkflows(session)) {
-      workflows = getTimelineWorkflows(session);
-    }
-    return (
-      <PopupMenu actions={workflows}>
-        <NavBarAction iconName="ui-plus" />
-      </PopupMenu>
-    );
-  }
-
   renderError() {
     return (
       <SmallText>{`Error: ${this.props.notifications.error?.name}
@@ -292,9 +280,20 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       navigation.setParams({ reloadWithNewSettings: undefined });
     }
 
-    this.props.navigation.setOptions({
-      headerRight: () => this.renderNavBarAction(this.props.session),
-    });
+    let workflows;
+    if (getTimelineWorkflows(this.props.session)) {
+      workflows = getTimelineWorkflows(this.props.session);
+    }
+    if (workflows.length) {
+      this.props.navigation.setOptions({
+        // eslint-disable-next-line react/no-unstable-nested-components
+        headerRight: () => (
+          <PopupMenu actions={workflows}>
+            <NavBarAction iconName="ui-plus" />
+          </PopupMenu>
+        ),
+      });
+    }
   }
 
   // METHODS ======================================================================================

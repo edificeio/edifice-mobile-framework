@@ -1,7 +1,7 @@
 /**
  * Schoolbook word details
  */
-import { CommonActions } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -10,6 +10,7 @@ import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
+import { InfoCommentField } from '~/framework/components/commentField';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -68,6 +69,12 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const [isPublishingReply, setIsPublishingReply] = React.useState(false);
   const [isAcknowledgingWord, setIsAcknowledgingWord] = React.useState(false);
+  const [infoComment, setInfoComment] = React.useState<InfoCommentField>({
+    type: '',
+    isPublication: false,
+    changed: false,
+    value: '',
+  });
   const isSchoolbookWordRendered =
     loadingState === AsyncPagedLoadingState.DONE ||
     loadingState === AsyncPagedLoadingState.REFRESH_SILENT ||
@@ -229,6 +236,24 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     userId,
   ]);
 
+  UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
+    Alert.alert(
+      I18n.t(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.t(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      [
+        {
+          text: I18n.t('common.quit'),
+          style: 'destructive',
+          onPress: () => props.navigation.dispatch(data.action),
+        },
+        {
+          text: I18n.t('common.continue'),
+          style: 'default',
+        },
+      ],
+    );
+  });
+
   React.useEffect(() => {
     const init = () => {
       setLoadingState(AsyncPagedLoadingState.INIT);
@@ -272,6 +297,9 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         isPublishingReply={isPublishingReply}
         isAcknowledgingWord={isAcknowledgingWord}
         onPublishReply={(comment, commentId) => replyToSchoolbookWord(comment, commentId)}
+        onEditComment={data => {
+          setInfoComment(data);
+        }}
       />
     );
   };
@@ -293,40 +321,11 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     }
   };
 
-  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
   return (
     <>
-      <PageComponent
-        safeArea={false}
-        onBack={() => {
-          if (detailsCardRef?.current?.cardBottomEditorSheetRef()?.doesCommentExist()) {
-            detailsCardRef?.current
-              ?.cardBottomEditorSheetRef()
-              ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()));
-          } else if (
-            detailsCardRef?.current?.cardSelectedCommentFieldRef()?.doesCommentExist() &&
-            !detailsCardRef?.current?.cardSelectedCommentFieldRef()?.isCommentUnchanged()
-          ) {
-            detailsCardRef?.current
-              ?.cardSelectedCommentFieldRef()
-              ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()));
-          } else props.navigation.dispatch(CommonActions.goBack());
-          /* Replace
-            detailsCardRef?.current?.cardBottomEditorSheetRef()?.doesCommentExist()
-              ? detailsCardRef?.current
-                  ?.cardBottomEditorSheetRef()
-                  ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()))
-              : detailsCardRef?.current?.cardSelectedCommentFieldRef()?.doesCommentExist() &&
-                !detailsCardRef?.current?.cardSelectedCommentFieldRef()?.isCommentUnchanged()
-              ? detailsCardRef?.current
-                  ?.cardSelectedCommentFieldRef()
-                  ?.confirmDiscard(() => props.navigation.dispatch(CommonActions.goBack()))
-              : props.navigation.dispatch(CommonActions.goBack());
-          */
-        }}>
-        {renderPage()}
-      </PageComponent>
+      <PageComponent safeArea={false}>{renderPage()}</PageComponent>
     </>
   );
 };
