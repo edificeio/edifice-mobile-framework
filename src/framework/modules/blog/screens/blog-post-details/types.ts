@@ -1,6 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { InfoCommentField } from '~/framework/components/commentField';
 import { ISession } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogPost } from '~/framework/modules/blog/reducer';
@@ -57,4 +58,5 @@ export interface BlogPostDetailsScreenState {
   errorState: boolean;
   showHeaderTitle: boolean;
   isCommentFieldFocused: boolean;
+  infoComment: InfoCommentField;
 }

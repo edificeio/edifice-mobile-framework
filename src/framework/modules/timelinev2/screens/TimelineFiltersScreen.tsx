@@ -1,7 +1,8 @@
+import { UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -21,8 +22,6 @@ import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/not
 import { NavBarAction } from '~/framework/navigation/navBar';
 import { shallowEqual } from '~/framework/util/object';
 
-// TYPES ==========================================================================================
-
 export interface ITimelineFiltersScreenDataProps {
   notifFilterSettings: INotifFilterSettings;
   notifFilters: INotificationFilter[];
@@ -38,8 +37,6 @@ export interface ITimelineFiltersScreenState {
   selectedFilters: INotifFilterSettings;
 }
 
-// STYLES =======================================================================================
-
 const styles = StyleSheet.create({
   checkboxContainer: {
     backgroundColor: theme.ui.background.card,
@@ -48,66 +45,45 @@ const styles = StyleSheet.create({
   },
 });
 
-// NAVBAR =========================================================================================
-
 export function computeNavBar(disabled: boolean, onPress?: () => void) {
   return <NavBarAction title={I18n.t('timeline.filtersScreen.apply')} disabled={disabled} onPress={onPress} />;
 }
 
-// COMPONENT ======================================================================================
+function PreventBack(props: { onPreventBack: boolean }) {
+  const navigation = useNavigation();
+  UNSTABLE_usePreventRemove(props.onPreventBack, ({ data }) => {
+    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+      {
+        text: I18n.t('common.cancel'),
+        style: 'cancel',
+      },
+      {
+        text: I18n.t('common.quit'),
+        style: 'destructive',
+        onPress: () => navigation.dispatch(data.action),
+      },
+    ]);
+  });
+  return null;
+}
 
 export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersScreenProps, ITimelineFiltersScreenState> {
-  // DECLARATIONS =================================================================================
-
   state: ITimelineFiltersScreenState = {
     selectedFilters: { ...this.props.notifFilterSettings },
   };
 
-  // RENDER =======================================================================================
-
   render() {
-    /*
-    // ToDo : goather back this back-handler logic
     const { selectedFilters } = this.state;
-    const { navigation, notifFilterSettings } = this.props;
+    const { notifFilterSettings } = this.props;
     const areFiltersUnchanged = shallowEqual(notifFilterSettings, selectedFilters);
     const noneSet = Object.values(selectedFilters).every(value => !value);
-    return (
-      <PageView
-        navigation={navigation}
-        navBarWithBack={{
-          right: (
-            <HeaderAction
-              text={I18n.t('common.ok')}
-              disabled={areFiltersUnchanged || noneSet}
-              onPress={() => this.doSetFilters(selectedFilters)}
-            />
-          ),
-          title: I18n.t('timeline.filtersScreen.title'),
-        }}
-        onBack={() => {
-          if (!areFiltersUnchanged && !noneSet) {
-            Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
-              {
-                text: I18n.t('common.cancel'),
-                style: 'cancel',
-              },
-              {
-                text: I18n.t('common.quit'),
-                style: 'destructive',
-                onPress: () => navigation.navigate('timeline'),
-              },
-            ]);
-          } else {
-            return true;
-          }
-        }}>
-        {this.renderList()}
-      </PageView>
-    );
-    */
     this.updateNavBar();
-    return <PageView>{this.renderList()}</PageView>;
+    return (
+      <>
+        <PreventBack onPreventBack={!areFiltersUnchanged && !noneSet} />
+        <PageView>{this.renderList()}</PageView>
+      </>
+    );
   }
 
   renderList() {
@@ -153,8 +129,6 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     );
   }
 
-  // LIFECYCLE ====================================================================================
-
   mounted: boolean = false;
 
   componentDidMount(): void {
@@ -165,8 +139,6 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
   componentWillUnmount(): void {
     this.mounted = false;
   }
-
-  // METHODS ======================================================================================
 
   doToggleFilter(item: INotificationFilter) {
     if (!this.mounted) return;
@@ -203,8 +175,6 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     });
   }
 }
-
-// MAPPING ========================================================================================
 
 const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s => {
   const ts = moduleConfig.getState(s) as ITimeline_State;

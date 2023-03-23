@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { Alert, LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -19,6 +19,7 @@ export interface CommentFieldProps {
   isPublishingComment: boolean;
   onPublishComment?: (comment: string, commentId?: string) => any;
   onDeleteComment?: (commentId: string) => any;
+  onChangeText?: ({ type, isPublication, changed, value }: InfoCommentField) => any;
   editCommentCallback?: Function;
   comment?: string;
   commentId?: number | string;
@@ -29,6 +30,13 @@ export interface CommentFieldProps {
   isResponse?: boolean;
   onEditableLayoutHeight?: (val: number) => void;
   isManager?: boolean;
+}
+
+export interface InfoCommentField {
+  type: string;
+  isPublication: boolean;
+  changed: boolean;
+  value: string;
 }
 
 // STYLES =========================================================================================
@@ -71,9 +79,6 @@ const styles = StyleSheet.create({
 // COMPONENT ======================================================================================
 
 const CommentField = (props: CommentFieldProps, ref) => {
-  //  Due to Alert + Keyboard bug, we need to set/unset a flag when Alert is displayed/discarded
-  let alertDisplayed = false;
-  const resetAlertDisplay = () => setTimeout(() => (alertDisplayed = false), 1000);
   const inputRef: { current: TextInput | undefined } = React.useRef();
 
   const session = useSelector(() => assertSession());
@@ -84,63 +89,43 @@ const CommentField = (props: CommentFieldProps, ref) => {
   const isFirstComment = props.index === 0;
 
   const publishComment = () => {
-    inputRef.current && inputRef.current.blur();
-    props.onPublishComment && props.onPublishComment(comment, props.commentId?.toString());
+    if (inputRef.current) inputRef.current.blur();
+    if (props.onPublishComment) props.onPublishComment(comment, props.commentId?.toString());
+    if (props.onChangeText)
+      props.onChangeText({
+        type: '',
+        isPublication: false,
+        changed: false,
+        value: '',
+      });
   };
   const editComment = () => {
     setIsEditing(true);
-    props.editCommentCallback && props.editCommentCallback();
+    if (props.editCommentCallback) props.editCommentCallback();
   };
   const deleteComment = () => {
-    props.onDeleteComment && props.commentId && props.onDeleteComment(props.commentId?.toString());
+    if (props.onDeleteComment && props.commentId) props.onDeleteComment(props.commentId?.toString());
   };
-
   const clearCommentField = () => {
-    inputRef.current && inputRef.current.clear();
+    if (inputRef.current) inputRef.current.clear();
     setComment('');
   };
-  const confirmDiscard = (quitCallback?: Function, continueCallback?: Function) => {
-    if (comment && !props.isPublishingComment && !alertDisplayed) {
-      alertDisplayed = true; //  Due to Alert + Keyboard bug, we need to set a flag when Alert is displayed
-      Alert.alert(
-        I18n.t(`common.confirmationUnsaved${props.commentId ? 'Modification' : 'Publication'}`),
-        I18n.t(
-          `common.${props.isResponse ? 'response' : 'comment'}.confirmationUnsaved${
-            props.commentId ? 'Modification' : 'Publication'
-          }`,
-        ),
-        [
-          {
-            text: I18n.t('common.quit'),
-            style: 'destructive',
-            onPress: () => {
-              // eslint-disable-next-line @babel/no-unused-expressions
-              quitCallback ? quitCallback() : clearCommentField();
-              resetAlertDisplay();
-            },
-          },
-          {
-            text: I18n.t('common.continue'),
-            style: 'default',
-            onPress: () => {
-              // eslint-disable-next-line @babel/no-unused-expressions
-              continueCallback ? continueCallback() : inputRef.current && inputRef.current.focus();
-              resetAlertDisplay();
-            },
-          },
-        ],
-      );
-    }
+  const onChangeText = (value: string) => {
+    if (props.onChangeText)
+      props.onChangeText({
+        type: props.isResponse ? 'response' : 'comment',
+        isPublication: !props.commentId,
+        changed: value !== comment,
+        value,
+      });
+    setComment(value);
   };
   const setIsEditingFalse = () => setIsEditing(false);
-  const doesCommentExist = () => !!comment;
   const isCommentUnchanged = () => comment === props.comment;
   const isCommentFieldFocused = () => inputRef.current?.isFocused();
   React.useImperativeHandle(ref, () => ({
     clearCommentField,
-    confirmDiscard,
     setIsEditingFalse,
-    doesCommentExist,
     isCommentUnchanged,
     isCommentFieldFocused,
   }));
@@ -149,7 +134,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
     if (isEditing) {
       setTimeout(() => {
         // Kinda a hack, but works...
-        inputRef.current && inputRef.current.focus();
+        if (inputRef.current) inputRef.current.focus();
       });
     }
   }, [isEditing]);
@@ -203,7 +188,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         multiline
         scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
         editable={!(props.isPublishingComment || isIdleExistingComment)}
-        onChangeText={text => setComment(text)}
+        onChangeText={text => onChangeText(text)}
         value={comment}
         style={Platform.select({
           ios: undefined,
@@ -211,7 +196,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         })}
       />
     ),
-    [comment, isIdleExistingComment, props.isPublishingComment, props.isResponse, textInputStyle],
+    [comment, isIdleExistingComment, onChangeText, props.isPublishingComment, props.isResponse, textInputStyle],
   );
 
   return (
