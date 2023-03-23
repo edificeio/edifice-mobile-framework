@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { DrawerNavigationOptions, DrawerScreenProps } from '@react-navigation/drawer';
 import { HeaderBackButton } from '@react-navigation/elements';
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -208,10 +209,6 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     }
   };
 
-  const onGoBack = () => {
-    if (selectedMails.length) return setSelectedMails([]);
-  };
-
   const updateQuery = (value: string) => setQuery(value);
 
   const getSelectedMails = (): Omit<IMail, 'body'>[] => {
@@ -312,7 +309,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       return {
         headerLeft: ({ tintColor }) => (
           <View style={styles.navBarLeftContainer}>
-            <HeaderBackButton tintColor={tintColor} onPress={onGoBack} />
+            <HeaderBackButton tintColor={tintColor} onPress={() => setSelectedMails([])} />
             <BodyBoldText style={styles.navBarCountText}>{selectedMails.length}</BodyBoldText>
           </View>
         ),
@@ -375,8 +372,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -434,6 +430,10 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         return renderError();
     }
   };
+
+  UNSTABLE_usePreventRemove(selectedMails.length > 0, ({ data }) => {
+    setSelectedMails([]);
+  });
 
   return <PageView>{renderPage()}</PageView>;
 };

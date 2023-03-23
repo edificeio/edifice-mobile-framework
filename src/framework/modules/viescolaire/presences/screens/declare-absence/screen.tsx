@@ -58,6 +58,11 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSingleDay]);
 
+  const setSingleDayDate = (date: Moment) => {
+    setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }));
+    setEndDate(endDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }));
+  };
+
   const onPickAttachment = (att: ImagePicked | DocumentPicked) => {
     setAttachment(new LocalFile(att as Asset | DocumentPicked, { _needIOSReleaseSecureAccess: false }));
   };
@@ -124,7 +129,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="date"
                 value={startDate}
-                onChange={date => setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                onChange={date => setSingleDayDate(date)}
                 minimumDate={moment().startOf('day')}
                 color={viescoTheme.palette.presences}
               />
@@ -182,9 +187,9 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
             <BottomMenu
               title={I18n.t('viesco-attachment')}
               actions={[
-                cameraAction({ callback: att => onPickAttachment(att) }),
-                galleryAction({ callback: att => onPickAttachment(att) }),
-                documentAction({ callback: att => onPickAttachment(att) }),
+                cameraAction({ callback: onPickAttachment }),
+                galleryAction({ callback: onPickAttachment }),
+                documentAction({ callback: onPickAttachment }),
               ]}>
               <View style={styles.filePickerContainer}>
                 <Picture
@@ -200,13 +205,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
             </BottomMenu>
           )}
         </View>
-        <ActionButton
-          text={I18n.t('viesco-validate')}
-          action={createAbsence}
-          disabled={!areDatesValid}
-          loading={isCreating}
-          style={styles.createAction}
-        />
+        <ActionButton text={I18n.t('viesco-validate')} action={createAbsence} disabled={!areDatesValid} loading={isCreating} />
       </ScrollView>
     );
   };

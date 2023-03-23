@@ -8,8 +8,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
+import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import Notifier from '~/infra/notifier/container';
-import { ISearchUsers } from '~/modules/conversation/service/newMail';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 

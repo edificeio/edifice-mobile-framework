@@ -1,3 +1,4 @@
+import { CommonActions, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { decode } from 'html-entities';
 import I18n from 'i18n-js';
@@ -54,6 +55,19 @@ interface ICreateMailState {
   isShownSignatureModal: boolean;
   isNewSignature: boolean;
   signatureModalRef: React.RefObject<ModalBoxHandle>;
+  isDeleted: boolean;
+}
+
+function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; updateDraft: () => void }) {
+  const navigation = useNavigation();
+  UNSTABLE_usePreventRemove(props.isDraftEdited || props.isUploading, ({ data }) => {
+    if (props.isUploading) {
+      return Alert.alert(I18n.t('zimbra-send-attachment-progress'));
+    }
+    props.updateDraft();
+    navigation.dispatch(data.action);
+  });
+  return null;
 }
 
 export const computeNavBar = ({
@@ -79,6 +93,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       isShownSignatureModal: false,
       isNewSignature: false,
       signatureModalRef: React.createRef<ModalBoxHandle>(),
+      isDeleted: false,
     };
   }
 
@@ -152,30 +167,25 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
       await zimbraService.mail.send(session!, this.getMailData(), this.state.id!, this.state.replyTo!);
       Toast.showSuccess(I18n.t('zimbra-send-mail'), { ...UI_ANIMATIONS.toast });
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
     } catch {
       // TODO: Manage error
     }
   };
 
-  getGoBack = () => {
-    if (this.state.tempAttachment) {
-      return Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
-    }
-    if (!this.checkIsMailEmpty()) {
-      const { type } = this.props.route.params;
-      this.saveDraft();
-      Toast.showSuccess(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'), {
-        ...UI_ANIMATIONS.toast,
-      });
-    }
-    this.props.navigation.goBack();
+  updateDraftOnBack = () => {
+    const { type } = this.props.route.params;
+    this.saveDraft();
+    Toast.showSuccess(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'), {
+      ...UI_ANIMATIONS.toast,
+    });
   };
 
   checkIsMailEmpty = () => {
     const draftType = this.props.route.params.type;
-    const { mail } = this.state;
+    const { isDeleted, mail } = this.state;
 
+    if (isDeleted) return true;
     if (draftType !== DraftType.NEW && draftType !== DraftType.DRAFT) {
       return false;
     }
@@ -402,8 +412,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { id } = this.state;
 
       if (!session || !id) throw new Error();
+      this.setState({ isDeleted: true });
       await zimbraService.mails.trash(session, [id]);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
       Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
@@ -416,8 +427,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { id } = this.state;
 
       if (!session || !id) throw new Error();
+      this.setState({ isDeleted: true });
       await zimbraService.mails.delete(session, [id]);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
       Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
@@ -546,41 +558,48 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     const { attachments, body, ...headers } = mail;
 
     return (
-      <PageView>
-        <NewMailComponent
-          isFetching={this.props.isFetching || !!isPrefilling}
-          headers={headers}
-          onDraftSave={this.saveDraft}
-          onHeaderChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
-          body={this.state.mail.body.replace(/(<br>|<br \/>)/gs, '\n')}
-          onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: newBody } }))}
-          attachments={
-            this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
-          }
-          onAttachmentChange={newAttachments => {
-            return this.setState(prevState => ({ mail: { ...prevState.mail, attachments: newAttachments } }));
-          }}
-          onAttachmentDelete={attachmentId =>
-            zimbraService.draft.deleteAttachment(this.props.session!, this.state.id!, attachmentId)
-          }
-          prevBody={this.state.prevBody}
-          signature={signature}
-          isNewSignature={this.state.isNewSignature}
-          onSignatureTextChange={text => this.setSignatureText(text)}
-          onSignatureAPIChange={this.setSignatureAPI}
-          hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
+      <>
+        <PreventBack
+          isDraftEdited={!this.checkIsMailEmpty()}
+          isUploading={!!this.state.tempAttachment}
+          updateDraft={this.updateDraftOnBack}
         />
-        <SignatureModal
-          ref={this.state.signatureModalRef}
-          session={this.props.session}
-          signatureText={signature.text}
-          signatureData={this.props.signature.data}
-          successCallback={() => {
-            this.setSignatureState(true, true);
-            this.state.signatureModalRef.current?.doDismissModal();
-          }}
-        />
-      </PageView>
+        <PageView>
+          <NewMailComponent
+            isFetching={this.props.isFetching || !!isPrefilling}
+            headers={headers}
+            onDraftSave={this.saveDraft}
+            onHeaderChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
+            body={this.state.mail.body.replace(/(<br>|<br \/>)/gs, '\n')}
+            onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: newBody } }))}
+            attachments={
+              this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
+            }
+            onAttachmentChange={newAttachments => {
+              return this.setState(prevState => ({ mail: { ...prevState.mail, attachments: newAttachments } }));
+            }}
+            onAttachmentDelete={attachmentId =>
+              zimbraService.draft.deleteAttachment(this.props.session!, this.state.id!, attachmentId)
+            }
+            prevBody={this.state.prevBody}
+            signature={signature}
+            isNewSignature={this.state.isNewSignature}
+            onSignatureTextChange={text => this.setSignatureText(text)}
+            onSignatureAPIChange={this.setSignatureAPI}
+            hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
+          />
+          <SignatureModal
+            ref={this.state.signatureModalRef}
+            session={this.props.session}
+            signatureText={signature.text}
+            signatureData={this.props.signature.data}
+            successCallback={() => {
+              this.setSignatureState(true, true);
+              this.state.signatureModalRef.current?.doDismissModal();
+            }}
+          />
+        </PageView>
+      </>
     );
   }
 }
