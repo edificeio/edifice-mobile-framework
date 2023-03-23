@@ -81,7 +81,4 @@ export default StyleSheet.create({
   iconAttMarginRight: {
     marginRight: UI_SIZES.spacing.minor,
   },
-  createAction: {
-    marginBottom: UI_SIZES.spacing.medium,
-  },
 });
