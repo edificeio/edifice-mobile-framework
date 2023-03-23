@@ -62,6 +62,8 @@ const imports = {
   'ui-listOrder': import('ASSETS/icons/uiIcons/listOrder.svg'),
   'ui-lock': import('ASSETS/icons/uiIcons/lock.svg'),
   'ui-mail': import('ASSETS/icons/uiIcons/mail.svg'),
+  'ui-mailRead': import('ASSETS/icons/uiIcons/mailRead.svg'),
+  'ui-mailUnread': import('ASSETS/icons/uiIcons/mailUnread.svg'),
   'ui-messageInfo': import('ASSETS/icons/uiIcons/messageInfo.svg'),
   'ui-mic': import('ASSETS/icons/uiIcons/mic.svg'),
   'ui-minus': import('ASSETS/icons/uiIcons/minus.svg'),

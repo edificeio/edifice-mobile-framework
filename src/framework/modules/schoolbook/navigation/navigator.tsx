@@ -2,13 +2,13 @@ import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import SchoolbookWordDetailsScreen, {
-  computeNavBar as SchoolbookWordDetailsNavBar,
+  computeNavBar as schoolbookWordDetailsNavBar,
 } from '~/framework/modules/schoolbook/screens/SchoolbookWordDetailsScreen';
 import SchoolbookWordListScreen, {
-  computeNavBar as SchoolbookWordListNavBar,
+  computeNavBar as schoolbookWordListNavBar,
 } from '~/framework/modules/schoolbook/screens/SchoolbookWordListScreen';
 import SchoolbookWordReportScreen, {
-  computeNavBar as SchoolbookWordReportNavBar,
+  computeNavBar as schoolbookWordReportNavBar,
 } from '~/framework/modules/schoolbook/screens/word-report/screen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -21,19 +21,19 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       <Stack.Screen
         name={schoolbookRouteNames.home}
         component={SchoolbookWordListScreen}
-        options={SchoolbookWordListNavBar}
+        options={schoolbookWordListNavBar}
         initialParams={{}}
       />
       <Stack.Screen
         name={schoolbookRouteNames.details}
         component={SchoolbookWordDetailsScreen}
-        options={SchoolbookWordDetailsNavBar}
+        options={schoolbookWordDetailsNavBar}
         initialParams={{}}
       />
       <Stack.Screen
         name={schoolbookRouteNames.report}
         component={SchoolbookWordReportScreen}
-        options={SchoolbookWordReportNavBar}
+        options={schoolbookWordReportNavBar}
         initialParams={{}}
       />
     </>

@@ -237,7 +237,7 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
 
 export default connect(
   (state: IGlobalState) => ({
-    session: getSession(state),
+    session: getSession(),
   }),
   (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
 )(CarnetDeBordDetailsScreen);

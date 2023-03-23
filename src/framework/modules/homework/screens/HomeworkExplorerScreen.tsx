@@ -13,7 +13,7 @@ import {
 
 const mapStateToProps: (state: any) => IHomeworkExplorerScreenDataProps = state => {
   // Extract data from state
-  const session = getSession(state);
+  const session = getSession();
   const localState = state.homework;
   const homeworkDiaryList = localState.diaryList;
   if (!homeworkDiaryList.data)

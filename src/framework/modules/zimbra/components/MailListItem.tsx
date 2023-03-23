@@ -74,7 +74,7 @@ export class MailListItem extends React.PureComponent<IMailListItemProps> {
 
   public render() {
     const { isSelected, mail, onPress, selectMail } = this.props;
-    const contactIds = mail.systemFolder !== 'SENT' && mail.systemFolder !== 'DRAFTS' ? [mail.from] : mail.to;
+    const contactIds = mail.systemFolder !== 'OUTBOX' && mail.systemFolder !== 'DRAFTS' ? [mail.from] : mail.to;
     const contactName = this.getContactName(contactIds[0]);
     const ContactText = mail.unread ? SmallBoldText : SmallText;
     const SubjectText = mail.unread ? SmallBoldText : SmallText;

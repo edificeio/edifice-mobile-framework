@@ -35,7 +35,7 @@ export const computeNavBar = ({
     navigation,
     route,
   }),
-  title: route.params.diaryTitle ?? I18n.t('Homework'),
+  title: I18n.t('Homework'),
   headerStyle: {
     backgroundColor: viescoTheme.palette.diary,
   },
@@ -80,29 +80,53 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
 export default connect(
   (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
     const userType = session?.user.type;
 
     return {
+      childId: getSelectedChild(state)?.id,
       homeworks: diaryState.homeworks.data,
-      sessions: diaryState.sessions.data,
-      teachers: diaryState.teachers.data,
       isFetchingHomework: diaryState.homeworks.isFetching || diaryState.teachers.isFetching,
       isFetchingSession: diaryState.sessions.isFetching || diaryState.teachers.isFetching,
-      childId: getSelectedChild(state)?.id,
+      sessions: diaryState.sessions.data,
       structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
+      teachers: diaryState.teachers.data,
       userType,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchChildHomeworks: tryAction(fetchDiaryHomeworksFromChildAction, undefined, true),
-        fetchChildSessions: tryAction(fetchDiarySessionsFromChildAction, undefined, true),
-        fetchHomeworks: tryAction(fetchDiaryHomeworksAction, undefined, true),
-        fetchSessions: tryAction(fetchDiarySessionsAction, undefined, true),
-        fetchTeachers: tryAction(fetchDiaryTeachersAction, undefined, true),
-        updateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction, undefined, true),
+        fetchChildHomeworks: tryAction(
+          fetchDiaryHomeworksFromChildAction,
+          undefined,
+          true,
+        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchChildHomeworks'],
+        fetchChildSessions: tryAction(
+          fetchDiarySessionsFromChildAction,
+          undefined,
+          true,
+        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchChildSessions'],
+        fetchHomeworks: tryAction(
+          fetchDiaryHomeworksAction,
+          undefined,
+          true,
+        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchHomeworks'],
+        fetchSessions: tryAction(
+          fetchDiarySessionsAction,
+          undefined,
+          true,
+        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchSessions'],
+        fetchTeachers: tryAction(
+          fetchDiaryTeachersAction,
+          undefined,
+          true,
+        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchTeachers'],
+        updateHomeworkProgress: tryAction(
+          updateDiaryHomeworkProgressAction,
+          undefined,
+          true,
+        ) as unknown as DiaryHomeworkListScreenPrivateProps['updateHomeworkProgress'],
       },
       dispatch,
     ),

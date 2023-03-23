@@ -196,7 +196,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       allowMultipleSlots: presencesState.allowMultipleSlots.data,

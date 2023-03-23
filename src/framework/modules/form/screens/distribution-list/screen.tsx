@@ -100,13 +100,15 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
 
   const openDistribution = (id: number, status: DistributionStatus, form: IForm) => {
     modalBoxRef.current?.doDismissModal();
-    props.navigation.navigate(formRouteNames.distribution, {
-      id,
-      status,
-      formId: form.id,
-      title: form.title,
-      editable: form.editable,
-    });
+    setTimeout(() => {
+      props.navigation.navigate(formRouteNames.distribution, {
+        id,
+        status,
+        formId: form.id,
+        title: form.title,
+        editable: form.editable,
+      });
+    }, 500); // prevent freeze due to navigation when modal is not dismissed
   };
 
   const onPressItem = (item: IFormDistributions) => {
@@ -181,7 +183,7 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
 export default connect(
   (state: IGlobalState) => {
     const formState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       formDistributions: formState.forms.data

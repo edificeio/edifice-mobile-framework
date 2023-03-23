@@ -146,13 +146,13 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     );
   };
 
-  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
   return <PageComponent>{renderPage()}</PageComponent>;
 };
 
 export default connect((state: IGlobalState) => {
-  const session = getSession(state);
+  const session = getSession();
 
   return {
     session,

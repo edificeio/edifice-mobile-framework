@@ -1,3 +1,4 @@
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { BackHandler, StatusBar, TouchableOpacity, View } from 'react-native';
@@ -12,13 +13,31 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyMediaNotSupportedScreen } from '~/framework/components/emptyMediaNotSupported';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
+import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
+import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
 
+export function computeNavBar({
+  navigation,
+  route,
+}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
+  const baseOptions = navBarOptions({
+    navigation,
+    route,
+  });
+  return {
+    ...baseOptions,
+    title: I18n.t('media-player-title'),
+    headerShown: false,
+  };
+}
+
 function MediaPlayer(props: MediaPlayerProps) {
-  const source = props.navigation.getParam('source');
-  const type = props.navigation.getParam('type');
+  const { route, navigation } = props;
+  const source = route.params.source;
+  const type = route.params.type;
 
   const isAudio = type === MediaType.AUDIO;
   let isChangingOrientation = false;
@@ -39,12 +58,13 @@ function MediaPlayer(props: MediaPlayerProps) {
   };
 
   const setErrorMediaType = () => {
-    const filetype = props.navigation.getParam('filetype');
+    const filetype = route.params.filetype;
     if (filetype === 'video/avi' || filetype === 'video/x-msvideo') {
       setError({
         active: true,
         type: 'AVFoundationErrorDomain',
       });
+      navigation.setOptions({ headerShown: true });
     }
   };
 
@@ -54,11 +74,13 @@ function MediaPlayer(props: MediaPlayerProps) {
         active: true,
         type: 'connection',
       });
+      navigation.setOptions({ headerShown: true });
     } else {
       setError({
         active: false,
         type: '',
       });
+      navigation.setOptions({ headerShown: false });
       setErrorMediaType();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,6 +163,7 @@ function MediaPlayer(props: MediaPlayerProps) {
               active: true,
               type: e.error.domain,
             });
+            navigation.setOptions({ headerShown: true });
           }}
           rewindTime={10}
           showDuration
@@ -179,17 +202,9 @@ function MediaPlayer(props: MediaPlayerProps) {
   });
 
   return (
-    <>
-      {!error.active ? (
-        <PageView style={styles.page} showNetworkBar={false} onBack={handleBack}>
-          {getPlayer()}
-        </PageView>
-      ) : (
-        <PageView navBarWithBack={{ title: I18n.t('media-player-title') }} onBack={handleBack}>
-          {renderError()}
-        </PageView>
-      )}
-    </>
+    <PageView style={styles.page} showNetworkBar={false}>
+      {!error.active ? getPlayer() : renderError()}
+    </PageView>
   );
 }
 

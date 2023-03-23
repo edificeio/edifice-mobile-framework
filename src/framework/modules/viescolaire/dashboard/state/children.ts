@@ -24,19 +24,19 @@ export const initialState: IChildState = {
 };
 
 export const getSelectedChild = (globalState: IGlobalState): UserChild | undefined => {
-  const session = getSession(globalState);
+  const session = getSession();
   const children = getFlattenedChildren(session?.user.children);
   const selectedChildId = viescoConfig.getState(globalState).children.selectedChild;
   return children?.find(child => child.id === selectedChildId);
 };
 
 export const getChildrenList = (globalState: IGlobalState): UserChildrenFlattened => {
-  const session = getSession(globalState);
+  const session = getSession();
   return getFlattenedChildren(session?.user.children) ?? [];
 };
 
 export const getSelectedChildStructure = (globalState: IGlobalState): StructureNode | undefined => {
-  const session = getSession(globalState);
+  const session = getSession();
   const children = getFlattenedChildren(session?.user.children);
   const selectedChildId = viescoConfig.getState(globalState).children.selectedChild;
   const structureName = children?.find(child => child.id === selectedChildId)?.structureName;

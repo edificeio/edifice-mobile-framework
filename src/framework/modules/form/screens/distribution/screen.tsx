@@ -413,7 +413,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const formState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       elements: formState.formContent.data.elements,

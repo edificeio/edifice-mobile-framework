@@ -27,7 +27,7 @@ export const initialState: IStructureState = {
 export const getSelectedStructure = (globalState: IGlobalState): string | undefined =>
   viescoConfig.getState(globalState).structure.selectedStructure;
 
-export const getStructuresList = (globalState: IGlobalState): StructureNode[] => getSession(globalState)?.user.structures ?? [];
+export const getStructuresList = (globalState: IGlobalState): StructureNode[] => getSession()?.user.structures ?? [];
 
 // THE ACTION TYPES -------------------------------------------------------------------------------
 

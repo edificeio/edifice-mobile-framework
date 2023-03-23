@@ -58,14 +58,15 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
     }
   };
 
-  const getMainFolderItem = (path: string): { label: string; value: string } => {
+  const getMainFolderItem = (path: string): { label: string; value: string; path: string } => {
     const folder = props.folders.find(f => f.path === path) ?? props.folders[0];
-    return { label: getFolderName(folder.name), value: folder.id };
+    return { label: getFolderName(folder.name), value: folder.id, path: folder.path };
   };
 
   const getFolderItems = (): { label: string; value: string }[] => {
+    const { folderPath } = props;
     const folders =
-      props.folderPath !== '/Inbox' && props.folderPath !== '/Drafts'
+      folderPath !== '/Inbox' && folderPath !== '/Drafts'
         ? [getMainFolderItem('/Inbox'), getMainFolderItem('/Trash'), getMainFolderItem('/Junk')]
         : [];
     folders.push(
@@ -74,9 +75,10 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
         ?.folders.map(folder => ({
           label: folder.name,
           value: folder.id,
+          path: folder.path,
         })) ?? []),
     );
-    return folders;
+    return folders.filter(folder => folder.path !== folderPath);
   };
 
   return (

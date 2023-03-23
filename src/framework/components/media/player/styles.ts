@@ -25,7 +25,6 @@ export default StyleSheet.create({
   },
   page: {
     backgroundColor: theme.palette.grey.darkness,
-    //position: 'relative',
   },
   playerLandscape: {
     backgroundColor: theme.palette.grey.darkness,

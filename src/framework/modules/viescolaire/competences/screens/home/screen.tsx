@@ -149,7 +149,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const competencesState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
 

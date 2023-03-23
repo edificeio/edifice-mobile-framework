@@ -14,7 +14,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
-import { BodyBoldText, BodyText, SmallText } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
@@ -91,11 +91,11 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
     const { header, body, days, time, info } = props.config.messages;
     return (
       <SafeAreaView style={styles.container}>
-        <BodyBoldText style={styles.primaryText}>{header}</BodyBoldText>
-        <BodyText style={styles.primaryText}>{body}</BodyText>
+        <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
+        <SmallText style={styles.primaryText}>{body}</SmallText>
         <Picture type="NamedSvg" name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
         <View>
-          <BodyText>{I18n.t('homeworkAssistance.serviceAvailable')}</BodyText>
+          <SmallText>{I18n.t('homeworkAssistance.serviceAvailable')}</SmallText>
           <View style={styles.rowContainer}>
             <Picture type="NamedSvg" name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.secondaryText}>{days}</SmallText>
@@ -133,7 +133,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
 export default connect(
   (state: IGlobalState) => {
     const homeworkAssistanceState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       config: homeworkAssistanceState.config.data,

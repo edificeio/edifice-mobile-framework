@@ -70,7 +70,7 @@ class ConnectorSelectorScreen extends React.PureComponent<IConnectorSelectorScre
 
 export default connect(
   (state: IGlobalState) => ({
-    session: getSession(state),
+    session: getSession(),
   }),
   (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
 )(ConnectorSelectorScreen);

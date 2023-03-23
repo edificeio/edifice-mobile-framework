@@ -5,7 +5,7 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
@@ -52,8 +52,14 @@ export function NavBarAction(props: { iconName?: string; title?: string; disable
     [props.disabled],
   );
 
+  const Component = props.onPress ? TouchableOpacity : View;
+
   return (
-    <TouchableOpacity onPress={props.onPress} hitSlop={genericHitSlop} disabled={props.disabled} style={styles.navBarActionWrapper}>
+    <Component
+      {...(props.onPress ? { onPress: props.onPress } : {})}
+      hitSlop={genericHitSlop}
+      disabled={props.disabled}
+      style={styles.navBarActionWrapper}>
       {props.iconName ? (
         <NamedSVG
           name={props.iconName}
@@ -64,6 +70,6 @@ export function NavBarAction(props: { iconName?: string; title?: string; disable
         />
       ) : null}
       {props.title ? <SmallInverseText style={opacityTextStyle}>{props.title}</SmallInverseText> : null}
-    </TouchableOpacity>
+    </Component>
   );
 }

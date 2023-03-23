@@ -188,7 +188,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
 export default connect(
   (state: IGlobalState) => {
     const zimbraState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
     const inboxFolder = zimbraState.rootFolders.data.find(folder => folder.name === 'Inbox');
 
     return {

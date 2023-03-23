@@ -99,7 +99,7 @@ const mailAdapter = (data: IBackendMail): IMail => {
   } as IMail;
 };
 
-const mailBackendAdapter = (data: IMail): IBackendMail => {
+/*const mailBackendAdapter = (data: IMail): IBackendMail => {
   return {
     id: data.id,
     date: data.date.unix(),
@@ -119,7 +119,7 @@ const mailBackendAdapter = (data: IMail): IBackendMail => {
     body: data.body,
     from: data.from,
   } as IBackendMail;
-};
+};*/
 
 const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>): IMail => {
   return {
@@ -184,9 +184,7 @@ export const zimbraService = {
       let api = '/zimbra/draft';
       if (inReplyTo) api += `?In-Reply-To=${inReplyTo}`;
       if (isForward) api += '&reply=F';
-      const body = JSON.stringify({
-        ...mailBackendAdapter(mail),
-      });
+      const body = JSON.stringify(mail);
       const response = await fetchJSONWithCache(api, {
         method: 'POST',
         body,
@@ -207,9 +205,7 @@ export const zimbraService = {
     },
     update: async (session: ISession, draftId: string, mail: IMail) => {
       const api = `/zimbra/draft/${draftId}`;
-      const body = JSON.stringify({
-        ...mailBackendAdapter(mail),
-      });
+      const body = JSON.stringify(mail);
       await fetchJSONWithCache(api, {
         method: 'PUT',
         body,
@@ -305,9 +301,7 @@ export const zimbraService = {
       let api = '/zimbra/send';
       if (draftId) api += `?id=${draftId}`;
       if (inReplyTo) api += `&In-Reply-To=${inReplyTo}`;
-      const body = JSON.stringify({
-        ...mailBackendAdapter(mail),
-      });
+      const body = JSON.stringify(mail);
       await fetchJSONWithCache(api, {
         method: 'POST',
         body,

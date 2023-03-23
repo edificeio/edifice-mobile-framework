@@ -250,7 +250,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       classCall: presencesState.classCall.data,

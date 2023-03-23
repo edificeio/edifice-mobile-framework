@@ -127,7 +127,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
             imageViewerRef.current?.share?.();
           }
         }}>
-        <ActionButton disabled={disabled} iconName="ui-options" style={styles.closeButton} />
+        <ActionButton text="" disabled={disabled} iconName="ui-options" style={styles.closeButton} />
       </MenuView>
     </>
   );
