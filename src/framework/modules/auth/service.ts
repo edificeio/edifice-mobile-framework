@@ -19,7 +19,6 @@ import {
   StructureNode,
   UserChild,
   UserChildren,
-  UserStructureWithClasses,
   createAuthError,
 } from './model';
 
