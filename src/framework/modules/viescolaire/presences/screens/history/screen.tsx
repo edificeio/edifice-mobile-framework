@@ -229,7 +229,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
 

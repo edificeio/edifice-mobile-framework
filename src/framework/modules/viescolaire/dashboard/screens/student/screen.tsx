@@ -221,7 +221,7 @@ export default connect(
   (state: IGlobalState) => {
     const competencesState = competencesConfig.getState(state);
     const diaryState = diaryConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       authorizedViescoApps: {

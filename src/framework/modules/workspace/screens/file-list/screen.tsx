@@ -475,7 +475,7 @@ export default connect(
       folderTree: state.folderTree.data,
       initialLoadingState:
         state.directories[parentId] === undefined ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
-      session: getSession(gs),
+      session: getSession(),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>

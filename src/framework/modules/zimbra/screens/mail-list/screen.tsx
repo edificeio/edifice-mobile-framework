@@ -441,7 +441,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const zimbraState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       initialLoadingState: zimbraState.mails.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,

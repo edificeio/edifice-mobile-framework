@@ -377,8 +377,8 @@ export default connect(
     return {
       data: moduleConfig.getState(state).carnetDeBord.data,
       error: moduleConfig.getState(state).carnetDeBord.error,
-      session: getSession(state),
-      structures: getSession(state)?.user.structures,
+      session: getSession(),
+      structures: getSession()?.user.structures,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>

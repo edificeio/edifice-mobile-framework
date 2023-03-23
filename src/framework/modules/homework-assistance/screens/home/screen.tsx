@@ -133,7 +133,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
 export default connect(
   (state: IGlobalState) => {
     const homeworkAssistanceState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       config: homeworkAssistanceState.config.data,

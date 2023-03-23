@@ -16,7 +16,7 @@ export interface ISchoolbookNotification extends ITimelineNotification, IResourc
 
 const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navState) => async (dispatch, getState) => {
-    const userType = getSession(getState())?.user?.type;
+    const userType = getSession()?.user?.type;
     if (!userType) return { managed: 0 };
 
     const isParent = userType === UserType.Relative;

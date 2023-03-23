@@ -40,5 +40,5 @@ function LvsHomeScreen(props: LvsHomeScreenPrivateProps) {
 }
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(state),
+  session: getSession(),
 }))(LvsHomeScreen);

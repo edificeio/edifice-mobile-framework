@@ -307,7 +307,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const zimbraState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,

@@ -15,6 +15,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { TextSizeStyle } from '~/framework/components/text';
+import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -96,6 +97,7 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
         const TabStack = () => (
           <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName}>
             {ModuleScreens.all}
+            {AuthNavigator()}
           </RootStack.Navigator>
         );
         return (

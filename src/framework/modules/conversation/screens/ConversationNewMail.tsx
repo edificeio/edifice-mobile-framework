@@ -723,7 +723,7 @@ const mapStateToProps = (state: IGlobalState) => {
   return {
     mail: data,
     isFetching,
-    session: getSession(state),
+    session: getSession(),
   };
 };
 

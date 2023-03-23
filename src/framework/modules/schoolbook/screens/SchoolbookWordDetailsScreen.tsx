@@ -333,6 +333,6 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 // MAPPING ========================================================================================
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(state),
+  session: getSession(),
   initialLoadingState: AsyncPagedLoadingState.PRISTINE,
 }))(SchoolbookWordDetailsScreen);

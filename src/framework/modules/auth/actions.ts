@@ -123,7 +123,9 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 4. Gather user public info (only if complete session scenario)
 
-      const { userdata } = partialSessionScenario ? { userdata: undefined } : await fetchUserPublicInfo(userinfo, platform);
+      const { userdata, userPublicInfo } = partialSessionScenario
+        ? { userdata: undefined, userPublicInfo: undefined }
+        : await fetchUserPublicInfo(userinfo, platform);
 
       // 5. Init Firebase
 
@@ -144,7 +146,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 8. Validate session + return redirect scenario
 
-      const sessionInfo = formatSession(platform, userinfo, userdata);
+      const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo);
       if (partialSessionScenario) {
         const context = await getAuthContext(platform);
         dispatch(authActions.sessionPartial(sessionInfo));

@@ -241,7 +241,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
 export default connect(
   (state: IGlobalState) => {
     const homeworkAssistanceState = moduleConfig.getState(state);
-    const session = getSession(state);
+    const session = getSession();
 
     return {
       children:

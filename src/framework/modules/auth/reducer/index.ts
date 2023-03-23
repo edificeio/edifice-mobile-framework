@@ -103,8 +103,8 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
 /**
  * Get the current active session.
  * This IS NOT the recommended way to get the session information.
- * - In a component, use the above `getState` (as getAuthState)
- * - In an action/thunk, use the above `getState` (as getAuthState)
+ * - In a component, use the below `getSession`
+ * - In an action/thunk, use this only if you call your action with tryAction. Else, use the below `getSession`
  * - In a utility function, use this assertion.
  * Caution : this is an "assert" function. If session not present, this function will throw an error.
  * @returns the current session
@@ -120,11 +120,10 @@ export function assertSession() {
  * This is the recommended way to get the session in a component.
  * Though `assertSession` should work, `getSession` does NOT throw exceptions, and return undefined instead,
  * letting you deal with the undefined value as you wish.
- * @param state
- * @returns
+ * @returns the active session present in redux state. Can be undefined.
  */
-export function getSession(state: IGlobalState) {
-  return getState(state).session;
+export function getSession() {
+  return getState(getStore().getState()).session;
 }
 
 export default reducer;

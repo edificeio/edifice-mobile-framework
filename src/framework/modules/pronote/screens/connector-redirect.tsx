@@ -60,7 +60,7 @@ function ConnectorRedirectScreen(props: IConnectorRedirectScreenProps) {
 
 export default connect(
   (state: IGlobalState) => ({
-    session: getSession(state),
+    session: getSession(),
   }),
   (dispatch: ThunkDispatch<any, any, any>) => bindActionCreators({}, dispatch),
 )(ConnectorRedirectScreen);

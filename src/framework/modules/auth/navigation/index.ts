@@ -7,6 +7,8 @@ import I18n from 'i18n-js';
 
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '~/framework/modules/auth/model';
+import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
+import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import type { LoginHomeScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
 import { RouteStack } from '~/framework/navigation/helper';
@@ -22,6 +24,8 @@ export enum AuthRouteNames {
   forgot = 'Forgot',
   revalidateTerms = 'RevalidateTerms',
   changePassword = 'ChangePassword',
+  changeEmail = 'ChangeEmail',
+  changeMobile = 'ChangeMobile',
 }
 export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.loginHome]: LoginHomeScreenNavParams;
@@ -31,6 +35,8 @@ export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.forgot]: { platform: Platform; mode: ForgotMode };
   [AuthRouteNames.revalidateTerms]: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
   [AuthRouteNames.changePassword]: ChangePasswordScreenNavParams;
+  [AuthRouteNames.changeEmail]: AuthChangeEmailScreenNavParams;
+  [AuthRouteNames.changeMobile]: AuthChangeMobileScreenNavParams;
 }
 
 export const getLoginRouteName = (platform?: Platform) => {

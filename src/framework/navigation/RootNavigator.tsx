@@ -95,7 +95,7 @@ function RootNavigator(props: RootNavigatorProps) {
 }
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(state),
+  session: getSession(),
   logged: getAuthState(state).logged,
   isReady: getAppStartupState(state).isReady,
   autoLoginResult: getAuthState(state).autoLoginResult,
