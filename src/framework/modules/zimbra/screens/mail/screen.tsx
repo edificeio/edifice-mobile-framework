@@ -1,3 +1,4 @@
+import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -98,7 +99,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await zimbraService.mails.toggleUnread(session, [id], true);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
@@ -111,7 +112,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await zimbraService.mails.trash(session, [id]);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
       Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
@@ -125,7 +126,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await zimbraService.mails.delete(session, [id]);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
       Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
@@ -150,7 +151,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     const { navigation } = props;
 
     moveModalRef.current?.doDismissModal();
-    navigation.goBack();
+    navigation.dispatch(CommonActions.goBack());
   };
 
   const openComposer = (type: DraftType) => {
