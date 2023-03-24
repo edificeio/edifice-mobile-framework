@@ -86,26 +86,26 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const texts: Record<string, any> = isEmailMFA
     ? {
-        title: I18n.t('user-mfa-email-title'),
-        messageSent: `${I18n.t('user-mfa-email-message-sent')} ${email}.`,
-        message: I18n.t('user-mfa-email-message'),
-        feedback: I18n.t(`user-mfa-email-feedback-${codeState.toLowerCase()}`),
-        resendToast: I18n.t('user-mfa-email-toast'),
+        title: I18n.t('auth-mfa-email-title'),
+        messageSent: `${I18n.t('auth-mfa-email-message-sent')} ${email}.`,
+        message: I18n.t('auth-mfa-email-message'),
+        feedback: I18n.t(`auth-mfa-email-feedback-${codeState.toLowerCase()}`),
+        resendToast: I18n.t('auth-mfa-email-toast'),
       }
     : isMobileMFA
     ? {
-        title: I18n.t('user-mfa-mobile-title'),
-        messageSent: `${I18n.t('user-mfa-mobile-message-sent')} ${mobile}.`,
-        message: I18n.t('user-mfa-mobile-message'),
-        feedback: I18n.t(`user-mfa-mobile-feedback-${codeState.toLowerCase()}`),
-        resendToast: I18n.t('user-mfa-mobile-toast'),
+        title: I18n.t('auth-mfa-mobile-title'),
+        messageSent: `${I18n.t('auth-mfa-mobile-message-sent')} ${mobile}.`,
+        message: I18n.t('auth-mfa-mobile-message'),
+        feedback: I18n.t(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+        resendToast: I18n.t('auth-mfa-mobile-toast'),
       }
     : {
-        title: I18n.t('user-mfa-title'),
-        messageSent: `${I18n.t('user-mfa-message-sent')} ${mobile}.`,
-        message: I18n.t('user-mfa-message'),
-        feedback: I18n.t(`user-mfa-feedback-${codeState.toLowerCase()}`),
-        resendToast: I18n.t('user-mfa-toast'),
+        title: I18n.t('auth-mfa-title'),
+        messageSent: `${I18n.t('auth-mfa-message-sent')} ${mobile}.`,
+        message: I18n.t('auth-mfa-message'),
+        feedback: I18n.t(`auth-mfa-feedback-${codeState.toLowerCase()}`),
+        resendToast: I18n.t('auth-mfa-toast'),
       };
 
   const setResendTimer = () => {
@@ -334,7 +334,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           </View>
         </View>
         <View style={styles.resendContainer}>
-          <SmallText style={styles.issueText}>{I18n.t('user-mfa-issue')}</SmallText>
+          <SmallText style={styles.issueText}>{I18n.t('auth-mfa-issue')}</SmallText>
           <TouchableOpacity
             style={[styles.resendButton, { opacity: resendOpacity }]}
             disabled={isResendInactive}
@@ -346,7 +346,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               width={UI_SIZES.dimensions.width.medium}
               height={UI_SIZES.dimensions.height.medium}
             />
-            <BodyBoldText style={styles.resendText}>{I18n.t('user-mfa-resend')}</BodyBoldText>
+            <BodyBoldText style={styles.resendText}>{I18n.t('auth-mfa-resend')}</BodyBoldText>
           </TouchableOpacity>
         </View>
       </View>
