@@ -219,7 +219,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       onUpdateProfile(isModifyingEmail ? { email } : { mobile });
       setTimeout(
         () =>
-          Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'user-mobile-edit-toast'), {
+          Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
             position: Toast.position.BOTTOM,
             mask: false,
             ...UI_ANIMATIONS.toast,

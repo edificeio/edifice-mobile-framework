@@ -122,19 +122,19 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
 
   const texts: Record<string, any> = isModifyingMobile
     ? {
-        title: I18n.t('user-mobile-edit-title'),
-        label: I18n.t('user-mobile-edit-label'),
+        title: I18n.t('auth-change-mobile-edit-title'),
+        label: I18n.t('auth-change-mobile-edit-label'),
       }
     : {
-        title: I18n.t('user-mobile-verify-title'),
-        label: I18n.t('user-mobile-verify-label'),
+        title: I18n.t('auth-change-mobile-verify-title'),
+        label: I18n.t('auth-change-mobile-verify-label'),
       };
-  texts.button = isCheckMobile ? I18n.t('user-mobile-verify-button') : I18n.t('user-mobile-edit-button');
+  texts.button = isCheckMobile ? I18n.t('auth-change-mobile-verify-button') : I18n.t('auth-change-mobile-edit-button');
   texts.message = isModifyingMobile
     ? isCheckMobile
-      ? I18n.t('user-mobile-edit-message')
-      : I18n.t('user-mobile-edit-message-unverified')
-    : I18n.t('user-mobile-verify-message');
+      ? I18n.t('auth-change-mobile-edit-message')
+      : I18n.t('auth-change-mobile-edit-message-unverified')
+    : I18n.t('auth-change-mobile-verify-message');
 
   const getIsValidMobileNumberForRegion = (toVerify: string) => {
     try {
@@ -178,7 +178,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         props.navigation.goBack();
         setTimeout(
           () =>
-            Toast.showSuccess(I18n.t('user-mobile-edit-toast'), {
+            Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast'), {
               position: Toast.position.BOTTOM,
               mask: false,
               ...UI_ANIMATIONS.toast,
@@ -214,7 +214,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   };
 
   UNSTABLE_usePreventRemove(!isMobileEmpty, ({ data }) => {
-    Alert.alert(I18n.t('user-mobile-edit-alert-title'), I18n.t('user-mobile-edit-alert-message'), [
+    Alert.alert(I18n.t('auth-change-mobile-edit-alert-title'), I18n.t('auth-change-mobile-edit-alert-message'), [
       {
         text: I18n.t('common.discard'),
         onPress: () => props.navigation.dispatch(data.action),
@@ -251,7 +251,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
           </View>
           <PhoneInput
-            placeholder={I18n.t('user-mobile-placeholder')}
+            placeholder={I18n.t('auth-change-mobile-placeholder')}
             ref={phoneInputRef}
             value={mobile}
             defaultCode={region}
@@ -277,7 +277,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             }
             countryPickerProps={{
               filterProps: {
-                placeholder: I18n.t('user-mobile-country-placeholder'),
+                placeholder: I18n.t('auth-change-mobile-country-placeholder'),
                 autoFocus: true,
               },
               language: countryListLanguages[I18n.currentLocale()] ?? countryListLanguages.DEFAULT,
@@ -295,8 +295,8 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             {isMobileStatePristine
               ? I18n.t('common.space')
               : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
-              ? I18n.t('user-mobile-error-same')
-              : I18n.t('user-mobile-error-invalid')}
+              ? I18n.t('auth-change-mobile-error-same')
+              : I18n.t('auth-change-mobile-error-invalid')}
           </CaptionItalicText>
           <ActionButton
             style={styles.sendButton}
@@ -307,7 +307,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           />
           {isModifyingMobile ? null : (
             <TouchableOpacity style={styles.logoutButton} onPress={() => refuseMobileVerification()}>
-              <SmallBoldText style={styles.logoutText}>{I18n.t('user-mobile-verify-disconnect')}</SmallBoldText>
+              <SmallBoldText style={styles.logoutText}>{I18n.t('auth-change-mobile-verify-disconnect')}</SmallBoldText>
             </TouchableOpacity>
           )}
         </View>
