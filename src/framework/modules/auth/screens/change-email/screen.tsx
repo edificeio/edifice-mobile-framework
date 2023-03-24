@@ -45,12 +45,6 @@ export const computeNavBar = ({
       route,
     }),
     title,
-    ...(isModifyingEmail
-      ? {}
-      : {
-          headerBackVisible: false,
-          headerLeft: () => null,
-        }),
   };
 };
 
