@@ -357,7 +357,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
     navigation.setOptions(options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedMails.length]);
+  }, [selectedMails.length, props.quota]);
 
   const renderEmpty = () => {
     return (
