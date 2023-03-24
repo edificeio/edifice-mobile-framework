@@ -27,15 +27,16 @@ export const navBarOptions: (props: {
     },
     headerTitleAlign: 'center',
     headerLeft: props => {
-      // Here use canGoBack() is not sufficient. We have to manually check how many routes have bee traversed in the current stack.
-      return navigation.canGoBack() && navigation.getState().routes.length > 1 ? (
-        <HeaderBackButton {...props} onPress={navigation.goBack} style={[{ marginHorizontal: -UI_SIZES.spacing.minor }]} />
+      const navState = navigation.getState();
+      // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.
+      return navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0 ? (
+        <HeaderBackButton {...props} onPress={navigation.goBack} style={{ marginHorizontal: -UI_SIZES.spacing.minor }} />
       ) : null;
     },
     headerTintColor: theme.ui.text.inverse,
-    headerBackTitleVisible: false,
+    headerBackVisible: false, // Since headerLeft replaces native back, we don't want him to show when there's no headerLeft
     headerShadowVisible: true,
-    headerBackButtonMenuEnabled: false, // buggy with headerBackTitleVisible: false, ToDo fix issue in RN6,
+    headerBackButtonMenuEnabled: false, // Since headerLeft replaces native back, we cannot use this.
     freezeOnBlur: true,
   } as NativeStackNavigationOptions);
 
