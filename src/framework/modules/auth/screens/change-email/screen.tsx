@@ -69,16 +69,16 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
 
   const texts: Record<string, any> = isModifyingEmail
     ? {
-        title: I18n.t('user-email-edit-title'),
-        message: I18n.t('user-email-edit-message'),
-        label: I18n.t('user-email-edit-label'),
+        title: I18n.t('auth-change-email-edit-title'),
+        message: I18n.t('auth-change-email-edit-message'),
+        label: I18n.t('auth-change-email-edit-label'),
       }
     : {
-        title: I18n.t('user-email-verify-title'),
-        message: I18n.t('user-email-verify-message'),
-        label: I18n.t('user-email-verify-label'),
+        title: I18n.t('auth-change-email-verify-title'),
+        message: I18n.t('auth-change-email-verify-message'),
+        label: I18n.t('auth-change-email-verify-label'),
       };
-  texts.button = I18n.t('user-email-verify-button');
+  texts.button = I18n.t('auth-change-email-verify-button');
 
   const sendEmailVerificationCode = async (toVerify: string) => {
     // Exit if email is not valid
@@ -121,7 +121,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   };
 
   UNSTABLE_usePreventRemove(!isEmailEmpty, ({ data }) => {
-    Alert.alert(I18n.t('user-email-edit-alert-title'), I18n.t('user-email-edit-alert-message'), [
+    Alert.alert(I18n.t('auth-change-email-edit-alert-title'), I18n.t('auth-change-email-edit-alert-message'), [
       {
         text: I18n.t('common.discard'),
         onPress: () => props.navigation.dispatch(data.action),
@@ -161,7 +161,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             autoCorrect={false}
             autoCapitalize="none"
             keyboardType="email-address"
-            placeholder={I18n.t('user-email-placeholder')}
+            placeholder={I18n.t('auth-change-email-placeholder')}
             placeholderTextColor={theme.palette.grey.graphite}
             style={styles.input}
             value={email}
@@ -172,8 +172,8 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           {isEmailStatePristine
             ? I18n.t('common.space')
             : emailState === EmailState.EMAIL_ALREADY_VERIFIED
-            ? I18n.t('user-email-error-same')
-            : I18n.t('user-email-error-invalid')}
+            ? I18n.t('auth-change-email-error-same')
+            : I18n.t('auth-change-email-error-invalid')}
         </CaptionItalicText>
         <ActionButton
           style={styles.sendButton}
@@ -184,7 +184,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         />
         {isModifyingEmail ? null : (
           <TouchableOpacity style={styles.logoutButton} onPress={() => refuseEmailVerification()}>
-            <SmallBoldText style={styles.logoutText}>{I18n.t('user-email-verify-disconnect')}</SmallBoldText>
+            <SmallBoldText style={styles.logoutText}>{I18n.t('auth-change-email-verify-disconnect')}</SmallBoldText>
           </TouchableOpacity>
         )}
       </View>
