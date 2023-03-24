@@ -3,10 +3,9 @@ import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/n
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, ImageURISource, ScrollView, View } from 'react-native';
+import { Alert, ImageURISource, ScrollView, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -316,7 +315,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
    */
   return React.useMemo(() => {
     return (
-      <TouchableOpacity onPress={() => doLogout()}>
+      <TouchableOpacity onPress={doLogout}>
         <SmallBoldText style={styles.logoutButton}>{I18n.t('directory-disconnectButton')}</SmallBoldText>
       </TouchableOpacity>
     );

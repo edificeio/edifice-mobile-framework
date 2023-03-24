@@ -2,8 +2,7 @@ import { Picker } from '@react-native-picker/picker';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { useState } from 'react';
-import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Platform, StyleSheet, TouchableWithoutFeedback, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
