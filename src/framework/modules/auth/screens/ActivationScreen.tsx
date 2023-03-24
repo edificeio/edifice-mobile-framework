@@ -50,10 +50,10 @@ export interface IActivationPageState extends IActivationPayload {
   activationState: 'IDLE' | 'RUNNING' | 'DONE';
 }
 export interface IActivationPageDataProps {
-  legalUrls: LegalUrls;
+  legalUrls?: LegalUrls;
 }
 export interface IActivationPageEventProps {
-  handleSubmit(platform: Platform, payload: IActivationPayload, rememberMe?: boolean): Promise<ILoginResult>;
+  trySubmit: (platform: Platform, payload: IActivationPayload, rememberMe?: boolean) => Promise<ILoginResult>;
 }
 export type IActivationPageProps = IActivationPageEventProps &
   IActivationPageDataProps &
@@ -128,11 +128,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   private doActivation = async () => {
     try {
       this.setState({ typing: false, activationState: 'RUNNING', error: undefined });
-      const redirect = await this.props.handleSubmit(
-        this.props.route.params.platform,
-        this.state,
-        this.props.route.params.rememberMe,
-      );
+      const redirect = await this.props.trySubmit(this.props.route.params.platform, this.state, this.props.route.params.rememberMe);
       if (redirect) {
         redirectLoginNavAction(redirect, this.props.route.params.platform, this.props.navigation);
         setTimeout(() => {
@@ -176,7 +172,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const errorText = errorKey ? I18n.t(errorKey) : error;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = activationState === 'RUNNING';
-    const cguUrl = this.props.legalUrls.cgu;
+    const cguUrl = this.props.legalUrls?.cgu;
 
     return (
       <PageView>
@@ -250,11 +246,13 @@ export default connect(
       legalUrls: getAuthState(state).legalUrls,
     };
   },
-  dispatch =>
-    bindActionCreators(
+  dispatch => {
+    const dprops = bindActionCreators<IActivationPageEventProps>(
       {
-        handleSubmit: tryAction(activateAccountAction, undefined, true) as unknown as IActivationPageEventProps['handleSubmit'], // Redux-thunk types suxx
+        trySubmit: tryAction(activateAccountAction),
       },
       dispatch,
-    ),
+    );
+    return dprops;
+  },
 )(ActivationPage);

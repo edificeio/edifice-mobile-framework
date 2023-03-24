@@ -11,7 +11,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { selectStructureAction } from '~/framework/modules/viescolaire/dashboard/actions/structure';
 import viescoConfig from '~/framework/modules/viescolaire/dashboard/module-config';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -82,7 +82,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        selectStructure: tryAction(selectStructureAction, undefined, true),
+        selectStructure: tryActionLegacy(selectStructureAction, undefined, true),
       },
       dispatch,
     ),

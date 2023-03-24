@@ -38,7 +38,7 @@ import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { formService } from '~/framework/modules/form/service';
 import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -432,12 +432,12 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDistributionResponses: tryAction(
+        fetchDistributionResponses: tryActionLegacy(
           fetchDistributionResponsesAction,
           undefined,
           true,
         ) as unknown as FormDistributionScreenPrivateProps['fetchDistributionResponses'],
-        fetchFormContent: tryAction(
+        fetchFormContent: tryActionLegacy(
           fetchFormContentAction,
           undefined,
           true,

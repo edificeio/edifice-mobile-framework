@@ -35,7 +35,7 @@ import { IMail, getMailContentState } from '~/framework/modules/conversation/sta
 import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
@@ -731,7 +731,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
       setup: fetchVisiblesAction,
-      sendMail: tryAction(sendMailAction, [moduleConfig, 'Envoyer un mail', `Rédaction mail - Envoyer`]),
+      sendMail: tryActionLegacy(sendMailAction, [moduleConfig, 'Envoyer un mail', `Rédaction mail - Envoyer`]),
       forwardMail: forwardMailAction,
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,

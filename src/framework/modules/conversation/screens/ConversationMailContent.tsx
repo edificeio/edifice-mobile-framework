@@ -33,7 +33,7 @@ import { DraftType } from '~/framework/modules/conversation/screens/Conversation
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
 import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -401,21 +401,33 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       {
         fetchMailContent: fetchMailContentAction,
         clearContent: clearMailContentAction,
-        toggleRead: tryAction(toggleReadAction, (mailIds, read) => [
+        toggleRead: tryActionLegacy(toggleReadAction, (mailIds, read) => [
           moduleConfig,
           'Marquer lu/non-lu',
           `Mail - Options - Marquer ${read ? 'lu' : 'non-lu'}`,
         ]),
-        trashMails: tryAction(trashMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Mettre à la corbeille`]),
-        deleteMails: tryAction(deleteMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Supprimer définitivement`]),
-        moveToFolder: tryAction(moveMailsToFolderAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Mail - Options - Déplacer']),
-        moveToInbox: tryAction(moveMailsToInboxAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Mail - Options - Déplacer']),
-        restoreToFolder: tryAction(restoreMailsToFolderAction, [
+        trashMails: tryActionLegacy(trashMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Mettre à la corbeille`]),
+        deleteMails: tryActionLegacy(deleteMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Supprimer définitivement`]),
+        moveToFolder: tryActionLegacy(moveMailsToFolderAction, [
+          moduleConfig,
+          'Déplacer',
+          'Inbox/Dossier - Mail - Options - Déplacer',
+        ]),
+        moveToInbox: tryActionLegacy(moveMailsToInboxAction, [
+          moduleConfig,
+          'Déplacer',
+          'Inbox/Dossier - Mail - Options - Déplacer',
+        ]),
+        restoreToFolder: tryActionLegacy(restoreMailsToFolderAction, [
           moduleConfig,
           'Restaurer',
           'Corbeille - Mail - Options - Restaurer',
         ]),
-        restoreToInbox: tryAction(restoreMailsToInboxAction, [moduleConfig, 'Restaurer', 'Corbeille - Mail - Options - Restaurer']),
+        restoreToInbox: tryActionLegacy(restoreMailsToInboxAction, [
+          moduleConfig,
+          'Restaurer',
+          'Corbeille - Mail - Options - Restaurer',
+        ]),
       },
       dispatch,
     ),

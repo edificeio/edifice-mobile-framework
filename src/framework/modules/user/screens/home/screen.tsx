@@ -26,7 +26,7 @@ import { UserType, getAuthContext } from '~/framework/modules/auth/service';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -403,7 +403,7 @@ export default connect(
   dispatch =>
     bindActionCreators(
       {
-        handleLogout: tryAction(logoutAction) as unknown as UserHomeScreenPrivateProps['handleLogout'],
+        handleLogout: tryActionLegacy(logoutAction) as unknown as UserHomeScreenPrivateProps['handleLogout'],
       },
       dispatch,
     ),

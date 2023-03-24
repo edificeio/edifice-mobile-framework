@@ -14,7 +14,7 @@ import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 
 import { consumeAuthError } from '../actions';
@@ -149,7 +149,7 @@ export default connect(
   dispatch =>
     bindActionCreators(
       {
-        handleConsumeError: tryAction(
+        handleConsumeError: tryActionLegacy(
           consumeAuthError,
           undefined,
           false,

@@ -33,7 +33,7 @@ import {
   homeworkAssistanceRouteNames,
 } from '~/framework/modules/homework-assistance/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -266,17 +266,17 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        addRequest: tryAction(
+        addRequest: tryActionLegacy(
           postHomeworkAssistanceRequestAction,
           undefined,
           true,
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['addRequest'],
-        fetchConfig: tryAction(
+        fetchConfig: tryActionLegacy(
           fetchHomeworkAssistanceConfigAction,
           undefined,
           true,
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchConfig'],
-        fetchServices: tryAction(
+        fetchServices: tryActionLegacy(
           fetchHomeworkAssistanceServicesAction,
           undefined,
           true,

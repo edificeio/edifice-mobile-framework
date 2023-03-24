@@ -23,7 +23,7 @@ import DiaryTeacherTimetable from '~/framework/modules/viescolaire/diary/compone
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 import type { DiaryTimetableScreenPrivateProps } from './types';
 
@@ -122,18 +122,22 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchHomeworks: tryAction(
+        fetchHomeworks: tryActionLegacy(
           fetchDiaryHomeworksAction,
           undefined,
           true,
         ) as unknown as DiaryTimetableScreenPrivateProps['fetchHomeworks'],
-        fetchSessions: tryAction(
+        fetchSessions: tryActionLegacy(
           fetchDiarySessionsAction,
           undefined,
           true,
         ) as unknown as DiaryTimetableScreenPrivateProps['fetchSessions'],
-        fetchSlots: tryAction(fetchDiarySlotsAction, undefined, true) as unknown as DiaryTimetableScreenPrivateProps['fetchSlots'],
-        fetchTeacherCourses: tryAction(
+        fetchSlots: tryActionLegacy(
+          fetchDiarySlotsAction,
+          undefined,
+          true,
+        ) as unknown as DiaryTimetableScreenPrivateProps['fetchSlots'],
+        fetchTeacherCourses: tryActionLegacy(
           fetchCourseListFromTeacherAction,
           undefined,
           true,

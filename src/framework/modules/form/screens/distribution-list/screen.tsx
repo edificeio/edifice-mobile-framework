@@ -23,7 +23,7 @@ import { DistributionStatus, IForm } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import { FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
@@ -202,12 +202,12 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDistributions: tryAction(
+        fetchDistributions: tryActionLegacy(
           fetchFormDistributionsAction,
           undefined,
           true,
         ) as unknown as FormDistributionListScreenPrivateProps['fetchDistributions'],
-        fetchForms: tryAction(
+        fetchForms: tryActionLegacy(
           fetchFormsReceivedAction,
           undefined,
           true,

@@ -41,7 +41,7 @@ import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -481,46 +481,66 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        createFolder: tryAction(
+        createFolder: tryActionLegacy(
           createWorkspaceFolderAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['createFolder'],
-        deleteFiles: tryAction(
+        deleteFiles: tryActionLegacy(
           deleteWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['deleteFiles'],
-        downloadFiles: tryAction(
+        downloadFiles: tryActionLegacy(
           downloadWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['downloadFiles'],
-        duplicateFiles: tryAction(
+        duplicateFiles: tryActionLegacy(
           copyWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['duplicateFiles'],
-        fetchFiles: tryAction(fetchWorkspaceFilesAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['fetchFiles'],
-        listFolders: tryAction(
+        fetchFiles: tryActionLegacy(
+          fetchWorkspaceFilesAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['fetchFiles'],
+        listFolders: tryActionLegacy(
           listWorkspaceFoldersAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['listFolders'],
-        moveFiles: tryAction(moveWorkspaceFilesAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['moveFiles'],
-        previewFile: tryAction(
+        moveFiles: tryActionLegacy(
+          moveWorkspaceFilesAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['moveFiles'],
+        previewFile: tryActionLegacy(
           downloadThenOpenWorkspaceFileAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['previewFile'],
-        renameFile: tryAction(renameWorkspaceFileAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['renameFile'],
-        restoreFiles: tryAction(
+        renameFile: tryActionLegacy(
+          renameWorkspaceFileAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['renameFile'],
+        restoreFiles: tryActionLegacy(
           restoreWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['restoreFiles'],
-        trashFiles: tryAction(trashWorkspaceFilesAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['trashFiles'],
-        uploadFile: tryAction(uploadWorkspaceFileAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['uploadFile'],
+        trashFiles: tryActionLegacy(
+          trashWorkspaceFilesAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['trashFiles'],
+        uploadFile: tryActionLegacy(
+          uploadWorkspaceFileAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['uploadFile'],
       },
       dispatch,
     ),

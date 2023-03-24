@@ -16,7 +16,7 @@ import { changePasswordAction, loginAction, logoutAction } from '~/framework/mod
 import { IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
 import { getAuthNavigationState, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import ChangePasswordFormModel from '~/user/components/change-password/form-model';
 import { ValueChange, ValueChangeArgs } from '~/utils/form';
@@ -249,13 +249,13 @@ const mapStateToProps: (state: IGlobalState) => ChangePasswordScreenStoreProps =
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePasswordScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      handleSubmit: tryAction(
+      handleSubmit: tryActionLegacy(
         changePasswordAction,
         undefined,
         true,
       ) as unknown as ChangePasswordScreenDispatchProps['handleSubmit'], // Redux-thunk types suxx,
-      handleLogin: tryAction(loginAction, undefined, true) as unknown as ChangePasswordScreenDispatchProps['handleLogin'], // Redux-thunk types suxx
-      handleLogout: tryAction(logoutAction, undefined, true) as unknown as ChangePasswordScreenDispatchProps['handleLogout'], // Redux-thunk types suxx,
+      handleLogin: tryActionLegacy(loginAction, undefined, true) as unknown as ChangePasswordScreenDispatchProps['handleLogin'], // Redux-thunk types suxx
+      handleLogout: tryActionLegacy(logoutAction, undefined, true) as unknown as ChangePasswordScreenDispatchProps['handleLogout'], // Redux-thunk types suxx,
     },
     dispatch,
   );

@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { BottomSheet, BottomSheetProps } from '~/framework/components/BottomSheet';
 import CommentField, { CommentFieldProps } from '~/framework/components/commentField';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 
 const BottomEditorSheet = (
   {
@@ -15,7 +15,7 @@ const BottomEditorSheet = (
   }: CommentFieldProps & Omit<BottomSheetProps, 'content'>,
   ref,
 ) => {
-  const session = useSelector(() => assertSession());
+  const session = useSelector(() => getSession());
   const commentFieldRef: { current: any } = React.createRef();
   return (
     <BottomSheet
@@ -25,7 +25,7 @@ const BottomEditorSheet = (
           ref={commentFieldRef}
           isPublishingComment={isPublishingComment}
           onPublishComment={onPublishComment}
-          commentAuthorId={session.user.id}
+          commentAuthorId={session?.user.id}
           isResponse={isResponse}
           onChangeText={data => {
             if (onChangeText) onChangeText(data);

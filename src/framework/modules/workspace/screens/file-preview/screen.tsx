@@ -17,7 +17,7 @@ import {
 import { renderImage } from '~/framework/modules/workspace/components/image';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { ButtonIconText } from '~/ui/ButtonIconText';
 
 import styles from './styles';
@@ -82,17 +82,17 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        downloadFile: tryAction(
+        downloadFile: tryActionLegacy(
           downloadWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFilePreviewScreenProps['downloadFile'],
-        previewFile: tryAction(
+        previewFile: tryActionLegacy(
           downloadThenOpenWorkspaceFileAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFilePreviewScreenProps['previewFile'],
-        shareFile: tryAction(
+        shareFile: tryActionLegacy(
           downloadThenShareWorkspaceFileAction,
           undefined,
           true,

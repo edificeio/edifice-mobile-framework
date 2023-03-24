@@ -35,7 +35,7 @@ import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zi
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 import { NavBarAction } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -454,7 +454,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchMailsFromFolder: tryAction(
+        fetchMailsFromFolder: tryActionLegacy(
           fetchZimbraMailsFromFolderAction,
           undefined,
           true,

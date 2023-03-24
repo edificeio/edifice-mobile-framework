@@ -25,7 +25,7 @@ import { HeadingSText, SmallText } from '~/framework/components/text';
 import { forgotAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { containsKey } from '~/framework/util/object';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { ValidatorBuilder } from '~/utils/form';
 
@@ -324,7 +324,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
 export default connect(undefined, dispatch =>
   bindActionCreators(
     {
-      handleSubmit: tryAction(forgotAction, undefined, true) as unknown as IForgotPageEventProps['handleSubmit'], // Redux-thunk types suxx
+      handleSubmit: tryActionLegacy(forgotAction, undefined, true) as unknown as IForgotPageEventProps['handleSubmit'], // Redux-thunk types suxx
     },
     dispatch,
   ),

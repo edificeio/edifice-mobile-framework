@@ -31,7 +31,7 @@ import Timetable from '~/framework/modules/viescolaire/edt/components/Timetable'
 import moduleConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import { EdtHomeScreenPrivateProps } from './types';
@@ -212,24 +212,28 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchChildCourses: tryAction(
+        fetchChildCourses: tryActionLegacy(
           fetchEdtCoursesAction,
           undefined,
           true,
         ) as unknown as EdtHomeScreenPrivateProps['fetchChildCourses'],
-        fetchClassGroups: tryAction(
+        fetchClassGroups: tryActionLegacy(
           fetchEdtClassGroupsAction,
           undefined,
           true,
         ) as unknown as EdtHomeScreenPrivateProps['fetchClassGroups'],
-        fetchSlots: tryAction(fetchEdtSlotsAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchSlots'],
-        fetchTeacherCourses: tryAction(
+        fetchSlots: tryActionLegacy(fetchEdtSlotsAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchSlots'],
+        fetchTeacherCourses: tryActionLegacy(
           fetchEdtTeacherCoursesAction,
           undefined,
           true,
         ) as unknown as EdtHomeScreenPrivateProps['fetchTeacherCourses'],
-        fetchTeachers: tryAction(fetchEdtTeachersAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchTeachers'],
-        fetchUserChildren: tryAction(
+        fetchTeachers: tryActionLegacy(
+          fetchEdtTeachersAction,
+          undefined,
+          true,
+        ) as unknown as EdtHomeScreenPrivateProps['fetchTeachers'],
+        fetchUserChildren: tryActionLegacy(
           fetchEdtUserChildrenAction,
           undefined,
           true,

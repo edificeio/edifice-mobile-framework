@@ -27,7 +27,7 @@ import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zi
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
@@ -622,13 +622,17 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchMail: tryAction(fetchZimbraMailAction, undefined, true) as unknown as ZimbraComposerScreenPrivateProps['fetchMail'],
-        fetchSignature: tryAction(
+        fetchMail: tryActionLegacy(
+          fetchZimbraMailAction,
+          undefined,
+          true,
+        ) as unknown as ZimbraComposerScreenPrivateProps['fetchMail'],
+        fetchSignature: tryActionLegacy(
           fetchZimbraSignatureAction,
           undefined,
           true,
         ) as unknown as ZimbraComposerScreenPrivateProps['fetchSignature'],
-        onPickFileError: tryAction(pickFileError, undefined, true),
+        onPickFileError: tryActionLegacy(pickFileError, undefined, true),
       },
       dispatch,
     ),

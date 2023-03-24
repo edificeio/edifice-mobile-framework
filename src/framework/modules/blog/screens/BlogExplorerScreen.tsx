@@ -31,7 +31,7 @@ import { Blog, BlogFlatTree, BlogFolder, BlogFolderWithChildren, BlogFolderWithR
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
 
 export interface BlogExplorerScreenDataProps {
@@ -249,7 +249,7 @@ export default connect(
   dispatch =>
     bindActionCreators(
       {
-        doFetch: tryAction(fetchBlogsAndFoldersAction, undefined, true) as any, // FUCK OFF REACT-REDUX YOUR TYPES DEFINITIONS SUCKS
+        doFetch: tryActionLegacy(fetchBlogsAndFoldersAction, undefined, true) as any, // FUCK OFF REACT-REDUX YOUR TYPES DEFINITIONS SUCKS
       },
       dispatch,
     ),

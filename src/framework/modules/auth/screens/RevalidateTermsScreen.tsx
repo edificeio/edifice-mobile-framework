@@ -27,7 +27,7 @@ import {
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { revalidateTerms } from '~/framework/modules/auth/service';
 import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================
 
@@ -152,8 +152,8 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        handleLogout: tryAction(logoutAction, undefined, true) as unknown as IRevalidateTermsScreenEventProps['handleLogout'], // Redux-thunk types suxx,
-        handleLogin: tryAction(loginAction, undefined, true) as unknown as IRevalidateTermsScreenEventProps['handleLogin'], // Redux-thunk types suxx
+        handleLogout: tryActionLegacy(logoutAction, undefined, true) as unknown as IRevalidateTermsScreenEventProps['handleLogout'], // Redux-thunk types suxx,
+        handleLogin: tryActionLegacy(loginAction, undefined, true) as unknown as IRevalidateTermsScreenEventProps['handleLogin'], // Redux-thunk types suxx
       },
       dispatch,
     ),

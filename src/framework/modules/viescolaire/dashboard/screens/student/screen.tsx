@@ -34,7 +34,7 @@ import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigatio
 import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncState } from '~/framework/util/redux/async';
 
 import styles from './styles';
@@ -240,27 +240,27 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDevoirs: tryAction(
+        fetchDevoirs: tryActionLegacy(
           fetchCompetencesDevoirsAction,
           undefined,
           true,
         ) as unknown as DashboardStudentScreenPrivateProps['fetchDevoirs'],
-        fetchHomeworks: tryAction(
+        fetchHomeworks: tryActionLegacy(
           fetchDiaryHomeworksAction,
           undefined,
           true,
         ) as unknown as DashboardStudentScreenPrivateProps['fetchHomeworks'],
-        fetchLevels: tryAction(
+        fetchLevels: tryActionLegacy(
           fetchCompetencesLevelsAction,
           undefined,
           true,
         ) as unknown as DashboardStudentScreenPrivateProps['fetchLevels'],
-        fetchTeachers: tryAction(
+        fetchTeachers: tryActionLegacy(
           fetchDiaryTeachersAction,
           undefined,
           true,
         ) as unknown as DashboardStudentScreenPrivateProps['fetchTeachers'],
-        updateHomeworkProgress: tryAction(
+        updateHomeworkProgress: tryActionLegacy(
           updateDiaryHomeworkProgressAction,
           undefined,
           true,

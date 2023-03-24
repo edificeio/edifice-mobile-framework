@@ -38,7 +38,7 @@ import {
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -251,22 +251,22 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchHistory: tryAction(
+        fetchHistory: tryActionLegacy(
           fetchPresencesHistoryAction,
           undefined,
           true,
         ) as unknown as PresencesHistoryScreenPrivateProps['fetchHistory'],
-        fetchSchoolYear: tryAction(
+        fetchSchoolYear: tryActionLegacy(
           fetchPresencesSchoolYearAction,
           undefined,
           true,
         ) as unknown as PresencesHistoryScreenPrivateProps['fetchSchoolYear'],
-        fetchTerms: tryAction(
+        fetchTerms: tryActionLegacy(
           fetchPresencesTermsAction,
           undefined,
           true,
         ) as unknown as PresencesHistoryScreenPrivateProps['fetchTerms'],
-        fetchUserChildren: tryAction(
+        fetchUserChildren: tryActionLegacy(
           fetchPresencesUserChildrenAction,
           undefined,
           true,
