@@ -1,3 +1,4 @@
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -212,26 +213,22 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   };
 
-  const displayConfirmationAlert = () => {
-    if (isMobileEmpty) {
-      navigation.goBack();
-    } else {
-      Alert.alert(I18n.t('user-mobile-edit-alert-title'), I18n.t('user-mobile-edit-alert-message'), [
-        {
-          text: I18n.t('common.discard'),
-          onPress: () => navigation.goBack(),
-          style: 'destructive',
-        },
-        {
-          text: I18n.t('common.continue'),
-          style: 'cancel',
-        },
-      ]);
-    }
-  };
+  UNSTABLE_usePreventRemove(!isMobileEmpty, ({ data }) => {
+    Alert.alert(I18n.t('user-mobile-edit-alert-title'), I18n.t('user-mobile-edit-alert-message'), [
+      {
+        text: I18n.t('common.discard'),
+        onPress: () => props.navigation.dispatch(data.action),
+        style: 'destructive',
+      },
+      {
+        text: I18n.t('common.continue'),
+        style: 'cancel',
+      },
+    ]);
+  });
 
   return (
-    <KeyboardPageView isFocused={false} style={styles.page} scrollable onBack={() => displayConfirmationAlert()}>
+    <KeyboardPageView isFocused={false} style={styles.page} scrollable>
       {isLoading ? (
         <LoadingIndicator />
       ) : isError ? (

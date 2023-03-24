@@ -1,3 +1,4 @@
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { useState } from 'react';
@@ -119,26 +120,22 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     }
   };
 
-  const displayConfirmationAlert = () => {
-    if (isEmailEmpty) {
-      navigation.goBack();
-    } else {
-      Alert.alert(I18n.t('user-email-edit-alert-title'), I18n.t('user-email-edit-alert-message'), [
-        {
-          text: I18n.t('common.discard'),
-          onPress: () => navigation.goBack(),
-          style: 'destructive',
-        },
-        {
-          text: I18n.t('common.continue'),
-          style: 'cancel',
-        },
-      ]);
-    }
-  };
+  UNSTABLE_usePreventRemove(!isEmailEmpty, ({ data }) => {
+    Alert.alert(I18n.t('user-email-edit-alert-title'), I18n.t('user-email-edit-alert-message'), [
+      {
+        text: I18n.t('common.discard'),
+        onPress: () => props.navigation.dispatch(data.action),
+        style: 'destructive',
+      },
+      {
+        text: I18n.t('common.continue'),
+        style: 'cancel',
+      },
+    ]);
+  });
 
   return (
-    <KeyboardPageView isFocused={false} style={styles.page} scrollable onBack={() => displayConfirmationAlert()}>
+    <KeyboardPageView isFocused={false} style={styles.page} scrollable>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <NamedSVG name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
