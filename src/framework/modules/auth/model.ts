@@ -77,6 +77,8 @@ export interface ILoggedUser extends IUser, ILoggedUserProfile, LoggedUserContac
   classes?: string[];
   relatives?: UserPrivateData['parents'];
   structures?: UserStructureWithClasses[];
+  photo?: string;
+  mobile: string;
 }
 
 export interface UserChild {

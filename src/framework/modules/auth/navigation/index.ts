@@ -11,6 +11,7 @@ import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/sc
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import type { LoginHomeScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
+import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
@@ -26,6 +27,7 @@ export enum AuthRouteNames {
   changePassword = 'ChangePassword',
   changeEmail = 'ChangeEmail',
   changeMobile = 'ChangeMobile',
+  mfa = 'MFA',
 }
 export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.loginHome]: LoginHomeScreenNavParams;
@@ -37,6 +39,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.changePassword]: ChangePasswordScreenNavParams;
   [AuthRouteNames.changeEmail]: AuthChangeEmailScreenNavParams;
   [AuthRouteNames.changeMobile]: AuthChangeMobileScreenNavParams;
+  [AuthRouteNames.mfa]: AuthMFAScreenNavParams;
 }
 
 export const getLoginRouteName = (platform?: Platform) => {
