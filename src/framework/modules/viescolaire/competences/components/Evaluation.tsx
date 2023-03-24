@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     maxWidth: '50%',
   },
   headerSelectedTermText: {
-    color: theme.palette.grey.stone,
+    color: theme.ui.text.light,
   },
   headerColorSwitchContainer: {
     flexDirection: 'row',
@@ -227,15 +227,19 @@ export default class Competences extends React.PureComponent<CompetencesHomeScre
 
     return (
       <>
-        {screenDisplay === ScreenDisplay.DISCIPLINE && <SmallBoldText numberOfLines={1}>{selectedDiscipline}</SmallBoldText>}
         <View style={styles.headerContainer}>
-          {screenDisplay === ScreenDisplay.DASHBOARD ? (
-            <SmallBoldText style={styles.headerGradeText} numberOfLines={1}>
-              {I18n.t('viesco-last-grades')}
-            </SmallBoldText>
-          ) : (
-            <SmallText style={styles.headerSelectedTermText}>{selectedTerm.type}</SmallText>
-          )}
+          <View style={UI_STYLES.flex1}>
+            {screenDisplay === ScreenDisplay.DISCIPLINE ? (
+              <SmallBoldText numberOfLines={1}>{selectedDiscipline}</SmallBoldText>
+            ) : null}
+            {screenDisplay === ScreenDisplay.DASHBOARD ? (
+              <SmallBoldText style={styles.headerGradeText} numberOfLines={1}>
+                {I18n.t('viesco-last-grades')}
+              </SmallBoldText>
+            ) : (
+              <SmallText style={styles.headerSelectedTermText}>{selectedTerm.type}</SmallText>
+            )}
+          </View>
           {isDevoirsNoted ? (
             <View style={styles.headerColorSwitchContainer}>
               <SmallText>{I18n.t('viesco-colors')}&ensp;</SmallText>
