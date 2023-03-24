@@ -104,7 +104,7 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
  * Get the current active session.
  * This IS NOT the recommended way to get the session information.
  * - In a component, use the below `getSession`
- * - In an action/thunk, use this only if you call your action with tryActionLegacy. Else, use the below `getSession`
+ * - In an action/thunk, use this only if you call your action with tryAction/callAction. Else, use the below `getSession`
  * - In a utility function, use this assertion.
  * Caution : this is an "assert" function. If session not present, this function will throw an error.
  * @returns the current session

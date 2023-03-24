@@ -14,7 +14,7 @@ import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { handleAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 
 import { consumeAuthError } from '../actions';
@@ -23,7 +23,7 @@ interface ILoginWayfScreenStoreProps {
   auth: IAuthState;
 }
 interface LoginWayfScreenDispatchProps {
-  handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => Promise<void>;
+  handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void;
 }
 interface ILoginWayfScreenProps
   extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf>,
@@ -147,13 +147,9 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators(
+    bindActionCreators<LoginWayfScreenDispatchProps>(
       {
-        handleConsumeError: tryActionLegacy(
-          consumeAuthError,
-          undefined,
-          false,
-        ) as unknown as LoginWayfScreenDispatchProps['handleConsumeError'],
+        handleConsumeError: handleAction(consumeAuthError),
       },
       dispatch,
     ),

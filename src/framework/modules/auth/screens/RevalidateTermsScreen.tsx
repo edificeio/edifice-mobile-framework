@@ -27,18 +27,18 @@ import {
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { revalidateTerms } from '~/framework/modules/auth/service';
 import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================
 
 export interface IRevalidateTermsScreenDataProps {
   session?: ISession;
-  legalUrls: LegalUrls;
+  legalUrls?: LegalUrls;
 }
 
 export interface IRevalidateTermsScreenEventProps {
-  handleLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
-  handleLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
+  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
 }
 export type IRevalidateTermsScreenProps = IRevalidateTermsScreenEventProps &
   IRevalidateTermsScreenDataProps &
@@ -70,14 +70,14 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
 
   const doRefuseTerms = React.useCallback(async () => {
     try {
-      props.handleLogout();
+      props.tryLogout();
       props.navigation.reset(getAuthNavigationState(props.route.params.platform));
     } catch {
       // console.warn('refuseTerms: could not refuse terms', e);
     }
     // Manually specified deps here
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.handleLogout, props.navigation]);
+  }, [props.tryLogout, props.navigation]);
 
   const doRevalidateTerms = React.useCallback(async () => {
     try {
@@ -88,14 +88,14 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
       const platform = props.route.params.platform;
       const credentials = props.route.params.credentials;
       const rememberMe = props.route.params.rememberMe;
-      const redirect = await props.handleLogin(platform, credentials, rememberMe);
+      const redirect = await props.tryLogin(platform, credentials, rememberMe);
       redirectLoginNavAction(redirect, platform, props.navigation);
     } catch {
       // console.warn('revalidateTerms: could not revalidate terms', e);
     }
     // Manually specified deps here
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation, props.handleLogin]);
+  }, [props.navigation, props.tryLogin]);
 
   const doOpenCGU = React.useCallback((url?: string) => {
     openPdfReader({
@@ -108,8 +108,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
 
   const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.big;
   const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
-  const eulaUrl = props.legalUrls.cgu;
-  console.debug(props.legalUrls);
+  const eulaUrl = props.legalUrls?.cgu;
 
   return (
     <PageView>
@@ -150,10 +149,10 @@ export default connect(
     legalUrls: getAuthState(state).legalUrls,
   }),
   (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+    bindActionCreators<IRevalidateTermsScreenEventProps>(
       {
-        handleLogout: tryActionLegacy(logoutAction, undefined, true) as unknown as IRevalidateTermsScreenEventProps['handleLogout'], // Redux-thunk types suxx,
-        handleLogin: tryActionLegacy(loginAction, undefined, true) as unknown as IRevalidateTermsScreenEventProps['handleLogin'], // Redux-thunk types suxx
+        tryLogout: tryAction(logoutAction),
+        tryLogin: tryAction(loginAction),
       },
       dispatch,
     ),
