@@ -2,17 +2,14 @@ import { UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/nati
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, StyleSheet, TouchableOpacity } from 'react-native';
+import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
-import theme from '~/app/theme';
-import { Checkbox } from '~/framework/components/checkbox';
+import CheckboxButton from '~/framework/components/buttons/checkbox';
 import FlatList from '~/framework/components/flatList';
-import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
-import { SmallText } from '~/framework/components/text';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { ITimelineNavigationParams } from '~/framework/modules/timelinev2/navigation';
@@ -36,14 +33,6 @@ export type ITimelineFiltersScreenProps = ITimelineFiltersScreenDataProps &
 export interface ITimelineFiltersScreenState {
   selectedFilters: INotifFilterSettings;
 }
-
-const styles = StyleSheet.create({
-  checkboxContainer: {
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.text.light,
-    borderWidth: 2,
-  },
-});
 
 export function computeNavBar(disabled: boolean, onPress?: () => void) {
   return <NavBarAction title={I18n.t('timeline.filtersScreen.apply')} disabled={disabled} onPress={onPress} />;
@@ -97,19 +86,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
         initialNumToRender={15} // Items are thin, 15 renders ok on iPhone 13
         ListHeaderComponent={
           notifFilters.length < 2 ? null : (
-            <TouchableOpacity onPress={() => this.doToggleAllFilters()}>
-              <ListItem
-                leftElement={<SmallText>{I18n.t('common.all')}</SmallText>}
-                rightElement={
-                  <Checkbox
-                    customCheckboxColor={!someNotSet ? theme.ui.text.light : undefined}
-                    customContainerStyle={styles.checkboxContainer}
-                    checked={!someNotSet}
-                    onPress={() => this.doToggleAllFilters()}
-                  />
-                }
-              />
-            </TouchableOpacity>
+            <CheckboxButton onPress={() => this.doToggleAllFilters()} title="common.all" isChecked={!someNotSet} isAllButton />
           )
         }
         renderItem={({ item }) => this.renderFilterItem(item)}
@@ -119,14 +96,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
 
   renderFilterItem(item: INotificationFilter) {
     const { selectedFilters } = this.state;
-    return (
-      <TouchableOpacity onPress={() => this.doToggleFilter(item)}>
-        <ListItem
-          leftElement={<SmallText>{I18n.t(item.i18n)}</SmallText>}
-          rightElement={<Checkbox checked={selectedFilters[item.type]} onPress={() => this.doToggleFilter(item)} />}
-        />
-      </TouchableOpacity>
-    );
+    return <CheckboxButton onPress={() => this.doToggleFilter(item)} title={item.i18n} isChecked={selectedFilters[item.type]} />;
   }
 
   mounted: boolean = false;

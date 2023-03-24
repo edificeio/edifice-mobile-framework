@@ -6,21 +6,18 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
-import { Checkbox } from '~/framework/components/checkbox';
+import CheckboxButton from '~/framework/components/buttons/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { SmallText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { updatePushNotifsSettingsAction } from '~/framework/modules/timelinev2/actions/notifSettings';
@@ -66,14 +63,6 @@ export interface IPushNotifsItemsListScreenState {
   pendingPrefsChanges: IPushNotifsSettings;
   arePrefsUnchanged: boolean;
 }
-
-const styles = StyleSheet.create({
-  checkbox: {
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.text.light,
-    borderWidth: 2,
-  },
-});
 
 export const computeNavBar = ({
   navigation,
@@ -131,7 +120,6 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
       Object.entries(this.state.pendingPrefsChanges).filter(([k, v]) => this.prefKeysArray.includes(k)),
     );
     const items = deepmerge<IPushNotifsSettings>(this.initialItems, pendingForType);
-    console.log(this.initialItems, items);
     this.setState({
       arePrefsUnchanged: shallowEqual(this.initialItems, items),
     });
@@ -200,19 +188,12 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
         ListFooterComponent={<View style={{ height: UI_SIZES.screen.bottomInset }} />}
         ListHeaderComponent={
           hasEmptySubListData ? null : (
-            <TouchableOpacity onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}>
-              <ListItem
-                leftElement={<SmallText>{I18n.t('common.all')}</SmallText>}
-                rightElement={
-                  <Checkbox
-                    customCheckboxColor={areAllChecked ? theme.ui.text.light : undefined}
-                    customContainerStyle={styles.checkbox}
-                    checked={areAllChecked}
-                    onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
-                  />
-                }
-              />
-            </TouchableOpacity>
+            <CheckboxButton
+              onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
+              title="common.all"
+              isChecked={areAllChecked}
+              isAllButton
+            />
           )
         }
       />
@@ -221,19 +202,11 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
 
   renderSubItem(item: [string, boolean]) {
     return (
-      <TouchableOpacity onPress={() => this.doTogglePushNotifSetting([item[0], !item[1]])}>
-        <ListItem
-          leftElement={<SmallText>{I18n.t(`timeline.notifType.${item[0]}`, {})}</SmallText>}
-          rightElement={
-            <Checkbox
-              checked={item[1]}
-              onPress={() => {
-                this.doTogglePushNotifSetting([item[0], !item[1]]);
-              }}
-            />
-          }
-        />
-      </TouchableOpacity>
+      <CheckboxButton
+        onPress={() => this.doTogglePushNotifSetting([item[0], !item[1]])}
+        title={`timeline.notifType.${item[0]}`}
+        isChecked={item[1]}
+      />
     );
   }
 
