@@ -3,11 +3,13 @@ import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -177,11 +179,13 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   };
 
   return (
-    <PageView>
-      {props.userType === UserType.Teacher ? <StructurePicker /> : null}
-      {props.userType === UserType.Relative ? <ChildPicker /> : null}
-      {renderPage()}
-    </PageView>
+    <GestureHandlerRootView style={UI_STYLES.flex1}>
+      <PageView>
+        {props.userType === UserType.Teacher ? <StructurePicker /> : null}
+        {props.userType === UserType.Relative ? <ChildPicker /> : null}
+        {renderPage()}
+      </PageView>
+    </GestureHandlerRootView>
   );
 };
 

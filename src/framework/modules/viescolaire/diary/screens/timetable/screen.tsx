@@ -2,11 +2,13 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
@@ -80,7 +82,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
     if (!prevState.startDate.isSame(startDate, 'day') || structureId !== prevProps.structureId) this.fetchCourses();
 
     // on structure change
-    if (structureId !== prevProps.structure.id) fetchSlots(structureId);
+    if (structureId !== prevProps.structureId) fetchSlots(structureId);
   }
 
   updateSelectedDate = (newDate: moment.Moment) => {
@@ -92,15 +94,17 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 
   public render() {
     return (
-      <PageView>
-        <StructurePicker />
-        <DiaryTeacherTimetable
-          {...this.props}
-          startDate={this.state.startDate}
-          selectedDate={this.state.selectedDate}
-          updateSelectedDate={this.updateSelectedDate}
-        />
-      </PageView>
+      <GestureHandlerRootView style={UI_STYLES.flex1}>
+        <PageView>
+          <StructurePicker />
+          <DiaryTeacherTimetable
+            {...this.props}
+            startDate={this.state.startDate}
+            selectedDate={this.state.selectedDate}
+            updateSelectedDate={this.updateSelectedDate}
+          />
+        </PageView>
+      </GestureHandlerRootView>
     );
   }
 }
