@@ -32,6 +32,7 @@ import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
+import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
@@ -62,6 +63,7 @@ export interface BlogCreatePostScreenState {
   title: string;
   content: string;
   images: ImagePicked[];
+  onPublish: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -139,10 +141,9 @@ export const computeNavBar = ({
   title: I18n.t('blog.blogCreatePostScreen.title'),
 });
 
-function PreventBack(props: { isCreatingPost: string | number }) {
+function PreventBack(props: { isEditing: boolean }) {
   const navigation = useNavigation();
-  UNSTABLE_usePreventRemove(true, ({ data }) => {
-    if (!props.isCreatingPost) return navigation.dispatch(data.action);
+  UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
     Alert.alert(
       I18n.t('common.confirmationUnsavedPublication'),
       I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
@@ -168,6 +169,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     title: '',
     content: '',
     images: [],
+    onPublish: false,
   };
 
   attachmentPickerRef: any;
@@ -238,6 +240,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
+      this.setState({
+        onPublish: true,
+      });
       navigation.navigate(route.params.referrer ?? 'timeline');
       dispatch(
         notifierShowAction({
@@ -407,9 +412,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
   }
 
   render() {
+    const isEditing = !isEmpty(this.state.title || this.state.content || this.state.images) && !this.state.onPublish;
     return (
       <>
-        <PreventBack isCreatingPost={this.state.content || this.state.title || this.state.images.length} />
+        <PreventBack isEditing={isEditing} />
         <KeyboardPageView scrollable={false}>
           <Notifier id="createPost" />
           {/* ToDo : don't use magic keywords like this. */}
