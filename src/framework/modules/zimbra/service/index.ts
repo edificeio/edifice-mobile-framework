@@ -295,6 +295,7 @@ export const zimbraService = {
     get: async (session: ISession, id: string) => {
       const api = `/zimbra/message/${id}`;
       const mail = (await fetchJSONWithCache(api)) as IBackendMail;
+      if (!('id' in mail)) throw new Error();
       return mailAdapter(mail) as IMail;
     },
     send: async (session: ISession, mail: IMail, draftId?: string, inReplyTo?: string) => {
