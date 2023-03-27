@@ -58,11 +58,15 @@ export const computeNavBar = ({
 class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenPrivateProps> {
   constructor(props) {
     super(props);
-    const { structureId, getHomeworks, userId } = props;
+    const { structureId, userId } = props;
     this.state = {
       // fetching next month homeworks only, when screen is focused
-      focusListener: this.props.navigation.addListener('willFocus', () => {
-        getHomeworks(structureId, moment().add(1, 'days').format('YYYY-MM-DD'), moment().add(1, 'month').format('YYYY-MM-DD'));
+      focusListener: this.props.navigation.addListener('focus', () => {
+        this.props.fetchHomeworks(
+          structureId,
+          moment().add(1, 'days').format('YYYY-MM-DD'),
+          moment().add(1, 'month').format('YYYY-MM-DD'),
+        );
         this.props.fetchDevoirs(structureId, userId);
       }),
     };
