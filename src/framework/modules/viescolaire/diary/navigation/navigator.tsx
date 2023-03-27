@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import DiaryHomeworkScreen, { computeNavBar as homeworkNavBar } from '~/framework/modules/viescolaire/diary/screens/homework';
@@ -22,21 +22,43 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
      */
 
     const screens: React.ReactElement[] = [];
-    const session = assertSession();
+    const session = getSession();
 
     if (session?.user.type === UserType.Teacher) {
-      screens.push(<Stack.Screen name={diaryRouteNames.timetable} component={DiaryTimetableScreen} options={timetableNavBar} />);
+      screens.push(
+        <Stack.Screen
+          key={diaryRouteNames.timetable}
+          name={diaryRouteNames.timetable}
+          component={DiaryTimetableScreen}
+          options={timetableNavBar}
+        />,
+      );
       moduleConfig.routeName = diaryRouteNames.timetable;
     } else {
       screens.push(
-        <Stack.Screen name={diaryRouteNames.homeworkList} component={DiaryHomeworkListScreen} options={homeworkListNavBar} />,
+        <Stack.Screen
+          key={diaryRouteNames.homeworkList}
+          name={diaryRouteNames.homeworkList}
+          component={DiaryHomeworkListScreen}
+          options={homeworkListNavBar}
+        />,
       );
       moduleConfig.routeName = diaryRouteNames.homeworkList;
     }
 
     screens.push(
-      <Stack.Screen name={diaryRouteNames.homework} component={DiaryHomeworkScreen} options={homeworkNavBar} />,
-      <Stack.Screen name={diaryRouteNames.session} component={DiarySessionScreen} options={sessionNavBar} />,
+      <Stack.Screen
+        key={diaryRouteNames.homework}
+        name={diaryRouteNames.homework}
+        component={DiaryHomeworkScreen}
+        options={homeworkNavBar}
+      />,
+      <Stack.Screen
+        key={diaryRouteNames.session}
+        name={diaryRouteNames.session}
+        component={DiarySessionScreen}
+        options={sessionNavBar}
+      />,
     );
 
     return <>{screens}</>;
