@@ -1,17 +1,43 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Dispatch } from 'redux';
 
-import type { UserNavigationParams } from '../../navigation';
+import { ISession } from '~/framework/modules/auth/model';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { IUpdatableProfileValues } from '~/user/actions/profile';
+import { IUserAuthState } from '~/user/reducers/auth';
+import { IUserInfoState } from '~/user/state/info';
 
-export interface UserProfileScreenProps {}
+import { UserNavigationParams, userRouteNames } from '../../navigation';
 
-export interface UserProfileScreenNavParams {}
+export interface IProfilePageDataProps {
+  userauth: IUserAuthState;
+  userinfo: IUserInfoState;
+  session: ISession;
+}
 
-export interface UserProfileScreenStoreProps {}
+export interface IProfilePageEventProps {
+  onSave: (updatedProfileValues: IUpdatableProfileValues) => void;
+  dispatch: Dispatch;
+}
 
-export interface UserProfileScreenDispatchProps {}
+export type IProfilePageProps = IProfilePageDataProps &
+  IProfilePageEventProps &
+  NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.profile> & {
+    onUploadAvatar: (avatar: LocalFile) => Promise<SyncedFile>;
+    onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
+    onPickFileError: (notifierId: string) => void;
+    onUploadAvatarError: () => void;
+  };
 
-export interface UserProfileScreenPrivateProps
-  extends NativeStackScreenProps<UserNavigationParams, 'profile'>,
-    UserProfileScreenProps,
-    UserProfileScreenStoreProps,
-    UserProfileScreenDispatchProps {}
+export type IProfilePageState = IUpdatableProfileValues & {
+  homePhoneValid?: boolean;
+  loginAliasValid?: boolean;
+  updatingAvatar?: boolean;
+};
+
+export interface ProfileScreenNavigationParams {
+  updatedProfileValues?: IUpdatableProfileValues;
+  edit?: boolean;
+  onCancel?: () => void;
+  onSave?: (updatedProfileValues: IUpdatableProfileValues) => void;
+}

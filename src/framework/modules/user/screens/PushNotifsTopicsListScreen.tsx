@@ -31,11 +31,11 @@ import {
   getPushNotifsSettingsByType,
 } from '~/framework/modules/timelinev2/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';
 
 import moduleConfig from '../module-config';
-import { UserNavigationParams, userRouteNames } from '../navigation';
 
 export interface IPushNotifsTopicsListScreenDataProps {
   timelineState: ITimeline_State;

@@ -6,7 +6,7 @@ import type { IPushNotifsTopicsListScreenNavigationParams } from '../screens/Pus
 import type { UserFamilyScreenNavParams } from '../screens/family';
 import type { UserHomeScreenNavParams } from '../screens/home';
 import type { UserLegalNoticeScreenNavParams } from '../screens/legal-notice';
-import type { UserProfileScreenNavParams } from '../screens/profile';
+import type { ProfileScreenNavigationParams } from '../screens/profile';
 import type { UserStructuresScreenNavParams } from '../screens/structures';
 import type { UserWhoAreWeScreenNavParams } from '../screens/who-are-we';
 
@@ -24,7 +24,7 @@ export interface UserNavigationParams extends ParamListBase {
   home: UserHomeScreenNavParams;
   notifPrefs: IPushNotifsTopicsListScreenNavigationParams;
   notifPrefsDetails: IPushNotifsItemsListScreenNavigationParams;
-  profile: UserProfileScreenNavParams;
+  profile: ProfileScreenNavigationParams;
   structures: UserStructuresScreenNavParams;
   family: UserFamilyScreenNavParams;
   whoAreWe: UserWhoAreWeScreenNavParams;
