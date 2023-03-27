@@ -130,6 +130,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
     const tomorrowDate = moment().add(1, 'day') as moment.Moment;
 
     homeworksByDate = Object.keys(homeworksByDate)
+      .filter(date => moment(date).isAfter(moment()))
       .sort()
       .slice(0, 5)
       .reduce(function (memo, current) {
@@ -140,34 +141,30 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
     return (
       <View style={styles.dashboardPart}>
         <BodyBoldText>{I18n.t('viesco-homework')}</BodyBoldText>
-        {Object.values(homeworks).length === 0 && (
+        {!Object.keys(homeworksByDate).length ? (
           <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
-        )}
+        ) : null}
         {Object.keys(homeworksByDate).map(date => (
           <>
-            {moment(date).isAfter(moment()) && (
-              <>
-                <SmallText style={styles.subtitle}>
-                  {moment(date).isSame(tomorrowDate, 'day')
-                    ? I18n.t('viesco-homework-fortomorrow')
-                    : `${I18n.t('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
-                </SmallText>
-                {homeworksByDate[date].map(homework => (
-                  <HomeworkItem
-                    hideCheckbox={false}
-                    checked={isHomeworkDone(homework)}
-                    title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
-                    subtitle={homework.type}
-                    onChange={() => {
-                      this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
-                    }}
-                    onPress={() =>
-                      this.props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsAdapter(homework, homeworks))
-                    }
-                  />
-                ))}
-              </>
-            )}
+            <SmallText style={styles.subtitle}>
+              {moment(date).isSame(tomorrowDate, 'day')
+                ? I18n.t('viesco-homework-fortomorrow')
+                : `${I18n.t('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
+            </SmallText>
+            {homeworksByDate[date].map(homework => (
+              <HomeworkItem
+                hideCheckbox={false}
+                checked={isHomeworkDone(homework)}
+                title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
+                subtitle={homework.type}
+                onChange={() => {
+                  this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
+                }}
+                onPress={() =>
+                  this.props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsAdapter(homework, homeworks))
+                }
+              />
+            ))}
           </>
         ))}
       </View>
