@@ -101,18 +101,14 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [props.navigation, props.structureId]);
 
   React.useEffect(() => {
     if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
