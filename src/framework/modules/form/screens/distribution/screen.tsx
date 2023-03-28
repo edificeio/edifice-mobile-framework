@@ -1,7 +1,8 @@
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
-import { FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
+import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -36,7 +37,7 @@ import {
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { formService } from '~/framework/modules/form/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -280,17 +281,6 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
   };
 
-  React.useEffect(() => {
-    const { navigation } = props;
-
-    if (loadingState !== AsyncPagedLoadingState.DONE) return;
-    navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () => (!isPositionAtSummary ? <NavBarAction iconName="ui-save" onPress={saveChanges} /> : undefined),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingState, position]);
-
   const renderEmpty = () => {
     return <EmptyScreen svgImage="empty-form-access" title={I18n.t('form.formDistributionScreen.emptyScreen.title')} />;
   };
@@ -387,6 +377,23 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         return renderError();
     }
   };
+
+  UNSTABLE_usePreventRemove(loadingState === AsyncPagedLoadingState.DONE, ({ data }) => {
+    Alert.alert(I18n.t('form.formDistributionScreen.leaveAlert.title'), I18n.t('form.formDistributionScreen.leaveAlert.message'), [
+      {
+        text: I18n.t('common.cancel'),
+        style: 'cancel',
+      },
+      {
+        text: I18n.t('common.quit'),
+        onPress: async () => {
+          await saveChanges();
+          props.navigation.dispatch(data.action);
+        },
+        style: 'destructive',
+      },
+    ]);
+  });
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 

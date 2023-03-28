@@ -415,6 +415,8 @@
   "form.formDistributionListScreen.emptyScreen.title": "You do not have any forms pending.",
   "form.formDistributionListScreen.title": "Form: My answers",
   "form.formDistributionScreen.emptyScreen.title": "Sorry, you do not have the rights to access this page",
+  "form.formDistributionScreen.leaveAlert.message": "You are about to leave the form. Your answers will be saved. Do you want to leave?",
+  "form.formDistributionScreen.leaveAlert.title": "Leave the form",
   "form.formDistributionScreen.submissionModal.upperText": "You are about to validate your answers to this form.",
   "form.formDistributionScreen.submissionModal.lowerText.default": "Once you have submitted your form you will not be able to change your answers. Do you want to confirm the submission?",
   "form.formDistributionScreen.submissionModal.lowerText.editable": "You will have the opportunity to modify your answers later. Do you want to confirm the submission?",
