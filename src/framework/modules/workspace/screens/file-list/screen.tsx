@@ -1,3 +1,5 @@
+import { HeaderBackButton } from '@react-navigation/elements';
+import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -17,6 +19,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
+import { BodyBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   convertIFileToIDistantFile,
@@ -207,13 +210,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
-  const getMenuActions = (): {
-    navBarActions: { icon: string };
-    popupMenuActions: MenuAction[];
-  } => {
+  const getNavBarActions = (): { actionIcon: string; menuActions: MenuAction[] } => {
     if (isSelectionActive) {
       const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
-      const popupMenuActions = [
+      const menuActions = [
         ...(selectedFiles.length === 1 && filter === Filter.OWNER
           ? [
               {
@@ -254,7 +254,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           ? [
               {
                 title: I18n.t('conversation.restore'),
-                action: () => restoreSelectedFiles,
+                action: restoreSelectedFiles,
                 icon: {
                   ios: 'arrow.uturn.backward.circle',
                   android: 'ic_restore',
@@ -282,10 +282,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
             ]
           : []),
       ];
-      return { navBarActions: { icon: 'ui-options' }, popupMenuActions };
+      return { actionIcon: 'ui-options', menuActions };
     }
     if (filter === Filter.OWNER || (filter === Filter.SHARED && parentId !== Filter.SHARED)) {
-      const popupMenuActions = [
+      const menuActions = [
         cameraAction({ callback: uploadFile }),
         galleryAction({ callback: uploadFile, multiple: true }),
         documentAction({ callback: uploadFile }),
@@ -302,19 +302,26 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
             ]
           : []),
       ];
-      return { navBarActions: { icon: 'ui-plus' }, popupMenuActions };
+      return { actionIcon: 'ui-plus', menuActions };
     }
-    return { navBarActions: { icon: '' }, popupMenuActions: [] };
+    return { actionIcon: '', menuActions: [] };
   };
 
-  const menuActions = getMenuActions();
-
   React.useEffect(() => {
+    const { actionIcon, menuActions } = getNavBarActions();
+
     props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
+      headerLeft: ({ tintColor }) => (
+        <>
+          <HeaderBackButton tintColor={tintColor} onPress={() => props.navigation.dispatch(CommonActions.goBack())} />
+          {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
+        </>
+      ),
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
-        <PopupMenu actions={menuActions.popupMenuActions}>
-          <NavBarAction iconName={menuActions.navBarActions.icon} />
+        <PopupMenu actions={menuActions}>
+          <NavBarAction iconName={actionIcon} />
         </PopupMenu>
       ),
     });
@@ -381,7 +388,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListEmptyComponent={renderEmpty()}
           contentContainerStyle={styles.listContainer}
-          bottomInset
           rightOpenValue={-140}
           leftOpenValue={140}
           swipeActionWidth={140}
@@ -462,6 +468,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         return renderError();
     }
   };
+
+  UNSTABLE_usePreventRemove(isSelectionActive, () => setSelectedFiles([]));
 
   return <PageView>{renderPage()}</PageView>;
 };
