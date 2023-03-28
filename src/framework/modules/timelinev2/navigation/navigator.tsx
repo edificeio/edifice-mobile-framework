@@ -14,15 +14,17 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     <>
       <Stack.Screen name={timelineRouteNames.Home} component={TimelineScreen} options={TimelineNavBar} initialParams={{}} />
 
-      <Stack.Screen
-        name={timelineRouteNames.Filters}
-        component={TimelineFiltersScreen}
-        options={{
-          title: I18n.t('timeline.filtersScreen.title'),
-          headerRight: () => computeNavBar(true),
-        }}
-        initialParams={undefined}
-      />
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen
+          name={timelineRouteNames.Filters}
+          component={TimelineFiltersScreen}
+          options={{
+            title: I18n.t('timeline.filtersScreen.title'),
+            headerRight: () => computeNavBar(true),
+          }}
+          initialParams={undefined}
+        />
+      </Stack.Group>
 
       {/* <Stack.Screen
         name={timelineRouteNames.Dummy}

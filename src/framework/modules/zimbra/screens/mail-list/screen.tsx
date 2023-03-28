@@ -112,12 +112,12 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const refreshSilent = () => {
+  /*const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
     fetchMails()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
+  };*/
 
   const fetchNext = () => {
     setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
@@ -129,11 +129,11 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
+      else refresh();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation, props.route.params.folderPath, mails]);
+  }, [props.navigation, props.route.params.folderPath]);
 
   React.useEffect(() => {
     setQuery('');
@@ -282,21 +282,17 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   };
 
   const getDropdownActions = () => {
-    const { folderPath } = props.route.params;
-
-    return folderPath === '/Sent'
-      ? [deleteAction({ action: trashSelectedMails })]
-      : [
-          {
-            title: I18n.t('zimbra-move'),
-            action: () => moveModalRef.current?.doShowModal(),
-            icon: {
-              ios: 'arrow.up.square',
-              android: 'ic_move_to_inbox',
-            },
-          },
-          deleteAction({ action: trashSelectedMails }),
-        ];
+    return [
+      {
+        title: I18n.t('zimbra-move'),
+        action: () => moveModalRef.current?.doShowModal(),
+        icon: {
+          ios: 'arrow.up.square',
+          android: 'ic_move_to_inbox',
+        },
+      },
+      deleteAction({ action: trashSelectedMails }),
+    ];
   };
 
   const getNavBarOptions = (): Partial<NativeStackNavigationOptions> => {
@@ -311,16 +307,18 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         ),
         headerRight: () => (
           <View style={styles.navBarRightContainer}>
-            {folderPath === '/Trash' ? (
+            {folderPath === '/Sent' || folderPath === '/Trash' ? (
               <>
-                <View style={styles.rightMargin}>
-                  <NavBarAction iconName="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
-                </View>
+                {folderPath === '/Trash' ? (
+                  <View style={styles.rightMargin}>
+                    <NavBarAction iconName="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
+                  </View>
+                ) : null}
                 <NavBarAction iconName="ui-delete" onPress={alertPermanentDeletion} />
               </>
             ) : (
               <>
-                {folderPath !== '/Sent' && folderPath !== '/Drafts' ? (
+                {folderPath !== '/Drafts' ? (
                   <View style={styles.rightMargin}>
                     <NavBarAction
                       iconName={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}

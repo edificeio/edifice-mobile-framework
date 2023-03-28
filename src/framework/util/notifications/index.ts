@@ -108,6 +108,11 @@ export const isResourceUriNotification = (n: IAbstractNotification) =>
 export const getAsResourceUriNotification = (n: IAbstractNotification) =>
   isResourceUriNotification(n) ? (n as IResourceUriNotification) : undefined;
 
+export const isResourceIdNotification = (n: IAbstractNotification) =>
+  !!(n as ITimelineNotification & Partial<IResourceIdNotification>).resource?.id;
+export const getAsResourceIdNotification = (n: IAbstractNotification) =>
+  isResourceIdNotification(n) ? (n as IResourceIdNotification) : undefined;
+
 export const isNamedResourceNotification = (n: IAbstractNotification) =>
   !!(n as ITimelineNotification & Partial<INamedResourceNotification>).resource?.name;
 export const getAsNamedResourceNotification = (n: IAbstractNotification) =>
