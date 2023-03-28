@@ -107,13 +107,9 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps

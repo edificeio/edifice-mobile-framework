@@ -112,12 +112,12 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  /*const refreshSilent = () => {
+  const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
     fetchMails()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };*/
+  };
 
   const fetchNext = () => {
     setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
@@ -126,18 +126,14 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    //else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [props.navigation, props.route.params.folderPath, mails]);
 
   React.useEffect(() => {
     setQuery('');
