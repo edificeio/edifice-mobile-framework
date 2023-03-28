@@ -341,10 +341,8 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
     return (
       <View style={styles.actionsContainer}>
-        {positionHistory.length ? (
-          <ActionButton text={I18n.t('previous')} type="secondary" action={() => goToPreviousPosition()} />
-        ) : null}
-        <ActionButton text={I18n.t('next')} action={() => goToNextPosition()} disabled={isMandatoryAnswerMissing} />
+        {positionHistory.length ? <ActionButton text={I18n.t('previous')} type="secondary" action={goToPreviousPosition} /> : null}
+        <ActionButton text={I18n.t('next')} action={goToNextPosition} disabled={isMandatoryAnswerMissing} />
       </View>
     );
   };
