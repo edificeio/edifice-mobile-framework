@@ -1,6 +1,6 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
 import { ILoginResult } from '~/framework/modules/auth/actions';
-import type { AuthErrorCode, ISession, LegalUrls } from '~/framework/modules/auth/model';
+import type { AuthErrorCode, ILoggedUserProfile, ISession, LegalUrls } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/moduleConfig';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
@@ -28,6 +28,7 @@ export const actionTypes = {
   sessionEnd: moduleConfig.namespaceActionType('SESSION_END'),
   redirectAutoLogin: moduleConfig.namespaceActionType('REDIRECT_AUTO_LOGIN'),
   getLegalDocuments: moduleConfig.namespaceActionType('GET_LEGAL_DOCUMENTS'),
+  profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
 };
 
 export interface ActionPayloads {
@@ -39,6 +40,7 @@ export interface ActionPayloads {
   sessionEnd: undefined;
   redirectAutoLogin: Pick<Required<IAuthState>, 'autoLoginResult'>;
   getLegalDocuments: Pick<Required<IAuthState>, 'legalUrls'>;
+  profileUpdate: { values: Partial<ILoggedUserProfile> };
 }
 
 export const actions = {
@@ -53,6 +55,7 @@ export const actions = {
   sessionEnd: () => ({ type: actionTypes.sessionEnd }),
   redirectAutoLogin: (result: ILoginResult) => ({ type: actionTypes.redirectAutoLogin, autoLoginResult: result }),
   getLegalDocuments: (legalUrls: LegalUrls) => ({ type: actionTypes.getLegalDocuments, legalUrls }),
+  profileUpdate: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdate, values }),
 };
 
 const reducer = createReducer(initialState, {
@@ -93,6 +96,14 @@ const reducer = createReducer(initialState, {
   [actionTypes.getLegalDocuments]: (state, action) => {
     const { legalUrls }: ActionPayloads['getLegalDocuments'] = action as any;
     return { ...state, legalUrls: { ...state.legalUrls, ...legalUrls } };
+  },
+  // Saves changes to user profile values into session
+  [actionTypes.profileUpdate]: (state, action) => {
+    const { values }: ActionPayloads['profileUpdate'] = action as any;
+    if (!state.session) {
+      return state;
+    }
+    return { ...state, session: { ...state.session, user: { ...state.session.user, ...values } } };
   },
 });
 

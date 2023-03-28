@@ -63,6 +63,8 @@ export interface IUserInfoBackend {
   groupsIds?: string[];
   classes?: string[];
   children?: { [userId: string]: { lastName: string; firstName: string } };
+  mobile?: string;
+  homePhone?: string;
 }
 
 export interface UserPrivateData {
@@ -277,6 +279,8 @@ export function formatSession(
     structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
     uniqueId: userinfo.uniqueId,
     photo: userPublicInfo?.photo,
+    mobile: userinfo.mobile,
+    homePhone: userinfo.homePhone,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
   // compute here detailed data about children (laborious)
