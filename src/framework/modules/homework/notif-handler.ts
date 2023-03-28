@@ -1,31 +1,30 @@
-/**
- * Homework notif handler
- * @scaffolder Remove this file if your module handles no notification.
- *
- * The notifHandler registers some behaviours for given notif types and event-types.
- * It applicates to both timelineNotififation and pushNotifications.
- */
+import { navigate } from '~/framework/navigation/helper';
+import { getAsResourceIdNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-const handleSomeNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  // @scaffolder extract info from notification here
+import homeworkDiarySelected from './actions/selectedDiary';
+import { HomeworkNavigationParams, homeworkRouteNames } from './navigation';
 
-  // @scaffolder navigate somewhere here
+const homeworkNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
+  const notif = getAsResourceIdNotification(notification);
+  if (!notif) return { managed: 0 };
 
-  // @scaffolder put `return {managed: 0}` if notification is skipped
-  return { managed: 0 };
+  const diaryId = notif.resource.id;
+  dispatch(homeworkDiarySelected(diaryId));
 
-  // return {
-  //   managed: 1,
-  //   trackInfo: { action: 'Homework', name: `${notification.type}.${notification['event-type']}` },
-  // };
+  navigate<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskList>(homeworkRouteNames.homeworkTaskList, {});
+
+  return {
+    managed: 1,
+    trackInfo: { action: 'Homework', name: `${notification.type}.${notification['event-type']}` },
+  };
 };
 
 export default () =>
   registerNotifHandlers([
     {
-      type: 'SOME-TYPE', // Replace this with the backend notification type
-      'event-type': 'SOME-EVENT-TYPE', // Replace this with the backend notification event-type
-      notifHandlerAction: handleSomeNotificationAction,
+      type: 'HOMEWORKS',
+      'event-type': ['SHARE', 'ENTRIES.MODIFIED'],
+      notifHandlerAction: homeworkNotificationAction,
     },
   ]);
