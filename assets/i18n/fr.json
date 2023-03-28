@@ -561,6 +561,7 @@
   "postCreatePlaceholder": "Écrivez un message...",
   "postCreateTitleField": "Titre du billet",
   "postCreateTitlePlaceholder": "Écrivez le titre",
+  "previous": "Précédent",
   "profileTypes.Guest": "Invité",
   "profileTypes.Personnel": "Personnel",
   "profileTypes.Relative": "Parent",

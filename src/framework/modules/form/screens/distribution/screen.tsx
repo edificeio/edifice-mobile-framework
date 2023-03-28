@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
-import { FlatList, Platform, RefreshControl, View } from 'react-native';
+import { FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,7 +15,6 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
@@ -343,19 +342,9 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     return (
       <View style={styles.actionsContainer}>
         {positionHistory.length ? (
-          <ActionButton
-            text={I18n.t('back')}
-            type="secondary"
-            action={() => goToPreviousPosition()}
-            style={styles.positionActionContainer}
-          />
+          <ActionButton text={I18n.t('previous')} type="secondary" action={() => goToPreviousPosition()} />
         ) : null}
-        <ActionButton
-          text={I18n.t('next')}
-          action={() => goToNextPosition()}
-          disabled={isMandatoryAnswerMissing}
-          style={styles.positionActionContainer}
-        />
+        <ActionButton text={I18n.t('next')} action={() => goToNextPosition()} disabled={isMandatoryAnswerMissing} />
       </View>
     );
   };

@@ -561,6 +561,7 @@
   "postCreatePlaceholder": "Write a message...",
   "postCreateTitleField": "Post title",
   "postCreateTitlePlaceholder": "Create title",
+  "previous": "Previous",
   "profileTypes.Guest": "Guest",
   "profileTypes.Personnel": "Staff",
   "profileTypes.Relative": "Parent",
