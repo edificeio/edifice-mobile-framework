@@ -1,4 +1,4 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import Pdf from 'react-native-pdf';
@@ -9,6 +9,7 @@ import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
 import { ISession } from '../modules/auth/model';
+import { navBarOptions } from '../navigation/navBar';
 import { openUrl } from '../util/linking';
 
 export interface IBackdropPdfReaderState {
@@ -17,6 +18,17 @@ export interface IBackdropPdfReaderState {
 
 const styles = StyleSheet.create({
   pdf: { flex: 1, backgroundColor: theme.palette.grey.fog },
+});
+
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<IModalsNavigationParams, typeof ModalsRouteNames.Pdf>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: route.params.title,
 });
 
 export class BackdropPdfReaderScreen extends React.PureComponent<
