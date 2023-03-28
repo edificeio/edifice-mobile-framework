@@ -35,7 +35,7 @@ import { ICarnetDeBordStateData } from '~/framework/modules/pronote/reducer/carn
 import redirect from '~/framework/modules/pronote/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 export interface CarnetDeBordScreenDataProps {
@@ -384,7 +384,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        handleLoadData: tryAction(loadCarnetDeBordAction, undefined, true) as unknown as () => Promise<ICarnetDeBord[]>, // Some TS issue with ThunkDispatch
+        handleLoadData: tryActionLegacy(loadCarnetDeBordAction, undefined, true) as unknown as () => Promise<ICarnetDeBord[]>, // Some TS issue with ThunkDispatch
       },
       dispatch,
     ),

@@ -1,3 +1,5 @@
+import { HeaderBackButton } from '@react-navigation/elements';
+import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -17,6 +19,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import SwipeableList from '~/framework/components/swipeableList';
+import { BodyBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   convertIFileToIDistantFile,
@@ -41,7 +44,7 @@ import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -105,13 +108,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -207,13 +206,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
-  const getMenuActions = (): {
-    navBarActions: { icon: string };
-    popupMenuActions: MenuAction[];
-  } => {
+  const getNavBarActions = (): { actionIcon: string; menuActions: MenuAction[] } => {
     if (isSelectionActive) {
       const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
-      const popupMenuActions = [
+      const menuActions = [
         ...(selectedFiles.length === 1 && filter === Filter.OWNER
           ? [
               {
@@ -254,7 +250,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           ? [
               {
                 title: I18n.t('conversation.restore'),
-                action: () => restoreSelectedFiles,
+                action: restoreSelectedFiles,
                 icon: {
                   ios: 'arrow.uturn.backward.circle',
                   android: 'ic_restore',
@@ -282,10 +278,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
             ]
           : []),
       ];
-      return { navBarActions: { icon: 'ui-options' }, popupMenuActions };
+      return { actionIcon: 'ui-options', menuActions };
     }
     if (filter === Filter.OWNER || (filter === Filter.SHARED && parentId !== Filter.SHARED)) {
-      const popupMenuActions = [
+      const menuActions = [
         cameraAction({ callback: uploadFile }),
         galleryAction({ callback: uploadFile, multiple: true }),
         documentAction({ callback: uploadFile }),
@@ -302,19 +298,26 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
             ]
           : []),
       ];
-      return { navBarActions: { icon: 'ui-plus' }, popupMenuActions };
+      return { actionIcon: 'ui-plus', menuActions };
     }
-    return { navBarActions: { icon: '' }, popupMenuActions: [] };
+    return { actionIcon: '', menuActions: [] };
   };
 
-  const menuActions = getMenuActions();
-
   React.useEffect(() => {
+    const { actionIcon, menuActions } = getNavBarActions();
+
     props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
+      headerLeft: ({ tintColor }) => (
+        <>
+          <HeaderBackButton tintColor={tintColor} onPress={() => props.navigation.dispatch(CommonActions.goBack())} />
+          {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
+        </>
+      ),
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
-        <PopupMenu actions={menuActions.popupMenuActions}>
-          <NavBarAction iconName={menuActions.navBarActions.icon} />
+        <PopupMenu actions={menuActions}>
+          <NavBarAction iconName={actionIcon} />
         </PopupMenu>
       ),
     });
@@ -381,7 +384,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListEmptyComponent={renderEmpty()}
           contentContainerStyle={styles.listContainer}
-          bottomInset
           rightOpenValue={-140}
           leftOpenValue={140}
           swipeActionWidth={140}
@@ -463,6 +465,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
+  UNSTABLE_usePreventRemove(isSelectionActive, () => setSelectedFiles([]));
+
   return <PageView>{renderPage()}</PageView>;
 };
 
@@ -481,46 +485,66 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        createFolder: tryAction(
+        createFolder: tryActionLegacy(
           createWorkspaceFolderAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['createFolder'],
-        deleteFiles: tryAction(
+        deleteFiles: tryActionLegacy(
           deleteWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['deleteFiles'],
-        downloadFiles: tryAction(
+        downloadFiles: tryActionLegacy(
           downloadWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['downloadFiles'],
-        duplicateFiles: tryAction(
+        duplicateFiles: tryActionLegacy(
           copyWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['duplicateFiles'],
-        fetchFiles: tryAction(fetchWorkspaceFilesAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['fetchFiles'],
-        listFolders: tryAction(
+        fetchFiles: tryActionLegacy(
+          fetchWorkspaceFilesAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['fetchFiles'],
+        listFolders: tryActionLegacy(
           listWorkspaceFoldersAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['listFolders'],
-        moveFiles: tryAction(moveWorkspaceFilesAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['moveFiles'],
-        previewFile: tryAction(
+        moveFiles: tryActionLegacy(
+          moveWorkspaceFilesAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['moveFiles'],
+        previewFile: tryActionLegacy(
           downloadThenOpenWorkspaceFileAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['previewFile'],
-        renameFile: tryAction(renameWorkspaceFileAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['renameFile'],
-        restoreFiles: tryAction(
+        renameFile: tryActionLegacy(
+          renameWorkspaceFileAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['renameFile'],
+        restoreFiles: tryActionLegacy(
           restoreWorkspaceFilesAction,
           undefined,
           true,
         ) as unknown as IWorkspaceFileListScreenProps['restoreFiles'],
-        trashFiles: tryAction(trashWorkspaceFilesAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['trashFiles'],
-        uploadFile: tryAction(uploadWorkspaceFileAction, undefined, true) as unknown as IWorkspaceFileListScreenProps['uploadFile'],
+        trashFiles: tryActionLegacy(
+          trashWorkspaceFilesAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['trashFiles'],
+        uploadFile: tryActionLegacy(
+          uploadWorkspaceFileAction,
+          undefined,
+          true,
+        ) as unknown as IWorkspaceFileListScreenProps['uploadFile'],
       },
       dispatch,
     ),

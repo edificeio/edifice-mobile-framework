@@ -27,7 +27,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
@@ -80,13 +80,9 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -322,9 +318,13 @@ export default connect(
     bindActionCreators(
       {
         downloadAttachment: downloadAttachmentAction,
-        fetchMail: tryAction(fetchZimbraMailAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchMail'],
-        fetchQuota: tryAction(fetchZimbraQuotaAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchQuota'],
-        fetchRootFolders: tryAction(
+        fetchMail: tryActionLegacy(fetchZimbraMailAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchMail'],
+        fetchQuota: tryActionLegacy(
+          fetchZimbraQuotaAction,
+          undefined,
+          true,
+        ) as unknown as ZimbraMailScreenPrivateProps['fetchQuota'],
+        fetchRootFolders: tryActionLegacy(
           fetchZimbraRootFoldersAction,
           undefined,
           true,

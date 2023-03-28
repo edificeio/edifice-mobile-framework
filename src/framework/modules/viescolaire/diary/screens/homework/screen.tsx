@@ -1,7 +1,9 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import DisplayHomework from '~/framework/modules/viescolaire/diary/components/DisplayHomework';
@@ -40,7 +42,11 @@ class DiaryHomeworkScreen extends React.PureComponent<any> {
           homeworkList={this.props.route.params.homeworkList}
         />
       );
-    return <PageView>{content}</PageView>;
+    return (
+      <GestureHandlerRootView style={UI_STYLES.flex1}>
+        <PageView>{content}</PageView>
+      </GestureHandlerRootView>
+    );
   }
 }
 

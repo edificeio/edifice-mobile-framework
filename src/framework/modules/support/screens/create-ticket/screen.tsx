@@ -26,7 +26,7 @@ import { getSupportWorkflowInformation } from '~/framework/modules/support/right
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
@@ -216,8 +216,8 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        postTicket: tryAction(postSupportTicketAction, undefined, true) as ISupportCreateTicketScreenEventProps['postTicket'],
-        uploadAttachments: tryAction(
+        postTicket: tryActionLegacy(postSupportTicketAction, undefined, true) as ISupportCreateTicketScreenEventProps['postTicket'],
+        uploadAttachments: tryActionLegacy(
           uploadSupportTicketAttachmentsAction,
           undefined,
           true,

@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import theme from '~/app/theme';
 import RoundButton from '~/framework/components/buttons/round';
 import { UI_SIZES } from '~/framework/components/constants';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { displayPastDate } from '~/framework/util/date';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -81,10 +81,10 @@ const styles = StyleSheet.create({
 const CommentField = (props: CommentFieldProps, ref) => {
   const inputRef: { current: TextInput | undefined } = React.useRef();
 
-  const session = useSelector(() => assertSession());
+  const session = useSelector(() => getSession());
   const [isEditing, setIsEditing] = React.useState(false);
   const [comment, setComment] = React.useState<string>(props.comment || '');
-  const isUserComment = session.user.id === props.commentAuthorId;
+  const isUserComment = session?.user.id === props.commentAuthorId;
   const isIdleExistingComment = !!props.commentId && !isEditing;
   const isFirstComment = props.index === 0;
 

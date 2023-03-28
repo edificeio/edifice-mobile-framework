@@ -8,6 +8,11 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.fog,
     flexGrow: 1,
   },
+  navBarCountText: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: theme.ui.text.inverse,
+  },
   uploadIndicatorContainer: {
     alignSelf: 'center',
     position: 'absolute',

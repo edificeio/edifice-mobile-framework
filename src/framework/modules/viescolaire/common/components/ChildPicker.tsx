@@ -12,7 +12,7 @@ import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { selectChildAction } from '~/framework/modules/viescolaire/dashboard/actions/children';
 import viescoConfig from '~/framework/modules/viescolaire/dashboard/module-config';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const styles = StyleSheet.create({
@@ -90,7 +90,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        selectChild: tryAction(selectChildAction, undefined, true),
+        selectChild: tryActionLegacy(selectChildAction, undefined, true),
       },
       dispatch,
     ),

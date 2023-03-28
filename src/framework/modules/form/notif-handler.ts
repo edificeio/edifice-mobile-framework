@@ -6,8 +6,8 @@ import { navigate } from '~/framework/navigation/helper';
 import { openUrl } from '~/framework/util/linking';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
+import { DistributionStatus } from './model';
 import { FormNavigationParams, formRouteNames } from './navigation';
-import { DistributionStatus } from './reducer';
 import { formService } from './service';
 
 const handleNewFormNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {

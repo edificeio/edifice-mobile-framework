@@ -42,7 +42,7 @@ export type IForgotScreenState = {
   forgotState: 'IDLE' | 'RUNNING' | 'DONE';
 };
 export interface IForgotPageEventProps {
-  handleSubmit: (...args: Parameters<typeof forgotAction>) => ReturnType<ReturnType<typeof forgotAction>>;
+  trySubmit: (...args: Parameters<typeof forgotAction>) => ReturnType<ReturnType<typeof forgotAction>>;
 }
 export type IForgotPageProps = IForgotPageEventProps & NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.forgot>;
 
@@ -123,7 +123,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
       const forgotMode = route.params.mode;
       const selectedStructure = structures && structures.find(structure => structure.structureName === structureName);
       const structureId = selectedStructure && selectedStructure.structureId;
-      const result = await this.props.handleSubmit(route.params.platform, { login, firstName, structureId }, forgotMode);
+      const result = await this.props.trySubmit(route.params.platform, { login, firstName, structureId }, forgotMode);
       this.setState({ editing: false, forgotState: 'DONE', result });
     } catch {
       this.setState({
@@ -322,9 +322,9 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
 }
 
 export default connect(undefined, dispatch =>
-  bindActionCreators(
+  bindActionCreators<IForgotPageEventProps>(
     {
-      handleSubmit: tryAction(forgotAction, undefined, true) as unknown as IForgotPageEventProps['handleSubmit'], // Redux-thunk types suxx
+      trySubmit: tryAction(forgotAction),
     },
     dispatch,
   ),

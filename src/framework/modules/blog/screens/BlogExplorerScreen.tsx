@@ -42,7 +42,7 @@ export interface BlogExplorerScreenDataProps {
 }
 
 export interface BlogExplorerScreenEventProps {
-  doFetch: () => Promise<[Blog[], BlogFolder[]] | undefined>;
+  tryFetch: () => Promise<[Blog[], BlogFolder[]] | undefined>;
 }
 
 export interface BlogExplorerScreenNavigationParams {
@@ -77,7 +77,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
   const reload = () => {
     setLoadingState(AsyncLoadingState.RETRY);
     props
-      .doFetch()
+      .tryFetch()
       .then(() => setLoadingState(AsyncLoadingState.DONE))
       .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
   };
@@ -85,7 +85,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
   const refresh = () => {
     setLoadingState(AsyncLoadingState.REFRESH);
     props
-      .doFetch()
+      .tryFetch()
       .then(() => setLoadingState(AsyncLoadingState.DONE))
       .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
   };
@@ -121,7 +121,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     if (loadingState === AsyncLoadingState.PRISTINE) {
       setLoadingState(AsyncLoadingState.INIT);
       props
-        .doFetch()
+        .tryFetch()
         .then(() => setLoadingState(AsyncLoadingState.DONE))
         .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
     }
@@ -247,9 +247,9 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators(
+    bindActionCreators<BlogExplorerScreenEventProps>(
       {
-        doFetch: tryAction(fetchBlogsAndFoldersAction, undefined, true) as any, // FUCK OFF REACT-REDUX YOUR TYPES DEFINITIONS SUCKS
+        tryFetch: tryAction(fetchBlogsAndFoldersAction),
       },
       dispatch,
     ),

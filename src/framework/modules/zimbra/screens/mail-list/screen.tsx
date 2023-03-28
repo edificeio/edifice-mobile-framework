@@ -35,7 +35,7 @@ import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zi
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 import { NavBarAction } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -112,12 +112,12 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  /*const refreshSilent = () => {
+  const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
     fetchMails()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };*/
+  };
 
   const fetchNext = () => {
     setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
@@ -126,18 +126,14 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    //else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [props.navigation, props.route.params.folderPath, mails]);
 
   React.useEffect(() => {
     setQuery('');
@@ -357,7 +353,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
     navigation.setOptions(options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedMails.length]);
+  }, [selectedMails.length, props.quota]);
 
   const renderEmpty = () => {
     return (
@@ -454,7 +450,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchMailsFromFolder: tryAction(
+        fetchMailsFromFolder: tryActionLegacy(
           fetchZimbraMailsFromFolderAction,
           undefined,
           true,

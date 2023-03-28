@@ -26,7 +26,7 @@ import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 type IPresencesCourseListScreenOldProps = {
@@ -101,18 +101,14 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [props.navigation, props.structureId]);
 
   React.useEffect(() => {
     if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
@@ -191,9 +187,9 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchCourses: tryAction(fetchPresencesCoursesAction, undefined, true),
-        fetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction, undefined, true),
-        fetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction, undefined, true),
+        fetchCourses: tryActionLegacy(fetchPresencesCoursesAction, undefined, true),
+        fetchMultipleSlotsSetting: tryActionLegacy(fetchPresencesMultipleSlotSettingAction, undefined, true),
+        fetchRegisterPreference: tryActionLegacy(fetchPresencesRegisterPreferenceAction, undefined, true),
       },
       dispatch,
     ),

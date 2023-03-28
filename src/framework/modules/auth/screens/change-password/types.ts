@@ -25,9 +25,9 @@ export interface ChangePasswordScreenStoreProps {
 }
 
 export interface ChangePasswordScreenDispatchProps {
-  handleLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
-  handleLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
-  handleSubmit(platform: Platform, payload: IChangePasswordPayload, forceChange?: boolean): Promise<void>;
+  tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
+  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  trySubmit: (platform: Platform, payload: IChangePasswordPayload, forceChange?: boolean) => Promise<void>;
 }
 
 export type ChangePasswordScreenPrivateProps = ChangePasswordScreenProps &

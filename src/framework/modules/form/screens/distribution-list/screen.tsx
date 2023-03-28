@@ -23,7 +23,7 @@ import { DistributionStatus, IForm } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import { FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
@@ -85,14 +85,10 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -202,12 +198,12 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDistributions: tryAction(
+        fetchDistributions: tryActionLegacy(
           fetchFormDistributionsAction,
           undefined,
           true,
         ) as unknown as FormDistributionListScreenPrivateProps['fetchDistributions'],
-        fetchForms: tryAction(
+        fetchForms: tryActionLegacy(
           fetchFormsReceivedAction,
           undefined,
           true,

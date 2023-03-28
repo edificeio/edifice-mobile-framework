@@ -17,7 +17,7 @@ import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions'
 import { AuthRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { tryAction } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
 import { Toggle } from '~/ui/forms/Toggle';
 
@@ -113,7 +113,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
 
     this.setState({ loginState: 'RUNNING' });
     try {
-      const redirect = await this.props.handleLogin(
+      const redirect = await this.props.tryLogin(
         platform,
         {
           username: this.state.login, // login is already trimmed by inputLine
@@ -275,14 +275,10 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators(
+    bindActionCreators<LoginHomeScreenDispatchProps>(
       {
-        handleLogin: tryAction(loginAction, undefined, true) as unknown as LoginHomeScreenDispatchProps['handleLogin'], // Redux-thunk types suxx
-        handleConsumeError: tryAction(
-          consumeAuthError,
-          undefined,
-          false,
-        ) as unknown as LoginHomeScreenDispatchProps['handleConsumeError'],
+        tryLogin: tryAction(loginAction),
+        handleConsumeError: handleAction(consumeAuthError),
       },
       dispatch,
     ),
