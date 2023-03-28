@@ -96,20 +96,20 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         throw new Error('failed to call api (resourceUri is undefined)');
       }
       ids = schoolbookUriCaptureFunction(resourceUri) as Required<ReturnType<typeof schoolbookUriCaptureFunction>>;
-      if (!ids.paramsSchoolbookWordId) {
+      if (!ids.schoolbookWordId) {
         throw new Error(`failed to capture resourceUri "${resourceUri}": ${ids}`);
       }
     } else {
       const paramsSchoolbookWordId = props.route.params.schoolbookWordId;
       const paramsStudentId = props.route.params.studentId;
       if (!paramsSchoolbookWordId || (isParent && !paramsStudentId)) {
-        throw new Error(`missing paramsSchoolbookWordId or paramsStudentId : ${{ paramsSchoolbookWordId, paramsStudentId }}`);
+        throw new Error(`missing schoolbookWordId or studentId : ${{ paramsSchoolbookWordId, paramsStudentId }}`);
       }
-      ids = { paramsSchoolbookWordId, paramsStudentId };
+      ids = { schoolbookWordId: paramsSchoolbookWordId, studentId: paramsStudentId };
     }
-    setSchoolbookWordId(ids.paramsSchoolbookWordId);
-    if (isParent) setStudentId(ids.paramsStudentId);
-    return ids.paramsSchoolbookWordId;
+    setSchoolbookWordId(ids.schoolbookWordId);
+    if (isParent) setStudentId(ids.studentId);
+    return ids.schoolbookWordId;
   }, [isParent, props.route.params.notification, props.route.params.schoolbookWordId, props.route.params.studentId]);
 
   const fetchSchoolbookWord = React.useCallback(

@@ -6,11 +6,11 @@
  */
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
-import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import { navigate } from '~/framework/navigation/helper';
-import { computeRelativePath } from '~/framework/util/navigation';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
+
+import { SchoolbookNavigationParams, schoolbookRouteNames } from './navigation';
 
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -20,10 +20,13 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
     if (!userType) return { managed: 0 };
 
     const isParent = userType === UserType.Relative;
-    const route = computeRelativePath(`${moduleConfig.routeName}${isParent ? '' : '/details'}`, navState);
-    navigate(route, {
-      notification,
-    });
+    if (isParent) {
+      navigate<SchoolbookNavigationParams, typeof schoolbookRouteNames.home>(schoolbookRouteNames.home);
+    } else {
+      navigate<SchoolbookNavigationParams, typeof schoolbookRouteNames.details>(schoolbookRouteNames.details, {
+        notification,
+      });
+    }
     return {
       managed: 1,
       trackInfo: { action: 'Schoolbook', name: `${notification.type}.${notification['event-type']}` },
