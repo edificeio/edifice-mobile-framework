@@ -1,9 +1,9 @@
 import { ISession } from '~/framework/modules/auth/model';
 import { IField, ISources } from '~/framework/modules/mediacentre/components/AdvancedSearchModal';
 import { IResource, IResourceList, Source } from '~/framework/modules/mediacentre/reducer';
-import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
-interface IEntcoreMediacentreResource {
+interface IBackendResource {
   id: string;
   _id?: string;
   title: string;
@@ -25,7 +25,7 @@ interface IEntcoreMediacentreResource {
   owner_name?: string;
 }
 
-type IEntcoreMediacentreResourceList = IEntcoreMediacentreResource[];
+type IBackendResourceList = IBackendResource[];
 
 export function compareResources(a: IResource, b: IResource) {
   return a.title.localeCompare(b.title);
@@ -36,7 +36,7 @@ function transformArray(array: string[]) {
   return array;
 }
 
-const resourcesAdapter: (data: IEntcoreMediacentreResourceList) => IResourceList = data => {
+const resourcesAdapter: (data: IBackendResourceList) => IResourceList = data => {
   const resources = [] as IResource[];
   for (const resource of data) {
     const res = {
@@ -181,10 +181,10 @@ export const mediacentreService = {
       for (const field of fields) {
         body[field.name] = { value: field.value, comparator: field.operand ? '$and' : '$or' };
       }
-      const resources = (await signedFetchJson(api, {
+      const resources = (await fetchJSONWithCache(api, {
         method: 'POST',
         body: JSON.stringify(body),
-      })) as IEntcoreMediacentreResourceList;
+      })) as IBackendResourceList;
       return resourcesAdapter(resources);
     },
   },
