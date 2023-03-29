@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import moment from 'moment';
 
 import { SupportedLocales } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -65,6 +66,7 @@ export interface IUserInfoBackend {
   children?: { [userId: string]: { lastName: string; firstName: string } };
   mobile?: string;
   homePhone?: string;
+  birthDate?: string;
 }
 
 export interface UserPrivateData {
@@ -281,6 +283,7 @@ export function formatSession(
     photo: userPublicInfo?.photo,
     mobile: userinfo.mobile,
     homePhone: userinfo.homePhone,
+    birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
   };
   // compute here detailed data about children (laborious)

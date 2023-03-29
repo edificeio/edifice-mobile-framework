@@ -55,6 +55,7 @@ export interface UserStructureWithClasses extends StructureNode {
  * Describes all editable profile values as text-only, without verifications.
  */
 export interface ILoggedUserProfile extends IUserProfile {
+  birthDate?: moment.Moment;
   firstName: string;
   lastName: string;
   homePhone?: string; // It's not in LoggedUserContactDetails because there is no logic associed with it unlike mobile.
