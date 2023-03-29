@@ -241,7 +241,7 @@ export function Carousel(props: ICarouselProps) {
           );
           return undefined;
         } else {
-          Toast.show(I18n.t('share.error'));
+          Toast.show(I18n.t('share-error'));
         }
       }
     },
