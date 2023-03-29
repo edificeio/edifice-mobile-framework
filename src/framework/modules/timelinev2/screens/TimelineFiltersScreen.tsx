@@ -1,5 +1,5 @@
 import { UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert } from 'react-native';
@@ -12,11 +12,11 @@ import FlatList from '~/framework/components/flatList';
 import { PageView } from '~/framework/components/page';
 import { setFiltersAction } from '~/framework/modules/timelinev2/actions/notifSettings';
 import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
-import { ITimelineNavigationParams } from '~/framework/modules/timelinev2/navigation';
+import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
-import { NavBarAction } from '~/framework/navigation/navBar';
+import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { shallowEqual } from '~/framework/util/object';
 
 export interface ITimelineFiltersScreenDataProps {
@@ -34,9 +34,16 @@ export interface ITimelineFiltersScreenState {
   selectedFilters: INotifFilterSettings;
 }
 
-export function computeNavBar(disabled: boolean, onPress?: () => void) {
-  return <NavBarAction title={I18n.t('timeline.filtersScreen.apply')} disabled={disabled} onPress={onPress} />;
-}
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<ITimelineNavigationParams, typeof timelineRouteNames.Filters>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+  }),
+  title: I18n.t('timeline.filtersScreen.title'),
+});
 
 function PreventBack(props: { onPreventBack: boolean }) {
   const navigation = useNavigation();
@@ -69,7 +76,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     this.updateNavBar();
     return (
       <>
-        <PreventBack onPreventBack={!areFiltersUnchanged && !noneSet} />
+        <PreventBack onPreventBack={!areFiltersUnchanged || noneSet} />
         <PageView>{this.renderList()}</PageView>
       </>
     );
@@ -140,8 +147,16 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     const { selectedFilters } = this.state;
     const { notifFilterSettings } = this.props;
     const areFiltersUnchanged = shallowEqual(notifFilterSettings, selectedFilters);
+    const noneSet = Object.values(selectedFilters).every(value => !value);
     this.props.navigation.setOptions({
-      headerRight: () => computeNavBar(areFiltersUnchanged, () => this.doSetFilters(selectedFilters)),
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <NavBarAction
+          title={I18n.t('timeline.filtersScreen.apply')}
+          disabled={areFiltersUnchanged || noneSet}
+          onPress={() => this.doSetFilters(selectedFilters)}
+        />
+      ),
     });
   }
 }
