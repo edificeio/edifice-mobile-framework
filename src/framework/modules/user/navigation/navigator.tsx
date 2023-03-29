@@ -25,12 +25,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={pushNotifsTopicsListNavBar}
         initialParams={{}}
       />
-      <Stack.Screen
-        name={userRouteNames.notifPrefsDetails}
-        component={PushNotifsItemsListScreen}
-        options={pushNotifsItemsListNavBar}
-        initialParams={{}}
-      />
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen
+          name={userRouteNames.notifPrefsDetails}
+          component={PushNotifsItemsListScreen}
+          options={pushNotifsItemsListNavBar}
+          initialParams={{}}
+        />
+      </Stack.Group>
       <Stack.Screen
         name={userRouteNames.structures}
         component={UserStructuresScreen}
