@@ -88,6 +88,7 @@ export const mediacentreService = {
     get: async (session: ISession) => {
       const api = '/mediacentre/favorites';
       const res = await fetchJSONWithCache(api);
+      if (!Array.isArray(res.data)) return [];
       const favorites = resourcesAdapter(res.data);
       for (const resource of favorites) {
         resource.favorite = true;
