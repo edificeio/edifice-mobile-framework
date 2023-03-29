@@ -98,6 +98,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         changed: false,
         value: '',
       });
+    setComment('');
   };
   const editComment = () => {
     setIsEditing(true);
@@ -115,7 +116,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
       props.onChangeText({
         type: props.isResponse ? 'response' : 'comment',
         isPublication: !props.commentId,
-        changed: value !== comment,
+        changed: (!props.commentId && value !== '') || (props.commentId !== undefined && value !== props.comment),
         value,
       });
     setComment(value);
