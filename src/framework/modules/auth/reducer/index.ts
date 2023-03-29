@@ -28,7 +28,9 @@ export const actionTypes = {
   sessionEnd: moduleConfig.namespaceActionType('SESSION_END'),
   redirectAutoLogin: moduleConfig.namespaceActionType('REDIRECT_AUTO_LOGIN'),
   getLegalDocuments: moduleConfig.namespaceActionType('GET_LEGAL_DOCUMENTS'),
-  profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
+  profileUpdateRequest: moduleConfig.namespaceActionType('PROFILE_UPDATE_REQUEST'),
+  profileUpdateSuccess: moduleConfig.namespaceActionType('PROFILE_UPDATE_SUCCESS'),
+  profileUpdateError: moduleConfig.namespaceActionType('PROFILE_UPDATE_ERROR'),
 };
 
 export interface ActionPayloads {
@@ -40,7 +42,9 @@ export interface ActionPayloads {
   sessionEnd: undefined;
   redirectAutoLogin: Pick<Required<IAuthState>, 'autoLoginResult'>;
   getLegalDocuments: Pick<Required<IAuthState>, 'legalUrls'>;
-  profileUpdate: { values: Partial<ILoggedUserProfile> };
+  profileUpdateRequest: { values: Partial<ILoggedUserProfile> };
+  profileUpdateSuccess: { values: Partial<ILoggedUserProfile> };
+  profileUpdateError: undefined;
 }
 
 export const actions = {
@@ -55,7 +59,9 @@ export const actions = {
   sessionEnd: () => ({ type: actionTypes.sessionEnd }),
   redirectAutoLogin: (result: ILoginResult) => ({ type: actionTypes.redirectAutoLogin, autoLoginResult: result }),
   getLegalDocuments: (legalUrls: LegalUrls) => ({ type: actionTypes.getLegalDocuments, legalUrls }),
-  profileUpdate: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdate, values }),
+  profileUpdateRequest: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdateRequest, values }),
+  profileUpdateSuccess: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdateSuccess, values }),
+  profileUpdateError: () => ({ type: actionTypes.profileUpdateError }),
 };
 
 const reducer = createReducer(initialState, {
@@ -98,13 +104,15 @@ const reducer = createReducer(initialState, {
     return { ...state, legalUrls: { ...state.legalUrls, ...legalUrls } };
   },
   // Saves changes to user profile values into session
-  [actionTypes.profileUpdate]: (state, action) => {
-    const { values }: ActionPayloads['profileUpdate'] = action as any;
+  [actionTypes.profileUpdateRequest]: (state, action) => state,
+  [actionTypes.profileUpdateSuccess]: (state, action) => {
+    const { values }: ActionPayloads['profileUpdateSuccess'] = action as any;
     if (!state.session) {
       return state;
     }
     return { ...state, session: { ...state.session, user: { ...state.session.user, ...values } } };
   },
+  [actionTypes.profileUpdateError]: (state, action) => state,
 });
 
 Reducers.register(moduleConfig.reducerName, reducer);

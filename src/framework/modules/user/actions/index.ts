@@ -5,52 +5,24 @@ import I18n from 'i18n-js';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import userConfig from '~/framework/modules/user/module-config';
+import { IGlobalState } from '~/app/store';
+import { ILoggedUserProfile } from '~/framework/modules/auth/model';
+import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
+import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { signedFetchJson } from '~/infra/fetchWithCache';
-import { notifierShowAction } from '~/infra/notifier/actions';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
-import { assertSession } from '../../auth/reducer';
+export type UpdatableProfileValues = ILoggedUserProfile;
 
-export interface IChangePasswordModel {
-  oldPassword: string;
-  newPassword: string;
-  confirm: string;
-}
-
-export interface IUpdatableProfileValues {
-  displayName?: string;
-  email?: string;
-  homePhone?: string;
-  loginAlias?: string;
-  mobile?: string;
-  photo?: string;
-  picture?: string;
-}
-
-export const actionTypeProfileUpdateRequested = userConfig.namespaceActionType('PROFILE_UPDATE_REQUESTED');
-export const actionTypeProfileUpdateSuccess = userConfig.namespaceActionType('PROFILE_UPDATE_SUCCESS');
-export const actionTypeProfileUpdateError = userConfig.namespaceActionType('PROFILE_UPDATE_ERROR');
-
-const profileUpdateActionBuilder = (type: string) => (updatedProfileValues: IUpdatableProfileValues) => ({
-  type,
-  updatedProfileValues,
-});
-
-export const profileUpdateRequestedAction = profileUpdateActionBuilder(actionTypeProfileUpdateRequested);
-
-export const profileUpdateSuccessAction = profileUpdateActionBuilder(actionTypeProfileUpdateSuccess);
-
-export const profileUpdateErrorAction = profileUpdateActionBuilder(actionTypeProfileUpdateError);
-
-export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValues, updateAvatar?: boolean, notify: boolean = true) {
-  return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => any) => {
-    const notifierId = `profile${updateAvatar ? 'One' : 'Two'}`;
-    const notifierSuccessText = I18n.t(`ProfileChange${updateAvatar ? 'Avatar' : ''}Success`);
+export function profileUpdateAction(newValues: UpdatableProfileValues) {
+  return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
+    const isUpdatingPhoto = newValues.photo !== undefined;
+    const notifierId = `profile${isUpdatingPhoto ? 'One' : 'Two'}`;
+    const notifierSuccessText = I18n.t(`ProfileChange${isUpdatingPhoto ? 'Avatar' : ''}Success`);
     const getNotifierErrorText = () => {
-      if (updateAvatar) {
-        return updatedProfileValues.picture === '' ? I18n.t('ProfileDeleteAvatarError') : I18n.t('ProfileChangeAvatarErrorAssign');
+      if (isUpdatingPhoto) {
+        return !newValues.photo ? I18n.t('ProfileDeleteAvatarError') : I18n.t('ProfileChangeAvatarErrorAssign');
       } else {
         return I18n.t('ProfileChangeError');
       }
@@ -58,40 +30,39 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
 
     const platform = assertSession().platform;
 
-    for (const index in updatedProfileValues) {
-      if (updatedProfileValues.hasOwnProperty(index)) {
-        if (index.match(/Valid/) || updatedProfileValues[index as keyof IUpdatableProfileValues] === getState().user.info[index]) {
-          delete updatedProfileValues[index as keyof IUpdatableProfileValues];
+    for (const key in newValues) {
+      if (newValues[key] !== undefined) {
+        if (key.match(/Valid/) || newValues[key as keyof UpdatableProfileValues] === getState().user.info[key]) {
+          delete newValues[key as keyof UpdatableProfileValues];
         }
       }
     }
 
-    dispatch(profileUpdateRequestedAction(updatedProfileValues));
+    dispatch(authActions.profileUpdateRequest(newValues));
     try {
       const userId = getState().user.info.id;
-      const reponse = await signedFetchJson(`${platform.url}/directory/user${updateAvatar ? 'book' : ''}/${userId}`, {
+      const reponse = await signedFetchJson(`${platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         method: 'PUT',
-        body: JSON.stringify(updatedProfileValues),
+        body: JSON.stringify(newValues),
       });
-      if ((reponse as any)['error']) {
-        throw new Error((reponse as any)['error']);
+      if ((reponse as any).error) {
+        throw new Error((reponse as any).error);
       }
-      dispatch(profileUpdateSuccessAction(updateAvatar ? { photo: updatedProfileValues.picture } : updatedProfileValues));
-      if (notify)
-        dispatch(
-          notifierShowAction({
-            id: notifierId,
-            text: notifierSuccessText,
-            icon: 'checked',
-            type: 'success',
-          }),
-        );
-      if (updateAvatar) {
+      dispatch(authActions.profileUpdateSuccess(newValues));
+      dispatch(
+        notifierShowAction({
+          id: notifierId,
+          text: notifierSuccessText,
+          icon: 'checked',
+          type: 'success',
+        }),
+      );
+      if (isUpdatingPhoto) {
         refreshSelfAvatarUniqueKey();
       }
       Trackers.trackEvent('Profile', 'UPDATE');
     } catch (e) {
-      dispatch(profileUpdateErrorAction(updatedProfileValues));
+      dispatch(authActions.profileUpdateError());
 
       if ((e as Error).message.match(/loginAlias/)) {
         dispatch(
@@ -112,7 +83,7 @@ export function profileUpdateAction(updatedProfileValues: IUpdatableProfileValue
             type: 'error',
           }),
         );
-        Trackers.trackEvent('Profile', 'UPDATE ERROR', `${updateAvatar ? 'Avatar' : 'Profile'}ChangeError`);
+        Trackers.trackEvent('Profile', 'UPDATE ERROR', `${isUpdatingPhoto ? 'Avatar' : 'Profile'}ChangeError`);
       }
     }
   };
