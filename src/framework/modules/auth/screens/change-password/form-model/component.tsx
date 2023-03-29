@@ -1,6 +1,6 @@
 import { TextInput } from 'react-native';
 
-import { IChangePasswordModel } from '~/user/actions/changePassword';
+import { IChangePasswordModel } from '~/framework/modules/user/actions';
 import { ValidatorBuilder, ValueGetter } from '~/utils/form';
 
 export default class ChangePasswordFormModel {

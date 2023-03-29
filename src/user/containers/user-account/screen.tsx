@@ -15,6 +15,7 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { formatSource } from '~/framework/util/media';
 import { containsValue } from '~/framework/util/object';
@@ -24,7 +25,6 @@ import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import { Avatar, Size } from '~/ui/avatars/Avatar';
 import { logout } from '~/user/actions/login';
 import { isXmasDateLimitCrossed } from '~/user/actions/xmas';
-import { userService } from '~/user/service';
 
 import styles from './styles';
 import { ModificationType, UserAccountScreenProps, UserAccountScreenState } from './types';
@@ -80,9 +80,9 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
   public getMFARequirementAndRedirect = async (modificationType: ModificationType) => {
     try {
       this.setState({ loadingMFARequirement: { ...this.state.loadingMFARequirement, [modificationType]: true } });
-      const requirements = await userService.getUserRequirements();
+      const requirements = await getUserRequirements();
       const needMfa = requirements?.needMfa;
-      if (needMfa) await userService.getMFAValidationInfos();
+      if (needMfa) await getMFAValidationInfos();
       const routeNames = {
         [ModificationType.EMAIL]: 'UserEmail',
         [ModificationType.MOBILE]: 'UserMobile',

@@ -17,13 +17,21 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
-import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { loginAction } from '~/framework/modules/auth/actions';
+import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
+import {
+  getMFAValidationInfos,
+  sendEmailVerificationCode,
+  sendMobileVerificationCode,
+  verifyEmailCode,
+  verifyMFACode,
+  verifyMobileCode,
+} from '~/framework/modules/auth/service';
+import { IUpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
-import { checkVersionThenLogin } from '~/user/actions/version';
-import { ModificationType } from '~/user/containers/user-account/types';
-import { userService } from '~/user/service';
+import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import { AuthMFAScreenDispatchProps, AuthMFAScreenPrivateProps, AuthMFAScreenStoreProps, CodeState, ResendResponse } from './types';
@@ -47,7 +55,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const { onLogin, onUpdateProfile, navigation, route } = props;
 
   const navBarTitle = route.params.navBarTitle;
+  const platform = props.route.params.platform;
   const credentials = route.params.credentials;
+  const rememberMe = props.route.params.rememberMe;
   const modificationType = route.params.modificationType;
   const isEmailMFA = route.params.isEmailMFA;
   const isMobileMFA = route.params.isMobileMFA;
@@ -137,9 +147,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     try {
       setIsVerifyingCode(true);
       let validationState;
-      if (isEmailMFA) validationState = await userService.verifyEmailCode(toVerify);
-      else if (isMobileMFA) validationState = await userService.verifyMobileCode(toVerify);
-      else validationState = await userService.verifyMFACode(toVerify);
+      if (isEmailMFA) validationState = await verifyEmailCode(toVerify);
+      else if (isMobileMFA) validationState = await verifyMobileCode(toVerify);
+      else validationState = await verifyMFACode(toVerify);
       const state =
         validationState?.state === 'valid'
           ? CodeState.CODE_CORRECT
@@ -174,10 +184,10 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     try {
       setIsResendingVerificationCode(true);
       if (isEmailMFA) {
-        await userService.sendEmailVerificationCode(email);
+        await sendEmailVerificationCode(email);
       } else if (isMobileMFA) {
-        await userService.sendMobileVerificationCode(mobile);
-      } else await userService.getMFAValidationInfos();
+        await sendMobileVerificationCode(mobile);
+      } else await getMFAValidationInfos();
       return ResendResponse.SUCCESS;
     } catch {
       return ResendResponse.FAIL;
@@ -213,7 +223,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     }
   };
 
-  const redirectEmailOrMobileMFA = useCallback(() => {
+  const redirectEmailOrMobileMFA = useCallback(async () => {
     if (isModifyingEmail || isModifyingMobile) {
       navigation.navigate('Profile');
       onUpdateProfile(isModifyingEmail ? { email } : { mobile });
@@ -228,7 +238,8 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       );
     } else {
       try {
-        onLogin(credentials);
+        const redirect = await onLogin(platform, credentials, rememberMe);
+        redirectLoginNavAction(redirect, platform, navigation);
       } catch {
         Toast.show(I18n.t('common.error.text'), {
           onHidden: () => resetCode(),
@@ -236,7 +247,19 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         });
       }
     }
-  }, [credentials, email, isModifyingEmail, isModifyingMobile, mobile, navigation, onLogin, onUpdateProfile, resetCode]);
+  }, [
+    isModifyingEmail,
+    isModifyingMobile,
+    navigation,
+    onUpdateProfile,
+    email,
+    mobile,
+    onLogin,
+    platform,
+    credentials,
+    rememberMe,
+    resetCode,
+  ]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -361,8 +384,7 @@ const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = state 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) =>
-        dispatch(checkVersionThenLogin(false, credentials)),
+      onLogin: tryAction(loginAction, undefined, true) as unknown as AuthMFAScreenDispatchProps['onLogin'],
       onUpdateProfile: (updatedProfileValues: IUpdatableProfileValues) =>
         dispatch(profileUpdateAction(updatedProfileValues, false, false)),
     },

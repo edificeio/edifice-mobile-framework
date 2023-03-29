@@ -3,11 +3,12 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
+import { logoutAction } from '../../actions';
 import { IAuthContext, IAuthCredentials } from '../../model';
 import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
 
 export interface AuthChangeEmailScreenDispatchProps {
-  onLogout(): void;
+  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
 }
 
 export interface AuthChangeEmailScreenNavParams {

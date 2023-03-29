@@ -25,13 +25,14 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
+import { IUpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
-import { logout } from '~/user/actions/login';
-import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
-import { ModificationType } from '~/user/containers/user-account/types';
-import { userService } from '~/user/service';
+import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import {
@@ -104,7 +105,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       try {
         setRequirementsChecked(true);
         setIsLoading(true);
-        const requirements = await userService.getUserRequirements();
+        const requirements = await getUserRequirements();
         setIsCheckMobile(containsKey(requirements as object, 'needRevalidateMobile'));
       } catch {
         setIsError(true);
@@ -148,7 +149,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   };
 
-  const sendMobileVerificationCode = async (toVerify: string) => {
+  const doSendMobileVerificationCode = async (toVerify: string) => {
     try {
       // First, we clean the number by trimming - and . characters (generally used as separators)
       const phoneNumberCleaned = toVerify.replaceAll(/[-.]+/g, '');
@@ -158,13 +159,13 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       if (!isValidMobileNumberForRegion || !mobileNumberFormatted) return MobileState.MOBILE_FORMAT_INVALID;
       if (isCheckMobile) {
         setIsSendingCode(true);
-        const mobileValidationInfos = await userService.getMobileValidationInfos();
+        const mobileValidationInfos = await getMobileValidationInfos();
         // Exit if mobile has already been verified
         if (mobileNumberFormatted === mobileValidationInfos?.mobileState?.valid) {
           setIsSendingCode(false);
           return MobileState.MOBILE_ALREADY_VERIFIED;
         }
-        await userService.sendMobileVerificationCode(mobileNumberFormatted);
+        await sendMobileVerificationCode(mobileNumberFormatted);
         navigation.navigate('MFA', {
           credentials,
           modificationType,
@@ -196,7 +197,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   };
 
   const sendSMS = async () => {
-    const sendResponse = await sendMobileVerificationCode(mobile);
+    const sendResponse = await doSendMobileVerificationCode(mobile);
     if (sendResponse) setMobileState(sendResponse);
   };
 
@@ -323,7 +324,7 @@ const mapStateToProps: (state: IGlobalState) => AuthChangeMobileScreenStoreProps
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeMobileScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogout: () => dispatch(logout()),
+      onLogout: tryAction(logoutAction, undefined, true) as unknown as AuthChangeMobileScreenDispatchProps['onLogout'],
       onSaveNewMobile(updatedProfileValues: IUpdatableProfileValues) {
         dispatch(profileUpdateAction(updatedProfileValues));
       },

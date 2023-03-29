@@ -111,14 +111,6 @@ export interface IUserAuthContext {
   };
 }
 
-export interface IUserRequirements {
-  forceChangePassword?: boolean;
-  needRevalidateEmail?: boolean;
-  needRevalidateTerms?: boolean;
-  needRevalidateMobile?: boolean;
-  needMfa?: boolean;
-}
-
 class UserService {
   static FCM_TOKEN_TODELETE_KEY = 'users.fcmtokens.todelete';
 
@@ -310,83 +302,6 @@ class UserService {
     }
   }
 
-  async getEmailValidationInfos() {
-    try {
-      const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
-      return emailValidationInfos;
-    } catch (e) {
-      // console.warn('[UserService] getEmailValidationInfos: could not get email validation infos', e);
-    }
-  }
-
-  async verifyEmailCode(key: string) {
-    try {
-      const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
-        method: 'POST',
-        body: JSON.stringify({ key }),
-      })) as IEntcoreEmailValidationState;
-      return emailValidationState;
-    } catch (e) {
-      // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
-    }
-  }
-
-  async sendEmailVerificationCode(email: string) {
-    await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mailstate', {
-      method: 'PUT',
-      body: JSON.stringify({ email }),
-    });
-  }
-
-  async getMobileValidationInfos() {
-    try {
-      const mobileValidationInfos = (await fetchJSONWithCache('/directory/user/mobilestate')) as IEntcoreMobileValidationInfos;
-      return mobileValidationInfos;
-    } catch (e) {
-      // console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
-    }
-  }
-
-  async verifyMobileCode(key: string) {
-    try {
-      const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
-        method: 'POST',
-        body: JSON.stringify({ key }),
-      })) as IEntcoreMobileValidationState;
-      return mobileValidationState;
-    } catch (e) {
-      // console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
-    }
-  }
-
-  async sendMobileVerificationCode(mobile: string) {
-    await signedFetch(DEPRECATED_getCurrentPlatform()?.url + '/directory/user/mobilestate', {
-      method: 'PUT',
-      body: JSON.stringify({ mobile }),
-    });
-  }
-
-  async getMFAValidationInfos() {
-    try {
-      const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
-      return MFAValidationInfos;
-    } catch (e) {
-      // console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
-    }
-  }
-
-  async verifyMFACode(key: string) {
-    try {
-      const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
-        method: 'POST',
-        body: JSON.stringify({ key }),
-      })) as IEntcoreMFAValidationState;
-      return mfaValidationState;
-    } catch (e) {
-      // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
-    }
-  }
-
   async getAuthTranslationKeys(language: Languages) {
     try {
       // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
@@ -402,11 +317,6 @@ class UserService {
     } finally {
       CookieManager.clearAll();
     }
-  }
-
-  async getUserRequirements(): Promise<IUserRequirements | null> {
-    const resp = await signedFetch(`${DEPRECATED_getCurrentPlatform()!.url}/auth/user/requirements`);
-    return resp.status === 404 ? null : resp.json();
   }
 }
 

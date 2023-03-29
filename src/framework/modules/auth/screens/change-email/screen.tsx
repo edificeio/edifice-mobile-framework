@@ -16,12 +16,13 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
-import { logout } from '~/user/actions/login';
-import { ModificationType } from '~/user/containers/user-account/types';
-import { userService } from '~/user/service';
+import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
@@ -80,18 +81,18 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       };
   texts.button = I18n.t('auth-change-email-verify-button');
 
-  const sendEmailVerificationCode = async (toVerify: string) => {
+  const doSendEmailVerificationCode = async (toVerify: string) => {
     // Exit if email is not valid
     if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
     try {
       setIsSendingCode(true);
-      const emailValidationInfos = await userService.getEmailValidationInfos();
+      const emailValidationInfos = await getEmailValidationInfos();
       // Exit if email has already been verified
       if (toVerify === emailValidationInfos?.emailState?.valid) {
         setIsSendingCode(false);
         return EmailState.EMAIL_ALREADY_VERIFIED;
       }
-      await userService.sendEmailVerificationCode(toVerify);
+      await sendEmailVerificationCode(toVerify);
       navigation.navigate('MFA', { credentials, modificationType, isEmailMFA: true, email: toVerify, navBarTitle: title });
     } catch {
       Toast.show(I18n.t('common.error.text'), {
@@ -103,7 +104,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   };
 
   const sendEmail = async () => {
-    const sendResponse = await sendEmailVerificationCode(email);
+    const sendResponse = await doSendEmailVerificationCode(email);
     if (sendResponse) setEmailState(sendResponse);
   };
 
@@ -199,7 +200,7 @@ const mapStateToProps: (state: IGlobalState) => AuthChangeEmailScreenStoreProps 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogout: () => dispatch(logout()),
+      onLogout: tryAction(logoutAction, undefined, true) as unknown as AuthChangeEmailScreenDispatchProps['onLogout'],
     },
     dispatch,
   );

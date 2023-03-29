@@ -21,6 +21,61 @@ import {
   UserChildren,
   createAuthError,
 } from './model';
+import { assertSession } from './reducer';
+
+export interface IUserRequirements {
+  forceChangePassword?: boolean;
+  needRevalidateEmail?: boolean;
+  needRevalidateTerms?: boolean;
+  needRevalidateMobile?: boolean;
+  needMfa?: boolean;
+}
+
+export interface IEntcoreMFAValidationInfos {
+  state: IEntcoreMFAValidationState; // State of the current MFA code
+  type: 'sms' | 'email'; // MFA validation type
+  waitInSeconds: number; // Estimated number of seconds before code reaches cellphone or mailbox
+}
+
+export interface IEntcoreMFAValidationState {
+  state: 'outdated | pending | valid'; // Validation state
+  tries: number; // Number of remaining retries before code becomes outdated
+  ttl: number; // Number of seconds remaining before expiration of the code
+}
+
+export interface IEntcoreMobileValidationInfos {
+  displayName: string; // User display name
+  firstName: string; // User first name
+  lastName: string; // User last name
+  mobile: string; // Current mobile of the user (possibly not verified)
+  mobileState?: IEntcoreMobileValidationState | null; // State of the current mobile
+  waitInSeconds: number; // Estimated number of seconds before code reaches cellphone
+}
+
+export interface IEntcoreMobileValidationState {
+  pending?: string; // (optional) Current pending (or outdated) mobile being checked
+  state: 'outdated' | 'pending' | 'valid'; // Validation state
+  tries?: number; // (optional) Number of remaining retries before code becomes outdated
+  ttl?: number; // (optional) Number of seconds remaining before expiration of the code
+  valid: string; // (optional) Last known valid mobile (or empty string)
+}
+
+export interface IEntcoreEmailValidationInfos {
+  displayName: string; // User display name
+  email: string; // Current email address of the user (possibly not verified)
+  emailState: IEntcoreEmailValidationState | null; // State of the current email address
+  firstName: string; // User first name
+  lastName: string; // User last name
+  waitInSeconds: number; // Suggested time to wait for the validation email to be sent (platform configuration)
+}
+
+export interface IEntcoreEmailValidationState {
+  pending?: string; // (optional) Current pending (or outdated) email address being checked
+  state: 'unchecked' | 'outdated' | 'pending' | 'valid'; // Validation state
+  tries?: number; // (optional) Remaining number of times a validation code can be typed in
+  ttl?: number; // (optional) Seconds remaining for the user to type in the correct validation code
+  valid: string; // Last known valid email address (or empty string)
+}
 
 export enum UserType {
   Student = 'Student',
@@ -535,5 +590,87 @@ export async function getAuthTranslationKeys(platform: Platform, language: Suppo
     } else throw new Error('http response not 2xx');
   } catch (e) {
     throw createAuthError(RuntimeAuthErrorCode.LOAD_I18N_ERROR, '', '', e as Error);
+  }
+}
+
+export async function getUserRequirements(): Promise<IUserRequirements | null> {
+  const resp = await signedFetch(`${assertSession().platform.url}/auth/user/requirements`);
+  return resp.status === 404 ? null : resp.json();
+}
+
+export async function getMFAValidationInfos() {
+  try {
+    const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
+    return MFAValidationInfos;
+  } catch {
+    // console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
+  }
+}
+
+export async function verifyMFACode(key: string) {
+  try {
+    const mfaValidationState = (await fetchJSONWithCache('/auth/user/mfa/code', {
+      method: 'POST',
+      body: JSON.stringify({ key }),
+    })) as IEntcoreMFAValidationState;
+    return mfaValidationState;
+  } catch {
+    // console.warn('[UserService] verifyMFACode: could not verify mfa code', e);
+  }
+}
+
+export async function getMobileValidationInfos() {
+  try {
+    const mobileValidationInfos = (await fetchJSONWithCache('/directory/user/mobilestate')) as IEntcoreMobileValidationInfos;
+    return mobileValidationInfos;
+  } catch {
+    // console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
+  }
+}
+
+export async function sendMobileVerificationCode(mobile: string) {
+  await signedFetch(assertSession().platform.url + '/directory/user/mobilestate', {
+    method: 'PUT',
+    body: JSON.stringify({ mobile }),
+  });
+}
+
+export async function verifyMobileCode(key: string) {
+  try {
+    const mobileValidationState = (await fetchJSONWithCache('/directory/user/mobilestate', {
+      method: 'POST',
+      body: JSON.stringify({ key }),
+    })) as IEntcoreMobileValidationState;
+    return mobileValidationState;
+  } catch {
+    // console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
+  }
+}
+
+export async function getEmailValidationInfos() {
+  try {
+    const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
+    return emailValidationInfos;
+  } catch {
+    // console.warn('[UserService] getEmailValidationInfos: could not get email validation infos', e);
+  }
+}
+
+export async function sendEmailVerificationCode(email: string) {
+  await signedFetch(assertSession().platform.url + '/directory/user/mailstate', {
+    method: 'PUT',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export async function verifyEmailCode(key: string) {
+  try {
+    const emailValidationState = (await fetchJSONWithCache('/directory/user/mailstate', {
+      method: 'POST',
+      body: JSON.stringify({ key }),
+    })) as IEntcoreEmailValidationState;
+    return emailValidationState;
+  } catch {
+    // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
   }
 }
