@@ -84,6 +84,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
   };
 
   const renderInformation = () => {
+    if (!props.config) return renderError();
     const { header, body, days, time, info } = props.config.messages;
     return (
       <SafeAreaView style={styles.container}>

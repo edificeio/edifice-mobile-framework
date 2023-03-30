@@ -8,8 +8,6 @@ import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~
 
 import moduleConfig from './module-config';
 
-// Types
-
 export enum Source {
   GAR = 'fr.openent.mediacentre.source.GAR',
   MOODLE = 'fr.openent.mediacentre.source.Moodle',
@@ -44,17 +42,7 @@ export interface ISignets {
   shared: IResourceList;
 }
 
-// State
-
-interface IMediacentreStateData {
-  externals: IResourceList;
-  favorites: IResourceList;
-  search: IResourceList;
-  signets: ISignets;
-  textbooks: IResourceList;
-}
-
-export interface IMediacentreState {
+export interface IMediacentreReduxState {
   externals: AsyncState<IResourceList>;
   favorites: AsyncState<IResourceList>;
   search: AsyncState<IResourceList>;
@@ -62,9 +50,15 @@ export interface IMediacentreState {
   textbooks: AsyncState<IResourceList>;
 }
 
-// Reducer
+interface IMediacentreReduxStateData {
+  externals: IResourceList;
+  favorites: IResourceList;
+  search: IResourceList;
+  signets: ISignets;
+  textbooks: IResourceList;
+}
 
-const initialState: IMediacentreStateData = {
+const initialState: IMediacentreReduxStateData = {
   externals: [],
   favorites: [],
   search: [],
