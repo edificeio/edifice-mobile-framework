@@ -378,7 +378,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
   };
 
-  UNSTABLE_usePreventRemove(loadingState === AsyncPagedLoadingState.DONE, ({ data }) => {
+  UNSTABLE_usePreventRemove(status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE, ({ data }) => {
     Alert.alert(I18n.t('form.formDistributionScreen.leaveAlert.title'), I18n.t('form.formDistributionScreen.leaveAlert.message'), [
       {
         text: I18n.t('common.cancel'),

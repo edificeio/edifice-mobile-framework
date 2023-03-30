@@ -17,7 +17,6 @@ export default (
     <RootStack.Group
       screenOptions={{
         presentation: 'fullScreenModal',
-        headerShown: true,
       }}>
       <RootStack.Screen name={ModalsRouteNames.Carousel} options={CarouselNavBar} component={CarouselScreen} />
     </RootStack.Group>
