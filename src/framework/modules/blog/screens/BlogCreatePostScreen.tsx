@@ -243,7 +243,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       this.setState({
         onPublish: true,
       });
-      navigation.navigate(route.params.referrer ?? 'timeline');
+      navigation.navigate(route.params.referrer ?? 'timeline', {
+        ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
+      });
       dispatch(
         notifierShowAction({
           id: route.params.referrer ?? 'timeline',
