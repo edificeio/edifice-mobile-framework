@@ -2,21 +2,17 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Dispatch } from 'redux';
 
 import { ISession } from '~/framework/modules/auth/model';
+import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
-import { IUpdatableProfileValues } from '~/user/actions/profile';
-import { IUserAuthState } from '~/user/reducers/auth';
-import { IUserInfoState } from '~/user/state/info';
 
 import { UserNavigationParams, userRouteNames } from '../../navigation';
 
 export interface IProfilePageDataProps {
-  userauth: IUserAuthState;
-  userinfo: IUserInfoState;
-  session: ISession;
+  session?: ISession;
 }
 
 export interface IProfilePageEventProps {
-  onSave: (updatedProfileValues: IUpdatableProfileValues) => void;
+  onSave: (updatedProfileValues: UpdatableProfileValues) => void;
   dispatch: Dispatch;
 }
 
@@ -29,15 +25,15 @@ export type IProfilePageProps = IProfilePageDataProps &
     onUploadAvatarError: () => void;
   };
 
-export type IProfilePageState = IUpdatableProfileValues & {
+export type IProfilePageState = UpdatableProfileValues & {
   homePhoneValid?: boolean;
   loginAliasValid?: boolean;
   updatingAvatar?: boolean;
 };
 
 export interface ProfileScreenNavigationParams {
-  updatedProfileValues?: IUpdatableProfileValues;
+  updatedProfileValues?: UpdatableProfileValues;
   edit?: boolean;
   onCancel?: () => void;
-  onSave?: (updatedProfileValues: IUpdatableProfileValues) => void;
+  onSave?: (updatedProfileValues: UpdatableProfileValues) => void;
 }

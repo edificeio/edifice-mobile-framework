@@ -14,6 +14,7 @@ import { PageView } from '~/framework/components/page';
 import { CaptionText, SmallText } from '~/framework/components/text';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
+import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
 import UserCard from '~/framework/modules/user/components/user-card';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import workspaceService from '~/framework/modules/workspace/service';
@@ -26,7 +27,6 @@ import { pickFileError } from '~/infra/actions/pickFile';
 import { notifierShowAction } from '~/infra/notifier/actions';
 import Notifier from '~/infra/notifier/container';
 import { PageContainer } from '~/ui/ContainerContent';
-import { IUpdatableProfileValues, profileUpdateAction, profileUpdateErrorAction } from '~/user/actions/profile';
 import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
@@ -34,10 +34,10 @@ import { IProfilePageProps, IProfilePageState } from './types';
 
 export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfilePageState> {
   defaultState: (force?: boolean) => IProfilePageState = force => ({
-    displayName: this.props.userinfo.displayName,
-    homePhone: this.props.userinfo.homePhone,
+    displayName: this.props.session?.user.displayName,
+    homePhone: this.props.session?.user.homePhone,
     homePhoneValid: true,
-    loginAlias: this.props.userinfo.loginAlias,
+    loginAlias: this.props.session?.user.loginAlias,
     loginAliasValid: true,
     updatingAvatar: false,
   });
@@ -89,8 +89,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
   }
 
   public render() {
-    const { userinfo } = this.props;
-    const session = assertSession();
+    const { session } = this.props;
     const isEditMode = this.props.route.params.edit ?? false;
     return (
       <PageContainer>
@@ -103,10 +102,10 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
           <ScrollView alwaysBounceVertical={false} overScrollMode="never">
             <SafeAreaView>
               <UserCard
-                id={userinfo.photo && formatSource(`${session?.platform.url}${userinfo.photo}`)}
-                displayName={userinfo.displayName!}
+                id={session?.user.photo && formatSource(`${session?.platform.url}${session?.user.photo}`)}
+                displayName={session?.user.displayName!}
                 type={
-                  userinfo.type! as
+                  session?.user.type! as
                     | 'Student'
                     | 'Relative'
                     | 'Teacher'
@@ -114,36 +113,36 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                     | ('Student' | 'Relative' | 'Teacher' | 'Personnel')[]
                 }
                 canEdit
-                hasAvatar={userinfo.photo !== ''}
+                hasAvatar={!!session?.user.photo}
                 updatingAvatar={this.state.updatingAvatar}
                 onChangeAvatar={this.onChangeAvatar.bind(this)}
                 onDeleteAvatar={this.onDeleteAvatar.bind(this)}
               />
               {this.renderItem({
                 title: I18n.t('Login'),
-                getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || userinfo.login),
+                getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || session?.user.login),
                 editable: true,
                 setter: loginAlias => this.setState({ loginAlias }),
                 validator: { key: 'loginAliasValid', regex: /^[0-9a-z\-.]+$/ },
-                placeholder: userinfo.login,
+                placeholder: session?.user.login,
               })}
               {this.renderItem({
                 title: I18n.t('Firstname'),
-                getter: () => userinfo.firstName,
+                getter: () => session?.user.firstName,
               })}
               {this.renderItem({
                 title: I18n.t('Lastname'),
-                getter: () => userinfo.lastName,
+                getter: () => session?.user.lastName,
               })}
               {this.renderItem({
                 title: I18n.t('DisplayName'),
                 getter: () => this.state.displayName,
-                editable: userinfo.type !== 'Relative',
+                editable: session?.user.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
               {this.renderItem({
                 title: I18n.t('EmailAddress'),
-                getter: () => userinfo.email,
+                getter: () => session?.user.email,
               })}
               {this.renderItem({
                 title: I18n.t('Phone'),
@@ -155,15 +154,15 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               })}
               {this.renderItem({
                 title: I18n.t('CellPhone'),
-                getter: () => userinfo.mobile,
+                getter: () => session?.user.mobile,
               })}
-              {/* {this.renderItem({
+              {this.renderItem({
                 title: I18n.t('Birthdate'),
                 getter: () =>
-                  userinfo.birthDate!.format('L') === 'Invalid date'
+                  session?.user.birthDate!.format('L') === 'Invalid date'
                     ? I18n.t('common-InvalidDate')
-                    : userinfo.birthDate!.format('L'),
-              })} */}
+                    : session?.user.birthDate!.format('L'),
+              })}
             </SafeAreaView>
           </ScrollView>
         </KeyboardAvoidingView>
@@ -272,13 +271,10 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
     super(props);
     this.props.navigation.setParams({
       onSave: this.props.onSave,
-      onCancel: () => {
-        this.props.dispatch(profileUpdateErrorAction({}));
-      },
     });
   }
 
-  canEdit = this.props.session.user.type !== UserType.Student;
+  canEdit = this.props.session?.user.type !== UserType.Student;
 
   componentDidUpdate() {
     const { navigation, route } = this.props;
@@ -292,7 +288,6 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
             onPress={() => {
               navigation.setParams({ edit: false });
               navigation.setParams({ updatedProfileValues: undefined });
-              console.log(route.params.onCancel);
               if (route.params.onCancel) route.params.onCancel();
             }}
           />
@@ -322,7 +317,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
     }
     if (this.canEdit) {
       navigation.setOptions({
-        headerLeft: () => null,
+        headerLeft: navBarOptions(this.props).headerLeft,
         // eslint-disable-next-line react/no-unstable-nested-components
         headerRight: () => <NavBarAction onPress={() => navigation.setParams({ edit: true })} iconName="ui-edit" />,
       });
@@ -332,7 +327,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
   render() {
     return (
       <PageView>
-        <ProfilePage {...this.props} key={this.props.userinfo.forceRefreshKey} />
+        <ProfilePage {...this.props} />
       </PageView>
     );
   }
@@ -359,22 +354,19 @@ const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch) =>
 const UserProfileScreenConnected = connect(
   (state: any) => {
     const ret = {
-      userauth: state.auth,
-      userinfo: state.auth.session.user,
       session: getSession(),
     };
     return ret;
   },
   (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
-    onSave(updatedProfileValues: IUpdatableProfileValues) {
+    onSave(updatedProfileValues: UpdatableProfileValues) {
       dispatch(profileUpdateAction(updatedProfileValues));
     },
-    dispatch,
     onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
     onUploadAvatarError: () => dispatch(uploadAvatarError()),
     onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
     onUpdateAvatar: (imageWorkspaceUrl: string) =>
-      dispatch(profileUpdateAction({ picture: imageWorkspaceUrl }, true)) as unknown as Promise<void>,
+      dispatch(profileUpdateAction({ photo: imageWorkspaceUrl })) as unknown as Promise<void>,
   }),
 )(UserProfileScreen);
 

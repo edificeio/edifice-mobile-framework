@@ -13,7 +13,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
-export type UpdatableProfileValues = ILoggedUserProfile;
+export type UpdatableProfileValues = Partial<ILoggedUserProfile>;
 
 export function profileUpdateAction(newValues: UpdatableProfileValues) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
@@ -28,11 +28,15 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
       }
     };
 
-    const platform = assertSession().platform;
+    const session = assertSession();
 
     for (const key in newValues) {
       if (newValues[key] !== undefined) {
-        if (key.match(/Valid/) || newValues[key as keyof UpdatableProfileValues] === getState().user.info[key]) {
+        if (
+          key.match(/Valid/) ||
+          newValues[key as keyof UpdatableProfileValues] === session.user[key] ||
+          key === 'updatingAvatar'
+        ) {
           delete newValues[key as keyof UpdatableProfileValues];
         }
       }
@@ -40,8 +44,8 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
 
     dispatch(authActions.profileUpdateRequest(newValues));
     try {
-      const userId = getState().user.info.id;
-      const reponse = await signedFetchJson(`${platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
+      const userId = session.user.id;
+      const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         method: 'PUT',
         body: JSON.stringify(newValues),
       });
