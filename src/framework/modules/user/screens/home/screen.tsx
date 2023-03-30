@@ -6,6 +6,7 @@ import * as React from 'react';
 import { Alert, ImageURISource, ScrollView, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
+import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -13,7 +14,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line/component';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -21,7 +22,7 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
 import { AuthRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType, getAuthContext } from '~/framework/modules/auth/service';
+import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
@@ -156,38 +157,50 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     return authContextRef.current;
   }, [session]);
 
-  const doLoadChangePassword = React.useCallback(async () => {
-    if (!session) return;
-    setCurrentLoadingMenu(ModificationType.PASSWORD);
-    // ToDo : manage MFA here instead of direct navigate
-    if (!(await fetchAuthContext())) return;
-    setCurrentLoadingMenu(undefined);
-    if (isFocused) {
-      navigation.navigate(AuthRouteNames.changePassword, { platform: session.platform, context: authContextRef.current });
-    }
-  }, [fetchAuthContext, isFocused, navigation, session]);
-
-  const doLoadChangeEmail = React.useCallback(async () => {
-    if (!session) return;
-    setCurrentLoadingMenu(ModificationType.EMAIL);
-    // ToDo : manage MFA here instead of direct navigate
-    if (!(await fetchAuthContext())) return;
-    setCurrentLoadingMenu(undefined);
-    if (isFocused) {
-      navigation.navigate(AuthRouteNames.changeEmail, { platform: session.platform, context: authContextRef.current });
-    }
-  }, [fetchAuthContext, isFocused, navigation, session]);
-
-  const doLoadChangeMobile = React.useCallback(async () => {
-    if (!session) return;
-    setCurrentLoadingMenu(ModificationType.MOBILE);
-    // ToDo : manage MFA here instead of direct navigate
-    if (!(await fetchAuthContext())) return;
-    setCurrentLoadingMenu(undefined);
-    if (isFocused) {
-      navigation.navigate(AuthRouteNames.changeMobile, { platform: session.platform, context: authContextRef.current });
-    }
-  }, [fetchAuthContext, isFocused, navigation, session]);
+  const getMFARequirementAndRedirect = React.useCallback(
+    async (modificationType: ModificationType) => {
+      try {
+        setCurrentLoadingMenu(modificationType);
+        if (!(await fetchAuthContext())) throw new Error('No session or auth context');
+        const requirements = await getUserRequirements();
+        const needMfa = requirements?.needMfa;
+        if (needMfa) await getMFAValidationInfos();
+        const routeNames = {
+          [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
+          [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
+          [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
+        };
+        const routeName = needMfa ? AuthRouteNames.mfa : routeNames[modificationType];
+        const params = {
+          [ModificationType.EMAIL]: {
+            navBarTitle: I18n.t('user.page.editEmail'),
+            modificationType: ModificationType.EMAIL,
+            platform: session?.platform,
+            context: authContextRef?.current,
+          },
+          [ModificationType.MOBILE]: {
+            navBarTitle: I18n.t('user.page.editMobile'),
+            modificationType: ModificationType.MOBILE,
+            platform: session?.platform,
+            context: authContextRef?.current,
+          },
+          [ModificationType.PASSWORD]: {
+            navBarTitle: I18n.t('user.page.editPassword'),
+            modificationType: ModificationType.PASSWORD,
+            platform: session?.platform,
+            context: authContextRef?.current,
+          },
+        };
+        const routeParams = params[modificationType];
+        if (isFocused) navigation.navigate(routeName, routeParams);
+      } catch {
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      } finally {
+        setCurrentLoadingMenu(undefined);
+      }
+    },
+    [fetchAuthContext, isFocused, navigation, session],
+  );
 
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
   const isStudent = session?.user.type === UserType.Student;
@@ -208,24 +221,24 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
             />
             <LineButton
               loading={currentLoadingMenu === ModificationType.PASSWORD}
-              disabled={currentLoadingMenu !== undefined}
+              disabled={!!currentLoadingMenu}
               title="user.page.editPassword"
-              onPress={doLoadChangePassword}
+              onPress={() => getMFARequirementAndRedirect(ModificationType.PASSWORD)}
             />
             {canEditPersonalInfo ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.EMAIL}
-                disabled={currentLoadingMenu !== undefined}
+                disabled={!!currentLoadingMenu}
                 title="user.page.editEmail"
-                onPress={doLoadChangeEmail}
+                onPress={() => getMFARequirementAndRedirect(ModificationType.EMAIL)}
               />
             ) : null}
             {canEditPersonalInfo ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.MOBILE}
-                disabled={currentLoadingMenu !== undefined}
+                disabled={!!currentLoadingMenu}
                 title="user.page.editMobile"
-                onPress={doLoadChangeMobile}
+                onPress={() => getMFARequirementAndRedirect(ModificationType.MOBILE)}
               />
             ) : null}
             <LineButton
@@ -272,17 +285,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         </View>
       </>
     ),
-    [
-      currentLoadingMenu,
-      doLoadChangePassword,
-      canEditPersonalInfo,
-      doLoadChangeEmail,
-      doLoadChangeMobile,
-      isStudent,
-      isRelative,
-      showWhoAreWe,
-      navigation,
-    ],
+    [currentLoadingMenu, canEditPersonalInfo, isStudent, isRelative, showWhoAreWe, navigation, getMFARequirementAndRedirect],
   );
 }
 
