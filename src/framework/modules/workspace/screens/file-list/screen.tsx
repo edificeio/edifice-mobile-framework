@@ -11,6 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -310,7 +311,11 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       // eslint-disable-next-line react/no-unstable-nested-components
       headerLeft: ({ tintColor }) => (
         <>
-          <HeaderBackButton tintColor={tintColor} onPress={() => props.navigation.dispatch(CommonActions.goBack())} />
+          <HeaderBackButton
+            tintColor={tintColor}
+            onPress={() => props.navigation.dispatch(CommonActions.goBack())}
+            style={{ marginHorizontal: -UI_SIZES.spacing.minor }}
+          />
           {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
         </>
       ),
