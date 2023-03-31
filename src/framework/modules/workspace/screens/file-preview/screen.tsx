@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
-import { assertSession } from '~/framework/modules/auth/reducer';
 import {
   downloadThenOpenWorkspaceFileAction,
   downloadThenShareWorkspaceFileAction,
@@ -76,7 +75,6 @@ export default connect(
     return {
       file: props.route.params.file,
       title: props.route.params.title,
-      session: assertSession(),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
