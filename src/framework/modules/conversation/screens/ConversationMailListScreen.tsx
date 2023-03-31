@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { fetchCountAction } from '~/framework/modules/conversation/actions/count';
 import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import {
@@ -26,7 +27,7 @@ import { DraftType } from '~/framework/modules/conversation/screens/Conversation
 import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
 import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
 import { getMailListState } from '~/framework/modules/conversation/state/mailList';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 
@@ -170,7 +171,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarAction
-          iconName="ui-plus"
+          icon="ui-plus"
           onPress={() => {
             Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
             navigation.navigate(`${moduleConfig.routeName}/new-mail`, {

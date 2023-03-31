@@ -18,11 +18,13 @@ import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
+import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { NavBarAction, NavBarActionsGroup, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
@@ -91,7 +93,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
               },
             ]);
           }}
-          iconName="ui-download"
+          icon="ui-download"
           disabled={disabled}
         />,
         <PopupMenu
@@ -105,7 +107,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
               },
             },
           ]}>
-          <NavBarAction disabled={disabled} iconName="ui-options" />
+          <NavBarAction disabled={disabled} icon="ui-options" />
         </PopupMenu>,
       ]}
     />

@@ -16,6 +16,7 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DocumentPicked, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/modules/zimbra/actions';
@@ -25,7 +26,7 @@ import { DraftType } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -544,13 +545,13 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
               galleryAction({ callback: this.addGivenAttachment, multiple: true }),
               documentAction({ callback: this.addGivenAttachment }),
             ]}>
-            <NavBarAction iconName="ui-attachment" />
+            <NavBarAction icon="ui-attachment" />
           </PopupMenu>
           <View style={styles.navBarSendAction}>
-            <NavBarAction iconName="ui-send" onPress={this.sendMail} />
+            <NavBarAction icon="ui-send" onPress={this.sendMail} />
           </View>
           <PopupMenu actions={menuActions}>
-            <NavBarAction iconName="ui-options" />
+            <NavBarAction icon="ui-options" />
           </PopupMenu>
         </View>
       ),

@@ -14,6 +14,7 @@ import { UI_ANIMATIONS, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
@@ -34,7 +35,7 @@ import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/r
 import { notificationsService } from '~/framework/modules/timelinev2/service';
 import { getTimelineWorkflows } from '~/framework/modules/timelinev2/timelineModules';
 import { navigate } from '~/framework/navigation/helper';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import {
   IAbstractNotification,
@@ -114,7 +115,7 @@ export const computeNavBar = ({
   title: I18n.t('timeline.appName'),
   headerLeft: () => (
     <NavBarAction
-      iconName="ui-filter"
+      icon="ui-filter"
       onPress={() => {
         navigate(timelineRouteNames.Filters);
       }}
@@ -289,7 +290,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         // eslint-disable-next-line react/no-unstable-nested-components
         headerRight: () => (
           <PopupMenu actions={workflows}>
-            <NavBarAction iconName="ui-plus" />
+            <NavBarAction icon="ui-plus" />
           </PopupMenu>
         ),
       });
