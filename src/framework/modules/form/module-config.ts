@@ -2,10 +2,10 @@ import theme from '~/app/theme';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import reducer from './reducer';
+import { IFormReduxState } from './reducer';
 import { getFormWorkflowInformation } from './rights';
 
-export default new NavigableModuleConfig<'form', ReturnType<typeof reducer>>({
+export default new NavigableModuleConfig<'form', IFormReduxState>({
   name: 'form',
   entcoreScope: ['formulaire'],
   matchEntcoreApp: '/formulaire',

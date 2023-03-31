@@ -6,8 +6,8 @@ import { IConfig } from '~/framework/modules/homework-assistance/model';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface HomeworkAssistanceHomeScreenProps {
-  config: IConfig;
   initialLoadingState: AsyncPagedLoadingState;
+  config?: IConfig;
   session?: ISession;
   fetchConfig: () => Promise<IConfig>;
 }

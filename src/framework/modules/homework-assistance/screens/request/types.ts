@@ -13,11 +13,11 @@ interface IChild extends UserChild {
 
 export interface HomeworkAssistanceRequestScreenProps {
   className: string;
-  config: IConfig;
   initialLoadingState: AsyncPagedLoadingState;
   services: IService[];
   structureName: string;
   children?: IChild[];
+  config?: IConfig;
   session?: ISession;
   addRequest: (
     service: IService,

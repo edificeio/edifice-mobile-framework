@@ -115,12 +115,6 @@ export interface IFormContent {
   elementsCount: number;
 }
 
-export interface IFormData {
-  distributions: IDistribution[];
-  forms: IForm[];
-  formContent: IFormContent;
-}
-
 export const getIsElementSection = (element: IFormElement) => {
   return !('type' in element);
 };

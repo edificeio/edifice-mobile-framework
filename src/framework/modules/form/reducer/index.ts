@@ -4,11 +4,23 @@
 import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
-import { IFormData } from '~/framework/modules/form/model';
+import { IDistribution, IForm, IFormContent } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
-import { createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
+import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
-const initialState: IFormData = {
+export interface IFormReduxState {
+  distributions: AsyncState<IDistribution[]>;
+  forms: AsyncState<IForm[]>;
+  formContent: AsyncState<IFormContent>;
+}
+
+interface IFormReduxStateData {
+  distributions: IDistribution[];
+  forms: IForm[];
+  formContent: IFormContent;
+}
+
+const initialState: IFormReduxStateData = {
   distributions: [],
   forms: [],
   formContent: {

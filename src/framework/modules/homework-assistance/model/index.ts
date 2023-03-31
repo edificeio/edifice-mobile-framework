@@ -41,11 +41,6 @@ export interface IService {
   value: number;
 }
 
-export interface HomeworkAssistanceData {
-  config?: IConfig;
-  services: IService[];
-}
-
 export const getIsDateValid = (config: IConfig, date: Moment, time: Moment): boolean => {
   const { openingDays, exclusions, openingTime } = config.settings;
   const weekday = getDayOfTheWeek(date);

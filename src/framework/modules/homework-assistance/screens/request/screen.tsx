@@ -61,7 +61,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
   const [service, setService] = React.useState(null);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [date, setDate] = React.useState(moment().startOf('day'));
-  const [time, setTime] = React.useState(props.config.settings.openingTime.start);
+  const [time, setTime] = React.useState(props.config!.settings.openingTime.start);
   const [information, setInformation] = React.useState('');
   const [isSendingRequest, setSendingRequest] = React.useState(false);
 
@@ -128,6 +128,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
   };
 
   const renderRequest = () => {
+    if (!props.config) return renderError();
     const { openingTime } = props.config.settings;
     const isDateValid = getIsDateValid(props.config, date, time);
     const isActionDisabled = !service || !phoneNumber || !isDateValid;

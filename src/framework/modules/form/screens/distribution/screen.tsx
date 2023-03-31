@@ -243,7 +243,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   };
 
   const goToNextPosition = () => {
-    postResponsesChanges();
+    postResponsesChanges().then(() => Toast.show(I18n.t('form.answersWellSaved'), { ...UI_ANIMATIONS.toast }));
     const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
     if (conditionalQuestion) {
       const res = responses.find(r => r.questionId === conditionalQuestion.id);
