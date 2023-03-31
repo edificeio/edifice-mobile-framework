@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import DashboardRelativeScreen, {
@@ -20,7 +20,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
      */
 
     const screens: React.ReactElement[] = [];
-    const session = assertSession();
+    const session = getSession();
     const userType = session?.user.type;
 
     if (userType === UserType.Student) {

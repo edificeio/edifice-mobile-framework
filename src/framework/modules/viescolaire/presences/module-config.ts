@@ -1,12 +1,14 @@
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IPresencesReduxState } from './reducer';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
-  const userType = assertSession().user.type;
-  return entcoreApp.address === '/presences' && [UserType.Student, UserType.Relative, UserType.Teacher].includes(userType);
+  const userType = getSession()?.user.type;
+  return (
+    !!userType && entcoreApp.address === '/presences' && [UserType.Student, UserType.Relative, UserType.Teacher].includes(userType)
+  );
 }
 
 export default new NavigableModuleConfig<'presences', IPresencesReduxState>({
