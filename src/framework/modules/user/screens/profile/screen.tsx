@@ -294,35 +294,37 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
             }}
           />
         ),
-        // eslint-disable-next-line react/no-unstable-nested-components
-        headerRight: () => (
-          <NavBarAction
-            title={I18n.t('Save')}
-            onPress={() => {
-              const values = route.params.updatedProfileValues as IProfilePageState;
-              if (!isEmpty(values)) {
-                if (values.loginAliasValid && values.homePhoneValid) {
-                  navigation.setParams({ edit: false });
-                  if (route.params.onSave && route.params.updatedProfileValues) {
-                    route.params.onSave(route.params.updatedProfileValues);
-                  }
-                } else {
-                  Alert.alert(I18n.t('common-ErrorUnknown2'), I18n.t('ProfileInvalidInformation'));
-                }
-              } else {
-                navigation.setParams({ edit: false });
-              }
-            }}
-          />
-        ),
+        // Note : we comment this because we don't want to have the ability to edit profile.
+        // Since this page will be soon rewritten, this better to just comment instead of clean the code.
+        // headerRight: () => (
+        //   <NavBarAction
+        //     title={I18n.t('Save')}
+        //     onPress={() => {
+        //       const values = route.params.updatedProfileValues as IProfilePageState;
+        //       if (!isEmpty(values)) {
+        //         if (values.loginAliasValid && values.homePhoneValid) {
+        //           navigation.setParams({ edit: false });
+        //           if (route.params.onSave && route.params.updatedProfileValues) {
+        //             route.params.onSave(route.params.updatedProfileValues);
+        //           }
+        //         } else {
+        //           Alert.alert(I18n.t('common-ErrorUnknown2'), I18n.t('ProfileInvalidInformation'));
+        //         }
+        //       } else {
+        //         navigation.setParams({ edit: false });
+        //       }
+        //     }}
+        //   />
+        // ),
       });
       return;
     }
     if (this.canEdit) {
       navigation.setOptions({
         headerLeft: navBarOptions(this.props).headerLeft,
-        // eslint-disable-next-line react/no-unstable-nested-components
-        headerRight: () => <NavBarAction onPress={() => navigation.setParams({ edit: true })} iconName="ui-edit" />,
+        // Note : we comment this because we don't want to have the ability to edit profile.
+        // Since this page will be soon rewritten, this better to just comment instead of clean the code.
+        // headerRight: () => <NavBarAction onPress={() => navigation.setParams({ edit: true })} iconName="ui-edit" />,
       });
     }
   }
