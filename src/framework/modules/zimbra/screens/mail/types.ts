@@ -20,6 +20,7 @@ export interface ZimbraMailScreenNavParams {
   folderPath: string;
   id: string;
   subject: string;
+  refreshList?: () => void;
 }
 
 export interface ZimbraMailScreenPrivateProps

@@ -41,10 +41,25 @@ export const navBarOptions: (props: {
   } as NativeStackNavigationOptions);
 
 const styles = StyleSheet.create({
-  navBarActionWrapper: { flexDirection: 'row', alignItems: 'center' },
-  navBarActionText: { padding: UI_SIZES.spacing.tiny, marginHorizontal: -UI_SIZES.spacing.tiny },
-  navBarActionIcon: { marginHorizontal: UI_SIZES.spacing.tiny / 2 },
-  navBarActionDisabled: { opacity: 0.618 }, // 1/phi
+  navBarActionWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  navBarActionWrapperIcon: {
+    justifyContent: 'center',
+    height: UI_SIZES.dimensions.height.hug,
+    width: UI_SIZES.dimensions.width.hug,
+  },
+  navBarActionText: {
+    padding: UI_SIZES.spacing.tiny,
+    marginHorizontal: -UI_SIZES.spacing.tiny,
+  },
+  navBarActionIcon: {
+    height: UI_SIZES.elements.icon,
+  },
+  navBarActionDisabled: {
+    opacity: 0.618,
+  }, // 1/phi
 });
 export function NavBarAction(props: { iconName?: string; title?: string; disabled?: boolean; onPress?: () => void }) {
   const opacityIconStyle = React.useMemo(() => (props.disabled ? styles.navBarActionDisabled : undefined), [props.disabled]);
@@ -60,7 +75,7 @@ export function NavBarAction(props: { iconName?: string; title?: string; disable
       {...(props.onPress ? { onPress: props.onPress } : {})}
       hitSlop={genericHitSlop}
       disabled={props.disabled}
-      style={styles.navBarActionWrapper}>
+      style={[styles.navBarActionWrapper, { ...(props.iconName ? styles.navBarActionWrapperIcon : {}) }]}>
       {props.iconName ? (
         <NamedSVG
           name={props.iconName}
@@ -73,4 +88,15 @@ export function NavBarAction(props: { iconName?: string; title?: string; disable
       {props.title ? <SmallInverseText style={opacityTextStyle}>{props.title}</SmallInverseText> : null}
     </Component>
   );
+}
+
+export function NavBarActionsGroup(props: { elements: JSX.Element[] }) {
+  const stylesGroup = StyleSheet.create({
+    container: {
+      width: props.elements.length * UI_SIZES.dimensions.width.hug + (props.elements.length - 1) * UI_SIZES.spacing.tiny,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+  });
+  return <View style={stylesGroup.container}>{props.elements.map(element => element)}</View>;
 }

@@ -5,7 +5,7 @@ import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, RefreshControl, View } from 'react-native';
+import { Alert, FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,12 +17,10 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView, pageGutterSize } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
@@ -129,11 +127,10 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refresh();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation, props.route.params.folderPath]);
+  }, [props.navigation]);
 
   React.useEffect(() => {
     setQuery('');
@@ -185,6 +182,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         folderPath,
         id: mail.id,
         subject: mail.subject,
+        refreshList: refresh,
       });
     }
   };
