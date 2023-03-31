@@ -70,6 +70,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
 
   const credentials = route.params.credentials;
+  const platform = route.params.platform;
   const defaultMobile = route.params.defaultMobile;
   const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
@@ -105,7 +106,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       try {
         setRequirementsChecked(true);
         setIsLoading(true);
-        const requirements = await getUserRequirements();
+        const requirements = await getUserRequirements(platform);
         setIsCheckMobile(containsKey(requirements as object, 'needRevalidateMobile'));
       } catch {
         setIsError(true);
@@ -114,7 +115,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       }
     }
     if (!requirementsChecked) checkRequirements();
-  }, [requirementsChecked]);
+  }, [platform, requirementsChecked]);
 
   const isMobileEmpty = isEmpty(mobile);
   const isMobileStatePristine = mobileState === MobileState.PRISTINE;
@@ -166,7 +167,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           return MobileState.MOBILE_ALREADY_VERIFIED;
         }
         await sendMobileVerificationCode(mobileNumberFormatted);
-        navigation.navigate('MFA', {
+        navigation.navigate(AuthRouteNames.mfa, {
           credentials,
           modificationType,
           isMobileMFA: true,

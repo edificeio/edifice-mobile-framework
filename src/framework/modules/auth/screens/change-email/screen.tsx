@@ -93,7 +93,13 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         return EmailState.EMAIL_ALREADY_VERIFIED;
       }
       await sendEmailVerificationCode(toVerify);
-      navigation.navigate('MFA', { credentials, modificationType, isEmailMFA: true, email: toVerify, navBarTitle: title });
+      navigation.navigate(AuthRouteNames.mfa, {
+        credentials,
+        modificationType,
+        isEmailMFA: true,
+        email: toVerify,
+        navBarTitle: title,
+      });
     } catch {
       Toast.show(I18n.t('common.error.text'), {
         ...UI_ANIMATIONS.toast,

@@ -119,6 +119,7 @@ export enum RuntimeAuthErrorCode {
   RESTORE_FAIL = 'restore-fail',
   USERINFO_FAIL = 'userinfo-fail',
   USERPUBLICINFO_FAIL = 'userpublicinfo-fail',
+  USERREQUIREMENTS_FAIL = 'userrequirements-fail',
   FIREBASE_ERROR = 'firebase_error',
   NOT_PREMIUM = 'not_premium',
   PRE_DELETED = 'pre_deleted',
@@ -153,6 +154,8 @@ export function createAuthError<T extends object>(
 export enum PartialSessionScenario {
   MUST_CHANGE_PASSWORD = 'must-change-password',
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
+  MUST_VERIFY_MOBILE = 'must-verify-mobile',
+  MUST_VERIFY_EMAIL = 'must-verify-email',
 }
 
 export interface IAuthContext {

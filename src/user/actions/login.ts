@@ -171,7 +171,7 @@ export function loginAction(
       // === 3: Gather user mandatory context
       let requirements: IUserRequirements | null = null;
       try {
-        requirements = await getUserRequirements();
+        requirements = await getUserRequirements(platform);
       } catch (err) {
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }

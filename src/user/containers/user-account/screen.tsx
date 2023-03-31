@@ -80,7 +80,7 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
   public getMFARequirementAndRedirect = async (modificationType: ModificationType) => {
     try {
       this.setState({ loadingMFARequirement: { ...this.state.loadingMFARequirement, [modificationType]: true } });
-      const requirements = await getUserRequirements();
+      const requirements = await getUserRequirements(platform);
       const needMfa = requirements?.needMfa;
       if (needMfa) await getMFAValidationInfos();
       const routeNames = {

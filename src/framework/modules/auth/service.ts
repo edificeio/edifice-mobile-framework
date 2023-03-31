@@ -182,103 +182,6 @@ export async function restoreSession(platform: Platform, fromData?: string) {
   }
 }
 
-export async function fetchUserInfo(platform: Platform) {
-  try {
-    const userinfo = (await fetchJSONWithCache(
-      '/auth/oauth2/userinfo',
-      {
-        headers: {
-          Accept: 'application/json;version=2.0',
-        },
-      },
-      true,
-      platform.url,
-    )) as any;
-
-    // Legacy app names for eventual compatibility
-    userinfo.appsNames = userinfo.apps.map((e: any) => e.name);
-    if (userinfo.appsNames.includes('Cahier de texte')) userinfo.appsNames.push('Homeworks');
-    if (userinfo.appsNames.includes('Espace documentaire')) userinfo.appsNames.push('Workspace');
-    if (userinfo.appsNames.includes('Actualites')) userinfo.appsNames.push('News');
-    return userinfo as IUserInfoBackend;
-  } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Failed to fetch user info', '', err as Error);
-  }
-}
-
-/**
- * Ensure that user has condition to create a session. Fire an exception if not.
- * Note : in some cases (force change password, revalidate cgu, etc) allow to create a session but not to use the app.
- *        These corner-cases are managed in dedicated functions.
- * @param userinfo user info got from `fetchUserInfo` function.
- */
-export function ensureUserValidity(userinfo: IUserInfoBackend) {
-  if (userinfo.deletePending) {
-    throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
-  } else if (!userinfo.hasApp) {
-    throw createAuthError(RuntimeAuthErrorCode.NOT_PREMIUM, '', 'Structure is not premium');
-  }
-  // else if (userinfo.forceChangePassword) {
-  //   const error = createAuthError(RuntimeAuthErrorCode.MUST_CHANGE_PASSWORD, '', 'User must change his password');
-  //   (error as any).userinfo = userinfo;
-  //   throw error;
-  // } else if (userinfo.needRevalidateTerms) {
-  //   throw createAuthError(RuntimeAuthErrorCode.MUST_REVALIDATE_TERMS, '', 'User must revalidate CGU');
-  // }
-}
-
-/**
- * Get flags status for the current user.
- * These flags may leady to partial sessions scenarios
- * where the user needs to do some action before retry login.
- *
- * CAUTION : the 'forceChangePassword' flag received from the server corresponds to a field named 'changePw' in the database.
- *
- * @param userinfo got userInfo from `fetchUserInfo()`
- * @returns the first flag encountered. May returns a flag until there is no one more.
- */
-export function getPartialSessionScenario(userinfo: IUserInfoBackend) {
-  if (userinfo.forceChangePassword) return PartialSessionScenario.MUST_CHANGE_PASSWORD;
-  if (userinfo.needRevalidateTerms) return PartialSessionScenario.MUST_REVALIDATE_TERMS;
-}
-
-export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: Platform) {
-  try {
-    if (!userinfo.userId) {
-      throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', 'User id has not being returned by the server');
-    }
-    if (!userinfo.type) {
-      throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', 'User type has not being returned by the server');
-    }
-
-    const [userdata, userPublicInfo] = await Promise.all([
-      fetchJSONWithCache(`/directory/user/${userinfo.userId}`, {}, true, platform.url) as any,
-      fetchJSONWithCache('/userbook/api/person?id=' + userinfo.userId, {}, true, platform.url),
-    ]);
-
-    // We fetch children information only for relative users
-    const childrenStructure: UserPrivateData['childrenStructure'] =
-      userinfo.type === UserType.Relative
-        ? await (fetchJSONWithCache('/directory/user/' + userinfo.userId + '/children', {}, true, platform.url) as any)
-        : undefined;
-    if (childrenStructure) {
-      userdata.childrenStructure = childrenStructure;
-    }
-
-    // We enforce undefined parents for non-student users becase backend populates this with null data
-    if (userinfo.type !== UserType.Student) {
-      userdata.parents = undefined;
-    }
-
-    return { userdata, userPublicInfo: userPublicInfo.result?.[0] } as {
-      userdata?: UserPrivateData;
-      userPublicInfo?: UserPersonDataBackend;
-    };
-  } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', '', err as Error);
-  }
-}
-
 export async function saveSession() {
   try {
     if (!OAuth2RessourceOwnerPasswordClient.connection) {
@@ -288,16 +191,6 @@ export async function saveSession() {
   } catch (err) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Failed to save token', err as Error);
   }
-}
-
-export function formatStructuresWithClasses(
-  structureNodes?: StructureNode[],
-  structuresWithClasses?: UserPersonDataStructureWithClasses[],
-) {
-  return structureNodes?.map(structure => ({
-    ...structure,
-    classes: structuresWithClasses?.find(sc => sc.id === structure.id)?.classes ?? [],
-  }));
 }
 
 export function formatSession(
@@ -371,6 +264,16 @@ export function formatSession(
     // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
     user,
   };
+}
+
+export function formatStructuresWithClasses(
+  structureNodes?: StructureNode[],
+  structuresWithClasses?: UserPersonDataStructureWithClasses[],
+) {
+  return structureNodes?.map(structure => ({
+    ...structure,
+    classes: structuresWithClasses?.find(sc => sc.id === structure.id)?.classes ?? [],
+  }));
 }
 
 export const PLATFORM_STORAGE_KEY = 'currentPlatform';
@@ -574,12 +477,6 @@ export async function removeFirebaseToken(platform: Platform) {
   }
 }
 
-export async function revalidateTerms(session: ISession) {
-  await signedFetch(session.platform.url + '/auth/cgu/revalidate', {
-    method: 'PUT',
-  });
-}
-
 export async function getAuthTranslationKeys(platform: Platform, language: SupportedLocales) {
   try {
     // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
@@ -593,9 +490,10 @@ export async function getAuthTranslationKeys(platform: Platform, language: Suppo
   }
 }
 
-export async function getUserRequirements(): Promise<IUserRequirements | null> {
-  const resp = await signedFetch(`${assertSession().platform.url}/auth/user/requirements`);
-  return resp.status === 404 ? null : resp.json();
+export async function revalidateTerms(session: ISession) {
+  await signedFetch(session.platform.url + '/auth/cgu/revalidate', {
+    method: 'PUT',
+  });
 }
 
 export async function getMFAValidationInfos() {
@@ -672,5 +570,118 @@ export async function verifyEmailCode(key: string) {
     return emailValidationState;
   } catch {
     // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
+  }
+}
+
+export async function getUserRequirements(platform: Platform) {
+  const resp = await signedFetch(`${platform.url}/auth/user/requirements`);
+  return resp.status === 404 ? null : (resp.json() as IUserRequirements);
+}
+
+export async function fetchUserRequirements(platform: Platform) {
+  try {
+    const requirements = await getUserRequirements(platform);
+    return requirements as IUserRequirements;
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.USERREQUIREMENTS_FAIL, 'Failed to fetch user requirements', '', err as Error);
+  }
+}
+
+/**
+ * Get flags status for the current user.
+ * These flags may lead to partial session scenarios
+ * where the user needs to do some action before retrying to login.
+ *
+ * CAUTION : the 'forceChangePassword' flag received from the server corresponds to a field named 'changePw' in the database.
+ *
+ * @param userRequirements get userRequirements from `fetchUserRequirements()`
+ * @returns the first flag encountered (until there is none).
+ */
+export function getPartialSessionScenario(userRequirements: IUserRequirements) {
+  if (userRequirements.forceChangePassword) return PartialSessionScenario.MUST_CHANGE_PASSWORD;
+  if (userRequirements.needRevalidateTerms) return PartialSessionScenario.MUST_REVALIDATE_TERMS;
+  if (userRequirements.needRevalidateMobile) return PartialSessionScenario.MUST_VERIFY_MOBILE;
+  if (userRequirements.needRevalidateEmail) return PartialSessionScenario.MUST_VERIFY_EMAIL;
+}
+
+export async function fetchUserInfo(platform: Platform) {
+  try {
+    const userinfo = (await fetchJSONWithCache(
+      '/auth/oauth2/userinfo',
+      {
+        headers: {
+          Accept: 'application/json;version=2.0',
+        },
+      },
+      true,
+      platform.url,
+    )) as any;
+
+    // Legacy app names for eventual compatibility
+    userinfo.appsNames = userinfo.apps.map((e: any) => e.name);
+    if (userinfo.appsNames.includes('Cahier de texte')) userinfo.appsNames.push('Homeworks');
+    if (userinfo.appsNames.includes('Espace documentaire')) userinfo.appsNames.push('Workspace');
+    if (userinfo.appsNames.includes('Actualites')) userinfo.appsNames.push('News');
+    return userinfo as IUserInfoBackend;
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Failed to fetch user info', '', err as Error);
+  }
+}
+
+/**
+ * Ensures that the user has the right conditions to create a session. Fire an exception otherwise.
+ * Note : in some cases (force change password, revalidate cgu, etc.), allows to create a session but not to use the app.
+ *        These corner-cases are managed in dedicated functions.
+ * @param userInfo get userInfo from `fetchUserInfo()`
+ */
+export function ensureUserValidity(userinfo: IUserInfoBackend) {
+  if (userinfo.deletePending) {
+    throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
+  } else if (!userinfo.hasApp) {
+    throw createAuthError(RuntimeAuthErrorCode.NOT_PREMIUM, '', 'Structure is not premium');
+  }
+  // else if (userinfo.forceChangePassword) {
+  //   const error = createAuthError(RuntimeAuthErrorCode.MUST_CHANGE_PASSWORD, '', 'User must change his password');
+  //   (error as any).userinfo = userinfo;
+  //   throw error;
+  // } else if (userinfo.needRevalidateTerms) {
+  //   throw createAuthError(RuntimeAuthErrorCode.MUST_REVALIDATE_TERMS, '', 'User must revalidate CGU');
+  // }
+}
+
+export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: Platform) {
+  try {
+    if (!userinfo.userId) {
+      throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', 'User id has not being returned by the server');
+    }
+    if (!userinfo.type) {
+      throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', 'User type has not being returned by the server');
+    }
+
+    const [userdata, userPublicInfo] = await Promise.all([
+      fetchJSONWithCache(`/directory/user/${userinfo.userId}`, {}, true, platform.url) as any,
+      fetchJSONWithCache('/userbook/api/person?id=' + userinfo.userId, {}, true, platform.url),
+    ]);
+
+    // We fetch children information only for relative users
+    const childrenStructure: UserPrivateData['childrenStructure'] =
+      userinfo.type === UserType.Relative
+        ? await (fetchJSONWithCache('/directory/user/' + userinfo.userId + '/children', {}, true, platform.url) as any)
+        : undefined;
+    if (childrenStructure) {
+      userdata.childrenStructure = childrenStructure;
+    }
+
+    // We enforce undefined parents for non-student users becase backend populates this with null data
+    if (userinfo.type !== UserType.Student) {
+      userdata.parents = undefined;
+    }
+
+    return { userdata, userPublicInfo: userPublicInfo.result?.[0] } as {
+      userdata?: UserPrivateData;
+      userPublicInfo?: UserPersonDataBackend;
+    };
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', '', err as Error);
   }
 }

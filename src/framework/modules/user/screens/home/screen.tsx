@@ -162,7 +162,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
       try {
         setCurrentLoadingMenu(modificationType);
         if (!(await fetchAuthContext())) throw new Error('No session or auth context');
-        const requirements = await getUserRequirements();
+        const requirements = await getUserRequirements(session?.platform!);
         const needMfa = requirements?.needMfa;
         if (needMfa) await getMFAValidationInfos();
         const routeNames = {
