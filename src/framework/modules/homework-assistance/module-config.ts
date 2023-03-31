@@ -1,5 +1,5 @@
 import theme from '~/app/theme';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IHomeworkAssistanceReduxState } from './reducer';
@@ -9,7 +9,7 @@ export default new NavigableModuleConfig<'homeworkAssistance', IHomeworkAssistan
   name: 'homeworkAssistance',
   entcoreScope: ['homework-assistance'],
   matchEntcoreApp: '/homework-assistance',
-  hasRight: () => getHomeworkAssistanceWorkflowInformation(assertSession()).send,
+  hasRight: () => !!getHomeworkAssistanceWorkflowInformation(getSession()).send,
 
   displayI18n: 'homeworkAssistance.tabName',
   displayAs: 'myAppsModule',

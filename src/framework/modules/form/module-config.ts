@@ -1,5 +1,5 @@
 import theme from '~/app/theme';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IFormReduxState } from './reducer';
@@ -9,7 +9,7 @@ export default new NavigableModuleConfig<'form', IFormReduxState>({
   name: 'form',
   entcoreScope: ['formulaire'],
   matchEntcoreApp: '/formulaire',
-  hasRight: () => getFormWorkflowInformation(assertSession()).initResponse,
+  hasRight: () => !!getFormWorkflowInformation(getSession()).initResponse,
 
   displayI18n: 'form.tabName',
   displayAs: 'myAppsModule',
