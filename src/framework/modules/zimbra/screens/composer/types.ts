@@ -26,6 +26,7 @@ export interface ZimbraComposerScreenNavParams {
   type: DraftType;
   isTrashed?: boolean;
   mailId?: string;
+  refreshList?: () => void;
 }
 
 export interface ZimbraComposerScreenPrivateProps
