@@ -3,7 +3,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Alert, AlertButton, Keyboard, Platform, StyleSheet, View } from 'react-native';
+import { Alert, AlertButton, Keyboard, Platform } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -32,7 +32,7 @@ import NewMailComponent from '~/framework/modules/conversation/components/NewMai
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, NavBarActionsGroup, navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -110,12 +110,6 @@ export const computeNavBar = ({
   title: I18n.t('conversation.newMessage'),
 });
 
-//FIXME: create/move to styles.ts
-const styles = StyleSheet.create({
-  addAttchmentMenuContainer: { width: 48, alignItems: 'center' },
-  headerRightContainer: { flexDirection: 'row' },
-});
-
 const HandleBack = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -170,21 +164,25 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
-        <View style={styles.headerRightContainer}>
-          {addGivenAttachment && (
-            <View style={styles.addAttchmentMenuContainer}>
-              <PopupMenu
-                actions={[
-                  cameraAction({ callback: addGivenAttachment }),
-                  galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
-                  documentAction({ callback: addGivenAttachment }),
-                ]}>
-                <NavBarAction iconName="ui-attachment" />
-              </PopupMenu>
-            </View>
-          )}
-          {sendDraft && <NavBarAction onPress={sendDraft} iconName="ui-send" />}
-        </View>
+        <NavBarActionsGroup
+          elements={[
+            {
+              ...(addGivenAttachment && (
+                <PopupMenu
+                  actions={[
+                    cameraAction({ callback: addGivenAttachment }),
+                    galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
+                    documentAction({ callback: addGivenAttachment }),
+                  ]}>
+                  <NavBarAction iconName="ui-attachment" />
+                </PopupMenu>
+              )),
+            },
+            {
+              ...(sendDraft && <NavBarAction onPress={sendDraft} iconName="ui-send" />),
+            },
+          ]}
+        />
       ),
     });
 

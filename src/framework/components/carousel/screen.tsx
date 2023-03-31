@@ -22,7 +22,7 @@ import { PageView } from '~/framework/components/page';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { NavBarAction, NavBarActionsGroup, navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
@@ -80,33 +80,35 @@ async function assertPermissions(permissions: Permission[]) {
 
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   return (
-    <>
-      <NavBarAction
-        onPress={() => {
-          Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+    <NavBarActionsGroup
+      elements={[
+        <NavBarAction
+          onPress={() => {
+            Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+              {
+                text: I18n.t('carousel.privacy.button'),
+                onPress: () => imageViewerRef.current?.saveToLocal?.(),
+              },
+            ]);
+          }}
+          iconName="ui-download"
+          disabled={disabled}
+        />,
+        <PopupMenu
+          actions={[
             {
-              text: I18n.t('carousel.privacy.button'),
-              onPress: () => imageViewerRef.current?.saveToLocal?.(),
+              title: I18n.t('share'),
+              action: () => imageViewerRef.current?.share?.(),
+              icon: {
+                ios: 'square.and.arrow.up',
+                android: 'ic-menu-share',
+              },
             },
-          ]);
-        }}
-        iconName="ui-download"
-        disabled={disabled}
-      />
-      <PopupMenu
-        actions={[
-          {
-            title: I18n.t('share'),
-            action: () => imageViewerRef.current?.share?.(),
-            icon: {
-              ios: 'square.and.arrow.up',
-              android: 'ic-menu-share',
-            },
-          },
-        ]}>
-        <NavBarAction disabled={disabled} iconName="ui-options" />
-      </PopupMenu>
-    </>
+          ]}>
+          <NavBarAction disabled={disabled} iconName="ui-options" />
+        </PopupMenu>,
+      ]}
+    />
   );
 };
 
