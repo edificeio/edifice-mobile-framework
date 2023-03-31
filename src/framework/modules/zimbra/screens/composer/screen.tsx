@@ -17,7 +17,7 @@ import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DocumentPicked, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import { PageView } from '~/framework/components/page';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/modules/zimbra/actions';
 import NewMailComponent from '~/framework/modules/zimbra/components/NewMail';
 import SignatureModal from '~/framework/modules/zimbra/components/modals/SignatureModal';
@@ -287,7 +287,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         const to = [getUser(this.props.mail.from)];
         let index = 0;
         for (const user of this.props.mail.to) {
-          if (user !== assertSession()?.user.id && this.props.mail.to.indexOf(user as never) === index) {
+          if (user !== getSession()?.user.id && this.props.mail.to.indexOf(user as never) === index) {
             to.push(getUser(user));
           }
           ++index;

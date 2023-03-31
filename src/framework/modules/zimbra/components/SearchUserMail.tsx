@@ -6,7 +6,7 @@ import Toast from 'react-native-tiny-toast';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getProfileColor } from '~/framework/modules/zimbra/utils/userColor';
 
@@ -67,11 +67,12 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
 
   const filterUsersOrGroups = found => selectedUsersOrGroups.every(selected => selected.id !== found.id);
   React.useEffect(() => {
-    const session = assertSession();
+    const session = getSession();
     if (search.length >= 3) {
       updateFoundUsersOrGroups([]);
       clearTimeout(searchTimeout.current);
       searchTimeout.current = setTimeout(() => {
+        if (!session) return;
         zimbraService.recipients.search(session, search).then(({ groups, users }) => {
           const filteredUsers = users.filter(filterUsersOrGroups);
           const filteredGroups = groups
