@@ -20,6 +20,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -32,7 +33,6 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
-import { NavBarAction } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -309,23 +309,23 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
               <>
                 {folderPath === '/Trash' ? (
                   <View style={styles.rightMargin}>
-                    <NavBarAction iconName="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
+                    <NavBarAction icon="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
                   </View>
                 ) : null}
-                <NavBarAction iconName="ui-delete" onPress={alertPermanentDeletion} />
+                <NavBarAction icon="ui-delete" onPress={alertPermanentDeletion} />
               </>
             ) : (
               <>
                 {folderPath !== '/Drafts' ? (
                   <View style={styles.rightMargin}>
                     <NavBarAction
-                      iconName={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
+                      icon={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
                       onPress={markSelectedMailsAsUnread}
                     />
                   </View>
                 ) : null}
                 <PopupMenu actions={getDropdownActions()}>
-                  <NavBarAction iconName="ui-options" />
+                  <NavBarAction icon="ui-options" />
                 </PopupMenu>
               </>
             )}
@@ -337,7 +337,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       headerLeft: undefined,
       headerRight: () => (
         <View style={styles.navBarRightContainer}>
-          <NavBarAction iconName="ui-write" onPress={openComposer} />
+          <NavBarAction icon="ui-write" onPress={openComposer} />
         </View>
       ),
     };

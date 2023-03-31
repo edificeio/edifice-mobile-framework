@@ -14,6 +14,8 @@ import theme from '~/app/theme';
 import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
+import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -32,7 +34,7 @@ import NewMailComponent from '~/framework/modules/conversation/components/NewMai
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
-import { NavBarAction, NavBarActionsGroup, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -174,12 +176,12 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                     galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
                     documentAction({ callback: addGivenAttachment }),
                   ]}>
-                  <NavBarAction iconName="ui-attachment" />
+                  <NavBarAction icon="ui-attachment" />
                 </PopupMenu>
               )),
             },
             {
-              ...(sendDraft && <NavBarAction onPress={sendDraft} iconName="ui-send" />),
+              ...(sendDraft && <NavBarAction onPress={sendDraft} icon="ui-send" />),
             },
           ]}
         />

@@ -14,6 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -23,7 +24,7 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -189,7 +190,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       headerRight: () =>
         hasBlogPostCreationRights && !hasError ? (
           <NavBarAction
-            iconName="ui-plus"
+            icon="ui-plus"
             onPress={() => {
               onGoToPostCreationScreen();
             }}
