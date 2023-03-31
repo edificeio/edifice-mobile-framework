@@ -79,10 +79,12 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
   }
 
   public async onDeleteAvatar() {
-    const { onUpdateAvatar } = this.props;
+    const { onUpdateAvatar, onUploadAvatarError } = this.props;
     try {
       this.setState({ updatingAvatar: true });
       await onUpdateAvatar('');
+    } catch {
+      onUploadAvatarError();
     } finally {
       this.setState({ updatingAvatar: false });
     }
@@ -301,8 +303,9 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
               if (!isEmpty(values)) {
                 if (values.loginAliasValid && values.homePhoneValid) {
                   navigation.setParams({ edit: false });
-                  if (route.params.onSave && route.params.updatedProfileValues)
+                  if (route.params.onSave && route.params.updatedProfileValues) {
                     route.params.onSave(route.params.updatedProfileValues);
+                  }
                 } else {
                   Alert.alert(I18n.t('common-ErrorUnknown2'), I18n.t('ProfileInvalidInformation'));
                 }
@@ -347,8 +350,12 @@ const uploadAvatarError = () => {
   };
 };
 
-const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: Dispatch) => {
-  return workspaceService.file.uploadFile(assertSession(), avatar, {});
+const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: ThunkDispatch<any, any, any>) => {
+  try {
+    return await workspaceService.file.uploadFile(assertSession(), avatar, {});
+  } catch {
+    _dispatch(uploadAvatarError());
+  }
 };
 
 const UserProfileScreenConnected = connect(
@@ -360,6 +367,7 @@ const UserProfileScreenConnected = connect(
   },
   (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
     onSave(updatedProfileValues: UpdatableProfileValues) {
+      // Code smell 💩 : ne return here. Exception will be unhandled but no crash.
       dispatch(profileUpdateAction(updatedProfileValues));
     },
     onPickFileError: (notifierId: string) => dispatch(pickFileError(notifierId)),
