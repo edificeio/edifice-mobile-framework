@@ -7,7 +7,7 @@ import AppCenter from 'appcenter';
 import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import appConf from '~/framework/util/appConf';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
 import { uniqueId, urlSigner } from '~/infra/oauth';
@@ -252,7 +252,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 
   async _trackView(path: string[]) {
-    const platform = assertSession()?.platform;
+    const platform = getSession()?.platform;
     const moduleName = (
       path[0] === 'timeline' ? (['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase()) ? path[2] : 'timeline') : path[0]
     ).toLowerCase();

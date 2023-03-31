@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { getStore } from '~/app/store';
 import { sessionInvalidateAction } from '~/framework/modules/auth/actions';
 import { AuthError, RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
-import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
+import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 
 import { Connection } from './Connection';
@@ -58,7 +58,7 @@ export async function signedFetchJson(url: string | Request, init?: RequestInit)
 }
 
 export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
-  const session = assertSession();
+  const session = getSession();
   if (!session) {
     throw new Error('Fetch : no active session');
   }

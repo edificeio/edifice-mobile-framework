@@ -8,7 +8,7 @@ import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
 import { Source } from 'react-native-fast-image';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
@@ -95,7 +95,7 @@ export class OAuthClientInfo {
 
 export const uniqueId = () => {
   try {
-    return assertSession()?.user?.uniqueId ?? '';
+    return getSession()?.user?.uniqueId ?? '';
   } catch {
     return '';
   }
