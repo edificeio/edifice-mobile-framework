@@ -17,7 +17,7 @@ import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
@@ -39,7 +39,7 @@ import { AttachmentPicker } from '~/ui/AttachmentPicker';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 export interface BlogCreatePostScreenDataProps {
-  session: ISession;
+  session?: ISession;
 }
 
 export interface BlogCreatePostScreenEventProps {
@@ -327,6 +327,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   renderBlogInfos() {
     const { route, session } = this.props;
+    if (!session) return <View style={styles.userInfos} />;
     const { id, displayName } = session.user;
     const blog = route.params.blog;
     return (
@@ -432,7 +433,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
 const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s => {
   return {
-    session: assertSession(),
+    session: getSession(),
   };
 };
 

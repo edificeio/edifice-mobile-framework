@@ -23,7 +23,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchBlogsAndFoldersAction } from '~/framework/modules/blog/actions';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
@@ -38,7 +38,7 @@ export interface BlogExplorerScreenDataProps {
   tree?: BlogFlatTree;
   initialLoadingState: AsyncLoadingState;
   error?: Error;
-  session: ISession;
+  session?: ISession;
 }
 
 export interface BlogExplorerScreenEventProps {
@@ -68,7 +68,8 @@ export const computeNavBar = ({
 });
 
 const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
-  const hasBlogCreationRights = getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
+  const hasBlogCreationRights =
+    props.session && getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
 
   // ToDo : Make this in a useLoadingState.
 
@@ -240,7 +241,7 @@ export default connect(
   (gs: IGlobalState) => {
     const bs = moduleConfig.getState(gs);
     return {
-      session: assertSession(),
+      session: getSession(),
       tree: bs.tree,
       initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
       error: bs.blogs.error ?? bs.folders.error,

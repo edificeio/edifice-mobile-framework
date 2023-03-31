@@ -127,6 +127,7 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
  * - In a utility function, use this assertion.
  * Caution : this is an "assert" function. If session not present, this function will throw an error.
  * @returns the current session
+ * @throws Error
  */
 export function assertSession() {
   const session = getState(getStore().getState()).session;

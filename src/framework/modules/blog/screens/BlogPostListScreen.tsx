@@ -16,7 +16,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { BlogPostResourceCard } from '~/framework/modules/blog/components/BlogPostResourceCard';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
@@ -31,10 +31,10 @@ import { DisplayedBlog } from './BlogExplorerScreen';
 
 export interface BlogPostListScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session: ISession;
+  session?: ISession;
 }
 export interface BlogPostListScreenEventProps {
-  doFetch: (selectedBlogId: string) => Promise<BlogPost[] | undefined>;
+  // doFetch: (selectedBlogId: string) => Promise<BlogPost[] | undefined>; // unused ?
 }
 export interface BlogPostListScreenNavigationParams {
   selectedBlog: DisplayedBlog;
@@ -64,7 +64,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   const selectedBlog = props.route.params.selectedBlog;
   const selectedBlogTitle = selectedBlog && selectedBlog.title;
   const selectedBlogId = selectedBlog && selectedBlog.id;
-  const hasBlogPostCreationRights = selectedBlog && getBlogPostRight(selectedBlog, props.session)?.actionRight;
+  const hasBlogPostCreationRights = props.session && selectedBlog && getBlogPostRight(selectedBlog, props.session)?.actionRight;
   const [blogPosts, setBlogPosts] = React.useState([] as BlogPostList);
   const [nextPageToFetchState, setNextPageToFetch] = React.useState(0);
   const [pagingSizeState, setPagingSize] = React.useState<number | undefined>(undefined);
@@ -79,11 +79,15 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   // Fetch a page of blog posts.
   // Auto-increment nextPageNumber unless `fromPage` is provided.
   // If `flushAfter` is also provided along `fromPage`, all content after the loaded page will be erased.
+  /**
+   * @throws Error
+   */
   const fetchPage = async (blogId: string, fromPage?: number, flushAfter?: boolean) => {
     try {
       const pageToFetch = fromPage ?? nextPageToFetchState; // If page is not defined, automatically fetch the next page
       if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
       const session = props.session;
+      if (!session) throw new Error('BlogPostListScreen.fetchPage: no session');
       const newBlogPosts = await blogService.posts.page(session, blogId, pageToFetch, ['PUBLISHED', 'SUBMITTED']);
       let pagingSize = pagingSizeState;
       if (!pagingSize) {
@@ -294,13 +298,10 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   );
 };
 
-const BlogPostListScreenConnected = connect(
-  (gs: IGlobalState) => {
-    return {
-      session: assertSession(),
-      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
-    };
-  },
-  dispatch => bindActionCreators({}, dispatch),
-)(BlogPostListScreen);
+const BlogPostListScreenConnected = connect((gs: IGlobalState) => {
+  return {
+    session: getSession(),
+    initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+  };
+})(BlogPostListScreen);
 export default BlogPostListScreenConnected;
