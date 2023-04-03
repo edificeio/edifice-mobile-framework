@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IUpdatableProfileValues } from '~/framework/modules/user/actions';
+import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
@@ -10,7 +10,7 @@ import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
 
 export interface AuthMFAScreenDispatchProps {
   onLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
-  onUpdateProfile: (updatedProfileValues: IUpdatableProfileValues) => void;
+  onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => void;
 }
 
 export interface AuthMFAScreenNavParams {

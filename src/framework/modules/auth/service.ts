@@ -21,7 +21,6 @@ import {
   UserChildren,
   createAuthError,
 } from './model';
-import { assertSession } from './reducer';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;
@@ -526,8 +525,8 @@ export async function getMobileValidationInfos() {
   }
 }
 
-export async function sendMobileVerificationCode(mobile: string) {
-  await signedFetch(assertSession().platform.url + '/directory/user/mobilestate', {
+export async function sendMobileVerificationCode(platform: Platform, mobile: string) {
+  await signedFetch(platform.url + '/directory/user/mobilestate', {
     method: 'PUT',
     body: JSON.stringify({ mobile }),
   });
@@ -554,8 +553,8 @@ export async function getEmailValidationInfos() {
   }
 }
 
-export async function sendEmailVerificationCode(email: string) {
-  await signedFetch(assertSession().platform.url + '/directory/user/mailstate', {
+export async function sendEmailVerificationCode(platform: Platform, email: string) {
+  await signedFetch(platform.url + '/directory/user/mailstate', {
     method: 'PUT',
     body: JSON.stringify({ email }),
   });

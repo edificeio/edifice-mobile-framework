@@ -28,7 +28,7 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
-import { IUpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
@@ -166,7 +166,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           setIsSendingCode(false);
           return MobileState.MOBILE_ALREADY_VERIFIED;
         }
-        await sendMobileVerificationCode(mobileNumberFormatted);
+        await sendMobileVerificationCode(platform, mobileNumberFormatted);
         navigation.navigate(AuthRouteNames.mfa, {
           credentials,
           modificationType,
@@ -326,7 +326,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChange
   return bindActionCreators(
     {
       onLogout: tryAction(logoutAction, undefined, true) as unknown as AuthChangeMobileScreenDispatchProps['onLogout'],
-      onSaveNewMobile(updatedProfileValues: IUpdatableProfileValues) {
+      onSaveNewMobile(updatedProfileValues: UpdatableProfileValues) {
         dispatch(profileUpdateAction(updatedProfileValues));
       },
     },

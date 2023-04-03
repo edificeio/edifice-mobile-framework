@@ -54,6 +54,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
 
   const credentials = route.params.credentials;
+  const platform = route.params.platform;
   const defaultEmail = route.params.defaultEmail;
   const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
@@ -92,7 +93,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         setIsSendingCode(false);
         return EmailState.EMAIL_ALREADY_VERIFIED;
       }
-      await sendEmailVerificationCode(toVerify);
+      await sendEmailVerificationCode(platform, toVerify);
       navigation.navigate(AuthRouteNames.mfa, {
         credentials,
         modificationType,

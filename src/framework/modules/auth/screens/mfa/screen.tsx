@@ -28,7 +28,7 @@ import {
   verifyMFACode,
   verifyMobileCode,
 } from '~/framework/modules/auth/service';
-import { IUpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -184,9 +184,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     try {
       setIsResendingVerificationCode(true);
       if (isEmailMFA) {
-        await sendEmailVerificationCode(email);
+        await sendEmailVerificationCode(platform, email);
       } else if (isMobileMFA) {
-        await sendMobileVerificationCode(mobile);
+        await sendMobileVerificationCode(platform, mobile);
       } else await getMFAValidationInfos();
       return ResendResponse.SUCCESS;
     } catch {
@@ -385,7 +385,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScr
   return bindActionCreators(
     {
       onLogin: tryAction(loginAction, undefined, true) as unknown as AuthMFAScreenDispatchProps['onLogin'],
-      onUpdateProfile: (updatedProfileValues: IUpdatableProfileValues) =>
+      onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) =>
         dispatch(profileUpdateAction(updatedProfileValues, false, false)),
     },
     dispatch,
