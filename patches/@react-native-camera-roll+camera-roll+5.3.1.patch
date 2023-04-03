@@ -1,3 +1,13 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:700b92a7a411014370865ac8069abf6765458facbb2f4f25519296e7734586e8
-size 867
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+index 332f9b8..94e5672 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+@@ -237,7 +237,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
+                     }
+                   });
+         }
+-      } catch (IOException e) {
++      } catch (Exception e) {
+         mPromise.reject(e);
+       } finally {
+         if (input != null) {

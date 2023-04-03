@@ -1,3 +1,46 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:833b7d3974827c0c7e11e8bca1157f719128e02fa7bbe66aaa0d3723fbeb8f95
-size 3951
+diff --git a/node_modules/react-native-country-picker-modal/lib/CountryPicker.d.ts b/node_modules/react-native-country-picker-modal/lib/CountryPicker.d.ts
+index 4ec9804..932c2c8 100644
+--- a/node_modules/react-native-country-picker-modal/lib/CountryPicker.d.ts
++++ b/node_modules/react-native-country-picker-modal/lib/CountryPicker.d.ts
+@@ -1,6 +1,6 @@
+ import { ReactNode } from 'react';
+ import { ModalProps, FlatListProps, StyleProp, ViewStyle, ImageSourcePropType, ImageStyle } from 'react-native';
+-import { Country, CountryCode, Region, Subregion } from './types';
++import { Country, CountryCode, Region, Subregion, TranslationLanguageCode } from './types';
+ import { CountryFilter, CountryFilterProps } from './CountryFilter';
+ import { FlagButton } from './FlagButton';
+ interface CountryPickerProps {
+@@ -37,6 +37,7 @@ interface CountryPickerProps {
+     onSelect(country: Country): void;
+     onOpen?(): void;
+     onClose?(): void;
++    language?: TranslationLanguageCode;
+ }
+ export declare const CountryPicker: {
+     (props: CountryPickerProps): JSX.Element;
+diff --git a/node_modules/react-native-country-picker-modal/lib/CountryPicker.js b/node_modules/react-native-country-picker-modal/lib/CountryPicker.js
+index c4ba18e..020a471 100644
+--- a/node_modules/react-native-country-picker-modal/lib/CountryPicker.js
++++ b/node_modules/react-native-country-picker-modal/lib/CountryPicker.js
+@@ -9,7 +9,7 @@ import { CountryList } from './CountryList';
+ const renderFlagButton = (props) => props.renderFlagButton ? (props.renderFlagButton(props)) : (React.createElement(FlagButton, Object.assign({}, props)));
+ const renderFilter = (props) => props.renderCountryFilter ? (props.renderCountryFilter(props)) : (React.createElement(CountryFilter, Object.assign({}, props)));
+ export const CountryPicker = (props) => {
+-    const { countryCode, region, subregion, countryCodes, renderFlagButton: renderButton, renderCountryFilter, filterProps, modalProps, flatListProps, onSelect, withEmoji, withFilter, withCloseButton, withCountryNameButton, withCallingCodeButton, withCurrencyButton, containerButtonStyle, withAlphaFilter, withCallingCode, withCurrency, withFlag, withModal, disableNativeModal, withFlagButton, onClose: handleClose, onOpen: handleOpen, closeButtonImage, closeButtonStyle, closeButtonImageStyle, excludeCountries, placeholder, preferredCountries } = props;
++    const { countryCode, region, subregion, countryCodes, renderFlagButton: renderButton, renderCountryFilter, filterProps, modalProps, flatListProps, onSelect, withEmoji, withFilter, withCloseButton, withCountryNameButton, withCallingCodeButton, withCurrencyButton, containerButtonStyle, withAlphaFilter, withCallingCode, withCurrency, withFlag, withModal, disableNativeModal, withFlagButton, onClose: handleClose, onOpen: handleOpen, closeButtonImage, closeButtonStyle, closeButtonImageStyle, excludeCountries, placeholder, preferredCountries, language } = props;
+     const [state, setState] = useState({
+         visible: props.visible || false,
+         countries: [],
+@@ -56,10 +56,10 @@ export const CountryPicker = (props) => {
+         placeholder,
+     };
+     useEffect(() => {
+-        getCountriesAsync(withEmoji ? FlagType.EMOJI : FlagType.FLAT, translation, region, subregion, countryCodes, excludeCountries, preferredCountries, withAlphaFilter)
++        getCountriesAsync(withEmoji ? FlagType.EMOJI : FlagType.FLAT, language ?? translation, region, subregion, countryCodes, excludeCountries, preferredCountries, withAlphaFilter)
+             .then(setCountries)
+             .catch(console.warn);
+-    }, [translation, withEmoji]);
++    }, [translation, withEmoji, language]);
+     return (React.createElement(React.Fragment, null,
+         withModal && renderFlagButton(flagProp),
+         React.createElement(CountryModal, Object.assign({}, { visible, withModal, disableNativeModal, ...modalProps }, { onRequestClose: onClose, onDismiss: onClose }),

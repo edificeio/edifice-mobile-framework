@@ -1,3 +1,55 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:c4a4f9b74b56fff5179ac54d7fa107dff13db08ec68807ef83fdeb7fab4ebe51
-size 2266
+diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
+index e3fb93b..c329b18 100644
+--- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
++++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
+@@ -41,7 +41,8 @@ import {
+     GET_DROPDOWN_DIRECTION,
+     LANGUAGE,
+     RTL_DIRECTION,
+-    RTL_STYLE
++    RTL_STYLE,
++    ARROW_ICON_POSITION,
+ } from '../constants';
+ import THEMES from '../themes';
+ import RenderBadgeItem from './RenderBadgeItem';
+@@ -162,6 +163,7 @@ function Picker({
+     testID,
+     closeOnBackPressed = false,
+     extendableBadgeContainer = false,
++    arrowIconPosition = ARROW_ICON_POSITION.RIGHT,
+     onSelectItem = (item) => {}
+ }) {
+     const [necessaryItems, setNecessaryItems] = useState([]);
+@@ -1808,14 +1810,19 @@ function Picker({
+      */
+     const pointerEvents = useMemo(() => disabled ? "none" : "auto", [disabled]);
+ 
++    const TopComponent = useMemo(() => {
++        switch (arrowIconPosition) {
++            case ARROW_ICON_POSITION.RIGHT: return [_BodyComponent, _ArrowComponent];
++            default: return [_ArrowComponent, _BodyComponent];
++        }
++    }, [arrowIconPosition, _ArrowComponent, _BodyComponent]);
++
+     return (
+         <>
+             <View style={_containerStyle} {...containerProps}>
+                 <TouchableOpacity style={_style} onPress={__onPress} onLayout={__onLayout} {...props} ref={onRef} pointerEvents={pointerEvents} disabled={disabled} testID={testID}>
+-                    {_BodyComponent}
+-                    {_ArrowComponent}
++                    {TopComponent}
+                 </TouchableOpacity>
+-
+                 {DropDownBodyComponent}
+             </View>
+         </>
+diff --git a/node_modules/react-native-dropdown-picker/src/constants/index.js b/node_modules/react-native-dropdown-picker/src/constants/index.js
+index f4e9c76..5a2bc5b 100644
+--- a/node_modules/react-native-dropdown-picker/src/constants/index.js
++++ b/node_modules/react-native-dropdown-picker/src/constants/index.js
+@@ -134,3 +134,5 @@ export const ASCII_CODE = (str) => {
+ 
+     return chr;
+ }
++
++export const ARROW_ICON_POSITION = { LEFT: 'LEFT', RIGHT: 'RIGHT' };
