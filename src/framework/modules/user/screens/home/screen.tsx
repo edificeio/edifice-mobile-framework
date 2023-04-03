@@ -26,7 +26,7 @@ import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } 
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
-import { handleAction, tryActionLegacy } from '~/framework/util/redux/actions';
+import { handleAction } from '~/framework/util/redux/actions';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -176,13 +176,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
             navBarTitle: I18n.t('user.page.editEmail'),
             modificationType: ModificationType.EMAIL,
             platform: session?.platform,
-            context: authContextRef?.current,
           },
           [ModificationType.MOBILE]: {
             navBarTitle: I18n.t('user.page.editMobile'),
             modificationType: ModificationType.MOBILE,
             platform: session?.platform,
-            context: authContextRef?.current,
           },
           [ModificationType.PASSWORD]: {
             navBarTitle: I18n.t('user.page.editPassword'),

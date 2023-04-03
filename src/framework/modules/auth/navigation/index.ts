@@ -94,8 +94,6 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
               name: AuthRouteNames.changeMobile,
               params: {
                 platform,
-                context: action.context,
-                credentials: action.credentials,
                 defaultMobile: action.defaultMobile,
               },
             },
@@ -109,8 +107,6 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
               name: AuthRouteNames.changeEmail,
               params: {
                 platform,
-                context: action.context,
-                credentials: action.credentials,
                 defaultEmail: action.defaultEmail,
               },
             },

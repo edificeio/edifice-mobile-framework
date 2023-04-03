@@ -5,7 +5,6 @@ import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 import { logoutAction } from '../../actions';
-import { IAuthContext, IAuthCredentials } from '../../model';
 import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
 
 export interface AuthChangeMobileScreenDispatchProps {
@@ -14,11 +13,9 @@ export interface AuthChangeMobileScreenDispatchProps {
 }
 
 export interface AuthChangeMobileScreenNavParams {
-  context: IAuthContext;
-  credentials: IAuthCredentials;
-  defaultMobile: string;
-  modificationType: ModificationType;
-  navBarTitle: string;
+  defaultMobile?: string;
+  modificationType?: ModificationType;
+  navBarTitle?: string;
   platform: Platform;
 }
 

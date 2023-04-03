@@ -56,7 +56,6 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const navBarTitle = route.params.navBarTitle;
   const platform = props.route.params.platform;
-  const credentials = route.params.credentials;
   const rememberMe = props.route.params.rememberMe;
   const modificationType = route.params.modificationType;
   const isEmailMFA = route.params.isEmailMFA;
@@ -213,12 +212,12 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const redirectMFA = () => {
     if (isCodeCorrect) {
       const routeNames = {
-        [ModificationType.EMAIL]: 'UserEmail',
-        [ModificationType.MOBILE]: 'UserMobile',
-        [ModificationType.PASSWORD]: 'ChangePassword',
+        [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
+        [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
+        [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
       };
       const routeName = routeNames[modificationType];
-      const params = { navBarTitle, modificationType };
+      const params = { navBarTitle, modificationType, platform };
       navigation.dispatch(StackActions.replace({ routeName, params }));
     }
   };
@@ -238,7 +237,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       );
     } else {
       try {
-        const redirect = await onLogin(platform, credentials, rememberMe);
+        const redirect = await onLogin(platform, undefined, rememberMe);
         redirectLoginNavAction(redirect, platform, navigation);
       } catch {
         Toast.show(I18n.t('common.error.text'), {
@@ -247,19 +246,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         });
       }
     }
-  }, [
-    isModifyingEmail,
-    isModifyingMobile,
-    navigation,
-    onUpdateProfile,
-    email,
-    mobile,
-    onLogin,
-    platform,
-    credentials,
-    rememberMe,
-    resetCode,
-  ]);
+  }, [isModifyingEmail, isModifyingMobile, navigation, onUpdateProfile, email, mobile, onLogin, platform, rememberMe, resetCode]);
 
   useEffect(() => setResendTimer(), []);
 

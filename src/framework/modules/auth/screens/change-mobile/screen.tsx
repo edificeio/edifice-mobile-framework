@@ -69,7 +69,6 @@ const countryListLanguages = {
 const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
 
-  const credentials = route.params.credentials;
   const platform = route.params.platform;
   const defaultMobile = route.params.defaultMobile;
   const navBarTitle = route.params.navBarTitle;
@@ -168,7 +167,6 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         }
         await sendMobileVerificationCode(platform, mobileNumberFormatted);
         navigation.navigate(AuthRouteNames.mfa, {
-          credentials,
           modificationType,
           isMobileMFA: true,
           mobile: mobileNumberFormatted,

@@ -4,7 +4,6 @@ import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 import { logoutAction } from '../../actions';
-import { IAuthContext, IAuthCredentials } from '../../model';
 import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
 
 export interface AuthChangeEmailScreenDispatchProps {
@@ -12,11 +11,9 @@ export interface AuthChangeEmailScreenDispatchProps {
 }
 
 export interface AuthChangeEmailScreenNavParams {
-  context: IAuthContext;
-  credentials: IAuthCredentials;
-  defaultEmail: string;
-  modificationType: ModificationType;
-  navBarTitle: string;
+  defaultEmail?: string;
+  modificationType?: ModificationType;
+  navBarTitle?: string;
   platform: Platform;
 }
 

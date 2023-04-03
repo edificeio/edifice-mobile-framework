@@ -15,7 +15,7 @@ export interface ChangePasswordScreenProps {
 export interface ChangePasswordScreenNavParams {
   platform: Platform;
   context: IAuthContext;
-  credentials?: IAuthCredentials;
+  credentials: IAuthCredentials;
   rememberMe?: boolean;
   forceChange?: boolean;
 }

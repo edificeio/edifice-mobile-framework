@@ -53,7 +53,6 @@ export const computeNavBar = ({
 const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
 
-  const credentials = route.params.credentials;
   const platform = route.params.platform;
   const defaultEmail = route.params.defaultEmail;
   const navBarTitle = route.params.navBarTitle;
@@ -95,7 +94,6 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       }
       await sendEmailVerificationCode(platform, toVerify);
       navigation.navigate(AuthRouteNames.mfa, {
-        credentials,
         modificationType,
         isEmailMFA: true,
         email: toVerify,
