@@ -1,6 +1,6 @@
 {
   "last": "2023-03-20 18:09:11",
   "notes": "fix(zimbra): AMZ-121 fix addition of recipient\nchore(navbar): MB-1406, MB-1405, change HeaderIcon to NavBarAction && NavBarAction with optional onPress && delete old PopupMenu component\nfix(presences): AMVS-335 update absence declaration dates using clone\nfix(openDocument): MB-1378, open carousel && media player in rn6\nupgrade(rn6): Packages upgrade.\nfix(presences): AMVS-346 improve memento rendering\nfix(diary): move personnel state from dashboard reducer to diary reducer\nupgrade(rn6): Somme ESLint + Prettier\nupgrade(rn6): replace header actions with navbar actions\nupgrade(rn6): react-native-dropdown-picker upgrade\nfix(mediacentre): pass right ref to imperative handlers\nfix(auth): prevent multiple logouts in case of refreshToken error\nchore(viesco): fix linter errors\nupgrade(rn6): Prettier Errors Fix\nupgrade(rn6): AMV2-561 upgrade homework-assistance\nfix: move use navigation dev plugin\nfix: MB-1422 redirct user on login screen if refreshToken fails\nfix: missing ref parameter in forwardRef components\nupgrade(rn6): AMV2-560 upgrade form\nfix(auth): MB-1422 manage error display on loginHome, loginWayf & wayf\nupgrade(rn6): Remaining Lint+Prettier errors and warnings fix\nupgrade(rn6): Remaining Lint+Prettier errors and warnings fix\nrelease: 1.9.5-alpha.8(1090508)",
-  "version": "1.9.5-alpha.9(1090509)",
+  "version": "1.9.6-alpha.0(1090600)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

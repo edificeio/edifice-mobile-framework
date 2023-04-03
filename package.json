@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.9.7",
+  "version": "1.9.6",
   "private": true,
   "scripts": {
     "add-dev": "yarn add --dev --exact",
@@ -46,7 +46,7 @@
     "@react-native-camera-roll/camera-roll": "5.3.1",
     "@react-native-clipboard/clipboard": "1.11.2",
     "@react-native-community/cli": "11.0.1",
-    "@react-native-community/datetimepicker": "7.0.0",
+    "@react-native-community/datetimepicker": "7.0.1",
     "@react-native-community/netinfo": "9.3.8",
     "@react-native-community/progress-bar-android": "1.0.5",
     "@react-native-community/progress-view": "1.4.1",
@@ -106,7 +106,7 @@
     "react-native-dropdown-picker": "5.4.6",
     "react-native-fast-image": "8.6.3",
     "react-native-file-viewer": "2.1.5",
-    "react-native-flipper": "0.184.0",
+    "react-native-flipper": "0.187.1",
     "react-native-fs": "2.20.0",
     "react-native-gesture-handler": "2.9.0",
     "react-native-global-props": "1.1.5",
