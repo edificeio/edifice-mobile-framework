@@ -1,14 +1,17 @@
 package com.ode.appe;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
-import com.facebook.react.defaults.DefaultReactNativeHost;
+import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
+
+import com.ode.appe.newarchitecture.MainApplicationReactNativeHost;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -26,23 +29,45 @@ public class MainApplication extends Application implements ReactApplication {
       List<ReactPackage> packages = new PackageList(this).getPackages();
       return packages;
     }
+
     @Override
     protected String getJSMainModuleName() {
       return "index";
     }
   };
 
+  private final ReactNativeHost mNewArchitectureNativeHost = new MainApplicationReactNativeHost(this);
+
   @Override
   public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
+    return (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) ? mNewArchitectureNativeHost : mReactNativeHost;
   }
 
   @Override
   public void onCreate() {
     super.onCreate();
+    ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
-    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) DefaultNewArchitectureEntryPoint.load();
-    ReactNativeFlipper.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    MainApplication.initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+  }
+
+  private static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
+    if (BuildConfig.DEBUG) {
+      try {
+        Class<?> aClass = Class.forName("com.ode.appe.ReactNativeFlipper");
+        aClass
+          .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+          .invoke(null, context, reactInstanceManager);
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
 }

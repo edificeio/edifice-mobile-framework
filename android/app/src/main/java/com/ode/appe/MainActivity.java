@@ -6,9 +6,7 @@ import android.os.Bundle;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
-import com.facebook.react.defaults.DefaultReactActivityDelegate;
-
+import com.facebook.react.ReactRootView;
 import com.swmansion.gesturehandler.react.RNGestureHandlerEnabledRootView;
 
 import org.devio.rn.splashscreen.SplashScreen;
@@ -29,12 +27,18 @@ public class MainActivity extends ReactActivity {
 
     @Override
     protected ReactActivityDelegate createReactActivityDelegate() {
-        return new DefaultReactActivityDelegate(
-            this,
-            getMainComponentName(),
-            DefaultNewArchitectureEntryPoint.getFabricEnabled(), // fabricEnabled
-            DefaultNewArchitectureEntryPoint.getConcurrentReactEnabled() // concurrentRootEnabled
-        );
+        return new ReactActivityDelegate(this, getMainComponentName()) {
+            @Override
+            protected ReactRootView createRootView() {
+                ReactRootView reactRootView = new ReactRootView(getContext()); //  RNGestureHandlerEnabledRootView(MainActivity.this);
+                reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+                return reactRootView;
+            }
+            @Override
+            protected boolean isConcurrentRootEnabled() {
+                return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+            }
+        };
     }
 
     @Override

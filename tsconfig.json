@@ -71,6 +71,5 @@
       "ASSETS/*": ["./assets/*"]
     },
   },
-  "exclude": ["__tests__/**/*-test.ts","__overrides__/**/*","__stashSpec__/**/*","scaffolder/**/*"],
-  "extends": ["@tsconfig/react-native/tsconfig.json"],
+  "exclude": ["__tests__/**/*-test.ts","__overrides__/**/*","__stashSpec__/**/*","scaffolder/**/*"]
 }

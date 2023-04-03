@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby File.read(File.join(__dir__, '.ruby-version')).strip
+ruby '2.7.5'
 
 gem 'cocoapods'
 gem "fastlane"

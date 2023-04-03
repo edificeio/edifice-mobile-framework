@@ -1,24 +1,15 @@
 diff --git a/node_modules/react-native-tiny-toast/lib/ToastContainer.js b/node_modules/react-native-tiny-toast/lib/ToastContainer.js
-index e95eb98..7e91dbc 100644
+index e95eb98..76d5699 100644
 --- a/node_modules/react-native-tiny-toast/lib/ToastContainer.js
 +++ b/node_modules/react-native-tiny-toast/lib/ToastContainer.js
-@@ -1,7 +1,6 @@
- import React, {Component} from 'react'
- import PropTypes from 'prop-types'
- import {
--  ViewPropTypes,
-   StyleSheet,
-   View,
-   Text,
-@@ -13,6 +12,8 @@ import {
+@@ -12,6 +12,7 @@ import {
+   TouchableWithoutFeedback, Platform
  } from 'react-native'
  import {getStatusBarHeight, getBottomSpace} from 'react-native-iphone-x-helper'
++import { ImagePropTypes, TextPropTypes } from 'deprecated-react-native-prop-types'
  
-+import { ImagePropTypes, TextPropTypes, ViewPropTypes } from 'deprecated-react-native-prop-types';
-+
  const position = {
    TOP: 40 + (Platform.OS === 'ios' ? getStatusBarHeight() : 0),
-   BOTTOM: -40 - (Platform.OS === 'ios' ? getBottomSpace() : 0),
 @@ -38,12 +39,12 @@ class ToastContainer extends Component {
      shadowColor: PropTypes.string,
      showText: PropTypes.bool,

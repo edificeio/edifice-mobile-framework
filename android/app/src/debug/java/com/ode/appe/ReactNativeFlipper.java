@@ -9,6 +9,7 @@ import com.facebook.flipper.plugins.inspector.DescriptorMapping;
 import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
 import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
+import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
 import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
@@ -21,6 +22,7 @@ public class ReactNativeFlipper {
                 // Flipper Client Initialization
                 final FlipperClient client = AndroidFlipperClient.getInstance(context);
                 client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
+                client.addPlugin(new ReactFlipperPlugin());
                 client.addPlugin(new SharedPreferencesFlipperPlugin(context, "appe"));
                 NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
                 NetworkingModule.setCustomClientBuilder(builder -> builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin)));
