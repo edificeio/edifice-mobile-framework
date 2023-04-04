@@ -4,11 +4,21 @@
 import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
-import { HomeworkAssistanceData } from '~/framework/modules/homework-assistance/model';
+import { IConfig, IService } from '~/framework/modules/homework-assistance/model';
 import moduleConfig from '~/framework/modules/homework-assistance/module-config';
-import { createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
+import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
-const initialState: HomeworkAssistanceData = {
+export interface IHomeworkAssistanceReduxState {
+  config: AsyncState<IConfig | undefined>;
+  services: AsyncState<IService[]>;
+}
+
+interface IHomeworkAssistanceReduxStateData {
+  config?: IConfig;
+  services: IService[];
+}
+
+const initialState: IHomeworkAssistanceReduxStateData = {
   services: [],
 };
 

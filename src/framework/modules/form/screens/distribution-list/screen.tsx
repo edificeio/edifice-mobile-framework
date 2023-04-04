@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { RefreshControl, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -11,10 +11,8 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchFormDistributionsAction, fetchFormsReceivedAction } from '~/framework/modules/form/actions';
 import { FormDistributionCard } from '~/framework/modules/form/components/FormDistributionCard';
@@ -23,7 +21,7 @@ import { DistributionStatus, IForm } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import { FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
@@ -85,14 +83,10 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -202,12 +196,12 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDistributions: tryAction(
+        fetchDistributions: tryActionLegacy(
           fetchFormDistributionsAction,
           undefined,
           true,
         ) as unknown as FormDistributionListScreenPrivateProps['fetchDistributions'],
-        fetchForms: tryAction(
+        fetchForms: tryActionLegacy(
           fetchFormsReceivedAction,
           undefined,
           true,

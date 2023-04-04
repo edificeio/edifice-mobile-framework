@@ -108,7 +108,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
         ...this.state,
         login: this.props.route.params.credentials.username,
       };
-      await this.props.handleSubmit(this.props.route.params.platform, payload, this.props.route.params.rememberMe);
+      await this.props.trySubmit(this.props.route.params.platform, payload, this.props.route.params.rememberMe);
 
       const platform = this.props.route.params.platform;
       const credentials = {
@@ -117,7 +117,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
       };
       const rememberMe = this.props.route.params.rememberMe;
       try {
-        const redirect = await this.props.handleLogin(platform, credentials, rememberMe);
+        const redirect = await this.props.tryLogin(platform, credentials, rememberMe);
         redirectLoginNavAction(redirect, platform, this.props.navigation);
         setTimeout(() => {
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
@@ -125,7 +125,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
         }, 500);
       } catch {
         // If error during the login phase, redirect to login screen
-        this.props.handleLogout();
+        this.props.tryLogout();
         this.props.navigation.reset(getAuthNavigationState(this.props.route.params.platform));
       }
     } catch (e) {
@@ -136,7 +136,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
 
   public doRefuseTerms = async () => {
     try {
-      this.props.handleLogout();
+      this.props.tryLogout();
       this.props.navigation.reset(getAuthNavigationState(this.props.route.params.platform));
     } catch {
       // console.warn('refuseTerms: could not refuse terms', e);
@@ -247,15 +247,11 @@ const mapStateToProps: (state: IGlobalState) => ChangePasswordScreenStoreProps =
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePasswordScreenDispatchProps = dispatch => {
-  return bindActionCreators(
+  return bindActionCreators<ChangePasswordScreenDispatchProps>(
     {
-      handleSubmit: tryAction(
-        changePasswordAction,
-        undefined,
-        true,
-      ) as unknown as ChangePasswordScreenDispatchProps['handleSubmit'], // Redux-thunk types suxx,
-      handleLogin: tryAction(loginAction, undefined, true) as unknown as ChangePasswordScreenDispatchProps['handleLogin'], // Redux-thunk types suxx
-      handleLogout: tryAction(logoutAction, undefined, true) as unknown as ChangePasswordScreenDispatchProps['handleLogout'], // Redux-thunk types suxx,
+      trySubmit: tryAction(changePasswordAction),
+      tryLogin: tryAction(loginAction),
+      tryLogout: tryAction(logoutAction),
     },
     dispatch,
   );

@@ -1,14 +1,18 @@
 import { navigate } from '~/framework/navigation/helper';
-import { IResourceIdNotification } from '~/framework/util/notifications';
+import { getAsResourceIdNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
 import { ZimbraNavigationParams, zimbraRouteNames } from './navigation';
 
 const handleZimbraNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
+  const notif = getAsResourceIdNotification(notification);
+  // As conversation & zimbra use same type & event-type
+  // We must redirect only zimbra ones
+  if (!notif || notif?.resource.uri.indexOf('zimbra') === -1) return { managed: 0 };
   navigate<ZimbraNavigationParams, typeof zimbraRouteNames.mail>(zimbraRouteNames.mail, {
     folderPath: '/Inbox',
-    id: (notification as IResourceIdNotification).resource.id,
-    subject: notification.backupData.params.subject,
+    id: notif.resource.id,
+    subject: notif.backupData.params.subject,
   });
 
   return {

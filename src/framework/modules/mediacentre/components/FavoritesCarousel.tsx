@@ -9,7 +9,7 @@ import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { FavoriteIcon, IconButton } from '~/framework/modules/mediacentre/components/SmallCard';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { openUrl } from '~/framework/util/linking';
@@ -97,8 +97,9 @@ const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
       return openUrl(props.resource.link);
     }
     const link = encodeURIComponent(props.resource.link);
-    const session = assertSession();
-    openUrl(`${session?.platform.url}/mediacentre/resource/open?url=${link}`);
+    const session = getSession();
+    if (!session) return;
+    openUrl(`${session.platform.url}/mediacentre/resource/open?url=${link}`);
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);

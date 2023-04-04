@@ -33,7 +33,7 @@ import {
   homeworkAssistanceRouteNames,
 } from '~/framework/modules/homework-assistance/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -61,7 +61,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
   const [service, setService] = React.useState(null);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [date, setDate] = React.useState(moment().startOf('day'));
-  const [time, setTime] = React.useState(props.config.settings.openingTime.start);
+  const [time, setTime] = React.useState(props.config!.settings.openingTime.start);
   const [information, setInformation] = React.useState('');
   const [isSendingRequest, setSendingRequest] = React.useState(false);
 
@@ -93,13 +93,9 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -132,6 +128,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
   };
 
   const renderRequest = () => {
+    if (!props.config) return renderError();
     const { openingTime } = props.config.settings;
     const isDateValid = getIsDateValid(props.config, date, time);
     const isActionDisabled = !service || !phoneNumber || !isDateValid;
@@ -266,17 +263,17 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        addRequest: tryAction(
+        addRequest: tryActionLegacy(
           postHomeworkAssistanceRequestAction,
           undefined,
           true,
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['addRequest'],
-        fetchConfig: tryAction(
+        fetchConfig: tryActionLegacy(
           fetchHomeworkAssistanceConfigAction,
           undefined,
           true,
         ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchConfig'],
-        fetchServices: tryAction(
+        fetchServices: tryActionLegacy(
           fetchHomeworkAssistanceServicesAction,
           undefined,
           true,

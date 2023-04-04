@@ -1,10 +1,9 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList from '~/framework/components/flatList';
 import { SmallText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionChoice, IQuestionResponse } from '~/framework/modules/form/model';
@@ -116,7 +115,6 @@ export const FormSingleAnswerRadioCard = ({
               ) : null}
             </TouchableOpacity>
           )}
-          bottomInset={false}
         />
       )}
     </FormQuestionCard>

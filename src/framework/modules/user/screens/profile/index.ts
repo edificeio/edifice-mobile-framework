@@ -1,5 +1,5 @@
-import UserProfileScreen from './screen';
+import UserProfileScreen, { computeNavBar } from './screen';
+import { ProfileScreenNavigationParams } from './types';
 
+export { ProfileScreenNavigationParams, computeNavBar };
 export default UserProfileScreen;
-export { UserProfileScreenNavParams, UserProfileScreenProps } from './types';
-export { computeNavBar } from './screen';

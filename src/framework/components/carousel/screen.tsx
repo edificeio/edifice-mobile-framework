@@ -3,7 +3,6 @@
  */
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { MenuView } from '@react-native-menu/menu';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -15,10 +14,12 @@ import Share from 'react-native-share';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
+import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
@@ -41,21 +42,6 @@ export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigation
 
 const styles = StyleSheet.create({
   page: { backgroundColor: theme.palette.grey.black },
-  header: {
-    position: 'absolute',
-    backgroundColor: theme.ui.shadowColorTransparent,
-    zIndex: 10,
-  },
-  // eslint-disable-next-line react-native/no-color-literals
-  closeButton: {
-    width: UI_SIZES.dimensions.width.huge,
-    height: UI_SIZES.dimensions.width.huge,
-    padding: 0,
-    paddingHorizontal: 0,
-    borderWidth: 0,
-    backgroundColor: 'transparent',
-    marginHorizontal: UI_SIZES.spacing.minor,
-  },
   // eslint-disable-next-line react-native/no-color-literals
   errorScreen: {
     backgroundColor: 'transparent',
@@ -96,40 +82,35 @@ async function assertPermissions(permissions: Permission[]) {
 
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   return (
-    <>
-      <ActionButton
-        text=""
-        action={() => {
-          Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+    <NavBarActionsGroup
+      elements={[
+        <NavBarAction
+          onPress={() => {
+            Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+              {
+                text: I18n.t('carousel.privacy.button'),
+                onPress: () => imageViewerRef.current?.saveToLocal?.(),
+              },
+            ]);
+          }}
+          icon="ui-download"
+          disabled={disabled}
+        />,
+        <PopupMenu
+          actions={[
             {
-              text: I18n.t('carousel.privacy.button'),
-              onPress: () => imageViewerRef.current?.saveToLocal?.(),
+              title: I18n.t('share'),
+              action: () => imageViewerRef.current?.share?.(),
+              icon: {
+                ios: 'square.and.arrow.up',
+                android: 'ic-menu-share',
+              },
             },
-          ]);
-        }}
-        iconName="ui-download"
-        style={styles.closeButton}
-        disabled={disabled}
-      />
-      <MenuView
-        actions={[
-          {
-            id: 'share',
-            title: I18n.t('share'),
-            image: Platform.select({
-              ios: 'square.and.arrow.up',
-              android: 'ic-menu-share',
-            }),
-          },
-        ]}
-        onPressAction={({ nativeEvent }) => {
-          if (nativeEvent.event === 'share') {
-            imageViewerRef.current?.share?.();
-          }
-        }}>
-        <ActionButton text="" disabled={disabled} iconName="ui-options" style={styles.closeButton} />
-      </MenuView>
-    </>
+          ]}>
+          <NavBarAction disabled={disabled} icon="ui-options" />
+        </PopupMenu>,
+      ]}
+    />
   );
 };
 
@@ -158,26 +139,15 @@ export function Carousel(props: ICarouselProps) {
   const startIndex = route.params.startIndex ?? 0;
   const data = React.useMemo(() => route.params.data ?? [], [route]);
   const dataAsImages = React.useMemo(() => data.map(d => ({ url: '', props: { source: urlSigner.signURISource(d.src) } })), [data]);
-  const isAttachmentLocal = dataAsImages[0].props.source.isLocal;
+
+  const [indexDisplay, setIndexDisplay] = React.useState((route.params.startIndex ?? 0) + 1);
+
+  const [imageState, setImageState] = React.useState('');
 
   const [isNavBarVisible, setNavBarVisible] = React.useState(true);
-  const toggleNavBarVisibility = React.useCallback(() => {
-    const newValue = !isNavBarVisible;
-    setNavBarVisible(newValue);
-    if (newValue) {
-      navigation.setOptions(computeNavBar({ navigation, route }));
-    } else {
-      navigation.setOptions({
-        headerBlurEffect: undefined,
-        headerStyle: { backgroundColor: 'transparent' },
-        headerLeft: undefined,
-        headerRight: undefined,
-        title: '',
-      });
-    }
-  }, [isNavBarVisible, navigation, route]);
 
   const imageViewerRef = React.useRef<ImageViewer>();
+
   const getButtons = React.useCallback(
     (disabled: boolean) => <Buttons disabled={disabled} imageViewerRef={imageViewerRef} />,
     [imageViewerRef],
@@ -250,7 +220,7 @@ export function Carousel(props: ICarouselProps) {
           await CameraRoll.save(realFilePath);
         }
         Toast.showSuccess(I18n.t('save.to.camera.roll.success'), { containerStyle: { zIndex: 150 } });
-      } catch (e) {
+      } catch {
         Toast.show(I18n.t('save.to.camera.roll.error'));
       }
     },
@@ -275,7 +245,7 @@ export function Carousel(props: ICarouselProps) {
           );
           return undefined;
         } else {
-          Toast.show(I18n.t('share.error'));
+          Toast.show(I18n.t('share-error'));
         }
       }
     },
@@ -300,26 +270,27 @@ export function Carousel(props: ICarouselProps) {
     );
   }, []);
 
-  const updateButtons = React.useCallback(
-    (index?: number, imageStatus?: IImageSize['status'], visible?: boolean) => {
-      if (index !== undefined && visible) {
-        navigation.setOptions({ headerRight: () => getButtons(imageStatus !== 'success') });
-      }
-    },
-    // We want to remove `navigation` from the dependencies here to avoid re-rendering when navState changes
+  React.useEffect(() => {
+    if (isNavBarVisible) {
+      navigation.setOptions(computeNavBar({ navigation, route }));
+      navigation.setOptions({
+        title:
+          route.params.data.length !== 1
+            ? I18n.t('carousel.counter', { current: indexDisplay, total: route.params.data.length })
+            : '',
+        headerRight: () => getButtons(imageState !== 'success'),
+      });
+    } else {
+      navigation.setOptions({
+        headerBlurEffect: undefined,
+        headerStyle: { backgroundColor: 'transparent' },
+        headerLeft: undefined,
+        headerRight: undefined,
+        title: '',
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [getButtons],
-  );
-  const updateIndex = React.useCallback(
-    (index?: number, total?: number, imageStatus?: IImageSize['status']) => {
-      if (index !== undefined) {
-        navigation.setParams({ startIndex: index });
-      }
-    },
-    // We want to remove `navigation` from the dependencies here to avoid re-rendering when navState changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
+  }, [indexDisplay, isNavBarVisible, imageState]);
 
   const imageViewer = React.useMemo(
     () => (
@@ -339,20 +310,17 @@ export function Carousel(props: ICarouselProps) {
         loadingRender={renderLoading}
         loadWindow={1}
         saveToLocalByLongPress={false}
-        onClick={() => {
-          toggleNavBarVisibility();
-        }}
+        onClick={() => setNavBarVisible(!isNavBarVisible)}
         renderFailImage={renderFailImage}
         renderIndicator={(index?: number, total?: number, imageStatus?: IImageSize['status']) => {
-          updateIndex(index, total, imageStatus);
-          updateButtons(index, imageStatus, isNavBarVisible);
-          return null;
+          if (index !== undefined) setIndexDisplay(index);
+          if (imageStatus !== undefined) setImageState(imageStatus);
         }}
       />
     ),
     // We want to remove `navigation` and `startIndex` from the dependencies here to avoid re-rendering when navState changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading, updateIndex],
+    [dataAsImages, isNavBarVisible, onSave, onShare, renderFailImage, renderImage, renderLoading],
   );
 
   return (

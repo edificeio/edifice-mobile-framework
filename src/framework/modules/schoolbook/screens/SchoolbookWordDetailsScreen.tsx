@@ -16,6 +16,7 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -27,7 +28,7 @@ import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-ha
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -96,20 +97,20 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         throw new Error('failed to call api (resourceUri is undefined)');
       }
       ids = schoolbookUriCaptureFunction(resourceUri) as Required<ReturnType<typeof schoolbookUriCaptureFunction>>;
-      if (!ids.paramsSchoolbookWordId) {
+      if (!ids.schoolbookWordId) {
         throw new Error(`failed to capture resourceUri "${resourceUri}": ${ids}`);
       }
     } else {
       const paramsSchoolbookWordId = props.route.params.schoolbookWordId;
       const paramsStudentId = props.route.params.studentId;
       if (!paramsSchoolbookWordId || (isParent && !paramsStudentId)) {
-        throw new Error(`missing paramsSchoolbookWordId or paramsStudentId : ${{ paramsSchoolbookWordId, paramsStudentId }}`);
+        throw new Error(`missing schoolbookWordId or studentId : ${{ paramsSchoolbookWordId, paramsStudentId }}`);
       }
-      ids = { paramsSchoolbookWordId, paramsStudentId };
+      ids = { schoolbookWordId: paramsSchoolbookWordId, studentId: paramsStudentId };
     }
-    setSchoolbookWordId(ids.paramsSchoolbookWordId);
-    if (isParent) setStudentId(ids.paramsStudentId);
-    return ids.paramsSchoolbookWordId;
+    setSchoolbookWordId(ids.schoolbookWordId);
+    if (isParent) setStudentId(ids.studentId);
+    return ids.schoolbookWordId;
   }, [isParent, props.route.params.notification, props.route.params.schoolbookWordId, props.route.params.studentId]);
 
   const fetchSchoolbookWord = React.useCallback(
@@ -222,7 +223,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       headerRight: () =>
         isSchoolbookWordRendered && canDeleteSchoolbookWord ? (
           <PopupMenu actions={[deleteAction({ action: () => showDeleteSchoolbookWordAlert() })]}>
-            <NavBarAction iconName="ui-options" />
+            <NavBarAction icon="ui-options" />
           </PopupMenu>
         ) : undefined,
     });

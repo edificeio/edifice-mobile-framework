@@ -46,7 +46,7 @@ const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
   const { logged, session, isReady, autoLoginResult, dispatch } = props;
-  const isFullyLogged = logged && session; // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
+  const isFullyLogged = !!(logged && session); // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
 
   React.useEffect(() => {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
@@ -69,7 +69,7 @@ function RootNavigator(props: RootNavigatorProps) {
   // === Auth/Main switch ===
   const routes = React.useMemo(() => {
     return isFullyLogged ? MainNavigation(session.apps, session.widgets) : AuthNavigator();
-  }, [isFullyLogged, session]);
+  }, [isFullyLogged, session?.apps, session?.widgets]);
 
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 

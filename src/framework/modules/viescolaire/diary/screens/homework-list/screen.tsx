@@ -23,7 +23,7 @@ import HomeworkList from '~/framework/modules/viescolaire/diary/components/Homew
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 import type { DiaryHomeworkListScreenPrivateProps } from './types';
 
@@ -97,32 +97,32 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchChildHomeworks: tryAction(
+        fetchChildHomeworks: tryActionLegacy(
           fetchDiaryHomeworksFromChildAction,
           undefined,
           true,
         ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchChildHomeworks'],
-        fetchChildSessions: tryAction(
+        fetchChildSessions: tryActionLegacy(
           fetchDiarySessionsFromChildAction,
           undefined,
           true,
         ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchChildSessions'],
-        fetchHomeworks: tryAction(
+        fetchHomeworks: tryActionLegacy(
           fetchDiaryHomeworksAction,
           undefined,
           true,
         ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchHomeworks'],
-        fetchSessions: tryAction(
+        fetchSessions: tryActionLegacy(
           fetchDiarySessionsAction,
           undefined,
           true,
         ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchSessions'],
-        fetchTeachers: tryAction(
+        fetchTeachers: tryActionLegacy(
           fetchDiaryTeachersAction,
           undefined,
           true,
         ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchTeachers'],
-        updateHomeworkProgress: tryAction(
+        updateHomeworkProgress: tryActionLegacy(
           updateDiaryHomeworkProgressAction,
           undefined,
           true,

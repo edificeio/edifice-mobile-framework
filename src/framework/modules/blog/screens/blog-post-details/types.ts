@@ -9,7 +9,7 @@ import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScre
 import { IResourceUriNotification } from '~/framework/util/notifications';
 
 export interface BlogPostDetailsScreenDataProps {
-  session: ISession;
+  session?: ISession;
 }
 export interface BlogPostDetailsScreenEventProps {
   handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<BlogPost | undefined>;

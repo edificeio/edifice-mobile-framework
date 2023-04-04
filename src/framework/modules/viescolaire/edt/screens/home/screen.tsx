@@ -3,11 +3,13 @@ import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -31,7 +33,7 @@ import Timetable from '~/framework/modules/viescolaire/edt/components/Timetable'
 import moduleConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import { EdtHomeScreenPrivateProps } from './types';
@@ -110,14 +112,10 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -177,11 +175,13 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   };
 
   return (
-    <PageView>
-      {props.userType === UserType.Teacher ? <StructurePicker /> : null}
-      {props.userType === UserType.Relative ? <ChildPicker /> : null}
-      {renderPage()}
-    </PageView>
+    <GestureHandlerRootView style={UI_STYLES.flex1}>
+      <PageView>
+        {props.userType === UserType.Teacher ? <StructurePicker /> : null}
+        {props.userType === UserType.Relative ? <ChildPicker /> : null}
+        {renderPage()}
+      </PageView>
+    </GestureHandlerRootView>
   );
 };
 
@@ -212,24 +212,28 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchChildCourses: tryAction(
+        fetchChildCourses: tryActionLegacy(
           fetchEdtCoursesAction,
           undefined,
           true,
         ) as unknown as EdtHomeScreenPrivateProps['fetchChildCourses'],
-        fetchClassGroups: tryAction(
+        fetchClassGroups: tryActionLegacy(
           fetchEdtClassGroupsAction,
           undefined,
           true,
         ) as unknown as EdtHomeScreenPrivateProps['fetchClassGroups'],
-        fetchSlots: tryAction(fetchEdtSlotsAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchSlots'],
-        fetchTeacherCourses: tryAction(
+        fetchSlots: tryActionLegacy(fetchEdtSlotsAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchSlots'],
+        fetchTeacherCourses: tryActionLegacy(
           fetchEdtTeacherCoursesAction,
           undefined,
           true,
         ) as unknown as EdtHomeScreenPrivateProps['fetchTeacherCourses'],
-        fetchTeachers: tryAction(fetchEdtTeachersAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchTeachers'],
-        fetchUserChildren: tryAction(
+        fetchTeachers: tryActionLegacy(
+          fetchEdtTeachersAction,
+          undefined,
+          true,
+        ) as unknown as EdtHomeScreenPrivateProps['fetchTeachers'],
+        fetchUserChildren: tryActionLegacy(
           fetchEdtUserChildrenAction,
           undefined,
           true,

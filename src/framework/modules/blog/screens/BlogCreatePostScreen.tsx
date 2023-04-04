@@ -14,10 +14,11 @@ import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
@@ -28,17 +29,18 @@ import {
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
+import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 export interface BlogCreatePostScreenDataProps {
-  session: ISession;
+  session?: ISession;
 }
 
 export interface BlogCreatePostScreenEventProps {
@@ -62,6 +64,7 @@ export interface BlogCreatePostScreenState {
   title: string;
   content: string;
   images: ImagePicked[];
+  onPublish: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -139,10 +142,9 @@ export const computeNavBar = ({
   title: I18n.t('blog.blogCreatePostScreen.title'),
 });
 
-function PreventBack(props: { isCreatingPost: string | number }) {
+function PreventBack(props: { isEditing: boolean }) {
   const navigation = useNavigation();
-  UNSTABLE_usePreventRemove(true, ({ data }) => {
-    if (!props.isCreatingPost) return navigation.dispatch(data.action);
+  UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
     Alert.alert(
       I18n.t('common.confirmationUnsavedPublication'),
       I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
@@ -168,6 +170,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     title: '',
     content: '',
     images: [],
+    onPublish: false,
   };
 
   attachmentPickerRef: any;
@@ -238,7 +241,12 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
-      navigation.navigate(route.params.referrer ?? 'timeline');
+      this.setState({
+        onPublish: true,
+      });
+      navigation.navigate(route.params.referrer ?? 'timeline', {
+        ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
+      });
       dispatch(
         notifierShowAction({
           id: route.params.referrer ?? 'timeline',
@@ -320,6 +328,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   renderBlogInfos() {
     const { route, session } = this.props;
+    if (!session) return <View style={styles.userInfos} />;
     const { id, displayName } = session.user;
     const blog = route.params.blog;
     return (
@@ -407,9 +416,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
   }
 
   render() {
+    const isEditing = !isEmpty(this.state.title || this.state.content || this.state.images) && !this.state.onPublish;
     return (
       <>
-        <PreventBack isCreatingPost={this.state.content || this.state.title || this.state.images.length} />
+        <PreventBack isEditing={isEditing} />
         <KeyboardPageView scrollable={false}>
           <Notifier id="createPost" />
           {/* ToDo : don't use magic keywords like this. */}
@@ -424,7 +434,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
 const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s => {
   return {
-    session: assertSession(),
+    session: getSession(),
   };
 };
 

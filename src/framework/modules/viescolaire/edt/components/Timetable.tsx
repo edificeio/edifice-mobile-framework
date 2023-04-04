@@ -100,20 +100,20 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={[styles.courseView, isCourseWithTags ? styles.greyishBackground : styles.whiteBackground]}>
         <View style={styles.subjectView}>
-          <HeadingXSText>{firstText}</HeadingXSText>
+          <HeadingXSText numberOfLines={1}>{firstText}</HeadingXSText>
           <SmallText numberOfLines={1}>{secondText}</SmallText>
         </View>
         <View>
           {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 ? (
             <View style={styles.roomView}>
               <Icon name="pin_drop" size={16} />
-              <SmallText>
+              <SmallText numberOfLines={1}>
                 &nbsp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
               </SmallText>
             </View>
           ) : null}
           {course.tags && course.tags !== undefined && course.tags.length > 0 ? (
-            <SmallBoldItalicText>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText>
+            <SmallBoldItalicText numberOfLines={1}>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText>
           ) : null}
         </View>
       </View>
@@ -143,7 +143,9 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
           <SmallText style={styles.halfTextStyle} numberOfLines={1}>
             {secondText}
           </SmallText>
-          {isCourseWithTags ? <SmallBoldItalicText>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText> : null}
+          {isCourseWithTags ? (
+            <SmallBoldItalicText numberOfLines={1}>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText>
+          ) : null}
         </View>
       </View>
     );

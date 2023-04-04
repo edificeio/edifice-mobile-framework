@@ -1,6 +1,6 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
 import { ILoginResult } from '~/framework/modules/auth/actions';
-import type { AuthErrorCode, ISession, LegalUrls } from '~/framework/modules/auth/model';
+import type { AuthErrorCode, ILoggedUserProfile, ISession, LegalUrls } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/moduleConfig';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
@@ -28,6 +28,9 @@ export const actionTypes = {
   sessionEnd: moduleConfig.namespaceActionType('SESSION_END'),
   redirectAutoLogin: moduleConfig.namespaceActionType('REDIRECT_AUTO_LOGIN'),
   getLegalDocuments: moduleConfig.namespaceActionType('GET_LEGAL_DOCUMENTS'),
+  profileUpdateRequest: moduleConfig.namespaceActionType('PROFILE_UPDATE_REQUEST'),
+  profileUpdateSuccess: moduleConfig.namespaceActionType('PROFILE_UPDATE_SUCCESS'),
+  profileUpdateError: moduleConfig.namespaceActionType('PROFILE_UPDATE_ERROR'),
 };
 
 export interface ActionPayloads {
@@ -39,6 +42,9 @@ export interface ActionPayloads {
   sessionEnd: undefined;
   redirectAutoLogin: Pick<Required<IAuthState>, 'autoLoginResult'>;
   getLegalDocuments: Pick<Required<IAuthState>, 'legalUrls'>;
+  profileUpdateRequest: { values: Partial<ILoggedUserProfile> };
+  profileUpdateSuccess: { values: Partial<ILoggedUserProfile> };
+  profileUpdateError: undefined;
 }
 
 export const actions = {
@@ -53,6 +59,9 @@ export const actions = {
   sessionEnd: () => ({ type: actionTypes.sessionEnd }),
   redirectAutoLogin: (result: ILoginResult) => ({ type: actionTypes.redirectAutoLogin, autoLoginResult: result }),
   getLegalDocuments: (legalUrls: LegalUrls) => ({ type: actionTypes.getLegalDocuments, legalUrls }),
+  profileUpdateRequest: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdateRequest, values }),
+  profileUpdateSuccess: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdateSuccess, values }),
+  profileUpdateError: () => ({ type: actionTypes.profileUpdateError }),
 };
 
 const reducer = createReducer(initialState, {
@@ -94,6 +103,16 @@ const reducer = createReducer(initialState, {
     const { legalUrls }: ActionPayloads['getLegalDocuments'] = action as any;
     return { ...state, legalUrls: { ...state.legalUrls, ...legalUrls } };
   },
+  // Saves changes to user profile values into session
+  [actionTypes.profileUpdateRequest]: (state, action) => state,
+  [actionTypes.profileUpdateSuccess]: (state, action) => {
+    const { values }: ActionPayloads['profileUpdateSuccess'] = action as any;
+    if (!state.session) {
+      return state;
+    }
+    return { ...state, session: { ...state.session, user: { ...state.session.user, ...values } } };
+  },
+  [actionTypes.profileUpdateError]: (state, action) => state,
 });
 
 Reducers.register(moduleConfig.reducerName, reducer);
@@ -104,10 +123,11 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
  * Get the current active session.
  * This IS NOT the recommended way to get the session information.
  * - In a component, use the below `getSession`
- * - In an action/thunk, use this only if you call your action with tryAction. Else, use the below `getSession`
+ * - In an action/thunk, use this only if you call your action with tryAction/callAction. Else, use the below `getSession`
  * - In a utility function, use this assertion.
  * Caution : this is an "assert" function. If session not present, this function will throw an error.
  * @returns the current session
+ * @throws Error
  */
 export function assertSession() {
   const session = getState(getStore().getState()).session;

@@ -47,7 +47,6 @@ export default StyleSheet.create({
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: UI_SIZES.spacing.medium,
   },
   deleteAction: {
     marginRight: UI_SIZES.spacing.medium,

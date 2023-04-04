@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { DrawerNavigationOptions, DrawerScreenProps } from '@react-navigation/drawer';
 import { HeaderBackButton } from '@react-navigation/elements';
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, RefreshControl, View } from 'react-native';
+import { Alert, FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,12 +17,11 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
@@ -33,8 +33,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
-import { NavBarAction } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -125,14 +124,9 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    //else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,6 +182,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         folderPath,
         id: mail.id,
         subject: mail.subject,
+        refreshList: refresh,
       });
     }
   };
@@ -206,10 +201,6 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     } else {
       openMail(mail);
     }
-  };
-
-  const onGoBack = () => {
-    if (selectedMails.length) return setSelectedMails([]);
   };
 
   const updateQuery = (value: string) => setQuery(value);
@@ -289,21 +280,17 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   };
 
   const getDropdownActions = () => {
-    const { folderPath } = props.route.params;
-
-    return folderPath === '/Sent'
-      ? [deleteAction({ action: trashSelectedMails })]
-      : [
-          {
-            title: I18n.t('zimbra-move'),
-            action: () => moveModalRef.current?.doShowModal(),
-            icon: {
-              ios: 'arrow.up.square',
-              android: 'ic_move_to_inbox',
-            },
-          },
-          deleteAction({ action: trashSelectedMails }),
-        ];
+    return [
+      {
+        title: I18n.t('zimbra-move'),
+        action: () => moveModalRef.current?.doShowModal(),
+        icon: {
+          ios: 'arrow.up.square',
+          android: 'ic_move_to_inbox',
+        },
+      },
+      deleteAction({ action: trashSelectedMails }),
+    ];
   };
 
   const getNavBarOptions = (): Partial<NativeStackNavigationOptions> => {
@@ -312,31 +299,33 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       return {
         headerLeft: ({ tintColor }) => (
           <View style={styles.navBarLeftContainer}>
-            <HeaderBackButton tintColor={tintColor} onPress={onGoBack} />
+            <HeaderBackButton tintColor={tintColor} onPress={() => setSelectedMails([])} />
             <BodyBoldText style={styles.navBarCountText}>{selectedMails.length}</BodyBoldText>
           </View>
         ),
         headerRight: () => (
           <View style={styles.navBarRightContainer}>
-            {folderPath === '/Trash' ? (
+            {folderPath === '/Sent' || folderPath === '/Trash' ? (
               <>
-                <View style={styles.rightMargin}>
-                  <NavBarAction iconName="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
-                </View>
-                <NavBarAction iconName="ui-delete" onPress={alertPermanentDeletion} />
+                {folderPath === '/Trash' ? (
+                  <View style={styles.rightMargin}>
+                    <NavBarAction icon="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
+                  </View>
+                ) : null}
+                <NavBarAction icon="ui-delete" onPress={alertPermanentDeletion} />
               </>
             ) : (
               <>
-                {folderPath !== '/Sent' && folderPath !== '/Drafts' ? (
+                {folderPath !== '/Drafts' ? (
                   <View style={styles.rightMargin}>
                     <NavBarAction
-                      iconName={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
+                      icon={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
                       onPress={markSelectedMailsAsUnread}
                     />
                   </View>
                 ) : null}
                 <PopupMenu actions={getDropdownActions()}>
-                  <NavBarAction iconName="ui-options" />
+                  <NavBarAction icon="ui-options" />
                 </PopupMenu>
               </>
             )}
@@ -348,7 +337,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       headerLeft: undefined,
       headerRight: () => (
         <View style={styles.navBarRightContainer}>
-          <NavBarAction iconName="ui-write" onPress={openComposer} />
+          <NavBarAction icon="ui-write" onPress={openComposer} />
         </View>
       ),
     };
@@ -360,7 +349,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
     navigation.setOptions(options);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedMails.length]);
+  }, [selectedMails.length, props.quota]);
 
   const renderEmpty = () => {
     return (
@@ -375,8 +364,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -435,6 +423,10 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     }
   };
 
+  UNSTABLE_usePreventRemove(selectedMails.length > 0, ({ data }) => {
+    setSelectedMails([]);
+  });
+
   return <PageView>{renderPage()}</PageView>;
 };
 
@@ -454,7 +446,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchMailsFromFolder: tryAction(
+        fetchMailsFromFolder: tryActionLegacy(
           fetchZimbraMailsFromFolderAction,
           undefined,
           true,

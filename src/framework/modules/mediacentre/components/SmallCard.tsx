@@ -9,7 +9,7 @@ import { TouchCard } from '~/framework/components/card/base';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { ResourceImage, SourceImage } from '~/framework/modules/mediacentre/components/ResourceImage';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { openUrl } from '~/framework/util/linking';
@@ -92,8 +92,9 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
       return openUrl(this.props.resource.link);
     }
     const link = encodeURIComponent(this.props.resource.link);
-    const session = assertSession();
-    openUrl(`${session?.platform.url}/mediacentre/resource/open?url=${link}`);
+    const session = getSession();
+    if (!session) return;
+    openUrl(`${session.platform.url}/mediacentre/resource/open?url=${link}`);
   };
 
   copyToClipboard = () => {

@@ -23,7 +23,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchBlogsAndFoldersAction } from '~/framework/modules/blog/actions';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
@@ -38,11 +38,11 @@ export interface BlogExplorerScreenDataProps {
   tree?: BlogFlatTree;
   initialLoadingState: AsyncLoadingState;
   error?: Error;
-  session: ISession;
+  session?: ISession;
 }
 
 export interface BlogExplorerScreenEventProps {
-  doFetch: () => Promise<[Blog[], BlogFolder[]] | undefined>;
+  tryFetch: () => Promise<[Blog[], BlogFolder[]] | undefined>;
 }
 
 export interface BlogExplorerScreenNavigationParams {
@@ -68,7 +68,8 @@ export const computeNavBar = ({
 });
 
 const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
-  const hasBlogCreationRights = getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
+  const hasBlogCreationRights =
+    props.session && getBlogWorkflowInformation(props.session) && getBlogWorkflowInformation(props.session).blog.create;
 
   // ToDo : Make this in a useLoadingState.
 
@@ -77,7 +78,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
   const reload = () => {
     setLoadingState(AsyncLoadingState.RETRY);
     props
-      .doFetch()
+      .tryFetch()
       .then(() => setLoadingState(AsyncLoadingState.DONE))
       .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
   };
@@ -85,7 +86,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
   const refresh = () => {
     setLoadingState(AsyncLoadingState.REFRESH);
     props
-      .doFetch()
+      .tryFetch()
       .then(() => setLoadingState(AsyncLoadingState.DONE))
       .catch(() => setLoadingState(AsyncLoadingState.REFRESH_FAILED));
   };
@@ -121,7 +122,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     if (loadingState === AsyncLoadingState.PRISTINE) {
       setLoadingState(AsyncLoadingState.INIT);
       props
-        .doFetch()
+        .tryFetch()
         .then(() => setLoadingState(AsyncLoadingState.DONE))
         .catch(() => setLoadingState(AsyncLoadingState.INIT_FAILED));
     }
@@ -240,16 +241,16 @@ export default connect(
   (gs: IGlobalState) => {
     const bs = moduleConfig.getState(gs);
     return {
-      session: assertSession(),
+      session: getSession(),
       tree: bs.tree,
       initialLoadingState: bs.folders.isPristine || bs.blogs.isPristine ? AsyncLoadingState.PRISTINE : AsyncLoadingState.DONE,
       error: bs.blogs.error ?? bs.folders.error,
     };
   },
   dispatch =>
-    bindActionCreators(
+    bindActionCreators<BlogExplorerScreenEventProps>(
       {
-        doFetch: tryAction(fetchBlogsAndFoldersAction, undefined, true) as any, // FUCK OFF REACT-REDUX YOUR TYPES DEFINITIONS SUCKS
+        tryFetch: tryAction(fetchBlogsAndFoldersAction),
       },
       dispatch,
     ),

@@ -1,11 +1,10 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList from '~/framework/components/flatList';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { Picture } from '~/framework/components/picture';
@@ -117,7 +116,6 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
             data={files}
             keyExtractor={attachment => attachment.filename}
             renderItem={({ item }) => <Attachment name={item.filename} type={item.type} onRemove={() => removeFile(item)} />}
-            bottomInset={false}
           />
         </View>
       )}

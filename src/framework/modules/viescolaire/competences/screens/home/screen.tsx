@@ -27,7 +27,7 @@ import moduleConfig from '~/framework/modules/viescolaire/competences/module-con
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import type { CompetencesHomeScreenPrivateProps } from './types';
@@ -91,14 +91,10 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,27 +168,27 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDevoirs: tryAction(
+        fetchDevoirs: tryActionLegacy(
           fetchCompetencesDevoirsAction,
           undefined,
           true,
         ) as unknown as CompetencesHomeScreenPrivateProps['fetchDevoirs'],
-        fetchLevels: tryAction(
+        fetchLevels: tryActionLegacy(
           fetchCompetencesLevelsAction,
           undefined,
           true,
         ) as unknown as CompetencesHomeScreenPrivateProps['fetchLevels'],
-        fetchMoyennes: tryAction(
+        fetchMoyennes: tryActionLegacy(
           fetchCompetencesMoyennesAction,
           undefined,
           true,
         ) as unknown as CompetencesHomeScreenPrivateProps['fetchMoyennes'],
-        fetchTerms: tryAction(
+        fetchTerms: tryActionLegacy(
           fetchCompetencesTermsAction,
           undefined,
           true,
         ) as unknown as CompetencesHomeScreenPrivateProps['fetchTerms'],
-        fetchUserChildren: tryAction(
+        fetchUserChildren: tryActionLegacy(
           fetchCompetencesUserChildrenAction,
           undefined,
           true,

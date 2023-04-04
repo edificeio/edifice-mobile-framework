@@ -32,7 +32,7 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
@@ -104,14 +104,10 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-    else refreshSilent();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -211,17 +207,17 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchCourses: tryAction(
+        fetchCourses: tryActionLegacy(
           fetchPresencesCoursesAction,
           undefined,
           true,
         ) as unknown as PresencesCourseListScreenPrivateProps['fetchCourses'],
-        fetchMultipleSlotsSetting: tryAction(
+        fetchMultipleSlotsSetting: tryActionLegacy(
           fetchPresencesMultipleSlotSettingAction,
           undefined,
           true,
         ) as unknown as PresencesCourseListScreenPrivateProps['fetchMultipleSlotsSetting'],
-        fetchRegisterPreference: tryAction(
+        fetchRegisterPreference: tryActionLegacy(
           fetchPresencesRegisterPreferenceAction,
           undefined,
           true,

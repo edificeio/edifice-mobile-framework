@@ -15,6 +15,7 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText } from '~/framework/components/text';
 import {
@@ -32,8 +33,8 @@ import moduleConfig from '~/framework/modules/conversation/module-config';
 import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -170,7 +171,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 ? popupActionsMenu.splice(2, 1)
                 : popupActionsMenu
             }>
-            <NavBarAction iconName="ui-options" />
+            <NavBarAction icon="ui-options" />
           </PopupMenu>
         ),
     });
@@ -401,21 +402,33 @@ const mapDispatchToProps: (dispatch: any) => any = dispatch => {
       {
         fetchMailContent: fetchMailContentAction,
         clearContent: clearMailContentAction,
-        toggleRead: tryAction(toggleReadAction, (mailIds, read) => [
+        toggleRead: tryActionLegacy(toggleReadAction, (mailIds, read) => [
           moduleConfig,
           'Marquer lu/non-lu',
           `Mail - Options - Marquer ${read ? 'lu' : 'non-lu'}`,
         ]),
-        trashMails: tryAction(trashMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Mettre à la corbeille`]),
-        deleteMails: tryAction(deleteMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Supprimer définitivement`]),
-        moveToFolder: tryAction(moveMailsToFolderAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Mail - Options - Déplacer']),
-        moveToInbox: tryAction(moveMailsToInboxAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Mail - Options - Déplacer']),
-        restoreToFolder: tryAction(restoreMailsToFolderAction, [
+        trashMails: tryActionLegacy(trashMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Mettre à la corbeille`]),
+        deleteMails: tryActionLegacy(deleteMailsAction, [moduleConfig, 'Supprimer', `Mail - Options - Supprimer définitivement`]),
+        moveToFolder: tryActionLegacy(moveMailsToFolderAction, [
+          moduleConfig,
+          'Déplacer',
+          'Inbox/Dossier - Mail - Options - Déplacer',
+        ]),
+        moveToInbox: tryActionLegacy(moveMailsToInboxAction, [
+          moduleConfig,
+          'Déplacer',
+          'Inbox/Dossier - Mail - Options - Déplacer',
+        ]),
+        restoreToFolder: tryActionLegacy(restoreMailsToFolderAction, [
           moduleConfig,
           'Restaurer',
           'Corbeille - Mail - Options - Restaurer',
         ]),
-        restoreToInbox: tryAction(restoreMailsToInboxAction, [moduleConfig, 'Restaurer', 'Corbeille - Mail - Options - Restaurer']),
+        restoreToInbox: tryActionLegacy(restoreMailsToInboxAction, [
+          moduleConfig,
+          'Restaurer',
+          'Corbeille - Mail - Options - Restaurer',
+        ]),
       },
       dispatch,
     ),

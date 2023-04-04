@@ -5,7 +5,7 @@ import FastImage from 'react-native-fast-image';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { Image, formatSource } from '~/framework/util/media';
 import ImageOptional from '~/ui/ImageOptional';
@@ -104,7 +104,7 @@ const getIcon = (id: string | null, isFolder: boolean, pName: string | null, con
 
 export const renderIcon = (id: string | null, isFolder: boolean, name: string, contentType: string | undefined): any => {
   const icon = getIcon(id, isFolder, name, contentType);
-  const session = assertSession();
+  const session = getSession();
 
   if (icon) {
     return <Icon color={theme.palette.grey.grey} size={50} name={icon} />;
@@ -117,7 +117,7 @@ export const renderIcon = (id: string | null, isFolder: boolean, name: string, c
 
 export const renderImage = (item: IFile, isFolder: boolean, name: string): any => {
   const icon = getIcon(item.id, isFolder, name, item.contentType);
-  const session = assertSession();
+  const session = getSession();
   const uri = `${session?.platform.url}/workspace/document/${item.id}`;
 
   if (icon) {

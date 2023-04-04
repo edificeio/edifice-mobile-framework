@@ -15,7 +15,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
@@ -26,7 +26,7 @@ import { computeRelativePath } from '~/framework/util/navigation';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 export interface BlogSelectScreenDataProps {
-  session: ISession;
+  session?: ISession;
 }
 export interface BlogSelectScreenEventProps {
   handleGetPublishableBlogList(): Promise<BlogList | undefined>;
@@ -150,7 +150,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
 
   renderEmpty() {
     const { session } = this.props;
-    const hasBlogCreationRights = getBlogWorkflowInformation(session)?.blog.create;
+    const hasBlogCreationRights = session && getBlogWorkflowInformation(session)?.blog.create;
     return (
       <EmptyScreen
         svgImage="empty-search"
@@ -210,7 +210,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
   }
 }
 
-const mapStateToProps: (s: IGlobalState) => BlogSelectScreenDataProps = s => ({ session: assertSession() });
+const mapStateToProps: (s: IGlobalState) => BlogSelectScreenDataProps = s => ({ session: getSession() });
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => BlogSelectScreenEventProps = (
   dispatch,

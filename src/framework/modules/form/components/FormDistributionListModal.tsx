@@ -1,13 +1,12 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
-import FlatList from '~/framework/components/flatList';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -125,7 +124,6 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
             keyExtractor={distribution => distribution.id.toString()}
             renderItem={({ item, index }) => renderListItem(item, index + 1)}
             persistentScrollbar
-            bottomInset={false}
             style={styles.flatListContainer}
           />
           <ActionButton text={I18n.t('form.answerAgain')} action={() => onAnswerAgain()} loading={isLoading} />

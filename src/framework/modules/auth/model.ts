@@ -7,12 +7,16 @@ import { IAuthorizedAction, UserPrivateData, UserType } from './service';
 /**
  * Describes a generic user (public info)
  */
-export interface IUser {
+
+export interface IUserProfile {
+  displayName: string;
+  photo?: string;
+}
+
+export interface IUser extends IUserProfile {
   id: string;
   login: string;
   type: UserType;
-  displayName: string;
-  photo?: string;
 }
 
 export interface StructureNode {
@@ -48,18 +52,31 @@ export interface UserStructureWithClasses extends StructureNode {
 }
 
 /**
- * Describes the user that is logged in currently (private info)
+ * Describes all editable profile values as text-only, without verifications.
  */
-export interface ILoggedUser extends IUser {
+export interface ILoggedUserProfile extends IUserProfile {
+  birthDate?: moment.Moment;
   firstName: string;
   lastName: string;
+  homePhone?: string; // It's not in LoggedUserContactDetails because there is no logic associed with it unlike mobile.
+  loginAlias?: string;
+}
+
+export interface LoggedUserContactDetails {
+  email?: string;
+  mobile?: string;
+}
+
+/**
+ * Describes the user that is logged in currently (private info)
+ */
+export interface ILoggedUser extends IUser, ILoggedUserProfile, LoggedUserContactDetails {
   groups: string[];
   uniqueId?: string;
   children?: UserChildren;
   classes?: string[];
   relatives?: UserPrivateData['parents'];
   structures?: UserStructureWithClasses[];
-  photo?: string;
 }
 
 export interface UserChild {

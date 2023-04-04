@@ -18,6 +18,7 @@ import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -34,7 +35,7 @@ import {
 } from '~/framework/modules/schoolbook/reducer';
 import { getSchoolbookWorkflowInformation } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService } from '~/framework/modules/schoolbook/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -272,7 +273,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
                 },
               }),
             ]}>
-            <NavBarAction iconName="ui-options" />
+            <NavBarAction icon="ui-options" />
           </PopupMenu>
         ) : undefined,
     });

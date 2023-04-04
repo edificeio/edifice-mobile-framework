@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { fetchCountAction } from '~/framework/modules/conversation/actions/count';
 import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import {
@@ -26,8 +27,8 @@ import { DraftType } from '~/framework/modules/conversation/screens/Conversation
 import { ICountMailboxes, getCountListState } from '~/framework/modules/conversation/state/count';
 import { IFolder, IInitMail, getInitMailListState } from '~/framework/modules/conversation/state/initMails';
 import { getMailListState } from '~/framework/modules/conversation/state/mailList';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 
 export type IInit = {
@@ -170,7 +171,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarAction
-          iconName="ui-plus"
+          icon="ui-plus"
           onPress={() => {
             Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
             navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
@@ -254,22 +255,30 @@ const mapDispatchToProps = dispatch => {
       fetchMailFromFolder: fetchMailListFromFolderAction,
       fetchInit: fetchInitAction,
       fetchCount: fetchCountAction,
-      trashMails: tryAction(trashMailsAction, [
+      trashMails: tryActionLegacy(trashMailsAction, [
         moduleConfig,
         'Supprimer',
         'Inbox/Dossier/Outbox - Balayage - Mettre à la corbeille',
       ]),
-      deleteDrafts: tryAction(deleteDraftsAction, [moduleConfig, 'Supprimer', 'Brouillons - Balayage - Supprimer définitivement']),
-      deleteMails: tryAction(deleteMailsAction, [moduleConfig, 'Supprimer', 'Corbeille - Balayage - Supprimer définitivement']),
-      toggleRead: tryAction(toggleReadAction, (mailsIds, read) => [
+      deleteDrafts: tryActionLegacy(deleteDraftsAction, [
+        moduleConfig,
+        'Supprimer',
+        'Brouillons - Balayage - Supprimer définitivement',
+      ]),
+      deleteMails: tryActionLegacy(deleteMailsAction, [
+        moduleConfig,
+        'Supprimer',
+        'Corbeille - Balayage - Supprimer définitivement',
+      ]),
+      toggleRead: tryActionLegacy(toggleReadAction, (mailsIds, read) => [
         moduleConfig,
         'Marquer lu/non-lu',
         `Inbox/Dossier - Balayage - Marquer ${read ? 'lu' : 'non-lu'}`,
       ]),
-      moveToFolder: tryAction(moveMailsToFolderAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
-      moveToInbox: tryAction(moveMailsToInboxAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
-      restoreToFolder: tryAction(restoreMailsToFolderAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
-      restoreToInbox: tryAction(restoreMailsToInboxAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
+      moveToFolder: tryActionLegacy(moveMailsToFolderAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
+      moveToInbox: tryActionLegacy(moveMailsToInboxAction, [moduleConfig, 'Déplacer', 'Inbox/Dossier - Balayage - Déplacer']),
+      restoreToFolder: tryActionLegacy(restoreMailsToFolderAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
+      restoreToInbox: tryActionLegacy(restoreMailsToInboxAction, [moduleConfig, 'Restaurer', 'Corbeille - Balayage - Restaurer']),
     },
     dispatch,
   );

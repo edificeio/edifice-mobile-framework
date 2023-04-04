@@ -24,7 +24,7 @@
  */
 import { TextStyle } from 'react-native';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { Platform } from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
@@ -156,7 +156,7 @@ export default class HtmlParserRN extends HtmlParserAbstract<JSX.Element | INugg
 
   public constructor(opts?: IHtmlParserRNOptions) {
     super({ ...HtmlParserRN.defaultOpts, ...opts });
-    this.platform = assertSession()?.platform;
+    this.platform = getSession()?.platform;
   }
 
   protected beforeParse = (html: string) => {

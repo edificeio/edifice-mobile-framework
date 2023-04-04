@@ -1,17 +1,39 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Dispatch } from 'redux';
 
-import type { UserNavigationParams } from '../../navigation';
+import { ISession } from '~/framework/modules/auth/model';
+import { UpdatableProfileValues } from '~/framework/modules/user/actions';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 
-export interface UserProfileScreenProps {}
+import { UserNavigationParams, userRouteNames } from '../../navigation';
 
-export interface UserProfileScreenNavParams {}
+export interface IProfilePageDataProps {
+  session?: ISession;
+}
 
-export interface UserProfileScreenStoreProps {}
+export interface IProfilePageEventProps {
+  onSave: (updatedProfileValues: UpdatableProfileValues) => void;
+  dispatch: Dispatch;
+}
 
-export interface UserProfileScreenDispatchProps {}
+export type IProfilePageProps = IProfilePageDataProps &
+  IProfilePageEventProps &
+  NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.profile> & {
+    onUploadAvatar: (avatar: LocalFile) => Promise<SyncedFile>;
+    onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
+    onPickFileError: (notifierId: string) => void;
+    onUploadAvatarError: () => void;
+  };
 
-export interface UserProfileScreenPrivateProps
-  extends NativeStackScreenProps<UserNavigationParams, 'profile'>,
-    UserProfileScreenProps,
-    UserProfileScreenStoreProps,
-    UserProfileScreenDispatchProps {}
+export type IProfilePageState = UpdatableProfileValues & {
+  homePhoneValid?: boolean;
+  loginAliasValid?: boolean;
+  updatingAvatar?: boolean;
+};
+
+export interface ProfileScreenNavigationParams {
+  updatedProfileValues?: UpdatableProfileValues;
+  edit?: boolean;
+  onCancel?: () => void;
+  onSave?: (updatedProfileValues: UpdatableProfileValues) => void;
+}

@@ -40,8 +40,8 @@ export async function openUrl(
     let finalUrl = urlSigner.getAbsoluteUrl(url);
 
     if (autoLogin) {
-      const session = assertSession();
       try {
+        const session = assertSession();
         if (urlSigner.getIsUrlSignable(finalUrl)) {
           const customToken = await session.oauth2.getQueryParamToken();
           if (customToken && finalUrl) {

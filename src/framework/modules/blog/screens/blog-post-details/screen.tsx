@@ -20,10 +20,11 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteBlogPostAction,
   deleteBlogPostCommentAction,
@@ -44,7 +45,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
@@ -252,6 +253,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   async doGetBlogInfos() {
     try {
       const { session } = this.props;
+      if (!session) throw new Error('BlogPostDetailsScreen.doGetBlogInfos: no session');
       const ids = this.getBlogPostIds();
       const blogId = ids?.blogId;
       const blogInfos = await blogService.get(session, blogId);
@@ -305,6 +307,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const menuItemOpenBrowser = linkAction({
       title: I18n.t('common.openInBrowser'),
       action: () => {
+        if (!session) return;
         const url = `${session.platform!.url}${resourceUri}`;
         openUrl(url);
         Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
@@ -312,7 +315,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     });
 
     const menuData =
-      hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id
+      session && (hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id)
         ? [
             menuItemOpenBrowser,
             deleteAction({
@@ -344,7 +347,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
         !errorState ? (
           <PopupMenu actions={menuData}>
-            <NavBarAction iconName="ui-options" />
+            <NavBarAction icon="ui-options" />
           </PopupMenu>
         ) : undefined,
     });
@@ -429,8 +432,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
     const blogPostComments = blogPostData?.comments;
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
-    const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
-    const hasPublishBlogPostRight = blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
+    const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
+    const hasPublishBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
     const ListComponent = Platform.select<React.ComponentType<any>>({
       ios: FlatList,
       android: KeyboardAvoidingFlatList,
@@ -584,8 +587,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;
 
     const isUpdatingComment = updateCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
-    const hasUpdateCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
-    const hasDeleteCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
+    const hasUpdateCommentBlogPostRight =
+      session && blogInfos && resourceHasRight(blogInfos, updateCommentBlogPostResourceRight, session);
+    const hasDeleteCommentBlogPostRight =
+      session && blogInfos && resourceHasRight(blogInfos, deleteCommentBlogPostResourceRight, session);
     return (
       <CommentField
         ref={element => (this.commentFieldRefs[blogPostComment.id] = element)}
@@ -595,7 +600,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           hasUpdateCommentBlogPostRight ? (comment, commentId) => this.doCreateComment(comment, commentId) : undefined
         }
         onDeleteComment={
-          hasDeleteCommentBlogPostRight || hasPermissionManager(blogInfos!, session)
+          hasDeleteCommentBlogPostRight || (session && hasPermissionManager(blogInfos!, session))
             ? () => {
                 Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.confirmationDelete'), [
                   {
@@ -628,7 +633,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         onEditableLayoutHeight={val => {
           this.editorOffsetRef.current = val;
         }}
-        isManager={hasPermissionManager(blogInfos!, session)}
+        isManager={session && hasPermissionManager(blogInfos!, session)}
       />
     );
   }
@@ -638,7 +643,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { loadingState, errorState, blogPostData, blogInfos } = this.state;
 
     const blogId = blogInfos?.id;
-    const hasCommentBlogPostRight = blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
+    const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const isBottomSheetVisible =
       (blogPostData?.state === 'PUBLISHED' && hasCommentBlogPostRight) || blogPostData?.state === 'SUBMITTED';
     const notification = (route.params.useNotification ?? true) && route.params.notification;
@@ -667,7 +672,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 }
 
 const mapStateToProps: (s: IGlobalState) => BlogPostDetailsScreenDataProps = s => ({
-  session: assertSession(),
+  session: getSession(),
 });
 
 const mapDispatchToProps: (

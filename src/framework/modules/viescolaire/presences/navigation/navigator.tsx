@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import PresencesCallScreen, { computeNavBar as callNavBar } from '~/framework/modules/viescolaire/presences/screens/call';
@@ -27,25 +27,49 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
      */
 
     const screens: React.ReactElement[] = [];
-    const session = assertSession();
+    const session = getSession();
 
     if (session?.user.type === UserType.Teacher) {
       screens.push(
-        <Stack.Screen name={presencesRouteNames.courseList} component={PresencesCourseListScreen} options={courseListNavBar} />,
-        <Stack.Screen name={presencesRouteNames.call} component={PresencesCallScreen} options={callNavBar} />,
         <Stack.Screen
+          key={presencesRouteNames.courseList}
+          name={presencesRouteNames.courseList}
+          component={PresencesCourseListScreen}
+          options={courseListNavBar}
+        />,
+        <Stack.Screen
+          key={presencesRouteNames.call}
+          name={presencesRouteNames.call}
+          component={PresencesCallScreen}
+          options={callNavBar}
+        />,
+        <Stack.Screen
+          key={presencesRouteNames.declareEvent}
           name={presencesRouteNames.declareEvent}
           component={PresencesDeclareEventScreen}
           options={declareEventNavBar}
         />,
-        <Stack.Screen name={presencesRouteNames.memento} component={PresencesMementoScreen} options={mementoNavBar} />,
+        <Stack.Screen
+          key={presencesRouteNames.memento}
+          name={presencesRouteNames.memento}
+          component={PresencesMementoScreen}
+          options={mementoNavBar}
+        />,
       );
       moduleConfig.routeName = presencesRouteNames.courseList;
     } else {
-      screens.push(<Stack.Screen name={presencesRouteNames.history} component={PresencesHistoryScreen} options={historyNavBar} />);
+      screens.push(
+        <Stack.Screen
+          key={presencesRouteNames.history}
+          name={presencesRouteNames.history}
+          component={PresencesHistoryScreen}
+          options={historyNavBar}
+        />,
+      );
       if (session?.user.type === UserType.Relative) {
         screens.push(
           <Stack.Screen
+            key={presencesRouteNames.declareAbsence}
             name={presencesRouteNames.declareAbsence}
             component={PresencesDeclareAbsenceScreen}
             options={declareAbsenceNavBar}

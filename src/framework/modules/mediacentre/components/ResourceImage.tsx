@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 'react-native';
 
 import { NamedSVG } from '~/framework/components/picture';
-import { assertSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { Source } from '~/framework/modules/mediacentre/reducer';
 import { Image } from '~/framework/util/media';
 
@@ -19,7 +19,7 @@ interface ISourceImageProps {
 }
 
 const getImageUri = (value: string): string => {
-  const session = assertSession();
+  const session = getSession();
   if (value.startsWith('/')) {
     const url = session?.platform.url;
     return url + value;

@@ -5,10 +5,11 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { UserNavigationParams, userRouteNames } from '.';
 import moduleConfig from '../module-config';
+import PushNotifsItemsListScreen, { computeNavBar as pushNotifsItemsListNavBar } from '../screens/PushNotifsItemsListScreen';
+import PushNotifsTopicsListScreen, { computeNavBar as pushNotifsTopicsListNavBar } from '../screens/PushNotifsTopicsListScreen';
 import UserFamilyScreen, { computeNavBar as familyNavBar } from '../screens/family';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
 import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '../screens/legal-notice';
-import UserNotifPrefsScreen, { computeNavBar as notifPrefsNavBar } from '../screens/notif-prefs';
 import UserProfileScreen, { computeNavBar as profileNavBar } from '../screens/profile';
 import UserStructuresScreen, { computeNavBar as structuresNavBar } from '../screens/structures';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '../screens/who-are-we';
@@ -20,10 +21,18 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       <Stack.Screen name={userRouteNames.profile} component={UserProfileScreen} options={profileNavBar} initialParams={{}} />
       <Stack.Screen
         name={userRouteNames.notifPrefs}
-        component={UserNotifPrefsScreen}
-        options={notifPrefsNavBar}
+        component={PushNotifsTopicsListScreen}
+        options={pushNotifsTopicsListNavBar}
         initialParams={{}}
       />
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen
+          name={userRouteNames.notifPrefsDetails}
+          component={PushNotifsItemsListScreen}
+          options={pushNotifsItemsListNavBar}
+          initialParams={{}}
+        />
+      </Stack.Group>
       <Stack.Screen
         name={userRouteNames.structures}
         component={UserStructuresScreen}

@@ -32,7 +32,7 @@ import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigatio
 import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncState } from '~/framework/util/redux/async';
 
 import styles from './styles';
@@ -69,13 +69,11 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
   }
 
   public componentDidUpdate(prevProps) {
-    const { childId, structureId, isFocused } = this.props;
+    const { childId, structureId } = this.props;
 
     if (prevProps.childId !== childId) {
       this.props.fetchTeachers(this.props.structureId);
       this.props.fetchLevels(structureId);
-    }
-    if (isFocused && (prevProps.isFocused !== isFocused || prevProps.childId !== childId)) {
       this.props.fetchHomeworks(
         childId,
         structureId,
@@ -132,8 +130,6 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
   }
 
   private renderHomework(homeworks: AsyncState<IHomeworkMap>) {
-    const homeworkDataList = homeworks.data as IHomeworkMap;
-
     let homeworksByDate = {} as IHomeworkByDateList;
     Object.values(homeworks.data).forEach(hm => {
       const key = moment(hm.due_date).format('YYYY-MM-DD');
@@ -144,6 +140,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
     const tomorrowDate = moment().add(1, 'day') as moment.Moment;
 
     homeworksByDate = Object.keys(homeworksByDate)
+      .filter(date => moment(date).isAfter(moment()))
       .sort()
       .slice(0, 5)
       .reduce(function (memo, current) {
@@ -154,34 +151,27 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
     return (
       <View style={styles.dashboardPart}>
         <BodyBoldText>{I18n.t('viesco-homework')}</BodyBoldText>
-        {Object.values(homeworks.data).length === 0 && (
+        {!Object.keys(homeworksByDate).length ? (
           <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
-        )}
+        ) : null}
         {Object.keys(homeworksByDate).map(date => (
           <>
-            {moment(date).isAfter(moment()) && (
-              <>
-                <SmallText style={styles.subtitle}>
-                  {moment(date).isSame(tomorrowDate, 'day')
-                    ? I18n.t('viesco-homework-fortomorrow')
-                    : `${I18n.t('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
-                </SmallText>
-                {homeworksByDate[date].map(homework => (
-                  <HomeworkItem
-                    disabled
-                    checked={isHomeworkDone(homework)}
-                    title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
-                    subtitle={homework.type}
-                    onPress={() =>
-                      this.props.navigation.navigate(
-                        diaryRouteNames.homework,
-                        homeworkListDetailsAdapter(homework, homeworkDataList),
-                      )
-                    }
-                  />
-                ))}
-              </>
-            )}
+            <SmallText style={styles.subtitle}>
+              {moment(date).isSame(tomorrowDate, 'day')
+                ? I18n.t('viesco-homework-fortomorrow')
+                : `${I18n.t('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
+            </SmallText>
+            {homeworksByDate[date].map(homework => (
+              <HomeworkItem
+                disabled
+                checked={isHomeworkDone(homework)}
+                title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
+                subtitle={homework.type}
+                onPress={() =>
+                  this.props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsAdapter(homework, homeworks.data))
+                }
+              />
+            ))}
           </>
         ))}
       </View>
@@ -266,22 +256,22 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDevoirs: tryAction(
+        fetchDevoirs: tryActionLegacy(
           fetchCompetencesDevoirsAction,
           undefined,
           true,
         ) as unknown as DashboardRelativeScreenPrivateProps['fetchDevoirs'],
-        fetchHomeworks: tryAction(
+        fetchHomeworks: tryActionLegacy(
           fetchDiaryHomeworksFromChildAction,
           undefined,
           true,
         ) as unknown as DashboardRelativeScreenPrivateProps['fetchHomeworks'],
-        fetchLevels: tryAction(
+        fetchLevels: tryActionLegacy(
           fetchCompetencesLevelsAction,
           undefined,
           true,
         ) as unknown as DashboardRelativeScreenPrivateProps['fetchLevels'],
-        fetchTeachers: tryAction(
+        fetchTeachers: tryActionLegacy(
           fetchDiaryTeachersAction,
           undefined,
           true,

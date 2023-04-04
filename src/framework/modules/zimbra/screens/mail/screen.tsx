@@ -1,7 +1,8 @@
+import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, RefreshControl, View } from 'react-native';
+import { Alert, RefreshControl, ScrollView, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,8 +15,8 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framework/modules/zimbra/actions';
 import { downloadAttachmentAction } from '~/framework/modules/zimbra/actions/download';
@@ -25,8 +26,8 @@ import { DraftType } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
-import { tryAction } from '~/framework/util/redux/actions';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
@@ -79,13 +80,17 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      fetchOnNavigation();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation]);
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener('beforeRemove', () => {
+      props.route.params.refreshList?.();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,7 +103,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await zimbraService.mails.toggleUnread(session, [id], true);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
@@ -111,7 +116,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await zimbraService.mails.trash(session, [id]);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
       Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
@@ -125,7 +130,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await zimbraService.mails.delete(session, [id]);
-      navigation.goBack();
+      navigation.dispatch(CommonActions.goBack());
       Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
@@ -150,7 +155,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     const { navigation } = props;
 
     moveModalRef.current?.doDismissModal();
-    navigation.goBack();
+    navigation.dispatch(CommonActions.goBack());
   };
 
   const openComposer = (type: DraftType) => {
@@ -216,7 +221,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <PopupMenu actions={actions}>
-          <NavBarAction iconName="ui-options" />
+          <NavBarAction icon="ui-options" />
         </PopupMenu>
       ),
     });
@@ -225,8 +230,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -321,9 +325,13 @@ export default connect(
     bindActionCreators(
       {
         downloadAttachment: downloadAttachmentAction,
-        fetchMail: tryAction(fetchZimbraMailAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchMail'],
-        fetchQuota: tryAction(fetchZimbraQuotaAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchQuota'],
-        fetchRootFolders: tryAction(
+        fetchMail: tryActionLegacy(fetchZimbraMailAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchMail'],
+        fetchQuota: tryActionLegacy(
+          fetchZimbraQuotaAction,
+          undefined,
+          true,
+        ) as unknown as ZimbraMailScreenPrivateProps['fetchQuota'],
+        fetchRootFolders: tryActionLegacy(
           fetchZimbraRootFoldersAction,
           undefined,
           true,

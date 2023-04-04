@@ -18,7 +18,7 @@ import { fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framewor
 import { DefaultFolder, IFolder, IQuota } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
-import { tryAction } from '~/framework/util/redux/actions';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 import CreateFolderModal from './modals/CreateFolderModal';
 
@@ -200,8 +200,8 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchQuota: tryAction(fetchZimbraQuotaAction, undefined, true) as unknown as CustomDrawerContentProps['fetchQuota'],
-        fetchRootFolders: tryAction(
+        fetchQuota: tryActionLegacy(fetchZimbraQuotaAction, undefined, true) as unknown as CustomDrawerContentProps['fetchQuota'],
+        fetchRootFolders: tryActionLegacy(
           fetchZimbraRootFoldersAction,
           undefined,
           true,
