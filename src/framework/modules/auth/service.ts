@@ -150,6 +150,16 @@ export interface UserPersonDataBackend {
   schools?: UserPersonDataStructureWithClasses[];
 }
 
+export function formatStructuresWithClasses(
+  structureNodes?: StructureNode[],
+  structuresWithClasses?: UserPersonDataStructureWithClasses[],
+) {
+  return structureNodes?.map(structure => ({
+    ...structure,
+    classes: structuresWithClasses?.find(sc => sc.id === structure.id)?.classes ?? [],
+  }));
+}
+
 export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
   if (!platform) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
@@ -265,16 +275,6 @@ export function formatSession(
   };
 }
 
-export function formatStructuresWithClasses(
-  structureNodes?: StructureNode[],
-  structuresWithClasses?: UserPersonDataStructureWithClasses[],
-) {
-  return structureNodes?.map(structure => ({
-    ...structure,
-    classes: structuresWithClasses?.find(sc => sc.id === structure.id)?.classes ?? [],
-  }));
-}
-
 export const PLATFORM_STORAGE_KEY = 'currentPlatform';
 
 /**
@@ -381,18 +381,6 @@ export class FcmService {
       // TODO: Manage error
     }
     return [];
-  }
-
-  private async _addTokenToDeleteQueue(token: string) {
-    if (!token) {
-      return;
-    }
-    //merge is not supported by all implementation
-    const tokens = await this._getTokenToDeleteQueue();
-    tokens.push(token);
-    //keep uniq tokens
-    const json = JSON.stringify(Array.from(new Set(tokens)));
-    await AsyncStorage.setItem(FcmService.FCM_TOKEN_TODELETE_KEY, json);
   }
 
   private async _removeTokenFromDeleteQueue(token: string) {
