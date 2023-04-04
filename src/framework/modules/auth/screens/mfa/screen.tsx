@@ -264,7 +264,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   }, [isCodeCorrect, isCodeStateUnknown, isEmailOrMobileMFA, isVerifyingActive, redirectEmailOrMobileMFA]);
 
   return (
-    <KeyboardPageView isFocused={false} style={styles.page} scrollable>
+    <KeyboardPageView style={styles.page} scrollable>
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
@@ -371,7 +371,7 @@ const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = state 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogin: tryAction(loginAction, undefined, true) as unknown as AuthMFAScreenDispatchProps['onLogin'],
+      onLogin: tryAction(loginAction, undefined) as unknown as AuthMFAScreenDispatchProps['onLogin'],
       onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) =>
         dispatch(profileUpdateAction(updatedProfileValues, false, false)),
     },
