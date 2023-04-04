@@ -1,7 +1,7 @@
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -37,14 +37,12 @@ export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.changeEmail>): NativeStackNavigationOptions => {
-  const navBarTitle = route.params.navBarTitle;
-  const title = navBarTitle || I18n.t('auth-change-email-verify');
   return {
     ...navBarOptions({
       navigation,
       route,
     }),
-    title,
+    title: undefined,
   };
 };
 
@@ -57,16 +55,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
   const isModifyingEmail = modificationType === ModificationType.EMAIL;
-
-  const [isSendingCode, setIsSendingCode] = useState(false);
-  const [email, setEmail] = useState(defaultEmail || '');
-  const [emailState, setEmailState] = useState<EmailState>(EmailState.PRISTINE);
-
-  const isEmailEmpty = isEmpty(email);
-  const isEmailStatePristine = emailState === EmailState.PRISTINE;
-
   const title = navBarTitle || I18n.t('auth-change-email-verify');
-
   const texts: Record<string, any> = isModifyingEmail
     ? {
         title: I18n.t('auth-change-email-edit-title'),
@@ -79,6 +68,16 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         label: I18n.t('auth-change-email-verify-label'),
       };
   texts.button = I18n.t('auth-change-email-verify-button');
+
+  const [isSendingCode, setIsSendingCode] = useState(false);
+  const [email, setEmail] = useState(defaultEmail || '');
+  const [emailState, setEmailState] = useState<EmailState>(EmailState.PRISTINE);
+  const isEmailEmpty = isEmpty(email);
+  const isEmailStatePristine = emailState === EmailState.PRISTINE;
+
+  useEffect(() => {
+    navigation.setOptions({ title });
+  }, [navigation, title]);
 
   const doSendEmailVerificationCode = async (toVerify: string) => {
     // Exit if email is not valid
@@ -142,7 +141,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   });
 
   return (
-    <KeyboardPageView isFocused={false} style={styles.page} scrollable>
+    <KeyboardPageView style={styles.page} scrollable>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <NamedSVG name="user-email" width={UI_SIZES.elements.thumbnail} height={UI_SIZES.elements.thumbnail} />
@@ -206,7 +205,7 @@ const mapStateToProps: (state: IGlobalState) => AuthChangeEmailScreenStoreProps 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogout: tryAction(logoutAction, undefined, true) as unknown as AuthChangeEmailScreenDispatchProps['onLogout'],
+      onLogout: tryAction(logoutAction, undefined) as unknown as AuthChangeEmailScreenDispatchProps['onLogout'],
     },
     dispatch,
   );

@@ -46,14 +46,12 @@ export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changeMobile>): NativeStackNavigationOptions => {
-  const navBarTitle = route.params.navBarTitle;
-  const title = navBarTitle || I18n.t('auth-change-mobile-verify');
   return {
     ...navBarOptions({
       navigation,
       route,
     }),
-    title,
+    title: undefined,
   };
 };
 
@@ -67,19 +65,32 @@ const countryListLanguages = {
 const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
 
+  const phoneInputRef = useRef<PhoneInput>(null);
+
   const platform = route.params.platform;
   const rememberMe = route.params.rememberMe;
   const defaultMobile = route.params.defaultMobile;
   const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
-
-  const phoneInputRef = useRef<PhoneInput>(null);
+  const title = navBarTitle || I18n.t('auth-change-mobile-verify');
+  const texts: Record<string, any> = isModifyingMobile
+    ? {
+        title: I18n.t('auth-change-mobile-edit-title'),
+        label: I18n.t('auth-change-mobile-edit-label'),
+      }
+    : {
+        title: I18n.t('auth-change-mobile-verify-title'),
+        label: I18n.t('auth-change-mobile-verify-label'),
+      };
 
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [mobile, setMobile] = useState<string>('');
   const [region, setRegion] = useState<CountryCode>('FR');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
+  const isMobileEmpty = isEmpty(mobile);
+  const isMobileStatePristine = mobileState === MobileState.PRISTINE;
+
   // Web 4.8+ compliance:
   //  -mobile verification APIs are available if /auth/user/requirements contains the needRevalidateMobile field
   //  -requirementsChecked is used to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
@@ -87,18 +98,6 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
   const [isCheckMobile, setIsCheckMobile] = React.useState(false);
-
-  useEffect(() => {
-    if (defaultMobile) {
-      const regionCodeAndNationalNumber = getRegionCodeAndNationalNumber(defaultMobile);
-      if (regionCodeAndNationalNumber) {
-        const regionCode = regionCodeAndNationalNumber.regionCode;
-        const nationalNumber = regionCodeAndNationalNumber.nationalNumber;
-        if (regionCode) setRegion(regionCode);
-        if (nationalNumber) setMobile(nationalNumber);
-      } else setMobile(defaultMobile);
-    }
-  }, [defaultMobile]);
   useEffect(() => {
     async function checkRequirements() {
       try {
@@ -114,27 +113,27 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
     if (!requirementsChecked) checkRequirements();
   }, [platform, requirementsChecked]);
-
-  const isMobileEmpty = isEmpty(mobile);
-  const isMobileStatePristine = mobileState === MobileState.PRISTINE;
-
-  const title = navBarTitle || I18n.t('auth-change-mobile-verify');
-
-  const texts: Record<string, any> = isModifyingMobile
-    ? {
-        title: I18n.t('auth-change-mobile-edit-title'),
-        label: I18n.t('auth-change-mobile-edit-label'),
-      }
-    : {
-        title: I18n.t('auth-change-mobile-verify-title'),
-        label: I18n.t('auth-change-mobile-verify-label'),
-      };
   texts.button = isCheckMobile ? I18n.t('auth-change-mobile-verify-button') : I18n.t('auth-change-mobile-edit-button');
   texts.message = isModifyingMobile
     ? isCheckMobile
       ? I18n.t('auth-change-mobile-edit-message')
       : I18n.t('auth-change-mobile-edit-message-unverified')
     : I18n.t('auth-change-mobile-verify-message');
+
+  useEffect(() => {
+    if (defaultMobile) {
+      const regionCodeAndNationalNumber = getRegionCodeAndNationalNumber(defaultMobile);
+      if (regionCodeAndNationalNumber) {
+        const regionCode = regionCodeAndNationalNumber.regionCode;
+        const nationalNumber = regionCodeAndNationalNumber.nationalNumber;
+        if (regionCode) setRegion(regionCode);
+        if (nationalNumber) setMobile(nationalNumber);
+      } else setMobile(defaultMobile);
+    }
+  }, [defaultMobile]);
+  useEffect(() => {
+    navigation.setOptions({ title });
+  }, [navigation, title]);
 
   const getIsValidMobileNumberForRegion = (toVerify: string) => {
     try {
@@ -229,7 +228,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   });
 
   return (
-    <KeyboardPageView isFocused={false} style={styles.page} scrollable>
+    <KeyboardPageView style={styles.page} scrollable>
       {isLoading ? (
         <LoadingIndicator />
       ) : isError ? (
@@ -324,7 +323,7 @@ const mapStateToProps: (state: IGlobalState) => AuthChangeMobileScreenStoreProps
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeMobileScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogout: tryAction(logoutAction, undefined, true) as unknown as AuthChangeMobileScreenDispatchProps['onLogout'],
+      onLogout: tryAction(logoutAction, undefined) as unknown as AuthChangeMobileScreenDispatchProps['onLogout'],
       onSaveNewMobile(updatedProfileValues: UpdatableProfileValues) {
         dispatch(profileUpdateAction(updatedProfileValues));
       },
