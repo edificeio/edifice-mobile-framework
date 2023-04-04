@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,14 +15,14 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import ScrollView from '~/framework/components/scrollView';
+import SwipeableList from '~/framework/components/swipeableList';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
 import StudentRow from '~/framework/modules/viescolaire/presences/components/StudentRow';
-import { EventType } from '~/framework/modules/viescolaire/presences/model';
+import { EventType, IStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -148,8 +148,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -159,42 +158,80 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     const { classCall, navigation } = props;
     const { id } = props.route.params;
     const students = classCall!.students.sort((a, b) => a.name.localeCompare(b.name));
+    students.forEach(student => (student.key = student.id));
 
     return classCall && students.length > 0 ? (
       <>
-        <FlatList
+        <SwipeableList<IStudent & { key: string }>
           data={students}
+          keyExtractor={(item: IStudent) => item.id}
           renderItem={({ item }) => (
             <StudentRow
               student={item}
-              mementoNavigation={() => props.navigation.navigate(presencesRouteNames.memento, { studentId: item.id })}
-              lateCallback={event =>
+              checkAbsent={() => createAbsence(item.id)}
+              uncheckAbsent={deleteAbsence}
+              openMemento={() => props.navigation.navigate(presencesRouteNames.memento, { studentId: item.id })}
+              openLateness={() => {
                 navigation.navigate(presencesRouteNames.declareEvent, {
                   type: EventType.LATENESS,
                   callId: id,
                   student: item,
                   startDate: classCall.start_date,
                   endDate: classCall.end_date,
-                  event,
-                })
-              }
-              leavingCallback={event =>
+                  event: item.events.find(e => e.type_id === 2),
+                });
+              }}
+              openDeparture={() => {
                 navigation.navigate(presencesRouteNames.declareEvent, {
                   type: EventType.DEPARTURE,
                   callId: id,
                   student: item,
                   startDate: classCall.start_date,
                   endDate: classCall.end_date,
-                  event,
-                })
-              }
-              checkAbsent={() => createAbsence(item.id)}
-              uncheckAbsent={deleteAbsence}
+                  event: item.events.find(e => e.type_id === 3),
+                });
+              }}
             />
           )}
-          refreshControl={
-            <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />
-          }
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          swipeActionWidth={70}
+          hiddenRowStyle={styles.studentHiddenRowContainer}
+          itemSwipeActionProps={({ item }) => ({
+            left: [
+              {
+                action: async row => {
+                  navigation.navigate(presencesRouteNames.declareEvent, {
+                    type: EventType.DEPARTURE,
+                    callId: id,
+                    student: item,
+                    startDate: classCall.start_date,
+                    endDate: classCall.end_date,
+                    event: item.events.find(e => e.type_id === 3),
+                  });
+                  row[item.key]?.closeRow();
+                },
+                backgroundColor: viescoTheme.palette.presencesEvents.departure,
+                actionIcon: 'ui-walk',
+                actionIconSize: 28,
+              },
+              {
+                action: async row => {
+                  navigation.navigate(presencesRouteNames.declareEvent, {
+                    type: EventType.LATENESS,
+                    callId: id,
+                    student: item,
+                    startDate: classCall.start_date,
+                    endDate: classCall.end_date,
+                    event: item.events.find(e => e.type_id === 2),
+                  });
+                  row[item.key]?.closeRow();
+                },
+                backgroundColor: viescoTheme.palette.presencesEvents.lateness,
+                actionIcon: 'ui-clock',
+                actionIconSize: 28,
+              },
+            ],
+          })}
         />
         <ActionButton text={I18n.t('viesco-validate')} action={validateCall} loading={isValidating} style={styles.validateButton} />
       </>

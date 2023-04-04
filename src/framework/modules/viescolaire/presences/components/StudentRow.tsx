@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import Swipeable from 'react-native-swipeable';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -30,8 +28,6 @@ const styles = StyleSheet.create({
   },
   alignRightContainer: { flexGrow: 1, flexDirection: 'row-reverse' },
   dash: { height: 10, width: 30, borderRadius: 10 },
-  swipeButtons: { flexDirection: 'row-reverse', flexGrow: 1 },
-  swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
   studentName: { marginLeft: UI_SIZES.spacing.small, marginVertical: UI_SIZES.spacing.medium },
   iconsView: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny },
   grey: {
@@ -67,16 +63,14 @@ type StudentRowState = {
 
 type StudentRowProps = {
   student: Student;
-  mementoNavigation: () => void;
-  lateCallback: (event: any) => any;
-  leavingCallback: (event: any) => any;
   checkAbsent: () => void;
+  openDeparture: () => void;
+  openLateness: () => void;
+  openMemento: () => void;
   uncheckAbsent: (event: any) => any;
-} & NavigationInjectedProps;
+};
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
-  swipeableRef = null;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -103,21 +97,6 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
       : styles.lightGrey;
   };
 
-  swipeButtons = (callBack1, callBack2) => [
-    <View style={styles.swipeButtons}>
-      <View style={[styles.swipeButton, styles.purple]}>
-        <TouchableOpacity onPress={callBack1}>
-          <Icon color={theme.ui.text.inverse} size={28} name="access_time" />
-        </TouchableOpacity>
-      </View>
-      <View style={[styles.swipeButton, styles.blue]}>
-        <TouchableOpacity onPress={callBack2}>
-          <Icon color={theme.ui.text.inverse} size={28} name="directions_walk" />
-        </TouchableOpacity>
-      </View>
-    </View>,
-  ];
-
   handleCheck = () => {
     const { checkAbsent, uncheckAbsent } = this.props;
     const { absentEvent } = this.state;
@@ -130,57 +109,39 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
   };
 
   public render() {
-    const { student, lateCallback, leavingCallback } = this.props;
+    const { student } = this.props;
     const { lateEvent, leavingEvent, absentEvent } = this.state;
     return (
-      <Swipeable
-        onRef={ref => (this.swipeableRef = ref)}
-        leftButtonWidth={120}
-        leftButtons={this.swipeButtons(
-          () => {
-            this.swipeableRef?.recenter();
-            lateCallback(lateEvent);
-          },
-          () => {
-            this.swipeableRef?.recenter();
-            leavingCallback(leavingEvent);
-          },
-        )}>
-        <View style={styles.studentsList}>
-          <TouchableOpacity onPress={this.handleCheck}>
-            <View style={[styles.tick, this.getCheckColor()]} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.props.mementoNavigation()}>
-            <SmallText style={styles.studentName}>{student.name}</SmallText>
-          </TouchableOpacity>
-          <View style={styles.iconsView}>
-            {student.last_course_absent && (
-              <Icon
-                style={{ transform: [{ rotateY: '180deg' }] }}
-                color={theme.palette.complementary.red.regular}
-                size={20}
-                name="refresh"
-              />
-            )}
-            {student.forgotten_notebook && (
-              <Icon color={viescoTheme.palette.presencesEvents.forgotNotebook} size={20} name="bookmark-remove" />
-            )}
-          </View>
-          <View style={styles.alignRightContainer}>
-            {absentEvent !== undefined && <View style={[styles.dash, styles.red]} />}
-            {lateEvent !== undefined && (
-              <TouchableOpacity onPress={() => lateCallback(lateEvent)}>
-                <View style={[styles.dash, styles.purple]} />
-              </TouchableOpacity>
-            )}
-            {leavingEvent !== undefined && (
-              <TouchableOpacity onPress={() => leavingCallback(leavingEvent)}>
-                <View style={[styles.dash, styles.blue]} />
-              </TouchableOpacity>
-            )}
-          </View>
+      <View style={styles.studentsList}>
+        <TouchableOpacity onPress={this.handleCheck}>
+          <View style={[styles.tick, this.getCheckColor()]} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.props.openMemento}>
+          <SmallText style={styles.studentName}>{student.name}</SmallText>
+        </TouchableOpacity>
+        <View style={styles.iconsView}>
+          {student.last_course_absent ? (
+            <Icon
+              style={{ transform: [{ rotateY: '180deg' }] }}
+              color={theme.palette.complementary.red.regular}
+              size={20}
+              name="refresh"
+            />
+          ) : null}
+          {student.forgotten_notebook ? (
+            <Icon color={viescoTheme.palette.presencesEvents.forgotNotebook} size={20} name="bookmark-remove" />
+          ) : null}
         </View>
-      </Swipeable>
+        <View style={styles.alignRightContainer}>
+          {absentEvent !== undefined ? <View style={[styles.dash, styles.red]} /> : null}
+          {lateEvent !== undefined ? (
+            <TouchableOpacity onPress={this.props.openLateness} style={[styles.dash, styles.purple]} />
+          ) : null}
+          {leavingEvent !== undefined ? (
+            <TouchableOpacity onPress={this.props.openDeparture} style={[styles.dash, styles.blue]} />
+          ) : null}
+        </View>
+      </View>
     );
   }
 }

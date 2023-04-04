@@ -65,9 +65,11 @@ declare module 'react' {
 export interface ISwipeAction<ItemT extends { key: string }> {
   action: (row: RowMap<ItemT>, e: GestureResponderEvent) => void;
   actionIcon?: string;
+  actionIconSize?: number;
   actionColor?: ColorValue;
   actionText?: string;
   backgroundColor?: ColorValue;
+  isFirstAction?: boolean;
   style?: ViewStyle;
 }
 
@@ -107,7 +109,7 @@ const SwipeAction = <ItemT extends { key: string }>(
   const overlapWidth = React.useMemo(() => UI_SIZES.screen.width - props.swipeActionWidth, [props.swipeActionWidth]);
   const overlapElement = React.useMemo(
     () =>
-      props.backgroundColor ? (
+      props.backgroundColor && props.isFirstAction ? (
         <View
           // eslint-disable-next-line react-native/no-inline-styles
           style={{
@@ -141,8 +143,8 @@ const SwipeAction = <ItemT extends { key: string }>(
           {overlapElement}
           {props.actionIcon ? (
             <NamedSVG
-              width={16}
-              height={16}
+              width={props.actionIconSize ?? 16}
+              height={props.actionIconSize ?? 16}
               fill={props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular)}
               name={props.actionIcon}
             />
@@ -223,8 +225,9 @@ export default React.forwardRef(
                 }
                 rowMap={rowmap}
                 animatedRefs={animatedRefs.current}
-                swipeActionWidth={(swipeActionWidth ?? defaultSwipeActionWidth) * actions.left!.length}
+                swipeActionWidth={swipeActionWidth ?? defaultSwipeActionWidth}
                 direction="left"
+                isFirstAction={!index}
               />
             ))}
             <View style={UI_STYLES.flex1} />
@@ -235,8 +238,9 @@ export default React.forwardRef(
                 style={[hiddenItemStyle, p.style] as ViewStyle}
                 rowMap={rowmap}
                 animatedRefs={animatedRefs.current}
-                swipeActionWidth={(swipeActionWidth ?? defaultSwipeActionWidth) * actions.right!.length}
+                swipeActionWidth={swipeActionWidth ?? defaultSwipeActionWidth}
                 direction="right"
+                isFirstAction={!index}
               />
             ))}
           </View>
