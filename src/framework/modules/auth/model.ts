@@ -51,10 +51,15 @@ export interface UserStructureWithClasses extends StructureNode {
   classes: string[];
 }
 
+export interface LoggedUserContactDetails {
+  email?: string;
+  mobile?: string;
+}
+
 /**
  * Describes all editable profile values as text-only, without verifications.
  */
-export interface ILoggedUserProfile extends IUserProfile {
+export interface ILoggedUserProfile extends IUserProfile, LoggedUserContactDetails {
   birthDate?: moment.Moment;
   firstName: string;
   lastName: string;
@@ -62,23 +67,16 @@ export interface ILoggedUserProfile extends IUserProfile {
   loginAlias?: string;
 }
 
-export interface LoggedUserContactDetails {
-  email?: string;
-  mobile?: string;
-}
-
 /**
  * Describes the user that is logged in currently (private info)
  */
-export interface ILoggedUser extends IUser, ILoggedUserProfile, LoggedUserContactDetails {
+export interface ILoggedUser extends IUser, ILoggedUserProfile {
   groups: string[];
   uniqueId?: string;
   children?: UserChildren;
   classes?: string[];
   relatives?: UserPrivateData['parents'];
   structures?: UserStructureWithClasses[];
-  photo?: string;
-  mobile: string;
 }
 
 export interface UserChild {
