@@ -20,6 +20,9 @@ export default StyleSheet.create({
   nameText: {
     marginLeft: UI_SIZES.spacing.minor,
   },
+  studentHiddenRowContainer: {
+    left: -70,
+  },
   validateButton: {
     marginBottom: UI_SIZES.spacing.medium,
   },
