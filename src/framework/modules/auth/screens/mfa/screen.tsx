@@ -183,9 +183,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     try {
       setIsResendingVerificationCode(true);
       if (isEmailMFA) {
-        await sendEmailVerificationCode(platform, email);
+        await sendEmailVerificationCode(platform, email!);
       } else if (isMobileMFA) {
-        await sendMobileVerificationCode(platform, mobile);
+        await sendMobileVerificationCode(platform, mobile!);
       } else await getMFAValidationInfos();
       return ResendResponse.SUCCESS;
     } catch {
@@ -216,7 +216,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
         [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
       };
-      const routeName = routeNames[modificationType];
+      const routeName = routeNames[modificationType!];
       const params = { navBarTitle, modificationType, platform };
       navigation.dispatch(StackActions.replace({ routeName, params }));
     }
@@ -372,8 +372,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScr
   return bindActionCreators(
     {
       onLogin: tryAction(loginAction, undefined) as unknown as AuthMFAScreenDispatchProps['onLogin'],
-      onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) =>
-        dispatch(profileUpdateAction(updatedProfileValues, false, false)),
+      onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => dispatch(profileUpdateAction(updatedProfileValues)),
     },
     dispatch,
   );
