@@ -17,6 +17,7 @@ export interface AuthChangeMobileScreenNavParams {
   modificationType?: ModificationType;
   navBarTitle?: string;
   platform: Platform;
+  rememberMe?: boolean;
 }
 
 export interface AuthChangeMobileScreenProps {}

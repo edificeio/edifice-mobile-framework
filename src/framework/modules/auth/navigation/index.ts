@@ -95,6 +95,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
               params: {
                 platform,
                 defaultMobile: action.defaultMobile,
+                rememberMe: action.rememberMe,
               },
             },
           ],
@@ -108,6 +109,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
               params: {
                 platform,
                 defaultEmail: action.defaultEmail,
+                rememberMe: action.rememberMe,
               },
             },
           ],

@@ -5,7 +5,7 @@ import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 import { ILoginResult, loginAction } from '../../actions';
-import { IAuthContext, IAuthCredentials, ISession } from '../../model';
+import { ISession } from '../../model';
 import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
 
 export interface AuthMFAScreenDispatchProps {
@@ -14,16 +14,14 @@ export interface AuthMFAScreenDispatchProps {
 }
 
 export interface AuthMFAScreenNavParams {
-  context: IAuthContext;
-  credentials: IAuthCredentials;
-  email: string;
-  isEmailMFA: boolean;
-  isMobileMFA: boolean;
-  mobile: string;
-  modificationType: ModificationType;
+  email?: string;
+  isEmailMFA?: boolean;
+  isMobileMFA?: boolean;
+  mobile?: string;
+  modificationType?: ModificationType;
   navBarTitle: string;
   platform: Platform;
-  rememberMe: boolean;
+  rememberMe?: boolean;
 }
 
 export interface AuthMFAScreenProps {}

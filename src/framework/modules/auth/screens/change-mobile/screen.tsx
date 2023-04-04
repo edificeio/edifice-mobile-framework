@@ -47,9 +47,7 @@ export const computeNavBar = ({
   route,
 }: NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changeMobile>): NativeStackNavigationOptions => {
   const navBarTitle = route.params.navBarTitle;
-  const modificationType = route.params.modificationType;
-  const isModifyingMobile = modificationType === ModificationType.MOBILE;
-  const title = isModifyingMobile ? navBarTitle : I18n.t('auth-change-mobile-verify');
+  const title = navBarTitle || I18n.t('auth-change-mobile-verify');
   return {
     ...navBarOptions({
       navigation,
@@ -70,6 +68,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
 
   const platform = route.params.platform;
+  const rememberMe = route.params.rememberMe;
   const defaultMobile = route.params.defaultMobile;
   const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
@@ -119,7 +118,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const isMobileEmpty = isEmpty(mobile);
   const isMobileStatePristine = mobileState === MobileState.PRISTINE;
 
-  const title = isModifyingMobile ? navBarTitle : I18n.t('auth-change-mobile-verify');
+  const title = navBarTitle || I18n.t('auth-change-mobile-verify');
 
   const texts: Record<string, any> = isModifyingMobile
     ? {
@@ -167,6 +166,8 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         }
         await sendMobileVerificationCode(platform, mobileNumberFormatted);
         navigation.navigate(AuthRouteNames.mfa, {
+          platform,
+          rememberMe,
           modificationType,
           isMobileMFA: true,
           mobile: mobileNumberFormatted,

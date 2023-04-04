@@ -38,9 +38,7 @@ export const computeNavBar = ({
   route,
 }: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.changeEmail>): NativeStackNavigationOptions => {
   const navBarTitle = route.params.navBarTitle;
-  const modificationType = route.params.modificationType;
-  const isModifyingEmail = modificationType === ModificationType.EMAIL;
-  const title = isModifyingEmail ? navBarTitle : I18n.t('auth-change-email-verify');
+  const title = navBarTitle || I18n.t('auth-change-email-verify');
   return {
     ...navBarOptions({
       navigation,
@@ -54,6 +52,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
 
   const platform = route.params.platform;
+  const rememberMe = route.params.rememberMe;
   const defaultEmail = route.params.defaultEmail;
   const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
@@ -66,7 +65,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isEmailEmpty = isEmpty(email);
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
 
-  const title = isModifyingEmail ? navBarTitle : I18n.t('auth-change-email-verify');
+  const title = navBarTitle || I18n.t('auth-change-email-verify');
 
   const texts: Record<string, any> = isModifyingEmail
     ? {
@@ -94,6 +93,8 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       }
       await sendEmailVerificationCode(platform, toVerify);
       navigation.navigate(AuthRouteNames.mfa, {
+        platform,
+        rememberMe,
         modificationType,
         isEmailMFA: true,
         email: toVerify,
