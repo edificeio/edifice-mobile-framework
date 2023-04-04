@@ -201,6 +201,22 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
               {
                 action: async row => {
                   navigation.navigate(presencesRouteNames.declareEvent, {
+                    type: EventType.DEPARTURE,
+                    callId: id,
+                    student: item,
+                    startDate: classCall.start_date,
+                    endDate: classCall.end_date,
+                    event: item.events.find(e => e.type_id === 3),
+                  });
+                  row[item.key]?.closeRow();
+                },
+                backgroundColor: viescoTheme.palette.presencesEvents.departure,
+                actionIcon: 'ui-walk',
+                actionIconSize: 28,
+              },
+              {
+                action: async row => {
+                  navigation.navigate(presencesRouteNames.declareEvent, {
                     type: EventType.LATENESS,
                     callId: id,
                     student: item,
@@ -212,23 +228,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                 },
                 backgroundColor: viescoTheme.palette.presencesEvents.lateness,
                 actionIcon: 'ui-clock',
-                actionIconSize: 20,
-              },
-              {
-                action: async row => {
-                  navigation.navigate(presencesRouteNames.declareEvent, {
-                    type: EventType.DEPARTURE,
-                    callId: id,
-                    student: item,
-                    startDate: classCall.start_date,
-                    endDate: classCall.end_date,
-                    event: item.events.find(e => e.type_id === 3),
-                  });
-                  row[item.key]?.closeRow();
-                },
-                backgroundColor: viescoTheme.palette.presencesEvents.departure,
-                actionIcon: 'ui-clock',
-                actionIconSize: 20,
+                actionIconSize: 28,
               },
             ],
           })}

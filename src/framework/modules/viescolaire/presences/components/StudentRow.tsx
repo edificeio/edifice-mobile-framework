@@ -28,8 +28,6 @@ const styles = StyleSheet.create({
   },
   alignRightContainer: { flexGrow: 1, flexDirection: 'row-reverse' },
   dash: { height: 10, width: 30, borderRadius: 10 },
-  swipeButtons: { flexDirection: 'row-reverse', flexGrow: 1 },
-  swipeButton: { width: 60, alignItems: 'center', justifyContent: 'center' },
   studentName: { marginLeft: UI_SIZES.spacing.small, marginVertical: UI_SIZES.spacing.medium },
   iconsView: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny },
   grey: {
@@ -73,8 +71,6 @@ type StudentRowProps = {
 };
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
-  swipeableRef = null;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -100,21 +96,6 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
       ? styles.red
       : styles.lightGrey;
   };
-
-  swipeButtons = (callBack1, callBack2) => [
-    <View style={styles.swipeButtons}>
-      <View style={[styles.swipeButton, styles.purple]}>
-        <TouchableOpacity onPress={callBack1}>
-          <Icon color={theme.ui.text.inverse} size={28} name="access_time" />
-        </TouchableOpacity>
-      </View>
-      <View style={[styles.swipeButton, styles.blue]}>
-        <TouchableOpacity onPress={callBack2}>
-          <Icon color={theme.ui.text.inverse} size={28} name="directions_walk" />
-        </TouchableOpacity>
-      </View>
-    </View>,
-  ];
 
   handleCheck = () => {
     const { checkAbsent, uncheckAbsent } = this.props;

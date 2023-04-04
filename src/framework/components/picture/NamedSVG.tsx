@@ -106,6 +106,7 @@ const imports = {
   'ui-users': import('ASSETS/icons/uiIcons/users.svg'),
   'ui-userSearch': import('ASSETS/icons/uiIcons/userSearch.svg'),
   'ui-video': import('ASSETS/icons/uiIcons/video.svg'),
+  'ui-walk': import('ASSETS/icons/uiIcons/walk.svg'),
   'ui-warning': import('ASSETS/icons/uiIcons/warning.svg'),
   'ui-wavering': import('ASSETS/icons/uiIcons/wavering.svg'),
   'ui-write': import('ASSETS/icons/uiIcons/write.svg'),
