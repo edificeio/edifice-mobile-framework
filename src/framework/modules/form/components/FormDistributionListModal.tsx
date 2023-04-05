@@ -51,31 +51,34 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
   const openDistributionCallback = (id: number, status: DistributionStatus) => {
     const { form } = props;
 
-    if (!form) return Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
-    props.openDistribution(id, status, form);
+    if (form) {
+      props.openDistribution(id, status, form);
+    } else {
+      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+    }
   };
 
   const openSentDistribution = async (id: number) => {
     const { distributions, form } = props;
 
     if (form?.editable) {
-      let distribution = distributions?.find(d => d.originalId === id && d.status === DistributionStatus.ON_CHANGE);
-      if (!distribution) {
-        try {
+      try {
+        let distribution = distributions?.find(d => d.originalId === id && d.status === DistributionStatus.ON_CHANGE);
+
+        if (!distribution) {
           const session = assertSession();
           distribution = await formService.distribution.duplicate(session, id);
-        } catch (e) {
-          Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
-          throw e;
         }
+        openDistributionCallback(distribution.id, distribution.status);
+      } catch {
+        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
       }
-      openDistributionCallback(distribution.id, distribution.status);
     } else {
       openDistributionCallback(id, DistributionStatus.FINISHED);
     }
   };
 
-  const onAnswerAgain = async () => {
+  const openNewDistribution = async () => {
     try {
       const { distributions } = props;
       let distribution = distributions?.find(d => d.status === DistributionStatus.TO_DO);
@@ -126,7 +129,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
             persistentScrollbar
             style={styles.flatListContainer}
           />
-          <ActionButton text={I18n.t('form.answerAgain')} action={() => onAnswerAgain()} loading={isLoading} />
+          <ActionButton text={I18n.t('form.answerAgain')} action={openNewDistribution} loading={isLoading} />
         </View>
       }
     />

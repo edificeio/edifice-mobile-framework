@@ -23,7 +23,6 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction = notification =>
     }
     const formId = Number(formUri);
     const session = assertSession();
-    if (!session) throw new Error();
     const form = await formService.form.get(session, formId);
     const hasResponderRight = await formService.form.hasResponderRight(session, formId);
     if (!form || form.archived || !hasResponderRight) {

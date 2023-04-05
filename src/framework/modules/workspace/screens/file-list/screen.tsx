@@ -175,8 +175,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   const restoreSelectedFiles = async () => {
     const ids = selectedFiles;
     setSelectedFiles([]);
-    props.restoreFiles(parentId, ids);
-    fetchList();
+    await props.restoreFiles(parentId, ids);
+    refresh();
   };
 
   const onModalAction = async (files: IFile[], value: string, destinationId: string) => {
@@ -315,7 +315,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           <HeaderBackButton
             tintColor={tintColor}
             onPress={() => props.navigation.dispatch(CommonActions.goBack())}
-            style={{ marginHorizontal: -UI_SIZES.spacing.minor }}
+            style={{ marginLeft: -UI_SIZES.spacing.minor }}
           />
           {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
         </>
@@ -351,8 +351,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );

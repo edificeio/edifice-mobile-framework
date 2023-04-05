@@ -25,7 +25,6 @@ export const getProfileColor = (userType: string): ColorValue => {
 export const getUserColor = async (userId: string) => {
   try {
     const session = assertSession();
-    if (!session) throw new Error();
     const user = await zimbraService.user.get(session, userId);
     return getProfileColor(user.type[0]);
   } catch {
