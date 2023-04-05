@@ -61,8 +61,8 @@ export const FormOrderCard = ({ isDisabled, question, responses, onChangeAnswer,
   const [choices, setChoices] = React.useState<IQuestionChoice[]>(sortChoices(question.choices, responses[0]?.answer));
   const { title, mandatory } = question;
 
-  const updateOrder = (data: IQuestionChoice[]) => {
-    const answer = `[${data.map(choice => choice.id).join(',')}]`;
+  React.useEffect(() => {
+    const answer = `[${choices.map(choice => choice.id).join(',')}]`;
 
     if (responses.length) {
       responses[0].answer = answer;
@@ -72,15 +72,15 @@ export const FormOrderCard = ({ isDisabled, question, responses, onChangeAnswer,
         questionId: question.id,
       });
     }
-    setChoices(data);
     onChangeAnswer(question.id, responses);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [choices]);
 
   const renderItem = ({ item, drag, isActive }: RenderItemParams<IQuestionChoice>) => {
     return (
       <ScaleDecorator>
         <TouchableOpacity
-          onLongPress={drag}
+          onPressIn={drag}
           disabled={isDisabled || isActive}
           style={[styles.choiceContainer, { backgroundColor: isActive ? theme.palette.grey.pearl : theme.palette.grey.fog }]}>
           <Picture
@@ -103,8 +103,8 @@ export const FormOrderCard = ({ isDisabled, question, responses, onChangeAnswer,
       ) : (
         <DraggableFlatList
           data={choices}
-          onDragEnd={({ data }) => updateOrder(data)}
-          keyExtractor={(item, index) => index.toString()}
+          onDragEnd={({ data }) => setChoices(data)}
+          keyExtractor={item => item.id.toString()}
           renderItem={renderItem}
           style={styles.listContainer}
         />
