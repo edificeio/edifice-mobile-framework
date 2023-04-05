@@ -305,25 +305,27 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         ),
         headerRight: () => (
           <View style={styles.navBarRightContainer}>
-            {folderPath === '/Sent' || folderPath === '/Trash' ? (
+            {folderPath === '/Sent' || folderPath === '/Drafts' || folderPath === '/Trash' ? (
               <>
                 {folderPath === '/Trash' ? (
                   <View style={styles.rightMargin}>
                     <NavBarAction icon="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
                   </View>
                 ) : null}
-                <NavBarAction icon="ui-delete" onPress={alertPermanentDeletion} />
+                {folderPath === '/Drafts' ? (
+                  <NavBarAction icon="ui-folderMove" onPress={() => moveModalRef.current?.doShowModal()} />
+                ) : (
+                  <NavBarAction icon="ui-delete" onPress={alertPermanentDeletion} />
+                )}
               </>
             ) : (
               <>
-                {folderPath !== '/Drafts' ? (
-                  <View style={styles.rightMargin}>
-                    <NavBarAction
-                      icon={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
-                      onPress={markSelectedMailsAsUnread}
-                    />
-                  </View>
-                ) : null}
+                <View style={styles.rightMargin}>
+                  <NavBarAction
+                    icon={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
+                    onPress={markSelectedMailsAsUnread}
+                  />
+                </View>
                 <PopupMenu actions={getDropdownActions()}>
                   <NavBarAction icon="ui-options" />
                 </PopupMenu>

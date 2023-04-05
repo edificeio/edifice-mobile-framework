@@ -58,6 +58,7 @@ export const FormSingleAnswerCard = ({
   const { title, mandatory } = question;
 
   const clearAnswer = () => {
+    setCustomAnswer('');
     responses[0].choiceId = undefined;
     responses[0].answer = '';
     responses[0].customAnswer = undefined;
@@ -85,10 +86,16 @@ export const FormSingleAnswerCard = ({
     onChangeAnswer(question.id, responses);
   };
 
+  const onChangeCustomAnswer = (text: string) => {
+    setCustomAnswer(text);
+    responses[0].customAnswer = text;
+    onChangeAnswer(question.id, responses);
+  };
+
   return (
     <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
       {isDisabled ? (
-        <FormAnswerText answer={responses[0]?.answer} />
+        <FormAnswerText answer={selectedChoice?.isCustom ? responses[0]?.customAnswer : responses[0]?.answer} />
       ) : (
         <View>
           <Dropdown
@@ -101,7 +108,7 @@ export const FormSingleAnswerCard = ({
           {selectedChoice?.isCustom ? (
             <TextInput
               value={customAnswer}
-              onChangeText={text => setCustomAnswer(text)}
+              onChangeText={onChangeCustomAnswer}
               editable={!isDisabled}
               placeholder={I18n.t('form.enterYourAnswer')}
               style={styles.customAnswerInput}
