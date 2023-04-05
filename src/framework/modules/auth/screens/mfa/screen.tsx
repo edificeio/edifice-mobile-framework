@@ -218,7 +218,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       };
       const routeName = routeNames[modificationType!];
       const params = { navBarTitle, modificationType, platform };
-      navigation.dispatch(StackActions.replace({ routeName, params }));
+      navigation.replace(routeName, params);
     }
   };
 
