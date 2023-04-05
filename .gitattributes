@@ -1,16 +1,1 @@
 *.pbxproj -text
-patches/react-native-fast-image+8.6.3.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-phone-number-input+2.1.0.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-media-console+2.0.6.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native+0.69.8.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-country-picker-modal+2.0.0.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-file-viewer+2.1.5.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-keyboard-avoiding-scroll-view+1.0.1.patch filter=lfs diff=lfs merge=lfs -text
-patches/@react-native-camera-roll+camera-roll+5.3.1.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-global-props+1.1.5.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-image-picker+4.8.4.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-matomo+0.2.0.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-dropdown-picker+5.4.6.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-snow-bg+1.0.0.patch filter=lfs diff=lfs merge=lfs -text
-patches/react-native-tiny-toast+1.0.7.patch filter=lfs diff=lfs merge=lfs -text
-patches/rn-material-ui-textfield+1.0.9.patch filter=lfs diff=lfs merge=lfs -text
