@@ -51,6 +51,7 @@ const imports = {
   'ui-filter': import('ASSETS/icons/uiIcons/filter.svg'),
   'ui-flag': import('ASSETS/icons/uiIcons/flag.svg'),
   'ui-folder': import('ASSETS/icons/uiIcons/folder.svg'),
+  'ui-folderMove': import('ASSETS/icons/uiIcons/folderMove.svg'),
   'ui-fullScreen': import('ASSETS/icons/uiIcons/fullScreen.svg'),
   'ui-globe': import('ASSETS/icons/uiIcons/globe.svg'),
   'ui-hide': import('ASSETS/icons/uiIcons/hide.svg'),
