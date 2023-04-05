@@ -81,7 +81,13 @@ export const FormMultipleAnswerCard = ({
 
   const onChangeCustomAnswer = (text: string, choice: IQuestionChoice) => {
     setCustomAnswer(text);
-    if (!selectedChoices.includes(choice.id)) {
+    if (selectedChoices.includes(choice.id) && text.length) {
+      const newResponses = responses.map(r => {
+        if (r.choiceId === choice.id) r.customAnswer = text;
+        return r;
+      });
+      onChangeAnswer(question.id, newResponses);
+    } else {
       onSelectChoice(choice);
     }
   };

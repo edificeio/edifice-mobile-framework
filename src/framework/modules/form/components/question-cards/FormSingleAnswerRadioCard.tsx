@@ -24,6 +24,9 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     marginLeft: UI_SIZES.spacing.minor,
   },
+  customAnswerContainer: {
+    minWidth: '90%',
+  },
   customAnswerInput: {
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
@@ -72,6 +75,7 @@ export const FormSingleAnswerRadioCard = ({
 
   const clearAnswer = () => {
     setValue(undefined);
+    setCustomAnswer('');
     responses[0].answer = '';
     responses[0].choiceId = undefined;
     responses[0].customAnswer = undefined;
@@ -82,6 +86,9 @@ export const FormSingleAnswerRadioCard = ({
     setCustomAnswer(text);
     if (value !== choice.id) {
       onChangeChoice(choice);
+    } else {
+      responses[0].customAnswer = text;
+      onChangeAnswer(question.id, responses);
     }
   };
 
@@ -101,7 +108,7 @@ export const FormSingleAnswerRadioCard = ({
             <TouchableOpacity
               onPress={() => onChangeChoice(item)}
               disabled={isDisabled}
-              style={[styles.answerContainer, index > 0 && styles.containerMargin]}>
+              style={[styles.answerContainer, index > 0 && styles.containerMargin, item.isCustom && styles.customAnswerContainer]}>
               <FormRadio active={item.id === value} disabled={isDisabled} />
               <SmallText style={styles.answerText}>{item.value}</SmallText>
               {item.isCustom ? (
