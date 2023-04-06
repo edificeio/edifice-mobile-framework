@@ -29,11 +29,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('viesco-memento'),
   }),
-  title: I18n.t('viesco-memento'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.presences,
-  },
+  },*/
 });
 
 const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {

@@ -20,6 +20,7 @@ import { SmallText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { navBarTitle } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
 import { IOAuthToken, OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, initOAuth2 } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
@@ -263,7 +264,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     }
     // Update page title
     this.props.navigation.setOptions({
-      title: I18n.t(this.state.mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title'),
+      headerTitle: navBarTitle(
+        I18n.t(this.state.mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title'),
+      ),
     });
   }
 

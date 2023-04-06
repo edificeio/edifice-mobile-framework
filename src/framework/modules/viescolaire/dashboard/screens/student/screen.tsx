@@ -51,8 +51,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('viesco'),
   }),
-  title: I18n.t('viesco'),
 });
 
 class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenPrivateProps> {

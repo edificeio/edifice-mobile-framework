@@ -33,8 +33,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('form.formDistributionListScreen.title'),
   }),
-  title: I18n.t('form.formDistributionListScreen.title'),
 });
 
 const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProps) => {

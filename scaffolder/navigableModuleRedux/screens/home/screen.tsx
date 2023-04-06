@@ -23,8 +23,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('{{moduleName}}-home-title'),
   }),
-  title: I18n.t('{{moduleName}}-home-title'),
   // @scaffolder add nav options here if necessary
   headerLeft: () => ( // @scaffolder remove this example
     <NavBarAction

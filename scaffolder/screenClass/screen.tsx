@@ -20,8 +20,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('{{moduleName}}-{{screenName}}-title'),
   }),
-  title: I18n.t('{{moduleName}}-{{screenName}}-title'),
 });
 
 export default class {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen extends React.PureComponent<{{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenPrivateProps, {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenState> {

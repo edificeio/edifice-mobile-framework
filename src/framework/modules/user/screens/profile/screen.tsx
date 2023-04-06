@@ -264,8 +264,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('MyProfile'),
   }),
-  title: I18n.t('MyProfile'),
 });
 
 export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IProfilePageState> {

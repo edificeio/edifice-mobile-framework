@@ -42,8 +42,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('timeline.filtersScreen.title'),
   }),
-  title: I18n.t('timeline.filtersScreen.title'),
 });
 
 function PreventBack(props: { onPreventBack: boolean }) {

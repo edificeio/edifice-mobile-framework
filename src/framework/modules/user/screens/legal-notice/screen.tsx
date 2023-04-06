@@ -26,8 +26,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('directory-legalNoticeTitle'),
   }),
-  title: I18n.t('directory-legalNoticeTitle'),
 });
 
 const LEGAL_ITEMS = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];

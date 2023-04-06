@@ -58,8 +58,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
   }),
-  title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
 });
 
 export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplorerScreenProps, object> {

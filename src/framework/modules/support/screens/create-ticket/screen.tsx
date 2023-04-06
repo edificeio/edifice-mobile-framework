@@ -35,8 +35,11 @@ export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<SupportNavigationParams, typeof supportRouteNames.home>): NativeStackNavigationOptions => ({
-  ...navBarOptions({ navigation, route }),
-  title: I18n.t('support.tabName'),
+  ...navBarOptions({
+    navigation,
+    route,
+    title: I18n.t('support.tabName'),
+  }),
 });
 
 const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {

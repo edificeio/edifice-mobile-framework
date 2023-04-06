@@ -17,8 +17,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('{{moduleName}}-other-title'),
   }),
-  title: I18n.t('{{moduleName}}-other-title'),
 });
 
 export default function {{moduleName | toCamelCase | capitalize}}OtherScreen(props: {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps) {

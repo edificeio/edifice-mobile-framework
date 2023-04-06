@@ -18,11 +18,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: route.params.diaryTitle ?? I18n.t('Homework'),
   }),
-  title: route.params.diaryTitle ?? I18n.t('Homework'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.diary,
-  },
+  },*/
 });
 
 class DiaryHomeworkScreen extends React.PureComponent<any> {

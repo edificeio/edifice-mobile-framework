@@ -31,11 +31,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
   }),
-  title: I18n.t(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.presences,
-  },
+  },*/
 });
 
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {

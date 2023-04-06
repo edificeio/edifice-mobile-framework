@@ -45,11 +45,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('viesco-presences'),
   }),
-  title: I18n.t('viesco-presences'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.presences,
-  },
+  },*/
 });
 
 const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps) => {

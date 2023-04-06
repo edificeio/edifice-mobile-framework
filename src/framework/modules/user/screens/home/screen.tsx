@@ -40,8 +40,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('MyAccount'),
   }),
-  title: I18n.t('MyAccount'),
   headerShadowVisible: false,
 });
 

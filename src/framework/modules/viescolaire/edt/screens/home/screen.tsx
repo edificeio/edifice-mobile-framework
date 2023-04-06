@@ -45,11 +45,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('viesco-timetable'),
   }),
-  title: I18n.t('viesco-timetable'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.edt,
-  },
+  },*/
 });
 
 const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {

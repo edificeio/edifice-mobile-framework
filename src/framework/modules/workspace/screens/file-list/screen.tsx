@@ -42,7 +42,7 @@ import WorkspaceModal, { WorkspaceModalType } from '~/framework/modules/workspac
 import moduleConfig from '~/framework/modules/workspace/module-config';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
@@ -59,8 +59,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('workspace.tabName'),
   }),
-  title: I18n.t('workspace.tabName'),
 });
 
 const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
@@ -332,7 +332,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      title: props.route.params.title ?? I18n.t('workspace.tabName'),
+      headerTitle: navBarTitle(props.route.params.title ?? I18n.t('workspace.tabName')),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);

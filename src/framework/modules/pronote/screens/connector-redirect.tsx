@@ -37,8 +37,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('pronote-home-title'),
   }),
-  title: I18n.t('pronote-home-title'),
 });
 
 function ConnectorRedirectScreen(props: IConnectorRedirectScreenProps) {

@@ -23,8 +23,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('{{moduleName}}-other-title'),
   }),
-  title: I18n.t('{{moduleName}}-other-title'),
   headerLeft: () => (
     <NavBarAction
       iconName="ui-plus"
@@ -48,7 +48,7 @@ function {{moduleName | toCamelCase | capitalize}}OtherScreen(props: {{moduleNam
       ),
     });
   }, [navigation, handleChangeFruit]);
-  
+
   return (
     <PageView>
       <BodyBoldText>{{moduleName | toCamelCase}} Other</BodyBoldText>

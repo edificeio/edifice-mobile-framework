@@ -102,8 +102,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('conversation.appName'),
   }),
-  title: I18n.t('conversation.appName'),
 });
 
 class ConversationMailListScreen extends React.PureComponent<ConversationMailListScreenProps, ConversationMailListScreenState> {
@@ -165,7 +165,6 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
     const { route, init, count, isFetching, isFocused, navigation } = this.props;
     const { firstFetch, fetchRequested, isChangingFolder } = this.state;
     const key = route.params.key;
-
     navigation.setOptions({
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components

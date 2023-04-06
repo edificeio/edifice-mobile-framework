@@ -34,7 +34,7 @@ import NewMailComponent from '~/framework/modules/conversation/components/NewMai
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -108,8 +108,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('conversation.newMessage'),
   }),
-  title: I18n.t('conversation.newMessage'),
 });
 
 const HandleBack = () => {
@@ -162,7 +162,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const sendDraft = route.params.getSendDraft;
 
     navigation.setOptions({
-      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
+      headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage')),
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (

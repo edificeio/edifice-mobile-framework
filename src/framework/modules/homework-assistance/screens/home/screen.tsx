@@ -39,8 +39,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('homeworkAssistance.tabName'),
   }),
-  title: I18n.t('homeworkAssistance.tabName'),
 });
 
 const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivateProps) => {

@@ -111,8 +111,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('timeline.appName'),
   }),
-  title: I18n.t('timeline.appName'),
   headerLeft: () => (
     <NavBarAction
       icon="ui-filter"

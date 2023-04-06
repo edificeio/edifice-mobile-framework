@@ -24,7 +24,7 @@ import { PageView } from '~/framework/components/page';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
@@ -118,16 +118,15 @@ export function computeNavBar({
   navigation,
   route,
 }: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel>): NativeStackNavigationOptions {
-  const baseOptions = navBarOptions({
-    navigation,
-    route,
-  });
   return {
-    ...baseOptions,
-    title:
-      route.params.data.length !== 1
-        ? I18n.t('carousel.counter', { current: route.params.startIndex ?? 1, total: route.params.data.length })
-        : '',
+    ...navBarOptions({
+      navigation,
+      route,
+      title:
+        route.params.data.length !== 1
+          ? I18n.t('carousel.counter', { current: route.params.startIndex ?? 1, total: route.params.data.length })
+          : '',
+    }),
     headerTransparent: true,
     headerBlurEffect: 'dark',
     headerStyle: { backgroundColor: theme.ui.shadowColorTransparent.toString() },
@@ -272,12 +271,13 @@ export function Carousel(props: ICarouselProps) {
 
   React.useEffect(() => {
     if (isNavBarVisible) {
-      navigation.setOptions(computeNavBar({ navigation, route }));
       navigation.setOptions({
-        title:
+        ...computeNavBar({ navigation, route }),
+        headerTitle: navBarTitle(
           route.params.data.length !== 1
             ? I18n.t('carousel.counter', { current: indexDisplay, total: route.params.data.length })
             : '',
+        ),
         headerRight: () => getButtons(imageState !== 'success'),
       });
     } else {
@@ -286,7 +286,7 @@ export function Carousel(props: ICarouselProps) {
         headerStyle: { backgroundColor: 'transparent' },
         headerLeft: undefined,
         headerRight: undefined,
-        title: '',
+        headerTitle: navBarTitle(),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

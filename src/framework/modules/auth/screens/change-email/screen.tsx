@@ -20,7 +20,7 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
@@ -53,10 +53,9 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const platform = route.params.platform;
   const rememberMe = route.params.rememberMe;
   const defaultEmail = route.params.defaultEmail;
-  const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
   const isModifyingEmail = modificationType === ModificationType.EMAIL;
-  const title = navBarTitle || I18n.t('auth-change-email-verify');
+  const title = route.params.navBarTitle || I18n.t('auth-change-email-verify');
   const texts: Record<string, any> = isModifyingEmail
     ? {
         title: I18n.t('auth-change-email-edit-title'),
@@ -77,7 +76,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
 
   useEffect(() => {
-    navigation.setOptions({ title });
+    navigation.setOptions({ headerTitle: navBarTitle(title) });
   }, [navigation, title]);
 
   const doSendEmailVerificationCode = async (toVerify: string) => {

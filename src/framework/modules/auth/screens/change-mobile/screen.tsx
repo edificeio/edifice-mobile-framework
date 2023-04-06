@@ -30,7 +30,7 @@ import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~
 import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
 import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -51,7 +51,6 @@ export const computeNavBar = ({
       navigation,
       route,
     }),
-    title: undefined,
   };
 };
 
@@ -70,10 +69,9 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const platform = route.params.platform;
   const rememberMe = route.params.rememberMe;
   const defaultMobile = route.params.defaultMobile;
-  const navBarTitle = route.params.navBarTitle;
   const modificationType = route.params.modificationType;
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
-  const title = navBarTitle || I18n.t('auth-change-mobile-verify');
+  const title = route.params.navBarTitle || I18n.t('auth-change-mobile-verify');
   const texts: Record<string, any> = isModifyingMobile
     ? {
         title: I18n.t('auth-change-mobile-edit-title'),
@@ -132,7 +130,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   }, [defaultMobile]);
   useEffect(() => {
-    navigation.setOptions({ title });
+    navigation.setOptions({ headerTitle: navBarTitle(title) });
   }, [navigation, title]);
 
   const getIsValidMobileNumberForRegion = (toVerify: string) => {

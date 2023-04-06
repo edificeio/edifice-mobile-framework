@@ -71,8 +71,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('directory-notificationsTitle'),
   }),
-  title: I18n.t('directory-notificationsTitle'),
 });
 
 function PreventBack(props: { hasChanged: boolean }) {

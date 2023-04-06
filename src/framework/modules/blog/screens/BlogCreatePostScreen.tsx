@@ -138,8 +138,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('blog.blogCreatePostScreen.title'),
   }),
-  title: I18n.t('blog.blogCreatePostScreen.title'),
 });
 
 function PreventBack(props: { isEditing: boolean }) {

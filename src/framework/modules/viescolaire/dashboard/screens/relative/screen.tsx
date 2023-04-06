@@ -49,8 +49,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('viesco'),
   }),
-  title: I18n.t('viesco'),
 });
 
 class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScreenPrivateProps> {

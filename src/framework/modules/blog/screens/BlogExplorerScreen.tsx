@@ -29,7 +29,7 @@ import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogFlatTree, BlogFolder, BlogFolderWithChildren, BlogFolderWithResources } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncLoadingState } from '~/framework/util/redux/async';
@@ -63,8 +63,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('blog.appName'),
   }),
-  title: I18n.t('blog.appName'),
 });
 
 const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
@@ -133,7 +133,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     const currentFolderId = props.route.params.folderId;
     const currentFolder = props.tree ? props.tree.folders.find(f => f.id === currentFolderId) : null;
     props.navigation.setOptions({
-      title: currentFolder ? currentFolder.name : I18n.t('blog.appName'),
+      headerTitle: navBarTitle(currentFolder ? currentFolder.name : I18n.t('blog.appName')),
     });
   }, [props.navigation, props.route.params.folderId, props.tree]);
 

@@ -41,11 +41,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('Homework'),
   }),
-  title: I18n.t('Homework'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.diary,
-  },
+  },*/
 });
 
 class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPrivateProps, TimetableState> {

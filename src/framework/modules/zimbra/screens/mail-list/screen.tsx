@@ -349,9 +349,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   React.useEffect(() => {
     const { navigation } = props;
-    const options = getNavBarOptions();
-
-    navigation.setOptions(options);
+    navigation.setOptions(getNavBarOptions());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMails.length, props.quota]);
 

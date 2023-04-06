@@ -45,7 +45,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
@@ -69,8 +69,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('timeline.blogPostDetailsScreen.title'),
   }),
-  title: I18n.t('timeline.blogPostDetailsScreen.title'),
 });
 
 function PreventBack(props: { infoComment: InfoCommentField }) {
@@ -97,8 +97,6 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
 }
 
 export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsScreenProps, BlogPostDetailsScreenState> {
-  _titleRef?: React.Ref<any> = undefined;
-
   flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList | null>() as React.MutableRefObject<
     FlatList | typeof KeyboardAvoidingFlatList | null
   >;
@@ -124,7 +122,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     blogInfos: undefined,
     blogPostData: undefined,
     errorState: false,
-    showHeaderTitle: false,
     isCommentFieldFocused: false,
     infoComment: {
       type: '',
@@ -288,12 +285,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     return ids;
   }
 
-  private updateVisible(isVisible: boolean) {
-    const { showHeaderTitle } = this.state;
-    if (showHeaderTitle && isVisible) this.setState({ showHeaderTitle: false });
-    else if (!showHeaderTitle && !isVisible) this.setState({ showHeaderTitle: true });
-  }
-
   setActionNavbar = () => {
     const { route, navigation, session } = this.props;
     const { blogPostData, blogInfos, errorState, loadingState } = this.state;
@@ -341,6 +332,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         : [menuItemOpenBrowser];
 
     this.props.navigation.setOptions({
+      headerTitle: navBarTitle(blogPostData?.title ?? I18n.t('timeline.blogPostDetailsScreen.title')),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         resourceUri &&
@@ -405,13 +397,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
     // Update notification event if any
     this.event = notification ? notification['event-type'] : null;
-
-    this.props.navigation.setOptions({
-      title:
-        blogPostData?.title && this.state.showHeaderTitle
-          ? I18n.t('timeline.blogPostDetailsScreen.title')
-          : I18n.t('timeline.blogPostDetailsScreen.title'),
-    });
   }
 
   componentDidUpdate() {
@@ -555,13 +540,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               <SmallBoldText style={styles.detailsNeedValidation}>{I18n.t('blog.post.needValidation')}</SmallBoldText>
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
-            <ViewportAwareTitle
-              style={styles.detailsTitlePost}
-              onViewportEnter={() => this.updateVisible(true)}
-              onViewportLeave={() => this.updateVisible(false)}
-              innerRef={ref => (this._titleRef = ref)}>
-              <HeadingSText>{blogPostData?.title}</HeadingSText>
-            </ViewportAwareTitle>
+            <HeadingSText>{blogPostData?.title}</HeadingSText>
             <HtmlContentView
               html={blogPostContent}
               onHtmlError={() => this.setState({ errorState: true })}

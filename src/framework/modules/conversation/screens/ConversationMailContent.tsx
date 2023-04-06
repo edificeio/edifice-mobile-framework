@@ -33,7 +33,7 @@ import moduleConfig from '~/framework/modules/conversation/module-config';
 import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -88,8 +88,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: undefined,
   }),
-  title: undefined,
 });
 
 const styles = StyleSheet.create({
@@ -158,7 +158,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
       deleteAction({ action: () => this.delete() }),
     ];
     navigation.setOptions({
-      title: showHeaderSubject ? route.params.subject : '',
+      headerTitle: navBarTitle(showHeaderSubject ? route.params.subject : ''),
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>

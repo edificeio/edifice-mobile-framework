@@ -22,8 +22,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('directory-structuresTitle'),
   }),
-  title: I18n.t('directory-structuresTitle'),
 });
 
 function UserStructuresScreen(props: UserStructuresScreenPrivateProps) {

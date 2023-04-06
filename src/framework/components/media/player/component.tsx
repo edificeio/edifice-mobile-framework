@@ -23,13 +23,12 @@ export function computeNavBar({
   navigation,
   route,
 }: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
-  const baseOptions = navBarOptions({
-    navigation,
-    route,
-  });
   return {
-    ...baseOptions,
-    title: I18n.t('media-player-title'),
+    ...navBarOptions({
+      navigation,
+      route,
+      title: I18n.t('media-player-title'),
+    }),
     headerShown: false,
   };
 }

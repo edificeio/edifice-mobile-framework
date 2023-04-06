@@ -24,7 +24,7 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -57,8 +57,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('blog.appName'),
   }),
-  title: I18n.t('blog.appName'),
 });
 
 const BlogPostListScreen = (props: BlogPostListScreenProps) => {
@@ -189,7 +189,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
 
     props.navigation.setOptions({
-      title: selectedBlogTitle ?? I18n.t('blog.appName'),
+      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.t('blog.appName')),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasBlogPostCreationRights && !hasError ? (

@@ -91,8 +91,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('mediacentre.tabName'),
   }),
-  title: I18n.t('mediacentre.tabName'),
 });
 
 const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
