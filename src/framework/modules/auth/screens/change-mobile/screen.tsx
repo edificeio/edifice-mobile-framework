@@ -1,4 +1,4 @@
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
@@ -64,7 +64,7 @@ const countryListLanguages = {
 
 const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
-
+  const isScreenFocused = useIsFocused();
   const phoneInputRef = useRef<PhoneInput>(null);
 
   const platform = route.params.platform;
@@ -213,7 +213,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   };
 
-  UNSTABLE_usePreventRemove(!isMobileEmpty, ({ data }) => {
+  UNSTABLE_usePreventRemove(!isMobileEmpty && isScreenFocused, ({ data }) => {
     Alert.alert(I18n.t('auth-change-mobile-edit-alert-title'), I18n.t('auth-change-mobile-edit-alert-message'), [
       {
         text: I18n.t('common.discard'),

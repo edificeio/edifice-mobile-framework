@@ -5,7 +5,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import Toast from 'react-native-tiny-toast';
-import { StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -29,6 +28,7 @@ import {
   verifyMobileCode,
 } from '~/framework/modules/auth/service';
 import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -224,7 +224,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const redirectEmailOrMobileMFA = useCallback(async () => {
     if (isModifyingEmail || isModifyingMobile) {
-      navigation.navigate('Profile');
+      navigation.navigate(userRouteNames.home);
       onUpdateProfile(isModifyingEmail ? { email } : { mobile });
       setTimeout(
         () =>

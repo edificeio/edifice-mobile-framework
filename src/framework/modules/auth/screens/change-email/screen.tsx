@@ -1,4 +1,4 @@
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { useEffect, useState } from 'react';
@@ -48,6 +48,7 @@ export const computeNavBar = ({
 
 const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const { onLogout, navigation, route } = props;
+  const isScreenFocused = useIsFocused();
 
   const platform = route.params.platform;
   const rememberMe = route.params.rememberMe;
@@ -126,7 +127,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     }
   };
 
-  UNSTABLE_usePreventRemove(!isEmailEmpty, ({ data }) => {
+  UNSTABLE_usePreventRemove(!isEmailEmpty && isScreenFocused, ({ data }) => {
     Alert.alert(I18n.t('auth-change-email-edit-alert-title'), I18n.t('auth-change-email-edit-alert-message'), [
       {
         text: I18n.t('common.discard'),
