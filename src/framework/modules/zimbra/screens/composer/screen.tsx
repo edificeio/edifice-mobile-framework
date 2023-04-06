@@ -80,7 +80,6 @@ export const computeNavBar = ({
     navigation,
     route,
   }),
-  title: '',
 });
 
 class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPrivateProps, ICreateMailState> {

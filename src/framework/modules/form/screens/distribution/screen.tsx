@@ -51,8 +51,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: route.params.title,
   }),
-  title: route.params.title,
 });
 
 const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {

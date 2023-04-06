@@ -11,6 +11,7 @@ import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/sc
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import type { LoginHomeScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
+import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
@@ -26,6 +27,7 @@ export enum AuthRouteNames {
   changePassword = 'ChangePassword',
   changeEmail = 'ChangeEmail',
   changeMobile = 'ChangeMobile',
+  mfa = 'MFA',
 }
 export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.loginHome]: LoginHomeScreenNavParams;
@@ -37,6 +39,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.changePassword]: ChangePasswordScreenNavParams;
   [AuthRouteNames.changeEmail]: AuthChangeEmailScreenNavParams;
   [AuthRouteNames.changeMobile]: AuthChangeMobileScreenNavParams;
+  [AuthRouteNames.mfa]: AuthMFAScreenNavParams;
 }
 
 export const getLoginRouteName = (platform?: Platform) => {
@@ -53,9 +56,25 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           credentials: action.credentials,
           rememberMe: action.rememberMe,
         });
+      case PartialSessionScenario.MUST_CHANGE_PASSWORD:
+        return CommonActions.reset({
+          // we reset instead of navigate to prevent the user from going back or something else
+          routes: [
+            {
+              name: AuthRouteNames.changePassword,
+              params: {
+                platform,
+                context: action.context,
+                credentials: action.credentials,
+                rememberMe: action.rememberMe,
+                forceChange: true,
+              },
+            },
+          ],
+        });
       case PartialSessionScenario.MUST_REVALIDATE_TERMS:
         return CommonActions.reset({
-          // we reset instead of navigate to prevent user to going back or something else
+          // we reset instead of navigate to prevent the user from going back or something else
           routes: [
             {
               name: AuthRouteNames.revalidateTerms,
@@ -67,18 +86,30 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
             },
           ],
         });
-      case PartialSessionScenario.MUST_CHANGE_PASSWORD:
+      case PartialSessionScenario.MUST_VERIFY_MOBILE:
         return CommonActions.reset({
-          // we reset instead of navigate to prevent user to going back or something else
+          // we reset instead of navigate to prevent the user from going back or something else
           routes: [
             {
-              name: AuthRouteNames.changePassword,
+              name: AuthRouteNames.changeMobile,
               params: {
                 platform,
-                context: action.context,
-                credentials: action.credentials,
+                defaultMobile: action.defaultMobile,
                 rememberMe: action.rememberMe,
-                forceChange: true,
+              },
+            },
+          ],
+        });
+      case PartialSessionScenario.MUST_VERIFY_EMAIL:
+        return CommonActions.reset({
+          // we reset instead of navigate to prevent the user from going back or something else
+          routes: [
+            {
+              name: AuthRouteNames.changeEmail,
+              params: {
+                platform,
+                defaultEmail: action.defaultEmail,
+                rememberMe: action.rememberMe,
               },
             },
           ],

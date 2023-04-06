@@ -32,9 +32,12 @@ import {
   ensureUserValidity,
   fetchUserInfo,
   fetchUserPublicInfo,
+  fetchUserRequirements,
   formatSession,
   getAuthContext,
   getAuthTranslationKeys,
+  getEmailValidationInfos,
+  getMobileValidationInfos,
   getPartialSessionScenario,
   manageFirebaseToken as initFirebaseToken,
   removeFirebaseToken,
@@ -52,6 +55,8 @@ interface ILoginActionResultActivation {
 }
 interface ILoginActionResultPartialScenario {
   action: PartialSessionScenario;
+  defaultMobile?: string;
+  defaultEmail?: string;
   credentials?: IAuthCredentials;
   rememberMe?: boolean;
   context: IAuthContext;
@@ -98,7 +103,6 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       await dispatch(getLegalUrlsAction(platform));
 
       // 1. Get token from somewhere
-
       if (credentials) {
         await createSession(platform, credentials);
       } else {
@@ -110,7 +114,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
         }
       }
 
-      // 2. Gather information about user
+      // 2. Gather user information
       const userinfo = await fetchUserInfo(platform);
       ensureUserValidity(userinfo);
       // Add device ID to userinfo
@@ -118,46 +122,53 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
         userinfo.uniqueId = uniqueID;
       });
 
-      // 3. Check some partial session cases
-      const partialSessionScenario = getPartialSessionScenario(userinfo);
+      // 3. Gather user requirements
+      const userRequirements = await fetchUserRequirements(platform);
 
-      // 4. Gather user public info (only if complete session scenario)
+      // 4. Gather partial session case
+      const partialSessionScenario = getPartialSessionScenario(userRequirements);
+      let defaultMobile;
+      let defaultEmail;
+      if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_MOBILE) {
+        const mobileValidationInfos = await getMobileValidationInfos();
+        defaultMobile = mobileValidationInfos?.mobile;
+      } else if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_EMAIL) {
+        const emailValidationInfos = await getEmailValidationInfos();
+        defaultEmail = emailValidationInfos?.email;
+      }
 
+      // 5. Gather user public info (only if complete session scenario)
       const { userdata, userPublicInfo } = partialSessionScenario
         ? { userdata: undefined, userPublicInfo: undefined }
         : await fetchUserPublicInfo(userinfo, platform);
 
-      // 5. Init Firebase
-
+      // 6. Init Firebase
       await initFirebaseToken(platform);
 
-      // 6. Save session info if needed
-
+      // 7. Save session info if needed
       await savePlatform(platform);
       if (!credentials || rememberMe || platform.wayf) await saveSession();
 
-      // 7. Do tracking
-
+      // 8. Do tracking
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN', partialSessionScenario);
       else await Trackers.trackDebugEvent('Auth', 'RESTORE', partialSessionScenario);
 
       // === Bonus : clear cookies. The backend can soemtimes send back a Set-Cookie header that conflicts with the oAuth2 token.
       await CookieManager.clearAll();
 
-      // 8. Validate session + return redirect scenario
-
+      // 9. Validate session + return redirect scenario
       const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo);
       if (partialSessionScenario) {
         const context = await getAuthContext(platform);
         dispatch(authActions.sessionPartial(sessionInfo));
-        return { action: partialSessionScenario, context, credentials, rememberMe };
+        return { action: partialSessionScenario, defaultEmail, defaultMobile, context, credentials, rememberMe };
       } else {
         dispatch(authActions.sessionCreate(sessionInfo));
       }
     } catch (e) {
       let authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
 
-      // 1. If error is bad login/mdp, it may be an account activation process
+      // 1. If error is bad user/password, it may be an account activation process
       if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
         try {
           await ensureCredentialsMatchActivationCode(platform, credentials);

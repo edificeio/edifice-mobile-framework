@@ -1,23 +1,37 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { UpdatableProfileValues } from '~/framework/modules/user/actions';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
-import { IAuthContext } from '../../model';
+import { logoutAction } from '../../actions';
 import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
+
+export interface AuthChangeMobileScreenDispatchProps {
+  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  onSaveNewMobile(updatedProfileValues: UpdatableProfileValues): void;
+}
+
+export interface AuthChangeMobileScreenNavParams {
+  defaultMobile?: string;
+  modificationType?: ModificationType;
+  navBarTitle?: string;
+  platform: Platform;
+  rememberMe?: boolean;
+}
 
 export interface AuthChangeMobileScreenProps {}
 
-export interface AuthChangeMobileScreenNavParams {
-  platform: Platform;
-  context: IAuthContext;
-}
-
 export interface AuthChangeMobileScreenStoreProps {}
 
-export interface AuthChangeMobileScreenDispatchProps {}
-
 export interface AuthChangeMobileScreenPrivateProps
-  extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changeMobile>,
+  extends NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.changeMobile>,
     AuthChangeMobileScreenProps,
     AuthChangeMobileScreenStoreProps,
     AuthChangeMobileScreenDispatchProps {}
+
+export enum MobileState {
+  MOBILE_ALREADY_VERIFIED = 'mobileAlreadyVerified',
+  MOBILE_FORMAT_INVALID = 'mobileFormatInvalid',
+  PRISTINE = 'pristine',
+}

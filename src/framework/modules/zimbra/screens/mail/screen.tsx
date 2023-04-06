@@ -26,7 +26,7 @@ import { DraftType } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { HtmlContentView } from '~/ui/HtmlContentView';
@@ -41,8 +41,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: route.params.subject,
   }),
-  title: route.params.subject,
 });
 
 const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
@@ -217,7 +217,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     if (loadingState !== AsyncPagedLoadingState.DONE || !mail) return;
     const actions = getMenuActions();
     navigation.setOptions({
-      title: mail.subject,
+      headerTitle: navBarTitle(mail.subject),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <PopupMenu actions={actions}>

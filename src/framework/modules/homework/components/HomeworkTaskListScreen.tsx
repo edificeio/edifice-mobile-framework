@@ -21,7 +21,7 @@ import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/module
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { Trackers } from '~/framework/util/tracker';
@@ -112,8 +112,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('Homework'),
   }),
-  title: I18n.t('Homework'),
 });
 
 export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, IHomeworkTaskListScreenState> {
@@ -131,7 +131,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
 
   componentDidMount() {
     this.props.navigation.setOptions({
-      title: this.props.diaryInformation?.title,
+      headerTitle: navBarTitle(this.props.diaryInformation?.title),
     });
   }
 

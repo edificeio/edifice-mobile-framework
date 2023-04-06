@@ -13,22 +13,17 @@ import CourseComponent from '~/framework/modules/viescolaire/presences/component
 import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
-  container: {
-    paddingVertical: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.big,
-    flex: 1,
-  },
   dateText: {
-    marginTop: UI_SIZES.spacing.minor,
-    marginBottom: UI_SIZES.spacing.small,
+    marginLeft: UI_SIZES.spacing.medium,
+    marginVertical: UI_SIZES.spacing.small,
   },
   renderContainer: {
-    flex: 1,
+    height: 300,
     justifyContent: 'space-evenly',
   },
   noCallText: {
     alignSelf: 'center',
-    color: theme.palette.grey.grey,
+    color: theme.ui.text.light,
   },
   noCallChip: {
     alignSelf: 'center',
@@ -38,32 +33,26 @@ const styles = StyleSheet.create({
   },
   absentColor: { backgroundColor: viescoTheme.palette.presencesEvents.noReason },
   presentColor: { backgroundColor: viescoTheme.palette.presences },
-  carouselContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   carouselPagination: {
     position: 'absolute',
     bottom: -50,
   },
   carouselFooter: {
-    height: 80,
+    marginBottom: 80,
   },
   carouselDot: {
-    backgroundColor: theme.palette.grey.cloudy,
     width: 10,
     height: 10,
-    borderRadius: 4,
+    backgroundColor: theme.palette.grey.cloudy,
+    borderRadius: 5,
     marginHorizontal: UI_SIZES.spacing.minor,
-    marginTop: UI_SIZES.spacing.tiny,
-    marginBottom: UI_SIZES.spacing.tiny,
+    marginVertical: UI_SIZES.spacing.tiny,
   },
   carouselActiveDot: {
     width: 20,
     height: 20,
-    borderRadius: 10,
     backgroundColor: viescoTheme.palette.presences,
+    borderRadius: 10,
   },
 });
 
@@ -93,48 +82,10 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
     return courseIndexNow !== -1 ? courseIndexNow : 0;
   }
 
-  private setCarouselDotStyle = () => {
-    return <View style={styles.carouselDot} />;
-  };
-
-  private Carousel = () => {
-    const { courses, onCoursePress } = this.props;
-    const getCourseCallItem = item => {
-      const isCourseNow = moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate));
-      const isCourseEditable = !moment(item.startDate).subtract(15, 'minutes').isAfter(moment());
-
-      return (
-        <CourseComponent
-          onPress={() => onCoursePress(item)}
-          item={item}
-          isCourseEditable={isCourseEditable}
-          isCourseNow={isCourseNow}
-        />
-      );
-    };
-
-    return (
-      <>
-        <View style={styles.carouselContainer}>
-          <Swiper
-            automaticallyAdjustContentInsets
-            horizontal
-            index={this.state.currentIndex}
-            paginationStyle={styles.carouselPagination}
-            dot={this.setCarouselDotStyle()}
-            activeDotStyle={styles.carouselActiveDot}>
-            {courses.map(item => getCourseCallItem(item))}
-          </Swiper>
-        </View>
-        <View style={styles.carouselFooter} />
-      </>
-    );
-  };
-
   public render() {
     const { isFetching, courses } = this.props;
     return (
-      <View style={styles.container}>
+      <View>
         <SmallBoldText style={styles.dateText}>
           {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
         </SmallBoldText>
@@ -142,7 +93,23 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
           {isFetching ? (
             <LoadingIndicator />
           ) : courses.length ? (
-            <this.Carousel />
+            <Swiper
+              horizontal
+              index={this.state.currentIndex}
+              dot={<View style={styles.carouselDot} />}
+              activeDotStyle={styles.carouselActiveDot}
+              paginationStyle={styles.carouselPagination}
+              containerStyle={styles.carouselFooter}>
+              {courses.map(item => (
+                <CourseComponent
+                  key={item.id}
+                  item={item}
+                  isCourseEditable={!moment(item.startDate).subtract(15, 'minutes').isAfter(moment())}
+                  isCourseNow={moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate))}
+                  onPress={() => this.props.onCoursePress(item)}
+                />
+              ))}
+            </Swiper>
           ) : (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />

@@ -20,8 +20,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('lvs.tabName'),
   }),
-  title: I18n.t('lvs.tabName'),
 });
 
 function LvsHomeScreen(props: LvsHomeScreenPrivateProps) {

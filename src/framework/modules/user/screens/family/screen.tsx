@@ -20,8 +20,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: route.params.mode === 'children' ? I18n.t('directory-childrenTitle') : I18n.t('directory-relativesTitle'),
   }),
-  title: route.params.mode === 'children' ? I18n.t('directory-childrenTitle') : I18n.t('directory-relativesTitle'),
 });
 
 function UserFamilyScreen(props: UserFamilyScreenPrivateProps) {

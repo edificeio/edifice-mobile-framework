@@ -30,7 +30,6 @@ export const computeNavBar = ({
     navigation,
     route,
   }),
-  title: '',
 });
 
 const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => {

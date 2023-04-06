@@ -62,8 +62,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t(PAGE_TITLE_I18N[route.params.type]),
   }),
-  title: I18n.t(PAGE_TITLE_I18N[route.params.type]),
 });
 
 const styles = StyleSheet.create({

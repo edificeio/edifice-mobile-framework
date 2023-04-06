@@ -35,7 +35,7 @@ import { hasResendRight } from '~/framework/modules/schoolbook/rights';
 import styles from '~/framework/modules/schoolbook/screens/word-report/styles';
 import { SchoolbookWordReportScreenProps } from '~/framework/modules/schoolbook/screens/word-report/types';
 import { schoolbookService } from '~/framework/modules/schoolbook/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { displayPastDate } from '~/framework/util/date';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
@@ -49,8 +49,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('schoolbook.appName'),
   }),
-  title: I18n.t('schoolbook.appName'),
 });
 
 // COMPONENT ======================================================================================
@@ -112,7 +112,11 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       setLoadingState(AsyncPagedLoadingState.INIT);
       getSchoolbookWordId()
         .then(wordId => fetchSchoolbookWord(wordId))
-        .then(() => props.navigation.setOptions({ title: schoolbookWord?.word?.title || I18n.t('schoolbook.appName') }))
+        .then(() =>
+          props.navigation.setOptions({
+            headerTitle: navBarTitle(schoolbookWord?.word?.title || I18n.t('schoolbook.appName')),
+          }),
+        )
         .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
         .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
     };

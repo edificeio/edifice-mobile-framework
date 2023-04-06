@@ -2,7 +2,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { NativeEventEmitter } from 'react-native';
 
-import { Filter } from '~/modules/workspace/reducer';
+import { Filter } from '~/framework/modules/workspace/reducer';
 import { isInOwnerWorkspace } from '~/navigation/NavigationService';
 import { mainNavNavigate } from '~/navigation/helpers/navHelper';
 import { ContentUri } from '~/types/contentUri';

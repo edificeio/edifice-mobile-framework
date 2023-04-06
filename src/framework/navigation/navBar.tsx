@@ -5,25 +5,45 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
+import { Platform } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextFontStyle } from '~/framework/components/text';
+import { navBarActionButtonSize } from '~/framework/components/navigation';
+import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+
+import { isEmpty } from '../util/object';
+
+const navBarTitleStyle = {
+  color: theme.ui.text.inverse,
+  maxWidth: UI_SIZES.screen.width - 2 * navBarActionButtonSize,
+};
+
+export const navBarTitle = (title?: string) =>
+  !isEmpty(title) && Platform.OS === 'android'
+    ? () => (
+        <BodyBoldText numberOfLines={1} style={navBarTitleStyle}>
+          {title}
+        </BodyBoldText>
+      )
+    : title;
 
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;
-}) => NativeStackNavigationOptions = ({ route, navigation }) =>
+  title?: string;
+}) => NativeStackNavigationOptions = ({ route, navigation, title }) =>
   ({
     headerStyle: {
       backgroundColor: theme.palette.primary.regular,
     },
+    headerTitle: navBarTitle(title),
+    headerTitleAlign: 'center',
     headerTitleStyle: {
       ...TextFontStyle.Bold,
       color: undefined, // override default test color
     },
-    headerTitleAlign: 'center',
     headerLeft: props => {
       const navState = navigation.getState();
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.

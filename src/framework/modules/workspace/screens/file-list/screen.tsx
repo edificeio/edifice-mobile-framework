@@ -42,7 +42,7 @@ import WorkspaceModal, { WorkspaceModalType } from '~/framework/modules/workspac
 import moduleConfig from '~/framework/modules/workspace/module-config';
 import { WorkspaceNavigationParams, workspaceRouteNames } from '~/framework/modules/workspace/navigation';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import { computeRelativePath } from '~/framework/util/navigation';
@@ -59,8 +59,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('workspace.tabName'),
   }),
-  title: I18n.t('workspace.tabName'),
 });
 
 const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
@@ -175,8 +175,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   const restoreSelectedFiles = async () => {
     const ids = selectedFiles;
     setSelectedFiles([]);
-    props.restoreFiles(parentId, ids);
-    fetchList();
+    await props.restoreFiles(parentId, ids);
+    refresh();
   };
 
   const onModalAction = async (files: IFile[], value: string, destinationId: string) => {
@@ -315,7 +315,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
           <HeaderBackButton
             tintColor={tintColor}
             onPress={() => props.navigation.dispatch(CommonActions.goBack())}
-            style={{ marginHorizontal: -UI_SIZES.spacing.minor }}
+            style={{ marginLeft: -UI_SIZES.spacing.minor }}
           />
           {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
         </>
@@ -332,7 +332,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      title: props.route.params.title ?? I18n.t('workspace.tabName'),
+      headerTitle: navBarTitle(props.route.params.title ?? I18n.t('workspace.tabName')),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);
@@ -351,8 +351,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );

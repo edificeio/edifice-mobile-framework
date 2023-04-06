@@ -36,8 +36,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('Pronote'),
   }),
-  title: I18n.t('Pronote'),
 });
 
 class ConnectorSelectorScreen extends React.PureComponent<IConnectorSelectorScreenProps> {

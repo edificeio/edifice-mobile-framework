@@ -22,7 +22,7 @@ import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -36,11 +36,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('viesco-absence-declaration'),
   }),
-  title: I18n.t('viesco-absence-declaration'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.presences,
-  },
+  },*/
 });
 
 const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPrivateProps) => {
@@ -89,7 +89,9 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
   React.useEffect(() => {
     const { childName, navigation } = props;
 
-    navigation.setOptions({ title: `${I18n.t('viesco-absence-declaration')} ${childName}` });
+    navigation.setOptions({
+      headerTitle: navBarTitle(`${I18n.t('viesco-absence-declaration')} ${childName}`),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childName]);
 

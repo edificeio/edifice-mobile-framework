@@ -51,10 +51,15 @@ export interface UserStructureWithClasses extends StructureNode {
   classes: string[];
 }
 
+export interface LoggedUserContactDetails {
+  email?: string;
+  mobile?: string;
+}
+
 /**
  * Describes all editable profile values as text-only, without verifications.
  */
-export interface ILoggedUserProfile extends IUserProfile {
+export interface ILoggedUserProfile extends IUserProfile, LoggedUserContactDetails {
   birthDate?: moment.Moment;
   firstName: string;
   lastName: string;
@@ -62,15 +67,10 @@ export interface ILoggedUserProfile extends IUserProfile {
   loginAlias?: string;
 }
 
-export interface LoggedUserContactDetails {
-  email?: string;
-  mobile?: string;
-}
-
 /**
  * Describes the user that is logged in currently (private info)
  */
-export interface ILoggedUser extends IUser, ILoggedUserProfile, LoggedUserContactDetails {
+export interface ILoggedUser extends IUser, ILoggedUserProfile {
   groups: string[];
   uniqueId?: string;
   children?: UserChildren;
@@ -117,6 +117,7 @@ export enum RuntimeAuthErrorCode {
   RESTORE_FAIL = 'restore-fail',
   USERINFO_FAIL = 'userinfo-fail',
   USERPUBLICINFO_FAIL = 'userpublicinfo-fail',
+  USERREQUIREMENTS_FAIL = 'userrequirements-fail',
   FIREBASE_ERROR = 'firebase_error',
   NOT_PREMIUM = 'not_premium',
   PRE_DELETED = 'pre_deleted',
@@ -151,6 +152,8 @@ export function createAuthError<T extends object>(
 export enum PartialSessionScenario {
   MUST_CHANGE_PASSWORD = 'must-change-password',
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
+  MUST_VERIFY_MOBILE = 'must-verify-mobile',
+  MUST_VERIFY_EMAIL = 'must-verify-email',
 }
 
 export interface IAuthContext {

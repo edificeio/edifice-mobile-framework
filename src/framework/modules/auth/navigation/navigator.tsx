@@ -14,6 +14,7 @@ import AuthChangeEmailScreen, { computeNavBar as changeEmailNavBar } from '~/fra
 import AuthChangeMobileScreen, { computeNavBar as changeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
+import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -90,6 +91,7 @@ export default function () {
         options={changeMobileNavBar}
         initialParams={{}}
       />
+      <Stack.Screen name={AuthRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
     </Stack.Group>
   );
 }

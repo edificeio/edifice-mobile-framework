@@ -5,6 +5,12 @@ import I18n from 'i18n-js';
 import { NavigationActions } from 'react-navigation';
 import { ThunkDispatch } from 'redux-thunk';
 
+import {
+  IUserRequirements,
+  getEmailValidationInfos,
+  getMobileValidationInfos,
+  getUserRequirements,
+} from '~/framework/modules/auth/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache, fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -13,13 +19,7 @@ import { createEndSessionAction } from '~/infra/redux/reducerFactory';
 import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
 import { navigate, reset, resetNavigation } from '~/navigation/helpers/navHelper';
 import { LegalUrls } from '~/user/reducers/auth';
-import {
-  IEntcoreEmailValidationInfos,
-  IEntcoreMobileValidationInfos,
-  IUserRequirements,
-  Languages,
-  userService,
-} from '~/user/service';
+import { IEntcoreEmailValidationInfos, IEntcoreMobileValidationInfos, Languages, userService } from '~/user/service';
 
 import { actionTypeLegalDocuments } from './actionTypes/legalDocuments';
 import {
@@ -171,7 +171,7 @@ export function loginAction(
       // === 3: Gather user mandatory context
       let requirements: IUserRequirements | null = null;
       try {
-        requirements = await userService.getUserRequirements();
+        requirements = await getUserRequirements(platform);
       } catch (err) {
         throw createLoginError(LoginFlowErrorType.RUNTIME_ERROR, '', '', err as Error);
       }
@@ -193,7 +193,7 @@ export function loginAction(
       } else if (requirements?.needRevalidateMobile) {
         const err = new Error('[loginAction]: User must verify mobile.');
         try {
-          const mobileValidationInfos = await userService.getMobileValidationInfos();
+          const mobileValidationInfos = await getMobileValidationInfos();
           (err as any).type = LoginFlowErrorType.MUST_VERIFY_MOBILE;
           (err as any).mobileValidationInfos = {
             ...mobileValidationInfos,
@@ -205,7 +205,7 @@ export function loginAction(
       } else if (requirements?.needRevalidateEmail) {
         const err = new Error('[loginAction]: User must verify email.');
         try {
-          const emailValidationInfos = await userService.getEmailValidationInfos();
+          const emailValidationInfos = await getEmailValidationInfos();
           (err as any).type = LoginFlowErrorType.MUST_VERIFY_EMAIL;
           (err as any).emailValidationInfos = {
             ...emailValidationInfos,

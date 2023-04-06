@@ -72,8 +72,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('blog.blogSelectScreen.title'),
   }),
-  title: I18n.t('blog.blogSelectScreen.title'),
 });
 
 export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps, BlogSelectScreenState> {

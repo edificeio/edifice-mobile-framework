@@ -21,8 +21,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('directory-whoAreWeTitle'),
   }),
-  title: I18n.t('directory-whoAreWeTitle'),
 });
 
 const APPLE_APP_ID = '1450246545';

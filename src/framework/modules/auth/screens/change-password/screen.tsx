@@ -18,9 +18,9 @@ import { getAuthNavigationState, redirectLoginNavAction } from '~/framework/modu
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
-import ChangePasswordFormModel from '~/user/components/change-password/form-model';
 import { ValueChange, ValueChangeArgs } from '~/utils/form';
 
+import ChangePasswordFormModel from './form-model/component';
 import styles from './styles';
 import {
   ChangePasswordScreenDispatchProps,

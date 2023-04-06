@@ -59,8 +59,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('CarnetDeBord'),
   }),
-  title: I18n.t('CarnetDeBord'),
 });
 
 const styles = StyleSheet.create({

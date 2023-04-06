@@ -39,11 +39,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('viesco-tests'),
   }),
-  title: I18n.t('viesco-tests'),
-  headerStyle: {
+  /*headerStyle: {
     backgroundColor: viescoTheme.palette.competences,
-  },
+  },*/
 });
 
 const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {

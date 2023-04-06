@@ -91,8 +91,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('directory-notificationsTitle'),
   }),
-  title: I18n.t('directory-notificationsTitle'),
 });
 
 export class PushNotifsTopicsListScreen extends React.PureComponent<

@@ -1,23 +1,35 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
-import { IAuthContext } from '../../model';
+import { logoutAction } from '../../actions';
 import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
+
+export interface AuthChangeEmailScreenDispatchProps {
+  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+}
+
+export interface AuthChangeEmailScreenNavParams {
+  defaultEmail?: string;
+  modificationType?: ModificationType;
+  navBarTitle?: string;
+  platform: Platform;
+  rememberMe?: boolean;
+}
 
 export interface AuthChangeEmailScreenProps {}
 
-export interface AuthChangeEmailScreenNavParams {
-  platform: Platform;
-  context: IAuthContext;
-}
-
 export interface AuthChangeEmailScreenStoreProps {}
 
-export interface AuthChangeEmailScreenDispatchProps {}
-
 export interface AuthChangeEmailScreenPrivateProps
-  extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changeEmail>,
+  extends NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.changeEmail>,
     AuthChangeEmailScreenProps,
     AuthChangeEmailScreenStoreProps,
     AuthChangeEmailScreenDispatchProps {}
+
+export enum EmailState {
+  EMAIL_ALREADY_VERIFIED = 'emailAlreadyVerified',
+  EMAIL_FORMAT_INVALID = 'emailFormatInvalid',
+  PRISTINE = 'pristine',
+}

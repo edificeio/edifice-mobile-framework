@@ -17,8 +17,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: I18n.t('{{moduleName}}-{{screenName}}-title'),
   }),
-  title: I18n.t('{{moduleName}}-{{screenName}}-title'),
 });
 
 export default function {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen(props: {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenPrivateProps) {

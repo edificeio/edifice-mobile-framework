@@ -1,39 +1,67 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import Lottie from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import Toast from 'react-native-tiny-toast';
-import { StackActions } from 'react-navigation';
 import { connect } from 'react-redux';
-import { AnyAction } from 'redux';
+import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
-import { getUserSession } from '~/framework/util/session';
-import { IUpdatableProfileValues, profileUpdateAction } from '~/user/actions/profile';
-import { checkVersionThenLogin } from '~/user/actions/version';
-import { ModificationType } from '~/user/containers/user-account/types';
-import { userService } from '~/user/service';
+import { loginAction } from '~/framework/modules/auth/actions';
+import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { getSession } from '~/framework/modules/auth/reducer';
+import {
+  getMFAValidationInfos,
+  sendEmailVerificationCode,
+  sendMobileVerificationCode,
+  verifyEmailCode,
+  verifyMFACode,
+  verifyMobileCode,
+} from '~/framework/modules/auth/service';
+import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { userRouteNames } from '~/framework/modules/user/navigation';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import { CodeState, MFAScreenProps, ResendResponse } from './types';
+import { AuthMFAScreenDispatchProps, AuthMFAScreenPrivateProps, AuthMFAScreenStoreProps, CodeState, ResendResponse } from './types';
 
-const MFAScreen = (props: MFAScreenProps) => {
-  const { onLogin, onUpdateProfile, navigation } = props;
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa>): NativeStackNavigationOptions => {
+  const navBarTitle = route.params.navBarTitle;
 
-  const navBarTitle = navigation.getParam('navBarTitle');
-  const credentials = navigation.getParam('credentials');
-  const modificationType = navigation.getParam('modificationType');
-  const isEmailMFA = navigation.getParam('isEmailMFA');
-  const isMobileMFA = navigation.getParam('isMobileMFA');
-  const email = navigation.getParam('email');
-  const mobile = isMobileMFA ? navigation.getParam('mobile') : props.session?.user?.mobile;
+  return {
+    ...navBarOptions({
+      navigation,
+      route,
+    }),
+    title: navBarTitle,
+  };
+};
+
+const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
+  const { onLogin, onUpdateProfile, navigation, route } = props;
+
+  const navBarTitle = route.params.navBarTitle;
+  const platform = props.route.params.platform;
+  const rememberMe = props.route.params.rememberMe;
+  const modificationType = route.params.modificationType;
+  const isEmailMFA = route.params.isEmailMFA;
+  const isMobileMFA = route.params.isMobileMFA;
+  const email = route.params.email;
+  const mobile = isMobileMFA ? route.params.mobile : props.session?.user?.mobile;
   const isModifyingEmail = modificationType === ModificationType.EMAIL;
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
   const isEmailOrMobileMFA = isEmailMFA || isMobileMFA;
@@ -67,26 +95,26 @@ const MFAScreen = (props: MFAScreenProps) => {
 
   const texts: Record<string, any> = isEmailMFA
     ? {
-        title: I18n.t('user-mfa-email-title'),
-        messageSent: `${I18n.t('user-mfa-email-message-sent')} ${email}.`,
-        message: I18n.t('user-mfa-email-message'),
-        feedback: I18n.t(`user-mfa-email-feedback-${codeState.toLowerCase()}`),
-        resendToast: I18n.t('user-mfa-email-toast'),
+        title: I18n.t('auth-mfa-email-title'),
+        messageSent: `${I18n.t('auth-mfa-email-message-sent')} ${email}.`,
+        message: I18n.t('auth-mfa-email-message'),
+        feedback: I18n.t(`auth-mfa-email-feedback-${codeState.toLowerCase()}`),
+        resendToast: I18n.t('auth-mfa-email-toast'),
       }
     : isMobileMFA
     ? {
-        title: I18n.t('user-mfa-mobile-title'),
-        messageSent: `${I18n.t('user-mfa-mobile-message-sent')} ${mobile}.`,
-        message: I18n.t('user-mfa-mobile-message'),
-        feedback: I18n.t(`user-mfa-mobile-feedback-${codeState.toLowerCase()}`),
-        resendToast: I18n.t('user-mfa-mobile-toast'),
+        title: I18n.t('auth-mfa-mobile-title'),
+        messageSent: `${I18n.t('auth-mfa-mobile-message-sent')} ${mobile}.`,
+        message: I18n.t('auth-mfa-mobile-message'),
+        feedback: I18n.t(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+        resendToast: I18n.t('auth-mfa-mobile-toast'),
       }
     : {
-        title: I18n.t('user-mfa-title'),
-        messageSent: `${I18n.t('user-mfa-message-sent')} ${mobile}.`,
-        message: I18n.t('user-mfa-message'),
-        feedback: I18n.t(`user-mfa-feedback-${codeState.toLowerCase()}`),
-        resendToast: I18n.t('user-mfa-toast'),
+        title: I18n.t('auth-mfa-title'),
+        messageSent: `${I18n.t('auth-mfa-message-sent')} ${mobile}.`,
+        message: I18n.t('auth-mfa-message'),
+        feedback: I18n.t(`auth-mfa-feedback-${codeState.toLowerCase()}`),
+        resendToast: I18n.t('auth-mfa-toast'),
       };
 
   const setResendTimer = () => {
@@ -118,9 +146,9 @@ const MFAScreen = (props: MFAScreenProps) => {
     try {
       setIsVerifyingCode(true);
       let validationState;
-      if (isEmailMFA) validationState = await userService.verifyEmailCode(toVerify);
-      else if (isMobileMFA) validationState = await userService.verifyMobileCode(toVerify);
-      else validationState = await userService.verifyMFACode(toVerify);
+      if (isEmailMFA) validationState = await verifyEmailCode(toVerify);
+      else if (isMobileMFA) validationState = await verifyMobileCode(toVerify);
+      else validationState = await verifyMFACode(toVerify);
       const state =
         validationState?.state === 'valid'
           ? CodeState.CODE_CORRECT
@@ -155,10 +183,10 @@ const MFAScreen = (props: MFAScreenProps) => {
     try {
       setIsResendingVerificationCode(true);
       if (isEmailMFA) {
-        await userService.sendEmailVerificationCode(email);
+        await sendEmailVerificationCode(platform, email!);
       } else if (isMobileMFA) {
-        await userService.sendMobileVerificationCode(mobile);
-      } else await userService.getMFAValidationInfos();
+        await sendMobileVerificationCode(platform, mobile!);
+      } else await getMFAValidationInfos();
       return ResendResponse.SUCCESS;
     } catch {
       return ResendResponse.FAIL;
@@ -184,23 +212,23 @@ const MFAScreen = (props: MFAScreenProps) => {
   const redirectMFA = () => {
     if (isCodeCorrect) {
       const routeNames = {
-        [ModificationType.EMAIL]: 'UserEmail',
-        [ModificationType.MOBILE]: 'UserMobile',
-        [ModificationType.PASSWORD]: 'ChangePassword',
+        [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
+        [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
+        [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
       };
-      const routeName = routeNames[modificationType];
-      const params = { navBarTitle, modificationType };
-      navigation.dispatch(StackActions.replace({ routeName, params }));
+      const routeName = routeNames[modificationType!];
+      const params = { navBarTitle, modificationType, platform };
+      navigation.replace(routeName, params);
     }
   };
 
-  const redirectEmailOrMobileMFA = useCallback(() => {
+  const redirectEmailOrMobileMFA = useCallback(async () => {
     if (isModifyingEmail || isModifyingMobile) {
-      navigation.navigate('Profile');
+      navigation.navigate(userRouteNames.home);
       onUpdateProfile(isModifyingEmail ? { email } : { mobile });
       setTimeout(
         () =>
-          Toast.showSuccess(I18n.t(isModifyingEmail ? 'user-email-edit-toast' : 'user-mobile-edit-toast'), {
+          Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
             position: Toast.position.BOTTOM,
             mask: false,
             ...UI_ANIMATIONS.toast,
@@ -209,7 +237,8 @@ const MFAScreen = (props: MFAScreenProps) => {
       );
     } else {
       try {
-        onLogin(credentials);
+        const redirect = await onLogin(platform, undefined, rememberMe);
+        redirectLoginNavAction(redirect, platform, navigation);
       } catch {
         Toast.show(I18n.t('common.error.text'), {
           onHidden: () => resetCode(),
@@ -217,7 +246,7 @@ const MFAScreen = (props: MFAScreenProps) => {
         });
       }
     }
-  }, [credentials, email, isModifyingEmail, isModifyingMobile, mobile, navigation, onLogin, onUpdateProfile, resetCode]);
+  }, [isModifyingEmail, isModifyingMobile, navigation, onUpdateProfile, email, mobile, onLogin, platform, rememberMe, resetCode]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -235,12 +264,7 @@ const MFAScreen = (props: MFAScreenProps) => {
   }, [isCodeCorrect, isCodeStateUnknown, isEmailOrMobileMFA, isVerifyingActive, redirectEmailOrMobileMFA]);
 
   return (
-    <KeyboardPageView
-      isFocused={false}
-      style={styles.page}
-      scrollable
-      navigation={navigation}
-      navBarWithBack={{ title: navBarTitle }}>
+    <KeyboardPageView style={styles.page} scrollable>
       <View style={styles.container}>
         <View style={styles.contentContainer}>
           <View style={styles.imageContainer}>
@@ -320,7 +344,7 @@ const MFAScreen = (props: MFAScreenProps) => {
           </View>
         </View>
         <View style={styles.resendContainer}>
-          <SmallText style={styles.issueText}>{I18n.t('user-mfa-issue')}</SmallText>
+          <SmallText style={styles.issueText}>{I18n.t('auth-mfa-issue')}</SmallText>
           <TouchableOpacity
             style={[styles.resendButton, { opacity: resendOpacity }]}
             disabled={isResendInactive}
@@ -332,7 +356,7 @@ const MFAScreen = (props: MFAScreenProps) => {
               width={UI_SIZES.dimensions.width.medium}
               height={UI_SIZES.dimensions.height.medium}
             />
-            <BodyBoldText style={styles.resendText}>{I18n.t('user-mfa-resend')}</BodyBoldText>
+            <BodyBoldText style={styles.resendText}>{I18n.t('auth-mfa-resend')}</BodyBoldText>
           </TouchableOpacity>
         </View>
       </View>
@@ -340,15 +364,18 @@ const MFAScreen = (props: MFAScreenProps) => {
   );
 };
 
-export default connect(
-  () => ({ session: getUserSession() }),
-  (dispatch: ThunkDispatch<any, void, AnyAction>) => ({
-    onLogin: (credentials?: { username: string; password: string; rememberMe: boolean }) => {
-      dispatch(checkVersionThenLogin(false, credentials));
-    },
-    onUpdateProfile(updatedProfileValues: IUpdatableProfileValues) {
-      dispatch(profileUpdateAction(updatedProfileValues, false, false));
+const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = state => {
+  return { session: getSession() };
+};
+
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScreenDispatchProps = dispatch => {
+  return bindActionCreators(
+    {
+      onLogin: tryAction(loginAction, undefined) as unknown as AuthMFAScreenDispatchProps['onLogin'],
+      onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => dispatch(profileUpdateAction(updatedProfileValues)),
     },
     dispatch,
-  }),
-)(MFAScreen);
+  );
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AuthMFAScreen);
