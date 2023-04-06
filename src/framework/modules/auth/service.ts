@@ -117,7 +117,6 @@ export interface IUserInfoBackend {
   groupsIds?: string[];
   classes?: string[];
   children?: { [userId: string]: { lastName: string; firstName: string } };
-  mobile?: string;
   birthDate?: string;
 }
 
@@ -138,6 +137,8 @@ export interface UserPrivateData {
   }[];
   structureNodes?: StructureNode[];
   homePhone?: string;
+  mobile?: string;
+  email?: string;
 }
 
 export type UserPersonDataStructureWithClasses = Pick<StructureNode, 'UAI' | 'id' | 'name'> & {
@@ -237,7 +238,8 @@ export function formatSession(
     structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
     uniqueId: userinfo.uniqueId,
     photo: userPublicInfo?.photo,
-    mobile: userinfo.mobile,
+    mobile: userPrivateData?.mobile,
+    email: userPrivateData?.email,
     homePhone: userPrivateData?.homePhone,
     birthDate: userinfo.birthDate ? moment(userinfo.birthDate) : undefined,
     // ... Add here every user-related (not account-related!) information that must be kept into the session. Keep it minimal.
