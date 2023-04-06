@@ -85,11 +85,13 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
     try {
       setIsSendingCode(true);
-      const emailValidationInfos = await getEmailValidationInfos();
-      // Exit if email has already been verified
-      if (toVerify === emailValidationInfos?.emailState?.valid) {
-        setIsSendingCode(false);
-        return EmailState.EMAIL_ALREADY_VERIFIED;
+      if (isModifyingEmail) {
+        // Exit if email has already been verified
+        const emailValidationInfos = await getEmailValidationInfos();
+        if (toVerify === emailValidationInfos?.emailState?.valid) {
+          setIsSendingCode(false);
+          return EmailState.EMAIL_ALREADY_VERIFIED;
+        }
       }
       await sendEmailVerificationCode(platform, toVerify);
       navigation.navigate(AuthRouteNames.mfa, {
