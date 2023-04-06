@@ -4,7 +4,17 @@ module.exports = {
     browser: true,
     'react-native/react-native': true,
   },
-  extends: ['@react-native-community', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native'],
+  extends: [
+    '@react-native-community',
+    'airbnb-typescript',
+    'eslint:recommended',
+    'prettier',
+    'prettier/flowtype',
+    'prettier/react',
+    'prettier/standard',
+    'standard',
+    'universe/native',
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',
@@ -12,7 +22,7 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native', 'jest'],
+  plugins: ['@typescript-eslint', 'flowtype', 'import', 'jest', 'prettier', 'react', 'react-hooks', 'react-native', 'standard'],
   rules: {
     '@typescript-eslint/naming-convention': ['error'],
     'ft-flow/boolean-style': [2, 'boolean'],
@@ -44,6 +54,7 @@ module.exports = {
     'react-native/no-color-literals': 2,
     // 'react-native/no-raw-text': 2,
     'react-native/no-single-element-style-arrays': 2,
+    'react-native/no-unused-styles': 2,
   },
   settings: {
     'ft-flow': {
@@ -63,4 +74,4 @@ module.exports = {
     },
     'import/ignore': ['react-native'],
   },
-};
+}
