@@ -26,7 +26,7 @@ import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { logoutAction } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
 import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
@@ -208,6 +208,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const refuseMobileVerification = () => {
     try {
       onLogout();
+      navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }

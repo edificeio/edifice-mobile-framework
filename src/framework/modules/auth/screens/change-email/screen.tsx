@@ -17,7 +17,7 @@ import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { logoutAction } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -122,6 +122,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const refuseEmailVerification = () => {
     try {
       onLogout();
+      navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
