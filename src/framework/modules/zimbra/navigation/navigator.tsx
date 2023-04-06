@@ -9,7 +9,7 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { ZimbraNavigationParams, zimbraRouteNames } from '.';
 import DrawerNavigator from './drawer-navigator';
 
-export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
+export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ZimbraNavigationParams>(moduleConfig.name, Stack => (
     <>
       <Stack.Screen name={zimbraRouteNames.home} component={DrawerNavigator} options={{ headerShown: false }} />
@@ -17,4 +17,3 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
       <Stack.Screen name={zimbraRouteNames.mail} component={ZimbraMailScreen} options={mailNavBar} />
     </>
   ));
-};

@@ -63,6 +63,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   const [currentPage, setCurrentPage] = React.useState<number>(0);
   const [isFetchNextCallable, setFetchNextCallable] = React.useState<boolean>(true);
   const [query, setQuery] = React.useState<string>('');
+  const [isSearchActive, setSearchActive] = React.useState<boolean>(false);
   const queryRefreshTimeout = React.useRef<NodeJS.Timeout>();
   const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
   const moveModalRef = React.useRef<ModalBoxHandle>(null);
@@ -78,6 +79,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
       if (page !== currentPage) setCurrentPage(page);
       let newMails = await props.fetchMailsFromFolder(folderPath, page, ignoreQuery ? undefined : query);
+      setSearchActive(query.length > 0 && !ignoreQuery);
       if (flushList) {
         setFetchNextCallable(true);
       } else {
@@ -354,7 +356,9 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   }, [selectedMails.length, props.quota]);
 
   const renderEmpty = () => {
-    return (
+    return isSearchActive ? (
+      <EmptyScreen svgImage="empty-search" title={I18n.t('mediacentre.empty-search')} customStyle={styles.emptyListContainer} />
+    ) : (
       <EmptyScreen
         svgImage="empty-conversation"
         title={I18n.t('zimbra-empty-mailbox-title')}
