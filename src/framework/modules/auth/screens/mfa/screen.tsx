@@ -214,7 +214,6 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       const routeNames = {
         [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
         [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
-        [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
       };
       const routeName = routeNames[modificationType!];
       const params = { navBarTitle, modificationType, platform };

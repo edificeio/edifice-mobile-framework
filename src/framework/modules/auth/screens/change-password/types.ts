@@ -1,7 +1,13 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ILoginResult, loginAction, logoutAction } from '~/framework/modules/auth/actions';
-import type { IAuthContext, IAuthCredentials, IChangePasswordPayload, ISession } from '~/framework/modules/auth/model';
+import type {
+  IAuthContext,
+  IAuthCredentials,
+  IAuthUsernameCredential,
+  IChangePasswordPayload,
+  ISession,
+} from '~/framework/modules/auth/model';
 import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import type { IChangePasswordModel } from '~/framework/modules/user/actions';
 import type { Platform } from '~/framework/util/appConf';
@@ -15,7 +21,7 @@ export interface ChangePasswordScreenProps {
 export interface ChangePasswordScreenNavParams {
   platform: Platform;
   context: IAuthContext;
-  credentials: IAuthCredentials;
+  credentials: IAuthCredentials | IAuthUsernameCredential;
   rememberMe?: boolean;
   forceChange?: boolean;
 }
