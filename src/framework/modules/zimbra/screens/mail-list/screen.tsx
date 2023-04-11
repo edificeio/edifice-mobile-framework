@@ -309,16 +309,17 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
           <View style={styles.navBarRightContainer}>
             {folderPath === '/Sent' || folderPath === '/Drafts' || folderPath === '/Trash' ? (
               <>
+                {folderPath === '/Drafts' ? (
+                  <View style={styles.rightMargin}>
+                    <NavBarAction icon="ui-folderMove" onPress={() => moveModalRef.current?.doShowModal()} />
+                  </View>
+                ) : null}
                 {folderPath === '/Trash' ? (
                   <View style={styles.rightMargin}>
                     <NavBarAction icon="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
                   </View>
                 ) : null}
-                {folderPath === '/Drafts' ? (
-                  <NavBarAction icon="ui-folderMove" onPress={() => moveModalRef.current?.doShowModal()} />
-                ) : (
-                  <NavBarAction icon="ui-delete" onPress={alertPermanentDeletion} />
-                )}
+                <NavBarAction icon="ui-delete" onPress={folderPath === '/Trash' ? alertPermanentDeletion : trashSelectedMails} />
               </>
             ) : (
               <>
