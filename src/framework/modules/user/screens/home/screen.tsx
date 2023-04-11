@@ -151,20 +151,24 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
 
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
-    if (!authContextRef.current) {
-      authContextRef.current = await getAuthContext(session.platform);
-    }
+    if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
     return authContextRef.current;
   }, [session]);
 
-  const getMFARequirementAndRedirect = React.useCallback(
+  const fetchMFAValidationInfos = React.useCallback(async () => {
+    const requirements = await getUserRequirements(session?.platform!);
+    const needMfa = requirements?.needMfa;
+    if (needMfa) await getMFAValidationInfos();
+    return needMfa;
+  }, [session]);
+
+  const editUserInformation = React.useCallback(
     async (modificationType: ModificationType) => {
       try {
         setCurrentLoadingMenu(modificationType);
-        if (!(await fetchAuthContext())) throw new Error('No session or auth context');
-        const requirements = await getUserRequirements(session?.platform!);
-        const needMfa = requirements?.needMfa;
-        if (needMfa) await getMFAValidationInfos();
+        if (!(await fetchAuthContext())) throw new Error('No session');
+        let needMfa: undefined | boolean;
+        if (modificationType !== ModificationType.PASSWORD) needMfa = await fetchMFAValidationInfos();
         const routeNames = {
           [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
           [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
@@ -183,10 +187,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
             platform: session?.platform,
           },
           [ModificationType.PASSWORD]: {
-            navBarTitle: I18n.t('user.page.editPassword'),
-            modificationType: ModificationType.PASSWORD,
             platform: session?.platform,
             context: authContextRef?.current,
+            credentials: { username: session?.user.login },
           },
         };
         const routeParams = params[modificationType];
@@ -197,7 +200,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         setCurrentLoadingMenu(undefined);
       }
     },
-    [fetchAuthContext, isFocused, navigation, session],
+    [fetchAuthContext, fetchMFAValidationInfos, isFocused, navigation, session?.platform, session?.user?.login],
   );
 
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
@@ -221,14 +224,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
               loading={currentLoadingMenu === ModificationType.PASSWORD}
               disabled={!!currentLoadingMenu}
               title="user.page.editPassword"
-              onPress={() => getMFARequirementAndRedirect(ModificationType.PASSWORD)}
+              onPress={() => editUserInformation(ModificationType.PASSWORD)}
             />
             {canEditPersonalInfo ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.EMAIL}
                 disabled={!!currentLoadingMenu}
                 title="user.page.editEmail"
-                onPress={() => getMFARequirementAndRedirect(ModificationType.EMAIL)}
+                onPress={() => editUserInformation(ModificationType.EMAIL)}
               />
             ) : null}
             {canEditPersonalInfo ? (
@@ -236,7 +239,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
                 loading={currentLoadingMenu === ModificationType.MOBILE}
                 disabled={!!currentLoadingMenu}
                 title="user.page.editMobile"
-                onPress={() => getMFARequirementAndRedirect(ModificationType.MOBILE)}
+                onPress={() => editUserInformation(ModificationType.MOBILE)}
               />
             ) : null}
             <LineButton
@@ -283,7 +286,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         </View>
       </>
     ),
-    [currentLoadingMenu, canEditPersonalInfo, isStudent, isRelative, showWhoAreWe, navigation, getMFARequirementAndRedirect],
+    [currentLoadingMenu, canEditPersonalInfo, isStudent, isRelative, showWhoAreWe, navigation, editUserInformation],
   );
 }
 

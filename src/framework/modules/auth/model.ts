@@ -202,6 +202,10 @@ export interface IAuthCredentials {
   password: string;
 }
 
+export interface IAuthUsernameCredential {
+  username: string;
+}
+
 export type ForgotMode = 'id' | 'password';
 
 export interface IForgotPayload {

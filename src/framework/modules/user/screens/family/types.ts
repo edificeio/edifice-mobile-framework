@@ -1,11 +1,11 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { UserNavigationParams } from '~/framework/modules/user/navigation'
+import type { UserNavigationParams } from '../../navigation';
 
 export interface UserFamilyScreenProps {}
 
 export interface UserFamilyScreenNavParams {
-  mode: 'children' | 'relatives'
+  mode: 'children' | 'relatives';
 }
 
 export interface UserFamilyScreenStoreProps {}

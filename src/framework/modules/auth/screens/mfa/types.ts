@@ -1,32 +1,33 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ILoginResult, loginAction } from '~/framework/modules/auth/actions'
-import { ISession } from '~/framework/modules/auth/model'
-import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation'
-import { UpdatableProfileValues } from '~/framework/modules/user/actions'
-import { ModificationType } from '~/framework/modules/user/screens/home/types'
-import { Platform } from '~/framework/util/appConf'
+import { UpdatableProfileValues } from '~/framework/modules/user/actions';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
+import { Platform } from '~/framework/util/appConf';
+
+import { ILoginResult, loginAction } from '../../actions';
+import { ISession } from '../../model';
+import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
 
 export interface AuthMFAScreenDispatchProps {
-  onLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>
-  onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => void
+  onLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
+  onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => void;
 }
 
 export interface AuthMFAScreenNavParams {
-  email?: string
-  isEmailMFA?: boolean
-  isMobileMFA?: boolean
-  mobile?: string
-  modificationType?: ModificationType
-  navBarTitle: string
-  platform: Platform
-  rememberMe?: boolean
+  email?: string;
+  isEmailMFA?: boolean;
+  isMobileMFA?: boolean;
+  mobile?: string;
+  modificationType?: ModificationType;
+  navBarTitle: string;
+  platform: Platform;
+  rememberMe?: boolean;
 }
 
 export interface AuthMFAScreenProps {}
 
 export interface AuthMFAScreenStoreProps {
-  session: ISession | undefined
+  session: ISession | undefined;
 }
 
 export interface AuthMFAScreenPrivateProps

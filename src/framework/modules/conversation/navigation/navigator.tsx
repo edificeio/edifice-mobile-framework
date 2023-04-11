@@ -1,19 +1,13 @@
-import * as React from 'react'
+import * as React from 'react';
 
-import moduleConfig from '~/framework/modules/conversation/module-config'
-import ConversationMailContentScreen, {
-  computeNavBar as conversationMailContentNavBar,
-} from '~/framework/modules/conversation/screens/ConversationMailContent'
-import ConversationMailListScreen, {
-  computeNavBar as conversationMailListNavBar,
-} from '~/framework/modules/conversation/screens/ConversationMailListScreen'
-import ConversationNewMailScreen, {
-  computeNavBar as conversationNewMailNavBar,
-} from '~/framework/modules/conversation/screens/ConversationNewMail'
-import { createModuleNavigator } from '~/framework/navigation/moduleScreens'
-import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool'
+import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
+import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import { ConversationNavigationParams, conversationRouteNames } from './'
+import { ConversationNavigationParams, conversationRouteNames } from '.';
+import moduleConfig from '../module-config';
+import ConversationMailContentScreen, { computeNavBar as conversationMailContentNavBar } from '../screens/ConversationMailContent';
+import ConversationMailListScreen, { computeNavBar as conversationMailListNavBar } from '../screens/ConversationMailListScreen';
+import ConversationNewMailScreen, { computeNavBar as conversationNewMailNavBar } from '../screens/ConversationNewMail';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ConversationNavigationParams>(moduleConfig.name, Stack => (
@@ -39,4 +33,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         />
       </Stack.Group>
     </>
-  ))
+  ));

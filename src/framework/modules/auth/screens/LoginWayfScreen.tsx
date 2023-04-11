@@ -22,7 +22,7 @@ interface ILoginWayfScreenStoreProps {
   auth: IAuthState
 }
 interface LoginWayfScreenDispatchProps {
-  handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void
+  handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void;
 }
 interface ILoginWayfScreenProps
   extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf>,

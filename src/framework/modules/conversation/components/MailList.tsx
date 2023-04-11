@@ -1,75 +1,76 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import I18n from 'i18n-js'
-import moment from 'moment'
-import * as React from 'react'
-import { RefreshControl, StyleSheet, View } from 'react-native'
-import Toast from 'react-native-tiny-toast'
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import I18n from 'i18n-js';
+import moment from 'moment';
+import * as React from 'react';
+import { RefreshControl, StyleSheet, View } from 'react-native';
+import Toast from 'react-native-tiny-toast';
 
-import theme from '~/app/theme'
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants'
-import { Drawer } from '~/framework/components/drawer'
-import { EmptyScreen } from '~/framework/components/emptyScreen'
-import { ListItem } from '~/framework/components/listItem'
-import { LoadingIndicator } from '~/framework/components/loading'
-import { PageView, pageGutterSize } from '~/framework/components/page'
-import { Icon } from '~/framework/components/picture/Icon'
-import SwipeableList from '~/framework/components/swipeableList'
-import { CaptionBoldText, CaptionText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text'
-import moduleConfig from '~/framework/modules/conversation/module-config'
-import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation'
-import CreateFolderModal from '~/framework/modules/conversation/screens/ConversationCreateFolderModal'
-import { IInit } from '~/framework/modules/conversation/screens/ConversationMailListScreen'
-import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail'
-import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal'
-import { ICountMailboxes } from '~/framework/modules/conversation/state/count'
-import { IFolder } from '~/framework/modules/conversation/state/initMails'
-import { IMail } from '~/framework/modules/conversation/state/mailContent'
-import { IMailList } from '~/framework/modules/conversation/state/mailList'
-import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos'
-import { displayPastDate } from '~/framework/util/date'
-import TouchableOpacity from '~/ui/CustomTouchableOpacity'
-import { Loading } from '~/ui/Loading'
-import { GridAvatars } from '~/ui/avatars/GridAvatars'
+import theme from '~/app/theme';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { Drawer } from '~/framework/components/drawer';
+import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { ListItem } from '~/framework/components/listItem';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { PageView, pageGutterSize } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
+import SwipeableList from '~/framework/components/swipeableList';
+import { CaptionBoldText, CaptionText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import CreateFolderModal from '~/framework/modules/conversation/screens/ConversationCreateFolderModal';
+import { IInit } from '~/framework/modules/conversation/screens/ConversationMailListScreen';
+import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
+import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
+import { ICountMailboxes } from '~/framework/modules/conversation/state/count';
+import { IFolder } from '~/framework/modules/conversation/state/initMails';
+import { IMail } from '~/framework/modules/conversation/state/mailContent';
+import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
+import { displayPastDate } from '~/framework/util/date';
+import TouchableOpacity from '~/ui/CustomTouchableOpacity';
+import { Loading } from '~/ui/Loading';
+import { GridAvatars } from '~/ui/avatars/GridAvatars';
+
+import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
+import { IMailList } from '../state/mailList';
 
 interface ConversationMailListComponentDataProps {
-  notifications: any
-  isFetching: boolean
-  firstFetch: boolean
-  isTrashed: boolean
-  fetchRequested: boolean
-  folders: IFolder[]
-  mailboxesCount: ICountMailboxes
-  navigationKey: string
+  notifications: any;
+  isFetching: boolean;
+  firstFetch: boolean;
+  isTrashed: boolean;
+  fetchRequested: boolean;
+  folders: IFolder[];
+  mailboxesCount: ICountMailboxes;
+  navigationKey: string;
 }
 interface ConversationMailListComponentEventProps {
-  fetchInit: () => IInit
-  fetchCompleted: () => any
-  fetchMails: (page: number) => any
-  trashMails: (mailIds: string[]) => void
-  deleteDrafts: (mailIds: string[]) => void
-  deleteMails: (mailIds: string[]) => void
-  toggleRead: (mailIds: string[], read: boolean) => void
-  moveToFolder: (mailIds: string[], folderId: string) => void
-  moveToInbox: (mailIds: string[]) => void
-  restoreToFolder: (mailIds: string[], folderId: string) => void
-  restoreToInbox: (mailIds: string[]) => void
+  fetchInit: () => IInit;
+  fetchCompleted: () => any;
+  fetchMails: (page: number) => any;
+  trashMails: (mailIds: string[]) => void;
+  deleteDrafts: (mailIds: string[]) => void;
+  deleteMails: (mailIds: string[]) => void;
+  toggleRead: (mailIds: string[], read: boolean) => void;
+  moveToFolder: (mailIds: string[], folderId: string) => void;
+  moveToInbox: (mailIds: string[]) => void;
+  restoreToFolder: (mailIds: string[], folderId: string) => void;
+  restoreToInbox: (mailIds: string[]) => void;
 }
 type ConversationMailListComponentProps = ConversationMailListComponentDataProps &
   ConversationMailListComponentEventProps &
-  NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.home>
+  NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.home>;
 
 interface ConversationMailListComponentState {
-  indexPage: number
-  mails: IMailList
-  nextPageCallable: boolean
-  showModal: boolean
-  selectedMail: IMail | undefined
-  isRefreshing: boolean
-  isChangingPage: boolean
-  showFolderCreationModal: boolean
+  indexPage: number;
+  mails: IMailList;
+  nextPageCallable: boolean;
+  showModal: boolean;
+  selectedMail: IMail | undefined;
+  isRefreshing: boolean;
+  isChangingPage: boolean;
+  showFolderCreationModal: boolean;
 }
 
-let lastFolderCache = ''
+let lastFolderCache = '';
 
 const styles = StyleSheet.create({
   contacts: {
@@ -107,15 +108,15 @@ const styles = StyleSheet.create({
   subjectContentAndAttachmentIndicatorContainer: { flex: 1, flexDirection: 'row' },
   swipeableListContentContainerStyle: { flexGrow: 1 },
   swipeableListStyle: { marginTop: 45 },
-})
+});
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
-  flatListRef: typeof SwipeableList | null = null
+  flatListRef: typeof SwipeableList | null = null;
 
   constructor(props: ConversationMailListComponentProps) {
-    super(props)
+    super(props);
 
-    const { notifications } = this.props
+    const { notifications } = this.props;
     this.state = {
       indexPage: 0,
       mails: notifications,
@@ -125,157 +126,157 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       isRefreshing: false,
       isChangingPage: false,
       showFolderCreationModal: false,
-    }
+    };
   }
 
   componentDidUpdate(prevProps) {
-    const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props
-    const { isChangingPage, indexPage } = this.state
+    const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props;
+    const { isChangingPage, indexPage } = this.state;
 
     if (indexPage === 0 && !isFetching && prevProps.isFetching && fetchRequested) {
-      this.setState({ mails: notifications })
-      fetchCompleted()
+      this.setState({ mails: notifications });
+      fetchCompleted();
     }
 
     if (notifications !== prevProps.notifications && indexPage > 0 && prevProps.isFetching && !isFetching && fetchRequested) {
-      let { mails } = this.state
+      let { mails } = this.state;
       if (lastFolderCache && navigation.getState()?.key !== lastFolderCache) {
         // THIS IS A BIG HACK BECAUSE DATA FLOW IS TOTALLY FUCKED UP IN THIS MODULE !!!!!!!! 🤬🤬🤬
         // So we force here mail state flush when folder has changed.
-        mails = []
+        mails = [];
       }
-      lastFolderCache = navigation.getState()?.key
-      const joinedList = mails.concat(notifications)
-      this.setState({ mails: joinedList })
-      fetchCompleted()
+      lastFolderCache = navigation.getState()?.key;
+      const joinedList = mails.concat(notifications);
+      this.setState({ mails: joinedList });
+      fetchCompleted();
     }
 
     if (isChangingPage && !isFetching && prevProps.isFetching) {
-      this.setState({ isChangingPage: false })
+      this.setState({ isChangingPage: false });
     }
   }
 
   selectItem = mailInfos => {
-    mailInfos.isChecked = !mailInfos.isChecked
+    mailInfos.isChecked = !mailInfos.isChecked;
 
-    const { mails } = this.state
-    const indexMail = mails.findIndex(item => item.id === mailInfos.id)
-    this.setState(prevState => ({ mails: { ...prevState.mails, [prevState.mails[indexMail]]: mailInfos } }))
-  }
+    const { mails } = this.state;
+    const indexMail = mails.findIndex(item => item.id === mailInfos.id);
+    this.setState(prevState => ({ mails: { ...prevState.mails, [prevState.mails[indexMail]]: mailInfos } }));
+  };
 
   renderEmpty() {
-    const { isTrashed, navigationKey } = this.props
-    const isFolderDrafts = navigationKey === 'drafts'
-    const isFolderOutbox = navigationKey === 'sendMessages'
-    const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox'
-    const text = I18n.t(`conversation.emptyScreen.${folder}.text`)
-    const title = I18n.t(`conversation.emptyScreen.${folder}.title`)
-    return <EmptyScreen svgImage={isTrashed ? 'empty-trash' : 'empty-conversation'} text={text} title={title} />
+    const { isTrashed, navigationKey } = this.props;
+    const isFolderDrafts = navigationKey === 'drafts';
+    const isFolderOutbox = navigationKey === 'sendMessages';
+    const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox';
+    const text = I18n.t(`conversation.emptyScreen.${folder}.text`);
+    const title = I18n.t(`conversation.emptyScreen.${folder}.title`);
+    return <EmptyScreen svgImage={isTrashed ? 'empty-trash' : 'empty-conversation'} text={text} title={title} />;
   }
 
   renderMailContent = mailInfos => {
-    const { navigationKey, navigation, fetchInit, isTrashed } = this.props
-    const isFolderDrafts = navigationKey === 'drafts'
-    const isStateDraft = mailInfos.state === 'DRAFT'
+    const { navigationKey, navigation, fetchInit, isTrashed } = this.props;
+    const isFolderDrafts = navigationKey === 'drafts';
+    const isStateDraft = mailInfos.state === 'DRAFT';
 
     if (isStateDraft && isFolderDrafts) {
       navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
         onGoBack: () => {
-          this.refreshMailList()
-          fetchInit()
+          this.refreshMailList();
+          fetchInit();
         },
-      })
+      });
     } else {
       navigation.navigate(`${moduleConfig.routeName}/mail-content`, {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
         currentFolder: navigationKey || 'inbox',
         onGoBack: () => {
-          this.refreshMailList()
-          fetchInit()
+          this.refreshMailList();
+          fetchInit();
         },
         isTrashed,
-      })
+      });
     }
-  }
+  };
 
   mailRestored = async () => {
-    const { fetchInit } = this.props
+    const { fetchInit } = this.props;
     try {
-      await this.refreshMailList()
-      await fetchInit()
+      await this.refreshMailList();
+      await fetchInit();
       Toast.show(I18n.t('conversation.messageMoved'), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         ...UI_ANIMATIONS.toast,
-      })
+      });
     } catch {
       // TODO: Manage error
     }
-  }
+  };
 
   toggleRead = async (unread: boolean, mailId: string) => {
-    const { toggleRead, fetchInit } = this.props
+    const { toggleRead, fetchInit } = this.props;
     try {
-      await toggleRead([mailId], unread)
-      this.refreshMailList()
-      fetchInit()
+      await toggleRead([mailId], unread);
+      this.refreshMailList();
+      fetchInit();
     } catch {
       // TODO: Manage error
     }
-  }
+  };
 
   delete = async (mailId: string) => {
-    const { isTrashed, deleteMails, deleteDrafts, trashMails, fetchInit, navigationKey } = this.props
-    const isFolderDrafts = navigationKey === 'drafts'
-    const isTrashedOrDraft = isTrashed || isFolderDrafts
+    const { isTrashed, deleteMails, deleteDrafts, trashMails, fetchInit, navigationKey } = this.props;
+    const isFolderDrafts = navigationKey === 'drafts';
+    const isTrashedOrDraft = isTrashed || isFolderDrafts;
     try {
       if (isTrashed) {
-        await deleteMails([mailId])
+        await deleteMails([mailId]);
       } else if (isFolderDrafts) {
-        await deleteDrafts([mailId])
-      } else await trashMails([mailId])
-      await this.refreshMailList()
-      await fetchInit()
+        await deleteDrafts([mailId]);
+      } else await trashMails([mailId]);
+      await this.refreshMailList();
+      await fetchInit();
       Toast.show(I18n.t(`conversation.message${isTrashedOrDraft ? 'Deleted' : 'Trashed'}`), {
         position: Toast.position.BOTTOM,
         mask: false,
         containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
         ...UI_ANIMATIONS.toast,
-      })
+      });
     } catch {
       // TODO: Manage error
     }
-  }
+  };
 
   onChangePage = () => {
-    const { isFetching, notifications, fetchMails } = this.props
+    const { isFetching, notifications, fetchMails } = this.props;
     if (!isFetching && notifications !== undefined) {
-      const { indexPage } = this.state
-      const currentPage = indexPage + 1
-      this.setState({ indexPage: currentPage })
-      fetchMails(currentPage)
+      const { indexPage } = this.state;
+      const currentPage = indexPage + 1;
+      this.setState({ indexPage: currentPage });
+      fetchMails(currentPage);
     }
-  }
+  };
 
   refreshMailList = () => {
-    const { fetchMails } = this.props
-    fetchMails(0)
-    this.setState({ indexPage: 0 })
-  }
+    const { fetchMails } = this.props;
+    fetchMails(0);
+    this.setState({ indexPage: 0 });
+  };
 
   toggleUnread = () => {
-    const { mails } = this.state
-    let toggleListIds = ''
+    const { mails } = this.state;
+    let toggleListIds = '';
     for (let i = 0; i < mails.length - 1; i++) {
-      if (mails[i].isChecked) toggleListIds = toggleListIds.concat('id=', mails[i].id, '&')
+      if (mails[i].isChecked) toggleListIds = toggleListIds.concat('id=', mails[i].id, '&');
     }
-    if (toggleListIds === '') return
-    toggleListIds = toggleListIds.slice(0, -1)
-  }
+    if (toggleListIds === '') return;
+    toggleListIds = toggleListIds.slice(0, -1);
+  };
 
   public render() {
     const {
@@ -289,18 +290,18 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       moveToInbox,
       restoreToFolder,
       restoreToInbox,
-    } = this.props
-    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage, showFolderCreationModal, mails } = this.state
-    const uniqueId = [] as string[]
-    const uniqueMails: (IMail & { key: string })[] = []
+    } = this.props;
+    const { showModal, selectedMail, isRefreshing, nextPageCallable, isChangingPage, showFolderCreationModal, mails } = this.state;
+    const uniqueId = [] as string[];
+    const uniqueMails: (IMail & { key: string })[] = [];
     if (mails)
       for (const mail of mails) {
         // @ts-ignore
         if (uniqueId.indexOf(mail.id) === -1) {
           // @ts-ignore
-          uniqueId.push(mail.id)
-          mail.key = mail.id
-          uniqueMails.push(mail)
+          uniqueId.push(mail.id);
+          mail.key = mail.id;
+          uniqueMails.push(mail);
         }
       }
     const drawerMailboxes = [
@@ -342,7 +343,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
           ...TextSizeStyle.Normal,
         },
       },
-    ]
+    ];
     const createFolderItem = {
       name: I18n.t('conversation.createDirectory'),
       value: 'createDirectory',
@@ -352,7 +353,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
         ...TextSizeStyle.Small,
       },
       closeAfterSelecting: false,
-    }
+    };
     const drawerFolders =
       folders &&
       folders.map(folder => ({
@@ -365,12 +366,12 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
           ...TextFontStyle.Regular,
           ...TextSizeStyle.Normal,
         },
-      }))
-    if (drawerFolders) drawerFolders.push(createFolderItem)
-    const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes
-    const isFolderOutbox = navigationKey === 'sendMessages'
-    const isFolderDrafts = navigationKey === 'drafts'
-    const isFolderTrash = isTrashed
+      }));
+    if (drawerFolders) drawerFolders.push(createFolderItem);
+    const drawerItems = drawerFolders ? drawerMailboxes.concat(drawerFolders) : drawerMailboxes;
+    const isFolderOutbox = navigationKey === 'sendMessages';
+    const isFolderDrafts = navigationKey === 'drafts';
+    const isFolderTrash = isTrashed;
 
     return (
       <>
@@ -385,14 +386,14 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                 contentContainerStyle={styles.swipeableListContentContainerStyle}
                 data={uniqueMails.length > 0 ? uniqueMails : []}
                 onScrollBeginDrag={() => {
-                  this.setState({ nextPageCallable: true })
+                  this.setState({ nextPageCallable: true });
                 }}
                 renderItem={({ item }) => {
-                  const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox
-                  const mailContacts = getMailPeople(item)
-                  const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText
-                  let contacts = !isFolderOutbox && !isFolderDrafts ? [mailContacts.from] : mailContacts.to
-                  if (contacts.length === 0) contacts = [[undefined, I18n.t('conversation.emptyTo'), false]]
+                  const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
+                  const mailContacts = getMailPeople(item);
+                  const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
+                  let contacts = !isFolderOutbox && !isFolderDrafts ? [mailContacts.from] : mailContacts.to;
+                  if (contacts.length === 0) contacts = [[undefined, I18n.t('conversation.emptyTo'), false]];
                   return (
                     <TouchableOpacity onPress={() => this.renderMailContent(item)}>
                       <ListItem
@@ -435,7 +436,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                         }
                       />
                     </TouchableOpacity>
-                  )
+                  );
                 }}
                 extraData={uniqueMails}
                 keyExtractor={(item: IMail) => item.id}
@@ -443,17 +444,17 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                   <RefreshControl
                     refreshing={isRefreshing}
                     onRefresh={async () => {
-                      this.setState({ isRefreshing: true })
-                      await this.refreshMailList()
-                      this.setState({ isRefreshing: false })
+                      this.setState({ isRefreshing: true });
+                      await this.refreshMailList();
+                      this.setState({ isRefreshing: false });
                     }}
                   />
                 }
                 onEndReachedThreshold={0.5}
                 onEndReached={() => {
                   if (nextPageCallable && !isRefreshing) {
-                    this.setState({ nextPageCallable: false, isChangingPage: true })
-                    this.onChangePage()
+                    this.setState({ nextPageCallable: false, isChangingPage: true });
+                    this.onChangePage();
                   }
                 }}
                 ListFooterComponent={
@@ -470,8 +471,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                     ? [
                         {
                           action: async row => {
-                            this.setState({ showModal: true, selectedMail: item })
-                            row[item.key]?.closeRow()
+                            this.setState({ showModal: true, selectedMail: item });
+                            row[item.key]?.closeRow();
                           },
                           backgroundColor: theme.palette.status.success.regular,
                           actionText: I18n.t('conversation.restore'),
@@ -482,8 +483,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                     ? [
                         {
                           action: async row => {
-                            this.toggleRead(item.unread, item.id)
-                            row[item.key]?.closeRow()
+                            this.toggleRead(item.unread, item.id);
+                            row[item.key]?.closeRow();
                           },
                           backgroundColor: theme.palette.status.info.regular,
                           actionText: I18n.t(`conversation.mark${item.unread ? 'Read' : 'Unread'}`),
@@ -494,8 +495,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                   right: [
                     {
                       action: async row => {
-                        this.delete(item.id)
-                        row[item.key]?.closeRow()
+                        this.delete(item.id);
+                        row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
                       actionText: I18n.t('conversation.delete'),
@@ -511,17 +512,17 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
               items={drawerItems}
               selectedItem={navigationKey}
               selectItem={selectedItem => {
-                const isCreateDirectory = selectedItem === 'createDirectory'
-                const isFolder = selectedItem.includes('folder-')
-                const folderId = selectedItem.replace('folder-', '')
+                const isCreateDirectory = selectedItem === 'createDirectory';
+                const isFolder = selectedItem.includes('folder-');
+                const folderId = selectedItem.replace('folder-', '');
                 if (isCreateDirectory) {
-                  this.setState({ showFolderCreationModal: true })
+                  this.setState({ showFolderCreationModal: true });
                 } else {
                   navigation.setParams({
                     key: selectedItem,
                     folderName: isFolder ? selectedItem : undefined,
                     folderId: isFolder ? folderId : undefined,
-                  })
+                  });
                 }
               }}
             />
@@ -540,6 +541,6 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
           restoreToInbox={restoreToInbox}
         />
       </>
-    )
+    );
   }
 }
