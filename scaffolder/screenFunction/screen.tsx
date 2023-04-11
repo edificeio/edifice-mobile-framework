@@ -6,7 +6,7 @@ import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '../../navigation';
+import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '~/framework/modules/module-name/navigation';
 import styles from './styles';
 import type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenPrivateProps } from './types';
 

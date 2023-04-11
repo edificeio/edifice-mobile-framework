@@ -1,7 +1,6 @@
 import { IGlobalState, Reducers } from '~/app/store';
+import moduleConfig from '~/framework/modules/user/module-config';
 import createReducer from '~/framework/util/redux/reducerFactory';
-
-import moduleConfig from '../module-config';
 
 // State type
 

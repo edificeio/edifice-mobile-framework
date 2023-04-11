@@ -10,9 +10,9 @@ import { BodyBoldText } from '~/framework/components/text';
 import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import { setFruitAction } from '../../actions';
-import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '../../navigation';
-import { getFruit } from '../../reducer';
+import { setFruitAction } from '~/framework/modules/module-name/actions';
+import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '~/framework/modules/module-name/navigation';
+import { getFruit } from '~/framework/modules/module-name/reducer';
 import styles from './styles';
 import type { {{moduleName | toCamelCase | capitalize}}HomeScreenDispatchProps, {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps } from './types';
 

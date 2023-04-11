@@ -30,6 +30,7 @@ import {
 import { clearMailContentAction, fetchMailContentAction } from '~/framework/modules/conversation/actions/mailContent';
 import { FooterButton, HeaderMail, RenderPJs } from '~/framework/modules/conversation/components/MailContentItems';
 import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
@@ -39,8 +40,6 @@ import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
-
-import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
 
 export interface ConversationMailContentScreenNavigationParams {
   currentFolder: string;

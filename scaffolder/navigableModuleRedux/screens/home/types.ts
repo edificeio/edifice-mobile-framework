@@ -1,8 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { setFruitAction } from '../../actions';
-import type { {{moduleName | toCamelCase | capitalize}}NavigationParams } from '../../navigation';
-import type { {{moduleName | toCamelCase | capitalize}}State } from '../../reducer';
+import type { setFruitAction } from '~/framework/modules/module-name/actions';
+import type { {{moduleName | toCamelCase | capitalize}}NavigationParams } from '~/framework/modules/module-name/navigation';
+import type { {{moduleName | toCamelCase | capitalize}}State } from '~/framework/modules/module-name/reducer';
 
 export interface {{moduleName | toCamelCase | capitalize}}HomeScreenProps {
   // @scaffolder add props here
@@ -23,7 +23,7 @@ export interface {{moduleName | toCamelCase | capitalize}}HomeScreenDispatchProp
 }
 
 
-export interface {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps 
+export interface {{moduleName | toCamelCase | capitalize}}HomeScreenPrivateProps
   extends NativeStackScreenProps<{{moduleName | toCamelCase | capitalize}}NavigationParams, 'home'>,
     {{moduleName | toCamelCase | capitalize}}HomeScreenProps,
     {{moduleName | toCamelCase | capitalize}}HomeScreenStoreProps,

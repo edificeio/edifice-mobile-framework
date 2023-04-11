@@ -1,8 +1,8 @@
 import { IGlobalState, Reducers } from '~/app/store';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
-import { {{moduleName | toCamelCase | capitalize}}Data } from '../model';
-import moduleConfig from '../module-config';
+import { {{moduleName | toCamelCase | capitalize}}Data } from '~/framework/modules/module-name/model';
+import moduleConfig from '~/framework/modules/module-name/module-config';
 
 // State type
 

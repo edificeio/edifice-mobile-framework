@@ -1,18 +1,22 @@
 import * as React from 'react';
 
+import moduleConfig from '~/framework/modules/user/module-config';
+import PushNotifsItemsListScreen, {
+  computeNavBar as pushNotifsItemsListNavBar,
+} from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
+import PushNotifsTopicsListScreen, {
+  computeNavBar as pushNotifsTopicsListNavBar,
+} from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import UserFamilyScreen, { computeNavBar as familyNavBar } from '~/framework/modules/user/screens/family';
+import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
+import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/framework/modules/user/screens/legal-notice';
+import UserProfileScreen, { computeNavBar as profileNavBar } from '~/framework/modules/user/screens/profile';
+import UserStructuresScreen, { computeNavBar as structuresNavBar } from '~/framework/modules/user/screens/structures';
+import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import { UserNavigationParams, userRouteNames } from '.';
-import moduleConfig from '../module-config';
-import PushNotifsItemsListScreen, { computeNavBar as pushNotifsItemsListNavBar } from '../screens/PushNotifsItemsListScreen';
-import PushNotifsTopicsListScreen, { computeNavBar as pushNotifsTopicsListNavBar } from '../screens/PushNotifsTopicsListScreen';
-import UserFamilyScreen, { computeNavBar as familyNavBar } from '../screens/family';
-import UserHomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
-import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '../screens/legal-notice';
-import UserProfileScreen, { computeNavBar as profileNavBar } from '../screens/profile';
-import UserStructuresScreen, { computeNavBar as structuresNavBar } from '../screens/structures';
-import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '../screens/who-are-we';
+import { UserNavigationParams, userRouteNames } from './';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (

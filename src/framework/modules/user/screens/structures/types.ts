@@ -1,8 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { UserStructureWithClasses } from '~/framework/modules/auth/model';
-
-import type { UserNavigationParams } from '../../navigation';
+import type { UserNavigationParams } from '~/framework/modules/user/navigation';
 
 export interface UserStructuresScreenProps {}
 

@@ -11,8 +11,8 @@ export { computeNavBar } from './screen';
 //
 //
 // 1. Add these lines to src/framework/modules/{{moduleName}}/navigation/index.ts :
-// 
-// import type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenNavParams } from '../screens/{{screenName}}';
+//
+// import type { {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}ScreenNavParams } from '~/framework/modules/module-name/screens/{{screenName}}';
 //
 // // in {{moduleName | toCamelCase}}RouteNames :
 // {{screenName | toCamelCase}}: `${moduleConfig.routeName}/{{screenName}}` as '{{screenName | toCamelCase}}',
@@ -23,7 +23,7 @@ export { computeNavBar } from './screen';
 //
 // 2. Add these lines to src/framework/modules/{{moduleName}}/navigation/navigator.tsx :
 //
-// import {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen, { computeNavBar as {{screenName | toCamelCase}}NavBar } from '../screens/{{screenName}}';
+// import {{moduleName | toCamelCase | capitalize}}{{screenName | toCamelCase | capitalize}}Screen, { computeNavBar as {{screenName | toCamelCase}}NavBar } from '~/framework/modules/module-name/screens/{{screenName}}';
 //
 // // in createModuleNavigator() :
 // <Stack.Screen

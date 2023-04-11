@@ -4,9 +4,9 @@ import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { {{moduleName | toCamelCase | capitalize}}NavigationParams, {{moduleName | toCamelCase}}RouteNames } from '.';
-import moduleConfig from '../module-config';
-import {{moduleName | toCamelCase | capitalize}}HomeScreen, { computeNavBar as homeNavBar } from '../screens/home';
-// import {{moduleName | toCamelCase | capitalize}}OtherScreen, { computeNavBar as otherNavBar } from '../screens/other';
+import moduleConfig from '~/framework/modules/module-name/module-config';
+import {{moduleName | toCamelCase | capitalize}}HomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/module-name/screens/home';
+// import {{moduleName | toCamelCase | capitalize}}OtherScreen, { computeNavBar as otherNavBar } from '~/framework/modules/module-name/screens/other';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<{{moduleName | toCamelCase | capitalize}}NavigationParams>(moduleConfig.name, Stack => (
