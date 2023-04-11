@@ -1,8 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { setFruitAction } from '../../actions';
-import type { {{moduleName | toCamelCase | capitalize}}NavigationParams } from '../../navigation';
-import type { {{moduleName | toCamelCase | capitalize}}State } from '../../reducer';
+import type { setFruitAction } from '~/framework/modules/module-name/actions';
+import type { {{moduleName | toCamelCase | capitalize}}NavigationParams } from '~/framework/modules/module-name/navigation';
+import type { {{moduleName | toCamelCase | capitalize}}State } from '~/framework/modules/module-name/reducer';
 
 export interface {{moduleName | toCamelCase | capitalize}}OtherScreenProps {
   // @scaffolder add props here
@@ -22,7 +22,7 @@ export interface {{moduleName | toCamelCase | capitalize}}OtherScreenDispatchPro
 }
 
 
-export interface {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps 
+export interface {{moduleName | toCamelCase | capitalize}}OtherScreenPrivateProps
   extends NativeStackScreenProps<{{moduleName | toCamelCase | capitalize}}NavigationParams, 'other'>,
     {{moduleName | toCamelCase | capitalize}}OtherScreenProps,
     {{moduleName | toCamelCase | capitalize}}OtherScreenStoreProps,

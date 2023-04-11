@@ -1,29 +1,28 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import * as React from 'react';
-import { InteractionManager, SafeAreaView, StyleSheet, View } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import I18n from 'i18n-js'
+import * as React from 'react'
+import { InteractionManager, SafeAreaView, StyleSheet, View } from 'react-native'
+import DeviceInfo from 'react-native-device-info'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_SIZES } from '~/framework/components/constants';
-import { PageView } from '~/framework/components/page';
-import { PFLogo } from '~/framework/components/pfLogo';
-import { SmallText } from '~/framework/components/text';
-import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
-import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { handleAction } from '~/framework/util/redux/actions';
-import { Trackers } from '~/framework/util/tracker';
-
-import { consumeAuthError } from '../actions';
+import theme from '~/app/theme'
+import { ActionButton } from '~/framework/components/buttons/action'
+import { UI_SIZES } from '~/framework/components/constants'
+import { PageView } from '~/framework/components/page'
+import { PFLogo } from '~/framework/components/pfLogo'
+import { SmallText } from '~/framework/components/text'
+import { consumeAuthError } from '~/framework/modules/auth/actions'
+import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation'
+import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer'
+import { handleAction } from '~/framework/util/redux/actions'
+import { Trackers } from '~/framework/util/tracker'
 
 interface ILoginWayfScreenStoreProps {
-  auth: IAuthState;
+  auth: IAuthState
 }
 interface LoginWayfScreenDispatchProps {
-  handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void;
+  handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void
 }
 interface ILoginWayfScreenProps
   extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf>,
@@ -31,7 +30,7 @@ interface ILoginWayfScreenProps
     LoginWayfScreenDispatchProps {}
 
 export interface ILoginWayfScreenState {
-  error: IAuthState['error'];
+  error: IAuthState['error']
 }
 
 const styles = StyleSheet.create({
@@ -52,59 +51,59 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
   },
-});
+})
 
 const initialState: ILoginWayfScreenState = {
   error: undefined,
-};
+}
 
 export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILoginWayfScreenState> {
-  private mounted = false;
+  private mounted = false
 
-  private unsubscribeBlur?: () => void;
+  private unsubscribeBlur?: () => void
 
-  private unsubscribeBlurTask?: ReturnType<typeof InteractionManager.runAfterInteractions>;
+  private unsubscribeBlurTask?: ReturnType<typeof InteractionManager.runAfterInteractions>
 
   constructor(props: ILoginWayfScreenProps) {
-    super(props);
-    this.state = { ...initialState };
+    super(props)
+    this.state = { ...initialState }
   }
 
   consumeError() {
     if (this.props.auth.error) {
-      this.setState({ error: this.props.auth.error });
-      this.props.handleConsumeError();
+      this.setState({ error: this.props.auth.error })
+      this.props.handleConsumeError()
     }
   }
 
   resetError() {
-    this.setState({ error: undefined });
+    this.setState({ error: undefined })
   }
 
   componentDidMount() {
-    this.mounted = true;
-    this.consumeError();
+    this.mounted = true
+    this.consumeError()
     this.unsubscribeBlur = this.props.navigation.addListener('blur', () => {
       this.unsubscribeBlurTask = InteractionManager.runAfterInteractions(() => {
-        this.resetError();
-      });
-    });
+        this.resetError()
+      })
+    })
   }
 
   componentDidUpdate() {
-    this.consumeError();
+    this.consumeError()
   }
 
   componentWillUnmount(): void {
-    this.mounted = false;
-    this.unsubscribeBlur?.();
-    this.unsubscribeBlurTask?.cancel();
+    this.mounted = false
+    this.unsubscribeBlur?.()
+    this.unsubscribeBlurTask?.cancel()
   }
 
   public render() {
-    const { navigation, route } = this.props;
-    const { error } = this.state;
-    const { platform } = route.params;
+    const { navigation, route } = this.props
+    const { error } = this.state
+    const { platform } = route.params
     return (
       <PageView>
         <SafeAreaView style={styles.safeArea}>
@@ -128,23 +127,23 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
             <ActionButton
               text={I18n.t('login-wayf-main-button')}
               action={() => {
-                Trackers.trackEvent('Auth', 'WAYF', 'Display');
-                navigation.navigate(AuthRouteNames.wayf, { platform: route.params.platform });
+                Trackers.trackEvent('Auth', 'WAYF', 'Display')
+                navigation.navigate(AuthRouteNames.wayf, { platform: route.params.platform })
               }}
             />
           </View>
         </SafeAreaView>
       </PageView>
-    );
+    )
   }
 }
 
 export default connect(
   (state: any, props: any): ILoginWayfScreenStoreProps => {
-    const auth = getAuthState(state);
+    const auth = getAuthState(state)
     return {
       auth,
-    };
+    }
   },
   dispatch =>
     bindActionCreators<LoginWayfScreenDispatchProps>(
@@ -153,4 +152,4 @@ export default connect(
       },
       dispatch,
     ),
-)(LoginWAYFPage);
+)(LoginWAYFPage)

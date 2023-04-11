@@ -1,6 +1,6 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-import type { UserNavigationParams } from '../../navigation';
+import type { UserNavigationParams } from '~/framework/modules/user/navigation'
 
 export interface UserNotifPrefsScreenProps {
   // @scaffolder add props here
@@ -20,8 +20,7 @@ export interface UserNotifPrefsScreenDispatchProps {
   // @scaffolder add dispatch props here
 }
 
-
-export interface UserNotifPrefsScreenPrivateProps 
+export interface UserNotifPrefsScreenPrivateProps
   extends NativeStackScreenProps<UserNavigationParams, 'notifPrefs'>,
     UserNotifPrefsScreenProps,
     UserNotifPrefsScreenStoreProps,

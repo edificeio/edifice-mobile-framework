@@ -1,21 +1,17 @@
-import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack'
+import I18n from 'i18n-js'
+import * as React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
 
-import { IGlobalState } from '~/app/store';
-import { PageView } from '~/framework/components/page';
-import { BodyBoldText } from '~/framework/components/text';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { IGlobalState } from '~/app/store'
+import { PageView } from '~/framework/components/page'
+import { BodyBoldText } from '~/framework/components/text'
+import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation'
+import { navBarOptions } from '~/framework/navigation/navBar'
 
-import { UserNavigationParams, userRouteNames } from '../../navigation';
-import styles from './styles';
-import type {
-  UserNotifPrefsScreenDispatchProps,
-  UserNotifPrefsScreenPrivateProps,
-  UserNotifPrefsScreenState,
- } from './types';
+import styles from './styles'
+import type { UserNotifPrefsScreenDispatchProps, UserNotifPrefsScreenPrivateProps, UserNotifPrefsScreenState } from './types'
 
 export const computeNavBar = ({
   navigation,
@@ -26,21 +22,21 @@ export const computeNavBar = ({
     route,
   }),
   title: I18n.t('user-notifPrefs-title'),
-});
+})
 
 function UserNotifPrefsScreen(props: UserNotifPrefsScreenPrivateProps) {
   return (
     <PageView>
       <BodyBoldText>user notifPrefs screen</BodyBoldText>
     </PageView>
-  );
+  )
 }
 
 export default connect(
   (state: IGlobalState) => {
     return {
       // @scaffolder add storeProps here.
-    };
+    }
   },
   dispatch =>
     bindActionCreators(
@@ -49,4 +45,4 @@ export default connect(
       },
       dispatch,
     ),
-)(UserNotifPrefsScreen);
+)(UserNotifPrefsScreen)

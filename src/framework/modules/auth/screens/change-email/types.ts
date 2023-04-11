@@ -1,21 +1,20 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { Platform } from '~/framework/util/appConf';
-
-import { logoutAction } from '../../actions';
-import type { AuthRouteNames, IAuthNavigationParams } from '../../navigation';
+import { logoutAction } from '~/framework/modules/auth/actions'
+import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation'
+import { ModificationType } from '~/framework/modules/user/screens/home/types'
+import { Platform } from '~/framework/util/appConf'
 
 export interface AuthChangeEmailScreenDispatchProps {
-  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>
 }
 
 export interface AuthChangeEmailScreenNavParams {
-  defaultEmail?: string;
-  modificationType?: ModificationType;
-  navBarTitle?: string;
-  platform: Platform;
-  rememberMe?: boolean;
+  defaultEmail?: string
+  modificationType?: ModificationType
+  navBarTitle?: string
+  platform: Platform
+  rememberMe?: boolean
 }
 
 export interface AuthChangeEmailScreenProps {}
