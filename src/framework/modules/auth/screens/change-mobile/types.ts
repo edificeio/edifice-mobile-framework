@@ -1,22 +1,22 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { logoutAction } from '~/framework/modules/auth/actions'
-import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation'
-import { UpdatableProfileValues } from '~/framework/modules/user/actions'
-import { ModificationType } from '~/framework/modules/user/screens/home/types'
-import { Platform } from '~/framework/util/appConf'
+import { logoutAction } from '~/framework/modules/auth/actions';
+import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { UpdatableProfileValues } from '~/framework/modules/user/actions';
+import { ModificationType } from '~/framework/modules/user/screens/home/types';
+import { Platform } from '~/framework/util/appConf';
 
 export interface AuthChangeMobileScreenDispatchProps {
-  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>
-  onSaveNewMobile(updatedProfileValues: UpdatableProfileValues): void
+  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  onSaveNewMobile(updatedProfileValues: UpdatableProfileValues): void;
 }
 
 export interface AuthChangeMobileScreenNavParams {
-  defaultMobile?: string
-  modificationType?: ModificationType
-  navBarTitle?: string
-  platform: Platform
-  rememberMe?: boolean
+  defaultMobile?: string;
+  modificationType?: ModificationType;
+  navBarTitle?: string;
+  platform: Platform;
+  rememberMe?: boolean;
 }
 
 export interface AuthChangeMobileScreenProps {}

@@ -7,11 +7,10 @@ import { bindActionCreators } from 'redux';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { BodyBoldText } from '~/framework/components/text';
+import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import { UserNavigationParams, userRouteNames } from '../../navigation';
-import styles from './styles';
-import type { UserFamilyScreenDispatchProps, UserFamilyScreenPrivateProps } from './types';
+import type { UserFamilyScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

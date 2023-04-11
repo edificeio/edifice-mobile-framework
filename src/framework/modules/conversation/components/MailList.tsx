@@ -5,6 +5,8 @@ import * as React from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 
+import { ConversationNavigationParams, conversationRouteNames } from '/framework/modules/conversation/navigation';
+import { IMailList } from '/framework/modules/conversation/state/mailList';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
@@ -28,9 +30,6 @@ import { displayPastDate } from '~/framework/util/date';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Loading } from '~/ui/Loading';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-
-import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
-import { IMailList } from '../state/mailList';
 
 interface ConversationMailListComponentDataProps {
   notifications: any;

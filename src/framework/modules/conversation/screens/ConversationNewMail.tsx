@@ -32,6 +32,7 @@ import {
 import { fetchVisiblesAction } from '~/framework/modules/conversation/actions/visibles';
 import NewMailComponent from '~/framework/modules/conversation/components/NewMail';
 import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
@@ -40,8 +41,6 @@ import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
-
-import { ConversationNavigationParams, conversationRouteNames } from '../navigation';
 
 export enum DraftType {
   NEW,

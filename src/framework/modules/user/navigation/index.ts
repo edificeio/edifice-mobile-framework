@@ -1,14 +1,14 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '../module-config';
-import { IPushNotifsItemsListScreenNavigationParams } from '../screens/PushNotifsItemsListScreen';
-import type { IPushNotifsTopicsListScreenNavigationParams } from '../screens/PushNotifsTopicsListScreen';
-import type { UserFamilyScreenNavParams } from '../screens/family';
-import type { UserHomeScreenNavParams } from '../screens/home';
-import type { UserLegalNoticeScreenNavParams } from '../screens/legal-notice';
-import type { ProfileScreenNavigationParams } from '../screens/profile';
-import type { UserStructuresScreenNavParams } from '../screens/structures';
-import type { UserWhoAreWeScreenNavParams } from '../screens/who-are-we';
+import moduleConfig from '~/framework/modules/user/module-config';
+import { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
+import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import type { UserFamilyScreenNavParams } from '~/framework/modules/user/screens/family';
+import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
+import type { UserLegalNoticeScreenNavParams } from '~/framework/modules/user/screens/legal-notice';
+import type { ProfileScreenNavigationParams } from '~/framework/modules/user/screens/profile';
+import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/structures';
+import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 
 export const userRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',

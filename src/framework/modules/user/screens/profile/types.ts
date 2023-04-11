@@ -3,9 +3,8 @@ import { Dispatch } from 'redux';
 
 import { ISession } from '~/framework/modules/auth/model';
 import { UpdatableProfileValues } from '~/framework/modules/user/actions';
+import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
-
-import { UserNavigationParams, userRouteNames } from '../../navigation';
 
 export interface IProfilePageDataProps {
   session?: ISession;

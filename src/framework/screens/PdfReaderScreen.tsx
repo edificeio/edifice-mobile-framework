@@ -5,12 +5,11 @@ import Pdf from 'react-native-pdf';
 
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { ISession } from '~/framework/modules/auth/model';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-
-import { ISession } from '../modules/auth/model';
-import { navBarOptions } from '../navigation/navBar';
-import { openUrl } from '../util/linking';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { openUrl } from '~/framework/util/linking';
 
 export interface IBackdropPdfReaderState {
   error: boolean;

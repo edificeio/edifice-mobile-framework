@@ -12,6 +12,21 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { navBarActionButtonSize } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { isEmpty } from '~/framework/util/object';
+
+const navBarTitleStyle = {
+  color: theme.ui.text.inverse,
+  maxWidth: UI_SIZES.screen.width - 2 * navBarActionButtonSize,
+};
+
+export const navBarTitle = (title?: string) =>
+  !isEmpty(title) && Platform.OS === 'android'
+    ? () => (
+        <BodyBoldText numberOfLines={1} style={navBarTitleStyle}>
+          {title}
+        </BodyBoldText>
+      )
+    : title;
 
 import { isEmpty } from '../util/object';
 
