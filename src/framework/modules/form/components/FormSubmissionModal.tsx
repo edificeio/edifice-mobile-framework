@@ -32,13 +32,14 @@ const styles = StyleSheet.create({
 
 interface IFormSubmissionModalProps {
   editable: boolean;
+  loading: boolean;
   status: DistributionStatus;
   structures: { label: string; value: string }[];
   onSubmit: (structure: string) => void;
 }
 
 const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModalProps>((props, ref) => {
-  const [isDropdownOpened, setDropdownOpened] = React.useState(false);
+  const [isDropdownOpen, setDropdownOpen] = React.useState(false);
   const [structureId, setStructureId] = React.useState(props.structures[0].value);
 
   return (
@@ -55,10 +56,10 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
           </SmallText>
           {props.structures.length > 1 ? (
             <DropDownPicker
-              open={isDropdownOpened}
+              open={isDropdownOpen}
               value={structureId}
               items={props.structures}
-              setOpen={setDropdownOpened}
+              setOpen={setDropdownOpen}
               setValue={setStructureId}
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropdownContainer}
@@ -74,7 +75,12 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
                 : 'form.formDistributionScreen.submissionModal.lowerText.default',
             )}
           </SmallText>
-          <ActionButton text={I18n.t('common.confirm')} action={() => props.onSubmit(structureId)} style={styles.topMargin} />
+          <ActionButton
+            text={I18n.t('common.confirm')}
+            action={() => props.onSubmit(structureId)}
+            loading={props.loading}
+            style={styles.topMargin}
+          />
         </View>
       }
     />

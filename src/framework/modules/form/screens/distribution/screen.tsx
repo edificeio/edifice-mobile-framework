@@ -61,6 +61,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   const [position, setPosition] = React.useState(0);
   const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
   const [responses, setResponses] = React.useState<IQuestionResponse[]>([]);
+  const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
   const flatListRef = React.useRef<FlatList>(null);
   const modalBoxRef = React.useRef<ModalBoxHandle>(null);
   const isPositionAtSummary = position === props.elementsCount;
@@ -264,6 +265,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       const { session } = props;
       const structure = props.structures.find(s => s.value === structureId);
 
+      setSubmitting(true);
       if (!session) throw new Error();
       const distribution = await formService.distribution.get(session, distributionId);
       distribution.structure = structure?.label;
@@ -277,6 +279,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       props.navigation.goBack();
       Toast.showSuccess(I18n.t('form.answersSent'), { ...UI_ANIMATIONS.toast });
     } catch {
+      setSubmitting(false);
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
   };
@@ -355,6 +358,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         <FormSubmissionModal
           ref={modalBoxRef}
           editable={editable}
+          loading={isSubmitting}
           status={status}
           structures={props.structures}
           onSubmit={submitDistribution}
@@ -378,22 +382,29 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
   };
 
-  UNSTABLE_usePreventRemove(status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE, ({ data }) => {
-    Alert.alert(I18n.t('form.formDistributionScreen.leaveAlert.title'), I18n.t('form.formDistributionScreen.leaveAlert.message'), [
-      {
-        text: I18n.t('common.cancel'),
-        style: 'cancel',
-      },
-      {
-        text: I18n.t('common.quit'),
-        onPress: async () => {
-          await saveChanges();
-          props.navigation.dispatch(data.action);
-        },
-        style: 'destructive',
-      },
-    ]);
-  });
+  UNSTABLE_usePreventRemove(
+    status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE && !isSubmitting,
+    ({ data }) => {
+      Alert.alert(
+        I18n.t('form.formDistributionScreen.leaveAlert.title'),
+        I18n.t('form.formDistributionScreen.leaveAlert.message'),
+        [
+          {
+            text: I18n.t('common.cancel'),
+            style: 'cancel',
+          },
+          {
+            text: I18n.t('common.quit'),
+            onPress: async () => {
+              await saveChanges();
+              props.navigation.dispatch(data.action);
+            },
+            style: 'destructive',
+          },
+        ],
+      );
+    },
+  );
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
