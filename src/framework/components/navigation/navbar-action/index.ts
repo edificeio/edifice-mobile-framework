@@ -1,4 +1,4 @@
-import NavBarAction, { navBarActionButtonSize } from './component';
+import NavBarAction from './component';
 
-export { NavBarAction, navBarActionButtonSize };
+export { NavBarAction };
 export default NavBarAction;
