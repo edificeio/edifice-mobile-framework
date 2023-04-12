@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
-import Toast from 'react-native-tiny-toast';
 
-import { UI_ANIMATIONS } from '~/framework/components/constants';
+import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IFolder, actionTypes } from '~/framework/modules/workspace/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
@@ -43,7 +42,7 @@ export const createWorkspaceFolderAction = (name: string, parentId: string) => a
     const session = assertSession();
     const folder = await workspaceService.folder.create(session, name, parentId);
     dispatch(workspaceCreateFolderActionsCreators.receipt(folder));
-    Toast.showSuccess(I18n.t('workspace.folder-created'), { ...UI_ANIMATIONS.toast });
+    Toast.showSuccess(I18n.t('workspace.folder-created'));
     return folder;
   } catch (e) {
     dispatch(workspaceCreateFolderActionsCreators.error(e as Error));

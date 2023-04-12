@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getProfileColor } from '~/framework/modules/zimbra/utils/userColor';
@@ -102,7 +102,7 @@ const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, hasRightToSendExte
       addUser({ displayName: search, id: search });
     } else if (search.includes('@') && !hasRightToSendExternalMails) {
       updateSearch('');
-      return Toast.show(I18n.t('zimbra-external-mail-right-error'), { ...UI_ANIMATIONS.toast });
+      return Toast.showError(I18n.t('zimbra-external-mail-right-error'));
     }
     if (search !== '') {
       updateSearch('');

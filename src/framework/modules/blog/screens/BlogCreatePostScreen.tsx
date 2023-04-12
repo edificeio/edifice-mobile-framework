@@ -3,13 +3,12 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Keyboard, ScrollView, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
@@ -17,6 +16,7 @@ import BottomMenu from '~/framework/components/menus/bottom';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
@@ -258,10 +258,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       );
     } catch (e: any) {
       if (e.response.body === '{"error":"file.too.large"}') {
-        Toast.show(I18n.t('fullStorage'), {
-          position: Toast.position.BOTTOM,
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('fullStorage'));
       }
       const { dispatch } = this.props;
       dispatch(

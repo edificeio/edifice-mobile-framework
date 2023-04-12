@@ -6,7 +6,6 @@ import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, FlatList, RefreshControl, ScrollView, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -14,7 +13,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -23,6 +22,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
 import { MailListItem } from '~/framework/modules/zimbra/components/MailListItem';
@@ -225,7 +225,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       setSelectedMails([]);
       refresh();
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -237,11 +237,9 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       await zimbraService.mails.trash(session, selectedMails);
       setSelectedMails([]);
       refresh();
-      Toast.show(I18n.t(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'), {
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showSuccess(I18n.t(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -253,11 +251,9 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       await zimbraService.mails.delete(session, selectedMails);
       setSelectedMails([]);
       refresh();
-      Toast.show(I18n.t(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'), {
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showSuccess(I18n.t(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

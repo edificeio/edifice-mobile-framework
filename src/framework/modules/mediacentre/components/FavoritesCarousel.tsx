@@ -3,12 +3,12 @@ import I18n from 'i18n-js';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { FavoriteIcon, IconButton } from '~/framework/modules/mediacentre/components/SmallCard';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
@@ -103,7 +103,7 @@ const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);
-    Toast.show(I18n.t('mediacentre.link-copied'), { ...UI_ANIMATIONS.toast });
+    Toast.showInfo(I18n.t('mediacentre.link-copied'));
   };
   return (
     <TouchCardWithoutPadding onPress={openUrlCallback} style={[styles.cardContainer, { backgroundColor: props.color }]}>

@@ -6,18 +6,17 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, Platform, RefreshControl, ScrollView } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
 import { InfoCommentField } from '~/framework/components/commentField';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
@@ -138,7 +137,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       refreshSilent();
     } catch {
       setIsAcknowledgingWord(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -159,7 +158,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
       }
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     } finally {
       setIsPublishingReply(false);
     }
@@ -193,7 +192,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         await schoolbookService.word.delete(session, schoolbookWordId);
         props.navigation.goBack();
       } catch {
-        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+        Toast.showError(I18n.t('common.error.text'));
       }
     };
     const showDeleteSchoolbookWordAlert = () =>

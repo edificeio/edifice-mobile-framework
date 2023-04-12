@@ -2,13 +2,13 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card/base';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { ResourceImage, SourceImage } from '~/framework/modules/mediacentre/components/ResourceImage';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
@@ -99,7 +99,7 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
 
   copyToClipboard = () => {
     Clipboard.setString(this.props.resource.link);
-    Toast.show(I18n.t('mediacentre.link-copied'), { ...UI_ANIMATIONS.toast });
+    Toast.showInfo(I18n.t('mediacentre.link-copied'));
   };
 
   public render() {

@@ -1,7 +1,7 @@
 import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Platform, TouchableOpacity, View } from 'react-native';
 import PhoneInput, {
   Country,
@@ -11,20 +11,20 @@ import PhoneInput, {
   isMobileNumber,
   isValidNumber,
 } from 'react-native-phone-number-input';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
@@ -81,10 +81,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   // Web 4.8+ compliance:
   //  -mobile verification APIs are available if /auth/user/requirements contains the needRevalidateMobile field
   //  -requirementsChecked is used to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
-  const [requirementsChecked, setRequirementsChecked] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
-  const [isCheckMobile, setIsCheckMobile] = React.useState(false);
+  const [requirementsChecked, setRequirementsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isCheckMobile, setIsCheckMobile] = useState(false);
   useEffect(() => {
     async function checkRequirements() {
       try {
@@ -133,7 +133,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   }, [defaultMobile]);
 
-  const getIsValidMobileNumberForRegion = React.useCallback(
+  const getIsValidMobileNumberForRegion = useCallback(
     (toVerify: string) => {
       try {
         // Returns whether number is valid for selected region and an actual mobile number
@@ -148,7 +148,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     [region],
   );
 
-  const doSendMobileVerificationCode = React.useCallback(
+  const doSendMobileVerificationCode = useCallback(
     async (toVerify: string) => {
       try {
         // First, we clean the number by trimming - and . characters (generally used as separators)
@@ -180,20 +180,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           setIsSendingCode(false);
           props.trySaveNewMobile({ mobile: mobileNumberFormatted });
           props.navigation.goBack();
-          setTimeout(
-            () =>
-              Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast'), {
-                position: Toast.position.BOTTOM,
-                mask: false,
-                ...UI_ANIMATIONS.toast,
-              }),
-            100,
-          );
+          setTimeout(() => Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast')), 100);
         }
       } catch {
-        Toast.show(I18n.t('common.error.text'), {
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('common.error.text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -212,12 +202,12 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     ],
   );
 
-  const sendSMS = React.useCallback(async () => {
+  const sendSMS = useCallback(async () => {
     const sendResponse = await doSendMobileVerificationCode(mobile);
     if (sendResponse) setMobileState(sendResponse);
   }, [doSendMobileVerificationCode, mobile]);
 
-  const changeMobile = React.useCallback(
+  const changeMobile = useCallback(
     (number: string) => {
       if (!isMobileStatePristine) setMobileState(MobileState.PRISTINE);
       setMobile(number);
@@ -225,12 +215,12 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     [isMobileStatePristine],
   );
 
-  const refuseMobileVerification = React.useCallback(async () => {
+  const refuseMobileVerification = useCallback(async () => {
     try {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   }, [navigation, tryLogout, platform]);
 
@@ -248,10 +238,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     ]);
   });
 
-  const onChangeMobile = React.useCallback((text: string) => changeMobile(text), [changeMobile]);
-  const onSetRegion = React.useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
-  const onSendSMS = React.useCallback(() => sendSMS(), [sendSMS]);
-  const onRefuseMobileVerification = React.useCallback(() => refuseMobileVerification(), [refuseMobileVerification]);
+  const onChangeMobile = useCallback((text: string) => changeMobile(text), [changeMobile]);
+  const onSetRegion = useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
+  const onSendSMS = useCallback(() => sendSMS(), [sendSMS]);
+  const onRefuseMobileVerification = useCallback(() => refuseMobileVerification(), [refuseMobileVerification]);
 
   return (
     <KeyboardPageView style={styles.page} scrollable>

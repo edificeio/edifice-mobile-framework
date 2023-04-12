@@ -3,14 +3,13 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { cardPaddingMerging } from '~/framework/components/card/base';
-import { UI_ANIMATIONS, UI_STYLES } from '~/framework/components/constants';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -18,6 +17,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import {
@@ -358,7 +358,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             try {
               await notificationsService.report(this.props.session, notif.id);
               resolve(true);
-              Toast.showSuccess(I18n.t('timeline.reportAction.success'), { ...UI_ANIMATIONS.toast });
+              Toast.showSuccess(I18n.t('timeline.reportAction.success'));
             } catch (e) {
               Alert.alert(I18n.t('common.error.text'));
               reject(e);
@@ -406,7 +406,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     try {
       await dispatch(dismissFlashMessageAction(flashMessageId));
     } catch {
-      Toast.show(I18n.t('timeline-flash-message-dismiss-error-text'));
+      Toast.showError(I18n.t('timeline-flash-message-dismiss-error-text'));
     }
   },
   handleOpenNotification: async (n: IAbstractNotification, fallback: NotifHandlerThunkAction, navState: NavigationState) => {

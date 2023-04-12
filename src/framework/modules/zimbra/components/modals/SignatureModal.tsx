@@ -1,14 +1,14 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import ActionButton from '~/framework/components/buttons/action';
 import { Checkbox } from '~/framework/components/checkbox';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { ISignature } from '~/framework/modules/zimbra/model';
 import { zimbraService } from '~/framework/modules/zimbra/service';
@@ -73,7 +73,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
       setUpdating(false);
     } catch {
       setUpdating(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

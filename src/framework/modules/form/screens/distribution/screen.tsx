@@ -3,7 +3,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -11,12 +10,12 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { HeadingSText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
 import { FormSectionCard } from '~/framework/modules/form/components/FormSectionCard';
@@ -224,9 +223,9 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   const saveChanges = async () => {
     try {
       await postResponsesChanges();
-      Toast.showSuccess(I18n.t('form.answersWellSaved'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('form.answersWellSaved'));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -244,7 +243,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   };
 
   const goToNextPosition = () => {
-    postResponsesChanges().then(() => Toast.show(I18n.t('form.answersWellSaved'), { ...UI_ANIMATIONS.toast }));
+    postResponsesChanges().then(() => Toast.showSuccess(I18n.t('form.answersWellSaved')));
     const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
     if (conditionalQuestion) {
       const res = responses.find(r => r.questionId === conditionalQuestion.id);
@@ -277,10 +276,10 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       }
       modalBoxRef.current?.doDismissModal();
       props.navigation.goBack();
-      Toast.showSuccess(I18n.t('form.answersSent'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('form.answersSent'));
     } catch {
       setSubmitting(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

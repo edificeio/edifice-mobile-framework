@@ -44,6 +44,14 @@ export enum CodeState {
   PRISTINE = 'pristine',
 }
 
+export interface PageTexts {
+  feedback: string;
+  message: string;
+  messageSent: string;
+  resendToast: string;
+  title: string;
+}
+
 export enum ResendResponse {
   FAIL = 'fail',
   SUCCESS = 'success',

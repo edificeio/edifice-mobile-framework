@@ -176,7 +176,7 @@
     "@types/i18n-js": "3.8.4",
     "@types/jest": "29.5.0",
     "@types/mime": "3.0.1",
-    "@types/react": "18.0.34",
+    "@types/react": "18.0.35",
     "@types/react-native": "0.71.5",
     "@types/react-native-share": "3.3.3",
     "@types/react-native-vector-icons": "6.4.13",

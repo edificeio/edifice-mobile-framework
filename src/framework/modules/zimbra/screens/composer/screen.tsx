@@ -6,18 +6,17 @@ import moment from 'moment';
 import React from 'react';
 import { Alert, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DocumentPicked, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/modules/zimbra/actions';
 import NewMailComponent from '~/framework/modules/zimbra/components/NewMail';
@@ -157,9 +156,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
   sendMail = async () => {
     if (!this.state.mail.to.length && !this.state.mail.cc.length && !this.state.mail.bcc.length) {
-      return Toast.show(I18n.t('zimbra-missing-receiver'), { ...UI_ANIMATIONS.toast });
+      return Toast.showError(I18n.t('zimbra-missing-receiver'));
     } else if (this.state.tempAttachment) {
-      return Toast.show(I18n.t('zimbra-send-attachment-progress'), { ...UI_ANIMATIONS.toast });
+      return Toast.showInfo(I18n.t('zimbra-send-attachment-progress'));
     }
 
     try {
@@ -168,19 +167,17 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
       if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
       await zimbraService.mail.send(session!, this.getMailData(), this.state.id!, this.state.replyTo!);
-      Toast.showSuccess(I18n.t('zimbra-send-mail'), { ...UI_ANIMATIONS.toast });
       navigation.dispatch(CommonActions.goBack());
+      Toast.showSuccess(I18n.t('zimbra-send-mail'));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
   updateDraftOnBack = async () => {
     const { type } = this.props.route.params;
     await this.saveDraft();
-    Toast.showSuccess(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'), {
-      ...UI_ANIMATIONS.toast,
-    });
+    Toast.showSuccess(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'));
   };
 
   checkIsMailEmpty = () => {
@@ -403,7 +400,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         tempAttachment: null,
       }));
     } catch {
-      Toast.show(I18n.t('zimbra-attachment-error'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('zimbra-attachment-error'));
       this.setState({ tempAttachment: null });
     }
   };
@@ -418,9 +415,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       this.setState({ isDeleted: true });
       await zimbraService.mails.trash(session, [id]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('zimbra-message-deleted'));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -434,9 +431,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       this.setState({ isDeleted: true });
       await zimbraService.mails.delete(session, [id]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.show(I18n.t('zimbra-message-deleted'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('zimbra-message-deleted'));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

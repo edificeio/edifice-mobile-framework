@@ -2,16 +2,16 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import Toast from '~/framework/components/toast';
 import {
   addFavoriteAction,
   fetchExternalsAction,
@@ -188,28 +188,20 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   const addFavorite = async (resourceId: string, resource: IResource) => {
     try {
       await props.addFavorite(resourceId, resource);
-      Toast.showSuccess(I18n.t('mediacentre.favorite-added'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showSuccess(I18n.t('mediacentre.favorite-added'));
       props.fetchFavorites();
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
   const removeFavorite = async (resourceId: string, resource: Source) => {
     try {
       await props.removeFavorite(resourceId, resource);
-      Toast.showSuccess(I18n.t('mediacentre.favorite-removed'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showSuccess(I18n.t('mediacentre.favorite-removed'));
       props.fetchFavorites();
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

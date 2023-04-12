@@ -4,7 +4,6 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -12,13 +11,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, NestedBoldText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
@@ -69,13 +68,11 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
         uploadedAttachments = await props.uploadAttachments(attachments);
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
-      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }), {
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
       props.navigation.dispatch(CommonActions.goBack());
     } catch {
       setSending(false);
-      Toast.show(I18n.t('support.supportCreateTicketScreen.failure'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('support.supportCreateTicketScreen.failure'));
     }
   };
 

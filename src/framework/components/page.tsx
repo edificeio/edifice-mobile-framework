@@ -23,6 +23,8 @@ import {
   View,
   ViewProps,
 } from 'react-native';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Toast from 'react-native-toast-message';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -95,7 +97,10 @@ export const PageViewContainer = (props: PageViewProps) => {
         {statusBarComponent}
         <DEPRECATED_ConnectionTrackingBar />
         <Notifier id={route.name} />
-        <View style={gutterStyle}>{children}</View>
+        <View style={gutterStyle}>
+          {children}
+          <Toast />
+        </View>
       </>
     </PageViewStyle>
   );

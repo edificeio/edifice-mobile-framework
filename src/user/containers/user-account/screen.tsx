@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -11,10 +10,11 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { LineButton } from '~/framework/components/buttons/line';
 import { ButtonLineGroup } from '~/framework/components/buttons/line/component';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { formatSource } from '~/framework/util/media';
@@ -106,7 +106,7 @@ export class UserAccountScreen extends React.PureComponent<UserAccountScreenProp
       const routeParams = params[modificationType];
       this.props.navigation.navigate(routeName, routeParams);
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     } finally {
       this.setState({ loadingMFARequirement: { ...this.state.loadingMFARequirement, [modificationType]: false } });
     }

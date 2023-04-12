@@ -2,13 +2,13 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import ActionButton from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { IFolder } from '~/framework/modules/zimbra/model';
 import { zimbraService } from '~/framework/modules/zimbra/service';
@@ -51,10 +51,10 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
       props.successCallback();
       setMoving(false);
       setSelectedFolderId(null);
-      Toast.show(I18n.t(mailIds.length > 1 ? 'zimbra-messages-moved' : 'zimbra-message-moved'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t(mailIds.length > 1 ? 'zimbra-messages-moved' : 'zimbra-message-moved'));
     } catch {
       setMoving(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
