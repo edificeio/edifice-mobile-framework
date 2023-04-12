@@ -174,7 +174,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
           [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
           [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
         };
-        const routeName = needMfa ? AuthRouteNames.mfa : routeNames[modificationType];
+        const routeName = needMfa ? AuthRouteNames.mfaModal : routeNames[modificationType];
         const params = {
           [ModificationType.EMAIL]: {
             navBarTitle: I18n.t('user.page.editEmail'),

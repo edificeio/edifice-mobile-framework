@@ -6,7 +6,7 @@ import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthChangeEmailScreenDispatchProps {
-  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
 }
 
 export interface AuthChangeEmailScreenNavParams {
@@ -31,4 +31,11 @@ export enum EmailState {
   EMAIL_ALREADY_VERIFIED = 'emailAlreadyVerified',
   EMAIL_FORMAT_INVALID = 'emailFormatInvalid',
   PRISTINE = 'pristine',
+}
+
+export interface PageTexts {
+  title: string;
+  message: string;
+  label: string;
+  button: string;
 }

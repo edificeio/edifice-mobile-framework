@@ -127,8 +127,8 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 4. Gather partial session case
       const partialSessionScenario = getPartialSessionScenario(userRequirements);
-      let defaultMobile;
-      let defaultEmail;
+      let defaultMobile: string | undefined;
+      let defaultEmail: string | undefined;
       if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_MOBILE) {
         const mobileValidationInfos = await getMobileValidationInfos();
         defaultMobile = mobileValidationInfos?.mobile;

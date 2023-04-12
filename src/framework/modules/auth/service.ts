@@ -37,7 +37,7 @@ export interface IEntcoreMFAValidationInfos {
 }
 
 export interface IEntcoreMFAValidationState {
-  state: 'outdated | pending | valid'; // Validation state
+  state: 'outdated' | 'pending' | 'valid'; // Validation state
   tries: number; // Number of remaining retries before code becomes outdated
   ttl: number; // Number of seconds remaining before expiration of the code
 }

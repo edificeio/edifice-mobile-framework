@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import Lottie from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -11,7 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_ANIMATIONS, UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
@@ -20,6 +20,9 @@ import { loginAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
+  IEntcoreEmailValidationState,
+  IEntcoreMFAValidationState,
+  IEntcoreMobileValidationState,
   getMFAValidationInfos,
   sendEmailVerificationCode,
   sendMobileVerificationCode,
@@ -27,34 +30,51 @@ import {
   verifyMFACode,
   verifyMobileCode,
 } from '~/framework/modules/auth/service';
-import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import { AuthMFAScreenDispatchProps, AuthMFAScreenPrivateProps, AuthMFAScreenStoreProps, CodeState, ResendResponse } from './types';
 
+const animationSources = {
+  [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
+  [CodeState.CODE_EXPIRED]: require('ASSETS/animations/mfa/code-wrong-locked.json'),
+  [CodeState.CODE_WRONG]: require('ASSETS/animations/mfa/code-wrong.json'),
+  [CodeState.CODE_RESENT]: require('ASSETS/animations/mfa/code-wrong-unlocked.json'),
+};
+const CELL_COUNT = 6;
+
+const CODE_RESEND_DELAY = 15000;
+const CODE_VALIDATION_DELAY = 500;
+const CODE_REDIRECTION_DELAY = 500;
+
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa>): NativeStackNavigationOptions => {
-  const navBarTitle = route.params.navBarTitle;
-
+}: NativeStackScreenProps<
+  IAuthNavigationParams,
+  typeof AuthRouteNames.mfa | typeof AuthRouteNames.mfaModal
+>): NativeStackNavigationOptions => {
+  const routeParams = route.params;
+  const title = Platform.select({
+    ios: routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.t('auth-mfa-title'),
+    android: routeParams.navBarTitle,
+  });
   return {
     ...navBarOptions({
       navigation,
       route,
     }),
-    title: navBarTitle,
+    headerTitle: navBarTitle(title),
   };
 };
 
 const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
-  const { onLogin, onUpdateProfile, navigation, route } = props;
+  const { tryLogin, tryUpdateProfile, navigation, route } = props;
 
-  const navBarTitle = route.params.navBarTitle;
   const platform = props.route.params.platform;
   const rememberMe = props.route.params.rememberMe;
   const modificationType = route.params.modificationType;
@@ -73,10 +93,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const [isCodeStateHidden, setIsCodeStateHidden] = useState(true);
   const [code, setCode] = useState('');
   const [codeState, setCodeState] = useState<CodeState>(CodeState.PRISTINE);
-  const [animationSource, setAnimationSource] = useState(require('ASSETS/animations/mfa/code-correct.json'));
+  const [animationSource, setAnimationSource] = useState(animationSources[CodeState.CODE_CORRECT]);
   const animationRef = useRef<Lottie>(null);
 
-  const CELL_COUNT = 6;
   const codeFieldRef = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
   const [codeFieldProps, getCellOnLayoutHandler] = useClearByFocusCell({
     value: code,
@@ -91,7 +110,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const isCodeStateDisplayed = !(isCodeStateHidden || isVerifyingActive || isCodeStateUnknown);
 
   const codeStateColor = theme.palette.status[isCodeCorrect ? 'success' : 'failure'].regular;
-  const resendOpacity = isResendInactive ? 0.5 : 1;
+  const resendOpacity = isResendInactive ? UI_VALUES.opacity.half : UI_VALUES.opacity.opaque;
 
   const texts: Record<string, any> = isEmailMFA
     ? {
@@ -121,23 +140,17 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     setIsResendDisabled(true);
     setTimeout(() => {
       setIsResendDisabled(false);
-    }, 15000);
+    }, CODE_RESEND_DELAY);
   };
 
   const setVerifyTimer = () => {
     setIsVerifyingEnabled(true);
     setTimeout(() => {
       setIsVerifyingEnabled(false);
-    }, 500);
+    }, CODE_VALIDATION_DELAY);
   };
 
   const startAnimation = (state: CodeState) => {
-    const animationSources = {
-      [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
-      [CodeState.CODE_EXPIRED]: require('ASSETS/animations/mfa/code-wrong-locked.json'),
-      [CodeState.CODE_WRONG]: require('ASSETS/animations/mfa/code-wrong.json'),
-      [CodeState.CODE_RESENT]: require('ASSETS/animations/mfa/code-wrong-unlocked.json'),
-    };
     setAnimationSource(animationSources[state]);
     animationRef.current?.play();
   };
@@ -145,7 +158,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const verifyCode = async (toVerify: string) => {
     try {
       setIsVerifyingCode(true);
-      let validationState;
+      let validationState: IEntcoreEmailValidationState | IEntcoreMobileValidationState | IEntcoreMFAValidationState | undefined;
       if (isEmailMFA) validationState = await verifyEmailCode(toVerify);
       else if (isMobileMFA) validationState = await verifyMobileCode(toVerify);
       else validationState = await verifyMFACode(toVerify);
@@ -216,27 +229,30 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
       };
       const routeName = routeNames[modificationType!];
-      const params = { navBarTitle, modificationType, platform };
+      const params = { navBarTitle: route.params.navBarTitle, modificationType, platform };
       navigation.replace(routeName, params);
     }
   };
 
   const redirectEmailOrMobileMFA = useCallback(async () => {
     if (isModifyingEmail || isModifyingMobile) {
-      navigation.navigate(userRouteNames.home);
-      onUpdateProfile(isModifyingEmail ? { email } : { mobile });
-      setTimeout(
-        () =>
-          Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
-            position: Toast.position.BOTTOM,
-            mask: false,
-            ...UI_ANIMATIONS.toast,
-          }),
-        600,
-      );
+      try {
+        await tryUpdateProfile(isModifyingEmail ? { email } : { mobile });
+        navigation.navigate(userRouteNames.home);
+        Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
+          position: Toast.position.BOTTOM,
+          mask: false,
+          ...UI_ANIMATIONS.toast,
+        });
+      } catch {
+        Toast.show(I18n.t('common.error.text'), {
+          onHidden: () => resetCode(),
+          ...UI_ANIMATIONS.toast,
+        });
+      }
     } else {
       try {
-        const redirect = await onLogin(platform, undefined, rememberMe);
+        const redirect = await tryLogin(platform, undefined, rememberMe);
         redirectLoginNavAction(redirect, platform, navigation);
       } catch {
         Toast.show(I18n.t('common.error.text'), {
@@ -245,7 +261,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         });
       }
     }
-  }, [isModifyingEmail, isModifyingMobile, navigation, onUpdateProfile, email, mobile, onLogin, platform, rememberMe, resetCode]);
+  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, resetCode, tryLogin, platform, rememberMe]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -257,7 +273,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           ...UI_ANIMATIONS.toast,
         });
       } else if (isCodeCorrect && isEmailOrMobileMFA) {
-        setTimeout(() => redirectEmailOrMobileMFA(), 500);
+        setTimeout(() => redirectEmailOrMobileMFA(), CODE_REDIRECTION_DELAY);
       }
     }
   }, [isCodeCorrect, isCodeStateUnknown, isEmailOrMobileMFA, isVerifyingActive, redirectEmailOrMobileMFA]);
@@ -368,10 +384,10 @@ const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = state 
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScreenDispatchProps = dispatch => {
-  return bindActionCreators(
+  return bindActionCreators<AuthMFAScreenDispatchProps>(
     {
-      onLogin: tryAction(loginAction, undefined) as unknown as AuthMFAScreenDispatchProps['onLogin'],
-      onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => dispatch(profileUpdateAction(updatedProfileValues)),
+      tryLogin: tryAction(loginAction),
+      tryUpdateProfile: tryAction(profileUpdateAction),
     },
     dispatch,
   );

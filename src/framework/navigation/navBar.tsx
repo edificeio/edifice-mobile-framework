@@ -28,22 +28,6 @@ export const navBarTitle = (title?: string) =>
       )
     : title;
 
-import { isEmpty } from '../util/object';
-
-const navBarTitleStyle = {
-  color: theme.ui.text.inverse,
-  maxWidth: UI_SIZES.screen.width - 2 * navBarActionButtonSize,
-};
-
-export const navBarTitle = (title?: string) =>
-  !isEmpty(title) && Platform.OS === 'android'
-    ? () => (
-        <BodyBoldText numberOfLines={1} style={navBarTitleStyle}>
-          {title}
-        </BodyBoldText>
-      )
-    : title;
-
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;

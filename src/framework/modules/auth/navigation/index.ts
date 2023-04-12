@@ -28,6 +28,7 @@ export enum AuthRouteNames {
   changeEmail = 'ChangeEmail',
   changeMobile = 'ChangeMobile',
   mfa = 'MFA',
+  mfaModal = 'MFAModal',
 }
 export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.loginHome]: LoginHomeScreenNavParams;
@@ -40,6 +41,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   [AuthRouteNames.changeEmail]: AuthChangeEmailScreenNavParams;
   [AuthRouteNames.changeMobile]: AuthChangeMobileScreenNavParams;
   [AuthRouteNames.mfa]: AuthMFAScreenNavParams;
+  [AuthRouteNames.mfaModal]: AuthMFAScreenNavParams;
 }
 
 export const getLoginRouteName = (platform?: Platform) => {

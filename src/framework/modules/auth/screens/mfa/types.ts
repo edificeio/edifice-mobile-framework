@@ -8,8 +8,8 @@ import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthMFAScreenDispatchProps {
-  onLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
-  onUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => void;
+  tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
+  tryUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => Promise<void>;
 }
 
 export interface AuthMFAScreenNavParams {
@@ -30,7 +30,7 @@ export interface AuthMFAScreenStoreProps {
 }
 
 export interface AuthMFAScreenPrivateProps
-  extends NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa>,
+  extends NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa | typeof AuthRouteNames.mfaModal>,
     AuthMFAScreenProps,
     AuthMFAScreenStoreProps,
     AuthMFAScreenDispatchProps {}
