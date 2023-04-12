@@ -91,7 +91,6 @@ export const UI_SIZES = {
     navbarMargin: 16,
     statusbarHeight: StatusBar.currentHeight,
     tabbarHeight: 56,
-    tabbarIconSize: 24,
     tabBarIconSize: Platform.select({ ios: 25, default: 19 }),
     tabBarLabelMargin: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
     textFieldMaxHeight: 105,
