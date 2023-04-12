@@ -54,16 +54,16 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isModifyingEmail = modificationType === ModificationType.EMAIL;
   const texts: PageTexts = isModifyingEmail
     ? {
-        title: I18n.t('auth-change-email-edit-title'),
-        message: I18n.t('auth-change-email-edit-message'),
-        label: I18n.t('auth-change-email-edit-label'),
         button: I18n.t('auth-change-email-verify-button'),
+        label: I18n.t('auth-change-email-edit-label'),
+        message: I18n.t('auth-change-email-edit-message'),
+        title: I18n.t('auth-change-email-edit-title'),
       }
     : {
-        title: I18n.t('auth-change-email-verify-title'),
-        message: I18n.t('auth-change-email-verify-message'),
-        label: I18n.t('auth-change-email-verify-label'),
         button: I18n.t('auth-change-email-verify-button'),
+        label: I18n.t('auth-change-email-verify-label'),
+        message: I18n.t('auth-change-email-verify-message'),
+        title: I18n.t('auth-change-email-verify-title'),
       };
 
   const [isSendingCode, setIsSendingCode] = useState(false);
