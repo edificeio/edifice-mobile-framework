@@ -4,13 +4,17 @@
  * The notifHandler registers some behaviours for given notif types and event-types.
  * It applicates to both timelineNotififation and pushNotifications.
  */
+import { StackActions } from '@react-navigation/native';
+
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
-import { navigate } from '~/framework/navigation/helper';
+import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { navigate, navigationRef } from '~/framework/navigation/helper';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-import { SchoolbookNavigationParams, schoolbookRouteNames } from './navigation';
+import { schoolbookRouteNames } from './navigation';
 
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -21,10 +25,19 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
 
     const isParent = userType === UserType.Relative;
     if (isParent) {
-      navigate<SchoolbookNavigationParams, typeof schoolbookRouteNames.home>(schoolbookRouteNames.home);
+      navigationRef.dispatch(StackActions.popToTop());
+      navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+        initial: false,
+        screen: schoolbookRouteNames.home,
+      });
     } else {
-      navigate<SchoolbookNavigationParams, typeof schoolbookRouteNames.details>(schoolbookRouteNames.details, {
-        notification,
+      navigationRef.dispatch(StackActions.popToTop());
+      navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+        initial: false,
+        screen: schoolbookRouteNames.details,
+        params: {
+          notification,
+        },
       });
     }
     return {

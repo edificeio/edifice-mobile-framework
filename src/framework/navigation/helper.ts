@@ -19,15 +19,8 @@ export const resetNavigation = (routes: RouteStack, index?: number) => {
   );
 };
 
-export function navigate<ParamList extends ParamListBase, RouteName extends keyof ParamList>(
-  ...args: RouteName extends unknown
-    ? undefined extends ParamList[RouteName]
-      ? [screen: RouteName] | [screen: RouteName, params: ParamList[RouteName]]
-      : [screen: RouteName, params: ParamList[RouteName]]
-    : never
-) {
-  return navigationRef.navigate(...(args as [any, any])); // Just type enforcement... I give up !
-}
+export const navigate = navigationRef.navigate;
+export const reset = navigationRef.reset;
 
 // === Initialize React Navigation Flipper Plugin ===
 export const useNavigationDevPlugins = () => {

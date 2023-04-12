@@ -21,7 +21,7 @@ import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framewo
 
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
-import { tabModules } from './tabModules';
+import { computeTabRouteName, tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
 //      888           888      8888b   888                   Y8P                   888
@@ -103,7 +103,7 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
         return (
           <Tab.Screen
             key={module.config.routeName}
-            name={`${module.config.routeName}.$tab`}
+            name={computeTabRouteName(module.config.routeName)}
             options={createTabOptions(module.config)}
             listeners={resetTabStacksOnBlur}>
             {TabStack}

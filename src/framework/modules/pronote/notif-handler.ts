@@ -17,11 +17,4 @@ import {
 //   return { managed: 0 };
 // };
 
-export default () =>
-  registerNotifHandlers([
-    // {
-    //   type: 'SOME-TYPE', // Replace this with the backend notification type
-    //   'event-type': 'SOME-EVENT-TYPE', // Replace this with the backend notification event-type
-    //   notifHandlerAction: handleSomeNotificationAction,
-    // },
-  ]);
+export default () => registerNotifHandlers([]);

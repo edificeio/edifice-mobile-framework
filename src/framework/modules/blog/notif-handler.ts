@@ -5,22 +5,29 @@
  * The notifHandler registers some behaviours for given notif types and event-types.
  * It applicates to both timelineNotififation and pushNotifications.
  */
+import { StackActions } from '@react-navigation/native';
+
+import timelineModuleConfig from '~/framework/modules//timelinev2/moduleConfig';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
+import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import { blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { navigate } from '~/framework/navigation/helper';
+import { navigate, navigationRef } from '~/framework/navigation/helper';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
 const handleBlogPostNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  const navParams = {};
   const blogNotif = getAsResourceUriNotification(notification);
   if (!blogNotif) return { managed: 0 };
 
-  navigate<BlogNavigationParams, typeof blogRouteNames.blogPostDetails>(blogRouteNames.blogPostDetails, {
-    notification: blogNotif,
-    useNotification: true,
-    ...navParams,
+  navigationRef.dispatch(StackActions.popToTop());
+  navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+    initial: false,
+    screen: blogRouteNames.blogPostDetails,
+    params: {
+      notification: blogNotif,
+      useNotification: true,
+    },
   });
 
   return {
@@ -38,9 +45,16 @@ const handleBlogNotificationAction: NotifHandlerThunkAction = notification => as
     const session = assertSession();
     const blogInfo = await blogService.get(session, blogId);
     if (!blogInfo) return { managed: 0 };
-    navigate<BlogNavigationParams, typeof blogRouteNames.blogPostList>(blogRouteNames.blogPostList, {
-      selectedBlog: blogInfo,
+
+    navigationRef.dispatch(StackActions.popToTop());
+    navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+      initial: false,
+      screen: blogRouteNames.blogPostList,
+      params: {
+        selectedBlog: blogInfo,
+      },
     });
+
     return {
       managed: 1,
       trackInfo: { action: 'Blog', name: `${notification.type}.${notification['event-type']}` },
