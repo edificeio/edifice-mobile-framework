@@ -97,6 +97,24 @@ function getLegalUrlsAction(platform: Platform) {
   };
 }
 
+/**
+ *
+ * @param partialSessionScenario
+ * @returns
+ */
+async function getDefaultInfos(partialSessionScenario: PartialSessionScenario) {
+  let defaultMobile: string | undefined;
+  let defaultEmail: string | undefined;
+  if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_MOBILE) {
+    const mobileValidationInfos = await getMobileValidationInfos();
+    defaultMobile = mobileValidationInfos?.mobile;
+  } else if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_EMAIL) {
+    const emailValidationInfos = await getEmailValidationInfos();
+    defaultEmail = emailValidationInfos?.email;
+  }
+  return { defaultMobile, defaultEmail };
+}
+
 export function loginAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<ILoginResult> {
     try {
@@ -127,15 +145,6 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 4. Gather partial session case
       const partialSessionScenario = getPartialSessionScenario(userRequirements);
-      let defaultMobile: string | undefined;
-      let defaultEmail: string | undefined;
-      if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_MOBILE) {
-        const mobileValidationInfos = await getMobileValidationInfos();
-        defaultMobile = mobileValidationInfos?.mobile;
-      } else if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_EMAIL) {
-        const emailValidationInfos = await getEmailValidationInfos();
-        defaultEmail = emailValidationInfos?.email;
-      }
 
       // 5. Gather user public info (only if complete session scenario)
       const { userdata, userPublicInfo } = partialSessionScenario
@@ -159,6 +168,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       // 9. Validate session + return redirect scenario
       const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo);
       if (partialSessionScenario) {
+        const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario);
         const context = await getAuthContext(platform);
         dispatch(authActions.sessionPartial(sessionInfo));
         return { action: partialSessionScenario, defaultEmail, defaultMobile, context, credentials, rememberMe };
