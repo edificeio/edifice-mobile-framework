@@ -37,7 +37,14 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import { AuthMFAScreenDispatchProps, AuthMFAScreenPrivateProps, AuthMFAScreenStoreProps, CodeState, ResendResponse } from './types';
+import {
+  AuthMFAScreenDispatchProps,
+  AuthMFAScreenPrivateProps,
+  AuthMFAScreenStoreProps,
+  CodeState,
+  PageTexts,
+  ResendResponse,
+} from './types';
 
 const animationSources = {
   [CodeState.CODE_CORRECT]: require('ASSETS/animations/mfa/code-correct.json'),
@@ -45,8 +52,8 @@ const animationSources = {
   [CodeState.CODE_WRONG]: require('ASSETS/animations/mfa/code-wrong.json'),
   [CodeState.CODE_RESENT]: require('ASSETS/animations/mfa/code-wrong-unlocked.json'),
 };
-const CELL_COUNT = 6;
 
+const CELL_COUNT = 6;
 const CODE_RESEND_DELAY = 15000;
 const CODE_VALIDATION_DELAY = 500;
 const CODE_REDIRECTION_DELAY = 500;
@@ -112,28 +119,28 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const codeStateColor = theme.palette.status[isCodeCorrect ? 'success' : 'failure'].regular;
   const resendOpacity = isResendInactive ? UI_VALUES.opacity.half : UI_VALUES.opacity.opaque;
 
-  const texts: Record<string, any> = isEmailMFA
+  const texts: PageTexts = isEmailMFA
     ? {
-        title: I18n.t('auth-mfa-email-title'),
-        messageSent: `${I18n.t('auth-mfa-email-message-sent')} ${email}.`,
-        message: I18n.t('auth-mfa-email-message'),
         feedback: I18n.t(`auth-mfa-email-feedback-${codeState.toLowerCase()}`),
+        message: I18n.t('auth-mfa-email-message'),
+        messageSent: `${I18n.t('auth-mfa-email-message-sent')} ${email}.`,
         resendToast: I18n.t('auth-mfa-email-toast'),
+        title: I18n.t('auth-mfa-email-title'),
       }
     : isMobileMFA
     ? {
-        title: I18n.t('auth-mfa-mobile-title'),
-        messageSent: `${I18n.t('auth-mfa-mobile-message-sent')} ${mobile}.`,
-        message: I18n.t('auth-mfa-mobile-message'),
         feedback: I18n.t(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+        message: I18n.t('auth-mfa-mobile-message'),
+        messageSent: `${I18n.t('auth-mfa-mobile-message-sent')} ${mobile}.`,
         resendToast: I18n.t('auth-mfa-mobile-toast'),
+        title: I18n.t('auth-mfa-mobile-title'),
       }
     : {
-        title: I18n.t('auth-mfa-title'),
-        messageSent: `${I18n.t('auth-mfa-message-sent')} ${mobile}.`,
-        message: I18n.t('auth-mfa-message'),
         feedback: I18n.t(`auth-mfa-feedback-${codeState.toLowerCase()}`),
+        message: I18n.t('auth-mfa-message'),
+        messageSent: `${I18n.t('auth-mfa-message-sent')} ${mobile}.`,
         resendToast: I18n.t('auth-mfa-toast'),
+        title: I18n.t('auth-mfa-title'),
       };
 
   const setResendTimer = () => {
@@ -155,36 +162,39 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     animationRef.current?.play();
   };
 
-  const verifyCode = async (toVerify: string) => {
-    try {
-      setIsVerifyingCode(true);
-      let validationState: IEntcoreEmailValidationState | IEntcoreMobileValidationState | IEntcoreMFAValidationState | undefined;
-      if (isEmailMFA) validationState = await verifyEmailCode(toVerify);
-      else if (isMobileMFA) validationState = await verifyMobileCode(toVerify);
-      else validationState = await verifyMFACode(toVerify);
-      const state =
-        validationState?.state === 'valid'
-          ? CodeState.CODE_CORRECT
-          : validationState?.ttl === 0 || validationState?.tries === 0
-          ? CodeState.CODE_EXPIRED
-          : CodeState.CODE_WRONG;
-      const isCodeAlreadyExpired = codeState === CodeState.CODE_EXPIRED && state === CodeState.CODE_EXPIRED;
-      if (!isCodeAlreadyExpired) startAnimation(state);
-      setCodeState(state);
-    } catch {
-      setCodeState(CodeState.CODE_STATE_UNKNOWN);
-    } finally {
-      setIsVerifyingCode(false);
-    }
-  };
+  const verifyCode = useCallback(
+    async (toVerify: string) => {
+      try {
+        setIsVerifyingCode(true);
+        let validationState: IEntcoreEmailValidationState | IEntcoreMobileValidationState | IEntcoreMFAValidationState | undefined;
+        if (isEmailMFA) validationState = await verifyEmailCode(toVerify);
+        else if (isMobileMFA) validationState = await verifyMobileCode(toVerify);
+        else validationState = await verifyMFACode(toVerify);
+        const state =
+          validationState?.state === 'valid'
+            ? CodeState.CODE_CORRECT
+            : validationState?.ttl === 0 || validationState?.tries === 0
+            ? CodeState.CODE_EXPIRED
+            : CodeState.CODE_WRONG;
+        const isCodeAlreadyExpired = codeState === CodeState.CODE_EXPIRED && state === CodeState.CODE_EXPIRED;
+        if (!isCodeAlreadyExpired) startAnimation(state);
+        setCodeState(state);
+      } catch {
+        setCodeState(CodeState.CODE_STATE_UNKNOWN);
+      } finally {
+        setIsVerifyingCode(false);
+      }
+    },
+    [codeState, isEmailMFA, isMobileMFA],
+  );
 
-  const verifyTypedCode = () => {
+  const verifyTypedCode = useCallback(() => {
     if (isCodeComplete) {
       setVerifyTimer();
       verifyCode(code);
       setIsCodeStateHidden(false);
     }
-  };
+  }, [code, isCodeComplete, verifyCode]);
 
   const resetCode = useCallback(() => {
     setCode('');
@@ -192,7 +202,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     setIsCodeStateHidden(true);
   }, [codeFieldRef]);
 
-  const resendVerificationCode = async () => {
+  const resendVerificationCode = useCallback(async () => {
     try {
       setIsResendingVerificationCode(true);
       if (isEmailMFA) {
@@ -206,9 +216,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     } finally {
       setIsResendingVerificationCode(false);
     }
-  };
+  }, [email, isEmailMFA, isMobileMFA, mobile, platform]);
 
-  const resendCode = async () => {
+  const resendCode = useCallback(async () => {
     setResendTimer();
     const resendResponse = await resendVerificationCode();
     if (resendResponse === ResendResponse.FAIL) {
@@ -220,9 +230,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       Toast.show(texts.resendToast, { ...UI_ANIMATIONS.toast });
       if (codeState === CodeState.CODE_EXPIRED) startAnimation(CodeState.CODE_RESENT);
     }
-  };
+  }, [codeState, resendVerificationCode, texts.resendToast]);
 
-  const redirectMFA = () => {
+  const redirectMFA = useCallback(() => {
     if (isCodeCorrect) {
       const routeNames = {
         [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
@@ -232,7 +242,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       const params = { navBarTitle: route.params.navBarTitle, modificationType, platform };
       navigation.replace(routeName, params);
     }
-  };
+  }, [isCodeCorrect, modificationType, navigation, platform, route.params.navBarTitle]);
 
   const redirectEmailOrMobileMFA = useCallback(async () => {
     if (isModifyingEmail || isModifyingMobile) {
@@ -278,6 +288,11 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     }
   }, [isCodeCorrect, isCodeStateUnknown, isEmailOrMobileMFA, isVerifyingActive, redirectEmailOrMobileMFA]);
 
+  const onRedirectMFA = useCallback(() => redirectMFA(), [redirectMFA]);
+  const onVerifyTypedCode = useCallback(() => verifyTypedCode(), [verifyTypedCode]);
+  const onResetCode = useCallback(() => resetCode(), [resetCode]);
+  const onResendCode = useCallback(() => resendCode(), [resendCode]);
+
   return (
     <KeyboardPageView style={styles.page} scrollable>
       <View style={styles.container}>
@@ -296,7 +311,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
                 style={styles.animation}
                 loop={false}
                 speed={0.5}
-                onAnimationFinish={() => redirectMFA()}
+                onAnimationFinish={onRedirectMFA}
               />
             )}
           </View>
@@ -330,13 +345,11 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               )}
               value={code}
               onChangeText={setCode}
-              onBlur={() => verifyTypedCode()}
+              onBlur={onVerifyTypedCode}
             />
             {/* Note: the CodeField's "editable" prop is not sufficient to prevent the user from typing, so an invisible absolute View is used instead.*/}
             {isCodeComplete ? (
-              <TouchableWithoutFeedback
-                disabled={isVerifyingActive || isCodeCorrect || isCodeStateUnknown}
-                onPress={() => resetCode()}>
+              <TouchableWithoutFeedback disabled={isVerifyingActive || isCodeCorrect || isCodeStateUnknown} onPress={onResetCode}>
                 <View style={styles.codeFieldWrapper} />
               </TouchableWithoutFeedback>
             ) : null}
@@ -363,7 +376,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           <TouchableOpacity
             style={[styles.resendButton, { opacity: resendOpacity }]}
             disabled={isResendInactive}
-            onPress={() => resendCode()}>
+            onPress={onResendCode}>
             <Picture
               type="NamedSvg"
               name="pictos-redo"
