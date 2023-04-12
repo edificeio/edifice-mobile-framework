@@ -85,6 +85,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const platform = props.route.params.platform;
   const rememberMe = props.route.params.rememberMe;
   const modificationType = route.params.modificationType;
+  const mfaRedirectionRoute = route.params.mfaRedirectionRoute;
   const isEmailMFA = route.params.isEmailMFA;
   const isMobileMFA = route.params.isMobileMFA;
   const email = route.params.email;
@@ -231,15 +232,10 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const redirectMFA = useCallback(() => {
     if (isCodeCorrect) {
-      const routeNames = {
-        [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
-        [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
-      };
-      const routeName = routeNames[modificationType!];
       const params = { navBarTitle: route.params.navBarTitle, modificationType, platform };
-      navigation.replace(routeName, params);
+      navigation.replace(mfaRedirectionRoute!, params);
     }
-  }, [isCodeCorrect, modificationType, navigation, platform, route.params.navBarTitle]);
+  }, [isCodeCorrect, modificationType, navigation, platform, route.params.navBarTitle, mfaRedirectionRoute]);
 
   const redirectEmailOrMobileMFA = useCallback(async () => {
     if (isModifyingEmail || isModifyingMobile) {

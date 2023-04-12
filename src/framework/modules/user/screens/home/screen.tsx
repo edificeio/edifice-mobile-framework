@@ -22,6 +22,10 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
 import { AuthRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
+import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
+import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -174,25 +178,29 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
           [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
           [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
         };
-        const routeName = needMfa ? AuthRouteNames.mfaModal : routeNames[modificationType];
+        let routeName = routeNames[modificationType];
         const params = {
           [ModificationType.EMAIL]: {
             navBarTitle: I18n.t('user.page.editEmail'),
             modificationType: ModificationType.EMAIL,
             platform: session?.platform,
-          },
+          } as AuthMFAScreenNavParams | AuthChangeEmailScreenNavParams,
           [ModificationType.MOBILE]: {
             navBarTitle: I18n.t('user.page.editMobile'),
             modificationType: ModificationType.MOBILE,
             platform: session?.platform,
-          },
+          } as AuthMFAScreenNavParams | AuthChangeMobileScreenNavParams,
           [ModificationType.PASSWORD]: {
             platform: session?.platform,
             context: authContextRef?.current,
             credentials: { username: session?.user.login },
-          },
+          } as ChangePasswordScreenNavParams,
         };
         const routeParams = params[modificationType];
+        if (needMfa) {
+          (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
+          routeName = AuthRouteNames.mfaModal;
+        }
         if (isFocused) navigation.navigate(routeName, routeParams);
       } catch {
         Toast.showError(I18n.t('common.error.text'));
