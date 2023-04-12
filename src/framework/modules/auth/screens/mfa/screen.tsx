@@ -258,7 +258,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         Toast.showError(I18n.t('common.error.text'));
       }
     }
-  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, resetCode, tryLogin, platform, rememberMe]);
+  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryLogin, platform, rememberMe]);
 
   useEffect(() => setResendTimer(), []);
 
