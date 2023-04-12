@@ -50,10 +50,13 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
 
   // Close dropdown list after item selection?
   private closeAfterSelecting = true;
+
   // Backdrop maximum heightt
   private backdropMaxHeight = 0;
+
   // Dropdown List maximum heigh
   private listMaxHeight = 0;
+
   // Selected value if any
   private selectedValue = null;
 

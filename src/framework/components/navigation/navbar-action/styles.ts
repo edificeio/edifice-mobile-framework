@@ -9,8 +9,8 @@ export default StyleSheet.create({
   },
   navBarActionWrapperIcon: {
     justifyContent: 'center',
-    height: UI_SIZES.dimensions.height.hug,
-    width: UI_SIZES.dimensions.width.hug,
+    height: UI_SIZES.elements.navbarButtonSize,
+    width: UI_SIZES.elements.navbarButtonSize,
   },
   navBarActionText: {
     padding: UI_SIZES.spacing.tiny,

@@ -34,8 +34,8 @@ export enum EmailState {
 }
 
 export interface PageTexts {
-  title: string;
-  message: string;
-  label: string;
   button: string;
+  label: string;
+  message: string;
+  title: string;
 }

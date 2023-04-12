@@ -5,18 +5,18 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { Platform, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { navBarActionButtonSize } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { isEmpty } from '~/framework/util/object';
 
-const navBarTitleStyle = {
+const navBarTitleStyle: TextStyle = {
   color: theme.ui.text.inverse,
-  maxWidth: UI_SIZES.screen.width - 2 * navBarActionButtonSize,
+  textAlign: 'center',
+  width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navBarIconSize - 3 * UI_SIZES.elements.navbarMargin,
 };
 
 export const navBarTitle = (title?: string) =>

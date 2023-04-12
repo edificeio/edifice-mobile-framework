@@ -8,8 +8,6 @@ import { SmallInverseText } from '~/framework/components/text';
 
 import styles from './styles';
 
-export const navBarActionButtonSize = styles.navBarActionWrapperIcon.width;
-
 export default function NavBarAction(props: { icon?: string; title?: string; disabled?: boolean; onPress?: () => void }) {
   const opacityIconStyle = React.useMemo(() => (props.disabled ? styles.navBarActionDisabled : undefined), [props.disabled]);
   const opacityTextStyle = React.useMemo(

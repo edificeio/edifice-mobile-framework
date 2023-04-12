@@ -1,9 +1,10 @@
-import { UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
+import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Platform, TouchableOpacity, View } from 'react-native';
 import PhoneInput, {
+  Country,
   CountryCode,
   getFormattedNumber,
   getRegionCodeAndNationalNumber,
@@ -15,7 +16,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
@@ -28,29 +28,28 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
-import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules/user/actions';
+import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import {
-  AuthChangeMobileScreenDispatchProps,
-  AuthChangeMobileScreenPrivateProps,
-  AuthChangeMobileScreenStoreProps,
-  MobileState,
-} from './types';
+import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
+
+const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, AuthRouteNames.changeMobile>) =>
+  route.params.navBarTitle || I18n.t('auth-change-mobile-verify');
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changeMobile>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.changeMobile>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
       navigation,
       route,
     }),
+    headerTitle: navBarTitle(getNavBarTitle(route)),
   };
 };
 
@@ -62,7 +61,7 @@ const countryListLanguages = {
 } as const;
 
 const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
-  const { onLogout, navigation, route } = props;
+  const { tryLogout, navigation, route } = props;
   const isScreenFocused = useIsFocused();
   const phoneInputRef = useRef<PhoneInput>(null);
 
@@ -71,16 +70,6 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const defaultMobile = route.params.defaultMobile;
   const modificationType = route.params.modificationType;
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
-  const title = route.params.navBarTitle || I18n.t('auth-change-mobile-verify');
-  const texts: Record<string, any> = isModifyingMobile
-    ? {
-        title: I18n.t('auth-change-mobile-edit-title'),
-        label: I18n.t('auth-change-mobile-edit-label'),
-      }
-    : {
-        title: I18n.t('auth-change-mobile-verify-title'),
-        label: I18n.t('auth-change-mobile-verify-label'),
-      };
 
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [mobile, setMobile] = useState<string>('');
@@ -111,12 +100,26 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
     if (!requirementsChecked) checkRequirements();
   }, [platform, requirementsChecked]);
-  texts.button = isCheckMobile ? I18n.t('auth-change-mobile-verify-button') : I18n.t('auth-change-mobile-edit-button');
-  texts.message = isModifyingMobile
+
+  const button = isCheckMobile ? I18n.t('auth-change-mobile-verify-button') : I18n.t('auth-change-mobile-edit-button');
+  const message = isModifyingMobile
     ? isCheckMobile
       ? I18n.t('auth-change-mobile-edit-message')
       : I18n.t('auth-change-mobile-edit-message-unverified')
     : I18n.t('auth-change-mobile-verify-message');
+  const texts: PageTexts = isModifyingMobile
+    ? {
+        button,
+        message,
+        label: I18n.t('auth-change-mobile-edit-label'),
+        title: I18n.t('auth-change-mobile-edit-title'),
+      }
+    : {
+        button,
+        message,
+        label: I18n.t('auth-change-mobile-verify-label'),
+        title: I18n.t('auth-change-mobile-verify-title'),
+      };
 
   useEffect(() => {
     if (defaultMobile) {
@@ -129,90 +132,107 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       } else setMobile(defaultMobile);
     }
   }, [defaultMobile]);
-  useEffect(() => {
-    navigation.setOptions({ headerTitle: navBarTitle(title) });
-  }, [navigation, title]);
 
-  const getIsValidMobileNumberForRegion = (toVerify: string) => {
-    try {
-      // Returns whether number is valid for selected region and an actual mobile number
-      const isValidNumberForRegion = isValidNumber(toVerify, region);
-      const isValidMobileNumber = isMobileNumber(toVerify, region);
-      return isValidNumberForRegion && isValidMobileNumber;
-    } catch {
-      // Returns false in case of format error (string is too short, isn't recognized as a phone number, etc.)
-      return false;
-    }
-  };
-
-  const doSendMobileVerificationCode = async (toVerify: string) => {
-    try {
-      // First, we clean the number by trimming - and . characters (generally used as separators)
-      const phoneNumberCleaned = toVerify.replaceAll(/[-.]+/g, '');
-      const isValidMobileNumberForRegion = getIsValidMobileNumberForRegion(phoneNumberCleaned);
-      const mobileNumberFormatted = getFormattedNumber(phoneNumberCleaned, region);
-      // Exit if mobile is not valid
-      if (!isValidMobileNumberForRegion || !mobileNumberFormatted) return MobileState.MOBILE_FORMAT_INVALID;
-      if (isCheckMobile) {
-        setIsSendingCode(true);
-        if (isModifyingMobile) {
-          // Exit if mobile has already been verified
-          const mobileValidationInfos = await getMobileValidationInfos();
-          if (mobileNumberFormatted === mobileValidationInfos?.mobileState?.valid) {
-            setIsSendingCode(false);
-            return MobileState.MOBILE_ALREADY_VERIFIED;
-          }
-        }
-        await sendMobileVerificationCode(platform, mobileNumberFormatted);
-        navigation.navigate(AuthRouteNames.mfa, {
-          platform,
-          rememberMe,
-          modificationType,
-          isMobileMFA: true,
-          mobile: mobileNumberFormatted,
-          navBarTitle: title,
-        });
-      } else {
-        setIsSendingCode(false);
-        props.onSaveNewMobile({ mobile: mobileNumberFormatted });
-        props.navigation.goBack();
-        setTimeout(
-          () =>
-            Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast'), {
-              position: Toast.position.BOTTOM,
-              mask: false,
-              ...UI_ANIMATIONS.toast,
-            }),
-          100,
-        );
+  const getIsValidMobileNumberForRegion = React.useCallback(
+    (toVerify: string) => {
+      try {
+        // Returns whether number is valid for selected region and an actual mobile number
+        const isValidNumberForRegion = isValidNumber(toVerify, region);
+        const isValidMobileNumber = isMobileNumber(toVerify, region);
+        return isValidNumberForRegion && isValidMobileNumber;
+      } catch {
+        // Returns false in case of format error (string is too short, isn't recognized as a phone number, etc.)
+        return false;
       }
-    } catch {
-      Toast.show(I18n.t('common.error.text'), {
-        ...UI_ANIMATIONS.toast,
-      });
-    } finally {
-      setIsSendingCode(false);
-    }
-  };
+    },
+    [region],
+  );
 
-  const sendSMS = async () => {
+  const doSendMobileVerificationCode = React.useCallback(
+    async (toVerify: string) => {
+      try {
+        // First, we clean the number by trimming - and . characters (generally used as separators)
+        const phoneNumberCleaned = toVerify.replaceAll(/[-.]+/g, '');
+        const isValidMobileNumberForRegion = getIsValidMobileNumberForRegion(phoneNumberCleaned);
+        const mobileNumberFormatted = getFormattedNumber(phoneNumberCleaned, region);
+        // Exit if mobile is not valid
+        if (!isValidMobileNumberForRegion || !mobileNumberFormatted) return MobileState.MOBILE_FORMAT_INVALID;
+        if (isCheckMobile) {
+          setIsSendingCode(true);
+          if (isModifyingMobile) {
+            // Exit if mobile has already been verified
+            const mobileValidationInfos = await getMobileValidationInfos();
+            if (mobileNumberFormatted === mobileValidationInfos?.mobileState?.valid) {
+              setIsSendingCode(false);
+              return MobileState.MOBILE_ALREADY_VERIFIED;
+            }
+          }
+          await sendMobileVerificationCode(platform, mobileNumberFormatted);
+          navigation.navigate(AuthRouteNames.mfa, {
+            platform,
+            rememberMe,
+            modificationType,
+            isMobileMFA: true,
+            mobile: mobileNumberFormatted,
+            navBarTitle: getNavBarTitle(route),
+          });
+        } else {
+          setIsSendingCode(false);
+          props.trySaveNewMobile({ mobile: mobileNumberFormatted });
+          props.navigation.goBack();
+          setTimeout(
+            () =>
+              Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast'), {
+                position: Toast.position.BOTTOM,
+                mask: false,
+                ...UI_ANIMATIONS.toast,
+              }),
+            100,
+          );
+        }
+      } catch {
+        Toast.show(I18n.t('common.error.text'), {
+          ...UI_ANIMATIONS.toast,
+        });
+      } finally {
+        setIsSendingCode(false);
+      }
+    },
+    [
+      getIsValidMobileNumberForRegion,
+      isCheckMobile,
+      isModifyingMobile,
+      modificationType,
+      navigation,
+      platform,
+      props,
+      region,
+      rememberMe,
+      route,
+    ],
+  );
+
+  const sendSMS = React.useCallback(async () => {
     const sendResponse = await doSendMobileVerificationCode(mobile);
     if (sendResponse) setMobileState(sendResponse);
-  };
+  }, [doSendMobileVerificationCode, mobile]);
 
-  const changeMobile = (number: string) => {
-    if (!isMobileStatePristine) setMobileState(MobileState.PRISTINE);
-    setMobile(number);
-  };
+  const changeMobile = React.useCallback(
+    (number: string) => {
+      if (!isMobileStatePristine) setMobileState(MobileState.PRISTINE);
+      setMobile(number);
+    },
+    [isMobileStatePristine],
+  );
 
-  const refuseMobileVerification = () => {
+  const refuseMobileVerification = React.useCallback(async () => {
     try {
-      onLogout();
+      await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
-  };
+  }, [navigation, tryLogout, platform]);
 
   UNSTABLE_usePreventRemove(!isMobileEmpty && isScreenFocused, ({ data }) => {
     Alert.alert(I18n.t('auth-change-mobile-edit-alert-title'), I18n.t('auth-change-mobile-edit-alert-message'), [
@@ -227,6 +247,11 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       },
     ]);
   });
+
+  const onChangeMobile = React.useCallback((text: string) => changeMobile(text), [changeMobile]);
+  const onSetRegion = React.useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
+  const onSendSMS = React.useCallback(() => sendSMS(), [sendSMS]);
+  const onRefuseMobileVerification = React.useCallback(() => refuseMobileVerification(), [refuseMobileVerification]);
 
   return (
     <KeyboardPageView style={styles.page} scrollable>
@@ -257,8 +282,8 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             value={mobile}
             defaultCode={region}
             layout="third"
-            onChangeFormattedText={text => changeMobile(text)}
-            onChangeCountry={code => setRegion(code.cca2)}
+            onChangeFormattedText={onChangeMobile}
+            onChangeCountry={onSetRegion}
             containerStyle={[
               { borderColor: isMobileStatePristine ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
               styles.input,
@@ -304,10 +329,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             text={texts.button}
             disabled={isMobileEmpty}
             loading={isSendingCode}
-            action={() => sendSMS()}
+            action={onSendSMS}
           />
           {isModifyingMobile ? null : (
-            <TouchableOpacity style={styles.logoutButton} onPress={() => refuseMobileVerification()}>
+            <TouchableOpacity style={styles.logoutButton} onPress={onRefuseMobileVerification}>
               <SmallBoldText style={styles.logoutText}>{I18n.t('auth-change-mobile-verify-disconnect')}</SmallBoldText>
             </TouchableOpacity>
           )}
@@ -317,20 +342,14 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   );
 };
 
-const mapStateToProps: (state: IGlobalState) => AuthChangeMobileScreenStoreProps = state => {
-  return {};
-};
-
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeMobileScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogout: tryAction(logoutAction, undefined) as unknown as AuthChangeMobileScreenDispatchProps['onLogout'],
-      onSaveNewMobile(updatedProfileValues: UpdatableProfileValues) {
-        dispatch(profileUpdateAction(updatedProfileValues));
-      },
+      tryLogout: tryAction(logoutAction),
+      trySaveNewMobile: tryAction(profileUpdateAction),
     },
     dispatch,
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthChangeMobileScreen);
+export default connect(undefined, mapDispatchToProps)(AuthChangeMobileScreen);
