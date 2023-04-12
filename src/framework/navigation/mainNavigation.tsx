@@ -104,7 +104,7 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
           <Tab.Screen
             key={module.config.routeName}
             name={computeTabRouteName(module.config.routeName)}
-            options={createTabOptions(module.config)}
+            options={{ ...createTabOptions(module.config), tabBarHideOnKeyboard: true }}
             listeners={resetTabStacksOnBlur}>
             {TabStack}
           </Tab.Screen>
