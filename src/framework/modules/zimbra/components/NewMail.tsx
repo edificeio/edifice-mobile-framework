@@ -1,101 +1,74 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { hasNotch } from 'react-native-device-info';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { Icon } from '~/framework/components/picture/Icon';
+import { pageGutterSize } from '~/framework/components/page';
+import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
-import Notifier from '~/infra/notifier/container';
-import { PageContainer } from '~/ui/ContainerContent';
 import { HtmlContentView } from '~/ui/HtmlContentView';
 
 import { Attachment } from './Attachment';
 import SearchUserMail from './SearchUserMail';
 
-// STYLES
 const styles = StyleSheet.create({
-  fullView: {
-    flex: 1,
-  },
-  fullGrowView: {
+  bodyInput: {
     flexGrow: 1,
+    color: theme.ui.text.regular,
   },
-  mailPart: {
-    padding: UI_SIZES.spacing.tiny,
+  contentContainer: {
+    flexGrow: 1,
+    padding: pageGutterSize,
     backgroundColor: theme.palette.grey.white,
   },
-  lineSeparator: {
-    marginLeft: UI_SIZES.spacing.medium,
-    width: '50%',
-    borderColor: theme.palette.grey.grey,
-    borderBottomWidth: 1,
-    borderRadius: 1,
-  },
-  signatureZoneContainer: {
-    flexGrow: 1,
+  expandActionContainer: {
     padding: UI_SIZES.spacing.minor,
+    marginLeft: UI_SIZES.spacing.minor,
   },
-  signatureZone: {
-    backgroundColor: theme.palette.grey.white,
-    minHeight: 40,
-    maxHeight: UI_SIZES.screen.height / 3,
-    paddingHorizontal: UI_SIZES.spacing.small,
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: UI_SIZES.spacing.small,
   },
-  attachmentView: {
-    padding: 0,
+  separatorContainer: {
+    width: '50%',
+    height: 1,
+    backgroundColor: theme.palette.grey.grey,
+    marginVertical: UI_SIZES.spacing.minor,
   },
-  headerContainer: {
-    zIndex: 4,
+  signatureInput: {
+    color: theme.ui.text.regular,
   },
-  headerUsersCc: {
-    zIndex: 3,
-  },
-  headerUsersBcc: {
-    zIndex: 2,
-  },
-  newMailHeaders: {
-    zIndex: 3,
-  },
-  newMailAttachments: {
-    zIndex: 2,
-  },
-  newMailBody: {
-    zIndex: 1,
+  subjectInput: {
+    flex: 1,
+    height: 40,
+    marginLeft: UI_SIZES.spacing.minor,
+    color: theme.ui.text.regular,
+    borderBottomColor: theme.palette.grey.pearl,
+    borderBottomWidth: 2,
   },
 });
 
-// COMPONENTS
-
 const HeaderUsers = ({
-  style,
   title,
   onChange,
   value,
   children,
   hasRightToSendExternalMails,
 }: React.PropsWithChildren<{
-  style?: ViewStyle;
   title: string;
   onChange;
   onSave;
-  forUsers?: boolean;
   value: any;
   hasRightToSendExternalMails: boolean;
 }>) => {
-  const headerStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: UI_SIZES.spacing.tiny,
-    paddingHorizontal: UI_SIZES.spacing.small,
-  } as ViewStyle;
-
   return (
-    <View style={[headerStyle, style]}>
-      <SmallText style={{ color: theme.ui.text.light }}>{title} : </SmallText>
+    <View style={styles.headerRow}>
+      <SmallText>{title} : </SmallText>
       <SearchUserMail
         selectedUsersOrGroups={value}
         onChange={val => onChange(val)}
@@ -106,28 +79,7 @@ const HeaderUsers = ({
   );
 };
 
-const HeaderSubject = ({
-  style,
-  title,
-  onChange,
-  onSave,
-  value,
-}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; onSave; forUsers?: boolean; value: any }>) => {
-  const headerStyle = {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: UI_SIZES.spacing.tiny,
-    paddingHorizontal: UI_SIZES.spacing.small,
-  } as ViewStyle;
-
-  const inputStyle = {
-    flex: 1,
-    height: 40,
-    color: theme.ui.text.regular,
-    borderBottomColor: theme.palette.grey.pearl,
-    borderBottomWidth: 2,
-  } as ViewStyle;
-
+const HeaderSubject = ({ onChange, onSave, value }: React.PropsWithChildren<{ onChange; onSave; value: any }>) => {
   const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const [currentValue, updateCurrentValue] = React.useState(value);
 
@@ -142,39 +94,42 @@ const HeaderSubject = ({
   }, [currentValue]);
 
   return (
-    <View style={[headerStyle, style]}>
-      <SmallText>{title} : </SmallText>
+    <View style={styles.headerRow}>
+      <SmallText>{I18n.t('zimbra-subject')} : </SmallText>
       <TextInput
-        style={inputStyle}
         defaultValue={value}
-        numberOfLines={1}
         onChangeText={text => updateCurrentValue(text)}
         onEndEditing={() => onSave()}
+        style={styles.subjectInput}
       />
     </View>
   );
 };
 
-const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails }) => {
-  const [showExtraFields, toggleExtraFields] = React.useState(false);
+const Headers = ({ headers, onChange, onSave, hasRightToSendExternalMails }) => {
+  const [isExpanded, setExpanded] = React.useState(false);
 
   return (
-    <View style={[styles.mailPart, style]}>
+    <>
       <HeaderUsers
-        style={styles.headerContainer}
         value={headers.to}
         onChange={to => onChange({ ...headers, to })}
         onSave={() => onSave()}
         title={I18n.t('zimbra-to')}
         hasRightToSendExternalMails={hasRightToSendExternalMails}>
-        <TouchableOpacity onPress={() => toggleExtraFields(!showExtraFields)}>
-          <Icon name={showExtraFields ? 'keyboard_arrow_up' : 'keyboard_arrow_down'} size={28} />
+        <TouchableOpacity onPress={() => setExpanded(!isExpanded)} style={styles.expandActionContainer}>
+          <Picture
+            type="NamedSvg"
+            name={isExpanded ? 'ui-rafterUp' : 'ui-rafterDown'}
+            width={20}
+            height={20}
+            fill={theme.ui.text.regular}
+          />
         </TouchableOpacity>
       </HeaderUsers>
-      {showExtraFields && (
+      {isExpanded ? (
         <>
           <HeaderUsers
-            style={styles.headerUsersCc}
             title={I18n.t('zimbra-cc')}
             value={headers.cc}
             onChange={cc => onChange({ ...headers, cc })}
@@ -182,7 +137,6 @@ const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails
             hasRightToSendExternalMails={hasRightToSendExternalMails}
           />
           <HeaderUsers
-            style={styles.headerUsersBcc}
             title={I18n.t('zimbra-bcc')}
             value={headers.bcc}
             onChange={bcc => onChange({ ...headers, bcc })}
@@ -190,36 +144,13 @@ const Headers = ({ style, headers, onChange, onSave, hasRightToSendExternalMails
             hasRightToSendExternalMails={hasRightToSendExternalMails}
           />
         </>
-      )}
-      <HeaderSubject
-        title={I18n.t('zimbra-subject')}
-        value={headers.subject}
-        onChange={subject => onChange({ ...headers, subject })}
-        onSave={() => onSave()}
-      />
-    </View>
+      ) : null}
+      <HeaderSubject value={headers.subject} onChange={subject => onChange({ ...headers, subject })} onSave={() => onSave()} />
+    </>
   );
 };
 
-const Attachments = ({ style, attachments, onChange, onDelete, onSave }) => {
-  const removeAttachment = id => {
-    const newAttachments = attachments.filter(item => item.id !== id);
-    onDelete(id);
-    onChange(newAttachments);
-  };
-
-  return attachments.length === 0 ? (
-    <View />
-  ) : (
-    <View style={[styles.mailPart, style, styles.attachmentView]}>
-      {attachments.map(att => (
-        <Attachment name={att.filename} type={att.filetype} uploadSuccess={!!att.id} onRemove={() => removeAttachment(att.id)} />
-      ))}
-    </View>
-  );
-};
-
-const Body = ({ style, value, onChange, onSave }) => {
+const Body = ({ value, onChange, onSave }) => {
   const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const [currentValue, updateCurrentValue] = React.useState(value);
 
@@ -234,36 +165,26 @@ const Body = ({ style, value, onChange, onSave }) => {
   }, [currentValue]);
 
   return (
-    <View style={[styles.mailPart, style, styles.fullGrowView]}>
-      <TextInput
-        placeholder={I18n.t('zimbra-type-message')}
-        textAlignVertical="top"
-        multiline
-        scrollEnabled={false}
-        style={styles.fullGrowView}
-        defaultValue={value}
-        onChangeText={text => updateCurrentValue(text)}
-        onEndEditing={() => onSave()}
-      />
-    </View>
+    <TextInput
+      defaultValue={value}
+      onChangeText={text => updateCurrentValue(text)}
+      onEndEditing={() => onSave()}
+      multiline
+      textAlignVertical="top"
+      scrollEnabled={false}
+      placeholder={I18n.t('zimbra-type-message')}
+      placeholderTextColor={theme.ui.text.light}
+      style={styles.bodyInput}
+    />
   );
 };
-
-const PrevBody = ({ prevBody }) => (
-  <View style={[styles.mailPart, styles.fullGrowView]}>
-    <View style={styles.lineSeparator} />
-    <HtmlContentView html={prevBody} />
-  </View>
-);
 
 const Signature = ({
   signatureText,
   onSignatureTextChange,
-  onSignatureAPIChange,
 }: {
   signatureText: string;
   onSignatureTextChange: (text: string) => void;
-  onSignatureAPIChange: () => void;
 }) => {
   const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const [currentValue, updateCurrentValue] = React.useState(signatureText);
@@ -279,18 +200,19 @@ const Signature = ({
   }, [currentValue]);
 
   return (
-    <View style={styles.signatureZone}>
-      <View style={styles.lineSeparator} />
-      <ScrollView style={styles.signatureZone} contentContainerStyle={styles.signatureZoneContainer}>
-        <TextInput onChangeText={text => updateCurrentValue(text)} onEndEditing={() => onSignatureAPIChange()}>
-          {signatureText}
-        </TextInput>
-      </ScrollView>
-    </View>
+    <>
+      <View style={styles.separatorContainer} />
+      <TextInput
+        defaultValue={signatureText}
+        onChangeText={text => updateCurrentValue(text)}
+        multiline
+        textAlignVertical="top"
+        scrollEnabled={false}
+        style={styles.signatureInput}
+      />
+    </>
   );
 };
-
-// TYPES & INTERFACES
 
 type HeadersProps = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
 
@@ -302,80 +224,83 @@ type IAttachment = {
 };
 
 interface NewMailComponentProps {
-  isFetching: boolean;
-  headers: HeadersProps;
-  onDraftSave: () => void;
-  onHeaderChange: (header: Headers) => void;
-  body: string;
-  onBodyChange: (body: string) => void;
   attachments: IAttachment[];
-  onAttachmentChange: (attachments: IAttachment[]) => void;
-  onAttachmentDelete: (attachmentId: string) => void;
+  body: string;
+  hasRightToSendExternalMails: boolean;
+  headers: HeadersProps;
+  isFetching: boolean;
+  isNewSignature: boolean;
   prevBody: any;
   signature: { text: string; useGlobal: boolean };
-  isNewSignature: boolean;
+  onAttachmentChange: (attachments: IAttachment[]) => void;
+  onAttachmentDelete: (attachmentId: string) => void;
+  onBodyChange: (body: string) => void;
+  onDraftSave: () => void;
+  onHeaderChange: (header: Headers) => void;
   onSignatureTextChange: (text: string) => void;
   onSignatureAPIChange: () => void;
-  hasRightToSendExternalMails: boolean;
 }
 
-// EXPORTED COMPONENTS
-
 export default ({
-  isFetching,
-  headers,
-  onDraftSave,
-  onHeaderChange,
-  body,
-  onBodyChange,
   attachments,
-  onAttachmentChange,
-  onAttachmentDelete,
+  body,
+  hasRightToSendExternalMails,
+  headers,
+  isFetching,
+  isNewSignature,
   prevBody,
   signature,
-  isNewSignature,
+  onAttachmentChange,
+  onAttachmentDelete,
+  onBodyChange,
+  onDraftSave,
+  onHeaderChange,
   onSignatureTextChange,
   onSignatureAPIChange,
-  hasRightToSendExternalMails,
 }: NewMailComponentProps) => {
+  const removeAttachment = (id: string) => {
+    const newAttachments = attachments.filter(item => item.id !== id);
+    onAttachmentDelete(id);
+    onAttachmentChange(newAttachments);
+  };
+
   return (
-    <PageContainer>
-      <Notifier id="zimbra" />
-      <KeyboardAvoidingView
-        enabled
-        behavior={Platform.select({ ios: 'padding' })}
-        style={styles.fullView}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined}>
-        {isFetching ? (
-          <LoadingIndicator />
-        ) : (
-          <ScrollView contentContainerStyle={styles.fullGrowView} bounces={false} keyboardShouldPersistTaps="handled">
-            <Headers
-              style={styles.newMailHeaders}
-              headers={headers}
-              onChange={onHeaderChange}
-              onSave={onDraftSave}
-              hasRightToSendExternalMails={hasRightToSendExternalMails}
+    <KeyboardAvoidingView
+      enabled
+      behavior={Platform.select({ ios: 'padding' })}
+      style={UI_STYLES.flex1}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? (hasNotch() ? 100 : 76) : undefined}>
+      {isFetching ? (
+        <LoadingIndicator />
+      ) : (
+        <ScrollView contentContainerStyle={styles.contentContainer} bounces={false} keyboardShouldPersistTaps="handled">
+          <Headers
+            headers={headers}
+            onChange={onHeaderChange}
+            onSave={onDraftSave}
+            hasRightToSendExternalMails={hasRightToSendExternalMails}
+          />
+          {attachments.map(att => (
+            <Attachment
+              key={att.id}
+              name={att.filename}
+              type={att.filetype}
+              uploadSuccess={!!att.id}
+              onRemove={() => removeAttachment(att.id)}
             />
-            <Attachments
-              style={styles.newMailAttachments}
-              attachments={attachments}
-              onChange={onAttachmentChange}
-              onDelete={onAttachmentDelete}
-              onSave={onDraftSave}
-            />
-            <Body style={styles.newMailBody} value={body} onChange={onBodyChange} onSave={onDraftSave} />
-            {!!prevBody && prevBody !== '' && <PrevBody prevBody={prevBody} />}
-            {!!signature && (signature.useGlobal || isNewSignature) && signature.text !== '' && (
-              <Signature
-                signatureText={signature.text}
-                onSignatureTextChange={onSignatureTextChange}
-                onSignatureAPIChange={onSignatureAPIChange}
-              />
-            )}
-          </ScrollView>
-        )}
-      </KeyboardAvoidingView>
-    </PageContainer>
+          ))}
+          <Body value={body} onChange={onBodyChange} onSave={onDraftSave} />
+          {prevBody ? (
+            <>
+              <View style={styles.separatorContainer} />
+              <HtmlContentView html={prevBody} />
+            </>
+          ) : null}
+          {!!signature && (signature.useGlobal || isNewSignature) && signature.text !== '' && (
+            <Signature signatureText={signature.text} onSignatureTextChange={onSignatureTextChange} />
+          )}
+        </ScrollView>
+      )}
+    </KeyboardAvoidingView>
   );
 };
