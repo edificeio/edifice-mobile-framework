@@ -7,8 +7,8 @@ import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthChangeMobileScreenDispatchProps {
-  onLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
-  onSaveNewMobile(updatedProfileValues: UpdatableProfileValues): void;
+  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  trySaveNewMobile(updatedProfileValues: UpdatableProfileValues): Promise<void>;
 }
 
 export interface AuthChangeMobileScreenNavParams {
@@ -33,4 +33,11 @@ export enum MobileState {
   MOBILE_ALREADY_VERIFIED = 'mobileAlreadyVerified',
   MOBILE_FORMAT_INVALID = 'mobileFormatInvalid',
   PRISTINE = 'pristine',
+}
+
+export interface PageTexts {
+  button: string;
+  label: string;
+  message: string;
+  title: string;
 }
