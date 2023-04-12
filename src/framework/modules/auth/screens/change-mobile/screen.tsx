@@ -1,7 +1,7 @@
 import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Platform, TouchableOpacity, View } from 'react-native';
 import PhoneInput, {
   Country,
@@ -81,10 +81,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   // Web 4.8+ compliance:
   //  -mobile verification APIs are available if /auth/user/requirements contains the needRevalidateMobile field
   //  -requirementsChecked is used to avoid multiple calls to /auth/user/requirements (useEffect can be called multiple times)
-  const [requirementsChecked, setRequirementsChecked] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
-  const [isCheckMobile, setIsCheckMobile] = React.useState(false);
+  const [requirementsChecked, setRequirementsChecked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isCheckMobile, setIsCheckMobile] = useState(false);
   useEffect(() => {
     async function checkRequirements() {
       try {
@@ -133,7 +133,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   }, [defaultMobile]);
 
-  const getIsValidMobileNumberForRegion = React.useCallback(
+  const getIsValidMobileNumberForRegion = useCallback(
     (toVerify: string) => {
       try {
         // Returns whether number is valid for selected region and an actual mobile number
@@ -148,7 +148,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     [region],
   );
 
-  const doSendMobileVerificationCode = React.useCallback(
+  const doSendMobileVerificationCode = useCallback(
     async (toVerify: string) => {
       try {
         // First, we clean the number by trimming - and . characters (generally used as separators)
@@ -212,12 +212,12 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     ],
   );
 
-  const sendSMS = React.useCallback(async () => {
+  const sendSMS = useCallback(async () => {
     const sendResponse = await doSendMobileVerificationCode(mobile);
     if (sendResponse) setMobileState(sendResponse);
   }, [doSendMobileVerificationCode, mobile]);
 
-  const changeMobile = React.useCallback(
+  const changeMobile = useCallback(
     (number: string) => {
       if (!isMobileStatePristine) setMobileState(MobileState.PRISTINE);
       setMobile(number);
@@ -225,7 +225,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     [isMobileStatePristine],
   );
 
-  const refuseMobileVerification = React.useCallback(async () => {
+  const refuseMobileVerification = useCallback(async () => {
     try {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
@@ -248,10 +248,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     ]);
   });
 
-  const onChangeMobile = React.useCallback((text: string) => changeMobile(text), [changeMobile]);
-  const onSetRegion = React.useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
-  const onSendSMS = React.useCallback(() => sendSMS(), [sendSMS]);
-  const onRefuseMobileVerification = React.useCallback(() => refuseMobileVerification(), [refuseMobileVerification]);
+  const onChangeMobile = useCallback((text: string) => changeMobile(text), [changeMobile]);
+  const onSetRegion = useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
+  const onSendSMS = useCallback(() => sendSMS(), [sendSMS]);
+  const onRefuseMobileVerification = useCallback(() => refuseMobileVerification(), [refuseMobileVerification]);
 
   return (
     <KeyboardPageView style={styles.page} scrollable>

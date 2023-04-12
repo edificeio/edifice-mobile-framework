@@ -1,7 +1,7 @@
 import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -72,7 +72,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isEmailEmpty = isEmpty(email);
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
 
-  const doSendEmailVerificationCode = React.useCallback(
+  const doSendEmailVerificationCode = useCallback(
     async (toVerify: string) => {
       // Exit if email is not valid
       if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
@@ -107,12 +107,12 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     [isModifyingEmail, modificationType, navigation, platform, rememberMe, route],
   );
 
-  const sendEmail = React.useCallback(async () => {
+  const sendEmail = useCallback(async () => {
     const sendResponse = await doSendEmailVerificationCode(email);
     if (sendResponse) setEmailState(sendResponse);
   }, [doSendEmailVerificationCode, email]);
 
-  const changeEmail = React.useCallback(
+  const changeEmail = useCallback(
     (text: string) => {
       if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
       setEmail(text);
@@ -120,7 +120,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     [isEmailStatePristine],
   );
 
-  const refuseEmailVerification = React.useCallback(async () => {
+  const refuseEmailVerification = useCallback(async () => {
     try {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
@@ -143,9 +143,9 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     ]);
   });
 
-  const onChangeEmail = React.useCallback((text: string) => changeEmail(text), [changeEmail]);
-  const onSendEmail = React.useCallback(() => sendEmail(), [sendEmail]);
-  const onRefuseEmailVerification = React.useCallback(() => refuseEmailVerification(), [refuseEmailVerification]);
+  const onChangeEmail = useCallback((text: string) => changeEmail(text), [changeEmail]);
+  const onSendEmail = useCallback(() => sendEmail(), [sendEmail]);
+  const onRefuseEmailVerification = useCallback(() => refuseEmailVerification(), [refuseEmailVerification]);
 
   return (
     <KeyboardPageView style={styles.page} scrollable>
