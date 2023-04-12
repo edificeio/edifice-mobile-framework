@@ -4,7 +4,6 @@ import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -13,11 +12,11 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import ActionButton from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
@@ -112,10 +111,10 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       await props.addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
       setSendingRequest(false);
       props.navigation.goBack();
-      Toast.showSuccess(I18n.t('homeworkAssistance.requestSent'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('homeworkAssistance.requestSent'));
     } catch {
       setSendingRequest(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

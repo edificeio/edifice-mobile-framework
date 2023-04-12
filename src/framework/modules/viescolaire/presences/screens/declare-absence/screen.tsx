@@ -4,18 +4,17 @@ import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
@@ -79,10 +78,10 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         await presencesService.absence.create(session, structureId, childId, startDate, endDate, comment);
       }
       navigation.goBack();
-      Toast.showSuccess(I18n.t('viesco-absence-declared'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('viesco-absence-declared'));
     } catch {
       setCreating(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

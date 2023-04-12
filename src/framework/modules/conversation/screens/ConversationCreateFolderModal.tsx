@@ -2,14 +2,14 @@ import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { postFolderAction } from '~/framework/modules/conversation/actions/folders';
 import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
@@ -48,21 +48,11 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
       await createFolder(name);
       fetchInit();
       onClose();
-      Toast.show(I18n.t('conversation.createDirectoryConfirm'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showInfo(I18n.t('conversation.createDirectoryConfirm'));
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
       onClose();
-      Toast.show(I18n.t(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showError(I18n.t(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'));
     } finally {
       this.setState({ name: '' });
     }

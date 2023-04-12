@@ -3,12 +3,11 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 
 import { ConversationNavigationParams, conversationRouteNames } from '/framework/modules/conversation/navigation';
 import { IMailList } from '/framework/modules/conversation/state/mailList';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { ListItem } from '~/framework/components/listItem';
@@ -17,6 +16,7 @@ import { PageView, pageGutterSize } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import SwipeableList from '~/framework/components/swipeableList';
 import { CaptionBoldText, CaptionText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import moduleConfig from '~/framework/modules/conversation/module-config';
 import CreateFolderModal from '~/framework/modules/conversation/screens/ConversationCreateFolderModal';
 import { IInit } from '~/framework/modules/conversation/screens/ConversationMailListScreen';
@@ -206,12 +206,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     try {
       await this.refreshMailList();
       await fetchInit();
-      Toast.show(I18n.t('conversation.messageMoved'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showInfo(I18n.t('conversation.messageMoved'));
     } catch {
       // TODO: Manage error
     }
@@ -240,12 +235,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       } else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
-      Toast.show(I18n.t(`conversation.message${isTrashedOrDraft ? 'Deleted' : 'Trashed'}`), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showInfo(I18n.t(`conversation.message${isTrashedOrDraft ? 'Deleted' : 'Trashed'}`));
     } catch {
       // TODO: Manage error
     }

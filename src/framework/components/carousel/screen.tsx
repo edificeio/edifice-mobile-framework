@@ -11,7 +11,6 @@ import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
 import Share from 'react-native-share';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
@@ -21,6 +20,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
+import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
@@ -218,9 +218,9 @@ export function Carousel(props: ICarouselProps) {
         } else {
           await CameraRoll.save(realFilePath);
         }
-        Toast.showSuccess(I18n.t('save.to.camera.roll.success'), { containerStyle: { zIndex: 150 } });
+        Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
       } catch {
-        Toast.show(I18n.t('save.to.camera.roll.error'));
+        Toast.showError(I18n.t('save.to.camera.roll.error'));
       }
     },
     [data, downloadFile],
@@ -244,7 +244,7 @@ export function Carousel(props: ICarouselProps) {
           );
           return undefined;
         } else {
-          Toast.show(I18n.t('share-error'));
+          Toast.showError(I18n.t('share-error'));
         }
       }
     },

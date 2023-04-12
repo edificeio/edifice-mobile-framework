@@ -6,7 +6,6 @@ import * as React from 'react';
 import { Alert, ImageURISource, ScrollView, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -14,10 +13,11 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line/component';
-import { UI_ANIMATIONS, UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
 import { AuthRouteNames } from '~/framework/modules/auth/navigation';
@@ -195,7 +195,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         const routeParams = params[modificationType];
         if (isFocused) navigation.navigate(routeName, routeParams);
       } catch {
-        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+        Toast.showError(I18n.t('common.error.text'));
       } finally {
         setCurrentLoadingMenu(undefined);
       }

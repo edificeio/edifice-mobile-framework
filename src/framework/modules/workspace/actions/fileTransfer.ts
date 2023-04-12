@@ -1,11 +1,10 @@
 import I18n from 'i18n-js';
 import { Platform } from 'react-native';
 import Share from 'react-native-share';
-import Toast from 'react-native-tiny-toast';
 import type { NavigationInjectedProps } from 'react-navigation';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { UI_ANIMATIONS } from '~/framework/components/constants';
+import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile, actionTypes } from '~/framework/modules/workspace/reducer';
 import workspaceService, { IWorkspaceUploadParams, factoryRootFolder } from '~/framework/modules/workspace/service';
@@ -27,10 +26,10 @@ export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => as
       parent: parentId as IWorkspaceUploadParams['parent'],
     });
     dispatch(workspaceUploadActionsCreators.receipt(file));
-    Toast.showSuccess(I18n.t('workspace.file-added'), { ...UI_ANIMATIONS.toast });
+    Toast.showSuccess(I18n.t('workspace.file-added'));
   } catch (e: any) {
     if (e && e?.response && e.response.body === `{"error":"file.too.large"}`) {
-      Toast.show(I18n.t('fullStorage'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('fullStorage'));
     }
     dispatch(workspaceUploadActionsCreators.error(e as Error));
   }
@@ -77,7 +76,7 @@ export const copyWorkspaceFilesAction =
       dispatch(workspaceCopyActionsCreators.request());
       await workspaceService.files.copy(session, parentId, files, destinationId);
       dispatch(workspaceCopyActionsCreators.receipt(files.length));
-      Toast.showSuccess(I18n.t('workspace.successfully-copied'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('workspace.successfully-copied'));
     } catch (e) {
       dispatch(workspaceCopyActionsCreators.error(e as Error));
       throw e;
@@ -95,7 +94,7 @@ export const moveWorkspaceFilesAction =
       dispatch(workspaceMoveActionsCreators.request());
       await workspaceService.files.move(session, parentId, files, destinationId);
       dispatch(workspaceMoveActionsCreators.receipt(files.length));
-      Toast.showSuccess(I18n.t('workspace.successfully-moved'), { ...UI_ANIMATIONS.toast });
+      Toast.showSuccess(I18n.t('workspace.successfully-moved'));
     } catch (e) {
       dispatch(workspaceMoveActionsCreators.error(e as Error));
       throw e;
@@ -112,7 +111,7 @@ export const restoreWorkspaceFilesAction = (parentId: string, files: string[]) =
     dispatch(workspaceRestoreActionsCreators.request());
     await workspaceService.files.restore(session, parentId, files);
     dispatch(workspaceRestoreActionsCreators.receipt(files.length));
-    Toast.showSuccess(I18n.t('workspace.successfully-restored'), { ...UI_ANIMATIONS.toast });
+    Toast.showSuccess(I18n.t('workspace.successfully-restored'));
   } catch (e) {
     dispatch(workspaceRestoreActionsCreators.error(e as Error));
     throw e;
@@ -129,7 +128,7 @@ export const trashWorkspaceFilesAction = (parentId: string, files: string[]) => 
     dispatch(workspaceTrashActionsCreators.request());
     await workspaceService.files.trash(session, parentId, files);
     dispatch(workspaceTrashActionsCreators.receipt(files.length));
-    Toast.showSuccess(I18n.t('workspace.successfully-deleted'), { ...UI_ANIMATIONS.toast });
+    Toast.showSuccess(I18n.t('workspace.successfully-deleted'));
   } catch (e) {
     dispatch(workspaceTrashActionsCreators.error(e as Error));
     throw e;
@@ -146,7 +145,7 @@ export const deleteWorkspaceFilesAction = (parentId: string, files: string[]) =>
     dispatch(workspaceDeleteActionsCreators.request());
     await workspaceService.files.delete(session, parentId, files);
     dispatch(workspaceDeleteActionsCreators.receipt(files.length));
-    Toast.showSuccess(I18n.t('workspace.successfully-deleted'), { ...UI_ANIMATIONS.toast });
+    Toast.showSuccess(I18n.t('workspace.successfully-deleted'));
   } catch (e) {
     dispatch(workspaceDeleteActionsCreators.error(e as Error));
     throw e;
@@ -167,7 +166,7 @@ export const renameWorkspaceFileAction = (file: IFile, name: string) => async (d
       await workspaceService.file.rename(session, file.id, name);
     }
     dispatch(workspaceRenameActionsCreators.receipt(name));
-    Toast.showSuccess(I18n.t('workspace.successfully-edited'), { ...UI_ANIMATIONS.toast });
+    Toast.showSuccess(I18n.t('workspace.successfully-edited'));
   } catch (e) {
     dispatch(workspaceRenameActionsCreators.error(e as Error));
     throw e;
@@ -238,10 +237,7 @@ export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch,
       syncedFiles.push(syncedFile);
     }
     dispatch(workspaceDownloadActionsCreators.receipt(syncedFiles));
-    Toast.showSuccess(
-      files.length > 1 ? I18n.t('download-success-all') : I18n.t('download-success-name', { name: files[0].name }),
-      { ...UI_ANIMATIONS.toast },
-    );
+    Toast.showSuccess(files.length > 1 ? I18n.t('download-success-all') : I18n.t('download-success-name', { name: files[0].name }));
   } catch (e) {
     dispatch(workspaceDownloadActionsCreators.error(e as Error));
     throw e;

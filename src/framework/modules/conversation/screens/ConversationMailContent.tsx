@@ -4,20 +4,20 @@ import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import {
   deleteMailsAction,
   moveMailsToFolderAction,
@@ -203,12 +203,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   mailMoved = () => {
     const { navigation } = this.props;
     navigation.dispatch(CommonActions.goBack());
-    Toast.show(I18n.t('conversation.messageMoved'), {
-      position: Toast.position.BOTTOM,
-      mask: false,
-      containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-      ...UI_ANIMATIONS.toast,
-    });
+    Toast.showInfo(I18n.t('conversation.messageMoved'));
   };
 
   markAsRead = async () => {
@@ -237,12 +232,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         await deleteMails([mailId]);
       } else await trashMails([mailId]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.show(I18n.t(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showSuccess(I18n.t(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`));
     } catch {
       // TODO: Manage error
     }

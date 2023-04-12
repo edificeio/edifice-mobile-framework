@@ -1,14 +1,14 @@
 import I18n from 'i18n-js';
 import React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { DistributionStatus, IDistribution, IForm } from '~/framework/modules/form/model';
 import { formService } from '~/framework/modules/form/service';
@@ -54,7 +54,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
     if (form) {
       props.openDistribution(id, status, form);
     } else {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -71,7 +71,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
         }
         openDistributionCallback(distribution.id, distribution.status);
       } catch {
-        Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+        Toast.showError(I18n.t('common.error.text'));
       }
     } else {
       openDistributionCallback(id, DistributionStatus.FINISHED);
@@ -93,7 +93,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
       openDistributionCallback(distribution.id, distribution.status);
     } catch {
       setLoading(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

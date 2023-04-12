@@ -4,17 +4,15 @@ import * as React from 'react';
 import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
 import { SmallText } from '~/framework/components/text';
-import { assertSession } from '~/framework/modules/auth/reducer';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import Toast from '~/framework/components/toast';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
@@ -97,7 +95,7 @@ const openFile = (notifierId: string, file: SyncedFile | undefined) => {
       try {
         file.open();
       } catch {
-        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
+        Toast.showError(I18n.t('download-error-generic'));
       }
     }
   };
@@ -108,12 +106,10 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
     if (file) {
       try {
         file.mirrorToDownloadFolder();
-        Toast.hide(lastToast);
-        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }), {
-          ...UI_ANIMATIONS.toast,
-        });
+        //Toast.hide(lastToast);
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }));
       } catch {
-        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
+        Toast.showError(I18n.t('download-error-generic'));
       }
     }
   };

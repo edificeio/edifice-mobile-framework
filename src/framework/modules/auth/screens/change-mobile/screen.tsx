@@ -11,20 +11,20 @@ import PhoneInput, {
   isMobileNumber,
   isValidNumber,
 } from 'react-native-phone-number-input';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
@@ -180,20 +180,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           setIsSendingCode(false);
           props.trySaveNewMobile({ mobile: mobileNumberFormatted });
           props.navigation.goBack();
-          setTimeout(
-            () =>
-              Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast'), {
-                position: Toast.position.BOTTOM,
-                mask: false,
-                ...UI_ANIMATIONS.toast,
-              }),
-            100,
-          );
+          setTimeout(() => Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast')), 100);
         }
       } catch {
-        Toast.show(I18n.t('common.error.text'), {
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('common.error.text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -230,7 +220,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   }, [navigation, tryLogout, platform]);
 

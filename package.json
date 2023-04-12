@@ -139,7 +139,7 @@
     "react-native-swipe-list-view": "3.2.9",
     "react-native-swiper": "1.6.0",
     "react-native-text-size": "4.0.0-rc.1",
-    "react-native-tiny-toast": "1.0.7",
+    "react-native-toast-message": "2.1.6",
     "react-native-url-polyfill": "1.3.0",
     "react-native-vector-icons": "9.2.0",
     "react-native-video": "5.2.1",

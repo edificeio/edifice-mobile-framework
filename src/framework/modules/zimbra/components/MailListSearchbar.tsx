@@ -1,11 +1,11 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
+import Toast from '~/framework/components/toast';
 
 const styles = StyleSheet.create({
   clearAction: {
@@ -60,7 +60,7 @@ export const MailListSearchbar = (props: MailListSearchbarProps) => {
     const { query } = props;
 
     if (query.length > 0 && query.length < 3) {
-      return Toast.show(I18n.t('zimbra-search-length-error'), { ...UI_ANIMATIONS.toast });
+      return Toast.showError(I18n.t('zimbra-search-length-error'));
     }
     props.onSearch();
   };

@@ -3,20 +3,19 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
@@ -112,7 +111,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -126,7 +125,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -138,11 +137,11 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       setValidating(true);
       if (!session) throw new Error();
       await presencesService.classCall.updateStatus(session, id, 3);
-      Toast.showSuccess(I18n.t('viesco-register-validated'), { ...UI_ANIMATIONS.toast });
       navigation.goBack();
+      Toast.showSuccess(I18n.t('viesco-register-validated'));
     } catch {
       setValidating(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

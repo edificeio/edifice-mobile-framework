@@ -2,14 +2,14 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, NestedText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getFileIcon } from '~/framework/modules/conversation/utils/fileIcon';
 import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
 import { getProfileColor, getUserColor } from '~/framework/modules/conversation/utils/userColor';
@@ -238,7 +238,7 @@ export const RenderPJs = ({
               try {
                 await sf.open();
               } catch {
-                Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
+                Toast.showError(I18n.t('download-error-generic'));
               }
             }}>
             <View style={styles.attachmentSubContainer}>
@@ -262,9 +262,9 @@ export const RenderPJs = ({
                     try {
                       const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                       await sf.mirrorToDownloadFolder();
-                      Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }), { ...UI_ANIMATIONS.toast });
+                      Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
                     } catch {
-                      Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
+                      Toast.showError(I18n.t('download-error-generic'));
                     }
                   }}
                   style={{ paddingHorizontal: UI_SIZES.spacing.small }}>

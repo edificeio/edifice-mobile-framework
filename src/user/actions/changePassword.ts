@@ -1,10 +1,9 @@
 import CookieManager from '@react-native-cookies/cookies';
 import I18n from 'i18n-js';
-import Toast from 'react-native-tiny-toast';
 import { Action, AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { UI_ANIMATIONS } from '~/framework/components/constants';
+import Toast from '~/framework/components/toast';
 import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
 import { getUserSession } from '~/framework/util/session';
 import { Trackers } from '~/framework/util/tracker';
@@ -155,17 +154,10 @@ export function changePasswordAction(model: IChangePasswordModel, redirectCallba
 
       // === 5 - change password finished successfully
       dispatch(changePasswordSubmitReceivedAction());
+
       if (redirectCallback) redirectCallback(dispatch);
       else mainNavNavigate('Profile');
-      setTimeout(
-        () =>
-          Toast.showSuccess(I18n.t('PasswordChangeSuccess'), {
-            position: Toast.position.BOTTOM,
-            mask: false,
-            ...UI_ANIMATIONS.toast,
-          }),
-        0,
-      );
+      setTimeout(() => Toast.showSuccess(I18n.t('PasswordChangeSuccess')), 0);
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD');
     } catch {
       dispatch(changePasswordSubmitErrorAction(I18n.t('changePassword-errorSubmit')));

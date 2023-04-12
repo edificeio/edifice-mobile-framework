@@ -3,18 +3,18 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import React, { useCallback, useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
@@ -97,9 +97,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           navBarTitle: getNavBarTitle(route),
         });
       } catch {
-        Toast.show(I18n.t('common.error.text'), {
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('common.error.text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -125,7 +123,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   }, [navigation, platform, tryLogout]);
 

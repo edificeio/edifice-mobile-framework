@@ -4,18 +4,18 @@ import Lottie from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES, UI_VALUES } from '~/framework/components/constants';
+import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { loginAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -222,12 +222,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     setResendTimer();
     const resendResponse = await resendVerificationCode();
     if (resendResponse === ResendResponse.FAIL) {
-      Toast.show(I18n.t('common.error.text'), {
-        onHidden: () => setIsResendDisabled(false),
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showError(I18n.t('common.error.text'));
     } else if (resendResponse === ResendResponse.SUCCESS) {
-      Toast.show(texts.resendToast, { ...UI_ANIMATIONS.toast });
+      Toast.showError(texts.resendToast);
       if (codeState === CodeState.CODE_EXPIRED) startAnimation(CodeState.CODE_RESENT);
     }
   }, [codeState, resendVerificationCode, texts.resendToast]);
@@ -249,26 +246,16 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       try {
         await tryUpdateProfile(isModifyingEmail ? { email } : { mobile });
         navigation.navigate(userRouteNames.home);
-        Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'));
       } catch {
-        Toast.show(I18n.t('common.error.text'), {
-          onHidden: () => resetCode(),
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('common.error.text'));
       }
     } else {
       try {
         const redirect = await tryLogin(platform, undefined, rememberMe);
         redirectLoginNavAction(redirect, platform, navigation);
       } catch {
-        Toast.show(I18n.t('common.error.text'), {
-          onHidden: () => resetCode(),
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('common.error.text'));
       }
     }
   }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, resetCode, tryLogin, platform, rememberMe]);
@@ -278,10 +265,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   useEffect(() => {
     if (!isVerifyingActive) {
       if (isCodeStateUnknown) {
-        Toast.show(I18n.t('common.error.text'), {
-          onHidden: () => setCode(''),
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('common.error.text'));
       } else if (isCodeCorrect && isEmailOrMobileMFA) {
         setTimeout(() => redirectEmailOrMobileMFA(), CODE_REDIRECTION_DELAY);
       }

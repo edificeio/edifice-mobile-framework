@@ -1,13 +1,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import ActionButton from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 
@@ -42,10 +42,10 @@ const CreateFolderModal = React.forwardRef<ModalBoxHandle, ICreateFolderModalPro
       props.creationCallback();
       setCreating(false);
       setName('');
-      Toast.show(I18n.t('zimbra-create-directory-confirm'), { ...UI_ANIMATIONS.toast });
+      Toast.showInfo(I18n.t('zimbra-create-directory-confirm'));
     } catch {
       setCreating(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

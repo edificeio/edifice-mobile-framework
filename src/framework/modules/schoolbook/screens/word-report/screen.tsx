@@ -5,7 +5,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import React from 'react';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
@@ -13,7 +12,7 @@ import ModalBox from '~/framework/components/ModalBox';
 import UserList from '~/framework/components/UserList';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { ResourceView } from '~/framework/components/card';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -28,6 +27,7 @@ import {
   SmallBoldText,
   SmallText,
 } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { IAcknowledgment, IWordReport, getStudentsByAcknowledgementForTeacher } from '~/framework/modules/schoolbook/reducer';
@@ -85,9 +85,9 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       modalBoxRef?.current?.doDismissModal();
       if (!session) throw new Error('missing session');
       await schoolbookService.word.resend(session, schoolbookWordId);
-      Toast.show(I18n.t('schoolbook.schoolbookWordReportScreen.reminderToast.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showInfo(I18n.t('schoolbook.schoolbookWordReportScreen.reminderToast.text'));
     } catch {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 

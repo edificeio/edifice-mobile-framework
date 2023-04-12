@@ -2,13 +2,13 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getFileIcon } from '~/framework/modules/zimbra/utils/fileIcon';
 import { getUserColor } from '~/framework/modules/zimbra/utils/userColor';
 import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
@@ -333,9 +333,9 @@ export const RenderPJs = ({
                       try {
                         const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                         await sf.mirrorToDownloadFolder();
-                        Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }), { ...UI_ANIMATIONS.toast });
+                        Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
                       } catch {
-                        Toast.show(I18n.t('download-error-generic'), { ...UI_ANIMATIONS.toast });
+                        Toast.showError(I18n.t('download-error-generic'));
                       }
                     }}
                     style={styles.attachmentDownloadButton}>

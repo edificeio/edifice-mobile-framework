@@ -5,18 +5,17 @@ import moment from 'moment';
 import React from 'react';
 import { Alert, AlertButton, Keyboard, Platform } from 'react-native';
 import { Asset } from 'react-native-image-picker';
-import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { deleteMailsAction, trashMailsAction } from '~/framework/modules/conversation/actions/mail';
@@ -249,21 +248,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       const { mail, tempAttachment } = this.state;
       if (mail.to.length === 0) {
         Keyboard.dismiss();
-        Toast.show(I18n.t('conversation.missingReceiver'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('conversation.missingReceiver'));
         return;
       } else if (tempAttachment && tempAttachment !== null) {
         Keyboard.dismiss();
-        Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showInfo(I18n.t('conversation.sendAttachmentProgress'));
         return;
       } else if (!mail.body || !mail.subject) {
         Keyboard.dismiss();
@@ -294,12 +283,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           await deleteMessage([id]);
           navigation.goBack();
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Succès');
-          Toast.show(I18n.t('conversation.messageDeleted'), {
-            position: Toast.position.BOTTOM,
-            mask: false,
-            containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-            ...UI_ANIMATIONS.toast,
-          });
+          Toast.showSuccess(I18n.t('conversation.messageDeleted'));
         } catch {
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
         }
@@ -320,12 +304,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
       if (isUploadingAttachment) {
         Keyboard.dismiss();
-        Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showInfo(I18n.t('conversation.sendAttachmentProgress'));
       } else if (!isDraftEmpty) {
         const textToDisplay = {
           title: 'conversation.saveDraftTitle',
@@ -620,13 +599,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       }));
     } catch (e) {
       Keyboard.dismiss();
-      Toast.show(
+      Toast.showError(
         // Ignore type error
         e.response.body === '{"error":"file.too.large"}' ? I18n.t('fullStorage') : I18n.t('conversation.attachmentError'),
-        {
-          position: Toast.position.BOTTOM,
-          ...UI_ANIMATIONS.toast,
-        },
       );
       this.setState({ tempAttachment: null });
       throw e;
@@ -671,13 +646,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
       Keyboard.dismiss();
       await sendMail(this.getMailData(), id, replyTo);
-      Toast.show(I18n.t('conversation.sendMail'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
       navigation.dispatch(CommonActions.goBack());
+      Toast.showSuccess(I18n.t('conversation.sendMail'));
     } catch {
       // TODO: Manage error
     }
