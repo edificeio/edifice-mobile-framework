@@ -1,11 +1,11 @@
 import { StackActions } from '@react-navigation/native';
 
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { navigate, navigationRef } from '~/framework/navigation/helper';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceIdNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
+import moduleConfig from './module-config';
 import { zimbraRouteNames } from './navigation';
 
 const handleZimbraNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
@@ -15,7 +15,7 @@ const handleZimbraNotificationAction: NotifHandlerThunkAction = notification => 
   if (!notif || notif?.resource.uri.indexOf('zimbra') === -1) return { managed: 0 };
 
   navigationRef.dispatch(StackActions.popToTop());
-  navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+  navigate(computeTabRouteName(moduleConfig.routeName), {
     initial: true,
     screen: zimbraRouteNames.mail,
     params: {
