@@ -92,6 +92,9 @@ export default function () {
         initialParams={{}}
       />
       <Stack.Screen name={AuthRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Screen name={AuthRouteNames.mfaModal} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
+      </Stack.Group>
     </Stack.Group>
   );
 }

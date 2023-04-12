@@ -30,7 +30,7 @@ export interface AuthMFAScreenStoreProps {
 }
 
 export interface AuthMFAScreenPrivateProps
-  extends NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa>,
+  extends NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa | typeof AuthRouteNames.mfaModal>,
     AuthMFAScreenProps,
     AuthMFAScreenStoreProps,
     AuthMFAScreenDispatchProps {}

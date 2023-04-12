@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import Lottie from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
@@ -54,13 +54,21 @@ const CODE_REDIRECTION_DELAY = 500;
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<
+  IAuthNavigationParams,
+  typeof AuthRouteNames.mfa | typeof AuthRouteNames.mfaModal
+>): NativeStackNavigationOptions => {
+  const routeParams = route.params;
+  const title = Platform.select({
+    ios: routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.t('auth-mfa-title'),
+    android: routeParams.navBarTitle,
+  });
   return {
     ...navBarOptions({
       navigation,
       route,
     }),
-    headerTitle: navBarTitle(route.params.navBarTitle),
+    headerTitle: navBarTitle(title),
   };
 };
 
