@@ -1,9 +1,12 @@
 /**
  * Workspace notif handler
  */
+import { StackActions } from '@react-navigation/native';
 import I18n from 'i18n-js';
 
-import { navigate } from '~/framework/navigation/helper';
+import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { navigate, navigationRef } from '~/framework/navigation/helper';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
 import { WorkspaceNavigationParams, workspaceRouteNames } from './navigation';
@@ -15,10 +18,16 @@ const handleWorkspaceShareFolderNotificationAction: NotifHandlerThunkAction = no
   const index = resourceUri.indexOf('folder/');
   if (index === -1) return { managed: 0 };
   const parentId = resourceUri.substring(index + 7);
-  navigate<WorkspaceNavigationParams, typeof workspaceRouteNames.home>(workspaceRouteNames.home, {
-    filter: Filter.SHARED,
-    parentId,
-    title: notification.backupData.params.resourceName ?? '',
+
+  navigationRef.dispatch(StackActions.popToTop());
+  navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+    initial: false,
+    screen: workspaceRouteNames.home,
+    params: {
+      filter: Filter.SHARED,
+      parentId,
+      title: notification.backupData.params.resourceName ?? '',
+    },
   });
 
   return {
@@ -36,10 +45,16 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction = notifica
     notification.backupData.params.resourceFolderName === 'Documents personnels'
       ? I18n.t('shared')
       : notification.backupData.params.resourceFolderName;
-  navigate<WorkspaceNavigationParams, typeof workspaceRouteNames.home>(workspaceRouteNames.home, {
-    filter: Filter.SHARED,
-    parentId,
-    title,
+
+  navigationRef.dispatch(StackActions.popToTop());
+  navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+    initial: false,
+    screen: workspaceRouteNames.home,
+    params: {
+      filter: Filter.SHARED,
+      parentId,
+      title,
+    },
   });
 
   return {

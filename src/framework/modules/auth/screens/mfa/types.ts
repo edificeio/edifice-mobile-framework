@@ -16,6 +16,7 @@ export interface AuthMFAScreenNavParams {
   email?: string;
   isEmailMFA?: boolean;
   isMobileMFA?: boolean;
+  mfaRedirectionRoute?: string;
   mobile?: string;
   modificationType?: ModificationType;
   navBarTitle: string;

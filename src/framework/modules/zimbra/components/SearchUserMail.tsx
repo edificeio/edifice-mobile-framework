@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   },
   userOrGroupSearchContainer: {
     overflow: 'visible',
-    marginHorizontal: UI_SIZES.spacing.tiny,
+    marginLeft: UI_SIZES.spacing.minor,
     flex: 1,
   },
 });

@@ -155,7 +155,6 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
     prevState: Readonly<INewsDetailsScreenState>,
     snapshot?: any,
   ): void {
-    console.debug(prevState.newsData?.title, this.state.newsData?.title);
     if (prevState.newsData?.title !== this.state.newsData?.title) {
       this.props.navigation.setParams({
         title: this.state.newsData?.title ?? I18n.t('timeline.newsDetailsScreen.title'),

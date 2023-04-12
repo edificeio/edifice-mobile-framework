@@ -1,15 +1,25 @@
 /**
  * Timeline notif handler
  */
-import { navigate } from '~/framework/navigation/helper';
+import { StackActions } from '@react-navigation/native';
+
+import { navigate, navigationRef } from '~/framework/navigation/helper';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-import { ITimelineNavigationParams, timelineRouteNames } from './navigation';
+import moduleConfig from './moduleConfig';
+import { timelineRouteNames } from './navigation';
 
 const handleFlashMsgNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
-  navigate<ITimelineNavigationParams, typeof timelineRouteNames.Home>(timelineRouteNames.Home, {
-    notification,
+  navigationRef.dispatch(StackActions.popToTop());
+  navigate(computeTabRouteName(moduleConfig.routeName), {
+    initial: true,
+    screen: timelineRouteNames.Home,
+    params: {
+      notification,
+    },
   });
+
   return {
     managed: 1,
     trackInfo: { action: 'Timeline', name: `${notification.type}.${notification['event-type']}` },

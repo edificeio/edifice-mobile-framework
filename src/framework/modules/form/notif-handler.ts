@@ -1,13 +1,16 @@
+import { StackActions } from '@react-navigation/native';
 import I18n from 'i18n-js';
 import { Alert } from 'react-native';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { navigate } from '~/framework/navigation/helper';
+import timlineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { navigate, navigationRef } from '~/framework/navigation/helper';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
 import { DistributionStatus } from './model';
-import { FormNavigationParams, formRouteNames } from './navigation';
+import { formRouteNames } from './navigation';
 import { formService } from './service';
 
 const handleNewFormNotificationAction: NotifHandlerThunkAction = notification => async (dispatch, getState) => {
@@ -34,15 +37,25 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction = notification =>
       distributions.length === 1 ? distributions[0] : distributions.find(d => d.status === DistributionStatus.TO_DO);
 
     if (distribution) {
-      navigate<FormNavigationParams, typeof formRouteNames.distribution>(formRouteNames.distribution, {
-        id: distribution.id,
-        status: distribution.status,
-        formId: form.id,
-        title: form.title,
-        editable: form.editable,
+      navigationRef.dispatch(StackActions.popToTop());
+      navigate(computeTabRouteName(timlineModuleConfig.routeName), {
+        initial: false,
+        screen: formRouteNames.distribution,
+        params: {
+          id: distribution.id,
+          status: distribution.status,
+          formId: form.id,
+          title: form.title,
+          editable: form.editable,
+        },
       });
     } else {
-      navigate<FormNavigationParams, typeof formRouteNames.home>(formRouteNames.home, {});
+      navigationRef.dispatch(StackActions.popToTop());
+      navigate(computeTabRouteName(timlineModuleConfig.routeName), {
+        initial: false,
+        screen: formRouteNames.home,
+        params: {},
+      });
     }
     return {
       managed: 1,

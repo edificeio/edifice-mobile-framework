@@ -4,11 +4,15 @@
  * The notifHandler registers some behaviours for given notif types and event-types.
  * It applicates to both timelineNotififation and pushNotifications.
  */
-import { navigate } from '~/framework/navigation/helper';
+import { StackActions } from '@react-navigation/native';
+
+import { navigate, navigationRef } from '~/framework/navigation/helper';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceIdNotification } from '~/framework/util/notifications';
 import { NotifHandlerThunkAction, registerNotifHandlers } from '~/framework/util/notifications/routing';
 
-import { ConversationNavigationParams, conversationRouteNames } from './navigation';
+import moduleConfig from './module-config';
+import { conversationRouteNames } from './navigation';
 
 const handleConversationNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navState) => async (dispatch, getState) => {
@@ -16,9 +20,15 @@ const handleConversationNotificationAction: NotifHandlerThunkAction =
     // As conversation & zimbra use same type & event-type
     // We must redirect only conversation ones
     if (!notif || notif?.resource.uri.indexOf('conversation') === -1) return { managed: 0 };
-    navigate<ConversationNavigationParams, typeof conversationRouteNames.mailContent>(conversationRouteNames.mailContent, {
-      notification: notif,
-      mailId: notif.resource.id,
+
+    navigationRef.dispatch(StackActions.popToTop());
+    navigate(computeTabRouteName(moduleConfig.routeName), {
+      initial: false,
+      screen: conversationRouteNames.mailContent,
+      params: {
+        notification: notif,
+        mailId: notif.resource.id,
+      },
     });
 
     return {

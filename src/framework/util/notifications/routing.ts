@@ -7,12 +7,14 @@ import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import legacyModuleDefinitions from '~/AppModules';
-import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
+import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
 import { navigate } from '~/framework/navigation/helper';
+import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
 
-import { IAbstractNotification, ITimelineNotification, getAsResourceUriNotification } from '.';
+import { IAbstractNotification, getAsResourceUriNotification } from '.';
 
 // Module Map
 
@@ -53,33 +55,18 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 // Notif Handler Action
 
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
+  // Check for all module notif-handler that are registered.
   moduleRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     const rets = await Promise.all(
       registeredNotifHandlers.map(async def => {
         if (n.type !== def.type) return false;
         const eventTypeArray = typeof def['event-type'] === 'string' ? [def['event-type']] : def['event-type'];
         if (eventTypeArray !== undefined && !eventTypeArray.includes(n['event-type'])) return false;
-        if (
-          n.type === 'MESSAGERIE' ||
-          n.type === 'BLOG' ||
-          ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id)
-        ) {
-          /**/ // #44727 tmp fix. Copied from timelineRedirection.
-          const thunkAction = def.notifHandlerAction(n, trackCategory, navState);
-          const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
-          if (trackCategory && ret.trackInfo)
-            Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
-          return ret;
-        } else {
-          /**/ // #44727 tmp fix. Copied from timelineRedirection.
-          /**/ if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-          /**/ navigate<ITimelineNavigationParams, typeof timelineRouteNames.Home>(timelineRouteNames.Home, {
-            /**/ notification: n,
-            /**/
-          });
-          /**/ return { managed: 1 };
-          /**/ //
-        }
+        const thunkAction = def.notifHandlerAction(n, trackCategory, navState);
+        const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
+        if (trackCategory && ret.trackInfo)
+          Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
+        return ret;
       }),
     );
     return {
@@ -87,43 +74,34 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
     };
   },
 
-  legacyRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
-    const legacyThunkAction = legacyHandleNotificationAction(
-      n.backupData.params as unknown as NotificationData,
-      getState().user?.auth?.apps,
-    ) as ThunkAction<Promise<number>, any, any, AnyAction>;
-    // No tracking here, they're defined in legacyActions themselves.
-    return {
-      managed: await (dispatch(legacyThunkAction) as unknown as Promise<number>),
-    };
-  },
-
+  // Redirect the user to the timeline + go to native browser
   webRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     const notifWithUri = getAsResourceUriNotification(n);
     if (!notifWithUri) {
       return { managed: 0 };
     }
-    if ((n as ITimelineNotification).message && (n as ITimelineNotification).date && (n as ITimelineNotification).id) {
-      /**/ // #44727 tmp fix. Copied from timelineRedirection.
-      if (trackCategory) Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
-      openUrl(notifWithUri.resource.uri);
-      return { managed: 1 };
-    } else {
-      /**/ // #44727 tmp fix. Copied from timelineRedirection.
-      /**/ if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-      /**/ navigate<ITimelineNavigationParams, typeof timelineRouteNames.Home>(timelineRouteNames.Home, {
-        /**/ notification: n,
-        /**/
-      });
-      /**/ return { managed: 1 };
-      /**/ //
-    }
+    if (trackCategory) Trackers.trackEvent(trackCategory, 'Browser', `${n.type}.${n['event-type']}`);
+    // We want to navigate on timeline even if this is a web redirection.
+    navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+      initial: true,
+      screen: timelineRouteNames.Home,
+      params: {
+        notification: n,
+      },
+    });
+    openUrl(notifWithUri.resource.uri);
+    return { managed: 1 };
   },
 
+  // Only redirect to the timeline
   timelineRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
     if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
-    navigate<ITimelineNavigationParams, typeof timelineRouteNames.Home>(timelineRouteNames.Home, {
-      notification: n,
+    navigate(computeTabRouteName(timelineModuleConfig.routeName), {
+      initial: true,
+      screen: timelineRouteNames.Home,
+      params: {
+        notification: n,
+      },
     });
     return { managed: 1 };
   },

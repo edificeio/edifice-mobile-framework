@@ -17,6 +17,7 @@ import { ISession } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
+import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 
 import { navigationRef } from './helper';
 import { MainNavigation } from './mainNavigation';
@@ -81,6 +82,7 @@ function RootNavigator(props: RootNavigatorProps) {
         <SplashScreenComponent key={isReady} />
         {isReady ? (
           <NavigationContainer ref={navigationRef} initialState={initialNavState}>
+            <AppPushNotificationHandlerComponent />
             <RootStack.Navigator screenOptions={{ headerShown: true }}>
               {routes}
               {modals}

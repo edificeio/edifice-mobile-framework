@@ -8,23 +8,16 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/AppStore';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';
 
-export async function requestUserPermission() {
-  const authorizationStatus = await messaging().requestPermission();
-
-  if (authorizationStatus) {
-  }
-}
-
-function _AppPushNotificationHandlerComponent(
+function AppPushNotificationHandlerComponentUnconnected(
   props: PropsWithChildren<{
     isLoggedIn: boolean;
-    apps: string[];
     dispatch: ThunkDispatch<any, any, any>;
   }>,
 ) {
@@ -68,8 +61,7 @@ function _AppPushNotificationHandlerComponent(
 
 const mapStateToProps = (s: IGlobalState) => {
   return {
-    isLoggedIn: s?.user?.auth?.loggedIn as boolean,
-    apps: s?.user?.auth?.apps as string[],
+    isLoggedIn: getAuthState(s).logged,
   };
 };
 
@@ -80,4 +72,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>) => ({
 export const AppPushNotificationHandlerComponent = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(_AppPushNotificationHandlerComponent);
+)(AppPushNotificationHandlerComponentUnconnected);
