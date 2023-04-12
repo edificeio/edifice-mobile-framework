@@ -157,6 +157,12 @@ export const UI_STYLES = StyleSheet.create({
 
 export const UI_VALUES = {
   modalOpacity: 0.4,
+  opacity: {
+    half: 0.5,
+    modal: 0.4,
+    opaque: 1,
+    transparent: 0,
+  },
 };
 
 export const genericHitSlop: Insets = {

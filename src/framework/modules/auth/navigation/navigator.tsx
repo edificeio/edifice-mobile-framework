@@ -10,8 +10,8 @@ import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import PlatformSelectScreen from '~/framework/modules/auth/screens/PlatformSelectScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
-import AuthChangeEmailScreen, { computeNavBar as changeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
-import AuthChangeMobileScreen, { computeNavBar as changeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
+import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
+import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
@@ -82,13 +82,13 @@ export default function () {
       <Stack.Screen
         name={AuthRouteNames.changeEmail}
         component={AuthChangeEmailScreen}
-        options={changeEmailNavBar}
+        options={authChangeEmailNavBar}
         initialParams={{}}
       />
       <Stack.Screen
         name={AuthRouteNames.changeMobile}
         component={AuthChangeMobileScreen}
-        options={changeMobileNavBar}
+        options={authChangeMobileNavBar}
         initialParams={{}}
       />
       <Stack.Screen name={AuthRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />

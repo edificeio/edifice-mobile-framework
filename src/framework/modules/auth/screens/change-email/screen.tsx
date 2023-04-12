@@ -1,14 +1,13 @@
-import { UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
+import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import Toast from 'react-native-tiny-toast';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
@@ -26,12 +25,10 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
-import {
-  AuthChangeEmailScreenDispatchProps,
-  AuthChangeEmailScreenPrivateProps,
-  AuthChangeEmailScreenStoreProps,
-  EmailState,
-} from './types';
+import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
+
+const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, AuthRouteNames.changeEmail>) =>
+  route.params.navBarTitle || I18n.t('auth-change-email-verify');
 
 export const computeNavBar = ({
   navigation,
@@ -42,12 +39,12 @@ export const computeNavBar = ({
       navigation,
       route,
     }),
-    title: undefined,
+    headerTitle: navBarTitle(getNavBarTitle(route)),
   };
 };
 
 const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
-  const { onLogout, navigation, route } = props;
+  const { tryLogout, navigation, route } = props;
   const isScreenFocused = useIsFocused();
 
   const platform = route.params.platform;
@@ -55,19 +52,19 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const defaultEmail = route.params.defaultEmail;
   const modificationType = route.params.modificationType;
   const isModifyingEmail = modificationType === ModificationType.EMAIL;
-  const title = route.params.navBarTitle || I18n.t('auth-change-email-verify');
-  const texts: Record<string, any> = isModifyingEmail
+  const texts: PageTexts = isModifyingEmail
     ? {
         title: I18n.t('auth-change-email-edit-title'),
         message: I18n.t('auth-change-email-edit-message'),
         label: I18n.t('auth-change-email-edit-label'),
+        button: I18n.t('auth-change-email-verify-button'),
       }
     : {
         title: I18n.t('auth-change-email-verify-title'),
         message: I18n.t('auth-change-email-verify-message'),
         label: I18n.t('auth-change-email-verify-label'),
+        button: I18n.t('auth-change-email-verify-button'),
       };
-  texts.button = I18n.t('auth-change-email-verify-button');
 
   const [isSendingCode, setIsSendingCode] = useState(false);
   const [email, setEmail] = useState(defaultEmail || '');
@@ -75,59 +72,62 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isEmailEmpty = isEmpty(email);
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
 
-  useEffect(() => {
-    navigation.setOptions({ headerTitle: navBarTitle(title) });
-  }, [navigation, title]);
-
-  const doSendEmailVerificationCode = async (toVerify: string) => {
-    // Exit if email is not valid
-    if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
-    try {
-      setIsSendingCode(true);
-      if (isModifyingEmail) {
-        // Exit if email has already been verified
-        const emailValidationInfos = await getEmailValidationInfos();
-        if (toVerify === emailValidationInfos?.emailState?.valid) {
-          setIsSendingCode(false);
-          return EmailState.EMAIL_ALREADY_VERIFIED;
+  const doSendEmailVerificationCode = React.useCallback(
+    async (toVerify: string) => {
+      // Exit if email is not valid
+      if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
+      try {
+        setIsSendingCode(true);
+        if (isModifyingEmail) {
+          // We don't want to check this on mail validation scenario at login
+          // Exit if email has already been verified
+          const emailValidationInfos = await getEmailValidationInfos();
+          if (toVerify === emailValidationInfos?.emailState?.valid) {
+            setIsSendingCode(false);
+            return EmailState.EMAIL_ALREADY_VERIFIED;
+          }
         }
+        await sendEmailVerificationCode(platform, toVerify);
+        navigation.navigate(AuthRouteNames.mfa, {
+          platform,
+          rememberMe,
+          modificationType,
+          isEmailMFA: true,
+          email: toVerify,
+          navBarTitle: getNavBarTitle(route),
+        });
+      } catch {
+        Toast.show(I18n.t('common.error.text'), {
+          ...UI_ANIMATIONS.toast,
+        });
+      } finally {
+        setIsSendingCode(false);
       }
-      await sendEmailVerificationCode(platform, toVerify);
-      navigation.navigate(AuthRouteNames.mfa, {
-        platform,
-        rememberMe,
-        modificationType,
-        isEmailMFA: true,
-        email: toVerify,
-        navBarTitle: title,
-      });
-    } catch {
-      Toast.show(I18n.t('common.error.text'), {
-        ...UI_ANIMATIONS.toast,
-      });
-    } finally {
-      setIsSendingCode(false);
-    }
-  };
+    },
+    [isModifyingEmail, modificationType, navigation, platform, rememberMe, route],
+  );
 
-  const sendEmail = async () => {
+  const sendEmail = React.useCallback(async () => {
     const sendResponse = await doSendEmailVerificationCode(email);
     if (sendResponse) setEmailState(sendResponse);
-  };
+  }, [doSendEmailVerificationCode, email]);
 
-  const changeEmail = (text: string) => {
-    if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
-    setEmail(text);
-  };
+  const changeEmail = React.useCallback(
+    (text: string) => {
+      if (!isEmailStatePristine) setEmailState(EmailState.PRISTINE);
+      setEmail(text);
+    },
+    [isEmailStatePristine],
+  );
 
-  const refuseEmailVerification = () => {
+  const refuseEmailVerification = React.useCallback(async () => {
     try {
-      onLogout();
+      await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
     }
-  };
+  }, [navigation, platform, tryLogout]);
 
   UNSTABLE_usePreventRemove(!isEmailEmpty && isScreenFocused, ({ data }) => {
     Alert.alert(I18n.t('auth-change-email-edit-alert-title'), I18n.t('auth-change-email-edit-alert-message'), [
@@ -142,6 +142,10 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       },
     ]);
   });
+
+  const onChangeEmail = React.useCallback((text: string) => changeEmail(text), [changeEmail]);
+  const onSendEmail = React.useCallback(() => sendEmail(), [sendEmail]);
+  const onRefuseEmailVerification = React.useCallback(() => refuseEmailVerification(), [refuseEmailVerification]);
 
   return (
     <KeyboardPageView style={styles.page} scrollable>
@@ -174,7 +178,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             placeholderTextColor={theme.palette.grey.graphite}
             style={styles.input}
             value={email}
-            onChangeText={text => changeEmail(text)}
+            onChangeText={onChangeEmail}
           />
         </View>
         <CaptionItalicText style={styles.errorText}>
@@ -189,10 +193,10 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           text={texts.button}
           disabled={isEmailEmpty}
           loading={isSendingCode}
-          action={() => sendEmail()}
+          action={onSendEmail}
         />
         {isModifyingEmail ? null : (
-          <TouchableOpacity style={styles.logoutButton} onPress={() => refuseEmailVerification()}>
+          <TouchableOpacity style={styles.logoutButton} onPress={onRefuseEmailVerification}>
             <SmallBoldText style={styles.logoutText}>{I18n.t('auth-change-email-verify-disconnect')}</SmallBoldText>
           </TouchableOpacity>
         )}
@@ -201,17 +205,13 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   );
 };
 
-const mapStateToProps: (state: IGlobalState) => AuthChangeEmailScreenStoreProps = state => {
-  return {};
-};
-
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      onLogout: tryAction(logoutAction, undefined) as unknown as AuthChangeEmailScreenDispatchProps['onLogout'],
+      tryLogout: tryAction(logoutAction),
     },
     dispatch,
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AuthChangeEmailScreen);
+export default connect(undefined, mapDispatchToProps)(AuthChangeEmailScreen);

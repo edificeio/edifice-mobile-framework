@@ -70,7 +70,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   getBackDropOpacityAnimation = (willOpen: boolean) => {
     const { backdropOpacity } = this.state;
     return Animated.timing(backdropOpacity, {
-      toValue: willOpen ? UI_VALUES.modalOpacity : 0,
+      toValue: willOpen ? UI_VALUES.opacity.modal : UI_VALUES.opacity.transparent,
       ...UI_ANIMATIONS.fade,
     });
   };
