@@ -17,7 +17,8 @@ export default StyleSheet.create({
     flex: 4,
   },
   page: {
-    paddingVertical: UI_SIZES.spacing.big,
+    paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.screen.topInset + UI_SIZES.spacing.big,
   },
   swiper: {
     width: 16,
