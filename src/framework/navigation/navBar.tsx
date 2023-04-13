@@ -47,7 +47,7 @@ export const navBarOptions: (props: {
       const navState = navigation.getState();
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.
       return navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0 ? (
-        <HeaderBackButton {...props} onPress={navigation.goBack} style={{ marginHorizontal: -UI_SIZES.spacing.minor }} />
+        <HeaderBackButton {...props} onPress={navigation.goBack} />
       ) : null;
     },
     headerTintColor: theme.ui.text.inverse,
