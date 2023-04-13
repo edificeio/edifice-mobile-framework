@@ -1,3 +1,88 @@
+diff --git a/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js b/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
+index 4536402..df0fa50 100644
+--- a/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
++++ b/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
+@@ -50,9 +50,7 @@ type Props = $ReadOnly<{|
+   keyboardVerticalOffset?: number,
+ |}>;
+ 
+-type State = {|
+-  bottom: number,
+-|};
++type State = {};
+ 
+ /**
+  * View that moves out of the way when the keyboard appears by automatically
+@@ -64,11 +62,13 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+   _subscriptions: Array<EventSubscription> = [];
+   viewRef: {current: React.ElementRef<typeof View> | null, ...};
+   _initialFrameHeight: number = 0;
++  bottom: {current: nubmer};
+ 
+   constructor(props: Props) {
+     super(props);
+-    this.state = {bottom: 0};
++    this.state = {};
+     this.viewRef = React.createRef();
++    this.bottom = React.createRef(0);
+   }
+ 
+   _relativeKeyboardHeight(keyboardFrame: KeyboardEventCoordinates): number {
+@@ -109,14 +109,17 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+ 
+   _updateBottomIfNecessary = () => {
+     if (this._keyboardEvent == null) {
+-      this.setState({bottom: 0});
++      if (this.bottom.current !== 0) {
++        this.bottom.current = 0;
++        this.forceUpdate();
++      }
+       return;
+     }
+ 
+     const {duration, easing, endCoordinates} = this._keyboardEvent;
+     const height = this._relativeKeyboardHeight(endCoordinates);
+ 
+-    if (this.state.bottom === height) {
++    if (this.bottom.current === height) {
+       return;
+     }
+ 
+@@ -130,7 +133,9 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+         },
+       });
+     }
+-    this.setState({bottom: height});
++    // this.setState({bottom: height});
++    this.bottom.current = height;
++    this.forceUpdate();
+   };
+ 
+   componentDidMount(): void {
+@@ -164,13 +169,13 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+       onLayout,
+       ...props
+     } = this.props;
+-    const bottomHeight = enabled === true ? this.state.bottom : 0;
++    const bottomHeight = enabled === true ? this.bottom.current : 0;
+     switch (behavior) {
+       case 'height':
+         let heightStyle;
+-        if (this._frame != null && this.state.bottom > 0) {
++        if (this._frame != null && this.bottom.current > 0) {
+           // Note that we only apply a height change when there is keyboard present,
+-          // i.e. this.state.bottom is greater than 0. If we remove that condition,
++          // i.e. this.bottom.current is greater than 0. If we remove that condition,
+           // this.frame.height will never go back to its original value.
+           // When height changes, we need to disable flex.
+           heightStyle = {
+diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
+new file mode 100644
+index 0000000..361f5fb
+--- /dev/null
++++ b/node_modules/react-native/scripts/.packager.env
+@@ -0,0 +1 @@
++export RCT_METRO_PORT=8081
 diff --git a/node_modules/react-native/scripts/react_native_pods.rb b/node_modules/react-native/scripts/react_native_pods.rb
 index e7c59ad..1461d45 100644
 --- a/node_modules/react-native/scripts/react_native_pods.rb
