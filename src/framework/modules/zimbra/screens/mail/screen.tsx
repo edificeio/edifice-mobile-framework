@@ -28,7 +28,7 @@ import { zimbraService } from '~/framework/modules/zimbra/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import { ZimbraMailScreenPrivateProps } from './types';

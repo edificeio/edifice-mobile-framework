@@ -6,7 +6,7 @@ import { CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText } from '~/framework/components/text';
 import { ArticleContainer } from '~/ui/ContainerContent';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 const styles = StyleSheet.create({
   container: {

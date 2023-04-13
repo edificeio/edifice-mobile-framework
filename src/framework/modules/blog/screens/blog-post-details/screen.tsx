@@ -50,7 +50,7 @@ import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
 import { notifierShowAction } from '~/infra/notifier/actions';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import {

@@ -10,7 +10,7 @@ import { pageGutterSize } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 import { Attachment } from './Attachment';
 import SearchUserMail from './SearchUserMail';

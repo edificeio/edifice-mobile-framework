@@ -20,7 +20,7 @@ import { Icon, NamedSVG, Picture, PictureProps } from '~/framework/components/pi
 import { BodyText, CaptionItalicText, CaptionText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 import {

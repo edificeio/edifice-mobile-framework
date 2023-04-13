@@ -38,7 +38,7 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 
 export interface ConversationMailContentScreenNavigationParams {
