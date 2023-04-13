@@ -663,6 +663,8 @@
   "pronote.carnetDeBord.vieScolaire.type.Punition": "PUNITION",
   "pronote.carnetDeBord.vieScolaire.type.Retard": "RETARD",
   "pronote.carnetDeBord.vieScolaire.type.Sanction": "SANCTION",
+  "pronote-redirect-error-title": "Impossible de rediriger sur Pronote",
+  "pronote-redirect-error-message": "Il semble que le service Pronote n’est pas opérationnel. Veuillez réessayer plus tard ou contacter votre administrateur.",
   "pronote.selector.action": "Ouvrir Pronote",
   "pronote.selector.placeholder": "Choisir l’établissement",
   "pronote.selector.title": "Votre compte est relié à plusieurs établissements.\nChoississez l’établissement avec lequel vous voulez vous connecter.",

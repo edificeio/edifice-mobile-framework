@@ -14,6 +14,7 @@ export interface OpenUrlCustomLabels {
   continue?: string;
   cancel?: string;
   error?: string;
+  errorTitle?: string;
 }
 
 const verifyAndOpenUrl = async (finalUrl: string) => {
@@ -77,7 +78,9 @@ export async function openUrl(
       );
     } else verifyAndOpenUrl(finalUrl!);
   } catch (e) {
-    Alert.alert(customLabels?.error ?? I18n.t('common.redirect.browser.error'));
+    const title = customLabels?.errorTitle ?? customLabels?.error ?? I18n.t('common.redirect.browser.error');
+    const message = customLabels?.error ?? (title ? undefined : I18n.t('common.redirect.browser.error'));
+    Alert.alert(title, message);
     if (generateException) throw e;
   }
 }
