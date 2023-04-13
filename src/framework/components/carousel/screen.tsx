@@ -81,18 +81,20 @@ async function assertPermissions(permissions: Permission[]) {
 }
 
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
+  const showPrivacyAlert = action => {
+    Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
+      {
+        text: I18n.t('carousel.privacy.button'),
+        onPress: action,
+      },
+    ]);
+  };
+
   return (
     <NavBarActionsGroup
       elements={[
         <NavBarAction
-          onPress={() => {
-            Alert.alert(I18n.t('carousel.privacy.title'), I18n.t('carousel.privacy.text'), [
-              {
-                text: I18n.t('carousel.privacy.button'),
-                onPress: () => imageViewerRef.current?.saveToLocal?.(),
-              },
-            ]);
-          }}
+          onPress={() => showPrivacyAlert(() => imageViewerRef.current?.saveToLocal?.())}
           icon="ui-download"
           disabled={disabled}
         />,
@@ -100,7 +102,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
           actions={[
             {
               title: I18n.t('share'),
-              action: () => imageViewerRef.current?.share?.(),
+              action: () => showPrivacyAlert(() => imageViewerRef.current?.share?.()),
               icon: {
                 ios: 'square.and.arrow.up',
                 android: 'ic-menu-share',
