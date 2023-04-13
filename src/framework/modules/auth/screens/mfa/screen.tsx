@@ -222,7 +222,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     if (resendResponse === ResendResponse.FAIL) {
       Toast.showError(I18n.t('common.error.text'));
     } else if (resendResponse === ResendResponse.SUCCESS) {
-      Toast.showError(texts.resendToast);
+      Toast.showSuccess(texts.resendToast);
       if (codeState === CodeState.CODE_EXPIRED) startAnimation(CodeState.CODE_RESENT);
     }
   }, [codeState, resendVerificationCode, texts.resendToast]);
