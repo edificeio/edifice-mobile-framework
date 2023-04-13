@@ -9,9 +9,12 @@ import { Platform, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { isEmpty } from '~/framework/util/object';
+
+import { navigationRef } from './helper';
 
 const navBarTitleStyle: TextStyle = {
   color: theme.ui.text.inverse,
@@ -46,9 +49,15 @@ export const navBarOptions: (props: {
     headerLeft: props => {
       const navState = navigation.getState();
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.
-      return navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0 ? (
-        <HeaderBackButton {...props} onPress={navigation.goBack} />
-      ) : null;
+      if (navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0) {
+        const currentOptions = navigationRef.getCurrentOptions() as NativeStackNavigationOptions | undefined;
+        // On iOS modals, we want to use a close button instead of a back button
+        if (Platform.OS === 'ios' && currentOptions?.presentation === 'modal') {
+          return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" />;
+        } else {
+          return <HeaderBackButton {...props} onPress={navigation.goBack} />;
+        }
+      } else return null;
     },
     headerTintColor: theme.ui.text.inverse,
     headerBackVisible: false, // Since headerLeft replaces native back, we don't want him to show when there's no headerLeft
