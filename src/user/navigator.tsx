@@ -1,10 +1,8 @@
 import { createStackNavigator } from 'react-navigation-stack';
 
 import ChangePasswordPage from './containers/ChangePasswordPage';
-import ChildrenPage from './containers/ChildrenPage';
 import LegalNoticeScreen from './containers/LegalNoticeScreen';
 import PushNotifsSettingsScreen from './containers/PushNotifsSettingsScreen';
-import RelativesPage from './containers/RelativesPage';
 import StructuresPage from './containers/StructuresPage';
 import WhoAreWeScreen from './containers/WhoAreWeScreen';
 import XmasScreen from './containers/XmasScreen';
@@ -58,14 +56,6 @@ export default createStackNavigator(
 
     Structures: {
       screen: StructuresPage,
-    },
-
-    Relatives: {
-      screen: RelativesPage,
-    },
-
-    Children: {
-      screen: ChildrenPage,
     },
   },
   {
