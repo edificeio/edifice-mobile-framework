@@ -1,6 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { UserChildren } from '~/framework/modules/auth/model';
+import { UserPrivateData } from '~/framework/modules/auth/service';
 import type { UserNavigationParams } from '~/framework/modules/user/navigation';
 
 export type ChildrenDataByStructures = {
@@ -20,7 +21,8 @@ export interface UserFamilyScreenNavParams {
 export interface UserFamilyScreenProps {}
 
 export interface UserFamilyScreenStoreProps {
-  session: ISession | undefined;
+  childrenByStructures?: UserChildren;
+  relatives?: UserPrivateData['parents'];
 }
 
 export interface UserFamilyScreenPrivateProps

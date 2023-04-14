@@ -28,18 +28,21 @@ export const computeNavBar = ({
 });
 
 function UserFamilyScreen(props: UserFamilyScreenPrivateProps) {
-  const { route, session } = props;
+  const { childrenByStructures, relatives, route } = props;
   const mode = route.params.mode;
-  const relatives = session?.user?.relatives;
-  const childrenByStructures = session?.user?.children;
-  const childrenDataByStructures: ChildrenDataByStructures = [];
-  if (childrenByStructures)
-    for (const childrenByStructure of childrenByStructures) {
-      childrenDataByStructures.push({
-        structureName: childrenByStructure.structureName,
-        data: childrenByStructure.children,
-      });
+  const childrenDataByStructures = React.useMemo(() => {
+    const data: ChildrenDataByStructures = [];
+    if (childrenByStructures) {
+      for (const childrenByStructure of childrenByStructures) {
+        data.push({
+          structureName: childrenByStructure.structureName,
+          data: childrenByStructure.children,
+        });
+      }
     }
+    return data;
+  }, [childrenByStructures]);
+
   return (
     <PageView>
       {mode === 'children' && childrenByStructures ? (
@@ -79,5 +82,6 @@ function UserFamilyScreen(props: UserFamilyScreenPrivateProps) {
 }
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(),
+  relatives: getSession()?.user?.relatives,
+  childrenByStructures: getSession()?.user?.children,
 }))(UserFamilyScreen);
