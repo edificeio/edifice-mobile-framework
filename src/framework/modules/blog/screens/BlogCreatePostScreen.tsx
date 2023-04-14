@@ -139,6 +139,7 @@ export const computeNavBar = ({
     navigation,
     route,
     title: I18n.t('blog.blogCreatePostScreen.title'),
+    titleStyle: { width: undefined },
   }),
 });
 

@@ -22,25 +22,26 @@ const navBarTitleStyle: TextStyle = {
   width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navBarIconSize - 3 * UI_SIZES.elements.navbarMargin,
 };
 
-export const navBarTitle = (title?: string) =>
+export const navBarTitle = (title?: string, style?: TextStyle) =>
   !isEmpty(title) && Platform.OS === 'android'
     ? () => (
-        <BodyBoldText numberOfLines={1} style={navBarTitleStyle}>
+        <BodyBoldText numberOfLines={1} style={[navBarTitleStyle, style ?? {}]}>
           {title}
         </BodyBoldText>
       )
-    : title;
+    : title ?? '';
 
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;
   title?: string;
-}) => NativeStackNavigationOptions = ({ route, navigation, title }) =>
+  titleStyle?: TextStyle;
+}) => NativeStackNavigationOptions = ({ route, navigation, title, titleStyle }) =>
   ({
     headerStyle: {
       backgroundColor: theme.palette.primary.regular,
     },
-    headerTitle: navBarTitle(title),
+    headerTitle: navBarTitle(title, titleStyle),
     headerTitleAlign: 'center',
     headerTitleStyle: {
       ...TextFontStyle.Bold,

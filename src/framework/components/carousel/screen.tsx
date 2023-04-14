@@ -48,6 +48,9 @@ const styles = StyleSheet.create({
     height: UI_SIZES.screen.height,
     justifyContent: 'center',
   },
+  title: {
+    width: undefined,
+  },
 });
 
 class PermissionError extends Error {
@@ -128,6 +131,7 @@ export function computeNavBar({
         route.params.data.length !== 1
           ? I18n.t('carousel.counter', { current: route.params.startIndex ?? 1, total: route.params.data.length })
           : '',
+      titleStyle: styles.title,
     }),
     headerTransparent: true,
     headerBlurEffect: 'dark',
@@ -279,6 +283,7 @@ export function Carousel(props: ICarouselProps) {
           route.params.data.length !== 1
             ? I18n.t('carousel.counter', { current: indexDisplay, total: route.params.data.length })
             : '',
+          styles.title,
         ),
         headerRight: () => getButtons(imageState !== 'success'),
       });
@@ -288,7 +293,7 @@ export function Carousel(props: ICarouselProps) {
         headerStyle: { backgroundColor: 'transparent' },
         headerLeft: undefined,
         headerRight: undefined,
-        headerTitle: navBarTitle(),
+        headerTitle: '',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

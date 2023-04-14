@@ -27,7 +27,7 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, sendMobileVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -45,8 +45,8 @@ export const computeNavBar = ({
     ...navBarOptions({
       navigation,
       route,
+      title: getNavBarTitle(route),
     }),
-    headerTitle: navBarTitle(getNavBarTitle(route)),
   };
 };
 

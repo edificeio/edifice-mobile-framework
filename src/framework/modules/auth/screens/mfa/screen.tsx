@@ -33,7 +33,7 @@ import {
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
@@ -71,8 +71,8 @@ export const computeNavBar = ({
     ...navBarOptions({
       navigation,
       route,
+      title,
     }),
-    headerTitle: navBarTitle(title),
   };
 };
 

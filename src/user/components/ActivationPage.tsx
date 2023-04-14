@@ -12,6 +12,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
+import { navBarTitle } from '~/framework/navigation/navBar';
 import { BackdropPdfReaderScreen } from '~/framework/screens/PdfReaderScreen';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
@@ -134,7 +135,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
       <PageView
         navigation={navigation}
         navBarWithBack={{
-          title: I18n.t('activation-title'),
+          headerTitle: navBarTitle(I18n.t('activation-title')),
         }}>
         <SafeAreaView style={{ flex: 1, backgroundColor: theme.ui.background.card }}>
           <KeyboardAvoidingView

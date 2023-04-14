@@ -16,7 +16,7 @@ import ChangePasswordScreen from '~/framework/modules/auth/screens/change-passwo
 import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { AuthRouteNames, IAuthNavigationParams } from '.';
@@ -34,50 +34,50 @@ export default function () {
         name={AuthRouteNames.loginHome}
         component={LoginHomeScreen}
         options={({ route }) => ({
-          title: route.params?.platform.displayName,
+          headerTitle: navBarTitle(route.params?.platform.displayName),
         })}
       />
       <Stack.Screen
         name={AuthRouteNames.loginWayf}
         component={LoginWayfScreen}
         options={({ route }) => ({
-          title: route.params?.platform.displayName,
+          headerTitle: navBarTitle(route.params?.platform.displayName),
         })}
       />
       <Stack.Screen
         name={AuthRouteNames.wayf}
         component={WayfScreen}
         options={{
-          title: I18n.t('login-wayf-main-title'),
+          headerTitle: navBarTitle(I18n.t('login-wayf-main-title')),
         }}
       />
       <Stack.Screen
         name={AuthRouteNames.activation}
         component={ActivationScreen}
         options={{
-          title: I18n.t('activation-title'),
+          headerTitle: navBarTitle(I18n.t('activation-title')),
         }}
       />
       <Stack.Screen
         name={AuthRouteNames.forgot}
         component={ForgotScreen}
         options={({ route }) => ({
-          title: route.params.mode === 'id' ? I18n.t('forgot-id') : I18n.t('forgot-password'),
+          headerTitle: navBarTitle(route.params.mode === 'id' ? I18n.t('forgot-id') : I18n.t('forgot-password')),
         })}
       />
       <Stack.Screen
         name={AuthRouteNames.revalidateTerms}
         component={RevalidateTermsScreen}
-        options={({ route }) => ({
-          title: I18n.t('user.revalidateTermsScreen.title'),
-        })}
+        options={{
+          headerTitle: navBarTitle(I18n.t('user.revalidateTermsScreen.title')),
+        }}
       />
       <Stack.Screen
         name={AuthRouteNames.changePassword}
         component={ChangePasswordScreen}
-        options={({ route }) => ({
-          title: I18n.t('user.page.editPassword'),
-        })}
+        options={{
+          headerTitle: navBarTitle(I18n.t('user.page.editPassword')),
+        }}
       />
       <Stack.Screen
         name={AuthRouteNames.changeEmail}

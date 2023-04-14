@@ -87,7 +87,6 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: undefined,
   }),
 });
 
