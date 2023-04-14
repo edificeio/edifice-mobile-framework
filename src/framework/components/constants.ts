@@ -1,4 +1,4 @@
-import { Dimensions, Insets, Platform, StatusBar, StyleSheet } from 'react-native';
+import { Dimensions, Insets, Platform, StyleSheet } from 'react-native';
 import DeviceInfo, { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -89,7 +89,7 @@ export const UI_SIZES = {
     navbarButtonSize: 32,
     navBarIconSize: 24,
     navbarMargin: 16,
-    statusbarHeight: StatusBar.currentHeight,
+    statusbarHeight: Platform.select({ ios: 19, default: 0 }),
     tabbarHeight: 56,
     tabBarIconSize: Platform.select({ ios: 25, default: 19 }),
     tabBarLabelMargin: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),

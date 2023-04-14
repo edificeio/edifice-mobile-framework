@@ -63,7 +63,9 @@ function useCurvedNavBarFeature() {
     svgDisplayWidth * (useCurvedNavBarFeature.svgOriginalHeight / useCurvedNavBarFeature.svgOriginalWidth),
   );
   const svgDisplayTopOffset =
-    Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) - svgDisplayHeight;
+    Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) -
+    svgDisplayHeight +
+    UI_SIZES.elements.statusbarHeight;
 
   // SVG size management
   return React.useMemo(() => {
