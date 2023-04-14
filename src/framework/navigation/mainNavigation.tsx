@@ -5,7 +5,16 @@
  * navBar shows up with the RootSTack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
  */
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationHelpers, ParamListBase, StackActions } from '@react-navigation/native';
+import {
+  CommonActions,
+  EventMapBase,
+  NavigationHelpers,
+  NavigationState,
+  ParamListBase,
+  ScreenListeners,
+  StackActions,
+  TabActions,
+} from '@react-navigation/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
@@ -21,6 +30,7 @@ import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framewo
 
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
+import { setNextTabJump } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
@@ -74,18 +84,36 @@ const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
 };
 
 /**
- * Resets tabs with stackNavigators to the first route when navigation to another tab
+ * The tab listener handles reset the stack inside a tab when leaving the tab + handle prevent back mechanic in this case.
  */
-const resetTabStacksOnBlur = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
-  blur: () => {
-    const state = navigation.getState();
-    state.routes.forEach((route, tabIndex) => {
-      if (state?.index !== tabIndex && route.state?.index !== undefined && route.state?.index > 0) {
-        navigation.dispatch(StackActions.popToTop());
+const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) =>
+  ({
+    tabPress: event => {
+      if (!event.target) return;
+      const state = navigation.getState();
+      (event as unknown as React.SyntheticEvent).preventDefault(); // Types given by ScreenListeners are wrong here. We use SyntheticEvent as a fallback that contains preventDefault.
+      let doTabSwitch: boolean = true;
+      state.routes.forEach((route, tabIndex) => {
+        //
+        if (tabIndex === state.index) {
+          // Narrows to the current tab
+          if (state.routes[state.index]?.state?.index !== undefined && state.routes[state.index]?.state?.index !== 0) {
+            // Pop to top only if there at least two pages in the stack
+            navigation.dispatch(StackActions.popToTop());
+            const newState = navigation.getState();
+            doTabSwitch = newState !== state;
+          }
+        }
+      });
+      // Then, change tabs only if previous pop to top hadn't be blocked by preventRemove or something else...
+      if (doTabSwitch) {
+        navigation.navigate({ key: event.target });
+      } else {
+        // Else, register the tab change that will be handled in preventRemove callback
+        setNextTabJump(CommonActions.navigate({ key: event.target }));
       }
-    });
-  },
-});
+    },
+  } as ScreenListeners<NavigationState, EventMapBase>);
 
 export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?: IEntcoreWidget[] }) {
   const RootStack = getTypedRootStack();
@@ -105,11 +133,13 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
             key={module.config.routeName}
             name={computeTabRouteName(module.config.routeName)}
             options={createTabOptions(module.config)}
-            listeners={resetTabStacksOnBlur}>
+            listeners={tabListeners}>
             {TabStack}
           </Tab.Screen>
         );
       });
+    // We effectively want to have this deps to minimise re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apps]);
   const screenOptions: BottomTabNavigationOptions = React.useMemo(
     () => ({

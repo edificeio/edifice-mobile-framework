@@ -35,6 +35,7 @@ import { ConversationNavigationParams, conversationRouteNames } from '~/framewor
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -125,6 +126,10 @@ const HandleBack = () => {
   UNSTABLE_usePreventRemove(true, ({ data }) => {
     route?.params?.onGoBack?.();
     navigation.dispatch(data.action);
+    const nextJump = consumeNextTabJump();
+    if (nextJump) {
+      navigation.dispatch(nextJump);
+    }
   });
   return null;
 };

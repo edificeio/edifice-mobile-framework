@@ -28,6 +28,7 @@ import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -244,7 +245,13 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         {
           text: I18n.t('common.quit'),
           style: 'destructive',
-          onPress: () => props.navigation.dispatch(data.action),
+          onPress: () => {
+            props.navigation.dispatch(data.action);
+            const nextJump = consumeNextTabJump();
+            if (nextJump) {
+              props.navigation.dispatch(nextJump);
+            }
+          },
         },
         {
           text: I18n.t('common.continue'),

@@ -28,6 +28,7 @@ import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~
 import { getMobileValidationInfos, sendMobileVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -178,7 +179,13 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     Alert.alert(I18n.t('auth-change-mobile-edit-alert-title'), I18n.t('auth-change-mobile-edit-alert-message'), [
       {
         text: I18n.t('common.discard'),
-        onPress: () => props.navigation.dispatch(data.action),
+        onPress: () => {
+          props.navigation.dispatch(data.action);
+          const nextJump = consumeNextTabJump();
+          if (nextJump) {
+            props.navigation.dispatch(nextJump);
+          }
+        },
         style: 'destructive',
       },
       {

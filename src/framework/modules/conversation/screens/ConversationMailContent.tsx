@@ -35,6 +35,7 @@ import { DraftType } from '~/framework/modules/conversation/screens/Conversation
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -112,6 +113,10 @@ const HandleBack = () => {
   UNSTABLE_usePreventRemove(true, ({ data }) => {
     route?.params?.onGoBack?.();
     navigation.dispatch(data.action);
+    const nextJump = consumeNextTabJump();
+    if (nextJump) {
+      navigation.dispatch(nextJump);
+    }
   });
   return null;
 };

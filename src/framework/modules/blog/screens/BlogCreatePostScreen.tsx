@@ -30,6 +30,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
@@ -152,7 +153,13 @@ function PreventBack(props: { isEditing: boolean }) {
       [
         {
           text: I18n.t('common.quit'),
-          onPress: () => navigation.dispatch(data.action),
+          onPress: () => {
+            navigation.dispatch(data.action);
+            const nextJump = consumeNextTabJump();
+            if (nextJump) {
+              navigation.dispatch(nextJump);
+            }
+          },
           style: 'destructive',
         },
         {
