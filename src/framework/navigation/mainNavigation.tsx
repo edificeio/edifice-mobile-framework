@@ -104,7 +104,7 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
           <Tab.Screen
             key={module.config.routeName}
             name={computeTabRouteName(module.config.routeName)}
-            options={{ ...createTabOptions(module.config), tabBarHideOnKeyboard: true }}
+            options={createTabOptions(module.config)}
             listeners={resetTabStacksOnBlur}>
             {TabStack}
           </Tab.Screen>
@@ -127,6 +127,7 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
       tabBarIconStyle: { marginTop: UI_SIZES.elements.tabBarLabelMargin },
       tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
       tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
+      tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
     }),
     [],
   );
