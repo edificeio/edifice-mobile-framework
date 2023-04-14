@@ -109,7 +109,6 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
 
 export const defaultNotificationActionStack = [
   defaultNotificationActions.moduleRedirection,
-  defaultNotificationActions.legacyRedirection,
   defaultNotificationActions.webRedirection,
   defaultNotificationActions.timelineRedirection,
 ];
