@@ -55,7 +55,7 @@ export const computeNavBar = ({
  * @returns the React Element of the decoration
  */
 function useCurvedNavBarFeature() {
-  const navBarHeight = useHeaderHeight();
+  const navBarHeight = useHeaderHeight() - UI_SIZES.screen.topInset;
 
   // SVG size management
   const svgDisplayWidth = UI_SIZES.screen.width;
@@ -63,10 +63,7 @@ function useCurvedNavBarFeature() {
     svgDisplayWidth * (useCurvedNavBarFeature.svgOriginalHeight / useCurvedNavBarFeature.svgOriginalWidth),
   );
   const svgDisplayTopOffset =
-    Math.ceil(
-      (navBarHeight - useCurvedNavBarFeature.svgDisplayTopOffsetTolerance) *
-        (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth),
-    ) - svgDisplayHeight;
+    Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) - svgDisplayHeight;
 
   // SVG size management
   return React.useMemo(() => {
