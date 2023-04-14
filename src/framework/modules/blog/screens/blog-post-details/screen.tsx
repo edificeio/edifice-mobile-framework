@@ -520,7 +520,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
-    const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View style={styles.detailsMain}>
         <View style={styles.detailsPost}>
