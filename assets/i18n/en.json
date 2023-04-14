@@ -449,6 +449,7 @@
   "forgot-no-match": "User unknown or no email address provided for this user. Please contact your VLE administrator.",
   "forgot-no-match-id": "Unknown email address. Please contact your VLE administrator.",
   "forgot-not-activated": "Your account is not activated. Please contact the VLE administrator for your school.",
+  "forgot-not-activated-id": "Your account is not activated. Please contact the VLE administrator for your school.",
   "forgot-password": "Password forgotten",
   "forgot-password-instructions": "Enter your username to receive your password.",
   "forgot-several-emails": "This email address is being used by several users. Please confirm your information to receive your login.",

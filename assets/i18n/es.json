@@ -449,6 +449,7 @@
   "forgot-no-match": "Usuario desconocido o ninguna dirección de correo electrónico indicada para este usuario. Póngase en contacto con el administrador.",
   "forgot-no-match-id": "Dirección de correo electrónico desconocida. Póngase en contacto con el administrador del EAV.",
   "forgot-not-activated": "Su cuenta no está activada, contacte con el administrador de su establecimiento.",
+  "forgot-not-activated-id": "Su cuenta no está activada, contacte con el administrador de su establecimiento.",
   "forgot-password": "Contraseña olvidada",
   "forgot-password-instructions": "Escriba su nombre de usuario para recibir su contraseña.",
   "forgot-several-emails": "Varios usuarios utilizan esta dirección de correo electrónico. Aporte información determinada para poder recibir su inicio de sesión.",
