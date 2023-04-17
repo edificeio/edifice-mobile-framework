@@ -299,15 +299,17 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
             login: userInfo.login,
             service: 'mail',
           };
-    const res = await fetch(`${platform.url}/auth/forgot-${forgotMode === 'id' ? 'id' : 'password'}`, {
+    const api = `${platform.url}/auth/forgot-${forgotMode === 'id' ? 'id' : 'password'}`;
+    const res = await fetch(api, {
       body: JSON.stringify(payLoad),
       method: 'POST',
       headers: {
         'X-Device-Id': uniqueId(),
+        'Content-Type': 'application/json',
       },
     });
+    const resStatus = res.status;
     const resJson = await res.json();
-    const resStatus = await res.status;
     const ok = resStatus >= 200 && resStatus < 300;
     const response = { ...resJson, ok };
     return response;
