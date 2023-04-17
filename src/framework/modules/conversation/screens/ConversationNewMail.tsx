@@ -70,7 +70,6 @@ export interface ConversationNewMailScreenNavigationParams {
   getSendDraft: () => void;
   mailId: string;
   type: DraftType;
-  onGoBack: () => void;
 }
 
 interface ConversationNewMailScreenEventProps {
@@ -126,7 +125,6 @@ const HandleBack = () => {
   UNSTABLE_usePreventRemove(true, ({ data }) => {
     route?.params?.getGoBack(() => {
       navigation.dispatch(data.action);
-      route?.params?.onGoBack?.();
     });
     const nextJump = consumeNextTabJump();
     if (nextJump) {

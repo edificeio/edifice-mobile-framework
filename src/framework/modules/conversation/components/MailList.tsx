@@ -128,6 +128,19 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     };
   }
 
+  componentDidMount() {
+    this.props.navigation.addListener('focus', this.handleFocus);
+  }
+
+  componentWillUnmount() {
+    this.props.navigation.removeListener('focus', this.handleFocus);
+  }
+
+  handleFocus = () => {
+    this.refreshMailList();
+    this.props.fetchInit();
+  };
+
   componentDidUpdate(prevProps) {
     const { notifications, isFetching, fetchCompleted, fetchRequested, navigation } = this.props;
     const { isChangingPage, indexPage } = this.state;
@@ -182,20 +195,12 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
-        onGoBack: () => {
-          this.refreshMailList();
-          fetchInit();
-        },
       });
     } else {
       navigation.navigate(`${moduleConfig.routeName}/mail-content`, {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
         currentFolder: navigationKey || 'inbox',
-        onGoBack: () => {
-          this.refreshMailList();
-          fetchInit();
-        },
         isTrashed,
       });
     }

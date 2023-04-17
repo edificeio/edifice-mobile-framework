@@ -1,4 +1,4 @@
-import { CommonActions, UNSTABLE_usePreventRemove, useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
@@ -35,7 +35,6 @@ import { DraftType } from '~/framework/modules/conversation/screens/Conversation
 import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModal';
 import { getMailContentState } from '~/framework/modules/conversation/state/mailContent';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { PageContainer } from '~/ui/ContainerContent';
@@ -47,7 +46,6 @@ export interface ConversationMailContentScreenNavigationParams {
   isTrashed: boolean;
   mailId: string;
   subject: string;
-  onGoBack: () => void;
 }
 interface ConversationMailContentScreenEventProps {
   fetchMailContent: (mailId: string) => void;
@@ -106,20 +104,6 @@ const styles = StyleSheet.create({
   mailContentContainer: { flexGrow: 1, padding: UI_SIZES.spacing.small, backgroundColor: theme.ui.background.card },
   scrollView: { flex: 1 },
 });
-
-const HandleBack = () => {
-  const route = useRoute();
-  const navigation = useNavigation();
-  UNSTABLE_usePreventRemove(true, ({ data }) => {
-    route?.params?.onGoBack?.();
-    navigation.dispatch(data.action);
-    const nextJump = consumeNextTabJump();
-    if (nextJump) {
-      navigation.dispatch(nextJump);
-    }
-  });
-  return null;
-};
 
 class MailContentScreen extends React.PureComponent<ConversationMailContentScreenProps, ConversationMailContentScreenState> {
   _subjectRef?: React.Ref<any> = undefined;
@@ -250,7 +234,6 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
 
     return (
       <>
-        <HandleBack />
         <PageView>
           <PageContainer style={{ backgroundColor: theme.ui.background.page }}>
             {isFetching ? (
@@ -307,7 +290,6 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
                 type: DraftType.REPLY,
                 mailId: mail.id,
-                onGoBack: route.params.onGoBack,
                 currentFolder: route.params.currentFolder,
               });
             }}
@@ -322,7 +304,6 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
                 type: DraftType.REPLY_ALL,
                 mailId: mail.id,
-                onGoBack: route.params.onGoBack,
                 currentFolder: route.params.currentFolder,
               });
             }}
@@ -337,7 +318,6 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
               navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
                 type: DraftType.FORWARD,
                 mailId: mail.id,
-                onGoBack: route.params.onGoBack,
               });
             }}
           />
