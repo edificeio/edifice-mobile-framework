@@ -1,5 +1,4 @@
 import I18n from 'i18n-js';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ToastMessage from 'react-native-toast-message';
 
 export default class Toast {
