@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import { Platform } from 'react-native';
 import Share from 'react-native-share';
-import type { NavigationInjectedProps } from 'react-navigation';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import Toast from '~/framework/components/toast';
@@ -186,18 +185,17 @@ export const convertIFileToIDistantFile = (file: IFile) => {
  * Download and open the given file.
  */
 export const workspacePreviewActionsCreators = createAsyncActionCreators(actionTypes.preview);
-export const downloadThenOpenWorkspaceFileAction =
-  (file: IFile, navigation: NavigationInjectedProps['navigation']) => async (dispatch, getState) => {
-    try {
-      dispatch(workspacePreviewActionsCreators.request());
-      const distanteFile = convertIFileToIDistantFile(file);
-      const resultingFile = await openDocument(distanteFile, navigation);
-      dispatch(workspacePreviewActionsCreators.receipt(resultingFile));
-    } catch (e) {
-      dispatch(workspacePreviewActionsCreators.error(e as Error));
-      throw e;
-    }
-  };
+export const downloadThenOpenWorkspaceFileAction = (file: IFile) => async (dispatch, getState) => {
+  try {
+    dispatch(workspacePreviewActionsCreators.request());
+    const distanteFile = convertIFileToIDistantFile(file);
+    const resultingFile = await openDocument(distanteFile);
+    dispatch(workspacePreviewActionsCreators.receipt(resultingFile));
+  } catch (e) {
+    dispatch(workspacePreviewActionsCreators.error(e as Error));
+    throw e;
+  }
+};
 
 /**
  * Download and share the given file.

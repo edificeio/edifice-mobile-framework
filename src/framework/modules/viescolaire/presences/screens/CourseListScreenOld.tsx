@@ -1,8 +1,8 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -23,7 +23,7 @@ import {
 import CourseList from '~/framework/modules/viescolaire/presences/components/CourseListOld';
 import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
-import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -46,7 +46,7 @@ type IPresencesCourseListScreenOldProps = {
   ) => Promise<ICourse[]>;
   fetchMultipleSlotsSetting: (structureId: string) => Promise<boolean>;
   fetchRegisterPreference: () => Promise<string>;
-} & NavigationInjectedProps;
+} & NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.memento>;
 
 const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps) => {
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);

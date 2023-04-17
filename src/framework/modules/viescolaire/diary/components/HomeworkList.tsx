@@ -1,8 +1,8 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -21,7 +21,7 @@ import {
   sessionListDetailsAdapter,
 } from '~/framework/modules/viescolaire/common/utils/diary';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
+import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { PageContainer } from '~/ui/ContainerContent';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -75,7 +75,7 @@ type HomeworkListProps = {
   onRefreshSessions: any;
   childId: string;
   userType?: UserType;
-} & NavigationInjectedProps;
+} & NativeStackScreenProps<DiaryNavigationParams, typeof diaryRouteNames.homeworkList>;
 
 const EmptyComponent = ({ title }) => <EmptyScreen svgImage="empty-homework" title={title} />;
 
