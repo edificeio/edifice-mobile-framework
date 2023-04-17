@@ -2,7 +2,7 @@
  * Workaround to hide tabBar on some screens on Android, because it currently does not implement native modals...
  *
  * How to :
- * use `hideAndroidTabBarOnTheseRoutes` in your module to populate the route map on which tabBar is hidden
+ * use `hideAndroidTabbarForRoutes` in your module to populate the route map on which tabBar is hidden
  * use `getAndroidTabBarStyleForNavState` by giving navState to get the nav options to apply
  */
 import { NavigationState } from '@react-navigation/native';
@@ -10,7 +10,7 @@ import { Platform } from 'react-native';
 
 const routesWithTabBarHiddenOnAndroid: string[] = [];
 
-export const hideAndroidTabBarOnTheseRoutes = (routeNames: string[]) => {
+export const hideAndroidTabbarForRoutes = (routeNames: string[]) => {
   routesWithTabBarHiddenOnAndroid.push(...routeNames);
 };
 

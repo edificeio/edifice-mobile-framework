@@ -7,7 +7,7 @@ import { getTypedRootStack } from '~/framework/navigation/navigators';
 import { BackdropPdfReaderScreen, computeNavBar as noticeNavBar } from '~/framework/screens/PdfReaderScreen';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
-import { hideAndroidTabBarOnTheseRoutes } from '../hideTabBarAndroid';
+import { hideAndroidTabbarForRoutes } from '../hideTabBarAndroid';
 
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
@@ -30,4 +30,4 @@ export default (
   </>
 );
 
-hideAndroidTabBarOnTheseRoutes([ModalsRouteNames.Pdf, ModalsRouteNames.Carousel, ModalsRouteNames.MediaPlayer]);
+hideAndroidTabbarForRoutes([ModalsRouteNames.Pdf, ModalsRouteNames.Carousel, ModalsRouteNames.MediaPlayer]);
