@@ -45,7 +45,6 @@ import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
-import { computeRelativePath } from '~/framework/util/navigation';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -159,9 +158,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     const { id, name: title, isFolder } = file;
     if (isFolder) {
       const newFilter = filter === Filter.ROOT ? id : filter;
-      navigation.push(computeRelativePath(moduleConfig.routeName), { filter: newFilter, parentId: id, title });
+      navigation.push(moduleConfig.routeName, { filter: newFilter, parentId: id, title });
     } else {
-      navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/file-preview`), { file, title });
+      navigation.navigate(`${moduleConfig.routeName}/file-preview`, { file, title });
     }
   };
 

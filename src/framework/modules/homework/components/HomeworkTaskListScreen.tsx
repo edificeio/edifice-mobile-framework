@@ -23,7 +23,6 @@ import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
-import { computeRelativePath } from '~/framework/util/navigation';
 import { Trackers } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 
@@ -250,7 +249,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                 title={item.title}
                 content={item.content}
                 date={item.date}
-                onPress={() => navigation!.navigate(computeRelativePath(`${config.name}/details`), { task: item })}
+                onPress={() => navigation!.navigate(`${config.name}/details`, { task: item })}
               />
             )
           }
