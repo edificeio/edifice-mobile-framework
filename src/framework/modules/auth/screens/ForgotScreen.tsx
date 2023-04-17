@@ -3,23 +3,14 @@ import { Picker } from '@react-native-picker/picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform as RNPlatform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
-import { PageView } from '~/framework/components/page';
+import { KeyboardPageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { forgotAction } from '~/framework/modules/auth/actions';
@@ -68,8 +59,7 @@ const LogoWrapper = styled.View({
 });
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: theme.ui.background.card },
-  keyboardAvoidingView: { flex: 1, backgroundColor: theme.ui.background.card },
+  keyboardAvoidingView: { backgroundColor: theme.ui.background.card },
   flexGrow1: { flexGrow: 1 },
   inputWrapper: {
     alignSelf: 'stretch',
@@ -174,149 +164,143 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
         : !login || (forgotMode === 'id' && !isValidEmail) || (isError && !editing);
 
     return (
-      <PageView>
-        <SafeAreaView style={styles.safeArea}>
-          <FormPage>
-            <KeyboardAvoidingView style={styles.keyboardAvoidingView} behavior={RNPlatform.OS === 'ios' ? 'padding' : undefined}>
-              <ScrollView
-                alwaysBounceVertical={false}
-                overScrollMode="never"
-                contentContainerStyle={styles.flexGrow1}
-                keyboardShouldPersistTaps="handled">
-                <FormWrapper>
-                  <FormContainer>
-                    <LogoWrapper>
-                      <HeadingSText style={styles.textColorLight}>
-                        {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}`)}
-                      </HeadingSText>
-                      <SmallText style={styles.textColorLight}>
-                        {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}-instructions`)}
-                      </SmallText>
-                    </LogoWrapper>
-                    {!isSuccess ? (
-                      <TextInputLine
-                        inputRef={this.setInputLoginRef}
-                        placeholder={I18n.t(forgotMode === 'id' ? 'Email' : 'Login')}
-                        onChange={({ nativeEvent: { text } }) => {
-                          this.setState({
-                            login: text,
-                            editing: true,
-                          });
-                        }}
-                        value={login}
-                        hasError={(isError && !editing && !(hasStructures && errorMsg)) ?? false}
-                        keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
-                        editable={!hasStructures}
-                        // inputStyle={hasStructures ? styles.inputLine : undefined}
-                        returnKeyLabel={I18n.t('forgot-submit')}
-                        returnKeyType="done"
-                        onSubmitEditing={() => this.doSubmit()}
-                        autoCapitalize="none"
-                        autoCorrect={false}
-                        spellCheck={false}
-                      />
-                    ) : null}
-                    {(hasStructures && !isSuccess) || (isError && !editing) ? (
-                      <SmallText style={styles.errorMsg}>{errorText}</SmallText>
-                    ) : null}
-                    {isSuccess ? (
-                      <SmallText style={styles.infoMsg}>
-                        {editing ? '' : isSuccess && I18n.t(`forgot-success-${forgotMode}`)}
-                      </SmallText>
-                    ) : null}
-                    {forgotMode === 'id' && hasStructures && !isSuccess ? (
-                      <>
-                        <TextInputLine
-                          inputRef={this.setInputLoginRef}
-                          placeholder={I18n.t('Firstname')}
-                          value={firstName}
-                          hasError={(isError && !editing) ?? false}
-                          onChange={({ nativeEvent: { text } }) => {
-                            this.setState({
-                              firstName: text,
-                              editing: true,
-                            });
-                          }}
-                        />
-                        <View
-                          style={[
-                            styles.inputWrapper,
-                            // Strangely, eslint considers this style is inline-defined.
-                            // eslint-disable-next-line react-native/no-inline-styles
-                            {
-                              backgroundColor: structureName ? theme.palette.complementary.blue.regular : undefined,
-                              borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
-                              borderBottomColor:
-                                isError && !editing
-                                  ? theme.palette.status.failure.regular
-                                  : showStructurePicker
-                                  ? theme.palette.complementary.blue.regular
-                                  : theme.palette.grey.grey,
-                            },
-                          ]}>
-                          <TextInputLine
-                            editable={false}
-                            hasError={false}
-                            inputRef={this.setInputLoginRef}
-                            placeholder={I18n.t('School')}
-                            value={structureName}
-                            style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
-                            // inputStyle={styles.inputLine}
-                          />
-                          <Icon
-                            name="arrow_down"
-                            color={structureName ? theme.ui.text.inverse : theme.palette.grey.black}
-                            style={[
-                              { marginTop: UI_SIZES.spacing.small },
-                              showStructurePicker && { transform: [{ rotate: '180deg' }] },
-                            ]}
-                          />
-                          <TouchableOpacity
-                            style={styles.touchable}
-                            onPress={() => this.setState({ showStructurePicker: !showStructurePicker })}
-                          />
-                        </View>
-                        {showStructurePicker ? (
-                          <Picker
-                            selectedValue={structureName}
-                            style={styles.picker}
-                            onValueChange={itemValue => this.setState({ structureName: itemValue, editing: true })}>
-                            <Picker.Item label="" value={null} />
-                            {structures &&
-                              structures.map(structure => (
-                                <Picker.Item label={structure.structureName} value={structure.structureName} />
-                              ))}
-                          </Picker>
-                        ) : null}
-                      </>
-                    ) : null}
+      <KeyboardPageView style={styles.keyboardAvoidingView}>
+        <FormPage>
+          <ScrollView
+            alwaysBounceVertical={false}
+            overScrollMode="never"
+            contentContainerStyle={styles.flexGrow1}
+            keyboardShouldPersistTaps="handled">
+            <FormWrapper>
+              <FormContainer>
+                <LogoWrapper>
+                  <HeadingSText style={styles.textColorLight}>
+                    {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}`)}
+                  </HeadingSText>
+                  <SmallText style={styles.textColorLight}>
+                    {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}-instructions`)}
+                  </SmallText>
+                </LogoWrapper>
+                {!isSuccess ? (
+                  <TextInputLine
+                    inputRef={this.setInputLoginRef}
+                    placeholder={I18n.t(forgotMode === 'id' ? 'Email' : 'Login')}
+                    onChange={({ nativeEvent: { text } }) => {
+                      this.setState({
+                        login: text,
+                        editing: true,
+                      });
+                    }}
+                    value={login}
+                    hasError={(isError && !editing && !(hasStructures && errorMsg)) ?? false}
+                    keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
+                    editable={!hasStructures}
+                    // inputStyle={hasStructures ? styles.inputLine : undefined}
+                    returnKeyLabel={I18n.t('forgot-submit')}
+                    returnKeyType="done"
+                    onSubmitEditing={() => this.doSubmit()}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    spellCheck={false}
+                  />
+                ) : null}
+                {(hasStructures && !isSuccess) || (isError && !editing) ? (
+                  <SmallText style={styles.errorMsg}>{errorText}</SmallText>
+                ) : null}
+                {isSuccess ? (
+                  <SmallText style={styles.infoMsg}>{editing ? '' : isSuccess && I18n.t(`forgot-success-${forgotMode}`)}</SmallText>
+                ) : null}
+                {forgotMode === 'id' && hasStructures && !isSuccess ? (
+                  <>
+                    <TextInputLine
+                      inputRef={this.setInputLoginRef}
+                      placeholder={I18n.t('Firstname')}
+                      value={firstName}
+                      hasError={(isError && !editing) ?? false}
+                      onChange={({ nativeEvent: { text } }) => {
+                        this.setState({
+                          firstName: text,
+                          editing: true,
+                        });
+                      }}
+                    />
                     <View
                       style={[
-                        styles.buttonWrapper,
+                        styles.inputWrapper,
+                        // Strangely, eslint considers this style is inline-defined.
+                        // eslint-disable-next-line react-native/no-inline-styles
                         {
-                          marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
+                          backgroundColor: structureName ? theme.palette.complementary.blue.regular : undefined,
+                          borderBottomWidth: (isError && !editing) || showStructurePicker ? 2 : 0.9,
+                          borderBottomColor:
+                            isError && !editing
+                              ? theme.palette.status.failure.regular
+                              : showStructurePicker
+                              ? theme.palette.complementary.blue.regular
+                              : theme.palette.grey.grey,
                         },
                       ]}>
-                      {!isSuccess || editing ? (
-                        <ActionButton
-                          action={() => this.doSubmit()}
-                          disabled={canSubmit}
-                          text={I18n.t('forgot-submit')}
-                          loading={this.state.forgotState === 'RUNNING'}
-                        />
-                      ) : null}
-
-                      {hasStructures && errorMsg ? (
-                        <SmallText style={styles.errorMsg}>{I18n.t('forgot-several-emails-no-match')}</SmallText>
-                      ) : null}
+                      <TextInputLine
+                        editable={false}
+                        hasError={false}
+                        inputRef={this.setInputLoginRef}
+                        placeholder={I18n.t('School')}
+                        value={structureName}
+                        style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
+                        // inputStyle={styles.inputLine}
+                      />
+                      <Icon
+                        name="arrow_down"
+                        color={structureName ? theme.ui.text.inverse : theme.palette.grey.black}
+                        style={[
+                          { marginTop: UI_SIZES.spacing.small },
+                          showStructurePicker && { transform: [{ rotate: '180deg' }] },
+                        ]}
+                      />
+                      <TouchableOpacity
+                        style={styles.touchable}
+                        onPress={() => this.setState({ showStructurePicker: !showStructurePicker })}
+                      />
                     </View>
-                  </FormContainer>
-                </FormWrapper>
-              </ScrollView>
-            </KeyboardAvoidingView>
-          </FormPage>
-        </SafeAreaView>
-      </PageView>
+                    {showStructurePicker ? (
+                      <Picker
+                        selectedValue={structureName}
+                        style={styles.picker}
+                        onValueChange={itemValue => this.setState({ structureName: itemValue, editing: true })}>
+                        <Picker.Item label="" value={null} />
+                        {structures &&
+                          structures.map(structure => (
+                            <Picker.Item label={structure.structureName} value={structure.structureName} />
+                          ))}
+                      </Picker>
+                    ) : null}
+                  </>
+                ) : null}
+                <View
+                  style={[
+                    styles.buttonWrapper,
+                    {
+                      marginTop: (isError || isSuccess) && !editing ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
+                    },
+                  ]}>
+                  {!isSuccess || editing ? (
+                    <ActionButton
+                      action={() => this.doSubmit()}
+                      disabled={canSubmit}
+                      text={I18n.t('forgot-submit')}
+                      loading={this.state.forgotState === 'RUNNING'}
+                    />
+                  ) : null}
+
+                  {hasStructures && errorMsg ? (
+                    <SmallText style={styles.errorMsg}>{I18n.t('forgot-several-emails-no-match')}</SmallText>
+                  ) : null}
+                </View>
+              </FormContainer>
+            </FormWrapper>
+          </ScrollView>
+        </FormPage>
+      </KeyboardPageView>
     );
   }
 }

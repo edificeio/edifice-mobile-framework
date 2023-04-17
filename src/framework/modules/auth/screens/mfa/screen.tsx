@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import Lottie from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Platform, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -33,7 +33,7 @@ import {
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
@@ -66,16 +66,13 @@ export const computeNavBar = ({
   typeof AuthRouteNames.mfa | typeof AuthRouteNames.mfaModal
 >): NativeStackNavigationOptions => {
   const routeParams = route.params;
-  const title = Platform.select({
-    ios: routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.t('auth-mfa-title'),
-    android: routeParams.navBarTitle,
-  });
+  const title = routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.t('auth-mfa-title');
   return {
     ...navBarOptions({
       navigation,
       route,
+      title,
     }),
-    headerTitle: navBarTitle(title),
   };
 };
 
@@ -225,7 +222,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     if (resendResponse === ResendResponse.FAIL) {
       Toast.showError(I18n.t('common.error.text'));
     } else if (resendResponse === ResendResponse.SUCCESS) {
-      Toast.showError(texts.resendToast);
+      Toast.showSuccess(texts.resendToast);
       if (codeState === CodeState.CODE_EXPIRED) startAnimation(CodeState.CODE_RESENT);
     }
   }, [codeState, resendVerificationCode, texts.resendToast]);

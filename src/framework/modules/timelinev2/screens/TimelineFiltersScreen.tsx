@@ -18,6 +18,7 @@ import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { shallowEqual } from '~/framework/util/object';
 
 export interface ITimelineFiltersScreenDataProps {
@@ -57,7 +58,13 @@ function PreventBack(props: { onPreventBack: boolean }) {
       {
         text: I18n.t('common.quit'),
         style: 'destructive',
-        onPress: () => navigation.dispatch(data.action),
+        onPress: () => {
+          navigation.dispatch(data.action);
+          const nextJump = consumeNextTabJump();
+          if (nextJump) {
+            navigation.dispatch(nextJump);
+          }
+        },
       },
     ]);
   });

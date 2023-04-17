@@ -5,7 +5,16 @@
  * navBar shows up with the RootSTack's NativeStackNavigator, not TabNavigator (because TabNavigator is not native).
  */
 import { BottomTabNavigationOptions, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationHelpers, ParamListBase, StackActions } from '@react-navigation/native';
+import {
+  CommonActions,
+  EventMapBase,
+  NavigationHelpers,
+  NavigationState,
+  ParamListBase,
+  RouteProp,
+  ScreenListeners,
+  StackActions,
+} from '@react-navigation/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
@@ -19,8 +28,10 @@ import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
+import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
+import { setNextTabJump } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
@@ -42,7 +53,7 @@ const createTabIcon = (
   props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPicture };
-  props.size = UI_SIZES.elements.tabBarIconSize;
+  props.size = UI_SIZES.elements.tabbarIconSize;
 
   if (dp.type === 'Image') {
     dp.style = [dp.style, { width: props.size, height: props.size }];
@@ -74,18 +85,36 @@ const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
 };
 
 /**
- * Resets tabs with stackNavigators to the first route when navigation to another tab
+ * The tab listener handles reset the stack inside a tab when leaving the tab + handle prevent back mechanic in this case.
  */
-const resetTabStacksOnBlur = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
-  blur: () => {
-    const state = navigation.getState();
-    state.routes.forEach((route, tabIndex) => {
-      if (state?.index !== tabIndex && route.state?.index !== undefined && route.state?.index > 0) {
-        navigation.dispatch(StackActions.popToTop());
+const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) =>
+  ({
+    tabPress: event => {
+      if (!event.target) return;
+      const state = navigation.getState();
+      (event as unknown as React.SyntheticEvent).preventDefault(); // Types given by ScreenListeners are wrong here. We use SyntheticEvent as a fallback that contains preventDefault.
+      let doTabSwitch: boolean = true;
+      state.routes.forEach((route, tabIndex) => {
+        //
+        if (tabIndex === state.index) {
+          // Narrows to the current tab
+          if (state.routes[state.index]?.state?.index !== undefined && state.routes[state.index]?.state?.index !== 0) {
+            // Pop to top only if there at least two pages in the stack
+            navigation.dispatch(StackActions.popToTop());
+            const newState = navigation.getState();
+            doTabSwitch = newState !== state;
+          }
+        }
+      });
+      // Then, change tabs only if previous pop to top hadn't be blocked by preventRemove or something else...
+      if (doTabSwitch) {
+        navigation.navigate({ key: event.target });
+      } else {
+        // Else, register the tab change that will be handled in preventRemove callback
+        setNextTabJump(CommonActions.navigate({ key: event.target }));
       }
-    });
-  },
-});
+    },
+  } as ScreenListeners<NavigationState, EventMapBase>);
 
 export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?: IEntcoreWidget[] }) {
   const RootStack = getTypedRootStack();
@@ -104,32 +133,36 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
           <Tab.Screen
             key={module.config.routeName}
             name={computeTabRouteName(module.config.routeName)}
-            options={{ ...createTabOptions(module.config), tabBarHideOnKeyboard: true }}
-            listeners={resetTabStacksOnBlur}>
+            options={createTabOptions(module.config)}
+            listeners={tabListeners}>
             {TabStack}
           </Tab.Screen>
         );
       });
+    // We effectively want to have this deps to minimise re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apps]);
-  const screenOptions: BottomTabNavigationOptions = React.useMemo(
-    () => ({
-      lazy: false, // Prevent navBar flickering with this option
-      freezeOnBlur: true,
-      headerShown: false,
-      tabBarStyle: {
-        backgroundColor: theme.ui.background.card,
-        borderTopColor: theme.palette.grey.cloudy,
-        borderTopWidth: 1,
-        elevation: 1,
-        height: UI_SIZES.elements.tabbarHeight + Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }),
-      },
-      tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabBarLabelMargin },
-      tabBarIconStyle: { marginTop: UI_SIZES.elements.tabBarLabelMargin },
-      tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-      tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-    }),
-    [],
-  );
+  const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
+    React.useCallback(({ route, navigation }) => {
+      return {
+        lazy: false, // Prevent navBar flickering with this option
+        freezeOnBlur: true,
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: theme.ui.background.card,
+          borderTopColor: theme.palette.grey.cloudy,
+          borderTopWidth: 1,
+          elevation: 1,
+          height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
+          ...getAndroidTabBarStyleForNavState(navigation.getState()),
+        },
+        tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabbarLabelMargin },
+        tabBarIconStyle: { marginTop: UI_SIZES.elements.tabbarLabelMargin },
+        tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
+        tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
+        tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
+      };
+    }, []);
   return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
 }
 

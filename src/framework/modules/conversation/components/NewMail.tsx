@@ -20,7 +20,7 @@ import {
 import { IDistantFileWithId } from '~/framework/util/fileHandler';
 import HtmlToText from '~/infra/htmlConverter/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 import { Loading } from '~/ui/Loading';
 
 import Attachment from './Attachment';

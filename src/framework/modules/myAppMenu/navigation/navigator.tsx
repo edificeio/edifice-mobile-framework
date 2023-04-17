@@ -5,6 +5,7 @@ import moduleConfig from '~/framework/modules/myAppMenu/moduleConfig';
 import { myAppsModules } from '~/framework/modules/myAppMenu/myAppsModules';
 import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
+import { navBarTitle } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget, NavigableModuleArray } from '~/framework/util/moduleTool';
 
 import { IMyAppsNavigationParams, myAppsRouteNames } from '.';
@@ -18,7 +19,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
         name={myAppsRouteNames.Home}
         component={MyAppsContainer}
         options={{
-          title: I18n.t('MyApplications'),
+          headerTitle: navBarTitle(I18n.t('MyApplications')),
         }}
         initialParams={undefined}
       />

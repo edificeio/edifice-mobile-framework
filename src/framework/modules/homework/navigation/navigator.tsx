@@ -9,6 +9,7 @@ import HomeworkInitialScreen from '~/framework/modules/homework/screens/Homework
 import HomeworkTaskDetailsScreen from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';
 import HomeworkTaskListScreen from '~/framework/modules/homework/screens/HomeworkTaskListScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
+import { navBarTitle } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { HomeworkNavigationParams, homeworkRouteNames } from '.';
@@ -19,7 +20,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       <Stack.Screen
         name={homeworkRouteNames.home}
         component={HomeworkInitialScreen}
-        options={{ title: I18n.t('Homework') }}
+        options={{ headerTitle: navBarTitle(I18n.t('Homework')) }}
         initialParams={undefined}
       />
       <Stack.Screen
@@ -31,7 +32,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       <Stack.Screen
         name={homeworkRouteNames.homeworkTaskDetails}
         component={HomeworkTaskDetailsScreen}
-        options={{ title: I18n.t('Homework') }}
+        options={{ headerTitle: navBarTitle(I18n.t('Homework')) }}
         initialParams={{}}
       />
       <Stack.Screen

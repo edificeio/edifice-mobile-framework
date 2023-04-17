@@ -9,7 +9,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
 import { ArticleContainer } from '~/ui/ContainerContent';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 interface ITimelineFlashMessageProps {
   flashMessage: IEntcoreFlashMessage;

@@ -27,7 +27,7 @@ import {
   getReportByStudentForParent,
   getStudentsForTeacher,
 } from '~/framework/modules/schoolbook/reducer';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>

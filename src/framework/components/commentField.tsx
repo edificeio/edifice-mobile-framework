@@ -91,6 +91,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
   const publishComment = () => {
     if (inputRef.current) inputRef.current.blur();
     if (props.onPublishComment) props.onPublishComment(comment, props.commentId?.toString());
+    if (!props.comment) setComment('');
     if (props.onChangeText)
       props.onChangeText({
         type: '',
@@ -98,7 +99,6 @@ const CommentField = (props: CommentFieldProps, ref) => {
         changed: false,
         value: '',
       });
-    setComment('');
   };
   const editComment = () => {
     setIsEditing(true);

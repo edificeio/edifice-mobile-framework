@@ -1,3 +1,5 @@
+import I18n from 'i18n-js';
+
 import { ISession } from '~/framework/modules/auth/model';
 import { openUrl } from '~/framework/util/linking';
 import { signedFetch } from '~/infra/fetchWithCache';
@@ -27,5 +29,8 @@ export default async (session: ISession, connectorAddress: string, pageId?: stri
   const intermediateResponse = await signedFetch(getRedirectUrl(session, connectorAddress, pageId));
   const finalUrl = intermediateResponse.headers.get('location');
   if (dryRun) return finalUrl ?? undefined;
-  openUrl(finalUrl ?? undefined);
+  openUrl(finalUrl ?? undefined, {
+    errorTitle: I18n.t('pronote-redirect-error-title'),
+    error: I18n.t('pronote-redirect-error-message'),
+  });
 };

@@ -12,7 +12,7 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { Session } from '~/framework/modules/viescolaire/common/utils/diary';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 const styles = StyleSheet.create({
   mainView: {

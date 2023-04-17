@@ -12,7 +12,7 @@ import HomeworkDayCheckpoint from '~/framework/modules/homework/components/Homew
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 const dayImages = {
   monday: 'days-monday',

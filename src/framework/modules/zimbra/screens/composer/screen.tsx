@@ -26,6 +26,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -67,6 +68,10 @@ function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; upda
     }
     props.updateDraft();
     navigation.dispatch(data.action);
+    const nextJump = consumeNextTabJump();
+    if (nextJump) {
+      navigation.dispatch(nextJump);
+    }
   });
   return null;
 }

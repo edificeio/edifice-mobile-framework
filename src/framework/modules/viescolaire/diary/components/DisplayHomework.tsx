@@ -11,7 +11,7 @@ import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/t
 import { Homework } from '~/framework/modules/viescolaire/common/utils/diary';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { PageContainer } from '~/ui/ContainerContent';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 const styles = StyleSheet.create({
   mainView: {

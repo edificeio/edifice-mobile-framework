@@ -8,10 +8,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewProps } from 'react-native';
+import { connect } from 'react-redux';
 
+import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { Loading } from '~/ui/Loading';
@@ -20,6 +23,7 @@ import { IRemoteAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 
 export interface IHtmlContentViewProps extends ViewProps {
+  session?: ISession;
   navigation?: any;
   html?: string;
   source?: string;
@@ -43,7 +47,7 @@ interface IHtmlContentViewState {
   jsx?: JSX.Element; // Computed jsx
 }
 
-export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlContentViewState> {
+class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlContentViewState> {
   public constructor(props: IHtmlContentViewProps | Readonly<IHtmlContentViewProps>) {
     super(props);
     this.state = {
@@ -74,6 +78,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
   }
 
   public generateAttachments(html: string) {
+    const { session } = this.props;
     const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
     const attachmentGroupsHtml = html.match(attachmentGroupRegex);
     const attachmentsHtml = attachmentGroupsHtml && attachmentGroupsHtml.join().match(/<a.*?>.*?<\/a>/g);
@@ -83,7 +88,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
         const attUrl = attHtml.match(/href="(.*?)"/g);
         const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
         return {
-          url: attUrl && `${DEPRECATED_getCurrentPlatform()!.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
+          url: attUrl && `${session?.platform?.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
           displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, '').replace(/<\/a>/g, ''),
         } as IRemoteAttachment;
       });
@@ -168,3 +173,11 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
     }
   }
 }
+
+const mapStateToProps: (state: IGlobalState) => {
+  session?: ISession;
+} = state => {
+  return { session: getSession() };
+};
+
+export default connect(mapStateToProps, undefined)(HtmlContentView);

@@ -12,7 +12,7 @@ import { ISession } from '~/framework/modules/auth/model';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { APPBADGES } from '~/framework/modules/timelinev2/appBadges';
 import { ITimelineNotification } from '~/framework/util/notifications';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: ISession }) => {
   const message = notification && notification.message;

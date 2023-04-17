@@ -198,7 +198,7 @@ class Images extends React.Component<
             </QuarterImage>
             <QuarterImage style={{ height: heightRatio / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(3)}>
               <StretchImage source={getImageSource(images[3].src)} />
-              {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(3)} />}
+              {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 2 }} onPress={() => this.openImage(3)} />}
               {images.length > 4 && (
                 <BubbleView style={{ bottom: heightRatio / 4 - 15, justifyContent: 'center' }}>
                   <SmallInverseText

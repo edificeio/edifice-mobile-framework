@@ -1,4 +1,4 @@
-import { Dimensions, Insets, Platform, StatusBar, StyleSheet } from 'react-native';
+import { Dimensions, Insets, Platform, StyleSheet } from 'react-native';
 import DeviceInfo, { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -87,12 +87,12 @@ export const UI_SIZES = {
     /** @deprecated use useHeaderHeight() instead */
     navbarHeight: 56,
     navbarButtonSize: 32,
-    navBarIconSize: 24,
+    navbarIconSize: 24,
     navbarMargin: 16,
-    statusbarHeight: StatusBar.currentHeight,
-    tabbarHeight: 56,
-    tabBarIconSize: Platform.select({ ios: 25, default: 19 }),
-    tabBarLabelMargin: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
+    statusbarHeight: Platform.select({ ios: 19, default: 0 }),
+    tabbarHeight: Platform.select({ ios: 44, default: 56 }),
+    tabbarIconSize: Platform.select({ ios: 25, default: 19 }),
+    tabbarLabelMargin: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
   },

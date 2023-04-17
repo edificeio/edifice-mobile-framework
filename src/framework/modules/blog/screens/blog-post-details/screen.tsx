@@ -46,11 +46,12 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
 import { notifierShowAction } from '~/infra/notifier/actions';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import {
@@ -84,7 +85,13 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
         {
           text: I18n.t('common.quit'),
           style: 'destructive',
-          onPress: () => navigation.dispatch(data.action),
+          onPress: () => {
+            navigation.dispatch(data.action);
+            const nextJump = consumeNextTabJump();
+            if (nextJump) {
+              navigation.dispatch(nextJump);
+            }
+          },
         },
         {
           text: I18n.t('common.continue'),
@@ -520,7 +527,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
-    const ViewportAwareTitle = Viewport.Aware(View);
     return (
       <View style={styles.detailsMain}>
         <View style={styles.detailsPost}>

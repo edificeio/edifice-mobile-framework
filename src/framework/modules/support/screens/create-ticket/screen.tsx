@@ -24,6 +24,7 @@ import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/
 import { getSupportWorkflowInformation } from '~/framework/modules/support/rights';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 
@@ -167,7 +168,13 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       },
       {
         text: I18n.t('common.quit'),
-        onPress: () => props.navigation.dispatch(data.action),
+        onPress: () => {
+          props.navigation.dispatch(data.action);
+          const nextJump = consumeNextTabJump();
+          if (nextJump) {
+            props.navigation.dispatch(nextJump);
+          }
+        },
         style: 'destructive',
       },
     ]);

@@ -19,7 +19,8 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
@@ -38,8 +39,8 @@ export const computeNavBar = ({
     ...navBarOptions({
       navigation,
       route,
+      title: getNavBarTitle(route),
     }),
-    headerTitle: navBarTitle(getNavBarTitle(route)),
   };
 };
 
@@ -131,7 +132,14 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     Alert.alert(I18n.t('auth-change-email-edit-alert-title'), I18n.t('auth-change-email-edit-alert-message'), [
       {
         text: I18n.t('common.discard'),
-        onPress: () => props.navigation.dispatch(data.action),
+        onPress: () => {
+          const nextJump = consumeNextTabJump();
+          if (nextJump) {
+            props.navigation.dispatch(nextJump);
+          } else {
+            props.navigation.dispatch(data.action);
+          }
+        },
         style: 'destructive',
       },
       {

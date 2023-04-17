@@ -1,16 +1,20 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
+import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
-import { BodyBoldText } from '~/framework/components/text';
+import SectionList from '~/framework/components/sectionList';
+import { SmallText } from '~/framework/components/text';
+import { getSession } from '~/framework/modules/auth/reducer';
+import UserCard from '~/framework/modules/user/components/user-card';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { ChildrenDataByStructures, UserFamilyScreenPrivateProps } from '~/framework/modules/user/screens/family/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import type { UserFamilyScreenPrivateProps } from './types';
+import styles from './styles';
 
 export const computeNavBar = ({
   navigation,
@@ -24,16 +28,60 @@ export const computeNavBar = ({
 });
 
 function UserFamilyScreen(props: UserFamilyScreenPrivateProps) {
+  const { childrenByStructures, relatives, route } = props;
+  const mode = route.params.mode;
+  const childrenDataByStructures = React.useMemo(() => {
+    const data: ChildrenDataByStructures = [];
+    if (childrenByStructures) {
+      for (const childrenByStructure of childrenByStructures) {
+        data.push({
+          structureName: childrenByStructure.structureName,
+          data: childrenByStructure.children,
+        });
+      }
+    }
+    return data;
+  }, [childrenByStructures]);
+
   return (
     <PageView>
-      <BodyBoldText>user family screen</BodyBoldText>
+      {mode === 'children' && childrenByStructures ? (
+        <SectionList
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+          sections={childrenDataByStructures}
+          keyExtractor={item => item.id}
+          renderSectionHeader={({ section }) => {
+            return <SmallText style={styles.structureName}>{section.structureName}</SmallText>;
+          }}
+          renderItem={({ item: user }) => {
+            return (
+              <View style={styles.child} key={user.id}>
+                <UserCard id={user.id} displayName={user.displayName} type="Student" hasAvatar={false} canEdit={false} />
+              </View>
+            );
+          }}
+        />
+      ) : mode === 'relatives' && relatives ? (
+        <FlatList
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+          data={relatives}
+          keyExtractor={item => item.id}
+          renderItem={({ item: user }) => (
+            <View style={styles.relative} key={user.id}>
+              <UserCard id={user.id} displayName={user.displayName} type="Relative" hasAvatar={false} canEdit={false} />
+            </View>
+          )}
+          ListFooterComponent={<View style={styles.relativesListFooter} />}
+          contentContainerStyle={styles.relativesContentContainer}
+        />
+      ) : null}
     </PageView>
   );
 }
 
-export default connect(
-  (state: IGlobalState) => {
-    return {};
-  },
-  dispatch => bindActionCreators({}, dispatch),
-)(UserFamilyScreen);
+export default connect((state: IGlobalState) => ({
+  relatives: getSession()?.user?.relatives,
+  childrenByStructures: getSession()?.user?.children,
+}))(UserFamilyScreen);

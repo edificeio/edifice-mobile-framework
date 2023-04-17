@@ -27,8 +27,8 @@ export default function NavBarAction(props: { icon?: string; title?: string; dis
         <NamedSVG
           name={props.icon}
           fill={theme.ui.text.inverse}
-          width={UI_SIZES.elements.navBarIconSize}
-          height={UI_SIZES.elements.navBarIconSize}
+          width={UI_SIZES.elements.navbarIconSize}
+          height={UI_SIZES.elements.navbarIconSize}
           style={[opacityIconStyle, styles.navBarActionIcon]}
         />
       ) : null}

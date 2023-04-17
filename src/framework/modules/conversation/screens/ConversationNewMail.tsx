@@ -3,7 +3,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Alert, AlertButton, Keyboard, Platform } from 'react-native';
+import { Alert, AlertButton, Keyboard, Platform, StyleSheet } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -35,11 +35,16 @@ import { ConversationNavigationParams, conversationRouteNames } from '~/framewor
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
+
+const styles = StyleSheet.create({
+  title: { width: undefined },
+});
 
 export enum DraftType {
   NEW,
@@ -48,6 +53,7 @@ export enum DraftType {
   REPLY_ALL,
   FORWARD,
 }
+
 type NewMail = {
   to: ISearchUsers;
   cc: ISearchUsers;
@@ -64,8 +70,8 @@ export interface ConversationNewMailScreenNavigationParams {
   getSendDraft: () => void;
   mailId: string;
   type: DraftType;
-  onGoBack: () => void;
 }
+
 interface ConversationNewMailScreenEventProps {
   setup: () => void;
   sendMail: (mailDatas: object, draftId: string | undefined, inReplyTo: string) => void;
@@ -80,11 +86,13 @@ interface ConversationNewMailScreenEventProps {
   fetchMailContent: (mailId: string) => void;
   clearContent: () => void;
 }
+
 interface ConversationNewMailScreenDataProps {
   isFetching: boolean;
   mail: IMail;
   session: ISession;
 }
+
 export type ConversationNewMailScreenProps = ConversationNewMailScreenEventProps &
   ConversationNewMailScreenDataProps &
   NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.newMail>;
@@ -107,6 +115,7 @@ export const computeNavBar = ({
     navigation,
     route,
     title: I18n.t('conversation.newMessage'),
+    titleStyle: styles.title,
   }),
 });
 
@@ -114,8 +123,13 @@ const HandleBack = () => {
   const route = useRoute();
   const navigation = useNavigation();
   UNSTABLE_usePreventRemove(true, ({ data }) => {
-    route?.params?.onGoBack?.();
-    navigation.dispatch(data.action);
+    route?.params?.getGoBack(() => {
+      navigation.dispatch(data.action);
+    });
+    const nextJump = consumeNextTabJump();
+    if (nextJump) {
+      navigation.dispatch(nextJump);
+    }
   });
   return null;
 };
@@ -160,7 +174,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const sendDraft = route.params.getSendDraft;
 
     navigation.setOptions({
-      headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage')),
+      headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage', styles.title)),
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
@@ -290,8 +304,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       }
       navigation.goBack();
     },
-    getGoBack: async () => {
-      const { navigation, trashMessage, deleteMessage, route } = this.props;
+    getGoBack: async backAction => {
+      const { trashMessage, deleteMessage, route } = this.props;
       const { tempAttachment, mail, id } = this.state;
       const { to, cc, cci, subject, body, attachments } = mail;
       const mailId = route.params.mailId;
@@ -333,7 +347,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                         'Rédaction mail - Sortir - Supprimer le brouillon - Échec',
                       );
                     }
-                    navigation.dispatch(CommonActions.goBack());
+                    backAction();
                   },
                   style: 'destructive',
                 },
@@ -363,7 +377,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                     : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
                 );
               }
-              navigation.dispatch(CommonActions.goBack());
+              backAction();
             },
             style: isSavedDraft ? 'default' : 'destructive',
           },
@@ -384,7 +398,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec',
                 );
               }
-              navigation.dispatch(CommonActions.goBack());
+              backAction();
             },
             style: 'default',
           },
@@ -404,7 +418,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         } else if (isSavedDraft) {
           await this.saveDraft();
         }
-        navigation.dispatch(CommonActions.goBack());
+        backAction();
       }
     },
   };
@@ -654,7 +668,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
   };
 
   public render() {
-    const { deleteAttachment, isFetching, navigation, route } = this.props;
+    const { deleteAttachment, isFetching, route } = this.props;
     const { id, isPrefilling, mail, tempAttachment, prevBody } = this.state;
     const draftType = route.params.type;
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
@@ -663,9 +677,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     return (
       <>
         <HandleBack />
-        <PageView
-          onBack={() => (route.params.getGoBack ?? navigation.goBack)()}
-          style={{ backgroundColor: theme.ui.background.card }}>
+        <PageView style={{ backgroundColor: theme.ui.background.card }}>
           <NewMailComponent
             isFetching={isFetching || !!isPrefilling}
             headers={headers}
