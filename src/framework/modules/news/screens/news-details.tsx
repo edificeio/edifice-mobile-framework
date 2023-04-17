@@ -6,7 +6,7 @@ import { RefreshControl, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import type { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';

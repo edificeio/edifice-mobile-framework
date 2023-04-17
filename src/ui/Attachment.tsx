@@ -7,7 +7,7 @@ import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';

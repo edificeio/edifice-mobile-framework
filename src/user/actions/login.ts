@@ -32,7 +32,6 @@ import {
 } from './actionTypes/login';
 import { initActivationAccount as initActivationAccountAction } from './initActivation';
 import { PLATFORM_STORAGE_KEY } from './platform';
-import { letItSnowAction } from './xmas';
 
 export enum LoginFlowErrorType {
   RUNTIME_ERROR = 'runtime_error',
@@ -283,7 +282,6 @@ export function loginAction(
 
       // === 11: navigate back to the main screen
       navigate('Main');
-      dispatch(letItSnowAction());
     } catch (err) {
       // In case of error...
       let routeToGo;

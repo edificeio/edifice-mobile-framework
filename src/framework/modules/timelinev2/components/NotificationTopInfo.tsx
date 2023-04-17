@@ -5,7 +5,7 @@ import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';

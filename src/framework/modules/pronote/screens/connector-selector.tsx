@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
-import type { IGlobalState } from '~/AppStore';
+import type { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import type { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';

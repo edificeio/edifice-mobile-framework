@@ -6,7 +6,7 @@ import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
 import FlatList from '~/framework/components/flatList';
 import NavBarAction from '~/framework/components/navigation/navbar-action';

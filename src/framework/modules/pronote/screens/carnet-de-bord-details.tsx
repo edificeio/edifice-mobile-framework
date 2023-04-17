@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
-import type { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { CardWithoutPadding, cardPadding } from '~/framework/components/card/base';
