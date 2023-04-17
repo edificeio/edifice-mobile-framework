@@ -19,7 +19,7 @@ import { navigationRef } from './helper';
 const navBarTitleStyle: TextStyle = {
   color: theme.ui.text.inverse,
   textAlign: 'center',
-  width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navBarIconSize - 3 * UI_SIZES.elements.navbarMargin,
+  width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
 };
 
 export const navBarTitle = (title?: string, style?: TextStyle) =>

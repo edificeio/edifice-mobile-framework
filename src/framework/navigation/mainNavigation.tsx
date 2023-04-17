@@ -53,7 +53,7 @@ const createTabIcon = (
   props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
 ) => {
   let dp: Partial<PictureProps> = { ...moduleConfig.displayPicture };
-  props.size = UI_SIZES.elements.tabBarIconSize;
+  props.size = UI_SIZES.elements.tabbarIconSize;
 
   if (dp.type === 'Image') {
     dp.style = [dp.style, { width: props.size, height: props.size }];
@@ -153,11 +153,11 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
           borderTopColor: theme.palette.grey.cloudy,
           borderTopWidth: 1,
           elevation: 1,
-          height: UI_SIZES.elements.tabbarHeight + Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }),
+          height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
           ...getAndroidTabBarStyleForNavState(navigation.getState()),
         },
-        tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabBarLabelMargin },
-        tabBarIconStyle: { marginTop: UI_SIZES.elements.tabBarLabelMargin },
+        tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabbarLabelMargin },
+        tabBarIconStyle: { marginTop: UI_SIZES.elements.tabbarLabelMargin },
         tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
         tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
         tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
