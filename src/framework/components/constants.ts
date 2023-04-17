@@ -90,7 +90,7 @@ export const UI_SIZES = {
     navbarIconSize: 24,
     navbarMargin: 16,
     statusbarHeight: Platform.select({ ios: 19, default: 0 }),
-    tabbarHeight: Platform.select({ ios: 44, default: 56 }),
+    tabbarHeight: 56,
     tabbarIconSize: Platform.select({ ios: 25, default: 19 }),
     tabbarLabelMargin: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
     textFieldMaxHeight: 105,
