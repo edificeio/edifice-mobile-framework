@@ -10,13 +10,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/AppStore';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/icon';
+import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { getUserSession } from '~/framework/util/session';
 import Notifier from '~/infra/notifier/container';
 import { urlSigner } from '~/infra/oauth';
 
@@ -333,7 +333,8 @@ class Attachment extends React.PureComponent<
       downloadState: DownloadState.Downloading,
     });
     const downloadAction = (att: IDistantFile) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
-      const session = getUserSession();
+      const session = getSession();
+      if (!session) return;
       fileTransferService
         .downloadFile(
           session,
