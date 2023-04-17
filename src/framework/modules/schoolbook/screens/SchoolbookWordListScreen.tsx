@@ -40,7 +40,6 @@ import { openUrl } from '~/framework/util/linking';
 import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { removeFirstWord } from '~/framework/util/string';
-import { userService } from '~/user/service';
 
 //FIXME: create/move to styles.ts
 const styles = {
@@ -179,7 +178,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         // Fetch children information for parent
         const fetchParentChildren = async () => {
           if (!userId) throw new Error('missing userId');
-          const childrenByStructure = await userService.getUserChildren(userId);
+          const childrenByStructure = session.user.children;
           const allChildren = childrenByStructure?.map(structure => structure.children)?.flat();
           const formattedAllChildren = allChildren?.map(child => ({
             id: child.id,
