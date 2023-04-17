@@ -5,6 +5,7 @@ import Pdf from 'react-native-pdf';
 
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { ISession } from '~/framework/modules/auth/model';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
@@ -48,6 +49,10 @@ export class BackdropPdfReaderScreen extends React.PureComponent<
     openUrl(uri);
   }
 
+  renderLoading() {
+    return <LoadingIndicator />;
+  }
+
   render() {
     const { src: uri } = this.props.route.params;
     const { error } = this.state;
@@ -55,14 +60,12 @@ export class BackdropPdfReaderScreen extends React.PureComponent<
       <EmptyConnectionScreen />
     ) : (
       <Pdf
-        activityIndicatorProps={{
-          color: theme.ui.text.light,
-          progressTintColor: theme.palette.primary.regular,
-        }}
         source={{ cache: true, uri }}
         style={styles.pdf}
+        trustAllCerts={false}
         onError={this.handleError}
         onPressLink={this.handlePressLink}
+        renderActivityIndicator={this.renderLoading}
       />
     );
   }
