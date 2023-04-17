@@ -11,9 +11,9 @@ import {
   NavigationHelpers,
   NavigationState,
   ParamListBase,
+  RouteProp,
   ScreenListeners,
   StackActions,
-  TabActions,
 } from '@react-navigation/native';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -28,6 +28,7 @@ import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
+import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { setNextTabJump } from './nextTabJump';
@@ -141,26 +142,27 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
     // We effectively want to have this deps to minimise re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apps]);
-  const screenOptions: BottomTabNavigationOptions = React.useMemo(
-    () => ({
-      lazy: false, // Prevent navBar flickering with this option
-      freezeOnBlur: true,
-      headerShown: false,
-      tabBarStyle: {
-        backgroundColor: theme.ui.background.card,
-        borderTopColor: theme.palette.grey.cloudy,
-        borderTopWidth: 1,
-        elevation: 1,
-        height: UI_SIZES.elements.tabbarHeight + Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }),
-      },
-      tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabBarLabelMargin },
-      tabBarIconStyle: { marginTop: UI_SIZES.elements.tabBarLabelMargin },
-      tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-      tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
-      tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
-    }),
-    [],
-  );
+  const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
+    React.useCallback(({ route, navigation }) => {
+      return {
+        lazy: false, // Prevent navBar flickering with this option
+        freezeOnBlur: true,
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: theme.ui.background.card,
+          borderTopColor: theme.palette.grey.cloudy,
+          borderTopWidth: 1,
+          elevation: 1,
+          height: UI_SIZES.elements.tabbarHeight + Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }),
+          ...getAndroidTabBarStyleForNavState(navigation.getState()),
+        },
+        tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabBarLabelMargin },
+        tabBarIconStyle: { marginTop: UI_SIZES.elements.tabBarLabelMargin },
+        tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
+        tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
+        tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
+      };
+    }, []);
   return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
 }
 

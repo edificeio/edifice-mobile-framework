@@ -16,6 +16,7 @@ import ChangePasswordScreen from '~/framework/modules/auth/screens/change-passwo
 import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
+import { hideAndroidTabBarOnTheseRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
@@ -98,3 +99,5 @@ export default function () {
     </Stack.Group>
   );
 }
+
+hideAndroidTabBarOnTheseRoutes([AuthRouteNames.mfaModal]);
