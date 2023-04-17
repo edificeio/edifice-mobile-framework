@@ -1,10 +1,10 @@
 import I18n from 'i18n-js';
-import { Platform, ActionSheetIOS } from 'react-native';
+import { ActionSheetIOS, Platform } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 
 import { LocalFile } from '~/framework/util/fileHandler';
-import { notifierShowAction } from '~/infra/notifier/actions';
+import { notifierShowAction } from '~/framework/util/notifier/actions';
 
 type Captions = {
   image: string;

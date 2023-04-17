@@ -17,7 +17,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import Notifier from '~/infra/notifier/container';
+import Notifier from '~/framework/util/notifier';
 import { urlSigner } from '~/infra/oauth';
 
 import { IconButton } from './IconButton';

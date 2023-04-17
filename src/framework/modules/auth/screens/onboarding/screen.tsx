@@ -9,8 +9,8 @@ import { ActionButton, getActionButtonWidth } from '~/framework/components/butto
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
+import { getLoginRouteName } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
-import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
 
 import styles from './styles';
 import { IOnboardingScreenProps, IOnboardingScreenState } from './types';

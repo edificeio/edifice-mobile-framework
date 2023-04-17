@@ -48,9 +48,9 @@ import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunctio
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { openUrl } from '~/framework/util/linking';
+import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
-import { notifierShowAction } from '~/infra/notifier/actions';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
