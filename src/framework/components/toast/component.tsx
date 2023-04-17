@@ -12,15 +12,15 @@ export default class Toast {
     });
   }
 
-  static showSuccess(text: string) {
-    this.$showToast('success', text);
-  }
-
   static showError(text: string = I18n.t('common.error.text')) {
     this.$showToast('error', text);
   }
 
   static showInfo(text: string) {
     this.$showToast('info', text);
+  }
+
+  static showSuccess(text: string) {
+    this.$showToast('success', text);
   }
 }
