@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
 });
 
 interface IAttachmentProps {
-  name: string;
-  type: string;
+  name?: string;
+  type?: string;
   uploadSuccess?: boolean;
   onRemove: () => void;
 }

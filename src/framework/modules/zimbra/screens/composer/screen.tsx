@@ -30,7 +30,7 @@ import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zi
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
-import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
+import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
@@ -45,13 +45,13 @@ type NewMail = {
   bcc: ISearchUsers;
   subject: string;
   body: string;
-  attachments: IDistantFile[];
+  attachments: IDistantFileWithId[];
 };
 
-interface ICreateMailState {
+interface ZimbraComposerScreenState {
   id?: string;
   mail: NewMail;
-  tempAttachment?: any;
+  tempAttachment?: LocalFile;
   isPrefilling?: boolean;
   prevBody?: string;
   replyTo?: string;
@@ -91,7 +91,7 @@ export const computeNavBar = ({
   }),
 });
 
-class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPrivateProps, ICreateMailState> {
+class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPrivateProps, ZimbraComposerScreenState> {
   constructor(props) {
     super(props);
 
@@ -142,21 +142,40 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  addGivenAttachment = async (file: Asset | DocumentPicked, sourceType: string = '') => {
-    const actionName =
-      'Rédaction mail - Insérer - Pièce jointe - ' +
-      ({
-        camera: 'Caméra',
-        gallery: 'Galerie',
-        document: 'Document',
-      }[sourceType] ?? 'Source inconnue');
+  addAttachment = async (file: Asset | DocumentPicked) => {
     try {
+      const { session } = this.props;
+      const attachment = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
+
+      if (!session) throw new Error();
       await this.saveDraft(true);
-      await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
-      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
+      this.setState({ tempAttachment: attachment });
+      const attachments = await zimbraService.draft.addAttachment(session, this.state.id!, attachment);
+      this.setState(prevState => ({
+        mail: { ...prevState.mail, attachments },
+        tempAttachment: undefined,
+      }));
+      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Succès');
     } catch {
+      this.setState({ tempAttachment: undefined });
+      Toast.showError(I18n.t('zimbra-attachment-error'));
       this.props.onPickFileError('conversation');
-      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
+      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Échec');
+    }
+  };
+
+  removeAttachment = async (attachmentId: string) => {
+    try {
+      const { session } = this.props;
+      const { id } = this.state;
+
+      if (!session || !id) throw new Error();
+      this.setState(prevState => ({
+        mail: { ...prevState.mail, attachments: prevState.mail.attachments.filter(item => item.id !== attachmentId) },
+      }));
+      await zimbraService.draft.deleteAttachment(session, id, attachmentId);
+    } catch {
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
@@ -385,32 +404,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     return ret;
   };
 
-  getAttachmentData = async (file: LocalFile) => {
-    this.setState({ tempAttachment: file });
-
-    try {
-      const { session } = this.props;
-      const newAttachments = (await zimbraService.draft.addAttachment(session!, this.state.id!, file)) as [];
-      const formattedNewAttachments = newAttachments.map((att: any) => {
-        return {
-          filename: att.filename,
-          filetype: att.contentType,
-          id: att.id,
-          filesize: att.size,
-          url: undefined,
-        } as IDistantFile;
-      });
-      this.setState(prevState => ({
-        // ToDo recompute all attachments ids here
-        mail: { ...prevState.mail, attachments: formattedNewAttachments },
-        tempAttachment: null,
-      }));
-    } catch {
-      Toast.showError(I18n.t('zimbra-attachment-error'));
-      this.setState({ tempAttachment: null });
-    }
-  };
-
   trashMail = async () => {
     try {
       const { navigation, session } = this.props;
@@ -499,21 +492,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  removeAttachment = async (attachmentId: string) => {
-    try {
-      const { session } = this.props;
-      const { id } = this.state;
-
-      if (!session || !id) throw new Error();
-      this.setState(prevState => ({
-        mail: { ...prevState.mail, attachments: prevState.mail.attachments.filter(item => item.id !== attachmentId) },
-      }));
-      await zimbraService.draft.deleteAttachment(session, id, attachmentId);
-    } catch {
-      Toast.showError(I18n.t('common.error.text'));
-    }
-  };
-
   setNavbar() {
     const { navigation } = this.props;
     const { isTrashed } = this.props.route.params;
@@ -535,9 +513,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         <View style={styles.navBarActionsContainer}>
           <PopupMenu
             actions={[
-              cameraAction({ callback: this.addGivenAttachment }),
-              galleryAction({ callback: this.addGivenAttachment, multiple: true }),
-              documentAction({ callback: this.addGivenAttachment }),
+              cameraAction({ callback: this.addAttachment }),
+              galleryAction({ callback: this.addAttachment, multiple: true }),
+              documentAction({ callback: this.addAttachment }),
             ]}>
             <NavBarAction icon="ui-attachment" />
           </PopupMenu>
@@ -576,13 +554,13 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
                 onChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
                 onSave={this.saveDraft}
               />
-              {attachments.map(att => (
+              {attachments.map(attachment => (
                 <Attachment
-                  key={att.filename}
-                  name={att.filename}
-                  type={att.contentType}
-                  uploadSuccess={!!att.id}
-                  onRemove={() => this.removeAttachment(att.id)}
+                  key={attachment.filename}
+                  name={attachment.filename}
+                  type={attachment.filetype}
+                  uploadSuccess={'id' in attachment}
+                  onRemove={() => this.removeAttachment(attachment.id)}
                 />
               ))}
               <TextInput
