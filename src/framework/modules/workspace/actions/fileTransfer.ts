@@ -27,7 +27,9 @@ export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => as
     dispatch(workspaceUploadActionsCreators.receipt(file));
     Toast.showSuccess(I18n.t('workspace.file-added'));
   } catch (e: any) {
-    if (e && e?.response && e.response.body === `{"error":"file.too.large"}`) {
+    // Full storage management
+    // statusCode = 400 on iOS and code = 'ENOENT' on Android
+    if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
       Toast.showError(I18n.t('fullStorage'));
     }
     dispatch(workspaceUploadActionsCreators.error(e as Error));
