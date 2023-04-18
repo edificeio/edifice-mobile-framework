@@ -54,6 +54,7 @@ buck-out/
 **/fastlane/test_output
 fastlane
 /mobile-ci-cd
+/log
 
 # CREDENTIALS for AppCenter & Google Firebase.
 # These files are also ignored with override mechanics. These lines are additinal protection to prevent committing hem.
