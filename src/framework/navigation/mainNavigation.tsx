@@ -24,9 +24,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { TextSizeStyle } from '~/framework/components/text';
-import AuthNavigator from '~/framework/modules/auth/navigation/navigator';
+import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import { ModuleScreens } from './moduleScreens';
@@ -116,29 +116,44 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
     },
   } as ScreenListeners<NavigationState, EventMapBase>);
 
-export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?: IEntcoreWidget[] }) {
+export function TabStack({ module }: { module: AnyNavigableModule }) {
   const RootStack = getTypedRootStack();
+  const authNavigation = useAuthNavigation();
+  return (
+    <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName}>
+      {ModuleScreens.all}
+      {authNavigation}
+    </RootStack.Navigator>
+  );
+}
+
+export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+  const tabModulesCache = tabModules.get();
+  const moduleTabStackCache = React.useMemo(() => tabModulesCache.map(module => <TabStack module={module} />), [tabModulesCache]);
+  const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
+  const availableTabModules = React.useMemo(
+    () =>
+      tabModules
+        .get()
+        .filterAvailables(apps ?? [])
+        .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
+    [apps],
+  );
   const tabRoutes = React.useMemo(() => {
-    const modules = tabModules.get().filterAvailables(apps ?? []);
-    return modules
-      .sort((a, b) => a.config.displayOrder - b.config.displayOrder)
-      .map(module => {
-        const TabStack = () => (
-          <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName}>
-            {ModuleScreens.all}
-            {AuthNavigator()}
-          </RootStack.Navigator>
-        );
-        return (
-          <Tab.Screen
-            key={module.config.routeName}
-            name={computeTabRouteName(module.config.routeName)}
-            options={createTabOptions(module.config)}
-            listeners={tabListeners}>
-            {TabStack}
-          </Tab.Screen>
-        );
-      });
+    return availableTabModules.map(module => {
+      const index = tabModulesCache.findIndex(tm => tm.config.name === module.config.name);
+      if (index < 0) return undefined;
+
+      return (
+        <Tab.Screen
+          key={module.config.routeName}
+          name={computeTabRouteName(module.config.routeName)}
+          options={createTabOptions(module.config)}
+          listeners={tabListeners}>
+          {moduleTabStackGetterCache[index]}
+        </Tab.Screen>
+      );
+    });
     // We effectively want to have this deps to minimise re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apps]);
@@ -163,7 +178,9 @@ export function TabNavigator({ apps, widgets }: { apps?: IEntcoreApp[]; widgets?
         tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
       };
     }, []);
-  return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
+  return React.useMemo(() => {
+    return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
+  }, [screenOptions, tabRoutes]);
 }
 
 //   .d8888b.  888                      888      888b    888                   d8b                   888
@@ -184,19 +201,24 @@ export enum MainRouteNames {
 
 /**
  * Computes the main navigation screens as a Group.
- * This operation is heavy so be careful to not call it unless content of aaps or widgets really changes.
+ * This operation is heavy so be careful to not call it unless content of apps or widgets really changes.
  * @param apps available apps for the user
  * @param widgets available widgets for the user
  * @returns
  */
-export function MainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+export function useMainNavigation(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
   const RootStack = getTypedRootStack();
   setUpModulesAccess(apps ?? [], widgets ?? []);
+  const MainTabNavigator = useTabNavigator(apps, widgets);
+  const renderMainTabNavigator = React.useCallback(() => {
+    return MainTabNavigator;
+  }, [MainTabNavigator]);
 
-  const Tabs = () => <TabNavigator apps={apps} widgets={widgets} />;
-  return (
-    <RootStack.Group screenOptions={navBarOptions}>
-      <RootStack.Screen name={MainRouteNames.Tabs} component={Tabs} options={{ headerShown: false }} />
-    </RootStack.Group>
-  );
+  return React.useMemo(() => {
+    return (
+      <RootStack.Group screenOptions={navBarOptions}>
+        <RootStack.Screen name={MainRouteNames.Tabs} component={renderMainTabNavigator} options={{ headerShown: false }} />
+      </RootStack.Group>
+    );
+  }, [RootStack, renderMainTabNavigator]);
 }

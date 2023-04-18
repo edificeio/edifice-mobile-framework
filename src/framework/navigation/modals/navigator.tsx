@@ -3,8 +3,8 @@ import * as React from 'react';
 import CarouselScreen from '~/framework/components/carousel';
 import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel/screen';
 import MediaPlayer, { computeNavBar as MediaPlayerNavBar } from '~/framework/components/media/player';
+import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
-import { BackdropPdfReaderScreen, computeNavBar as noticeNavBar } from '~/framework/screens/PdfReaderScreen';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
 import { hideAndroidTabbarForRoutes } from '../hideTabBarAndroid';
@@ -13,7 +13,7 @@ const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
   <>
     <RootStack.Group screenOptions={{ presentation: 'modal' }}>
-      <RootStack.Screen name={ModalsRouteNames.Pdf} options={noticeNavBar} component={BackdropPdfReaderScreen} />
+      <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} initialParams={{ title: '' }} />
     </RootStack.Group>
     <RootStack.Group
       screenOptions={{

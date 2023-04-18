@@ -1,11 +1,6 @@
 import { Moment } from 'moment';
 
-export type IMailAttachment = {
-  id: string;
-  filename: string;
-  contentType: string;
-  size: number;
-};
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
 
 export interface IMail {
   id: string;
@@ -22,7 +17,7 @@ export interface IMail {
   cc: string[];
   bcc: string[];
   displayNames: string[][];
-  attachments: IMailAttachment[];
+  attachments: IDistantFileWithId[];
   body: string;
   from: string;
 }

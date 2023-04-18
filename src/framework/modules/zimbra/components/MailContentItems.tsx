@@ -295,32 +295,25 @@ export const RenderPJs = ({
   onDownload,
   dispatch,
 }: {
-  attachments: IDistantFile[];
+  attachments: IDistantFileWithId[];
   mailId: string;
   onDownload: (att: IDistantFile) => void;
   dispatch: ThunkDispatch<any, any, any>;
 }) => {
   const [isVisible, toggleVisible] = React.useState(false);
-  const displayedAttachments = isVisible ? attachments : (attachments.slice(0, 1) as any);
+  const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
   return (
     <View style={[styles.containerMail, styles.attachmentContainer]}>
       {displayedAttachments.map((item, index) => {
-        const df: IDistantFileWithId = {
-          url: `/conversation/message/${mailId}/attachment/${item.id}`,
-          id: item.id,
-          filename: item.filename,
-          filesize: item.size,
-          filetype: item.contentType,
-        };
         return (
           <TouchableOpacity
             onPress={() => {
               Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-              onDownload(df);
+              onDownload(item);
             }}>
             <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
               <View style={[styles.gridViewStyle, styles.attachmentGridViewChild]}>
-                <Icon size={25} color={theme.palette.primary.regular} name={getFileIcon(item.contentType)} />
+                <Icon size={25} color={theme.palette.primary.regular} name={getFileIcon(item.filetype)} />
                 <SmallText style={styles.gridButtonTextPJnames} key={item.id} numberOfLines={1} ellipsizeMode="middle">
                   {item.filename}
                 </SmallText>
@@ -331,7 +324,7 @@ export const RenderPJs = ({
                   <TouchableOpacity
                     onPress={async () => {
                       try {
-                        const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
+                        const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(item, {}))) as unknown as SyncedFileWithId;
                         await sf.mirrorToDownloadFolder();
                         Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
                       } catch {

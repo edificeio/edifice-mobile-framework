@@ -154,6 +154,7 @@ export const UI_STYLES = StyleSheet.create({
   justifyEnd: { justifyContent: 'flex-end' },
   row: { flexDirection: 'row' },
   rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
+  width100: { width: '100%' },
 });
 
 export const UI_VALUES = {

@@ -21,6 +21,7 @@ import { ActionButton } from '~/framework/components/buttons/action';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
 import { ILoginResult, activateAccountAction } from '~/framework/modules/auth/actions';
@@ -35,7 +36,6 @@ import {
 import { IActivationError, IActivationPayload, LegalUrls } from '~/framework/modules/auth/model';
 import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -155,7 +155,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   };
 
   private doOpenCGU = (url?: string) => {
-    openPdfReader({ src: url, title: I18n.t('activation-cgu') });
+    openPDFReader({ src: url, title: I18n.t('activation-cgu') });
   };
 
   public render() {

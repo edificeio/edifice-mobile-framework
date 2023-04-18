@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
 import { IFolder, IMail, IQuota, ISignature } from '~/framework/modules/zimbra/model';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
@@ -66,6 +66,16 @@ type IBackendFolderList = IBackendFolder[];
 type IBackendMailList = Omit<IBackendMail, 'body'>[];
 type IBackendUserList = IBackendUser[];
 
+const attachmentAdapter = (data: IBackendAttachment, platformUrl: string, mailId: string): IDistantFileWithId => {
+  return {
+    id: data.id,
+    url: `${platformUrl}/zimbra/message/${mailId}/attachment/${data.id}`,
+    filename: data.filename,
+    filetype: data.contentType,
+    filesize: data.size,
+  } as IDistantFileWithId;
+};
+
 const folderAdapter = (data: IBackendFolder): IFolder => {
   return {
     id: data.id,
@@ -77,7 +87,7 @@ const folderAdapter = (data: IBackendFolder): IFolder => {
   } as IFolder;
 };
 
-const mailAdapter = (data: IBackendMail): IMail => {
+const mailAdapter = (data: IBackendMail, platformUrl: string): IMail => {
   return {
     id: data.id,
     date: moment(data.date),
@@ -93,7 +103,7 @@ const mailAdapter = (data: IBackendMail): IMail => {
     cc: data.cc,
     bcc: data.bcc,
     displayNames: data.displayNames,
-    attachments: data.attachments,
+    attachments: data.attachments.map(attachment => attachmentAdapter(attachment, platformUrl, data.id)),
     body: data.body,
     from: data.from,
   } as IMail;
@@ -121,7 +131,7 @@ const mailAdapter = (data: IBackendMail): IMail => {
   } as IBackendMail;
 };*/
 
-const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>): IMail => {
+const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>, platformUrl: string): Omit<IMail, 'body'> => {
   return {
     id: data.id,
     date: moment(data.date),
@@ -137,7 +147,7 @@ const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>): IMail => {
     cc: data.cc,
     bcc: data.bcc,
     displayNames: data.displayNames,
-    attachments: data.attachments,
+    attachments: data.attachments.map(attachment => attachmentAdapter(attachment, platformUrl, data.id)),
     from: data.from,
   } as IMail;
 };
@@ -178,7 +188,7 @@ export const zimbraService = {
           return attachments as any;
         },
       );
-      return attachments;
+      return attachments.map(attachment => attachmentAdapter(attachment, session.platform.url, draftId));
     },
     create: async (session: ISession, mail: IMail, inReplyTo?: string, isForward?: boolean) => {
       let api = '/zimbra/draft';
@@ -230,7 +240,7 @@ export const zimbraService = {
       let api = `/zimbra/list?folder=${folder}&page=${page}&unread=false`;
       if (search) api += `&search=${search}`;
       const mails = (await fetchJSONWithCache(api)) as IBackendMailList;
-      return mails.map(mail => mailFromListAdapter(mail)) as Omit<IMail, 'body'>[];
+      return mails.map(mail => mailFromListAdapter(mail, session.platform.url)) as Omit<IMail, 'body'>[];
     },
     delete: async (session: ISession, ids: string[]) => {
       const api = '/zimbra/delete';
@@ -296,7 +306,7 @@ export const zimbraService = {
       const api = `/zimbra/message/${id}`;
       const mail = (await fetchJSONWithCache(api)) as IBackendMail;
       if (!('id' in mail)) throw new Error();
-      return mailAdapter(mail) as IMail;
+      return mailAdapter(mail, session.platform.url) as IMail;
     },
     send: async (session: ISession, mail: IMail, draftId?: string, inReplyTo?: string) => {
       let api = '/zimbra/send';

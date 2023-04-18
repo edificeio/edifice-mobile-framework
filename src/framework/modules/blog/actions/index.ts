@@ -98,29 +98,25 @@ export const uploadBlogPostImagesAction =
 export const createBlogPostAction =
   (blogId: string, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      const session = assertSession();
+    const session = assertSession();
 
-      let postContentHtml = `<p class="ng-scope" style="">${postContent}</p>`;
-      if (uploadedPostImages) {
-        const postImageUploads = Object.values(uploadedPostImages);
-        const images = postImageUploads
-          .map(postImageUpload => `<img src="${postImageUpload.url}?thumbnail=2600x0" class="">`)
-          .join('');
-        const imagesHtml = `<p class="ng-scope" style="">
+    let postContentHtml = `<p class="ng-scope" style="">${postContent}</p>`;
+    if (uploadedPostImages) {
+      const postImageUploads = Object.values(uploadedPostImages);
+      const images = postImageUploads
+        .map(postImageUpload => `<img src="${postImageUpload.url}?thumbnail=2600x0" class="">`)
+        .join('');
+      const imagesHtml = `<p class="ng-scope" style="">
         <span contenteditable="false" class="image-container ng-scope" style="">
           ${images}
         </span>
       </p>`;
-        postContentHtml = postContentHtml + imagesHtml;
-      }
-
-      const createdPost = await blogService.post.create(session, blogId, postTitle, postContentHtml);
-      const postId = createdPost._id;
-      return postId;
-    } catch {
-      // ToDo: Error handling
+      postContentHtml = postContentHtml + imagesHtml;
     }
+
+    const createdPost = await blogService.post.create(session, blogId, postTitle, postContentHtml);
+    const postId = createdPost._id;
+    return postId;
   };
 
 /**
@@ -158,33 +154,27 @@ export const submitBlogPostAction =
 export const sendBlogPostAction =
   (blog: Blog, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    try {
-      const session = assertSession();
-      const blogId = blog.id;
-      const blogPostRight = getBlogPostRight(blog, session);
-      if (!blogPostRight) {
-        throw new Error('[sendBlogPostAction] user has no post rights for this blog');
-      }
-
-      // Create post
-      const postId = (await dispatch(
-        createBlogPostAction(blogId, postTitle, postContent, uploadedPostImages),
-      )) as unknown as string;
-
-      // Submit or publish post
-      if (!postId) {
-        throw new Error('[sendBlogPostAction] failed to access id of created post');
-      }
-      const blogPostActionRight = blogPostRight.actionRight;
-      const shareAction = {
-        [createBlogPostResourceRight]: undefined,
-        [submitBlogPostResourceRight]: () => dispatch(submitBlogPostAction(blogId, postId)) as unknown as Promise<string>,
-        [publishBlogPostResourceRight]: () => dispatch(publishBlogPostAction(blogId, postId)) as unknown as Promise<string>,
-      }[blogPostActionRight];
-      if (shareAction) await shareAction();
-    } catch {
-      // ToDo: Error handling
+    const session = assertSession();
+    const blogId = blog.id;
+    const blogPostRight = getBlogPostRight(blog, session);
+    if (!blogPostRight) {
+      throw new Error('[sendBlogPostAction] user has no post rights for this blog');
     }
+
+    // Create post
+    const postId = (await dispatch(createBlogPostAction(blogId, postTitle, postContent, uploadedPostImages))) as unknown as string;
+
+    // Submit or publish post
+    if (!postId) {
+      throw new Error('[sendBlogPostAction] failed to access id of created post');
+    }
+    const blogPostActionRight = blogPostRight.actionRight;
+    const shareAction = {
+      [createBlogPostResourceRight]: undefined,
+      [submitBlogPostResourceRight]: () => dispatch(submitBlogPostAction(blogId, postId)) as unknown as Promise<string>,
+      [publishBlogPostResourceRight]: () => dispatch(publishBlogPostAction(blogId, postId)) as unknown as Promise<string>,
+    }[blogPostActionRight];
+    if (shareAction) await shareAction();
   };
 
 /**

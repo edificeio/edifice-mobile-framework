@@ -53,7 +53,7 @@ export const navBarOptions: (props: {
       if (navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0) {
         const currentOptions = navigationRef.getCurrentOptions() as NativeStackNavigationOptions | undefined;
         // On iOS modals, we want to use a close button instead of a back button
-        if (Platform.OS === 'ios' && currentOptions?.presentation === 'modal') {
+        if (currentOptions?.presentation === 'modal') {
           return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" />;
         } else {
           return <HeaderBackButton {...props} onPress={navigation.goBack} />;

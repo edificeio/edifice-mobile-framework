@@ -105,6 +105,7 @@ interface ConversationNewMailScreenState {
   prevBody?: string;
   replyTo?: string;
   webDraftWarning: boolean;
+  isSending: boolean;
 }
 
 export const computeNavBar = ({
@@ -119,10 +120,10 @@ export const computeNavBar = ({
   }),
 });
 
-const HandleBack = () => {
+const HandleBack = (props: { isSending: boolean }) => {
   const route = useRoute();
   const navigation = useNavigation();
-  UNSTABLE_usePreventRemove(true, ({ data }) => {
+  UNSTABLE_usePreventRemove(!props.isSending, ({ data }) => {
     route?.params?.getGoBack(() => {
       navigation.dispatch(data.action);
     });
@@ -142,6 +143,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       mail: { to: [], cc: [], cci: [], subject: '', body: '', attachments: [] },
       prevBody: '',
       webDraftWarning: false,
+      isSending: false,
     };
   }
 
@@ -611,12 +613,15 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
       }));
-    } catch (e) {
+    } catch (e: any) {
       Keyboard.dismiss();
-      Toast.showError(
-        // Ignore type error
-        e.response.body === '{"error":"file.too.large"}' ? I18n.t('fullStorage') : I18n.t('conversation.attachmentError'),
-      );
+      // Full storage management
+      // statusCode = 400 on iOS and code = 'ENOENT' on Android
+      if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
+        Toast.showError(I18n.t('fullStorage'));
+      } else {
+        Toast.showError(I18n.t('conversation.attachmentError'));
+      }
       this.setState({ tempAttachment: null });
       throw e;
     }
@@ -660,6 +665,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
       Keyboard.dismiss();
       await sendMail(this.getMailData(), id, replyTo);
+      this.setState({ isSending: true });
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.t('conversation.sendMail'));
     } catch {
@@ -673,10 +679,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const draftType = route.params.type;
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
-
     return (
       <>
-        <HandleBack />
+        <HandleBack isSending={this.state.isSending} />
         <PageView style={{ backgroundColor: theme.ui.background.card }}>
           <NewMailComponent
             isFetching={isFetching || !!isPrefilling}

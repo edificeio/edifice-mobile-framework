@@ -4,22 +4,25 @@ import { decode } from 'html-entities';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { DocumentPicked, cameraAction, deleteAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { PageView } from '~/framework/components/page';
+import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/modules/zimbra/actions';
-import NewMailComponent from '~/framework/modules/zimbra/components/NewMail';
+import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
+import { ComposerHeaders } from '~/framework/modules/zimbra/components/ComposerHeaders';
 import SignatureModal from '~/framework/modules/zimbra/components/modals/SignatureModal';
 import { DraftType } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
@@ -27,10 +30,11 @@ import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zi
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
-import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
+import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import { ZimbraComposerScreenPrivateProps } from './types';
@@ -41,13 +45,13 @@ type NewMail = {
   bcc: ISearchUsers;
   subject: string;
   body: string;
-  attachments: IDistantFile[];
+  attachments: IDistantFileWithId[];
 };
 
-interface ICreateMailState {
+interface ZimbraComposerScreenState {
   id?: string;
   mail: NewMail;
-  tempAttachment?: any;
+  tempAttachment?: LocalFile;
   isPrefilling?: boolean;
   prevBody?: string;
   replyTo?: string;
@@ -87,7 +91,7 @@ export const computeNavBar = ({
   }),
 });
 
-class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPrivateProps, ICreateMailState> {
+class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPrivateProps, ZimbraComposerScreenState> {
   constructor(props) {
     super(props);
 
@@ -109,14 +113,10 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       this.setState({ isPrefilling: true });
       this.props.fetchMail(this.props.route.params.mailId);
     }
-    const draftType = this.props.route.params.type;
-    if (draftType === DraftType.REPLY) {
-      Trackers.trackEvent('Zimbra', 'REPLY TO ONE');
-    }
-    if (draftType === DraftType.REPLY_ALL) {
-      Trackers.trackEvent('Zimbra', 'REPLY TO ALL');
-    }
-    if (draftType !== DraftType.DRAFT) {
+    const { type } = this.props.route.params;
+    if (type === DraftType.REPLY) Trackers.trackEvent('Zimbra', 'REPLY TO ONE');
+    else if (type === DraftType.REPLY_ALL) Trackers.trackEvent('Zimbra', 'REPLY TO ALL');
+    if (type !== DraftType.DRAFT) {
       this.setState({ id: undefined });
       this.saveDraft();
     }
@@ -142,37 +142,56 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  addGivenAttachment = async (file: Asset | DocumentPicked, sourceType: string = '') => {
-    const actionName =
-      'Rédaction mail - Insérer - Pièce jointe - ' +
-      ({
-        camera: 'Caméra',
-        gallery: 'Galerie',
-        document: 'Document',
-      }[sourceType] ?? 'Source inconnue');
+  addAttachment = async (file: Asset | DocumentPicked) => {
     try {
+      const { session } = this.props;
+      const attachment = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
+
+      if (!session) throw new Error();
       await this.saveDraft(true);
-      await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
-      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
+      this.setState({ tempAttachment: attachment });
+      const attachments = await zimbraService.draft.addAttachment(session, this.state.id!, attachment);
+      this.setState(prevState => ({
+        mail: { ...prevState.mail, attachments },
+        tempAttachment: undefined,
+      }));
+      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Succès');
     } catch {
+      this.setState({ tempAttachment: undefined });
+      Toast.showError(I18n.t('zimbra-attachment-error'));
       this.props.onPickFileError('conversation');
-      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
+      Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Échec');
+    }
+  };
+
+  removeAttachment = async (attachmentId: string) => {
+    try {
+      const { session } = this.props;
+      const { id } = this.state;
+
+      if (!session || !id) throw new Error();
+      this.setState(prevState => ({
+        mail: { ...prevState.mail, attachments: prevState.mail.attachments.filter(item => item.id !== attachmentId) },
+      }));
+      await zimbraService.draft.deleteAttachment(session, id, attachmentId);
+    } catch {
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
   sendMail = async () => {
-    if (!this.state.mail.to.length && !this.state.mail.cc.length && !this.state.mail.bcc.length) {
-      return Toast.showError(I18n.t('zimbra-missing-receiver'));
-    } else if (this.state.tempAttachment) {
-      return Toast.showInfo(I18n.t('zimbra-send-attachment-progress'));
-    }
-
     try {
       const { navigation, session } = this.props;
-      const { mail } = this.state;
+      const { mail, tempAttachment } = this.state;
 
-      if (mail.attachments && mail.attachments.length !== 0) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
-      await zimbraService.mail.send(session!, this.getMailData(), this.state.id!, this.state.replyTo!);
+      if (!mail.to.length && !mail.cc.length && !mail.bcc.length) {
+        return Toast.showError(I18n.t('zimbra-missing-receiver'));
+      } else if (tempAttachment) {
+        return Toast.showInfo(I18n.t('zimbra-send-attachment-progress'));
+      }
+      if (!session) throw new Error();
+      if (mail.attachments.length) Trackers.trackEvent('Zimbra', 'SEND ATTACHMENTS');
+      await zimbraService.mail.send(session, this.getMailData(), this.state.id, this.state.replyTo);
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.t('zimbra-send-mail'));
     } catch {
@@ -187,11 +206,11 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   };
 
   checkIsMailEmpty = () => {
-    const draftType = this.props.route.params.type;
+    const { type } = this.props.route.params;
     const { isDeleted, isSent, mail } = this.state;
 
     if (isDeleted || isSent) return true;
-    if (draftType !== DraftType.NEW && draftType !== DraftType.DRAFT) {
+    if (type !== DraftType.NEW && type !== DraftType.DRAFT) {
       return false;
     }
     for (const key in mail) {
@@ -208,7 +227,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   };
 
   getPrefilledMail = () => {
-    const draftType = this.props.route.params.type;
+    const { type } = this.props.route.params;
     const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)[1];
     const getUser = id => ({ id, displayName: getDisplayName(id) });
 
@@ -275,7 +294,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       return header;
     };
 
-    switch (draftType) {
+    switch (type) {
       case DraftType.REPLY: {
         return {
           replyTo: this.props.mail.id,
@@ -349,11 +368,11 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
   getMailData = () => {
     let { mail, prevBody, signature, isNewSignature } = this.state;
-    const draftType = this.props.route.params.type;
+    const { type } = this.props.route.params;
     const regexp = /(\r\n|\n|\r)/gm;
 
     mail.body = mail.body.replace(regexp, '<br>');
-    if (draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL) {
+    if (type === DraftType.REPLY || type === DraftType.REPLY_ALL) {
       prevBody = prevBody?.replace('\n', '<br />');
     } else {
       prevBody = prevBody?.replace(/(<br>|<br \/>)/gs, '\n');
@@ -369,7 +388,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         ret[key] = value.map(user => user.id);
       } else if (key === 'body') {
         if (signature.text !== '' && (signature.useGlobal || isNewSignature)) {
-          if (draftType === DraftType.DRAFT) {
+          if (type === DraftType.DRAFT) {
             ret[key] = value + prevBody;
           } else {
             const sign = '<br><div class="signature new-signature ng-scope">' + signature.text + '</div>\n\n';
@@ -383,32 +402,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }
     }
     return ret;
-  };
-
-  getAttachmentData = async (file: LocalFile) => {
-    this.setState({ tempAttachment: file });
-
-    try {
-      const { session } = this.props;
-      const newAttachments = (await zimbraService.draft.addAttachment(session!, this.state.id!, file)) as [];
-      const formattedNewAttachments = newAttachments.map((att: any) => {
-        return {
-          filename: att.filename,
-          filetype: att.contentType,
-          id: att.id,
-          filesize: att.size,
-          url: undefined,
-        } as IDistantFile;
-      });
-      this.setState(prevState => ({
-        // ToDo recompute all attachments ids here
-        mail: { ...prevState.mail, attachments: formattedNewAttachments },
-        tempAttachment: null,
-      }));
-    } catch {
-      Toast.showError(I18n.t('zimbra-attachment-error'));
-      this.setState({ tempAttachment: null });
-    }
   };
 
   trashMail = async () => {
@@ -457,33 +450,21 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     ]);
   };
 
-  forwardDraft = async () => {
-    try {
-      const { session } = this.props;
-      await zimbraService.draft.forward(session!, this.state.id!, this.state.replyTo!);
-    } catch {
-      // TODO: Manage error
-    }
-  };
-
   saveDraft = async (addedAttachments: boolean = false) => {
     const { session } = this.props;
-    if (!this.checkIsMailEmpty() || addedAttachments) {
-      if (this.state.id === undefined && !this.state.settingId) {
-        this.setState({ settingId: true });
-        const inReplyTo = this.props.mail?.id;
-        const isForward = this.props.route.params.type === DraftType.FORWARD;
-        const idDraft = await zimbraService.draft.create(session!, this.getMailData(), inReplyTo, isForward);
 
-        this.setState({ id: idDraft, settingId: false });
-        if (isForward) this.forwardDraft();
-      } else {
-        await zimbraService.draft.update(session!, this.state.id, this.getMailData());
-      }
+    if (this.checkIsMailEmpty() && !addedAttachments) return;
+    if (this.state.id === undefined && !this.state.settingId) {
+      this.setState({ settingId: true });
+      const inReplyTo = this.props.mail?.id;
+      const isForward = this.props.route.params.type === DraftType.FORWARD;
+      const draftId = await zimbraService.draft.create(session!, this.getMailData(), inReplyTo, isForward);
+      this.setState({ id: draftId, settingId: false });
+      if (isForward) await zimbraService.draft.forward(session!, this.state.id!, this.state.replyTo!);
+    } else {
+      await zimbraService.draft.update(session!, this.state.id, this.getMailData());
     }
   };
-
-  // HEADER, MENU, COMPONENT AND SIGNATURE -------------------------
 
   setSignatureState = async (isSettingNewSignature: boolean = false, isFirstSet: boolean = false) => {
     let { data } = this.props.signature;
@@ -511,17 +492,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  setSignatureText = (signatureText: string) => {
-    const { useGlobal } = this.state.signature;
-    this.setState({ signature: { text: signatureText, useGlobal } });
-  };
-
-  setSignatureAPI = async () => {
-    const { session } = this.props;
-    await zimbraService.signature.update(session!, this.state.signature.text, this.state.signature.useGlobal);
-    this.setSignatureState(true, true);
-  };
-
   setNavbar() {
     const { navigation } = this.props;
     const { isTrashed } = this.props.route.params;
@@ -543,9 +513,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         <View style={styles.navBarActionsContainer}>
           <PopupMenu
             actions={[
-              cameraAction({ callback: this.addGivenAttachment }),
-              galleryAction({ callback: this.addGivenAttachment, multiple: true }),
-              documentAction({ callback: this.addGivenAttachment }),
+              cameraAction({ callback: this.addAttachment }),
+              galleryAction({ callback: this.addAttachment, multiple: true }),
+              documentAction({ callback: this.addAttachment }),
             ]}>
             <NavBarAction icon="ui-attachment" />
           </PopupMenu>
@@ -561,8 +531,10 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   }
 
   public render() {
-    const { isPrefilling, mail, signature } = this.state;
-    const { attachments, body, ...headers } = mail;
+    const { isNewSignature, isPrefilling, mail, prevBody, signature, tempAttachment } = this.state;
+    const { ...headers } = mail;
+    const attachments = tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments;
+    const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
     return (
       <>
@@ -571,30 +543,58 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           isUploading={!!this.state.tempAttachment}
           updateDraft={this.updateDraftOnBack}
         />
-        <PageView>
-          <NewMailComponent
-            isFetching={this.props.isFetching || !!isPrefilling}
-            headers={headers}
-            onDraftSave={this.saveDraft}
-            onHeaderChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
-            body={this.state.mail.body.replace(/(<br>|<br \/>)/gs, '\n')}
-            onBodyChange={newBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: newBody } }))}
-            attachments={
-              this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
-            }
-            onAttachmentChange={newAttachments => {
-              return this.setState(prevState => ({ mail: { ...prevState.mail, attachments: newAttachments } }));
-            }}
-            onAttachmentDelete={attachmentId =>
-              zimbraService.draft.deleteAttachment(this.props.session!, this.state.id!, attachmentId)
-            }
-            prevBody={this.state.prevBody}
-            signature={signature}
-            isNewSignature={this.state.isNewSignature}
-            onSignatureTextChange={text => this.setSignatureText(text)}
-            onSignatureAPIChange={this.setSignatureAPI}
-            hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
-          />
+        <PageComponent>
+          {this.props.isFetching || isPrefilling ? (
+            <LoadingIndicator />
+          ) : (
+            <ScrollView contentContainerStyle={styles.contentContainer} bounces={false} keyboardShouldPersistTaps="handled">
+              <ComposerHeaders
+                hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
+                headers={headers}
+                onChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
+                onSave={this.saveDraft}
+              />
+              {attachments.map(attachment => (
+                <Attachment
+                  key={attachment.filename}
+                  name={attachment.filename}
+                  type={attachment.filetype}
+                  uploadSuccess={'id' in attachment}
+                  onRemove={() => this.removeAttachment(attachment.id)}
+                />
+              ))}
+              <TextInput
+                value={mail.body.replace(/(<br>|<br \/>)/gs, '\n')}
+                onChangeText={text => this.setState(prevState => ({ mail: { ...prevState.mail, body: text } }))}
+                onEndEditing={() => this.saveDraft()}
+                multiline
+                textAlignVertical="top"
+                scrollEnabled={false}
+                placeholder={I18n.t('zimbra-type-message')}
+                placeholderTextColor={theme.ui.text.light}
+                style={styles.bodyInput}
+              />
+              {prevBody ? (
+                <>
+                  <View style={styles.separatorContainer} />
+                  <HtmlContentView html={prevBody} />
+                </>
+              ) : null}
+              {signature.text.length && (signature.useGlobal || isNewSignature) ? (
+                <>
+                  <View style={styles.separatorContainer} />
+                  <TextInput
+                    value={signature.text}
+                    onChangeText={text => this.setState(prevState => ({ signature: { ...prevState.signature, text } }))}
+                    multiline
+                    textAlignVertical="top"
+                    scrollEnabled={false}
+                    style={styles.signatureInput}
+                  />
+                </>
+              ) : null}
+            </ScrollView>
+          )}
           <SignatureModal
             ref={this.state.signatureModalRef}
             session={this.props.session}
@@ -605,7 +605,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
               this.state.signatureModalRef.current?.doDismissModal();
             }}
           />
-        </PageView>
+        </PageComponent>
       </>
     );
   }

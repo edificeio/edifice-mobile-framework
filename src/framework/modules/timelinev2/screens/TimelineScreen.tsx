@@ -125,6 +125,25 @@ export const computeNavBar = ({
 
 // COMPONENT ======================================================================================
 
+function NotificationItem({
+  notification,
+  doOpenNotification,
+}: {
+  notification: ITimelineNotification;
+  doOpenNotification: typeof TimelineScreen.prototype.doOpenNotification;
+}) {
+  const onNotificationAction = React.useMemo(
+    () =>
+      isResourceUriNotification(notification)
+        ? () => doOpenNotification(notification as ITimelineNotification & IResourceUriNotification)
+        : undefined,
+    // Since notifications are immutable, we can memoize them only by id safely.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [notification.id, doOpenNotification],
+  );
+  return <TimelineNotification notification={notification} notificationAction={onNotificationAction} />;
+}
+
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
   // DECLARATIONS =================================================================================
 
@@ -159,6 +178,60 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     ); // ToDo: great error screen here
   }
 
+  listKeyExtractor(n: ITimelineItem & { key: string }) {
+    return n.data.id.toString();
+  }
+
+  listRenderItem({ item }: ListRenderItemInfo<ITimelineItem>) {
+    return item.type === ITimelineItemType.NOTIFICATION ? (
+      <NotificationItem notification={item.data as ITimelineNotification} doOpenNotification={this.doOpenNotification.bind(this)} />
+    ) : (
+      this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)
+    );
+  }
+
+  listSwipeActions({ item }: ListRenderItemInfo<ITimelineItem>) {
+    return {
+      right: this.rights.notification.report
+        ? item.type === ITimelineItemType.NOTIFICATION
+          ? [
+              {
+                action: async row => {
+                  try {
+                    await this.doReportConfirm(item.data as ITimelineNotification);
+                    row[item.data.id]?.closeRow();
+                  } catch {
+                    /* empty */
+                  } // Do nothing, just to prevent error
+                },
+                actionColor: theme.palette.status.warning.regular,
+                actionText: I18n.t('timeline.reportAction.button'),
+                actionIcon: 'ui-warning',
+              },
+            ]
+          : item.type === ITimelineItemType.FLASHMSG
+          ? [
+              {
+                action: async row => {
+                  try {
+                    await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
+                    row[item.data.id]?.closeRow();
+                  } catch {
+                    /* empty */
+                  } // Do nothing, just to prevent error
+                },
+                actionColor: theme.palette.status.failure.regular,
+                actionText: I18n.t('common.close'),
+                actionIcon: 'ui-close',
+              },
+            ]
+          : undefined
+        : undefined,
+    };
+  }
+
+  listSeparator = (<View style={{ height: pageGutterSize }} />);
+
   renderList() {
     const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
     const isEmpty = items && items.length === 0;
@@ -168,19 +241,15 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         // ref={this.listRef}
         // data
         data={items}
-        keyExtractor={n => n.data.id.toString()}
+        keyExtractor={this.listKeyExtractor.bind(this)}
         contentContainerStyle={isEmpty ? UI_STYLES.flex1 : undefined}
-        renderItem={({ item }: ListRenderItemInfo<ITimelineItem>) =>
-          item.type === ITimelineItemType.NOTIFICATION
-            ? this.renderNotificationItem(item.data as ITimelineNotification)
-            : this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)
-        }
+        renderItem={this.listRenderItem.bind(this)}
         // pagination
         ListEmptyComponent={this.renderEmpty}
         refreshControl={
           <RefreshControl
             refreshing={[TimelineLoadingState.REFRESH, TimelineLoadingState.INIT].includes(this.state.loadingState)}
-            onRefresh={() => this.doRefresh()}
+            onRefresh={this.doRefresh.bind(this)}
           />
         }
         ListFooterComponent={
@@ -188,52 +257,14 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
             <LoadingIndicator withVerticalMargins />
           ) : null
         }
-        ListHeaderComponent={<View style={{ height: pageGutterSize }} />}
-        onEndReached={() => this.doNextPage()}
-        onEndReachedThreshold={0.5}
+        ListHeaderComponent={this.listSeparator}
+        onEndReached={this.doNextPage.bind(this)}
+        onEndReachedThreshold={1}
         // Swipeable props
         swipeActionWidth={140}
         hiddenRowStyle={cardPaddingMerging}
         hiddenItemStyle={UI_STYLES.justifyEnd}
-        itemSwipeActionProps={({ item }) => {
-          return {
-            right: this.rights.notification.report
-              ? item.type === ITimelineItemType.NOTIFICATION
-                ? [
-                    {
-                      action: async row => {
-                        try {
-                          await this.doReportConfirm(item.data as ITimelineNotification);
-                          row[item.data.id]?.closeRow();
-                        } catch {
-                          /* empty */
-                        } // Do nothing, just to prevent error
-                      },
-                      actionColor: theme.palette.status.warning.regular,
-                      actionText: I18n.t('timeline.reportAction.button'),
-                      actionIcon: 'ui-warning',
-                    },
-                  ]
-                : item.type === ITimelineItemType.FLASHMSG
-                ? [
-                    {
-                      action: async row => {
-                        try {
-                          await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
-                          row[item.data.id]?.closeRow();
-                        } catch {
-                          /* empty */
-                        } // Do nothing, just to prevent error
-                      },
-                      actionColor: theme.palette.status.failure.regular,
-                      actionText: I18n.t('common.close'),
-                      actionIcon: 'ui-close',
-                    },
-                  ]
-                : undefined
-              : undefined,
-          };
-        }}
+        itemSwipeActionProps={this.listSwipeActions.bind(this)}
       />
     );
   }
@@ -244,19 +275,6 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         svgImage="empty-timeline"
         title={I18n.t('timeline.emptyScreenTitle')}
         text={I18n.t('timeline.emptyScreenText')}
-      />
-    );
-  }
-
-  renderNotificationItem(notification: ITimelineNotification) {
-    return (
-      <TimelineNotification
-        notification={notification}
-        notificationAction={
-          isResourceUriNotification(notification)
-            ? () => this.doOpenNotification(notification as ITimelineNotification & IResourceUriNotification)
-            : undefined
-        }
       />
     );
   }

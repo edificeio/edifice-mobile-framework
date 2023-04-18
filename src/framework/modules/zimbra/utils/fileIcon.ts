@@ -1,4 +1,4 @@
-export const getFileIcon = (type: string) => {
+export const getFileIcon = (type?: string) => {
   switch (type) {
     case 'image/png':
     case 'image/jpeg':

@@ -5,6 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { SupportedLocales } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
+import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, destroyOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
@@ -336,6 +337,7 @@ function sessionDestroyAction(platform: Platform) {
     await destroyOAuth2();
     // Validate log out
     dispatch(authActions.sessionEnd());
+    dispatch(createEndSessionAction()); // flush sessionReducers
   };
 }
 
@@ -349,6 +351,7 @@ export function sessionInvalidateAction(platform: Platform, error?: AuthError) {
     await removeFirebaseToken(platform);
     // Validate log out
     dispatch(authActions.sessionError(error?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+    dispatch(createEndSessionAction()); // flush sessionReducers
   };
 }
 
