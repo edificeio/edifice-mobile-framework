@@ -13,7 +13,7 @@ const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
   <>
     <RootStack.Group screenOptions={{ presentation: 'modal' }}>
-      <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} />
+      <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} initialParams={{ title: '' }} />
     </RootStack.Group>
     <RootStack.Group
       screenOptions={{
