@@ -1,4 +1,4 @@
-import { filesize } from 'filesize';
+import Filesize from 'filesize';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
@@ -7,17 +7,17 @@ import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/icon';
+import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { IDistantFile, IDistantFileWithId, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { openDocument } from '~/framework/util/fileHandler/actions';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { getUserSession } from '~/framework/util/session';
-import Notifier from '~/infra/notifier/container';
+import Notifier from '~/framework/util/notifier';
 import { urlSigner } from '~/infra/oauth';
 
 import { IconButton } from './IconButton';
@@ -244,7 +244,7 @@ class Attachment extends React.PureComponent<
                     : downloadState === DownloadState.Error
                     ? ' ' + I18n.t('tryagain')
                     : (this.props.attachment as IRemoteAttachment).size
-                    ? `${filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
+                    ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
                     : ''}
                 </SmallText>
               </SmallText>
@@ -333,7 +333,8 @@ class Attachment extends React.PureComponent<
       downloadState: DownloadState.Downloading,
     });
     const downloadAction = (att: IDistantFile) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
-      const session = getUserSession();
+      const session = getSession();
+      if (!session) return;
       fileTransferService
         .downloadFile(
           session,

@@ -16,7 +16,6 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import { assertPermissions } from '~/framework/util/permissions';
 

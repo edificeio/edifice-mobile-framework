@@ -6,7 +6,6 @@ import { NavigationState } from '@react-navigation/native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import legacyModuleDefinitions from '~/AppModules';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
 import { navigate } from '~/framework/navigation/helper';
@@ -140,33 +139,3 @@ export interface NotificationHandler {
 export interface NotificationHandlerFactory<S, E, A extends Action> {
   (dispatch: ThunkDispatch<S, E, A>, getState: () => S): NotificationHandler;
 }
-
-export const legacyHandleNotificationAction =
-  (data: NotificationData, apps: string[], trackCategory: false | string = 'Push Notification') =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    // function for calling handlerfactory
-    let manageCount = 0;
-    const call = async (notifHandlerFactory: NotificationHandlerFactory<any, any, any>) => {
-      try {
-        const managed = await notifHandlerFactory(dispatch, getState)(data, apps, trackCategory);
-        if (managed) {
-          manageCount++;
-        }
-      } catch {
-        //TODO: Manage error
-      }
-    };
-    // timeline is not a functional module
-    // await call(legacyTimelineHandlerFactory); This is commented becasue timeline v2 developpement.
-    // notify functionnal module
-    for (const handler of legacyModuleDefinitions) {
-      if (handler && handler.config && handler.config.notifHandlerFactory) {
-        const func = await handler.config.notifHandlerFactory();
-        await call(func);
-      }
-    }
-
-    return manageCount;
-  };
-
-// END LEGACY ZONE

@@ -29,7 +29,6 @@ import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
-import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 // TYPES ==========================================================================================
@@ -166,7 +165,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   };
 
   const openSchoolbookWordReport = () =>
-    props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/report`, props.navigation.state), {
+    props.navigation.navigate(`${moduleConfig.routeName}/report`, {
       schoolbookWordId,
     });
 

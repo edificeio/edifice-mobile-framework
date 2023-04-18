@@ -1,8 +1,7 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View } from 'react-native';
+import { LayoutChangeEvent, View } from 'react-native';
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
-import { LayoutEvent } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -38,7 +37,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
     textStyle: { marginTop: UI_SIZES.spacing.tiny },
   };
 
-  public measureText = (numberOfLines: number | undefined) => async (evt: LayoutEvent) => {
+  public measureText = (numberOfLines: number | undefined) => async (evt: LayoutChangeEvent) => {
     if (numberOfLines) {
       const { textContent } = this.props;
       const result: TSMeasureResult = await rnTextSize.measure({

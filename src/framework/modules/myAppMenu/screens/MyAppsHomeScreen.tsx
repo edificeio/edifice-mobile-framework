@@ -1,8 +1,8 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import GridList from '~/framework/components/GridList';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -10,9 +10,10 @@ import { TouchableSelectorPictureCard } from '~/framework/components/card/pictur
 import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
+import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 
-export interface MyAppsHomeScreenProps extends NavigationInjectedProps {
+export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
   modules: NavigableModuleArray;
 }
 

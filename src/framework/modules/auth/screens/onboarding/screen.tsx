@@ -9,9 +9,8 @@ import { ActionButton, getActionButtonWidth } from '~/framework/components/butto
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
+import { getLoginRouteName } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
-import { getLoginRouteName } from '~/navigation/helpers/loginRouteName';
-import { selectPlatform } from '~/user/actions/platform';
 
 import styles from './styles';
 import { IOnboardingScreenProps, IOnboardingScreenState } from './types';
@@ -60,9 +59,6 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
             text={I18n.t('user.onboardingScreen.joinMyNetwork')}
             action={() => {
               const hasMultiplePlatforms = appConf.platforms.length > 1;
-              if (!hasMultiplePlatforms) {
-                dispatch(selectPlatform(appConf.platforms[0].name));
-              }
               navigation.navigate(hasMultiplePlatforms ? 'PlatformSelect' : getLoginRouteName());
             }}
             style={{ width: buttonsWidth }}

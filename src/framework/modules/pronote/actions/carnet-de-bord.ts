@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/pronote/module-config';

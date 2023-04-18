@@ -37,10 +37,8 @@ import { getSchoolbookWorkflowInformation } from '~/framework/modules/schoolbook
 import { schoolbookService } from '~/framework/modules/schoolbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { removeFirstWord } from '~/framework/util/string';
-import { userService } from '~/user/service';
 
 //FIXME: create/move to styles.ts
 const styles = {
@@ -179,7 +177,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         // Fetch children information for parent
         const fetchParentChildren = async () => {
           if (!userId) throw new Error('missing userId');
-          const childrenByStructure = await userService.getUserChildren(userId);
+          const childrenByStructure = session.user.children;
           const allChildren = childrenByStructure?.map(structure => structure.children)?.flat();
           const formattedAllChildren = allChildren?.map(child => ({
             id: child.id,
@@ -217,7 +215,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   );
 
   const openSchoolbookWord = (schoolbookWordId: string) =>
-    props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`, props.navigation.state), {
+    props.navigation.navigate(`${moduleConfig.routeName}/details`, {
       schoolbookWordId,
       studentId: selectedChildId,
     });

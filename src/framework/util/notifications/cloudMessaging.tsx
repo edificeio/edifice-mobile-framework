@@ -7,7 +7,7 @@ import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';

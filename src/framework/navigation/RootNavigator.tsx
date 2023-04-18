@@ -9,8 +9,8 @@ import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
 import { useAppStartup } from '~/app/startup';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';

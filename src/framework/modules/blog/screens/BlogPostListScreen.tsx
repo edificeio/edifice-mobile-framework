@@ -7,7 +7,6 @@ import moment from 'moment';
 import React from 'react';
 import { FlatList, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -25,7 +24,6 @@ import { BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { computeRelativePath } from '~/framework/util/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import { DisplayedBlog } from './BlogExplorerScreen';
@@ -169,7 +167,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     });
 
   const onOpenBlogPost = (item: BlogPost) => {
-    props.navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/details`), {
+    props.navigation.navigate(`${moduleConfig.routeName}/details`, {
       blogPost: item,
       blog: selectedBlog,
     });

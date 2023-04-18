@@ -6,9 +6,9 @@ import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText } from '~/framework/components/text';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
-import { Icon } from '~/ui/icons/Icon';
 
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
 

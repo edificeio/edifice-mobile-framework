@@ -7,7 +7,7 @@ import React from 'react';
 import { ColorValue } from 'react-native';
 import type { Reducer } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timelinev2/appBadges';
 import { toSnakeCase } from '~/framework/util/string';

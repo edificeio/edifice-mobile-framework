@@ -2,7 +2,6 @@
  * Actions for file handler
  */
 import FileViewer from 'react-native-file-viewer';
-import type { NavigationInjectedProps } from 'react-navigation';
 import type { ThunkDispatch } from 'redux-thunk';
 
 import { openCarousel } from '~/framework/components/carousel';

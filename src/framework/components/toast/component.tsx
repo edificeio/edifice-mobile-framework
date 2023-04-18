@@ -1,5 +1,4 @@
 import I18n from 'i18n-js';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import ToastMessage from 'react-native-toast-message';
 
 export default class Toast {
@@ -12,15 +11,15 @@ export default class Toast {
     });
   }
 
-  static showSuccess(text: string) {
-    this.$showToast('success', text);
-  }
-
   static showError(text: string = I18n.t('common.error.text')) {
     this.$showToast('error', text);
   }
 
   static showInfo(text: string) {
     this.$showToast('info', text);
+  }
+
+  static showSuccess(text: string) {
+    this.$showToast('success', text);
   }
 }

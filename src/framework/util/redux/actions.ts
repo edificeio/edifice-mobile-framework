@@ -1,7 +1,7 @@
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { DoTrackArg, Trackers } from '~/framework/util/tracker';
 
 interface TryActionOptions<Args extends any[]> {

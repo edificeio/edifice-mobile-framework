@@ -1,15 +1,16 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, KeyboardAvoidingView, KeyboardTypeOptions, Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, KeyboardTypeOptions, Platform, SafeAreaView, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
-import { AnyAction, Dispatch } from 'redux';
+import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { ContainerTextInput, ContainerView } from '~/framework/components/buttons/line';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ImagePicked } from '~/framework/components/menus/actions';
+import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { CaptionText, SmallText } from '~/framework/components/text';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
@@ -18,14 +19,14 @@ import { UpdatableProfileValues, profileUpdateAction } from '~/framework/modules
 import UserCard from '~/framework/modules/user/components/user-card';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import workspaceService from '~/framework/modules/workspace/service';
-import { NavBarAction, navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { formatSource } from '~/framework/util/media';
+import Notifier from '~/framework/util/notifier';
+import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
-import { notifierShowAction } from '~/infra/notifier/actions';
-import Notifier from '~/infra/notifier/container';
 import { PageContainer } from '~/ui/ContainerContent';
 import { ValidatorBuilder } from '~/utils/form';
 

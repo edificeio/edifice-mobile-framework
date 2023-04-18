@@ -22,7 +22,6 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { Blog, BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { computeRelativePath } from '~/framework/util/navigation';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 export interface BlogSelectScreenDataProps {
@@ -166,7 +165,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
     const { navigation } = this.props;
     const blogShareNumber = blog.shared?.length;
     return (
-      <TouchableOpacity onPress={() => navigation.navigate(computeRelativePath(`${moduleConfig.routeName}/create`), { blog })}>
+      <TouchableOpacity onPress={() => navigation.navigate(`${moduleConfig.routeName}/create`, { blog })}>
         <ListItem
           leftElement={
             <View style={styles.blogItem}>

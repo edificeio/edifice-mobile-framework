@@ -16,3 +16,16 @@ index eb581d8..707c79f 100644
              {text1}
            </Text>)}
          {(text2?.length ?? 0) > 0 && (<Text testID={getTestId('Text2')} style={[styles.text2, text2Style]} numberOfLines={text2NumberOfLines} ellipsizeMode='tail' {...text2Props}>
+diff --git a/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js b/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
+index 33f0b87..97e2423 100644
+--- a/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
++++ b/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
+@@ -16,7 +16,7 @@ export function useSlideAnimation({ position, height, topOffset, bottomOffset, k
+     const animate = React.useCallback((toValue) => {
+         Animated.spring(animatedValue.current, {
+             toValue,
+-            useNativeDriver,
++            useNativeDriver: false,
+             friction: 8
+         }).start();
+     }, []);
