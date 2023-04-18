@@ -351,6 +351,7 @@ export function sessionInvalidateAction(platform: Platform, error?: AuthError) {
     await removeFirebaseToken(platform);
     // Validate log out
     dispatch(authActions.sessionError(error?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+    dispatch(createEndSessionAction()); // flush sessionReducers
   };
 }
 
