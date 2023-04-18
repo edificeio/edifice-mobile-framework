@@ -265,18 +265,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         }),
       );
     } catch (e: any) {
-      if (e.response.body === '{"error":"file.too.large"}') {
+      if (e.response?.body === '{"error":"file.too.large"}') {
         Toast.showError(I18n.t('fullStorage'));
       }
-      const { dispatch } = this.props;
-      dispatch(
-        notifierShowAction({
-          id: 'blog/create',
-          text: `${I18n.t('common.error.title')} ${I18n.t('common.error.text')}`,
-          icon: 'close',
-          type: 'error',
-        }),
-      );
       if ((e as Error).message && (e as Error).message !== 'handled') {
         Alert.alert('', I18n.t('blog-post-publish-error-text'));
       }
