@@ -1,6 +1,6 @@
 {
-  "last": "2023-04-19 01:39:29",
-  "notes": "chore: ignore logs\nchore: add build-* commands\nadd mobile-ci-cd in .gitignore to easy sparse-checkout of this\nfix(zimbra): improve attachments typing\nfix: MB-1516 fix store flush on session error\nfix(conversation): MB-1485, full stockage error on android\nfix: MB-1516 fix store flush on session end\nfix(blog): MB-1504, handle network fail for blog post creation\nfix(workspace): MB-1486, Manage Android full storage error ('ENOENT')\nfix: timeline performance\nchore(zimbra): remove NewMail component, add ComposerHeaders component\nfix(conversation): fix alert draft when send mail\nfix: avoid re-render of navigation when tab jump\nfeat(modal): close icon in android too\nchore(stack): Replacing babel eslint\nrefactor(pdf): Move PDF Reader to components\nrelease: 1.9.5-alpha.16(1090516)",
-  "version": "1.9.5-alpha.17(1090517)",
+  "last": "2023-04-19 01:48:04",
+  "notes": "release: 1.9.5-alpha.17(1090517)",
+  "version": "1.9.5-alpha.18(1090518)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
