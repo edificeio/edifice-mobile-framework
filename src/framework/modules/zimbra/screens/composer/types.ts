@@ -14,12 +14,6 @@ export interface ZimbraComposerScreenProps {
   fetchMail: (id: string) => Promise<IMail>;
   fetchSignature: () => Promise<ISignature>;
   onPickFileError: (notifierId: string) => void;
-  //sendMail: (mailDatas: object, draftId: string, inReplyTo: string) => void;
-  //forwardMail: (draftId: string, inReplyTo: string) => void;
-  //makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => void;
-  //updateDraft: (mailId: string, mailDatas: object) => void;
-  //addAttachment: (draftId: string, files: LocalFile) => Promise<any[]>;
-  //deleteAttachment: (draftId: string, attachmentId: string) => void;
 }
 
 export interface ZimbraComposerScreenNavParams {
