@@ -613,12 +613,15 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
       }));
-    } catch (e) {
+    } catch (e: any) {
       Keyboard.dismiss();
-      Toast.showError(
-        // Ignore type error
-        e.response.body === '{"error":"file.too.large"}' ? I18n.t('fullStorage') : I18n.t('conversation.attachmentError'),
-      );
+      // Full storage management
+      // statusCode = 400 on iOS and code = 'ENOENT' on Android
+      if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
+        Toast.showError(I18n.t('fullStorage'));
+      } else {
+        Toast.showError(I18n.t('conversation.attachmentError'));
+      }
       this.setState({ tempAttachment: null });
       throw e;
     }

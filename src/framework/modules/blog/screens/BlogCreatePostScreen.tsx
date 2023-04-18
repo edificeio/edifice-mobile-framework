@@ -216,8 +216,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       if (images.length > 0) {
         try {
           uploadedPostImages = await handleUploadPostImages(images);
-        } catch (e) {
-          if ((e as any).response?.body === '{"error":"file.too.large"}') {
+        } catch (e: any) {
+          // Full storage management
+          // statusCode = 400 on iOS and code = 'ENOENT' on Android
+          if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
             Alert.alert('', I18n.t('fullStorage'));
           } else {
             Alert.alert('', I18n.t('blog-post-upload-attachments-error-text'));
