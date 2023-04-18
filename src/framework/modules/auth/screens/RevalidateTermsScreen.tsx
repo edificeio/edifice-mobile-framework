@@ -14,6 +14,7 @@ import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView, PageViewStyle } from '~/framework/components/page';
+import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ILoginResult, loginAction, logoutAction } from '~/framework/modules/auth/actions';
@@ -26,7 +27,6 @@ import {
 } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { revalidateTerms } from '~/framework/modules/auth/service';
-import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
 import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================
@@ -98,7 +98,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
   }, [props.navigation, props.tryLogin]);
 
   const doOpenCGU = React.useCallback((url?: string) => {
-    openPdfReader({
+    openPDFReader({
       src: url,
       title: I18n.t('activation-cgu'),
     });

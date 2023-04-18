@@ -8,12 +8,12 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
+import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Icon } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { openPdfReader } from '~/framework/screens/PdfReaderScreen';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
@@ -39,7 +39,7 @@ function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
       const selectedLegalTitle = I18n.t(`user.legalNoticeScreen.${legalItem}`);
       const selectedLegalUrl = props.urls[legalItem];
       Trackers.trackEvent('Profile', 'READ NOTICE', legalItem);
-      openPdfReader({ title: selectedLegalTitle, src: selectedLegalUrl });
+      openPDFReader({ title: selectedLegalTitle, src: selectedLegalUrl });
     },
     [props.urls],
   );

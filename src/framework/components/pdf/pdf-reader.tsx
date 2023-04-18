@@ -31,7 +31,7 @@ export const computeNavBar = ({
   }),
 });
 
-export class BackdropPdfReaderScreen extends React.PureComponent<
+export class PDFReader extends React.PureComponent<
   NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Pdf>,
   IBackdropPdfReaderState
 > {
@@ -71,6 +71,6 @@ export class BackdropPdfReaderScreen extends React.PureComponent<
   }
 }
 
-export function openPdfReader(navParams: IModalsNavigationParams[ModalsRouteNames.Pdf]) {
+export function openPDFReader(navParams: IModalsNavigationParams[ModalsRouteNames.Pdf]) {
   navigate(ModalsRouteNames.Pdf, navParams);
 }
