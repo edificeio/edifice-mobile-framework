@@ -20,7 +20,7 @@ import { getState as getAuthState, getSession } from '~/framework/modules/auth/r
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 
 import { navigationRef } from './helper';
-import { MainNavigation } from './mainNavigation';
+import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
@@ -68,9 +68,10 @@ function RootNavigator(props: RootNavigatorProps) {
   }, [initialNavState]);
 
   // === Auth/Main switch ===
+  const mainNavigation = useMainNavigation(session?.apps ?? [], session?.widgets ?? []);
   const routes = React.useMemo(() => {
-    return isFullyLogged ? MainNavigation(session.apps, session.widgets) : AuthNavigator();
-  }, [isFullyLogged, session?.apps, session?.widgets]);
+    return isFullyLogged ? mainNavigation : <AuthNavigator />;
+  }, [isFullyLogged, mainNavigation]);
 
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 
