@@ -316,6 +316,7 @@
   "conversation-reply-to-name-action": "Répondre à {{name}}",
   "conversation-responsePlaceholder": "Répondre à tous...",
   "conversation-responsePlaceholderSingle": "Répondre...",
+  "conversation-send-error": "Erreur lors de l'envoi du message",
   "conversation-sendingMessage": "En cours d'envoi...",
   "conversation-subjectPrefixInput": "Objet :",
   "conversation-subjectReplyPrefix": "Re:",

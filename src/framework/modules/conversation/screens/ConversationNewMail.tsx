@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -38,7 +39,6 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
@@ -169,7 +169,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
   componentDidUpdate = async (prevProps: ConversationNewMailScreenProps) => {
     const { mail, navigation, route } = this.props;
-    const { id, webDraftWarning } = this.state;
+    const { id, isSending, webDraftWarning } = this.state;
     const draftType = route.params.type;
     const isSavedDraft = draftType === DraftType.DRAFT;
     const addGivenAttachment = route.params.addGivenAttachment;
@@ -195,7 +195,13 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
               )),
             },
             {
-              ...(sendDraft && <NavBarAction onPress={sendDraft} icon="ui-send" />),
+              ...(sendDraft ? (
+                isSending ? (
+                  <LoadingIndicator small customColor={theme.ui.text.inverse} />
+                ) : (
+                  <NavBarAction onPress={sendDraft} icon="ui-send" />
+                )
+              ) : null),
             },
           ]}
         />
@@ -663,25 +669,28 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       const { navigation, sendMail } = this.props;
       const { id, replyTo } = this.state;
 
+      this.setState({ isSending: true });
       Keyboard.dismiss();
       await sendMail(this.getMailData(), id, replyTo);
-      this.setState({ isSending: true });
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.t('conversation.sendMail'));
     } catch {
+      Toast.showError(I18n.t('conversation-send-error'));
       // TODO: Manage error
+    } finally {
+      this.setState({ isSending: false });
     }
   };
 
   public render() {
     const { deleteAttachment, isFetching, route } = this.props;
-    const { id, isPrefilling, mail, tempAttachment, prevBody } = this.state;
+    const { id, isPrefilling, isSending, mail, tempAttachment, prevBody } = this.state;
     const draftType = route.params.type;
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
     return (
       <>
-        <HandleBack isSending={this.state.isSending} />
+        <HandleBack isSending={isSending} />
         <PageView style={{ backgroundColor: theme.ui.background.card }}>
           <NewMailComponent
             isFetching={isFetching || !!isPrefilling}
@@ -717,7 +726,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
       setup: fetchVisiblesAction,
-      sendMail: tryActionLegacy(sendMailAction, [moduleConfig, 'Envoyer un mail', `Rédaction mail - Envoyer`]),
+      sendMail: sendMailAction,
       forwardMail: forwardMailAction,
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
