@@ -6,9 +6,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
+import { IRecipient } from '~/framework/modules/zimbra/model';
 
-import SearchUserMail from './SearchUserMail';
+import { RecipientField } from './RecipientField';
 
 const styles = StyleSheet.create({
   expandActionContainer: {
@@ -32,58 +32,30 @@ const styles = StyleSheet.create({
 
 const HeaderUsers = ({
   title,
-  onChange,
-  value,
-  children,
+  recipients,
   hasRightToSendExternalMails,
+  onChange,
+  children,
 }: React.PropsWithChildren<{
   title: string;
-  onChange;
-  onSave;
-  value: any;
+  recipients: IRecipient[];
   hasRightToSendExternalMails: boolean;
+  onChange;
 }>) => {
   return (
     <View style={styles.headerRow}>
       <SmallText>{title} : </SmallText>
-      <SearchUserMail
-        selectedUsersOrGroups={value}
-        onChange={val => onChange(val)}
+      <RecipientField
         hasRightToSendExternalMails={hasRightToSendExternalMails}
+        selectedRecipients={recipients}
+        onChange={value => onChange(value)}
       />
       {children}
     </View>
   );
 };
 
-const HeaderSubject = ({ onChange, onSave, value }: React.PropsWithChildren<{ onChange; onSave; value: any }>) => {
-  const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
-  const [currentValue, updateCurrentValue] = React.useState(value);
-
-  React.useEffect(() => {
-    clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = setTimeout(() => onChange(currentValue), 500);
-
-    return () => {
-      clearTimeout(textUpdateTimeout.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentValue]);
-
-  return (
-    <View style={styles.headerRow}>
-      <SmallText>{I18n.t('zimbra-subject')} : </SmallText>
-      <TextInput
-        defaultValue={value}
-        onChangeText={text => updateCurrentValue(text)}
-        onEndEditing={() => onSave()}
-        style={styles.subjectInput}
-      />
-    </View>
-  );
-};
-
-type MailHeaders = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
+type MailHeaders = { to: IRecipient[]; cc: IRecipient[]; bcc: IRecipient[]; subject: string };
 
 interface ComposerHeadersProps {
   hasRightToSendExternalMails: boolean;
@@ -101,9 +73,8 @@ export const ComposerHeaders = ({ hasRightToSendExternalMails, headers, onChange
     <>
       <HeaderUsers
         title={I18n.t('zimbra-to')}
-        value={headers.to}
+        recipients={headers.to}
         onChange={to => onChange({ ...headers, to })}
-        onSave={onSave}
         hasRightToSendExternalMails={hasRightToSendExternalMails}>
         <TouchableOpacity onPress={expand} style={styles.expandActionContainer}>
           <Picture
@@ -119,21 +90,27 @@ export const ComposerHeaders = ({ hasRightToSendExternalMails, headers, onChange
         <>
           <HeaderUsers
             title={I18n.t('zimbra-cc')}
-            value={headers.cc}
+            recipients={headers.cc}
             onChange={cc => onChange({ ...headers, cc })}
-            onSave={onSave}
             hasRightToSendExternalMails={hasRightToSendExternalMails}
           />
           <HeaderUsers
             title={I18n.t('zimbra-bcc')}
-            value={headers.bcc}
+            recipients={headers.bcc}
             onChange={bcc => onChange({ ...headers, bcc })}
-            onSave={onSave}
             hasRightToSendExternalMails={hasRightToSendExternalMails}
           />
         </>
       ) : null}
-      <HeaderSubject value={headers.subject} onChange={subject => onChange({ ...headers, subject })} onSave={onSave} />
+      <View style={styles.headerRow}>
+        <SmallText>{I18n.t('zimbra-subject')} : </SmallText>
+        <TextInput
+          defaultValue={headers.subject}
+          onChangeText={text => onChange({ ...headers, subject: text })}
+          onEndEditing={onSave}
+          style={styles.subjectInput}
+        />
+      </View>
     </>
   );
 };

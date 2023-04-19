@@ -24,7 +24,7 @@ import { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/m
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { ComposerHeaders } from '~/framework/modules/zimbra/components/ComposerHeaders';
 import SignatureModal from '~/framework/modules/zimbra/components/modals/SignatureModal';
-import { DraftType, IMail } from '~/framework/modules/zimbra/model';
+import { DraftType, IMail, IRecipient } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
@@ -40,9 +40,9 @@ import styles from './styles';
 import { ZimbraComposerScreenPrivateProps } from './types';
 
 type NewMail = {
-  to: ISearchUsers;
-  cc: ISearchUsers;
-  bcc: ISearchUsers;
+  to: IRecipient[];
+  cc: IRecipient[];
+  bcc: IRecipient[];
   subject: string;
   body: string;
   attachments: IDistantFileWithId[];
@@ -148,8 +148,8 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       let { id } = this.state;
       const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
 
-      if (!session) throw new Error();
       if (!id) id = await this.saveDraft(true);
+      if (!session || !id) throw new Error();
       this.setState({ tempAttachment: lf });
       const attachments = await zimbraService.draft.addAttachment(session, id, lf);
       this.setState(prevState => ({
