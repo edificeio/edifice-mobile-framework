@@ -50,15 +50,12 @@ type NewMail = {
 
 interface ZimbraComposerScreenState {
   isDeleted: boolean;
-  isNewSignature: boolean;
   isSent: boolean;
   isSettingId: boolean;
   mail: NewMail;
-  signature: {
-    text: string;
-    useGlobal: boolean;
-  };
+  signature: string;
   signatureModalRef: React.RefObject<ModalBoxHandle>;
+  useSignature: boolean;
   id?: string;
   isPrefilling?: boolean;
   prevBody?: string;
@@ -98,18 +95,18 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     super(props);
 
     this.state = {
-      mail: { to: [], cc: [], bcc: [], subject: '', body: '', attachments: [] },
-      prevBody: '',
-      isSettingId: false,
-      signature: { text: '', useGlobal: false },
-      isNewSignature: false,
-      signatureModalRef: React.createRef<ModalBoxHandle>(),
       isDeleted: false,
       isSent: false,
+      isSettingId: false,
+      mail: { to: [], cc: [], bcc: [], subject: '', body: '', attachments: [] },
+      prevBody: '',
+      signature: '',
+      signatureModalRef: React.createRef<ModalBoxHandle>(),
+      useSignature: false,
     };
   }
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     const { mailId, type } = this.props.route.params;
 
     if (mailId) {
@@ -121,12 +118,15 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     if (type !== DraftType.DRAFT) {
       this.saveDraft();
     }
-    this.setSignatureState(true);
     this.setNavbar();
+    const signature = await this.props.fetchSignature();
+    this.setState({
+      signature: signature.preference.signature,
+      useSignature: signature.preference.useSignature,
+    });
   };
 
   componentDidUpdate = async (prevProps: ZimbraComposerScreenPrivateProps) => {
-    const { signature } = this.props;
     const { mailId } = this.props.route.params;
 
     if (prevProps.mail !== this.props.mail) {
@@ -139,9 +139,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }));
     } else if (!this.state.id && mailId) {
       this.setState({ id: mailId });
-    }
-    if (prevProps.signature.isFetching !== signature.isFetching && !signature.isFetching) {
-      this.setSignatureState();
     }
   };
 
@@ -371,7 +368,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   };
 
   getMailData = (): IMail => {
-    let { mail, prevBody, signature, isNewSignature } = this.state;
+    let { mail, prevBody, signature, useSignature } = this.state;
     const { type } = this.props.route.params;
 
     mail.body = mail.body.replace(/(\r\n|\n|\r)/gm, '<br>');
@@ -390,11 +387,11 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       if (key === 'to' || key === 'cc' || key === 'bcc') {
         ret[key] = value.map(user => user.id);
       } else if (key === 'body') {
-        if (signature.text !== '' && (signature.useGlobal || isNewSignature)) {
+        if (signature && useSignature) {
           if (type === DraftType.DRAFT) {
             ret[key] = value + prevBody;
           } else {
-            const sign = '<br><div class="signature new-signature ng-scope">' + signature.text + '</div>\n\n';
+            const sign = '<br><div class="signature new-signature ng-scope">' + signature + '</div>\n\n';
             ret[key] = value + sign + prevBody;
           }
         } else {
@@ -476,32 +473,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  setSignatureState = async (isSettingNewSignature: boolean = false, isFirstSet: boolean = false) => {
-    let { data } = this.props.signature;
-    if (isFirstSet) {
-      this.setState({ isNewSignature: true });
-    }
-    if (isSettingNewSignature) {
-      data = await this.props.fetchSignature();
-    }
-
-    if (data !== undefined) {
-      let signatureText = '' as string;
-      let isGlobal = false as boolean;
-      const signaturePref = data.preference;
-      if (signaturePref !== undefined) {
-        if (typeof signaturePref === 'object') {
-          signatureText = signaturePref.signature;
-          isGlobal = signaturePref.useSignature;
-        } else {
-          signatureText = JSON.parse(signaturePref).signature;
-          isGlobal = JSON.parse(signaturePref).useSignature;
-        }
-        this.setState({ signature: { text: signatureText, useGlobal: isGlobal } });
-      }
-    }
-  };
-
   setNavbar() {
     const { navigation } = this.props;
     const { isTrashed } = this.props.route.params;
@@ -541,7 +512,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   }
 
   public render() {
-    const { isNewSignature, isPrefilling, mail, prevBody, signature, tempAttachment } = this.state;
+    const { isPrefilling, mail, prevBody, signature, tempAttachment, useSignature } = this.state;
     const { ...headers } = mail;
     const attachments = tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments;
     const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
@@ -590,12 +561,12 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
                   <HtmlContentView html={prevBody} />
                 </>
               ) : null}
-              {signature.text.length && (signature.useGlobal || isNewSignature) ? (
+              {signature && useSignature ? (
                 <>
                   <View style={styles.separatorContainer} />
                   <TextInput
-                    value={signature.text}
-                    onChangeText={text => this.setState(prevState => ({ signature: { ...prevState.signature, text } }))}
+                    value={signature}
+                    onChangeText={text => this.setState({ signature: text })}
                     multiline
                     textAlignVertical="top"
                     scrollEnabled={false}
@@ -608,10 +579,10 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           <SignatureModal
             ref={this.state.signatureModalRef}
             session={this.props.session}
-            signatureText={signature.text}
-            signatureData={this.props.signature.data}
-            successCallback={() => {
-              this.setSignatureState(true, true);
+            signature={this.props.signature}
+            onChange={(text: string) => {
+              this.setState({ signature: text, useSignature: true });
+              this.props.fetchSignature();
               this.state.signatureModalRef.current?.doDismissModal();
             }}
           />
@@ -633,7 +604,7 @@ export default connect(
       isFetching: zimbraState.mail.isFetching,
       mail: zimbraState.mail.data,
       session,
-      signature: zimbraState.signature,
+      signature: zimbraState.signature.data,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>

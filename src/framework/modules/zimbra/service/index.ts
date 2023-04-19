@@ -48,10 +48,7 @@ type IBackendQuota = {
 };
 
 type IBackendSignature = {
-  preference: {
-    useSignature: boolean;
-    signature: string;
-  };
+  preference: string;
   zimbraENTSignatureExists: boolean;
   id: string;
 };
@@ -160,8 +157,12 @@ const quotaAdapter = (data: IBackendQuota): IQuota => {
 };
 
 const signatureAdapter = (data: IBackendSignature): ISignature => {
+  const preference = JSON.parse(data.preference);
   return {
-    preference: data.preference,
+    preference: {
+      signature: preference.signature,
+      useSignature: preference.useSignature,
+    },
     zimbraENTSignatureExists: data.zimbraENTSignatureExists,
     id: data.id,
   } as ISignature;
