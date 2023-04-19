@@ -70,7 +70,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('timeline.blogPostDetailsScreen.title'),
+    title: '',
   }),
 });
 
@@ -339,7 +339,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         : [menuItemOpenBrowser];
 
     this.props.navigation.setOptions({
-      headerTitle: navBarTitle(blogPostData?.title ?? I18n.t('timeline.blogPostDetailsScreen.title')),
+      headerTitle: navBarTitle(blogPostData?.title),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         resourceUri &&

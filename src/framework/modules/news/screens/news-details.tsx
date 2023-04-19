@@ -62,7 +62,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.title ?? I18n.t('timeline.newsDetailsScreen.title'),
+    title: route.params.title ?? '',
   }),
 });
 
