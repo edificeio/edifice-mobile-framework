@@ -195,10 +195,10 @@ export const zimbraService = {
       if (inReplyTo) api += `?In-Reply-To=${inReplyTo}`;
       if (isForward) api += '&reply=F';
       const body = JSON.stringify(mail);
-      const response = await fetchJSONWithCache(api, {
+      const response = (await fetchJSONWithCache(api, {
         method: 'POST',
         body,
-      });
+      })) as { id: string };
       return response.id;
     },
     deleteAttachment: async (session: ISession, draftId: string, attachmentId: string) => {

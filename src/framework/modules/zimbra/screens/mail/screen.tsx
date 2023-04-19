@@ -254,14 +254,14 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       <View style={styles.fullContainer}>
         <HeaderMail mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} />
         {areDetailsVisible ? <HeaderMailDetails mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} /> : null}
-        {mail.hasAttachment && (
+        {mail.hasAttachment ? (
           <RenderPJs
             attachments={mail.attachments}
             mailId={mail.id}
             onDownload={props.downloadAttachment}
             dispatch={props.dispatch}
           />
-        )}
+        ) : null}
         <View style={styles.shadowContainer}>
           <View style={styles.marginView} />
           <View style={styles.scrollContainer}>

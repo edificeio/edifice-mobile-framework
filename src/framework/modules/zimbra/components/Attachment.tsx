@@ -26,7 +26,7 @@ interface IAttachmentProps {
   name?: string;
   type?: string;
   uploadSuccess?: boolean;
-  onRemove: () => void;
+  onRemove?: () => void;
 }
 
 export const Attachment = ({ name, type, uploadSuccess = true, onRemove }: IAttachmentProps) => {
@@ -43,13 +43,13 @@ export const Attachment = ({ name, type, uploadSuccess = true, onRemove }: IAtta
       <SmallText numberOfLines={1} ellipsizeMode="middle" style={UI_STYLES.flex1}>
         {name}
       </SmallText>
-      <TouchableOpacity onPress={onRemove} style={styles.iconContainer}>
+      <TouchableOpacity onPress={onRemove} disabled={!uploadSuccess} style={styles.iconContainer}>
         <Picture
           type="NamedSvg"
           name="pictos-close"
           width={UI_SIZES.dimensions.width.medium}
           height={UI_SIZES.dimensions.height.medium}
-          fill={theme.palette.complementary.red.regular}
+          fill={uploadSuccess ? theme.palette.complementary.red.regular : theme.palette.grey.grey}
         />
       </TouchableOpacity>
     </View>
