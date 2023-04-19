@@ -35,32 +35,21 @@ const styles = StyleSheet.create({
   },
 });
 
-const getGlobalValue = (signature: ISignature): boolean => {
-  const { preference } = signature;
-  let signatureCheck = false;
-
-  if (preference !== undefined) {
-    if (typeof preference === 'object') signatureCheck = preference.useSignature;
-    else signatureCheck = JSON.parse(preference).useSignature;
-  }
-  return signatureCheck;
-};
-
 interface ISignatureModalProps {
-  signatureData: ISignature;
-  signatureText: string;
+  signature: ISignature;
   session?: ISession;
-  successCallback: () => any;
+  onChange: (text: string) => void;
 }
 
 const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((props, ref) => {
-  const [text, setText] = React.useState(props.signatureText);
-  const [isGlobal, setGlobal] = React.useState(getGlobalValue(props.signatureData));
+  const [text, setText] = React.useState<string>(props.signature.preference.signature);
+  const [isGlobal, setGlobal] = React.useState<boolean>(props.signature.preference.useSignature);
   const [isUpdating, setUpdating] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    setGlobal(getGlobalValue(props.signatureData));
-  }, [props.signatureData]);
+    setText(props.signature.preference.signature);
+    setGlobal(props.signature.preference.useSignature);
+  }, [props.signature.preference]);
 
   const updateSignature = async () => {
     try {
@@ -69,7 +58,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
       setUpdating(true);
       if (!session) throw new Error();
       await zimbraService.signature.update(session, text, isGlobal);
-      props.successCallback();
+      props.onChange(text);
       setUpdating(false);
     } catch {
       setUpdating(false);
@@ -84,7 +73,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
         <View>
           <BodyText>{I18n.t('zimbra-signature')}</BodyText>
           <TextInput
-            defaultValue={props.signatureText}
+            value={text}
             onChangeText={value => setText(value)}
             multiline
             textAlignVertical="top"

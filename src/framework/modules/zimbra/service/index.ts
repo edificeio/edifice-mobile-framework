@@ -48,10 +48,7 @@ type IBackendQuota = {
 };
 
 type IBackendSignature = {
-  preference: {
-    useSignature: boolean;
-    signature: string;
-  };
+  preference: string;
   zimbraENTSignatureExists: boolean;
   id: string;
 };
@@ -160,8 +157,12 @@ const quotaAdapter = (data: IBackendQuota): IQuota => {
 };
 
 const signatureAdapter = (data: IBackendSignature): ISignature => {
+  const preference = JSON.parse(data.preference);
   return {
-    preference: data.preference,
+    preference: {
+      signature: preference.signature,
+      useSignature: preference.useSignature,
+    },
     zimbraENTSignatureExists: data.zimbraENTSignatureExists,
     id: data.id,
   } as ISignature;
@@ -195,10 +196,10 @@ export const zimbraService = {
       if (inReplyTo) api += `?In-Reply-To=${inReplyTo}`;
       if (isForward) api += '&reply=F';
       const body = JSON.stringify(mail);
-      const response = await fetchJSONWithCache(api, {
+      const response = (await fetchJSONWithCache(api, {
         method: 'POST',
         body,
-      });
+      })) as { id: string };
       return response.id;
     },
     deleteAttachment: async (session: ISession, draftId: string, attachmentId: string) => {

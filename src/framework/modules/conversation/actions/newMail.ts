@@ -8,7 +8,8 @@ import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 
 export function sendMailAction(mailDatas, draftId: string | undefined, InReplyTo: string) {
   return async () => {
-    const sentMail = await newMailService.sendMail(mailDatas, draftId, InReplyTo);
+    const session = assertSession();
+    const sentMail = await newMailService.sendMail(session, mailDatas, draftId, InReplyTo);
     return sentMail;
   };
 }

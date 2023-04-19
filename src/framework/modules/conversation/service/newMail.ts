@@ -1,7 +1,7 @@
 import { ISession } from '~/framework/modules/auth/model';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService, { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
 export type IUser = {
   id: string;
@@ -41,7 +41,7 @@ export const newMailService = {
     const searchResult = await fetchJSONWithCache(`/conversation/visible?search=${search}`);
     return searchResult;
   },
-  sendMail: async (mailDatas, draftId, inReplyTo) => {
+  sendMail: async (session: ISession, mailDatas, draftId, inReplyTo) => {
     const params = {
       id: draftId,
       'In-Reply-To': inReplyTo,
@@ -51,7 +51,7 @@ export const newMailService = {
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
 
-    await fetchJSONWithCache(`/conversation/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
+    await signedFetch(`${session.platform.url}/conversation/send${paramsUrl?.length > 0 ? '?' + paramsUrl : ''}`, {
       method: 'POST',
       body: JSON.stringify(formatMailDatas(mailDatas)),
     });
