@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { DrawerNavigationOptions, DrawerScreenProps } from '@react-navigation/drawer';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove, useScrollToTop } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -365,10 +365,20 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     );
   };
 
+  const listRef = React.useRef<FlatList>(null);
+  useScrollToTop(
+    React.useRef({
+      scrollToTop: () => {
+        listRef.current?.scrollToOffset({ offset: 0 });
+      },
+    }),
+  );
+
   const renderMailList = () => {
     return (
       <>
         <FlatList
+          ref={listRef}
           data={mails}
           extraData={mails}
           keyExtractor={(item: Omit<IMail, 'body'>) => item.id}
