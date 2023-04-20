@@ -11,6 +11,7 @@ import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { ScrollToTopHandler } from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
@@ -202,17 +203,20 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
     );
   }
 
+  scrollRef = React.createRef<ScrollView>();
+
   public render() {
     const { authorizedViescoApps, homeworks, evaluations, levels } = this.props;
 
     return (
       <PageView>
         {this.renderNavigationGrid()}
-        <ScrollView>
+        <ScrollView ref={this.scrollRef}>
           {authorizedViescoApps.diary && this.renderHomework(homeworks.data)}
           {authorizedViescoApps.competences &&
             (evaluations.isFetching ? <LoadingIndicator /> : this.renderEvaluations(evaluations, levels))}
         </ScrollView>
+        <ScrollToTopHandler scrollRef={this.scrollRef} />
       </PageView>
     );
   }

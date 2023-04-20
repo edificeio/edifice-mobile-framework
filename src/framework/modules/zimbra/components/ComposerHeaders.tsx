@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { IRecipient } from '~/framework/modules/zimbra/model';
+import { IDraft } from '~/framework/modules/zimbra/model';
 
 import { RecipientField } from './RecipientField';
 
@@ -30,17 +30,12 @@ const styles = StyleSheet.create({
   },
 });
 
-interface MailHeaders {
-  to: IRecipient[];
-  cc: IRecipient[];
-  bcc: IRecipient[];
-  subject: string;
-}
+type IDraftHeaders = Pick<IDraft, 'to' | 'cc' | 'bcc' | 'subject'>;
 
 interface ComposerHeadersProps {
   hasZimbraSendExternalRight: boolean;
-  headers: MailHeaders;
-  onChange: (headers: MailHeaders) => void;
+  headers: IDraftHeaders;
+  onChange: (headers: IDraftHeaders) => void;
   onSave: () => void;
 }
 

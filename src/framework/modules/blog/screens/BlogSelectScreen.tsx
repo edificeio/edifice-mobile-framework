@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
@@ -119,7 +120,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
   }
 
   renderError() {
-    return <SmallBoldText>Error</SmallBoldText>; // ToDo: great error screen here
+    return <EmptyConnectionScreen />;
   }
 
   renderList() {

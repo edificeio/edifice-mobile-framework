@@ -118,7 +118,7 @@
   "auth-mfa-message": "Il peut mettre quelques minutes à arriver.",
   "auth-mfa-message-sent": "Un code à 6 chiffres vous a été envoyé par SMS au numéro :",
   "auth-mfa-resend": "Renvoyer un code",
-  "auth-mfa-title": "Vérification d'identité",
+  "auth-mfa-title": "Confirmez votre identité",
   "auth-mfa-toast": "Un nouveau code vous a été envoyé sur le numéro de téléphone que vous avez renseigné.",
   "auth-mfa-email-feedback-codecorrect": "Vérification de l'adresse mail réussie !",
   "auth-mfa-email-feedback-codeexpired": "Le code de vérification a expiré, cliquez sur le bouton pour en recevoir un nouveau.",
