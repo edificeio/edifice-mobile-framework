@@ -1,5 +1,5 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useIsFocused, useNavigation, useScrollToTop } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -386,9 +386,16 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const logoutButton = useLogoutFeature(handleLogout);
   const versionButton = useVersionFeature(session);
 
+  const scrollRef = React.useRef<ScrollView>(null);
+  useScrollToTop(scrollRef);
+
   return (
     <PageView style={styles.page} showNetworkBar={false}>
-      <ScrollView style={UI_STYLES.flex1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        ref={scrollRef}
+        style={UI_STYLES.flex1}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.sectionUserInfo}>
           {navBarDecoration}
           {avatarButton}
