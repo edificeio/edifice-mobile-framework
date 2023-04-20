@@ -8,5 +8,7 @@ export interface IDraft {
   bcc: IRecipient[];
   subject: string;
   body: string;
+  threadBody: string;
   attachments: IDistantFileWithId[];
+  inReplyTo?: string;
 }
