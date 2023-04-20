@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import { FlatList as RNFlatList, FlatListProps as RNFlatListProps, View } from 'react-native';
 
@@ -27,3 +28,8 @@ function FlatList<ItemT>(props: FlatListProps<ItemT>, ref) {
 }
 FlatList.scrollIndicatorInsets = { right: 0.001 };
 export default React.forwardRef(FlatList);
+
+export function ScrollToTopHandler({ listRef }: { listRef: React.RefObject<RNFlatList<any>> }) {
+  useScrollToTop(listRef);
+  return null;
+}

@@ -11,6 +11,7 @@ import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { ScrollToTopHandler } from '~/framework/components/scrollView';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
@@ -205,6 +206,8 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
     );
   }
 
+  scrollRef = React.createRef<ScrollView>();
+
   public render() {
     const { authorizedViescoApps, homeworks, evaluations, hasRightToCreateAbsence, levels } = this.props;
 
@@ -219,12 +222,13 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
             </TouchableOpacity>
           ) : null}
         </ChildPicker>
-        <ScrollView>
+        <ScrollView ref={this.scrollRef}>
           {this.renderNavigationGrid()}
           {authorizedViescoApps.diary && this.renderHomework(homeworks)}
           {authorizedViescoApps.competences &&
             (evaluations && evaluations.isFetching ? <LoadingIndicator /> : this.renderLastEval(evaluations, levels))}
         </ScrollView>
+        <ScrollToTopHandler scrollRef={this.scrollRef} />
       </PageView>
     );
   }
