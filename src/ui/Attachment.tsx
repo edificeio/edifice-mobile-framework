@@ -1,4 +1,4 @@
-import Filesize from 'filesize';
+import { filesize } from 'filesize';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
@@ -244,7 +244,7 @@ class Attachment extends React.PureComponent<
                     : downloadState === DownloadState.Error
                     ? ' ' + I18n.t('tryagain')
                     : (this.props.attachment as IRemoteAttachment).size
-                    ? `${Filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
+                    ? `${filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
                     : ''}
                 </SmallText>
               </SmallText>
