@@ -98,6 +98,19 @@ index 5ea0ab2..47ea7f0 100644
                }
              />
              <BottomControls
+diff --git a/node_modules/react-native-media-console/src/components/Back/Back.tsx b/node_modules/react-native-media-console/src/components/Back/Back.tsx
+index ef51f8d..92457ce 100644
+--- a/node_modules/react-native-media-console/src/components/Back/Back.tsx
++++ b/node_modules/react-native-media-console/src/components/Back/Back.tsx
+@@ -11,7 +11,7 @@ interface BackProps {
+ export const Back = ({onBack, showControls}: BackProps) => {
+   return (
+     <Control callback={onBack} disabled={!showControls}>
+-      <Image source={require('../../assets/img/back.png')} />
++      <Image source={require('ASSETS/icons/bitmapIcons/close.png')} />
+     </Control>
+   );
+ };
 diff --git a/node_modules/react-native-media-console/src/types.ts b/node_modules/react-native-media-console/src/types.ts
 index ab51aed..36ca814 100644
 --- a/node_modules/react-native-media-console/src/types.ts
