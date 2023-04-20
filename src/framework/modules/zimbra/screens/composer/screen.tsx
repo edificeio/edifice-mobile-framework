@@ -180,19 +180,20 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   sendMail = async () => {
     try {
       const { navigation, session } = this.props;
-      const { mail, tempAttachment } = this.state;
+      const { id, mail, replyTo, tempAttachment } = this.state;
 
       if (!mail.to.length && !mail.cc.length && !mail.bcc.length) {
         return Toast.showError(I18n.t('zimbra-missing-receiver'));
       } else if (tempAttachment) {
         return Toast.showInfo(I18n.t('zimbra-send-attachment-progress'));
       }
-      if (!session) throw new Error();
       this.setState({ isSent: true });
-      await zimbraService.mail.send(session, this.getMailData(), this.state.id, this.state.replyTo);
+      if (!session) throw new Error();
+      await zimbraService.mail.send(session, this.getMailData(), id, replyTo);
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.t('zimbra-send-mail'));
     } catch {
+      this.setState({ isSent: false });
       Toast.showError(I18n.t('common.error.text'));
     }
   };
@@ -406,13 +407,14 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { navigation, session } = this.props;
       const { id } = this.state;
 
-      if (!id) return this.setState({ isDeleted: true }, () => navigation.dispatch(CommonActions.goBack()));
-      if (!session) throw new Error();
       this.setState({ isDeleted: true });
+      if (!id) return navigation.dispatch(CommonActions.goBack());
+      if (!session) throw new Error();
       await zimbraService.mails.trash(session, [id]);
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.t('zimbra-message-deleted'));
     } catch {
+      this.setState({ isDeleted: false });
       Toast.showError(I18n.t('common.error.text'));
     }
   };
@@ -422,13 +424,14 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { navigation, session } = this.props;
       const { id } = this.state;
 
-      if (!id) return this.setState({ isDeleted: true }, () => navigation.dispatch(CommonActions.goBack()));
-      if (!session) throw new Error();
       this.setState({ isDeleted: true });
+      if (!id) return navigation.dispatch(CommonActions.goBack());
+      if (!session) throw new Error();
       await zimbraService.mails.delete(session, [id]);
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.t('zimbra-message-deleted'));
     } catch {
+      this.setState({ isDeleted: false });
       Toast.showError(I18n.t('common.error.text'));
     }
   };
@@ -509,6 +512,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   }
 
   public render() {
+    const { hasZimbraSendExternalRight, isFetching, session } = this.props;
     const { isPrefilling, mail, prevBody, signature, tempAttachment, useSignature } = this.state;
     const { ...headers } = mail;
     const attachments = tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments;
@@ -518,16 +522,16 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       <>
         <PreventBack
           isDraftEdited={!this.checkIsMailEmpty()}
-          isUploading={!!this.state.tempAttachment}
+          isUploading={tempAttachment !== undefined}
           updateDraft={this.updateDraftOnBack}
         />
         <PageComponent>
-          {this.props.isFetching || isPrefilling ? (
+          {isFetching || isPrefilling ? (
             <LoadingIndicator />
           ) : (
             <ScrollView contentContainerStyle={styles.contentContainer} bounces={false} keyboardShouldPersistTaps="handled">
               <ComposerHeaders
-                hasZimbraSendExternalRight={this.props.hasZimbraSendExternalRight}
+                hasZimbraSendExternalRight={hasZimbraSendExternalRight}
                 headers={headers}
                 onChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
                 onSave={this.saveDraft}
@@ -575,7 +579,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           )}
           <SignatureModal
             ref={this.state.signatureModalRef}
-            session={this.props.session}
+            session={session}
             signature={this.props.signature}
             onChange={(text: string) => {
               this.setState({ signature: text, useSignature: true });
