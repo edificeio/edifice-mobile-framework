@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.9.6",
+  "version": "1.10.0",
   "private": true,
   "scripts": {
     "add-dev": "yarn add --dev --exact",
