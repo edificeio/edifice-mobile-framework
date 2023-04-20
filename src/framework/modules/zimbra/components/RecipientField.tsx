@@ -57,12 +57,12 @@ const styles = StyleSheet.create({
 });
 
 interface RecipientFieldProps {
-  hasRightToSendExternalMails: boolean;
+  hasZimbraSendExternalRight: boolean;
   selectedRecipients: IRecipient[];
   onChange: (recipients: IRecipient[]) => void;
 }
 
-export const RecipientField = ({ hasRightToSendExternalMails, selectedRecipients, onChange }: RecipientFieldProps) => {
+export const RecipientField = ({ hasZimbraSendExternalRight, selectedRecipients, onChange }: RecipientFieldProps) => {
   const [value, setValue] = React.useState<string>('');
   const [foundRecipients, setFoundRecipients] = React.useState<IRecipient[]>([]);
   const searchTimeout = React.useRef<NodeJS.Timeout>();
@@ -95,7 +95,7 @@ export const RecipientField = ({ hasRightToSendExternalMails, selectedRecipients
 
   const manageExternalRecipient = () => {
     if (value.includes('@')) {
-      if (hasRightToSendExternalMails) {
+      if (hasZimbraSendExternalRight) {
         addRecipient({ id: value, displayName: value } as IRecipient);
       } else {
         Toast.showError(I18n.t('zimbra-external-mail-right-error'));

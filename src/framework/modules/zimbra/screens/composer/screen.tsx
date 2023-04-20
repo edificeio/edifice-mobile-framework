@@ -27,6 +27,7 @@ import SignatureModal from '~/framework/modules/zimbra/components/modals/Signatu
 import { DraftType, IMail, IRecipient } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
+import { getZimbraWorkflowInformation } from '~/framework/modules/zimbra/rights';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
@@ -530,7 +531,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           ) : (
             <ScrollView contentContainerStyle={styles.contentContainer} bounces={false} keyboardShouldPersistTaps="handled">
               <ComposerHeaders
-                hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
+                hasZimbraSendExternalRight={this.props.hasZimbraSendExternalRight}
                 headers={headers}
                 onChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
                 onSave={this.saveDraft}
@@ -598,9 +599,7 @@ export default connect(
     const session = getSession();
 
     return {
-      hasRightToSendExternalMails: session?.authorizedActions.some(
-        action => action.name === 'fr.openent.zimbra.controllers.ZimbraController|zimbraOutside',
-      ),
+      hasZimbraSendExternalRight: session && getZimbraWorkflowInformation(session).sendExternal,
       isFetching: zimbraState.mail.isFetching,
       mail: zimbraState.mail.data,
       session,
