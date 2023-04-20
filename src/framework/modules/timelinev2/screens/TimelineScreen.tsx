@@ -1,8 +1,9 @@
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useScrollToTop } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -148,6 +149,27 @@ function NotificationItem({
   return <TimelineNotification notification={notification} notificationAction={onNotificationAction} />;
 }
 
+const ScrollToTopHandler = ({
+  listRef,
+}: {
+  listRef: React.RefObject<
+    SwipeListView<
+      ITimelineItem & {
+        key: string;
+      }
+    >
+  >;
+}) => {
+  useScrollToTop(
+    React.useRef({
+      scrollToTop: () => {
+        listRef.current?.scrollToTop();
+      },
+    }),
+  );
+  return null;
+};
+
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
   // DECLARATIONS =================================================================================
 
@@ -236,40 +258,45 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   listSeparator = (<View style={{ height: pageGutterSize }} />);
 
+  listRef = React.createRef<SwipeListView<ITimelineItem & { key: string }>>();
+
   renderList() {
     const items = getTimelineItems(this.props.flashMessages, this.props.notifications);
     const isEmpty = items && items.length === 0;
 
     return (
-      <SwipeableList<ITimelineItem & { key: string }>
-        // ref={this.listRef}
-        // data
-        data={items}
-        keyExtractor={this.listKeyExtractor.bind(this)}
-        contentContainerStyle={isEmpty ? UI_STYLES.flex1 : undefined}
-        renderItem={this.listRenderItem.bind(this)}
-        // pagination
-        ListEmptyComponent={this.renderEmpty}
-        refreshControl={
-          <RefreshControl
-            refreshing={[TimelineLoadingState.REFRESH, TimelineLoadingState.INIT].includes(this.state.loadingState)}
-            onRefresh={this.doRefresh.bind(this)}
-          />
-        }
-        ListFooterComponent={
-          this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? (
-            <LoadingIndicator withVerticalMargins />
-          ) : null
-        }
-        ListHeaderComponent={this.listSeparator}
-        onEndReached={this.doNextPage.bind(this)}
-        onEndReachedThreshold={1}
-        // Swipeable props
-        swipeActionWidth={140}
-        hiddenRowStyle={cardPaddingMerging}
-        hiddenItemStyle={UI_STYLES.justifyEnd}
-        itemSwipeActionProps={this.listSwipeActions.bind(this)}
-      />
+      <>
+        <SwipeableList<ITimelineItem & { key: string }>
+          ref={this.listRef}
+          // data
+          data={items}
+          keyExtractor={this.listKeyExtractor.bind(this)}
+          contentContainerStyle={isEmpty ? UI_STYLES.flex1 : undefined}
+          renderItem={this.listRenderItem.bind(this)}
+          // pagination
+          ListEmptyComponent={this.renderEmpty}
+          refreshControl={
+            <RefreshControl
+              refreshing={[TimelineLoadingState.REFRESH, TimelineLoadingState.INIT].includes(this.state.loadingState)}
+              onRefresh={this.doRefresh.bind(this)}
+            />
+          }
+          ListFooterComponent={
+            this.state.loadingState === TimelineLoadingState.DONE && this.props.notifications.isFetching ? (
+              <LoadingIndicator withVerticalMargins />
+            ) : null
+          }
+          ListHeaderComponent={this.listSeparator}
+          onEndReached={this.doNextPage.bind(this)}
+          onEndReachedThreshold={1}
+          // Swipeable props
+          swipeActionWidth={140}
+          hiddenRowStyle={cardPaddingMerging}
+          hiddenItemStyle={UI_STYLES.justifyEnd}
+          itemSwipeActionProps={this.listSwipeActions.bind(this)}
+        />
+        <ScrollToTopHandler listRef={this.listRef} />
+      </>
     );
   }
 
