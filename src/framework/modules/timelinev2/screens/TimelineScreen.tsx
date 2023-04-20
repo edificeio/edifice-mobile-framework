@@ -16,7 +16,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
-import SwipeableList from '~/framework/components/swipeableList';
+import SwipeableList, { ScrollToTopHandler } from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
@@ -148,27 +148,6 @@ function NotificationItem({
   );
   return <TimelineNotification notification={notification} notificationAction={onNotificationAction} />;
 }
-
-const ScrollToTopHandler = ({
-  listRef,
-}: {
-  listRef: React.RefObject<
-    SwipeListView<
-      ITimelineItem & {
-        key: string;
-      }
-    >
-  >;
-}) => {
-  useScrollToTop(
-    React.useRef({
-      scrollToTop: () => {
-        listRef.current?.scrollToTop();
-      },
-    }),
-  );
-  return null;
-};
 
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
   // DECLARATIONS =================================================================================
