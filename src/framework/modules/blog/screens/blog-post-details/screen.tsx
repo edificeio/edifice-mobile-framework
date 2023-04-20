@@ -370,6 +370,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { blogPostData } = this.state;
     this.setActionNavbar();
     if (prevState.blogPostData !== blogPostData) {
+      this.showSubscription?.remove();
       this.showSubscription = Keyboard.addListener(
         Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!,
         event => {
