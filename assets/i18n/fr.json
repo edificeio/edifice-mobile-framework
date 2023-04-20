@@ -601,6 +601,7 @@
   "myapp-emptyScreenTitle": "Aucune application !",
   "myapp-infoBubbleText": "Avec {{appName}}, vous recevez toutes vos notifications dans l'onglet Nouveautés. En cliquant sur certaines activités, vous serez redirigé vers la version en ligne de votre réseau social éducatif.\n\nPour consulter et modifier certains contenus, vous serez redirigé vers le navigateur de votre téléphone.",
   "myapp-infoBubbleTitle": "Où sont les autres applications ?",
+  "news.tabName": "Actualités",
   "next": "Suivant",
   "noContent": "Aucun contenu",
   "notif-pref-blog": "Nouveau billet de blog",
