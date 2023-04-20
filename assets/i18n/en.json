@@ -132,7 +132,7 @@
   "auth-mfa-mobile-title": "Identify verification",
   "auth-mfa-mobile-toast": "A new code has been sent to the number you provided.",
   "auth-mfa-resend": "Send another code",
-  "auth-mfa-title": "Identify verification",
+  "auth-mfa-title": "Confirm Your identity",
   "auth-mfa-toast": "A new code has been sent to the number you provided.",
   "back": "Back",
   "blog-emptyScreenButton": "Create a blog",

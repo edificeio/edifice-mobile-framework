@@ -5,7 +5,7 @@ import { DraftType, IMail, ISignature } from '~/framework/modules/zimbra/model';
 import type { ZimbraNavigationParams } from '~/framework/modules/zimbra/navigation';
 
 export interface ZimbraComposerScreenProps {
-  hasRightToSendExternalMails: boolean;
+  hasZimbraSendExternalRight: boolean;
   isFetching: boolean;
   mail: IMail;
   signature: ISignature;

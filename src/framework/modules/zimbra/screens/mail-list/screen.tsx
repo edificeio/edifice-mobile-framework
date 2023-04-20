@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { DrawerNavigationOptions, DrawerScreenProps } from '@react-navigation/drawer';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove, useScrollToTop } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -33,6 +33,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
+import { navBarTitle } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -44,7 +45,7 @@ export const computeNavBar = ({
   route,
 }: DrawerScreenProps<ZimbraNavigationParams, typeof zimbraRouteNames.mailList>): DrawerNavigationOptions =>
   ({
-    title: getFolderName(route.params.folderName),
+    headerTitle: navBarTitle(getFolderName(route.params.folderName), styles.navBarTitle),
     headerStyle: {
       backgroundColor: theme.palette.primary.regular,
     },
@@ -111,13 +112,6 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
-
-  /*const refreshSilent = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    fetchMails()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };*/
 
   const fetchNext = () => {
     setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
@@ -371,10 +365,20 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     );
   };
 
+  const listRef = React.useRef<FlatList>(null);
+  useScrollToTop(
+    React.useRef({
+      scrollToTop: () => {
+        listRef.current?.scrollToOffset({ offset: 0 });
+      },
+    }),
+  );
+
   const renderMailList = () => {
     return (
       <>
         <FlatList
+          ref={listRef}
           data={mails}
           extraData={mails}
           keyExtractor={(item: Omit<IMail, 'body'>) => item.id}

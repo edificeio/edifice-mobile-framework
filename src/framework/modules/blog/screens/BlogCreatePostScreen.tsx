@@ -1,4 +1,4 @@
-import { UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -9,12 +9,12 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/icon';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView } from '~/framework/components/page';
+import { Icon } from '~/framework/components/picture/Icon';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
@@ -29,8 +29,8 @@ import {
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
@@ -145,7 +145,7 @@ export const computeNavBar = ({
 });
 
 function PreventBack(props: { isEditing: boolean }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
     Alert.alert(
       I18n.t('common.confirmationUnsavedPublication'),
@@ -154,11 +154,7 @@ function PreventBack(props: { isEditing: boolean }) {
         {
           text: I18n.t('common.quit'),
           onPress: () => {
-            navigation.dispatch(data.action);
-            const nextJump = consumeNextTabJump();
-            if (nextJump) {
-              navigation.dispatch(nextJump);
-            }
+            handleRemoveConfirmNavigationEvent(data.action, navigation);
           },
           style: 'destructive',
         },

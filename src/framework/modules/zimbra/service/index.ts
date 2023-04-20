@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { IFolder, IMail, IQuota, ISignature } from '~/framework/modules/zimbra/model';
+import { IFolder, IMail, IQuota, IRecipient, ISignature } from '~/framework/modules/zimbra/model';
 import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -45,6 +45,20 @@ type IBackendMail = {
 type IBackendQuota = {
   storage: number;
   quota: string;
+};
+
+type IBackendRecipient = {
+  id: string;
+  displayName?: string;
+  name?: string;
+  groupDisplayName: string | null;
+  profile: string | null;
+  structureName: string | null;
+};
+
+type IBackendRecipientDirectory = {
+  groups: IBackendRecipient[];
+  users: IBackendRecipient[];
 };
 
 type IBackendSignature = {
@@ -154,6 +168,24 @@ const quotaAdapter = (data: IBackendQuota): IQuota => {
     storage: data.storage,
     quota: Number(data.quota),
   } as IQuota;
+};
+
+const recipientAdapter = (data: IBackendRecipient): IRecipient => {
+  return {
+    id: data.id,
+    displayName: data.displayName ?? data.name,
+    groupDisplayName: data.groupDisplayName ?? undefined,
+    profile: data.profile ?? undefined,
+    structureName: data.structureName ?? undefined,
+  } as IRecipient;
+};
+
+const recipientDirectoryAdapter = (data: IBackendRecipientDirectory, query: string): IRecipient[] => {
+  const groups = data.groups
+    .map(group => recipientAdapter(group))
+    .filter(group => group.displayName.toLowerCase().includes(query.toLowerCase()));
+  const users = data.users.map(user => recipientAdapter(user));
+  return groups.concat(users);
 };
 
 const signatureAdapter = (data: IBackendSignature): ISignature => {
@@ -330,20 +362,8 @@ export const zimbraService = {
   recipients: {
     search: async (session: ISession, query: string) => {
       const api = `/zimbra/visible?search=${query}`;
-      const recipients = (await fetchJSONWithCache(api)) as {
-        groups: {
-          id: string;
-          name: string;
-          displayName: string | null;
-          structureName: string | null;
-        }[];
-        users: {
-          id: string;
-          displayName: string;
-          profile: string;
-        }[];
-      };
-      return recipients;
+      const recipientDirectory = (await fetchJSONWithCache(api)) as IBackendRecipientDirectory;
+      return recipientDirectoryAdapter(recipientDirectory, query);
     },
   },
   rootFolders: {

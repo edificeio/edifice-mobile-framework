@@ -1,4 +1,4 @@
-import { CommonActions, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
@@ -45,8 +45,8 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { openUrl } from '~/framework/util/linking';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -76,7 +76,7 @@ export const computeNavBar = ({
 
 function PreventBack(props: { infoComment: InfoCommentField }) {
   const { infoComment } = props;
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
       I18n.t(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
@@ -86,11 +86,7 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
           text: I18n.t('common.quit'),
           style: 'destructive',
           onPress: () => {
-            navigation.dispatch(data.action);
-            const nextJump = consumeNextTabJump();
-            if (nextJump) {
-              navigation.dispatch(nextJump);
-            }
+            handleRemoveConfirmNavigationEvent(data.action, navigation);
           },
         },
         {
@@ -356,7 +352,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { route } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
-    const { blogPostData } = this.state;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
 
     if (blog && blogPost) {
@@ -367,47 +362,53 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       });
     } else this.doInit();
 
-    this.showSubscription = Keyboard.addListener(
-      Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!,
-      event => {
-        if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
-          this.setState({ isCommentFieldFocused: true });
-        setTimeout(() => {
-          if (!this.editedCommentId) return;
-          const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
-          if (commentIndex !== undefined && commentIndex > -1) {
-            if (Platform.OS === 'ios') {
-              (this.flatListRef.current as FlatList)?.scrollToIndex({
-                index: commentIndex,
-                viewPosition: 1,
-              });
-            } else {
-              (this.flatListRef.current as FlatList)?.scrollToIndex({
-                index: commentIndex,
-                viewPosition: 0,
-                viewOffset:
-                  UI_SIZES.screen.height -
-                  UI_SIZES.elements.navbarHeight -
-                  event.endCoordinates.height -
-                  (this.editorOffsetRef.current ?? 0),
-              });
-            }
-          }
-        }, 50);
-      },
-    );
-
-    this.hideSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
-      if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
-        this.setState({ isCommentFieldFocused: false });
-    });
-
     // Update notification event if any
     this.event = notification ? notification['event-type'] : null;
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
+    const { blogPostData } = this.state;
     this.setActionNavbar();
+    if (prevState.blogPostData !== blogPostData) {
+      this.showSubscription?.remove();
+      this.showSubscription = Keyboard.addListener(
+        Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!,
+        event => {
+          if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
+            this.setState({ isCommentFieldFocused: true });
+          setTimeout(() => {
+            if (!this.editedCommentId) return;
+            const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
+            if (commentIndex && commentIndex > -1) {
+              if (Platform.OS === 'ios') {
+                (this.flatListRef.current as FlatList)?.scrollToIndex({
+                  index: commentIndex,
+                  viewPosition: 1,
+                });
+              } else {
+                (this.flatListRef.current as FlatList)?.scrollToIndex({
+                  index: commentIndex,
+                  viewPosition: 0,
+                  viewOffset:
+                    UI_SIZES.screen.height -
+                    UI_SIZES.elements.navbarHeight -
+                    event.endCoordinates.height -
+                    (this.editorOffsetRef.current ?? 0),
+                });
+              }
+            }
+          }, 50);
+        },
+      );
+
+      this.hideSubscription = Keyboard.addListener(
+        Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!,
+        () => {
+          if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
+            this.setState({ isCommentFieldFocused: false });
+        },
+      );
+    }
   }
 
   componentWillUnmount() {

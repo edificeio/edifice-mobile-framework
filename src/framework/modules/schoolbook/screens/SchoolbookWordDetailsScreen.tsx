@@ -27,8 +27,8 @@ import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-ha
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 // TYPES ==========================================================================================
@@ -245,11 +245,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
           text: I18n.t('common.quit'),
           style: 'destructive',
           onPress: () => {
-            props.navigation.dispatch(data.action);
-            const nextJump = consumeNextTabJump();
-            if (nextJump) {
-              props.navigation.dispatch(nextJump);
-            }
+            handleRemoveConfirmNavigationEvent(data.action, props.navigation);
           },
         },
         {

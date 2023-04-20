@@ -34,6 +34,7 @@
  *     hiddenItemStyle={UI_STYLES.justifyEnd} // Optional. style for every action
  * />
  */
+import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import {
   Animated,
@@ -342,3 +343,14 @@ export default React.forwardRef(
     );
   },
 );
+
+export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<SwipeListView<any>> }) => {
+  useScrollToTop(
+    React.useRef({
+      scrollToTop: () => {
+        listRef.current?.scrollToTop();
+      },
+    }),
+  );
+  return null;
+};

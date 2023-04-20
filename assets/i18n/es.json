@@ -132,7 +132,7 @@
   "auth-mfa-mobile-title": "Indique el código recibido",
   "auth-mfa-mobile-toast": "Se le ha enviado un nuevo código al número de teléfono móvil que indicó.",
   "auth-mfa-resend": "Reenviar un código",
-  "auth-mfa-title": "Verificación de identidad",
+  "auth-mfa-title": "Confirme su identidad",
   "auth-mfa-toast": "Se le ha enviado un nuevo código al número de teléfono que indicó.",
   "back": "Atrás",
   "blog-emptyScreenButton": "Crear un blog",

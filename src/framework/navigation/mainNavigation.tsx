@@ -92,7 +92,7 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
     tabPress: event => {
       if (!event.target) return;
       const state = navigation.getState();
-      (event as unknown as React.SyntheticEvent).preventDefault(); // Types given by ScreenListeners are wrong here. We use SyntheticEvent as a fallback that contains preventDefault.
+      let mustPrevent = state.routes[state.index].key !== event.target; // We must prevent default if we change tab, not if it's the same tab. This allow to use useScrollToTop.
       let doTabSwitch: boolean = true;
       state.routes.forEach((route, tabIndex) => {
         //
@@ -100,12 +100,16 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
           // Narrows to the current tab
           if (state.routes[state.index]?.state?.index !== undefined && state.routes[state.index]?.state?.index !== 0) {
             // Pop to top only if there at least two pages in the stack
+            mustPrevent = true;
             navigation.dispatch(StackActions.popToTop());
             const newState = navigation.getState();
             doTabSwitch = newState !== state;
           }
         }
       });
+      if (mustPrevent) {
+        (event as unknown as React.SyntheticEvent).preventDefault(); // Types given by ScreenListeners are wrong here. We use SyntheticEvent as a fallback that contains preventDefault.
+      }
       // Then, change tabs only if previous pop to top hadn't be blocked by preventRemove or something else...
       if (doTabSwitch) {
         navigation.navigate({ key: event.target });

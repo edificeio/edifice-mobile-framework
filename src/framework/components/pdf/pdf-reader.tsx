@@ -1,6 +1,6 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import Pdf from 'react-native-pdf';
 
 import theme from '~/app/theme';
@@ -12,7 +12,7 @@ import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigatio
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 
-export interface IBackdropPdfReaderState {
+export interface PDFReaderState {
   error: boolean;
 }
 
@@ -33,20 +33,20 @@ export const computeNavBar = ({
 
 export class PDFReader extends React.PureComponent<
   NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Pdf>,
-  IBackdropPdfReaderState
+  PDFReaderState
 > {
-  state: IBackdropPdfReaderState = {
+  state: PDFReaderState = {
     error: false,
   };
-
-  handleError(err: any) {
-    this.setState({ error: !!err });
-  }
 
   handlePressLink(
     uri: string | ((session: ISession) => string | false | Promise<string | false | undefined> | undefined) | undefined,
   ) {
     openUrl(uri);
+  }
+
+  renderError() {
+    return <EmptyConnectionScreen />;
   }
 
   renderLoading() {
@@ -56,14 +56,13 @@ export class PDFReader extends React.PureComponent<
   render() {
     const { src: uri } = this.props.route.params;
     const { error } = this.state;
-    return error ? (
-      <EmptyConnectionScreen />
-    ) : (
+    if (error) return this.renderError();
+    return (
       <Pdf
         source={{ cache: true, uri }}
         style={styles.pdf}
         trustAllCerts={false}
-        onError={this.handleError}
+        onError={() => this.setState({ error: true })}
         onPressLink={this.handlePressLink}
         renderActivityIndicator={this.renderLoading}
       />

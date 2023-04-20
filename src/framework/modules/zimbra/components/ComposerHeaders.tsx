@@ -6,16 +6,16 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
+import { IDraft } from '~/framework/modules/zimbra/model';
 
-import SearchUserMail from './SearchUserMail';
+import { RecipientField } from './RecipientField';
 
 const styles = StyleSheet.create({
   expandActionContainer: {
     padding: UI_SIZES.spacing.minor,
     marginLeft: UI_SIZES.spacing.minor,
   },
-  headerRow: {
+  headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: UI_SIZES.spacing.small,
@@ -30,81 +30,29 @@ const styles = StyleSheet.create({
   },
 });
 
-const HeaderUsers = ({
-  title,
-  onChange,
-  value,
-  children,
-  hasRightToSendExternalMails,
-}: React.PropsWithChildren<{
-  title: string;
-  onChange;
-  onSave;
-  value: any;
-  hasRightToSendExternalMails: boolean;
-}>) => {
-  return (
-    <View style={styles.headerRow}>
-      <SmallText>{title} : </SmallText>
-      <SearchUserMail
-        selectedUsersOrGroups={value}
-        onChange={val => onChange(val)}
-        hasRightToSendExternalMails={hasRightToSendExternalMails}
-      />
-      {children}
-    </View>
-  );
-};
-
-const HeaderSubject = ({ onChange, onSave, value }: React.PropsWithChildren<{ onChange; onSave; value: any }>) => {
-  const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
-  const [currentValue, updateCurrentValue] = React.useState(value);
-
-  React.useEffect(() => {
-    clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = setTimeout(() => onChange(currentValue), 500);
-
-    return () => {
-      clearTimeout(textUpdateTimeout.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentValue]);
-
-  return (
-    <View style={styles.headerRow}>
-      <SmallText>{I18n.t('zimbra-subject')} : </SmallText>
-      <TextInput
-        defaultValue={value}
-        onChangeText={text => updateCurrentValue(text)}
-        onEndEditing={() => onSave()}
-        style={styles.subjectInput}
-      />
-    </View>
-  );
-};
-
-type MailHeaders = { to: ISearchUsers; cc: ISearchUsers; bcc: ISearchUsers; subject: string };
+type IDraftHeaders = Pick<IDraft, 'to' | 'cc' | 'bcc' | 'subject'>;
 
 interface ComposerHeadersProps {
-  hasRightToSendExternalMails: boolean;
-  headers: MailHeaders;
-  onChange: (headers: MailHeaders) => void;
+  hasZimbraSendExternalRight: boolean;
+  headers: IDraftHeaders;
+  onChange: (headers: IDraftHeaders) => void;
   onSave: () => void;
 }
 
-export const ComposerHeaders = ({ hasRightToSendExternalMails, headers, onChange, onSave }: ComposerHeadersProps) => {
+export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange, onSave }: ComposerHeadersProps) => {
   const [isExpanded, setExpanded] = React.useState<boolean>(false);
 
   const expand = () => setExpanded(!isExpanded);
 
   return (
     <>
-      <HeaderUsers
-        title={I18n.t('zimbra-to')}
-        value={headers.to}
-        onChange={to => onChange({ ...headers, to })}
-        onSave={onSave}
-        hasRightToSendExternalMails={hasRightToSendExternalMails}>
+      <View style={styles.headerContainer}>
+        <SmallText>{I18n.t('zimbra-to')} : </SmallText>
+        <RecipientField
+          hasZimbraSendExternalRight={hasZimbraSendExternalRight}
+          selectedRecipients={headers.to}
+          onChange={to => onChange({ ...headers, to })}
+        />
         <TouchableOpacity onPress={expand} style={styles.expandActionContainer}>
           <Picture
             type="NamedSvg"
@@ -114,26 +62,36 @@ export const ComposerHeaders = ({ hasRightToSendExternalMails, headers, onChange
             fill={theme.ui.text.regular}
           />
         </TouchableOpacity>
-      </HeaderUsers>
+      </View>
       {isExpanded ? (
         <>
-          <HeaderUsers
-            title={I18n.t('zimbra-cc')}
-            value={headers.cc}
-            onChange={cc => onChange({ ...headers, cc })}
-            onSave={onSave}
-            hasRightToSendExternalMails={hasRightToSendExternalMails}
-          />
-          <HeaderUsers
-            title={I18n.t('zimbra-bcc')}
-            value={headers.bcc}
-            onChange={bcc => onChange({ ...headers, bcc })}
-            onSave={onSave}
-            hasRightToSendExternalMails={hasRightToSendExternalMails}
-          />
+          <View style={styles.headerContainer}>
+            <SmallText>{I18n.t('zimbra-cc')} : </SmallText>
+            <RecipientField
+              hasZimbraSendExternalRight={hasZimbraSendExternalRight}
+              selectedRecipients={headers.cc}
+              onChange={cc => onChange({ ...headers, cc })}
+            />
+          </View>
+          <View style={styles.headerContainer}>
+            <SmallText>{I18n.t('zimbra-bcc')} : </SmallText>
+            <RecipientField
+              hasZimbraSendExternalRight={hasZimbraSendExternalRight}
+              selectedRecipients={headers.bcc}
+              onChange={bcc => onChange({ ...headers, bcc })}
+            />
+          </View>
         </>
       ) : null}
-      <HeaderSubject value={headers.subject} onChange={subject => onChange({ ...headers, subject })} onSave={onSave} />
+      <View style={styles.headerContainer}>
+        <SmallText>{I18n.t('zimbra-subject')} : </SmallText>
+        <TextInput
+          defaultValue={headers.subject}
+          onChangeText={text => onChange({ ...headers, subject: text })}
+          onEndEditing={onSave}
+          style={styles.subjectInput}
+        />
+      </View>
     </>
   );
 };

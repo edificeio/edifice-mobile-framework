@@ -16,7 +16,7 @@ const gridListItemWrapperStyleBase = {
   flexGrow: 0,
 };
 
-export default function GridList<ItemT>(props: GridListProps<ItemT>) {
+export default React.forwardRef(function GridList<ItemT>(props: GridListProps<ItemT>, ref: React.ForwardedRef<FlatList<ItemT>>) {
   const { renderItem, numColumns, columnWrapperStyle, gap, gapOutside, ...otherProps } = props;
   const realNumColumns = numColumns ?? 2;
   const realGap = gap ?? 0,
@@ -50,6 +50,7 @@ export default function GridList<ItemT>(props: GridListProps<ItemT>) {
   ];
   return (
     <FlatList
+      ref={ref}
       renderItem={info => (
         <View style={[gridListItemWrapperStyleBase, gridListItemWrapperStyleCustom, getHorizontalGapStyle(info)]}>
           {renderItem?.(info)}
@@ -61,4 +62,4 @@ export default function GridList<ItemT>(props: GridListProps<ItemT>) {
       {...otherProps}
     />
   );
-}
+});

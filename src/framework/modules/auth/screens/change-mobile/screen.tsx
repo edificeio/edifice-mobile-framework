@@ -27,8 +27,8 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, sendMobileVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -180,11 +180,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       {
         text: I18n.t('common.discard'),
         onPress: () => {
-          props.navigation.dispatch(data.action);
-          const nextJump = consumeNextTabJump();
-          if (nextJump) {
-            props.navigation.dispatch(nextJump);
-          }
+          handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
         style: 'destructive',
       },

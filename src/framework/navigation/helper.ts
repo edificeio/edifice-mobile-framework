@@ -3,7 +3,16 @@
  * Connected to the navigationRef, you can call these exported methods from everywhere you want.
  * In components, it is recommended to use navigation & route props & hooks instead of these helper functions.
  */
-import { CommonActions, ParamListBase, Route, createNavigationContainerRef } from '@react-navigation/native';
+import {
+  CommonActions,
+  NavigationAction,
+  NavigationProp,
+  ParamListBase,
+  Route,
+  createNavigationContainerRef,
+} from '@react-navigation/native';
+
+import { consumeNextTabJump } from './nextTabJump';
 
 export interface INavigationParams extends ParamListBase {}
 export const navigationRef = createNavigationContainerRef<INavigationParams>();
@@ -29,5 +38,25 @@ export const useNavigationDevPlugins = () => {
     const rnDevTools = require('@react-navigation/devtools');
     rnDevTools?.useFlipper(navigationRef);
     rnDevTools?.useReduxDevToolsExtension(navigationRef);
+  }
+};
+
+export const handleRemoveConfirmNavigationEvent = (action: NavigationAction, navigation: NavigationProp<ParamListBase>) => {
+  const [nextJumps, delayed] = consumeNextTabJump();
+  nextJumps.unshift(action);
+  if (delayed) {
+    const consumeOne = () => {
+      setTimeout(() => {
+        const next = nextJumps.shift();
+        if (!next) return;
+        navigation.dispatch(next);
+        consumeOne();
+      });
+    };
+    consumeOne();
+  } else {
+    nextJumps.forEach(next => {
+      navigation.dispatch(next);
+    });
   }
 };

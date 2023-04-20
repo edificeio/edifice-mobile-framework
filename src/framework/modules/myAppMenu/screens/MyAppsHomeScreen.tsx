@@ -1,7 +1,8 @@
+import { useScrollToTop } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
 import GridList from '~/framework/components/GridList';
@@ -11,7 +12,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
-import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { AnyNavigableModule, NavigableModuleArray, UnknownNavigableModule } from '~/framework/util/moduleTool';
 
 export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
   modules: NavigableModuleArray;
@@ -23,7 +24,14 @@ const styles = StyleSheet.create({
   image: { height: 64, width: '100%' },
 });
 
+function ScrollToTopHandler({ listRef }: { listRef: React.RefObject<FlatList<UnknownNavigableModule>> }) {
+  useScrollToTop(listRef);
+  return null;
+}
+
 class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
+  listRef = React.createRef<FlatList<UnknownNavigableModule>>();
+
   private renderGrid(modules?: NavigableModuleArray) {
     const allModules = (modules ?? [])?.sort((a, b) =>
       I18n.t(a.config.displayI18n).localeCompare(I18n.t(b.config.displayI18n)),
@@ -57,18 +65,22 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
     };
 
     return (
-      <GridList
-        data={allModules}
-        renderItem={renderGridItem}
-        keyExtractor={item => item.config.name}
-        gap={UI_SIZES.spacing.big}
-        gapOutside={UI_SIZES.spacing.big}
-        ListFooterComponent={this.renderFooter()}
-        ListFooterComponentStyle={styles.footer}
-        alwaysBounceVertical={false}
-        overScrollMode="never"
-        contentContainerStyle={styles.container}
-      />
+      <>
+        <GridList
+          ref={this.listRef}
+          data={allModules}
+          renderItem={renderGridItem}
+          keyExtractor={item => item.config.name}
+          gap={UI_SIZES.spacing.big}
+          gapOutside={UI_SIZES.spacing.big}
+          ListFooterComponent={this.renderFooter()}
+          ListFooterComponentStyle={styles.footer}
+          alwaysBounceVertical={false}
+          overScrollMode="never"
+          contentContainerStyle={styles.container}
+        />
+        <ScrollToTopHandler listRef={this.listRef} />
+      </>
     );
   }
 

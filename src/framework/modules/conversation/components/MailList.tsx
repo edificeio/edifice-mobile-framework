@@ -3,9 +3,8 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
+import { SwipeListView } from 'react-native-swipe-list-view';
 
-import { ConversationNavigationParams, conversationRouteNames } from '/framework/modules/conversation/navigation';
-import { IMailList } from '/framework/modules/conversation/state/mailList';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
@@ -14,10 +13,11 @@ import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import SwipeableList from '~/framework/components/swipeableList';
+import SwipeableList, { ScrollToTopHandler } from '~/framework/components/swipeableList';
 import { CaptionBoldText, CaptionText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import CreateFolderModal from '~/framework/modules/conversation/screens/ConversationCreateFolderModal';
 import { IInit } from '~/framework/modules/conversation/screens/ConversationMailListScreen';
 import { DraftType } from '~/framework/modules/conversation/screens/ConversationNewMail';
@@ -25,6 +25,7 @@ import MoveModal from '~/framework/modules/conversation/screens/MoveToFolderModa
 import { ICountMailboxes } from '~/framework/modules/conversation/state/count';
 import { IFolder } from '~/framework/modules/conversation/state/initMails';
 import { IMail } from '~/framework/modules/conversation/state/mailContent';
+import { IMailList } from '~/framework/modules/conversation/state/mailList';
 import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
 import { displayPastDate } from '~/framework/util/date';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
 });
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
-  flatListRef: typeof SwipeableList | null = null;
+  flatListRef = React.createRef<SwipeListView<any>>();
 
   constructor(props: ConversationMailListComponentProps) {
     super(props);
@@ -374,131 +375,134 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
             {isFetching && !isRefreshing && !isChangingPage ? (
               <Loading />
             ) : (
-              <SwipeableList
-                ref={ref => (this.flatListRef = ref)}
-                style={styles.swipeableListStyle} // ToDo : Magic value here as it's the Drawer size
-                contentContainerStyle={styles.swipeableListContentContainerStyle}
-                data={uniqueMails.length > 0 ? uniqueMails : []}
-                onScrollBeginDrag={() => {
-                  this.setState({ nextPageCallable: true });
-                }}
-                renderItem={({ item }) => {
-                  const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
-                  const mailContacts = getMailPeople(item);
-                  const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
-                  let contacts = !isFolderOutbox && !isFolderDrafts ? [mailContacts.from] : mailContacts.to;
-                  if (contacts.length === 0) contacts = [[undefined, I18n.t('conversation.emptyTo'), false]];
-                  return (
-                    <TouchableOpacity onPress={() => this.renderMailContent(item)}>
-                      <ListItem
-                        style={isMailUnread ? styles.containerMailUnread : styles.containerMailRead}
-                        leftElement={<GridAvatars users={contacts.map(c => c[0]!)} />}
-                        rightElement={
-                          <View style={styles.mailInfos}>
-                            {/* Contact name */}
-                            <View style={styles.contactsAndDateContainer}>
-                              {isFolderOutbox || isFolderDrafts ? (
-                                <SmallText style={{ color: isMailUnread ? theme.ui.text.regular : theme.ui.text.light }}>
-                                  {I18n.t('conversation.toPrefix') + ' '}
+              <>
+                <SwipeableList
+                  ref={this.flatListRef}
+                  style={styles.swipeableListStyle} // ToDo : Magic value here as it's the Drawer size
+                  contentContainerStyle={styles.swipeableListContentContainerStyle}
+                  data={uniqueMails.length > 0 ? uniqueMails : []}
+                  onScrollBeginDrag={() => {
+                    this.setState({ nextPageCallable: true });
+                  }}
+                  renderItem={({ item }) => {
+                    const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
+                    const mailContacts = getMailPeople(item);
+                    const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
+                    let contacts = !isFolderOutbox && !isFolderDrafts ? [mailContacts.from] : mailContacts.to;
+                    if (contacts.length === 0) contacts = [[undefined, I18n.t('conversation.emptyTo'), false]];
+                    return (
+                      <TouchableOpacity onPress={() => this.renderMailContent(item)}>
+                        <ListItem
+                          style={isMailUnread ? styles.containerMailUnread : styles.containerMailRead}
+                          leftElement={<GridAvatars users={contacts.map(c => c[0]!)} />}
+                          rightElement={
+                            <View style={styles.mailInfos}>
+                              {/* Contact name */}
+                              <View style={styles.contactsAndDateContainer}>
+                                {isFolderOutbox || isFolderDrafts ? (
+                                  <SmallText style={{ color: isMailUnread ? theme.ui.text.regular : theme.ui.text.light }}>
+                                    {I18n.t('conversation.toPrefix') + ' '}
+                                  </SmallText>
+                                ) : null}
+                                <SmallBoldText
+                                  numberOfLines={1}
+                                  style={[styles.contacts, isFolderDrafts ? { color: theme.palette.status.warning.regular } : {}]}>
+                                  {contacts.map(c => c[1]).join(', ')}
+                                </SmallBoldText>
+                                {/* Date */}
+                                <SmallText style={styles.mailDate} numberOfLines={1}>
+                                  {displayPastDate(moment(item.date))}
                                 </SmallText>
-                              ) : null}
-                              <SmallBoldText
-                                numberOfLines={1}
-                                style={[styles.contacts, isFolderDrafts ? { color: theme.palette.status.warning.regular } : {}]}>
-                                {contacts.map(c => c[1]).join(', ')}
-                              </SmallBoldText>
-                              {/* Date */}
-                              <SmallText style={styles.mailDate} numberOfLines={1}>
-                                {displayPastDate(moment(item.date))}
-                              </SmallText>
-                            </View>
-                            <View style={styles.subjectContentAndAttachmentIndicatorContainer}>
-                              {/* Mail subject */}
-                              <View style={styles.subjectAndContentContainer}>
-                                <TextSubjectComponent numberOfLines={1} style={styles.subjectAndContent}>
-                                  {item.subject}
-                                </TextSubjectComponent>
                               </View>
-                              {/* Mail attachment indicator */}
-                              {item.hasAttachment ? (
-                                <View style={styles.mailIndicator}>
-                                  <Icon name="attachment" size={16} color={theme.ui.text.light} />
+                              <View style={styles.subjectContentAndAttachmentIndicatorContainer}>
+                                {/* Mail subject */}
+                                <View style={styles.subjectAndContentContainer}>
+                                  <TextSubjectComponent numberOfLines={1} style={styles.subjectAndContent}>
+                                    {item.subject}
+                                  </TextSubjectComponent>
                                 </View>
-                              ) : null}
+                                {/* Mail attachment indicator */}
+                                {item.hasAttachment ? (
+                                  <View style={styles.mailIndicator}>
+                                    <Icon name="attachment" size={16} color={theme.ui.text.light} />
+                                  </View>
+                                ) : null}
+                              </View>
                             </View>
-                          </View>
-                        }
-                      />
-                    </TouchableOpacity>
-                  );
-                }}
-                extraData={uniqueMails}
-                keyExtractor={(item: IMail) => item.id}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={isRefreshing}
-                    onRefresh={async () => {
-                      this.setState({ isRefreshing: true });
-                      await this.refreshMailList();
-                      this.setState({ isRefreshing: false });
-                    }}
-                  />
-                }
-                onEndReachedThreshold={0.5}
-                onEndReached={() => {
-                  if (nextPageCallable && !isRefreshing) {
-                    this.setState({ nextPageCallable: false, isChangingPage: true });
-                    this.onChangePage();
+                          }
+                        />
+                      </TouchableOpacity>
+                    );
+                  }}
+                  extraData={uniqueMails}
+                  keyExtractor={(item: IMail) => item.id}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={isRefreshing}
+                      onRefresh={async () => {
+                        this.setState({ isRefreshing: true });
+                        await this.refreshMailList();
+                        this.setState({ isRefreshing: false });
+                      }}
+                    />
                   }
-                }}
-                ListFooterComponent={
-                  isChangingPage ? (
-                    <LoadingIndicator customStyle={{ marginTop: UI_SIZES.spacing.big, marginBottom: pageGutterSize }} />
-                  ) : null
-                }
-                ListEmptyComponent={this.renderEmpty()}
-                rightOpenValue={-140}
-                leftOpenValue={140}
-                swipeActionWidth={140}
-                itemSwipeActionProps={({ item }) => ({
-                  left: isFolderTrash
-                    ? [
-                        {
-                          action: async row => {
-                            this.setState({ showModal: true, selectedMail: item });
-                            row[item.key]?.closeRow();
+                  onEndReachedThreshold={0.5}
+                  onEndReached={() => {
+                    if (nextPageCallable && !isRefreshing) {
+                      this.setState({ nextPageCallable: false, isChangingPage: true });
+                      this.onChangePage();
+                    }
+                  }}
+                  ListFooterComponent={
+                    isChangingPage ? (
+                      <LoadingIndicator customStyle={{ marginTop: UI_SIZES.spacing.big, marginBottom: pageGutterSize }} />
+                    ) : null
+                  }
+                  ListEmptyComponent={this.renderEmpty()}
+                  rightOpenValue={-140}
+                  leftOpenValue={140}
+                  swipeActionWidth={140}
+                  itemSwipeActionProps={({ item }) => ({
+                    left: isFolderTrash
+                      ? [
+                          {
+                            action: async row => {
+                              this.setState({ showModal: true, selectedMail: item });
+                              row[item.key]?.closeRow();
+                            },
+                            backgroundColor: theme.palette.status.success.regular,
+                            actionText: I18n.t('conversation.restore'),
+                            actionIcon: 'ui-unarchive',
                           },
-                          backgroundColor: theme.palette.status.success.regular,
-                          actionText: I18n.t('conversation.restore'),
-                          actionIcon: 'ui-unarchive',
-                        },
-                      ]
-                    : !isFolderDrafts && !isFolderOutbox
-                    ? [
-                        {
-                          action: async row => {
-                            this.toggleRead(item.unread, item.id);
-                            row[item.key]?.closeRow();
+                        ]
+                      : !isFolderDrafts && !isFolderOutbox
+                      ? [
+                          {
+                            action: async row => {
+                              this.toggleRead(item.unread, item.id);
+                              row[item.key]?.closeRow();
+                            },
+                            backgroundColor: theme.palette.status.info.regular,
+                            actionText: I18n.t(`conversation.mark${item.unread ? 'Read' : 'Unread'}`),
+                            actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                           },
-                          backgroundColor: theme.palette.status.info.regular,
-                          actionText: I18n.t(`conversation.mark${item.unread ? 'Read' : 'Unread'}`),
-                          actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
+                        ]
+                      : [],
+                    right: [
+                      {
+                        action: async row => {
+                          this.delete(item.id);
+                          row[item.key]?.closeRow();
                         },
-                      ]
-                    : [],
-                  right: [
-                    {
-                      action: async row => {
-                        this.delete(item.id);
-                        row[item.key]?.closeRow();
+                        backgroundColor: theme.palette.status.failure.regular,
+                        actionText: I18n.t('conversation.delete'),
+                        actionIcon: 'ui-trash',
                       },
-                      backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.t('conversation.delete'),
-                      actionIcon: 'ui-trash',
-                    },
-                  ],
-                })}
-              />
+                    ],
+                  })}
+                />
+                <ScrollToTopHandler listRef={this.flatListRef} />
+              </>
             )}
             <Drawer
               isNavbar
