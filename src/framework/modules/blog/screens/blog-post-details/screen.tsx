@@ -352,7 +352,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { route } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
-    const { blogPostData } = this.state;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
 
     if (blog && blogPost) {
@@ -363,47 +362,52 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       });
     } else this.doInit();
 
-    this.showSubscription = Keyboard.addListener(
-      Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!,
-      event => {
-        if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
-          this.setState({ isCommentFieldFocused: true });
-        setTimeout(() => {
-          if (!this.editedCommentId) return;
-          const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
-          if (commentIndex !== undefined && commentIndex > -1) {
-            if (Platform.OS === 'ios') {
-              (this.flatListRef.current as FlatList)?.scrollToIndex({
-                index: commentIndex,
-                viewPosition: 1,
-              });
-            } else {
-              (this.flatListRef.current as FlatList)?.scrollToIndex({
-                index: commentIndex,
-                viewPosition: 0,
-                viewOffset:
-                  UI_SIZES.screen.height -
-                  UI_SIZES.elements.navbarHeight -
-                  event.endCoordinates.height -
-                  (this.editorOffsetRef.current ?? 0),
-              });
-            }
-          }
-        }, 50);
-      },
-    );
-
-    this.hideSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
-      if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
-        this.setState({ isCommentFieldFocused: false });
-    });
-
     // Update notification event if any
     this.event = notification ? notification['event-type'] : null;
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
+    const { blogPostData } = this.state;
     this.setActionNavbar();
+    if (prevState.blogPostData !== blogPostData) {
+      this.showSubscription = Keyboard.addListener(
+        Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!,
+        event => {
+          if (this.editedCommentId && this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
+            this.setState({ isCommentFieldFocused: true });
+          setTimeout(() => {
+            if (!this.editedCommentId) return;
+            const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
+            if (commentIndex && commentIndex > -1) {
+              if (Platform.OS === 'ios') {
+                (this.flatListRef.current as FlatList)?.scrollToIndex({
+                  index: commentIndex,
+                  viewPosition: 1,
+                });
+              } else {
+                (this.flatListRef.current as FlatList)?.scrollToIndex({
+                  index: commentIndex,
+                  viewPosition: 0,
+                  viewOffset:
+                    UI_SIZES.screen.height -
+                    UI_SIZES.elements.navbarHeight -
+                    event.endCoordinates.height -
+                    (this.editorOffsetRef.current ?? 0),
+                });
+              }
+            }
+          }, 50);
+        },
+      );
+
+      this.hideSubscription = Keyboard.addListener(
+        Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!,
+        () => {
+          if (this.editedCommentId && !this.commentFieldRefs[this.editedCommentId]?.isCommentFieldFocused())
+            this.setState({ isCommentFieldFocused: false });
+        },
+      );
+    }
   }
 
   componentWillUnmount() {
