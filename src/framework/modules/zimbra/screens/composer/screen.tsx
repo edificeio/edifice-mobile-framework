@@ -2,7 +2,6 @@ import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { decode } from 'html-entities';
 import I18n from 'i18n-js';
-import moment from 'moment';
 import React from 'react';
 import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
@@ -24,14 +23,14 @@ import { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/m
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { ComposerHeaders } from '~/framework/modules/zimbra/components/ComposerHeaders';
 import SignatureModal from '~/framework/modules/zimbra/components/modals/SignatureModal';
-import { DraftType, IMail, IRecipient } from '~/framework/modules/zimbra/model';
+import { DraftType, IDraft, IMail, IRecipient } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { getZimbraWorkflowInformation } from '~/framework/modules/zimbra/rights';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
@@ -40,20 +39,11 @@ import HtmlContentView from '~/ui/HtmlContentView';
 import styles from './styles';
 import { ZimbraComposerScreenPrivateProps } from './types';
 
-type NewMail = {
-  to: IRecipient[];
-  cc: IRecipient[];
-  bcc: IRecipient[];
-  subject: string;
-  body: string;
-  attachments: IDistantFileWithId[];
-};
-
 interface ZimbraComposerScreenState {
   isDeleted: boolean;
   isSent: boolean;
   isSettingId: boolean;
-  mail: NewMail;
+  mail: IDraft;
   signature: string;
   signatureModalRef: React.RefObject<ModalBoxHandle>;
   useSignature: boolean;
@@ -127,7 +117,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     const { mailId } = this.props.route.params;
 
     if (prevProps.mail !== this.props.mail) {
-      const { mail, ...rest } = this.getPrefilledMail();
+      const { mail, ...rest } = this.getPrefilledMail(this.props.mail);
       this.setState(prevState => ({
         ...prevState,
         ...rest,
@@ -225,12 +215,15 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     return true;
   };
 
-  getPrefilledMail = () => {
+  getPrefilledMail = (mail: IMail) => {
+    const { session } = this.props;
     const { type } = this.props.route.params;
-    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)[1];
-    const getUser = id => ({ id, displayName: getDisplayName(id) });
 
-    const deleteHtmlContent = function (text) {
+    const getDisplayName = (id: string): string => mail.displayNames.find(displayName => displayName[0] === id)?.[1] ?? '';
+
+    const getRecipientFromId = (id: string): IRecipient => ({ id, displayName: getDisplayName(id) });
+
+    const deleteHtmlContent = (text: string): string => {
       const regexp = /<(\S+)[^>]*>(.*)<\/\1>/gs;
 
       if (regexp.test(text)) {
@@ -241,14 +234,6 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     };
 
     const getPrevBody = () => {
-      const getUserArrayToString = users => users.map(getDisplayName).join(', ');
-
-      const from = getDisplayName(this.props.mail.from);
-      const date = moment(this.props.mail.date).format('DD/MM/YYYY HH:mm');
-      const subject = this.props.mail.subject;
-
-      const to = getUserArrayToString(this.props.mail.to);
-
       let header =
         '<br>' +
         '<br>' +
@@ -258,36 +243,34 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         '<p class="medium-text ng-scope">' +
         '<span translate="" key="transfer.from"><span class="no-style ng-scope">De : </span></span>' +
         '<em class="ng-binding">' +
-        from +
+        getDisplayName(mail.from) +
         '</em>' +
         '<br>' +
         '<span class="medium-importance" translate="" key="transfer.date"><span class="no-style ng-scope">Date: </span></span>' +
         '<em class="ng-binding">' +
-        date +
+        mail.date.format('DD/MM/YYYY HH:mm') +
         '</em>' +
         '<br>' +
         '<span class="medium-importance" translate="" key="transfer.subject"><span class="no-style ng-scope">Objet : </span></span>' +
         '<em class="ng-binding">' +
-        subject +
+        mail.subject +
         '</em>' +
         '<br>' +
         '<span class="medium-importance" translate="" key="transfer.to"><span class="no-style ng-scope">A : </span></span>' +
         '<em class="medium-importance">' +
-        to +
+        mail.to.map(getDisplayName).join(', ') +
         '</em>';
 
-      if (this.props.mail.cc.length > 0) {
-        const cc = getUserArrayToString(this.props.mail.cc);
-
+      if (mail.cc.length) {
         header += `<br><span class="medium-importance" translate="" key="transfer.cc">
         <span class="no-style ng-scope">Copie à : </span>
-        </span><em class="medium-importance ng-scope">${cc}</em>`;
+        </span><em class="medium-importance ng-scope">${mail.cc.map(getDisplayName).join(', ')}</em>`;
       }
 
       header +=
         '</p><blockquote class="ng-scope">' +
         '<p class="ng-scope" style="font-size: 24px; line-height: 24px;">' +
-        this.props.mail.body +
+        mail.body +
         '</p>';
 
       return header;
@@ -296,69 +279,52 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     switch (type) {
       case DraftType.REPLY: {
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            to: [this.props.mail.from].map(getUser),
-            subject: I18n.t('zimbra-reply-subject') + this.props.mail.subject,
+            to: [getRecipientFromId(mail.from)],
+            subject: I18n.t('zimbra-reply-subject') + mail.subject,
           },
         };
       }
       case DraftType.REPLY_ALL: {
-        const to = [getUser(this.props.mail.from)];
-        let index = 0;
-        for (const user of this.props.mail.to) {
-          if (user !== getSession()?.user.id && this.props.mail.to.indexOf(user as never) === index) {
-            to.push(getUser(user));
-          }
-          ++index;
-        }
-        const cc = [] as object[];
-        for (const id of this.props.mail.cc) {
-          if (id !== this.props.mail.from) {
-            cc.push(getUser(id));
-          }
-        }
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            to,
-            cc,
-            subject: I18n.t('zimbra-reply-subject') + this.props.mail.subject,
+            to: [getRecipientFromId(mail.from), ...mail.to.filter(id => id !== session?.user.id).map(getRecipientFromId)],
+            cc: mail.cc.filter(id => id !== mail.from).map(getRecipientFromId),
+            subject: I18n.t('zimbra-reply-subject') + mail.subject,
           },
         };
       }
       case DraftType.FORWARD: {
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            subject: I18n.t('zimbra-forward-subject') + this.props.mail.subject,
+            subject: I18n.t('zimbra-forward-subject') + mail.subject,
             body: '',
-            attachments: this.props.mail.attachments,
+            attachments: mail.attachments,
           },
         };
       }
       case DraftType.DRAFT: {
         let prevbody = '';
-        if (this.props.mail.body.length > 0) {
-          prevbody = this.props.mail.body.split('<br><br>').slice(1).join('<br><br>');
-          if (prevbody !== '') {
-            prevbody.concat('<br><br>', prevbody);
-          }
+        if (mail.body.length) {
+          prevbody = mail.body.split('<br><br>').slice(1).join('<br><br>');
+          if (prevbody) prevbody.concat('<br><br>', prevbody);
         }
-        const currentBody = this.props.mail.body.split('<br><br>')[0];
 
         return {
           prevBody: prevbody,
           mail: {
-            to: this.props.mail.to.map(getUser),
-            cc: this.props.mail.cc.map(getUser),
-            cci: this.props.mail.bcc.map(getUser),
-            subject: this.props.mail.subject,
-            body: deleteHtmlContent(currentBody),
-            attachments: this.props.mail.attachments,
+            to: mail.to.map(getRecipientFromId),
+            cc: mail.cc.map(getRecipientFromId),
+            bcc: mail.bcc.map(getRecipientFromId),
+            subject: mail.subject,
+            body: deleteHtmlContent(mail.body.split('<br><br>')[0]),
+            attachments: mail.attachments,
           },
         };
       }
