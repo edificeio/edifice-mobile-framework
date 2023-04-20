@@ -19,8 +19,8 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
@@ -133,12 +133,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       {
         text: I18n.t('common.discard'),
         onPress: () => {
-          const nextJump = consumeNextTabJump();
-          if (nextJump) {
-            props.navigation.dispatch(nextJump);
-          } else {
-            props.navigation.dispatch(data.action);
-          }
+          handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
         style: 'destructive',
       },

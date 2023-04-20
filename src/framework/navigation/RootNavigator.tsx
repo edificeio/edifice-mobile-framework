@@ -84,11 +84,12 @@ function RootNavigator(props: RootNavigatorProps) {
         <SplashScreenComponent key={isReady} />
         {isReady ? (
           <NavigationContainer ref={navigationRef} initialState={initialNavState}>
-            <AppPushNotificationHandlerComponent />
-            <RootStack.Navigator screenOptions={{ headerShown: true }}>
-              {routes}
-              {modals}
-            </RootStack.Navigator>
+            <AppPushNotificationHandlerComponent>
+              <RootStack.Navigator screenOptions={{ headerShown: true }}>
+                {routes}
+                {modals}
+              </RootStack.Navigator>
+            </AppPushNotificationHandlerComponent>
           </NavigationContainer>
         ) : null}
       </>

@@ -3,6 +3,7 @@
  * All tools to manage push-notifications opening
  */
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -10,7 +11,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';
@@ -40,21 +40,23 @@ function AppPushNotificationHandlerComponentUnconnected(
       });
   }, []);
 
-  if (notification && props.isLoggedIn) {
-    if (notification.data) {
-      const notificationData = {
-        ...notification.data,
-        params: notification.data.params && JSON.parse(notification.data.params),
-      } as IEntcoreTimelineNotification;
-      const n = notificationAdapter(notificationData);
+  const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
+  const { isLoggedIn, dispatch } = props;
+  useEffect(() => {
+    if (notification && isLoggedIn) {
+      if (notification.data) {
+        const notificationData = {
+          ...notification.data,
+          params: notification.data.params && JSON.parse(notification.data.params),
+        } as IEntcoreTimelineNotification;
+        const n = notificationAdapter(notificationData);
 
-      props.dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-      props.dispatch(
-        handleNotificationAction(n, defaultNotificationActionStack, 'Push Notification', timelineModuleConfig.routeName),
-      );
-      setNotification(undefined);
+        dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
+        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Push Notification'));
+        setNotification(undefined);
+      }
     }
-  }
+  }, [dispatch, isLoggedIn, navigation, notification]);
 
   return <>{props.children}</>;
 }

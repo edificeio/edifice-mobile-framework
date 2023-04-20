@@ -1,4 +1,4 @@
-import { CommonActions, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { decode } from 'html-entities';
 import I18n from 'i18n-js';
@@ -29,8 +29,8 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { getZimbraWorkflowInformation } from '~/framework/modules/zimbra/rights';
 import { zimbraService } from '~/framework/modules/zimbra/service';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -65,17 +65,13 @@ interface ZimbraComposerScreenState {
 }
 
 function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; updateDraft: () => void }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isDraftEdited || props.isUploading, ({ data }) => {
     if (props.isUploading) {
       return Alert.alert(I18n.t('zimbra-send-attachment-progress'));
     }
     props.updateDraft();
-    navigation.dispatch(data.action);
-    const nextJump = consumeNextTabJump();
-    if (nextJump) {
-      navigation.dispatch(nextJump);
-    }
+    handleRemoveConfirmNavigationEvent(data.action, navigation);
   });
   return null;
 }

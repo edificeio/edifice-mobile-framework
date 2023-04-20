@@ -2,13 +2,14 @@
  * Notification routing
  * Router operations on opeening a notification
  */
-import { NavigationState } from '@react-navigation/native';
+import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
-import { navigate } from '~/framework/navigation/helper';
+import { navigate, navigationRef } from '~/framework/navigation/helper';
+import { setNextTabJump } from '~/framework/navigation/nextTabJump';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
@@ -30,7 +31,7 @@ export type NotifHandlerThunk = ThunkAction<Promise<INotifHandlerReturnType>, an
 export type NotifHandlerThunkAction<NotifType extends IAbstractNotification = IAbstractNotification> = (
   notification: NotifType,
   trackCategory: false | string,
-  navState?: NavigationState | string,
+  navigation: NavigationProp<ParamListBase>,
 ) => NotifHandlerThunk;
 
 export interface INotifHandlerDefinition<NotifType extends IAbstractNotification = IAbstractNotification> {
@@ -116,14 +117,14 @@ export const handleNotificationAction =
   (
     notification: IAbstractNotification,
     actionStack: NotifHandlerThunkAction[],
+    navigation: NavigationProp<ParamListBase>,
     trackCategory: false | string = false,
-    navState?: NavigationState | string,
   ) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     let manageCount = 0;
     for (const action of actionStack) {
       if (manageCount) return;
-      const ret = (await dispatch(action(notification, trackCategory, navState))) as unknown as INotifHandlerReturnType;
+      const ret = (await dispatch(action(notification, trackCategory, navigation))) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
       if (ret.trackInfo && trackCategory)
         Trackers.trackEvent(trackCategory, ret.trackInfo.action, 'Post-routing', ret.trackInfo.value);
@@ -139,3 +140,37 @@ export interface NotificationHandler {
 export interface NotificationHandlerFactory<S, E, A extends Action> {
   (dispatch: ThunkDispatch<S, E, A>, getState: () => S): NotificationHandler;
 }
+
+/**
+ * Handles every action that must be dispatched, then dispatch the given navigation action.
+ * Manage dispatch schedule if necessary.
+ * @param navAction the navigation action to dispatch in fine
+ */
+export const handleNotificationNavigationAction = (navAction: NavigationAction) => {
+  // 1. Pop to top current stack. This allow to close open modals & trigger preventRemove handlers.
+  let preventMove = false;
+  const navState = navigationRef.getRootState();
+  let leafState: Pick<typeof navState, 'index' | 'routes'> = navState;
+  while (leafState.routes[leafState.index].state !== undefined) {
+    leafState = leafState.routes[leafState.index].state as Pick<typeof navState, 'index' | 'routes'>;
+  }
+  // We try popToTop only if the user is not at the root of its stack.
+  if (leafState.index !== undefined && leafState.index !== 0) {
+    navigationRef.dispatch(StackActions.popToTop());
+    const newState = navigationRef.getRootState();
+    preventMove = JSON.stringify(navState) === JSON.stringify(newState);
+  }
+
+  // 2. Call / schedule given nav action. If there was preventRemove, we must include popToTop again in the scheduled actions to close the modal.
+  if (preventMove) {
+    // We set the `delayed` argument to true to ensure native modals are closed before triggering any other action.
+    // This seems to be an issue of React Navigation 6 at this time. In the future, we can test with `false` to not use setTimeout to delay each nav action.
+    setNextTabJump([StackActions.popToTop(), navAction], true);
+  } else {
+    // We use setTimeout here to ensure native modals are closed before triggering any other action.
+    // This seems to be an issue of React Navigation 6 at this time. In the future, we can test by calling directly dispatch function.
+    setTimeout(() => {
+      navigationRef.dispatch(navAction);
+    });
+  }
+};
