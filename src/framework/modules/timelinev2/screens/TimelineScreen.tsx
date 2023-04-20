@@ -1,4 +1,4 @@
-import { NavigationState } from '@react-navigation/native';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -61,7 +61,11 @@ export interface ITimelineScreenEventProps {
   handleInitTimeline(): Promise<void>;
   handleNextPage(): Promise<boolean>; // return true if page if there is more pages to load
   handleDismissFlashMessage(flashMessageId: number): Promise<void>;
-  handleOpenNotification(n: IAbstractNotification, fallback: NotifHandlerThunkAction, navState: NavigationState): Promise<void>;
+  handleOpenNotification(
+    n: IAbstractNotification,
+    fallback: NotifHandlerThunkAction,
+    navigation: NavigationProp<ParamListBase>,
+  ): Promise<void>;
 }
 export type ITimelineScreenProps = ITimelineScreenDataProps &
   ITimelineScreenEventProps &
@@ -354,7 +358,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       return { managed: 1 };
     };
     if (this.props.handleOpenNotification)
-      this.props.handleOpenNotification(n, fallbackHandleNotificationAction, this.props.navigation.getState());
+      this.props.handleOpenNotification(n, fallbackHandleNotificationAction, this.props.navigation);
   }
 
   async doDismissFlashMessage(flashMessageId: number) {
@@ -427,8 +431,12 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
       Toast.showError(I18n.t('timeline-flash-message-dismiss-error-text'));
     }
   },
-  handleOpenNotification: async (n: IAbstractNotification, fallback: NotifHandlerThunkAction, navState: NavigationState) => {
-    dispatch(handleNotificationAction(n, defaultNotificationActionStack, 'Timeline Notification', navState));
+  handleOpenNotification: async (
+    n: IAbstractNotification,
+    fallback: NotifHandlerThunkAction,
+    navigation: NavigationProp<ParamListBase, keyof ParamListBase, string>,
+  ) => {
+    dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Timeline Notification'));
   },
 });
 

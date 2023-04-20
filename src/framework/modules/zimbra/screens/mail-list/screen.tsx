@@ -33,6 +33,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
+import { navBarTitle } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -44,7 +45,7 @@ export const computeNavBar = ({
   route,
 }: DrawerScreenProps<ZimbraNavigationParams, typeof zimbraRouteNames.mailList>): DrawerNavigationOptions =>
   ({
-    title: getFolderName(route.params.folderName),
+    headerTitle: navBarTitle(getFolderName(route.params.folderName), styles.navBarTitle),
     headerStyle: {
       backgroundColor: theme.palette.primary.regular,
     },
@@ -111,13 +112,6 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
-
-  /*const refreshSilent = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    fetchMails()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };*/
 
   const fetchNext = () => {
     setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);

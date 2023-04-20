@@ -1,7 +1,7 @@
 /**
  * Index page for push-notifs settings.
  */
-import { CommonActions, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
@@ -30,8 +30,8 @@ import {
 } from '~/framework/modules/timelinev2/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import Notifier from '~/framework/util/notifier';
 import { shallowEqual } from '~/framework/util/object';
 
@@ -77,7 +77,7 @@ export const computeNavBar = ({
 });
 
 function PreventBack(props: { hasChanged: boolean }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.hasChanged, ({ data }) => {
     Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
       {
@@ -88,11 +88,7 @@ function PreventBack(props: { hasChanged: boolean }) {
         text: I18n.t('common.quit'),
         style: 'destructive',
         onPress: () => {
-          navigation.dispatch(data.action);
-          const nextJump = consumeNextTabJump();
-          if (nextJump) {
-            navigation.dispatch(nextJump);
-          }
+          handleRemoveConfirmNavigationEvent(data.action, navigation);
         },
       },
     ]);

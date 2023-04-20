@@ -1,4 +1,4 @@
-import { CommonActions, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { decode } from 'html-entities';
 import I18n from 'i18n-js';
@@ -24,12 +24,13 @@ import { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/m
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { ComposerHeaders } from '~/framework/modules/zimbra/components/ComposerHeaders';
 import SignatureModal from '~/framework/modules/zimbra/components/modals/SignatureModal';
-import { DraftType, IMail } from '~/framework/modules/zimbra/model';
+import { DraftType, IMail, IRecipient } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
+import { getZimbraWorkflowInformation } from '~/framework/modules/zimbra/rights';
 import { zimbraService } from '~/framework/modules/zimbra/service';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -40,9 +41,9 @@ import styles from './styles';
 import { ZimbraComposerScreenPrivateProps } from './types';
 
 type NewMail = {
-  to: ISearchUsers;
-  cc: ISearchUsers;
-  bcc: ISearchUsers;
+  to: IRecipient[];
+  cc: IRecipient[];
+  bcc: IRecipient[];
   subject: string;
   body: string;
   attachments: IDistantFileWithId[];
@@ -64,17 +65,13 @@ interface ZimbraComposerScreenState {
 }
 
 function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; updateDraft: () => void }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isDraftEdited || props.isUploading, ({ data }) => {
     if (props.isUploading) {
       return Alert.alert(I18n.t('zimbra-send-attachment-progress'));
     }
     props.updateDraft();
-    navigation.dispatch(data.action);
-    const nextJump = consumeNextTabJump();
-    if (nextJump) {
-      navigation.dispatch(nextJump);
-    }
+    handleRemoveConfirmNavigationEvent(data.action, navigation);
   });
   return null;
 }
@@ -148,8 +145,8 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       let { id } = this.state;
       const lf = new LocalFile(file, { _needIOSReleaseSecureAccess: false });
 
-      if (!session) throw new Error();
       if (!id) id = await this.saveDraft(true);
+      if (!session || !id) throw new Error();
       this.setState({ tempAttachment: lf });
       const attachments = await zimbraService.draft.addAttachment(session, id, lf);
       this.setState(prevState => ({
@@ -530,7 +527,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           ) : (
             <ScrollView contentContainerStyle={styles.contentContainer} bounces={false} keyboardShouldPersistTaps="handled">
               <ComposerHeaders
-                hasRightToSendExternalMails={this.props.hasRightToSendExternalMails}
+                hasZimbraSendExternalRight={this.props.hasZimbraSendExternalRight}
                 headers={headers}
                 onChange={newHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...newHeaders } }))}
                 onSave={this.saveDraft}
@@ -598,9 +595,7 @@ export default connect(
     const session = getSession();
 
     return {
-      hasRightToSendExternalMails: session?.authorizedActions.some(
-        action => action.name === 'fr.openent.zimbra.controllers.ZimbraController|zimbraOutside',
-      ),
+      hasZimbraSendExternalRight: session && getZimbraWorkflowInformation(session).sendExternal,
       isFetching: zimbraState.mail.isFetching,
       mail: zimbraState.mail.data,
       session,

@@ -1,4 +1,4 @@
-import { UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -17,8 +17,8 @@ import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modul
 import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
 import { INotificationFilter } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { shallowEqual } from '~/framework/util/object';
 
 export interface ITimelineFiltersScreenDataProps {
@@ -48,7 +48,7 @@ export const computeNavBar = ({
 });
 
 function PreventBack(props: { onPreventBack: boolean }) {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.onPreventBack, ({ data }) => {
     Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
       {
@@ -59,11 +59,7 @@ function PreventBack(props: { onPreventBack: boolean }) {
         text: I18n.t('common.quit'),
         style: 'destructive',
         onPress: () => {
-          navigation.dispatch(data.action);
-          const nextJump = consumeNextTabJump();
-          if (nextJump) {
-            navigation.dispatch(nextJump);
-          }
+          handleRemoveConfirmNavigationEvent(data.action, navigation);
         },
       },
     ]);

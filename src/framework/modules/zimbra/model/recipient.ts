@@ -1,7 +1,7 @@
 export interface IRecipient {
   id: string;
-  name?: string;
-  displayName: string | null;
-  structureName?: string | null;
+  displayName: string;
+  groupDisplayName?: string;
   profile?: string;
+  structureName?: string;
 }

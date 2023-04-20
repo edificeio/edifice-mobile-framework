@@ -5,7 +5,7 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 
-export const getProfileColor = (userType: string): ColorValue => {
+export const getProfileColor = (userType?: string): ColorValue => {
   switch (userType) {
     case UserType.Student:
       return theme.color.profileTypes.Student;

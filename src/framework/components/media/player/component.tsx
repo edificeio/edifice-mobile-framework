@@ -134,7 +134,7 @@ function MediaPlayer(props: MediaPlayerProps) {
         <>
           <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]}>
             <TouchableOpacity onPress={handleBack}>
-              <NamedSVG height={24} width={24} name="ui-rafterLeft" fill={theme.palette.grey.white} />
+              <NamedSVG height={24} width={24} name="ui-close" fill={theme.palette.grey.white} />
             </TouchableOpacity>
           </View>
           <WebView

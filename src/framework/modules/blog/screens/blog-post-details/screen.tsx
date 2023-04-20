@@ -1,4 +1,4 @@
-import { CommonActions, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import I18n from 'i18n-js';
@@ -45,8 +45,8 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { openUrl } from '~/framework/util/linking';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -76,7 +76,7 @@ export const computeNavBar = ({
 
 function PreventBack(props: { infoComment: InfoCommentField }) {
   const { infoComment } = props;
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
       I18n.t(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
@@ -86,11 +86,7 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
           text: I18n.t('common.quit'),
           style: 'destructive',
           onPress: () => {
-            navigation.dispatch(data.action);
-            const nextJump = consumeNextTabJump();
-            if (nextJump) {
-              navigation.dispatch(nextJump);
-            }
+            handleRemoveConfirmNavigationEvent(data.action, navigation);
           },
         },
         {

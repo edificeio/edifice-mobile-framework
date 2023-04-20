@@ -106,6 +106,7 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
           }
         }
       });
+      console.debug('tabPress', doTabSwitch);
       // Then, change tabs only if previous pop to top hadn't be blocked by preventRemove or something else...
       if (doTabSwitch) {
         navigation.navigate({ key: event.target });

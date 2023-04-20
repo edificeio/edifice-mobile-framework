@@ -25,6 +25,9 @@ export default StyleSheet.create({
     flexDirection: 'row',
     marginRight: UI_SIZES.spacing.small,
   },
+  navBarTitle: {
+    width: undefined,
+  },
   rightMargin: {
     marginRight: UI_SIZES.spacing.small,
   },

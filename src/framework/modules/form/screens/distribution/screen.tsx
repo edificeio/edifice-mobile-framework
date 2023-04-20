@@ -36,8 +36,8 @@ import {
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { formService } from '~/framework/modules/form/service';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -397,11 +397,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
             text: I18n.t('common.quit'),
             onPress: async () => {
               await saveChanges();
-              props.navigation.dispatch(data.action);
-              const nextJump = consumeNextTabJump();
-              if (nextJump) {
-                props.navigation.dispatch(nextJump);
-              }
+              handleRemoveConfirmNavigationEvent(data.action, props.navigation);
             },
             style: 'destructive',
           },

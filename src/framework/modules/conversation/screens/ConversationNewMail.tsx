@@ -1,4 +1,11 @@
-import { CommonActions, UNSTABLE_usePreventRemove, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  CommonActions,
+  NavigationProp,
+  ParamListBase,
+  UNSTABLE_usePreventRemove,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -35,8 +42,8 @@ import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { consumeNextTabJump } from '~/framework/navigation/nextTabJump';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { Trackers } from '~/framework/util/tracker';
@@ -122,15 +129,11 @@ export const computeNavBar = ({
 
 const HandleBack = (props: { isSending: boolean }) => {
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(!props.isSending, ({ data }) => {
     route?.params?.getGoBack(() => {
-      navigation.dispatch(data.action);
+      handleRemoveConfirmNavigationEvent(data.action, navigation);
     });
-    const nextJump = consumeNextTabJump();
-    if (nextJump) {
-      navigation.dispatch(nextJump);
-    }
   });
   return null;
 };
