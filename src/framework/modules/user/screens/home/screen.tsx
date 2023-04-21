@@ -176,7 +176,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         const routeNames = {
           [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
           [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
-          [ModificationType.PASSWORD]: AuthRouteNames.changePassword,
+          [ModificationType.PASSWORD]: AuthRouteNames.changePasswordModal,
         };
         let routeName = routeNames[modificationType];
         const params = {

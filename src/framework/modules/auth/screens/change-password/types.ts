@@ -39,7 +39,7 @@ export interface ChangePasswordScreenDispatchProps {
 export type ChangePasswordScreenPrivateProps = ChangePasswordScreenProps &
   ChangePasswordScreenStoreProps &
   ChangePasswordScreenDispatchProps &
-  NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changePassword>;
+  NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changePassword | AuthRouteNames.changePasswordModal>;
 
 export interface ChangePasswordScreenState extends IChangePasswordModel {
   typing: boolean;
