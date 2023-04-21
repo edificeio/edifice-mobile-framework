@@ -34,7 +34,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={blogPostDetailsNavBar}
         initialParams={{}}
       />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen
           name={blogRouteNames.blogCreatePost}
           component={BlogCreatePostScreen}

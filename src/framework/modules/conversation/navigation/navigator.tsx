@@ -31,7 +31,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={conversationMailContentNavBar}
         initialParams={{}}
       />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen
           name={conversationRouteNames.newMail}
           component={ConversationNewMailScreen}
