@@ -109,6 +109,7 @@
     "react-native-fs": "2.20.0",
     "react-native-gesture-handler": "2.9.0",
     "react-native-global-props": "1.1.5",
+    "react-native-haptic-feedback": "2.0.3",
     "react-native-image-pan-zoom": "2.1.12",
     "react-native-image-picker": "4.8.4",
     "react-native-keyboard-avoiding-scroll-view": "1.0.1",

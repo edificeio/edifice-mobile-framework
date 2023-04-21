@@ -18,6 +18,7 @@ import {
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
+import { trigger } from 'react-native-haptic-feedback';
 
 import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
@@ -117,6 +118,11 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
         // Else, register the tab change that will be handled in preventRemove callback
         setNextTabJump(CommonActions.navigate({ key: event.target }));
       }
+      // Haptic feebback
+      trigger('impactLight', {
+        enableVibrateFallback: true,
+        ignoreAndroidSystemSettings: false,
+      });
     },
   } as ScreenListeners<NavigationState, EventMapBase>);
 
