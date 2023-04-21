@@ -32,6 +32,7 @@ export type NotifHandlerThunkAction<NotifType extends IAbstractNotification = IA
   notification: NotifType,
   trackCategory: false | string,
   navigation: NavigationProp<ParamListBase>,
+  allowSwitchTab?: boolean,
 ) => NotifHandlerThunk;
 
 export interface INotifHandlerDefinition<NotifType extends IAbstractNotification = IAbstractNotification> {
@@ -56,13 +57,13 @@ export const getRegisteredNotifHandlers = () => registeredNotifHandlers;
 
 const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   // Check for all module notif-handler that are registered.
-  moduleRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
+  moduleRedirection: (n, trackCategory, navigation, allowSwitchTab) => async (dispatch, getState) => {
     const rets = await Promise.all(
       registeredNotifHandlers.map(async def => {
         if (n.type !== def.type) return false;
         const eventTypeArray = typeof def['event-type'] === 'string' ? [def['event-type']] : def['event-type'];
         if (eventTypeArray !== undefined && !eventTypeArray.includes(n['event-type'])) return false;
-        const thunkAction = def.notifHandlerAction(n, trackCategory, navState);
+        const thunkAction = def.notifHandlerAction(n, trackCategory, navigation, allowSwitchTab);
         const ret = await (dispatch(thunkAction) as unknown as Promise<INotifHandlerReturnType>); // TS BUG ThunkDispatch is treated like a regular Dispatch
         if (trackCategory && ret.trackInfo)
           Trackers.trackEvent(trackCategory, ret.trackInfo.action, `${n.type}.${n['event-type']}`, ret.trackInfo.value);
@@ -75,7 +76,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   },
 
   // Redirect the user to the timeline + go to native browser
-  webRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
+  webRedirection: (n, trackCategory) => async (dispatch, getState) => {
     const notifWithUri = getAsResourceUriNotification(n);
     if (!notifWithUri) {
       return { managed: 0 };
@@ -94,7 +95,7 @@ const defaultNotificationActions: { [k: string]: NotifHandlerThunkAction } = {
   },
 
   // Only redirect to the timeline
-  timelineRedirection: (n, trackCategory, navState) => async (dispatch, getState) => {
+  timelineRedirection: (n, trackCategory) => async (dispatch, getState) => {
     if (trackCategory) Trackers.trackEvent(trackCategory, 'Timeline', `${n.type}.${n['event-type']}`);
     navigate(computeTabRouteName(timelineModuleConfig.routeName), {
       initial: true,
@@ -119,12 +120,15 @@ export const handleNotificationAction =
     actionStack: NotifHandlerThunkAction[],
     navigation: NavigationProp<ParamListBase>,
     trackCategory: false | string = false,
+    allowSwitchTab?: boolean,
   ) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     let manageCount = 0;
     for (const action of actionStack) {
       if (manageCount) return;
-      const ret = (await dispatch(action(notification, trackCategory, navigation))) as unknown as INotifHandlerReturnType;
+      const ret = (await dispatch(
+        action(notification, trackCategory, navigation, allowSwitchTab),
+      )) as unknown as INotifHandlerReturnType;
       manageCount += ret.managed;
       if (ret.trackInfo && trackCategory)
         Trackers.trackEvent(trackCategory, ret.trackInfo.action, 'Post-routing', ret.trackInfo.value);
