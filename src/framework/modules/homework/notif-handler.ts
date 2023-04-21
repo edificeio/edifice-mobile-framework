@@ -2,7 +2,7 @@ import { CommonActions } from '@react-navigation/native';
 
 import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
-import { getAsResourceIdNotification } from '~/framework/util/notifications';
+import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {
   NotifHandlerThunkAction,
   handleNotificationNavigationAction,
@@ -15,11 +15,15 @@ import { homeworkRouteNames } from './navigation';
 const homeworkNotificationAction: NotifHandlerThunkAction =
   (notification, trackCategory, navigation) => async (dispatch, getState) => {
     try {
-      const notif = getAsResourceIdNotification(notification);
+      const notif = getAsResourceUriNotification(notification);
       if (!notif) return { managed: 0 };
 
+      // We must extract resource id ourselves beacause backend don't return it :/
+      const diaryUri = notif.resource.uri;
+      const diaryId = diaryUri.split('/').pop();
+      if (!diaryId) return { managed: 0 };
+
       // side-effect needed :/
-      const diaryId = notif.resource.id;
       dispatch(homeworkDiarySelected(diaryId));
 
       const navAction = CommonActions.navigate({

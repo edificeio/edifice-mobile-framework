@@ -14,7 +14,7 @@ import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { isEmpty } from '~/framework/util/object';
 
-import { navigationRef } from './helper';
+import { isModalModeOnThisRoute } from './hideTabBarAndroid';
 
 const styles = StyleSheet.create({
   navBarTitleStyle: {
@@ -56,9 +56,8 @@ export const navBarOptions: (props: {
       const navState = navigation.getState();
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.
       if (navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0) {
-        const currentOptions = navigationRef.getCurrentOptions() as NativeStackNavigationOptions | undefined;
-        // On iOS modals, we want to use a close button instead of a back button
-        if (currentOptions?.presentation === 'modal' || currentOptions?.presentation === 'fullScreenModal') {
+        // On modals, we want to use a close button instead of a back button
+        if (isModalModeOnThisRoute(route.name)) {
           return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" />;
         } else {
           return <HeaderBackButton {...props} onPress={navigation.goBack} style={styles.backbutton} />;
