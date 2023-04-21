@@ -3,7 +3,7 @@ import { NavigationProp, useIsFocused, useNavigation, useScrollToTop } from '@re
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, ImageURISource, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
@@ -16,6 +16,7 @@ import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';

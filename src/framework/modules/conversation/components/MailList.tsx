@@ -13,7 +13,7 @@ import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
-import SwipeableList, { ScrollToTopHandler } from '~/framework/components/swipeableList';
+import SwipeableList from '~/framework/components/swipeableList';
 import { CaptionBoldText, CaptionText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import moduleConfig from '~/framework/modules/conversation/module-config';
@@ -501,7 +501,6 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                     ],
                   })}
                 />
-                <ScrollToTopHandler listRef={this.flatListRef} />
               </>
             )}
             <Drawer
