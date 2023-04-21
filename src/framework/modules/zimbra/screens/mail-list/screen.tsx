@@ -1,11 +1,11 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { DrawerNavigationOptions, DrawerScreenProps } from '@react-navigation/drawer';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { UNSTABLE_usePreventRemove, useScrollToTop } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import { Alert, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -16,6 +16,7 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -365,20 +366,10 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     );
   };
 
-  const listRef = React.useRef<FlatList>(null);
-  useScrollToTop(
-    React.useRef({
-      scrollToTop: () => {
-        listRef.current?.scrollToOffset({ offset: 0 });
-      },
-    }),
-  );
-
   const renderMailList = () => {
     return (
       <>
         <FlatList
-          ref={listRef}
           data={mails}
           extraData={mails}
           keyExtractor={(item: Omit<IMail, 'body'>) => item.id}

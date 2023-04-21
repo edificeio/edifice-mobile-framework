@@ -1,9 +1,9 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { NavigationProp, useIsFocused, useNavigation, useScrollToTop } from '@react-navigation/native';
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, ImageURISource, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
@@ -16,6 +16,7 @@ import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
@@ -386,16 +387,9 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const logoutButton = useLogoutFeature(handleLogout);
   const versionButton = useVersionFeature(session);
 
-  const scrollRef = React.useRef<ScrollView>(null);
-  useScrollToTop(scrollRef);
-
   return (
     <PageView style={styles.page} showNetworkBar={false}>
-      <ScrollView
-        ref={scrollRef}
-        style={UI_STYLES.flex1}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView style={UI_STYLES.flex1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
         <View style={styles.sectionUserInfo}>
           {navBarDecoration}
           {avatarButton}

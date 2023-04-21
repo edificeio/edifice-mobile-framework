@@ -4,7 +4,9 @@
  * use `gap` and `gapOutside` props to manage spaces around the items. Give number or [horizontal, vertical].
  */
 import * as React from 'react';
-import { FlatList, FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
+import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
+
+import FlatList from './flatList';
 
 export interface GridListProps<ItemT> extends FlatListProps<ItemT> {
   gap?: number | [number, number]; // distance BETWEEN each item

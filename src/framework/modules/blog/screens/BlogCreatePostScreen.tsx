@@ -267,7 +267,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         Toast.showError(I18n.t('fullStorage'));
       }
       if ((e as Error).message && (e as Error).message !== 'handled') {
-        Alert.alert('', I18n.t('blog-post-publish-error-text'));
+        Toast.showError(I18n.t('blog-post-publish-error-text'));
       }
     }
   }

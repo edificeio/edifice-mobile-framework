@@ -379,7 +379,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           setTimeout(() => {
             if (!this.editedCommentId) return;
             const commentIndex = blogPostData?.comments?.findIndex(c => c.id === this.editedCommentId);
-            if (commentIndex && commentIndex > -1) {
+            if (commentIndex !== undefined && commentIndex > -1) {
               if (Platform.OS === 'ios') {
                 (this.flatListRef.current as FlatList)?.scrollToIndex({
                   index: commentIndex,
