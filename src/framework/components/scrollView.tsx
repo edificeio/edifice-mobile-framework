@@ -17,6 +17,8 @@ function ScrollView(props: ScrollViewProps, ref) {
   const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
   React.useImperativeHandle(ref, () => ({ scrollToEnd }));
 
+  useScrollToTop(scrollViewRef);
+
   return (
     <RNScrollView
       ref={scrollViewRef}
@@ -28,8 +30,3 @@ function ScrollView(props: ScrollViewProps, ref) {
 }
 ScrollView.scrollIndicatorInsets = { right: 0.001 };
 export default React.forwardRef(ScrollView);
-
-export function ScrollToTopHandler({ scrollRef }: { scrollRef: React.RefObject<RNScrollView> }) {
-  useScrollToTop(scrollRef);
-  return null;
-}

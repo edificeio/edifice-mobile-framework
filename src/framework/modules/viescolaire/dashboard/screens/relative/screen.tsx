@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -11,7 +11,7 @@ import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { ScrollToTopHandler } from '~/framework/components/scrollView';
+import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
@@ -206,7 +206,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
     );
   }
 
-  scrollRef = React.createRef<ScrollView>();
+  scrollRef = React.createRef<typeof ScrollView>();
 
   public render() {
     const { authorizedViescoApps, homeworks, evaluations, hasRightToCreateAbsence, levels } = this.props;
@@ -228,7 +228,6 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
           {authorizedViescoApps.competences &&
             (evaluations && evaluations.isFetching ? <LoadingIndicator /> : this.renderLastEval(evaluations, levels))}
         </ScrollView>
-        <ScrollToTopHandler scrollRef={this.scrollRef} />
       </PageView>
     );
   }

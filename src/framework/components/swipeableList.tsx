@@ -176,6 +176,17 @@ export interface SwipeableListProps<ItemT extends { key: string }>
   itemSwipeActionProps?: (info: ListRenderItemInfo<ItemT>) => ISwipeActionProps<ItemT> | null;
 }
 
+export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<SwipeListView<any>> }) => {
+  useScrollToTop(
+    React.useRef({
+      scrollToTop: () => {
+        listRef?.current?.scrollToTop();
+      },
+    }),
+  );
+  return null;
+};
+
 export default React.forwardRef(
   <ItemT extends { key: string }>( // need to write "extends" because we're in a tsx file
     props: SwipeableListProps<ItemT> & FlatListProps<ItemT>,
@@ -329,28 +340,20 @@ export default React.forwardRef(
     }
 
     return (
-      <SwipeListView
-        {...otherListProps}
-        data={data}
-        ref={ref}
-        // onSwipeValueChange={onSwipeValueChange}
-        renderItem={realRenderItem}
-        onRowOpen={onRowOpen}
-        onRowClose={onRowClose}
-        ListFooterComponent={realListFooterComponent}
-        scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
-      />
+      <>
+        <SwipeListView
+          {...otherListProps}
+          data={data}
+          ref={ref}
+          // onSwipeValueChange={onSwipeValueChange}
+          renderItem={realRenderItem}
+          onRowOpen={onRowOpen}
+          onRowClose={onRowClose}
+          ListFooterComponent={realListFooterComponent}
+          scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
+        />
+        <ScrollToTopHandler listRef={ref as React.RefObject<SwipeListView<any>>} />
+      </>
     );
   },
 );
-
-export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<SwipeListView<any>> }) => {
-  useScrollToTop(
-    React.useRef({
-      scrollToTop: () => {
-        listRef.current?.scrollToTop();
-      },
-    }),
-  );
-  return null;
-};

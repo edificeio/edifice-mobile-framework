@@ -17,10 +17,13 @@ function FlatList<ItemT>(props: FlatListProps<ItemT>, ref) {
       ListFooterComponent
     );
   }, [bottomInset, ListFooterComponent]);
+  const listRef = React.useRef<RNFlatList>(null);
+  useScrollToTop(listRef);
+  ref = listRef;
   return (
     <RNFlatList
       {...otherProps}
-      ref={ref}
+      ref={listRef}
       ListFooterComponent={realListFooterComponent}
       scrollIndicatorInsets={scrollIndicatorInsets || FlatList.scrollIndicatorInsets} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
     />
@@ -28,8 +31,3 @@ function FlatList<ItemT>(props: FlatListProps<ItemT>, ref) {
 }
 FlatList.scrollIndicatorInsets = { right: 0.001 };
 export default React.forwardRef(FlatList);
-
-export function ScrollToTopHandler({ listRef }: { listRef: React.RefObject<RNFlatList<any>> }) {
-  useScrollToTop(listRef);
-  return null;
-}
