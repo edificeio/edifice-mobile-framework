@@ -10,7 +10,7 @@ import ConversationMailListScreen, {
 import ConversationNewMailScreen, {
   computeNavBar as conversationNewMailNavBar,
 } from '~/framework/modules/conversation/screens/ConversationNewMail';
-import { hideAndroidTabbarForRoutes } from '~/framework/navigation/hideTabBarAndroid';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -31,7 +31,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={conversationMailContentNavBar}
         initialParams={{}}
       />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen
           name={conversationRouteNames.newMail}
           component={ConversationNewMailScreen}
@@ -42,4 +42,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     </>
   ));
 
-hideAndroidTabbarForRoutes([conversationRouteNames.newMail]);
+setModalModeForRoutes([conversationRouteNames.newMail]);

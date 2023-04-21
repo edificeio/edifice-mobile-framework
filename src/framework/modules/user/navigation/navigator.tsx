@@ -13,7 +13,7 @@ import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/fra
 import UserProfileScreen, { computeNavBar as profileNavBar } from '~/framework/modules/user/screens/profile';
 import UserStructuresScreen, { computeNavBar as structuresNavBar } from '~/framework/modules/user/screens/structures';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
-import { hideAndroidTabbarForRoutes } from '~/framework/navigation/hideTabBarAndroid';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -55,4 +55,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     </>
   ));
 
-hideAndroidTabbarForRoutes([userRouteNames.notifPrefsDetails]);
+setModalModeForRoutes([userRouteNames.notifPrefsDetails]);

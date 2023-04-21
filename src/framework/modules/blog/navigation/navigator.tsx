@@ -6,7 +6,7 @@ import BlogExplorerScreen, { computeNavBar as blogExplorerNavBar } from '~/frame
 import BlogPostListScreen, { computeNavBar as blogPostListNavBar } from '~/framework/modules/blog/screens/BlogPostListScreen';
 import BlogSelectScreen, { computeNavBar as blogSelectNavBar } from '~/framework/modules/blog/screens/BlogSelectScreen';
 import BlogPostDetailsScreen, { computeNavBar as blogPostDetailsNavBar } from '~/framework/modules/blog/screens/blog-post-details';
-import { hideAndroidTabbarForRoutes } from '~/framework/navigation/hideTabBarAndroid';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -34,7 +34,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={blogPostDetailsNavBar}
         initialParams={{}}
       />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen
           name={blogRouteNames.blogCreatePost}
           component={BlogCreatePostScreen}
@@ -45,4 +45,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     </>
   ));
 
-hideAndroidTabbarForRoutes([blogRouteNames.blogCreatePost]);
+setModalModeForRoutes([blogRouteNames.blogCreatePost]);

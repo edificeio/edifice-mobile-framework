@@ -7,12 +7,15 @@ import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pd
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
-import { hideAndroidTabbarForRoutes } from '../hideTabBarAndroid';
+import { setModalModeForRoutes } from '../hideTabBarAndroid';
 
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
   <>
-    <RootStack.Group screenOptions={{ presentation: 'modal' }}>
+    <RootStack.Group
+      screenOptions={{
+        presentation: 'modal',
+      }}>
       <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} initialParams={{ title: '' }} />
     </RootStack.Group>
     <RootStack.Group
@@ -30,4 +33,4 @@ export default (
   </>
 );
 
-hideAndroidTabbarForRoutes([ModalsRouteNames.Pdf, ModalsRouteNames.Carousel, ModalsRouteNames.MediaPlayer]);
+setModalModeForRoutes([ModalsRouteNames.Pdf, ModalsRouteNames.Carousel, ModalsRouteNames.MediaPlayer]);
