@@ -162,9 +162,9 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
               {this.renderItem({
                 title: I18n.t('Birthdate'),
                 getter: () =>
-                  session?.user.birthDate!.format('L') === 'Invalid date'
+                  session?.user.birthDate?.format('L') === 'Invalid date'
                     ? I18n.t('common-InvalidDate')
-                    : session?.user.birthDate!.format('L'),
+                    : session?.user.birthDate?.format('L'),
               })}
             </SafeAreaView>
           </ScrollView>
