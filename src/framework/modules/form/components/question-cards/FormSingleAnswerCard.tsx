@@ -57,17 +57,9 @@ export const FormSingleAnswerCard = ({
   let selectedChoice = question.choices.find(c => c.id === value);
   const { title, mandatory } = question;
 
-  const clearAnswer = () => {
-    setCustomAnswer('');
-    responses[0].choiceId = undefined;
-    responses[0].answer = '';
-    responses[0].customAnswer = undefined;
-    onChangeAnswer(question.id, responses);
-  };
-
   const onChangeChoice = (choiceId?: number) => {
     setValue(choiceId);
-    if (!choiceId) return clearAnswer();
+    if (!choiceId) setCustomAnswer('');
     selectedChoice = question.choices.find(c => c.id === choiceId);
     const answer = selectedChoice?.value ?? '';
 
