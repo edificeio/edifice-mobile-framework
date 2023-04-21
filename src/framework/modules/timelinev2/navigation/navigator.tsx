@@ -5,7 +5,7 @@ import TimelineFiltersScreen, {
   computeNavBar as TimelineFiltersNavBar,
 } from '~/framework/modules/timelinev2/screens/TimelineFiltersScreen';
 import TimelineScreen, { computeNavBar as TimelineNavBar } from '~/framework/modules/timelinev2/screens/TimelineScreen';
-import { hideAndroidTabbarForRoutes } from '~/framework/navigation/hideTabBarAndroid';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -27,4 +27,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     </>
   ));
 
-hideAndroidTabbarForRoutes([timelineRouteNames.Filters]);
+setModalModeForRoutes([timelineRouteNames.Filters]);
