@@ -161,7 +161,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 8. Do tracking
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN', partialSessionScenario);
-      else await Trackers.trackDebugEvent('Auth', 'RESTORE', partialSessionScenario);
+      else await Trackers.trackEvent('Auth', 'RESTORE', partialSessionScenario);
 
       // === Bonus : clear cookies. The backend can soemtimes send back a Set-Cookie header that conflicts with the oAuth2 token.
       await CookieManager.clearAll();
