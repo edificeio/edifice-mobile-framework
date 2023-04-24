@@ -14,7 +14,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { CaptionText, SmallText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
@@ -244,14 +244,14 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                 <SmallText
                   style={styles.textForgotPassword}
                   onPress={() => {
-                    navigation.navigate(AuthRouteNames.forgot, { platform, mode: 'password' });
+                    navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' });
                   }}>
                   {I18n.t('forgot-password')}
                 </SmallText>
                 <SmallText
                   style={styles.textForgotId}
                   onPress={() => {
-                    navigation.navigate(AuthRouteNames.forgot, { platform, mode: 'id' });
+                    navigation.navigate(authRouteNames.forgot, { platform, mode: 'id' });
                   }}>
                   {I18n.t('forgot-id')}
                 </SmallText>

@@ -21,7 +21,7 @@ import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framewor
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
-import { AuthRouteNames } from '~/framework/modules/auth/navigation';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
@@ -174,9 +174,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         let needMfa: undefined | boolean;
         if (modificationType !== ModificationType.PASSWORD) needMfa = await fetchMFAValidationInfos();
         const routeNames = {
-          [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
-          [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
-          [ModificationType.PASSWORD]: AuthRouteNames.changePasswordModal,
+          [ModificationType.EMAIL]: authRouteNames.changeEmail,
+          [ModificationType.MOBILE]: authRouteNames.changeMobile,
+          [ModificationType.PASSWORD]: authRouteNames.changePasswordModal,
         };
         let routeName = routeNames[modificationType];
         const params = {
@@ -199,7 +199,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         const routeParams = params[modificationType];
         if (needMfa) {
           (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
-          routeName = AuthRouteNames.mfaModal;
+          routeName = authRouteNames.mfaModal;
         }
         if (isFocused) navigation.navigate(routeName, routeParams);
       } catch {

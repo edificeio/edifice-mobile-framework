@@ -14,7 +14,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { forgotAction } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { containsKey } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
@@ -35,7 +35,7 @@ export type IForgotScreenState = {
 export interface IForgotPageEventProps {
   trySubmit: (...args: Parameters<typeof forgotAction>) => ReturnType<ReturnType<typeof forgotAction>>;
 }
-export type IForgotPageProps = IForgotPageEventProps & NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.forgot>;
+export type IForgotPageProps = IForgotPageEventProps & NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.forgot>;
 
 // Forgot Page Component -------------------------------------------------------------
 

@@ -18,7 +18,7 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
@@ -33,7 +33,7 @@ enum WAYFPageMode {
   WEBVIEW = 4,
 }
 
-export interface IWayfScreenProps extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.wayf> {
+export interface IWayfScreenProps extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.wayf> {
   auth: IAuthState;
   dispatch: ThunkDispatch<any, any, any>;
 }
@@ -116,11 +116,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private backActions = [
     // WAYFPageMode.EMPTY: Go to top of wayf navigation stack
     () => {
-      this.props.navigation.navigate(AuthRouteNames.loginWayf, { platform: this.props.route.params.platform });
+      this.props.navigation.navigate(authRouteNames.loginWayf, { platform: this.props.route.params.platform });
     },
     // WAYFPageMode.ERROR: Go to top of wayf navigation stack
     () => {
-      this.props.navigation.navigate(AuthRouteNames.loginWayf, { platform: this.props.route.params.platform });
+      this.props.navigation.navigate(authRouteNames.loginWayf, { platform: this.props.route.params.platform });
     },
     // WAYFPageMode.LOADING: Nothing to do
     () => {},
@@ -286,7 +286,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       })
       .catch(_error => {
         // Go to WAYF stack home
-        navigation.navigate(AuthRouteNames.loginWayf, { platform: this.props.route.params.platform });
+        navigation.navigate(authRouteNames.loginWayf, { platform: this.props.route.params.platform });
       });
   }
 
@@ -465,7 +465,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     const url = request.url;
     if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
       if (!this.samlResponse)
-        this.props.navigation.replace(AuthRouteNames.loginHome, { platform: this.props.route.params.platform });
+        this.props.navigation.replace(authRouteNames.loginHome, { platform: this.props.route.params.platform });
       return false;
     }
     return true;

@@ -24,7 +24,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getMobileValidationInfos, sendMobileVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
@@ -35,13 +35,13 @@ import { tryAction } from '~/framework/util/redux/actions';
 import styles from './styles';
 import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
 
-const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, AuthRouteNames.changeMobile>) =>
+const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeMobile>) =>
   route.params.navBarTitle || I18n.t('auth-change-mobile-verify');
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.changeMobile>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changeMobile>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
       navigation,
@@ -136,7 +136,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           }
         }
         await sendMobileVerificationCode(platform, mobileNumberFormatted);
-        navigation.navigate(AuthRouteNames.mfa, {
+        navigation.navigate(authRouteNames.mfa, {
           platform,
           rememberMe,
           modificationType,

@@ -15,45 +15,49 @@ import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mf
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-export enum AuthRouteNames {
-  loginHome = 'LoginHome',
-  loginWayf = 'LoginWAYF',
-  wayf = 'WAYF',
-  onboarding = 'Onboarding',
-  platforms = 'PlatformSelect',
-  activation = 'Activation',
-  forgot = 'Forgot',
-  revalidateTerms = 'RevalidateTerms',
-  changePassword = 'ChangePassword',
-  changePasswordModal = 'ChangePasswordModal',
-  changeEmail = 'ChangeEmail',
-  changeMobile = 'ChangeMobile',
-  mfa = 'MFA',
-  mfaModal = 'MFAModal',
-}
+import moduleConfig from '../moduleConfig';
+
+// We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
+export const authRouteNames = {
+  loginHome: `${moduleConfig.name}/login/home` as 'loginHome',
+  loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
+  wayf: `${moduleConfig.name}/wayf` as 'wayf',
+  onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
+  platforms: `${moduleConfig.name}/platforms` as 'platforms',
+  activation: `${moduleConfig.name}/activation` as 'activation',
+  forgot: `${moduleConfig.name}/forgot` as 'forgot',
+  revalidateTerms: `${moduleConfig.name}/revalidateTerms` as 'revalidateTerms',
+  changePassword: `${moduleConfig.name}/changePassword` as 'changePassword',
+  changePasswordModal: `${moduleConfig.name}/changePasswordModal` as 'changePasswordModal',
+  changeEmail: `${moduleConfig.name}/changeEmail` as 'changeEmail',
+  changeMobile: `${moduleConfig.name}/changeMobile` as 'changeMobile',
+  mfa: `${moduleConfig.name}/mfa` as 'mfa',
+  mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
+};
+
 export interface IAuthNavigationParams extends ParamListBase {
-  [AuthRouteNames.loginHome]: LoginHomeScreenNavParams;
-  [AuthRouteNames.loginWayf]: { platform: Platform };
-  [AuthRouteNames.wayf]: { platform: Platform };
-  [AuthRouteNames.activation]: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
-  [AuthRouteNames.forgot]: { platform: Platform; mode: ForgotMode };
-  [AuthRouteNames.revalidateTerms]: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
-  [AuthRouteNames.changePassword]: ChangePasswordScreenNavParams;
-  [AuthRouteNames.changeEmail]: AuthChangeEmailScreenNavParams;
-  [AuthRouteNames.changeMobile]: AuthChangeMobileScreenNavParams;
-  [AuthRouteNames.mfa]: AuthMFAScreenNavParams;
-  [AuthRouteNames.mfaModal]: AuthMFAScreenNavParams;
+  [authRouteNames.loginHome]: LoginHomeScreenNavParams;
+  [authRouteNames.loginWayf]: { platform: Platform };
+  [authRouteNames.wayf]: { platform: Platform };
+  [authRouteNames.activation]: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
+  [authRouteNames.forgot]: { platform: Platform; mode: ForgotMode };
+  [authRouteNames.revalidateTerms]: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
+  [authRouteNames.changePassword]: ChangePasswordScreenNavParams;
+  [authRouteNames.changeEmail]: AuthChangeEmailScreenNavParams;
+  [authRouteNames.changeMobile]: AuthChangeMobileScreenNavParams;
+  [authRouteNames.mfa]: AuthMFAScreenNavParams;
+  [authRouteNames.mfaModal]: AuthMFAScreenNavParams;
 }
 
 export const getLoginRouteName = (platform?: Platform) => {
-  return platform?.wayf ? AuthRouteNames.loginWayf : AuthRouteNames.loginHome;
+  return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginHome;
 };
 
 export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platform) => {
   if (action) {
     switch (action.action) {
       case 'activate':
-        return CommonActions.navigate(AuthRouteNames.activation, {
+        return CommonActions.navigate(authRouteNames.activation, {
           platform,
           context: action.context,
           credentials: action.credentials,
@@ -64,7 +68,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
             {
-              name: AuthRouteNames.changePassword,
+              name: authRouteNames.changePassword,
               params: {
                 platform,
                 context: action.context,
@@ -80,7 +84,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
             {
-              name: AuthRouteNames.revalidateTerms,
+              name: authRouteNames.revalidateTerms,
               params: {
                 platform,
                 credentials: action.credentials,
@@ -94,7 +98,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
             {
-              name: AuthRouteNames.changeMobile,
+              name: authRouteNames.changeMobile,
               params: {
                 platform,
                 defaultMobile: action.defaultMobile,
@@ -108,7 +112,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
             {
-              name: AuthRouteNames.changeEmail,
+              name: authRouteNames.changeEmail,
               params: {
                 platform,
                 defaultEmail: action.defaultEmail,
@@ -135,7 +139,7 @@ export const redirectLoginNavAction = (
 export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IAuthNavigationParams>) {
   const hasMultiplePlatforms = appConf.platforms.length > 1;
   if (hasMultiplePlatforms) {
-    navigation.navigate(AuthRouteNames.platforms);
+    navigation.navigate(authRouteNames.platforms);
   } else {
     const pf = appConf.platforms[0];
     navigation.navigate(getLoginRouteName(pf), { platform: pf }); // Auto-select first platform if not defined));
@@ -171,7 +175,7 @@ export const getAuthNavigationState = (selectedPlatform?: Platform, loginRedirec
   const navAction = getRedirectLoginNavAction(loginRedirect, selectedPlatform);
   if (!navAction) return { routes };
   const router = StackRouter({});
-  const routeNames = Object.values(AuthRouteNames);
+  const routeNames = Object.values(authRouteNames);
   const rehydratedState = router.getRehydratedState({ routes }, { routeNames, routeParamList: {}, routeGetIdList: {} });
   const newState = router.getStateForAction(rehydratedState, navAction, { routeNames, routeParamList: {}, routeGetIdList: {} });
 

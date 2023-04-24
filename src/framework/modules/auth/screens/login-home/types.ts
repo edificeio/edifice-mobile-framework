@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ILoginResult, consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IAuthState } from '~/framework/modules/auth/reducer';
 import type { Platform } from '~/framework/util/appConf';
 
@@ -25,7 +25,7 @@ export interface LoginHomeScreenDispatchProps {
 export type LoginHomeScreenPrivateProps = LoginHomeScreenProps &
   LoginHomeScreenStoreProps &
   LoginHomeScreenDispatchProps &
-  NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginHome>;
+  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginHome>;
 
 export interface LoginHomeScreenState {
   login: string;
