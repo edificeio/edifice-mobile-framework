@@ -2,18 +2,17 @@ import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
-import { ThunkDispatch } from 'redux-thunk';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { getFileIcon } from '~/framework/modules/zimbra/utils/fileIcon';
 import { getUserColor } from '~/framework/modules/zimbra/utils/userColor';
-import { IDistantFile, IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
-import { downloadFileAction } from '~/framework/util/fileHandler/actions';
-import { Trackers } from '~/framework/util/tracker';
+import { IDistantFileWithId } from '~/framework/util/fileHandler';
+import fileTransferService from '~/framework/util/fileHandler/service';
 import { BadgeAvatar } from '~/ui/BadgeAvatar';
 import { ButtonIcon } from '~/ui/ButtonIconText';
 import { CenterPanel, Header, LeftPanel } from '~/ui/ContainerContent';
@@ -289,27 +288,24 @@ export const FooterButton = ({ icon, text, onPress }) => {
   );
 };
 
-export const RenderPJs = ({
-  attachments,
-  mailId,
-  onDownload,
-  dispatch,
-}: {
-  attachments: IDistantFileWithId[];
-  mailId: string;
-  onDownload: (att: IDistantFile) => void;
-  dispatch: ThunkDispatch<any, any, any>;
-}) => {
+export const RenderPJs = ({ attachments }: { attachments: IDistantFileWithId[] }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const displayedAttachments = isVisible ? attachments : attachments.slice(0, 1);
+  const session = getSession();
   return (
     <View style={[styles.containerMail, styles.attachmentContainer]}>
       {displayedAttachments.map((item, index) => {
         return (
           <TouchableOpacity
-            onPress={() => {
-              Trackers.trackEvent('Zimbra', 'DOWNLOAD ATTACHMENT');
-              onDownload(item);
+            key={item.id}
+            onPress={async () => {
+              try {
+                if (!session) throw new Error();
+                const sf = await fileTransferService.downloadFile(session, item, {});
+                await sf.open();
+              } catch {
+                Toast.showError(I18n.t('download-error-generic'));
+              }
             }}>
             <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
               <View style={[styles.gridViewStyle, styles.attachmentGridViewChild]}>
@@ -318,13 +314,13 @@ export const RenderPJs = ({
                   {item.filename}
                 </SmallText>
               </View>
-
               <View style={[styles.gridViewStyle, styles.attachmentDownloadContainer]}>
-                {Platform.OS !== 'ios' ? (
+                {Platform.OS === 'android' ? (
                   <TouchableOpacity
                     onPress={async () => {
                       try {
-                        const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(item, {}))) as unknown as SyncedFileWithId;
+                        if (!session) throw new Error();
+                        const sf = await fileTransferService.downloadFile(session, item, {});
                         await sf.mirrorToDownloadFolder();
                         Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
                       } catch {

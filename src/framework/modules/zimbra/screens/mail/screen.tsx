@@ -18,7 +18,6 @@ import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framework/modules/zimbra/actions';
-import { downloadAttachmentAction } from '~/framework/modules/zimbra/actions/download';
 import { FooterButton, HeaderMail, HeaderMailDetails, RenderPJs } from '~/framework/modules/zimbra/components/MailContentItems';
 import MoveMailsModal from '~/framework/modules/zimbra/components/modals/MoveMailsModal';
 import { DraftType } from '~/framework/modules/zimbra/model';
@@ -254,14 +253,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       <View style={styles.fullContainer}>
         <HeaderMail mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} />
         {areDetailsVisible ? <HeaderMailDetails mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} /> : null}
-        {mail.hasAttachment ? (
-          <RenderPJs
-            attachments={mail.attachments}
-            mailId={mail.id}
-            onDownload={props.downloadAttachment}
-            dispatch={props.dispatch}
-          />
-        ) : null}
+        {mail.hasAttachment ? <RenderPJs attachments={mail.attachments} /> : null}
         <View style={styles.shadowContainer}>
           <View style={styles.marginView} />
           <View style={styles.scrollContainer}>
@@ -323,7 +315,6 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        downloadAttachment: downloadAttachmentAction,
         fetchMail: tryActionLegacy(fetchZimbraMailAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchMail'],
         fetchQuota: tryActionLegacy(
           fetchZimbraQuotaAction,
