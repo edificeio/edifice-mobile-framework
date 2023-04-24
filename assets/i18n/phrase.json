@@ -1,3 +1,1382 @@
 {
-
+  "Activate": "Activer votre compte",
+  "activation-cancelLoad": "Annuler",
+  "activation-cgu": "Conditions générales d'utilisation",
+  "activation-cgu-accept": "J'accepte les ",
+  "activation-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour activer votre compte. Veuillez réessayer ultérieurement.",
+  "activation-errorSubmit": "Nous n'avons pas pu activer votre compte. Veuillez réessayer ultérieurement.",
+  "activation-retryLoad": "Réessayer",
+  "activation-title": "Activation",
+  "Actualites": "Actualités",
+  "add-file": "Ajouter un fichier",
+  "agoHours": "il y a {{hours}} h",
+  "agoMinutes": "il y a {{minutes}} min",
+  "apply": "Appliquer",
+  "attachment": "Pièce jointe",
+  "attachments": "Pièces jointes",
+  "audioNotAvailable": "Lecteur audio non disponible",
+  "auth-change-email-edit-alert-message": "Votre adresse e-mail ne sera pas modifiée. Êtes-vous sûr d'abandonner ?",
+  "auth-change-email-edit-alert-title": "Modifications non enregistrées",
+  "auth-change-email-edit-label": "Nouvelle adresse mail",
+  "auth-change-email-edit-message": "Veuillez rentrer votre nouvelle adresse mail.",
+  "auth-change-email-edit-title": "Modifier mon adresse mail",
+  "auth-change-email-edit-toast": "Email modifié avec succès.",
+  "auth-change-email-error-invalid": "Format d'email invalide.",
+  "auth-change-email-error-same": "L'email doit être différent de celui renseigné actuellement.",
+  "auth-change-email-placeholder": "Entrez votre adresse mail",
+  "auth-change-email-verify": "Vérification d'email",
+  "auth-change-email-verify-button": "Vérifier mon email",
+  "auth-change-email-verify-disconnect": "Refuser et se déconnecter",
+  "auth-change-email-verify-label": "Adresse mail",
+  "auth-change-email-verify-message": "En tant qu'administrateur de votre établissement, vous avez accès à des informations sensibles. Pour améliorer la sécurité de votre compte vous devez vérifier votre adresse mail.",
+  "auth-change-email-verify-title": "Vérification de votre adresse mail",
+  "auth-change-mobile-country-placeholder": "Rechercher un pays",
+  "auth-change-mobile-edit-alert-message": "Votre numéro de téléphone ne sera pas modifié. Êtes-vous sûr d'abandonner ?",
+  "auth-change-mobile-edit-alert-title": "Modifications non enregistrées",
+  "auth-change-mobile-edit-label": "Nouveau numéro de téléphone mobile",
+  "auth-change-mobile-edit-message": "En changeant votre numéro de téléphone il vous sera demandé de le vérifier pour des raisons de sécurité.",
+  "auth-change-mobile-edit-title": "Indiquez votre numéro de téléphone portable",
+  "auth-change-mobile-edit-toast": "Numéro de téléphone modifié avec succès.",
+  "auth-change-mobile-error-invalid": "Format de numéro de téléphone invalide.",
+  "auth-change-mobile-error-same": "Le numéro doit être différent de celui renseigné actuellement.",
+  "auth-change-mobile-placeholder": "Saisir le numéro",
+  "auth-change-mobile-verify": "Vérification du numéro de téléphone",
+  "auth-change-mobile-verify-button": "Vérifier mon numéro",
+  "auth-change-mobile-verify-disconnect": "Refuser et se déconnecter",
+  "auth-change-mobile-verify-label": "Nouveau numéro de téléphone mobile",
+  "auth-change-mobile-verify-message": "En tant qu'administrateur de votre établissement, vous avez accès à des informations sensibles. Pour améliorer la sécurité de votre compte vous devez saisir votre numéro de téléphone portable.",
+  "auth-change-mobile-verify-title": "Indiquez votre numéro de téléphone portable",
+  "auth-disconnectConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  "auth-error-bad_credentials": "L'identifiant ou le mot de passe est incorrect.",
+  "auth-error-bad_response": "Un problème est survenu. Veuillez réessayer. (Code 5)",
+  "auth-error-bad_saml": "Votre compte n’existe pas sur le réseau éducatif. Veuillez contacter votre administrateur.",
+  "auth-error-blocked_type": "Nous restreignons temporairement l'accès au réseau social éducatif à certains profils d'utilisateurs. Merci de réessayer ultérieurement.",
+  "auth-error-blocked_user": "L'administrateur de votre établissement a bloqué votre accès à votre réseau éducatif. Veuillez le contacter.",
+  "auth-error-firebase_error": "Un problème est survenu. Veuillez réessayer. (Code 6)",
+  "auth-error-invalid_client": "Cette version de l'application ({{version}}) est obsolète, veuillez la mettre à jour et vous reconnecter.",
+  "auth-error-invalid_grant": "Vous avez été déconnecté pour des raisons de sécurité. Veuillez vous reconnecter.",
+  "auth-error-must_log_again": "Merci de bien vouloir vous identifier à nouveau avec votre nouveau mot de passe.",
+  "auth-error-network_error": "Impossible de s'identifier, réessayez ou vérifiez votre connexion internet.",
+  "auth-error-not_initilized": "Un problème est survenu. Veuillez réessayer. (Code 4)",
+  "auth-error-not_premium": "Vous ne pouvez pas vous connecter car votre établissement n'est pas abonné à l'application.",
+  "auth-error-other": "Un problème est survenu. Veuillez réessayer. (Code 0)",
+  "auth-error-parse_error": "Un problème est survenu. Veuillez réessayer. (Code 3)",
+  "auth-error-platform_unavailable": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
+  "auth-error-pre_deleted": "Votre compte est en pré-suppression. Vous pouvez seulement vous connecter via un navigateur web à l'adresse {{currentplatform}} pour récupérer vos contenus.",
+  "auth-error-runtime_error": "Un problème est survenu. Veuillez réessayer.",
+  "auth-error-too_load": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
+  "auth-error-too_many_tries": "Pour des raisons de sécurité, votre compte est bloqué temporairement suite à un trop grand nombre de tentatives de connexion. Veuillez réessayer ultérieurement.",
+  "auth-error-unknown_denied": "Un problème est survenu. Veuillez réessayer. (Code 1)",
+  "auth-error-unknown_response": "Un problème est survenu. Veuillez réessayer. (Code 2)",
+  "auth-mfa-email-feedback-codecorrect": "Vérification de l'adresse mail réussie !",
+  "auth-mfa-email-feedback-codeexpired": "Le code de vérification a expiré, cliquez sur le bouton pour en recevoir un nouveau.",
+  "auth-mfa-email-feedback-codewrong": "Le code de vérification est incorrect, ré‑essayez.",
+  "auth-mfa-email-message": "Le mail contenant le code peut mettre quelques minutes à arriver. Pensez bien à vérifier vos spams.",
+  "auth-mfa-email-message-sent": "Envoyé à :",
+  "auth-mfa-email-title": "Entrer le code reçu",
+  "auth-mfa-email-toast": "Un nouveau code vous a été envoyé sur l'adresse mail que vous avez renseignée.",
+  "auth-mfa-feedback-codecorrect": "Identité confirmée !",
+  "auth-mfa-feedback-codeexpired": "Le code de vérification a expiré, cliquez sur le bouton pour en recevoir un nouveau.",
+  "auth-mfa-feedback-codewrong": "Le code de vérification est incorrect, ré‑essayez.",
+  "auth-mfa-issue": "Rien reçu ? Le code ne fonctionne pas ?",
+  "auth-mfa-message": "Il peut mettre quelques minutes à arriver.",
+  "auth-mfa-message-sent": "Un code à 6 chiffres vous a été envoyé par SMS au numéro :",
+  "auth-mfa-mobile-feedback-codecorrect": "Vérification du numéro réussie !",
+  "auth-mfa-mobile-feedback-codeexpired": "Le code de vérification a expiré, cliquez sur le bouton pour en recevoir un nouveau.",
+  "auth-mfa-mobile-feedback-codewrong": "Le code de vérification est incorrect, ré‑essayez.",
+  "auth-mfa-mobile-message": "Il peut mettre quelques minutes à arriver.",
+  "auth-mfa-mobile-message-sent": "Un code à 6 chiffres vous a été envoyé par SMS au numéro :",
+  "auth-mfa-mobile-title": "Indiquez le code reçu",
+  "auth-mfa-mobile-toast": "Un nouveau code vous a été envoyé sur le numéro de téléphone mobile que vous avez renseigné.",
+  "auth-mfa-resend": "Renvoyer un code",
+  "auth-mfa-title": "Confirmez votre identité",
+  "auth-mfa-toast": "Un nouveau code vous a été envoyé sur le numéro de téléphone que vous avez renseigné.",
+  "AutoLogin": "Me reconnecter automatiquement",
+  "back": "Retour",
+  "Birthdate": "Date de naissance",
+  "blog-emptyScreenButton": "Créer un Blog",
+  "blog-emptyScreenText": "Vous n'avez aucun Blog partagé. Pour publier un billet, vous devez d'abord créer un Blog et le partager depuis la version web de votre espace numérique.",
+  "blog-emptyScreenTitle": "C'est un peu calme ici...",
+  "blog-newPost": "Nouveau billet",
+  "blog-post-publish-error-text": "Erreur lors de la publication",
+  "blog-post-upload-attachments-error-text": "Erreur d'envoi des pièces jointes : verifiez votre accès à internet et que votre espace documentaire dispose d'assez d'espace libre",
+  "blog-publishAction": "Publier",
+  "blog-selectPublishableBlog": "Choisir un blog",
+  "blog-sharedToNbPersons": "Partagé à {{nb}} personnes",
+  "blog": {
+    "appName": "Blog",
+    "blogCreatePostScreen": {
+      "confirmationUnsavedPublication": "Si vous quittez, le billet que vous avez rédigé sera perdu.",
+      "createAction": "Enregistrer",
+      "createSuccess": "Votre billet a bien été enregistré.",
+      "postContent": "Contenu du billet",
+      "postContentPlaceholder": "Écrivez un message...",
+      "postMedia": "Ajouter des photos à votre billet",
+      "postTitle": "Titre du billet",
+      "postTitlePlaceholder": "Écrivez le titre",
+      "publishAction": "Publier",
+      "publishSuccess": "Votre billet a bien été publié.",
+      "submitAction": "Envoyer",
+      "submitSuccess": "Votre billet a bien été envoyé. Il sera publié une fois validé par le gestionnaire du blog.",
+      "title": "Nouveau billet"
+    },
+    "blogExplorerScreen": {
+      "emptyScreenButton": "Créer un blog sur le web",
+      "emptyScreenText": "Endossez la casquette du petit reporter en créant un Blog ! Publiez et partagez facilement vos informations, en y intégrant différents contenus multimédias.",
+      "emptyScreenTextNoCreationRights": "Il n'y a pas encore de Blog. Le Blog permet de partager facilement des informations en y intégrant différents contenus multimédias. Proposez des idées à votre école (la vie de la classe, les voyages scolaires, des expos, ...).",
+      "emptyScreenTitle": "Aucun blog à l'hoziron...",
+      "rootItemName": "Blog"
+    },
+    "blogPostListScreen": {
+      "emptyScreen": {
+        "button": "Ajouter un billet de blog",
+        "text": "Prenez la plume et lancez-vous !\nPensez à rajouter des images et vidéos pour que cela soit plus agréable à lire.",
+        "textNoCreationRights": "Pour le moment il n'y a pas encore de billets de blog. Un peu de patience...",
+        "title": "Votre premier billet de blog",
+        "titleNoCreationRights": "Pas encore de billet de blog"
+      }
+    },
+    "blogSelectScreen": {
+      "sharedToNbPerson": "Partagé à {{nb}} personne",
+      "sharedToNbPersons": "Partagé à {{nb}} personnes",
+      "title": "Choisir un blog"
+    },
+    "blogsEmptyScreen": {
+      "button": "Créer un blog sur le web",
+      "text": "Endossez la casquette du petit reporter en créant votre premier blog !",
+      "textNoCreationRights": "Proposez des idées de blog à votre école (la vie de la classe, les sorties scolaires, les exposés, ...)",
+      "title": "Aucun blog à l'horizon"
+    },
+    "post": {
+      "needValidation": "Billet à valider",
+      "publishAction": "Publier le billet",
+      "waitingValidation": "Billet en attente de validation"
+    },
+    "resourceName": "Billet de blog",
+    "tabName": "Blog"
+  },
+  "bottom-menu-add-media": "Ajouter du contenu multimédia",
+  "bottom-menu-change-avatar": "Changer votre photo de profil",
+  "camera": {
+    "permission": {
+      "blocked": {
+        "text": "{{appName}} ne peut pas accéder à la l'apareil photo. Vous pouvez autoriser l'accès à l'apareil photo via les paramètres de confidentialité.",
+        "title": "Accès à l'apareil photo refusé"
+      }
+    }
+  },
+  "Cancel": "Annuler",
+  "CarnetDeBord": "Carnet de bord Pronote",
+  "carousel": {
+    "counter": "{{current}} / {{total}}",
+    "image": {
+      "not": {
+        "found": "Image inaccessible ou introuvable."
+      }
+    },
+    "privacy": {
+      "button": "J'ai compris",
+      "text": "Conformément à la charte des données personnelles que vous avez acceptée, ce contenu doit être utilisé à un usage strictement personnel.",
+      "title": "Rappel de confidentialité"
+    }
+  },
+  "CellPhone": "Téléphone mobile",
+  "change-password-errorLoading": "Nous n'avons pas pu charger les données nécessaires pour modifier votre mot de passe. Veuillez réessayer ultérieurement.",
+  "changePassword-errorConfirm": "Les mots de passe doivent être identiques.",
+  "changePassword-errorFields": "Le formulaire contient des erreurs",
+  "changePassword-errorRegex": "Le nouveau mot de passe ne correspond pas aux critères de sécurité.",
+  "changePassword-errorSubmit": "Erreur durant la réinitialisation du mot de passe",
+  "common-connected": "Connecté",
+  "common-connecting": "Reconnexion en cours",
+  "common-disconnected": "Aucune connexion internet",
+  "common-ErrorLoadingResource": "Cette ressource est inaccessible.",
+  "common-ErrorNetwork": "Erreur de réseau",
+  "common-ErrorStorageAccess": "Erreur lors de l'ajout de document. L'application n'a pas accès au stockage de votre appareil. Merci de vérifier les paramètres d'accès avant de recommencer l'opération.",
+  "common-ErrorStorageAccessAlertRetry": "Paramètres",
+  "common-ErrorStorageAccessAlertText": "Erreur lors de l'ajout de document. L'application n'a pas accès au stockage de votre appareil. Vous pouvez modifier cette autorisation dans les paramètres de l'application.",
+  "common-ErrorStorageAccessAlertTitle": "Accès au stockage de l'appareil refusé",
+  "common-ErrorUnknown": "Erreur",
+  "common-ErrorUnknown2": "Une erreur est survenue",
+  "common-InvalidDate": "Date invalide",
+  "common-ok": "OK",
+  "common-photoPicker-pick": "Choisir dans la galerie",
+  "common-photoPicker-take": "Prendre une photo",
+  "common-photoPicker-title": "Sélectionnez une photo",
+  "common-picker-document": "Ajouter un document",
+  "common-picker-image": "Ajouter une image",
+  "common-picker-title": "Choissisez le type de fichier à ajouter",
+  "common-VersionContent": "Une nouvelle version ({{version}}) est disponible sur le store si vous le souhaitez.",
+  "common-VersionContentMandatory": "Une nouvelle version ({{version}}) est disponible sur le store. Veuillez mettre à jour votre application.",
+  "common-VersionSkip": "Non merci",
+  "common-VersionTitle": "Nouvelle version sur le Store",
+  "common-VersionUpdate": "Mettre à jour",
+  "common": {
+    "accept": "Accepter",
+    "addFiles": "Ajouter des fichiers",
+    "all": "Tous",
+    "apply": "Appliquer",
+    "by": "Par :",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "comment": {
+      "add": "Ajouter un commentaire...",
+      "comment": "Commentaire",
+      "comments": "Commentaires",
+      "confirmationDelete": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer le commentaire ?",
+      "confirmationUnsavedModification": "Vous allez annuler les changements du commentaire. En êtes-vous sûr ?",
+      "confirmationUnsavedPublication": "Vous allez annuler l'ajout du commentaire. En êtes-vous sûr ?",
+      "noComments": "Pas encore de commentaires"
+    },
+    "confirm": "Confirmer",
+    "confirmationLeaveAlert": {
+      "message": "Les modifications que vous avez apportées ne seront pas enregistrées. Souhaitez-vous quitter cette page ?",
+      "title": "Êtes-vous sûr de vouloir quitter ?"
+    },
+    "confirmationUnsavedModification": "Modification non enregistrée",
+    "confirmationUnsavedPublication": "Publication non enregistrée",
+    "continue": "Continuer",
+    "date": {
+      "now": "maintenant",
+      "today": "aujourd'hui",
+      "tomorrow": "demain",
+      "yesterday": "hier"
+    },
+    "delete": "Supprimer",
+    "deletion": "Suppression",
+    "deletionPostBlogMenu": "Supprimer le billet",
+    "deletionPostBlogText": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer le billet ?",
+    "deletionPostBlogTitle": "Confirmez-vous la suppression ?",
+    "discard": "Abandonner",
+    "enterDate": "Saisir une date",
+    "enterTime": "Saisir une heure",
+    "error": {
+      "connection": {
+        "text": "Un problème est survenu. Nous n'arrivons pas à afficher la page. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+        "title": "Désolé...\nLa lumière s'est éteinte"
+      },
+      "content": {
+        "text": "Il semblerait que le contenu a été supprimé ou que vous n'y avez plus accès.",
+        "title": "Oups...\nLe contenu s'est envolé"
+      },
+      "mediaNotSupported": {
+        "text": "Le contenu ne peut pas être lue pour plusieurs raisons possibles (format non compatible, fichier corrompu, fichier supprimé).",
+        "title": "Impossible de lire le contenu"
+      },
+      "text": "Une erreur est survenue. Veuillez réessayer plus tard.",
+      "title": "Oups..."
+    },
+    "errorLoadingResource": "Cette ressource est inaccessible.",
+    "for": "➡️",
+    "forRecipients": "Pour :",
+    "from": "De :",
+    "idf": {
+      "passwordRules": "Le nouveau mot de passe doit comporter 12 caractères minimum, incluant au minimum 1 majuscule, 1 minuscule et 1 chiffre ou 1 caractère spécial parmi les suivants : $&+,~:;=?@#|’<>_./^*(){}%µ!£- ."
+    },
+    "infoBubble-doNotShow": "Ne plus afficher ce message",
+    "infoBubble-understood": "J'ai compris",
+    "modified": "(modifié)",
+    "modify": "Modifier",
+    "ok": "OK",
+    "openInBrowser": "Ouvrir dans le navigateur",
+    "publish": "Publier",
+    "quit": "Quitter",
+    "readMore": "lire plus",
+    "redirect": {
+      "browser": {
+        "error": "Erreur lors de la redirection.",
+        "message": "Vous allez être redirigés sur un site externe dans votre navigateur.",
+        "title": "Redirection sur le navigateur"
+      }
+    },
+    "response": {
+      "add": "Ajouter une réponse...",
+      "confirmationUnsavedModification": "Vous allez annuler les changements de votre réponse. En êtes-vous sûr ?",
+      "confirmationUnsavedPublication": "Vous allez annuler l'ajout de votre réponse. En êtes-vous sûr ?"
+    },
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "send": "Envoyer",
+    "sentOnDate": "Envoyé le {{date}}",
+    "sommeNumeriqueAlert_temp": "La plateforme \"Somme Numérique\" ne sera plus disponible à partir de la rentrée 2021. Il faudra utiliser l'accès \"ENT Hauts-de-France\" dans la liste des réseaux sociaux éducatifs.",
+    "space": " ",
+    "to": "À :"
+  },
+  "Connect": "Se connecter",
+  "connector-connectFailed": "Impossible d'ouvrir le lien !",
+  "Conversation": "Messagerie",
+  "conversation-chatPlaceholder": "Ecrivez un message...",
+  "conversation-datePrefix": "Date :",
+  "conversation-deleteThread": "supprimer cette conversation ?",
+  "conversation-emptyMessage": "Message vide",
+  "conversation-errorUser-text": "Veuillez sélectionner uniquement un des utilisateurs de l'ENT dans la liste qui vous est proposée.",
+  "conversation-errorUser-title": "{{user}} n'est pas un utilisateur de l'ENT",
+  "conversation-failedSent": "Message non reçu",
+  "conversation-fromPrefix": "De :",
+  "conversation-historyHide": "Masquer l'historique",
+  "conversation-historyShow": "Afficher l'historique",
+  "conversation-newMessage": "Nouveau message",
+  "conversation-newThreadSubjectPrefix": "Discussion avec ",
+  "conversation-receiver": "1 destinataire",
+  "conversation-receiverList": "Destinataires",
+  "conversation-receiverPrefix": "à",
+  "conversation-receiverPrefixInput": "À :",
+  "conversation-receivers": "{{count}} destinataires",
+  "conversation-receiversCC": "En copie",
+  "conversation-receiversCCPrefix": "Copie à :",
+  "conversation-receiversSender": "Expéditeur",
+  "conversation-receiversTo": "Destinataires",
+  "conversation-receiverTo": "Destinataire",
+  "conversation-reply": "Répondre",
+  "conversation-reply-backMessage": "En réponse à :",
+  "conversation-reply-to-all-action": "Répondre à tous",
+  "conversation-reply-to-name-action": "Répondre à {{name}}",
+  "conversation-responsePlaceholder": "Répondre à tous...",
+  "conversation-responsePlaceholderSingle": "Répondre...",
+  "conversation-send-error": "Erreur lors de l'envoi du message",
+  "conversation-sendingMessage": "En cours d'envoi...",
+  "conversation-subjectPrefixInput": "Objet :",
+  "conversation-subjectReplyPrefix": "Re:",
+  "conversation-subjectTransferPrefix": "Tr:",
+  "conversation-transfer": "Transférer",
+  "conversation-transfer-backMessage": "Message transféré :",
+  "conversation": {
+    "appName": "Messagerie",
+    "attachmentError": "Echec de l'ajout de la pièce jointe",
+    "bcc": "Cci",
+    "bccPrefix": "Cci :",
+    "cancelModifications": "Annuler les modifications",
+    "cc": "Cc",
+    "ccPrefix": "Cc :",
+    "create": "Créer",
+    "createDirectory": "Créer un dossier",
+    "createDirectoryConfirm": "Dossier créé",
+    "createDirectoryError": {
+      "folderExists": "Ce dossier existe déjà"
+    },
+    "delete": "Supprimer",
+    "deleteDraft": "Supprimer le brouillon",
+    "directories": "Dossiers",
+    "directoryName": "Nom du dossier",
+    "downloadAll": "Télécharger pièces jointes",
+    "draft": "Brouillon",
+    "drafts": "Brouillons",
+    "emptyScreen": {
+      "drafts": {
+        "text": "Vous avez pas eu le temps de finir votre messages ? Pas de soucis, vous pouvez l'enregistrer en tant que brouillon.",
+        "title": "Pas de brouillons"
+      },
+      "mailbox": {
+        "text": "Avec la Messagerie, commencez dès maintenant à communiquer avec les membres de votre réseau.",
+        "title": "Pas l'ombre d'un message..."
+      },
+      "sent": {
+        "text": "Avec la Messagerie, commencez dès maintenant à communiquer avec les membres de votre réseau.",
+        "title": "Aucun message envoyé"
+      },
+      "trash": {
+        "text": "Vous retrouvez ici vos messages supprimés. Actuellement, tout est propre.",
+        "title": "Le panier est vide"
+      }
+    },
+    "emptyTo": "(Sans destinataire)",
+    "forward": "Transférer",
+    "forwardSubject": "TR : ",
+    "fromPrefix": "De :",
+    "inbox": "Boîte de réception",
+    "markRead": "Marquer comme lu",
+    "markUnread": "Marquer comme non lu",
+    "messageDeleted": "Message supprimé",
+    "messageMoved": "Message déplacé",
+    "messages": "Messages",
+    "messageTrashed": "Message mis à la corbeille",
+    "missingBodyMessage": "Le contenu de ce message est vide. Voulez-vous l'envoyer quand même ?",
+    "missingBodyTitle": "Un oubli ?",
+    "missingReceiver": "Ce message doit contenir au moins un destinataire",
+    "missingSubjectMessage": "Ce message n'a aucun objet. Voulez-vous l'envoyer quand même ?",
+    "missingSubjectTitle": "Un oubli ?",
+    "move": "Déplacer",
+    "moveImpossible": "Impossible de déplacer votre email. Vous devez d'abord créer un dossier personnalisé à partir de l'écran des dossiers.",
+    "moveSelect": "Choississez un dossier",
+    "moveTo": "Déplacer vers",
+    "newMessage": "Nouveau message",
+    "reply": "Répondre",
+    "replyAll": "Répondre à tous",
+    "replySubject": "RE : ",
+    "restore": "Restaurer",
+    "restoreTo": "Restaurer vers",
+    "saveAgainDraftMessage": "Souhaitez vous enregistrer les modifications faites à votre brouillon ?",
+    "saveDraftMessage": "Souhaitez vous enregistrer votre message en tant que brouillon afin de le reprendre plus tard ?",
+    "saveDraftTitle": "Brouillon",
+    "saveModifications": "Enregistrer les modifications",
+    "seeDetail": "Voir le détail",
+    "selectDirectory": "Choisir un dossier",
+    "sendAttachmentProgress": "Veuillez attendre l'ajout complet de la pièce jointe",
+    "sendMail": "Message envoyé",
+    "sendMessages": "Messages envoyés",
+    "subject": "Objet",
+    "tabName": "Messagerie",
+    "to": "À",
+    "toMore": " et {{count}} de plus",
+    "toPrefix": "À :",
+    "trash": "Corbeille",
+    "typeMessage": "Écrire un message...",
+    "unknown": "Inconnu",
+    "warning": {
+      "webDraft": {
+        "text": "Le brouillon a été initié depuis un ordinateur. En continuant sur l'application mobile, l'expérience sera dégradée. Souhaitez-vous continuer ?",
+        "title": "Brouillon incompatible"
+      }
+    }
+  },
+  "copy": "Copier",
+  "copy-documents": "Copier documents vers",
+  "create": "Créer",
+  "create-folder": "Créer un dossier",
+  "createPost-create-contentField": "Contenu du billet",
+  "createPost-create-contentPlaceholder": "Écrivez un message...",
+  "createPost-create-mediaField": "Ajouter des photos à votre billet",
+  "createPost-create-titleField": "Titre du billet",
+  "createPost-create-titlePlaceholder": "Écrivez le titre",
+  "createPost-createSuccess": "Votre billet a bien été créé.",
+  "createPost-menu-blog": "Billet de blog",
+  "createPost-menu-news": "Actualité",
+  "createPost-menu-title": "Créer :",
+  "createPost-newPost-blog": "Nouveau billet",
+  "createPost-newPost-news": "Nouvelle actualité",
+  "createPost-publishAction": "Publier",
+  "createPost-publishSuccess": "Votre billet a bien été publié.",
+  "createPost-select-blog": "Choisir un blog",
+  "createPost-select-news": "Choisir une actualité",
+  "createPost-sharedToNbPersons": "Partagé à {{nb}} personnes",
+  "createPost-submitAction": "Envoyer",
+  "createPost-submitSuccess": "Votre billet a bien été soumis. Il sera publié une fois validé par le gestionnaire du blog.",
+  "delete": "Supprimer",
+  "delete-confirm": "Supprimer définitivement :",
+  "directory-childrenTitle": "Enfants(s)",
+  "directory-disconnectButton": "Se déconnecter",
+  "directory-legalNoticeTitle": "Mentions légales",
+  "directory-notificationsTitle": "Notifications mobile",
+  "directory-relativesTitle": "Famille",
+  "directory-structuresTitle": "Établissement(s) et classe(s)",
+  "directory-whoAreWeTitle": "Qui sommes-nous ?",
+  "directory-xmasTitle": "Thème de Noël 🎄",
+  "DisplayName": "Nom affiché",
+  "download": "Télécharger",
+  "download-all": "Tout télécharger",
+  "download-confirm": "Souhaitez-vous télécharger\n{{name}}{{size}} ?",
+  "download-documents": "Téléchargement documents:",
+  "download-error": "Erreur.",
+  "download-error-generic": "Erreur à l'ouverture du fichier",
+  "download-error-unsupportedFileType": "Le format du fichier n'est pas reconnu par votre appareil",
+  "download-invalidUrl": "(lien invalide)",
+  "download-open": "Ouvrir",
+  "download-success-all": "Fichiers enregistrés dans Téléchargements",
+  "download-success-name": "{{name}} enregistré dans Téléchargements",
+  "download-untitled": "Pièce jointe sans titre",
+  "Email": "Courriel",
+  "EmailAddress": "Adresse mail",
+  "federatedAccount-instructions": "Pour utiliser l’application mobile, il faut récupérer un identifiant spécifique sur la version web de votre réseau éducatif ONE :",
+  "federatedAccount-instructions-details": "• Connectez-vous sur ONE depuis votre navigateur web en cliquant sur le bouton ci-dessous\n\n• Accédez à la page \"Mon Compte\"\n\n• Récupérez l’identifiant et cliquez sur \"Générer un mot de passe temporaire\"\n\n• Revenez sur l’application mobile et utilisez ces informations sur l’écran de connexion",
+  "federatedAccount-link": "Connexion pour les comptes académiques et les comptes des services scolarité (EduConnect, SAPIA, ARENA, ...)",
+  "federatedAccount-openLink": "Accéder à Mon Compte",
+  "federatedAccount-title": "Authentification",
+  "files": {
+    "too": {
+      "large": "Espace insuffisant pour sauvegarder les fichiers"
+    }
+  },
+  "Firstname": "Prénom",
+  "forgot-id": "Identifiant oublié",
+  "forgot-id-instructions": "Entrez votre adresse de courriel pour recevoir votre identifiant.",
+  "forgot-invalid-mail": "Utilisateur inconnu ou aucune adresse courriel renseignée pour cet utilisateur. Veuillez contacter votre administrateur ENT.",
+  "forgot-no-match": "Utilisateur inconnu ou aucune adresse courriel renseignée pour cet utilisateur. Veuillez contacter votre administrateur ENT.",
+  "forgot-no-match-id": "Adresse courriel inconnue. Veuillez contacter votre administrateur ENT.",
+  "forgot-not-activated": "Votre compte n'est pas activé, veuillez contacter l'administrateur ENT de votre établissement.",
+  "forgot-not-activated-id": "Votre compte n'est pas activé, veuillez contacter l'administrateur ENT de votre établissement.",
+  "forgot-password": "Mot de passe oublié",
+  "forgot-password-instructions": "Entrez votre identifiant pour recevoir votre mot de passe.",
+  "forgot-several-emails": "Cette adresse mail est utilisée par plusieurs utilisateurs. Merci de préciser quelques informations pour recevoir votre login.",
+  "forgot-several-emails-no-match": "Les informations saisies ne correspondent pas à l'adresse mail renseignée.",
+  "forgot-submit": "Envoyer",
+  "forgot-success-id": "Si un compte est associé à cette adresse mail, un email contenant un lien pour mettre à jour votre mot de passe vous a été envoyé. Pensez à vérifier vos spams. Si vous n'avez rien reçu, contactez votre administrateur.",
+  "forgot-success-password": "Si une adresse email est associée à ce compte, un message contenant un lien de renouvellement de mot de passe vous a été envoyé. Pensez à vérifier vos spams.",
+  "form": {
+    "answerAgain": "Répondre à nouveau",
+    "answeredOnDate": "Répondu le {{date}}",
+    "answersNb": "Réponses : {{nb}}",
+    "answersSent": "Vos réponses ont bien été envoyées !",
+    "answersWellSaved": "Réponses bien enregistrées",
+    "awaitingResponse": "En attente de réponse",
+    "clearAnswer": "Effacer la réponse",
+    "enterYourAnswer": "Saisissez votre réponse",
+    "finishAndSend": "Terminer et envoyer",
+    "formDistributionListScreen": {
+      "emptyScreen": {
+        "text": "Vous recevrez une notification dès qu'un formulaire vous aura été envoyé.",
+        "title": "Vous n'avez aucun formulaire en attente de réponse"
+      },
+      "title": "Formulaire : Mes réponses"
+    },
+    "formDistributionScreen": {
+      "emptyScreen": {
+        "title": "Désolé, vous n'avez pas les droits pour accéder à cette page"
+      },
+      "leaveAlert": {
+        "message": "Vous vous apprêtez à quitter le formulaire. Vos réponses seront enregistrées. Voulez-vous quitter ?",
+        "title": "Quitter le formulaire"
+      },
+      "submissionModal": {
+        "lowerText": {
+          "default": "Une fois votre formulaire envoyé vous ne pourrez plus modifier vos réponses. Voulez-vous confirmer l'envoi ?",
+          "editable": "Vous aurez la possibilité de modifier vos réponses plus tard. Voulez-vous confirmer l'envoi ?",
+          "replace": "Voulez-vous valider et envoyer les modifications apportées à votre réponse ?"
+        },
+        "selectStructure": "Veuillez sélectionner votre établissement :",
+        "title": "Valider l'envoi",
+        "upperText": "Vous êtes sur le point de valider vos réponses à ce formulaire."
+      }
+    },
+    "missingFormAlert": "Vous n'avez plus les droits d'accès à ce formulaire",
+    "myAnswers": "Mes réponses",
+    "notAnswered": "Non répondu",
+    "selectAnOption": "Sélectionner une option",
+    "summary": "Récapitulatif",
+    "tabName": "Formulaire"
+  },
+  "fullStorage": "Votre espace de stockage est plein. Vous ne pouvez plus importer de documents.",
+  "galery": {
+    "read": {
+      "permission": {
+        "blocked": {
+          "text": "{{appName}} ne peut pas accéder à la Galerie. Vous pouvez autoriser l'accès à la Galerie via les paramètres de confidentialité.",
+          "title": "Accès à la galerie refusé"
+        }
+      }
+    }
+  },
+  "Homework": "Cahier de textes",
+  "homework-createActivity": "Ajouter une activité",
+  "homework-createDiary": "Créer un cahier de textes",
+  "homework-diaries-emptyScreenText": "Avec l'application Cahier de textes, plus d'excuse pour les jeunes étourdis. Notez tous vos devoirs !",
+  "homework-diaries-emptyScreenTitle": "Pas encore de cahier de textes",
+  "homework-tasks-emptyScreenText": "Ajoutez de nouvelles activités à votre cahier de texte.",
+  "homework-tasks-emptyScreenText-NoCreationRights": "Profitez de ce moment de calme. C'est les vacances ?",
+  "homework-tasks-emptyScreenText-NoTasks": "Ajoutez une activité à votre semaine. Cela peut être utile pour lister vos tâches ou simplement pour écrire des notes.",
+  "homework-tasks-emptyScreenText-NoTasks-NoCreationRights": "Vous retrouverez dans votre cachier de textes la liste des activités des jours à venir.",
+  "homework-tasks-emptyScreenTitle": "Détendez-vous, il n'y a pas d'activités",
+  "homework-tasks-emptyScreenTitle-NoTasks": "Commencez à remplir votre cahier de texte",
+  "homework-tasks-emptyScreenTitle-NoTasks-NoCreationRights": "Pas encore d'activités",
+  "homework": {
+    "homeworkExplorerScreen": {
+      "homeworks": "Cahiers de textes"
+    },
+    "homeworkTaskListScreen": {
+      "displayPastDays": "Afficher les jours précédents",
+      "noFutureHomework": "Pas d'autres activités",
+      "noFutureHomeworkTryAgain": "Pas d'autres activités à l'horizon, revenez plus tard !",
+      "noMorePastHomework": "Pas d'activités précédentes"
+    }
+  },
+  "homeworkAssistance": {
+    "additionalInformation": "Informations complémentaires",
+    "chooseASubject": "Choisir une matière",
+    "dateOfCall": "Date du rappel",
+    "detailsAbout": "Détails sur votre problème, thème, chapitre...",
+    "makeARequest": "Faire une demande",
+    "myRequest": "Ma demande",
+    "phoneNumberToCallYouBackOn": "Numéro de téléphone sur lequel vous rappeler",
+    "requestSent": "Votre demande a bien été envoyée !",
+    "sendMyRequest": "Envoyer ma demande",
+    "serviceAvailable": "Service accessible :",
+    "serviceClosedError": "Il est impossible de choisir cette date, le service est fermé.",
+    "tabName": "Aide aux devoirs",
+    "time": "Heure"
+  },
+  "imageNotAvailable": "Image non disponible",
+  "Lastname": "Nom",
+  "linkTo": "Lien vers",
+  "loading": "Chargement",
+  "loadingFailedMessage": "Le chargement a échoué. Veuillez vérifier votre connexion internet.",
+  "Login": "Identifiant",
+  "login-back": "Retour à l'écran de connexion",
+  "login-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",
+  "login-wayf-empty-title": "Oups...\nLe contenu s'est envolé",
+  "login-wayf-error-retry": "Réessayer",
+  "login-wayf-loading-text": "Connexion en cours...",
+  "login-wayf-main-button": "S'identifier",
+  "login-wayf-main-text": "Il est temps de sélectionner votre profil et de saisir vos identifiants !",
+  "login-wayf-main-title": "Identification",
+  "login-wayf-select-button": "Se connecter",
+  "login-wayf-select-help": "Pour mieux comprendre",
+  "login-wayf-select-placeholder": "Choisir un compte",
+  "login-wayf-select-text": "Votre compte EduConnect est lié à plusieurs comptes de l'ENT.\n\nChoisissez le compte avec lequel vous voulez vous connecter.",
+  "login-wayf-select-title": "Choix du compte",
+  "LoginWeb": "Connectez-vous depuis le web",
+  "lvs": {
+    "tabName": "LVS"
+  },
+  "mailbox": {
+    "alert": {
+      "deletedThread": {
+        "text": "Votre conversation a été supprimée. Nous ne pouvons pas vous restituer l'historique de la conversation.",
+        "title": "Lecture impossible"
+      }
+    }
+  },
+  "me-indicator": "(moi)",
+  "media-player-title": "Lecteur multimédia",
+  "mediacentre": {
+    "add-favorite": "Ajouter aux favoris",
+    "advanced-search": "Recherche avancée",
+    "advancedSearch": {
+      "and": "ET",
+      "authors": "Auteur :",
+      "disciplines": "Discipline :",
+      "editors": "Éditeur :",
+      "levels": "Niveau :",
+      "or": "OU",
+      "search-authors": "Rechercher un auteur",
+      "search-disciplines": "Rechercher une discipline",
+      "search-editors": "Rechercher un éditeur",
+      "search-levels": "Rechercher un niveau",
+      "search-title": "Rechercher un titre",
+      "sources": "Sources :",
+      "title": "Titre :"
+    },
+    "copy-link": "Copier le lien",
+    "display-all": "Afficher tout",
+    "download-textbooks": "Votre manuel va s'afficher dans quelques instants...",
+    "empty-screen": "Vous n'avez pas de ressource pour l'instant",
+    "empty-search": "Aucun résultat pour cette recherche",
+    "external-resources": "Mes ressources externes",
+    "favorite-added": "Cette ressource a été ajoutée dans vos favoris",
+    "favorite-removed": "Cette ressource a été supprimée de vos favoris",
+    "favorites": "Mes favoris",
+    "filter": "Filtrer",
+    "find-resources": "Rechercher une ressource",
+    "home": "Accueil",
+    "level": "Niveau",
+    "link-copied": "Lien copié",
+    "my-signets": "Mes signets",
+    "my-textbooks": "Mes manuels",
+    "orientation-signets": "Orientation / Découverte des métiers",
+    "remove-favorite": "Supprimer des favoris",
+    "resource-type": "Type de ressource",
+    "source": "Source",
+    "tabName": "Médiacentre"
+  },
+  "mediaNotAvailable": "Lecteur non disponible",
+  "modify": "Modifier",
+  "modules-names_other": "Autre",
+  "modules-names": {
+    "actualites": "Actualités",
+    "archive": "Mes données",
+    "blog": "Blog",
+    "calendar": "Agenda",
+    "collaborativeeditor": "Pad",
+    "collaborativewall": "Mur collaboratif",
+    "community": "Communautés",
+    "forum": "Forum",
+    "mindmap": "Carte mentale",
+    "poll": "Sondages",
+    "rbs": "Réservation de ressources",
+    "schoolbook": "Carnet de liaison",
+    "sharebigfiles": "Téléchargement de fichier lourd",
+    "support": "Aide et support",
+    "timelinegenerator": "Frise chronologique",
+    "wiki": "Wiki"
+  },
+  "move": "Déplacer",
+  "move-documents": "Déplacer documents dans",
+  "MyAccount": "Mon compte",
+  "myapp-accessWeb": "Accéder à la version web",
+  "myapp-emptyScreenText": "Il semblerait que vous n'ayez accès à aucune application ...",
+  "myapp-emptyScreenTitle": "Aucune application !",
+  "myapp-infoBubbleText": "Avec {{appName}}, vous recevez toutes vos notifications dans l'onglet Nouveautés. En cliquant sur certaines activités, vous serez redirigé vers la version en ligne de votre réseau social éducatif.\n\nPour consulter et modifier certains contenus, vous serez redirigé vers le navigateur de votre téléphone.",
+  "myapp-infoBubbleTitle": "Où sont les autres applications ?",
+  "MyApplications": "Mes applis",
+  "MyProfile": "Mon profil",
+  "News": "Nouveautés",
+  "next": "Suivant",
+  "noContent": "Aucun contenu",
+  "notif-pref-blog": "Nouveau billet de blog",
+  "notif-pref-homeworks": "Mise à jour du cahier de textes",
+  "notif-pref-messagerie": "Nouveau message",
+  "notif-pref-news": "Nouvelle actualité",
+  "notif-pref-schoolbook": "Nouveau mot",
+  "notif-pref-workspace": "Mise à jour espace documentaire",
+  "Notifications": "Toutes mes notifications",
+  "notifications-emptyScreenTitle": "Pas de notification à l'horizon.",
+  "notifications-readRecent": "Vous avez lu vos {{notificationsLimit}} dernières notifications",
+  "On": "dans",
+  "owner": "Documents Personnels",
+  "Password": "Mot de passe",
+  "PasswordChangeSuccess": "Mot de passe modifié avec succès.",
+  "PasswordChangeWarning": "Pour des raisons de sécurité, vous devez renouveler votre mot de passe.",
+  "PasswordConfirm": "Confirmation du mot de passe",
+  "PasswordNew": "Nouveau mot de passe",
+  "PasswordNewConfirm": "Confirmation du mot de passe",
+  "PasswordOld": "Mot de passe actuel",
+  "PasswordPlaceholder": "********",
+  "past": "Coller",
+  "Phone": "Téléphone",
+  "pick-date": "Choissisez une date",
+  "pick-hour": "Choissisez une heure",
+  "postCreateContentField": "Contenu du billet",
+  "postCreatePlaceholder": "Écrivez un message...",
+  "postCreateTitleField": "Titre du billet",
+  "postCreateTitlePlaceholder": "Écrivez le titre",
+  "previous": "Précédent",
+  "Profile": "Profil",
+  "ProfileChangeAvatarErrorAssign": "Votre image a été envoyée mais une erreur est survenue lors du changement d'avatar.",
+  "ProfileChangeAvatarErrorUpload": "Erreur lors de la mise à jour de l'avatar.",
+  "ProfileChangeAvatarSuccess": "Votre avatar a bien été modifié.",
+  "ProfileChangeError": "Erreur lors de l'enregistrement des informations.",
+  "ProfileChangeLoginError": "L'identifiant demandé existe déjà.",
+  "ProfileChangeSuccess": "Vos informations ont bien été modifiées.",
+  "ProfileDeleteAvatarError": "Erreur lors de la suppression de l'avatar.",
+  "ProfileInvalidInformation": "Certains champs sont invalides. Veuillez vérifier vos informations et corriger les erreurs avant de les enregistrer.",
+  "profileTypes": {
+    "Guest": "Invité",
+    "Personnel": "Personnel",
+    "Relative": "Parent",
+    "Structure": "Structure",
+    "Student": "Élève",
+    "Teacher": "Enseignant"
+  },
+  "Pronote": "Pronote",
+  "pronote-redirect-error-message": "Il semble que le service Pronote n’est pas opérationnel. Veuillez réessayer plus tard ou contacter votre administrateur.",
+  "pronote-redirect-error-title": "Impossible de rediriger sur Pronote",
+  "pronote": {
+    "carnetDeBord": {
+      "cahierDeTextes": {
+        "empty": "Pas de travail pour les 7 prochains jours",
+        "PourDate": "Pour {{date}}",
+        "pourDate": "pour {{date}}",
+        "title": "Cahier de textes"
+      },
+      "competences": {
+        "empty": "Pas de compétences remontées",
+        "title": "Compétences",
+        "value": {
+          "1": "Expert",
+          "2": "Acquis",
+          "3": "Presque acquis",
+          "4": "En cours d'acquisition",
+          "5": "Début d'acquisition",
+          "6": "Non acquis",
+          "7": "Absent",
+          "8": "Non évalué"
+        }
+      },
+      "initFailed": {
+        "text": "Nous avons rencontré un problème de communication avec le service Pronote.\nDemandez à l'administration de votre établissement de vérifier le paramétrage de Pronote.",
+        "title": "Pas de données Pronote"
+      },
+      "noData": {
+        "text": "Nous avons rencontré un problème de communication avec le service Pronote. Demandez à l'administration de votre établissement de vérifier le paramétrage de Pronote.",
+        "title": "Humm ! Un problème est survenu..."
+      },
+      "noDataChild": {
+        "text": "Il semblerait qu’aucune donnée de Pronote ne remonte pour votre enfant.",
+        "title": "C’est désert ici …"
+      },
+      "noInfo": " –– ",
+      "openInPronote": "Ouvrir sur Pronote",
+      "releveDeNotes": {
+        "empty": "Pas de notes remontées",
+        "note": "{{note}} / {{bareme}}",
+        "title": "Notes",
+        "value": {
+          "abs": "absent",
+          "disp": "dispensé",
+          "inap": "inapte",
+          "nnot": "non noté",
+          "nrdu": "non rendu"
+        }
+      },
+      "vieScolaire": {
+        "dateFromTo": "{{start}} – {{end}}",
+        "empty": "Pas d’évènements sur les 30 derniers jours",
+        "title": "Vie Scolaire",
+        "type": {
+          "Absence": "ABSENCE",
+          "Observation": "OBSERVATION",
+          "PassageInfirmerie": "PASSAGE À L'INFIRMERIE",
+          "Punition": "PUNITION",
+          "Retard": "RETARD",
+          "Sanction": "SANCTION"
+        }
+      }
+    },
+    "selector": {
+      "action": "Ouvrir Pronote",
+      "placeholder": "Choisir l’établissement",
+      "title": "Votre compte est relié à plusieurs établissements.\nChoississez l’établissement avec lequel vous voulez vous connecter."
+    }
+  },
+  "protected": "Documents ajoutés dans les applis",
+  "readMore": "lire plus",
+  "rename": "Renommer",
+  "Save": "Enregistrer",
+  "save": {
+    "to": {
+      "camera": {
+        "roll": {
+          "error": "Erreur lors de l'enregistrement.",
+          "permission": {
+            "blocked": {
+              "text": "{{appName}} ne peut pas accéder à la Galerie. Vous pouvez autoriser l'accès à la Galerie via les paramètres de confidentialité.",
+              "title": "Enregistrement bloqué"
+            }
+          },
+          "success": "Enregistré dans la Galerie"
+        }
+      }
+    }
+  },
+  "School": "Etablissement",
+  "schoolbook": {
+    "acknowledge": "Confirmer la lecture",
+    "acknowledged": "Lu",
+    "acknowledgement": "Lu",
+    "acknowledgementNeededRelative": "Vous devez confirmer la lecture du mot.",
+    "acknowledgementNeededStudent": "Un parent doit confirmer la lecture.",
+    "acknowledgements": "Lus",
+    "appName": "Carnet de liaison",
+    "categories": {
+      "canteen": "Cantine",
+      "event": "Événements",
+      "last-minute": "Dernière minute",
+      "leisure": "Loisirs",
+      "outing": "Sorties",
+      "various": "Divers"
+    },
+    "response": "Réponse",
+    "responses": "Réponses",
+    "schoolbookWordDetailsScreen": {
+      "deleteAlert": {
+        "text": "Êtes-vous sûr de vouloir supprimer ce mot ? Les parents et les élèves n'y auront plus accès.",
+        "title": "Supprimer le mot"
+      },
+      "recipientsModal": {
+        "text": "Le mot est envoyé aux élèves suivants et à leurs responsables.",
+        "title": "Liste des destinataires"
+      }
+    },
+    "schoolbookWordListScreen": {
+      "emptyScreen": {
+        "text": "Besoin de communiquer avec les parents d'élèves ? Envoyez des mots grâce au carnet de liaison numérique !",
+        "textNoCreationRights": "L'enseignant pourra communiquer des informations essentielles. Les parents doivent confirmer les mots.",
+        "title": "Il est temps de créer votre premier mot",
+        "titleNoCreationRights": "Il n'y a aucun mot dans votre carnet pour le moment..."
+      }
+    },
+    "schoolbookWordReportScreen": {
+      "acknowledgedBy": "Lu par",
+      "relativesDidAcknowledge": "Les responsables de ces élèves ont lu le mot.",
+      "relativesDidNotAcknowledge": "Les responsables de ces élèves n'ont pas encore lu le mot.",
+      "reminder": "Rappel",
+      "reminderModal": {
+        "text": "Vous allez envoyer une notification de rappel à toutes les personnes qui n'ont pas encore confirmé la lecture du mot.",
+        "title": "Envoi d'un rappel"
+      },
+      "reminderPossible": "Vous pouvez leur envoyer un rappel de lecture.",
+      "reminderToast": {
+        "text": "Rappel envoyé aux personnes n'ayant pas confirmé la lecture du mot."
+      },
+      "unacknowledgement": "Non-lu",
+      "unacknowledgements": "Non-lus"
+    },
+    "students": "Élèves",
+    "tabName": "Carnet de liaison",
+    "word": {
+      "create": "Créer un mot"
+    }
+  },
+  "Search": "Rechercher ...",
+  "seeDetails": "Voir détails",
+  "seeLess": "Voir moins",
+  "seeMore": "Voir plus",
+  "select-platform": "Sélectionnez votre réseau social éducatif !",
+  "share": "Partager",
+  "share-error": "Erreur lors du partage.",
+  "share-permission-blocked-text": "{{appName}} ne peut partager le document. Vous pouvez autoriser l'accès aux documents via les paramètres de confidentialité.",
+  "share-permission-blocked-title": "Partage bloqué",
+  "shared": "Documents partagés",
+  "structuresTitle": "Établissement(s) de rattachement et classe(s)",
+  "support": {
+    "supportCreateTicketScreen": {
+      "category": "Catégorie",
+      "description": "Description",
+      "emptyScreen": {
+        "title": "Vous n'avez pas accès à la création de ticket"
+      },
+      "establishment": "Établissement",
+      "failure": "La création de la demande a échoué.",
+      "mobileOnly": "Uniquement pour les incidents de l'application mobile.",
+      "reportIncident": "Remonter un incident",
+      "subject": "Sujet",
+      "successCreationId": "Demande #{{id}} créée avec succès. Retrouvez le suivi sur la version web du module Aide et support."
+    },
+    "tabName": "Assistance ENT"
+  },
+  "timeline-allFilter": "Tous",
+  "timeline-blogFilter": "Blog",
+  "timeline-comment": "Commentaire",
+  "timeline-comment-error": "Impossible d'afficher les commentaires",
+  "timeline-endOfFeed": "Vous avez lu vos {{nb}} dernières notifications",
+  "timeline-filterBy": "Filtrer par",
+  "timeline-flash-message-dismiss-error-text": "Impossible de fermer le message flash.",
+  "timeline-newsFilter": "Actualités",
+  "timeline-schoolbookFilter": "Carnet de liaison",
+  "timeline-viewInBrowser": "Consulter à partir du navigateur",
+  "timeline": {
+    "appName": "Fil de nouveautés",
+    "appType": {
+      "ARCHIVE": "Mes données",
+      "BLOG": "Blog",
+      "CALENDAR": "Agenda",
+      "COLLABORATIVEEDITOR": "Pad",
+      "COLLABORATIVEWALL": "Mur Collaboratif",
+      "COMMUNITY": "Communautés",
+      "EXERCIZER": "Exercices",
+      "FORMULAIRE": "Formulaires",
+      "FORUM": "Forum",
+      "HOMEWORKS": "Cahier de textes",
+      "INCIDENTS": "Incidents",
+      "MAGNETO": "Magnéto",
+      "MESSAGERIE": "Messagerie",
+      "MINDMAP": "Carte mentale",
+      "MINETEST": "Minetest",
+      "MOODLE": "Moodle",
+      "NEWS": "Actualités",
+      "PAGES": "Pages",
+      "POLL": "Sondage",
+      "PRESENCES": "Présences",
+      "RACK": "Casier",
+      "RBS": "Réservation de ressources",
+      "SCHOOLBOOK": "Carnet de liaison",
+      "SCRAPBOOK": "Cahier multimédia",
+      "SHAREBIGFILES": "Poste-fichiers",
+      "SUPPORT": "Assistance ENT",
+      "TIMELINE": "Signalements",
+      "TIMELINEGENERATOR": "Frise chronologique",
+      "USERBOOK": "Annuaire",
+      "USERBOOK_MOOD": "Humeurs",
+      "USERBOOK_MOTTO": "Devises",
+      "WIKI": "Wiki",
+      "WORKSPACE": "Espace documentaire"
+    },
+    "blogPostDetailsScreen": {
+      "title": "Blog"
+    },
+    "emptyScreenText": "C'est calme ici... Vous connaissez l'expression \"le calme avant la tempête\" ?",
+    "emptyScreenTitle": "C'est désert...\nIl y a quelqu'un ?",
+    "filtersScreen": {
+      "apply": "OK",
+      "title": "Nouveautés à afficher"
+    },
+    "newsDetailsScreen": {
+      "title": "Actualités"
+    },
+    "notifType": {
+      "archive": {
+        "archives_error": "Erreur lors de la création de l'archive",
+        "archives_ok": "Création de l'archive terminée"
+      },
+      "blog": {
+        "publish-comment": "Commentaire d'un billet de blog",
+        "publish-post": "Publication d'un billet de blog",
+        "share": "Partage d'un blog",
+        "submit-post": "Soumission d'un billet de blog"
+      },
+      "calendar": {
+        "create": "Création d'un événement",
+        "share": "Partage d'un agenda",
+        "update": "Mise à jour d'un événement"
+      },
+      "collaborativeeditor": {
+        "share": "Partage d'un Pad",
+        "unused": "Pad non modifié"
+      },
+      "collaborativewall": {
+        "share": "Partage de mur collaboratif"
+      },
+      "community": {
+        "share": "Partage d'une communauté"
+      },
+      "exercizer": {
+        "assigncopy": "Assignation de copie",
+        "assigntraining": "Assignation de sujet d'entraînement",
+        "considersubmitted": "Copie considérée rendue",
+        "correctcopy": "Correction de copie",
+        "correcthomework": "Correction de devoir",
+        "homeworkreminder": "Rappel automatique",
+        "modifybegin": "Modification de la date de début d'un sujet",
+        "modifydue": "Modification de la date de fin d'un sujet",
+        "modifyperiod": "Modification de la période de distribution d'un sujet",
+        "share": "Partage de sujet",
+        "submitcopy": "Rendu de copie",
+        "submithomework": "Rendu de devoir",
+        "unassigncopy": "Retrait de copie"
+      },
+      "forum": {
+        "category-shared": "Partage de catégorie",
+        "message-created": "Nouveau message dans le forum",
+        "message-updated": "Modification d'un message dans le forum",
+        "subject-created": "Nouvelle discussion de forum",
+        "subject-updated": "Modification d'une discussion dans le forum"
+      },
+      "homeworks": {
+        "entries": {
+          "modified": "Mise à jour du cahier de textes"
+        },
+        "share": "Partage d'un cahier de textes"
+      },
+      "messagerie": {
+        "return-message": "Retour d'un message",
+        "send-message": "Réception d'un message",
+        "storage": "Espace de stockage bientôt plein"
+      },
+      "mindmap": {
+        "share": "Partage de carte mentale"
+      },
+      "news": {
+        "info-shared": "Partage d'une actualité",
+        "news-comment": "Commentaire d'une actualité",
+        "news-published": "Publication d'une actualité",
+        "news-submitted": "Demande de validation d'une actualité",
+        "news-unpublished": "Dépublication d'une actualité",
+        "news-unsubmitted": "Annulation d'une demande de validation d'une actualité",
+        "news-update": "Mise à jour d'une actualité",
+        "thread-shared": "Partage d'un fil d'actualités"
+      },
+      "pages": {
+        "shared": "Partage d'une Page"
+      },
+      "poll": {
+        "share": "Partage d'un sondage"
+      },
+      "rack": {
+        "rack-post": "Dépôt de document dans un casier",
+        "storage": "Espace de stockage bientôt plein"
+      },
+      "rbs": {
+        "booking-created": "Création d'une réservation",
+        "booking-deleted": "Suppression d'une réservation",
+        "booking-refused": "Refus d'une réservation",
+        "booking-updated": "Mise à jour d'une réservation",
+        "booking-validated": "Validation d'une réservation",
+        "periodic-booking-created": "Création d'une réservation périodique",
+        "periodic-booking-deleted": "Suppression d'une réservation périodique",
+        "periodic-booking-updated": "Mise à jour d'une réservation périodique",
+        "resource-available": "Disponibilité d'une ressource",
+        "resource-unavailable": "Indisponibilité d'une ressource"
+      },
+      "schoolbook": {
+        "acknowledge": "Confirmer de lecture d'un mot",
+        "modifyresponse": "Modification d'une réponse",
+        "publish": "Envoi d'un mot",
+        "response": "Suivi d'un mot",
+        "word-resend": "Rappel de lecture",
+        "word-shared": "Partage d'un mot"
+      },
+      "scrapbook": {
+        "modified": "Modification d'un cahier multimédia",
+        "share": "Partage d'un cahier multimédia"
+      },
+      "sharebigfiles": {
+        "delete": "Suppression d'un fichier dans Poste-fichiers",
+        "share": "Partage d'un fichier dans Poste-fichiers"
+      },
+      "support": {
+        "bugtracker-issue-closed": "Fermeture d'une demande escaladée",
+        "bugtracker-issue-resolved": "Résolution d'une demande escaladée",
+        "bugtracker-issue-updated": "Mise à jour d'une demande escaladée",
+        "ticket-created": "Création d'une demande de support",
+        "ticket-updated": "Mise à jour d'une demande de support"
+      },
+      "timeline": {
+        "notify-report": "Signalement d'une notification",
+        "send-flash-message-mail": "Publication d'un nouveau message flash",
+        "send-flash-message-push": "Publication d'un nouveau message flash"
+      },
+      "timelinegenerator": {
+        "share": "Partage d'une frise chronologique"
+      },
+      "userbook": {
+        "delete-email": "Suppression d'un email invalide (hard-bounce)",
+        "userbook_mood": "Changement d'humeur",
+        "userbook_motto": "Changement de devise"
+      },
+      "wiki": {
+        "comment-added": "Ajout de commentaire dans un Wiki",
+        "page-created": "Nouvelle page dans un Wiki",
+        "shared": "Partage d'un Wiki"
+      },
+      "workspace": {
+        "comment": "Ajout de commentaire sur un fichier",
+        "comment-folder": "Ajout de commentaire sur un dossier",
+        "contrib-folder": "Contribution dans un dossier",
+        "contrib-version": "Ajout d'une version à un document",
+        "share": "Partage d'un fichier",
+        "share-folder": "Partage d'un dossier",
+        "storage": "Espace de stockage bientôt plein"
+      }
+    },
+    "PushNotifsSettingsScreen": {
+      "appType-override": {
+        "TIMELINE": "Message flash"
+      }
+    },
+    "reportAction": {
+      "button": "Signaler",
+      "description": "L'heure et l'origine de ce signalement seront enregistrées ainsi que votre identité et transmises à la direction de l'établissement. Etes vous sûr(e) de vouloir signaler ce contenu ?",
+      "submit": "Signaler la notification inappropriée",
+      "success": "La notification a bien été signalée.",
+      "title": "Vous allez signaler une notification"
+    },
+    "tabName": "Nouveautés",
+    "webViewScreen": {
+      "infoBubbleText": "Pour consulter et modifier certains contenus, vous serez redirigé vers le navigateur web de votre smartphone.",
+      "title": "Redirection web"
+    }
+  },
+  "today": " Aujourd'hui ",
+  "trash": "Corbeille",
+  "trash-confirm": "Vous êtes sur le point de supprimer :",
+  "tryagain": "Réessayer",
+  "unknown-user": "Utilisateur inconnu",
+  "user": {
+    "legalNoticeScreen": {
+      "cgu": "CGU",
+      "cookies": "Notice cookies",
+      "personalDataProtection": "Charte de protection des données personnelles",
+      "userCharter": "Charte d'utilisation"
+    },
+    "legalUrl": {
+      "cgu": "/assets/cgu/ODE_CGU.pdf",
+      "cookies": "/assets/cgu/notice_cookies.pdf",
+      "personalDataProtection": "/assets/cgu/ODE_Charte_de_confidentialite.pdf",
+      "userCharter": "/assets/cgu/ODE_Charte_d_utilisation.pdf"
+    },
+    "onboardingScreen": {
+      "discover": "Découvrir",
+      "discoverLink": "https://opendigitaleducation.com/index.php?lang=fr",
+      "joinMyNetwork": "Rejoindre mon réseau",
+      "onboarding": {
+        "0": "Bienvenue sur votre application mobile, l'extension de votre espace numérique !",
+        "1": "Soyez notifié en temps réel des dernières nouveautés.",
+        "2": "Communiquez plus facilement à l'aide de la Messagerie.",
+        "3": "Chargez ou téléchargez vos documents dans l'Espace documentaire."
+      }
+    },
+    "page": {
+      "configuration": "Configuration",
+      "editEmail": "Modifier mon adresse mail",
+      "editMobile": "Modifier mon numéro de téléphone",
+      "editPassword": "Modifier mon mot de passe",
+      "others": "Autres",
+      "userFileButton": "Voir ma fiche utilisateur"
+    },
+    "pushNotifsSettingsScreen": {
+      "countOutOfTotal_one": "({{count}} activée sur {{total}})",
+      "countOutOfTotal_other": "({{count}} activées sur {{total}})"
+    },
+    "revalidateTermsScreen": {
+      "EULA": "CGU",
+      "mustAccept": "Pour pouvoir continuer à utiliser l'application, vous devez accepter les",
+      "newEndUserLicenseAgreement": "Nouvelles Conditions Générales d'Utilisation",
+      "newEULA": "Nouvelles CGU",
+      "refuseAndDisconnect": "Refuser et se déconnecter",
+      "title": "Mise à jour des CGU"
+    },
+    "whoAreWeScreen": {
+      "description": "Éditée par Open Digital Education, ONE Pocket est l'appli mobile du premier réseau social éducatif conçu spécialement pour les écoles. L'idée ? Rapprocher ceux qui enseignent, apprennent et contribuent à l'éducation. Simplifier la vie des enseignants en offrant un outil sécurisé pour collaborer, communiquer avec les familles et créer des activités pédagogiques. Rendre l'élève acteur de son apprentissage et favoriser sa créativité comme sa réussite scolaire !",
+      "reviewApp": "Evaluez votre app"
+    },
+    "xmasScreen": {
+      "activate": "Activer le thème Noël 🎅",
+      "description": "Ce thème sera disponible que pour un certain moment. En activant le thème Noël, les icônes des menus principaux changeront et des flocons tomberont de votre écran. Petite astuce : secouez votre téléphone pour en avoir plus !\n\nToute l'équipe de {{appName}} vous souhaite un joyeux Noël."
+    }
+  },
+  "version-number": "Version",
+  "videoNotAvailable": "Lecteur vidéo non disponible",
+  "viesco": "Vie Scolaire",
+  "viesco-absence-declaration": "Déclaration d'absence",
+  "viesco-absence-declared": "Absence déclarée avec succès",
+  "viesco-absence-motive": "Motif de l'absence",
+  "viesco-arrived": "Arrivée à",
+  "viesco-arrived-motive": "Motif du retard",
+  "viesco-attachment": "Pièce justificative",
+  "viesco-average": "Moyennes",
+  "viesco-close": "Fermer",
+  "viesco-colors": "Couleurs",
+  "viesco-competences-disciplines": "Disciplines",
+  "viesco-competences-period": "Période",
+  "viesco-competences-period-2": "Semestre",
+  "viesco-competences-period-3": "Trimestre",
+  "viesco-confirm": "Confirmer",
+  "viesco-declareAbsence": "Déclarer absence",
+  "viesco-edt-week-of": "Semaine du",
+  "viesco-empty-card": "Rien à afficher",
+  "viesco-empty-screen-text": "La vie scolaire sur l'application est réservée aux familles et aux enseignants.",
+  "viesco-empty-screen-title": "Désolé, il n'y a pas de contenu pour votre profil",
+  "viesco-enter-text": "Entrer du texte",
+  "viesco-eval-EmptyScreenText": "Aucune nouvelle évaluation...",
+  "viesco-from": "Du",
+  "viesco-from-hour": "À partir de",
+  "viesco-fullyear": "Année scolaire",
+  "viesco-history": "Historique",
+  "viesco-history-departures": "Départs anticipés",
+  "viesco-history-forgotten-notebooks": "Carnets oubliés",
+  "viesco-history-incidents": "Incidents",
+  "viesco-history-latenesses": "Retards",
+  "viesco-history-load-error": "Erreur au chargement des données de l'historique",
+  "viesco-history-noreason": "Absences sans motif",
+  "viesco-history-punishments": "Punitions",
+  "viesco-history-regularized": "Absences régularisées",
+  "viesco-history-unregularized": "Absences non régularisées",
+  "viesco-homework": "Travail à faire",
+  "viesco-homework-EmptyScreenText": "Aucun travail à faire...",
+  "viesco-homework-fordate": "Pour le",
+  "viesco-homework-fortomorrow": "Pour demain",
+  "viesco-homework-home": "Travail à faire à la maison",
+  "viesco-incidents-punishments-date": {
+    "created-on": "Créé le ",
+    "for-the": "Pour le ",
+    "from": "Du ",
+    "to": " au "
+  },
+  "viesco-last-grades": "Dernières notes",
+  "viesco-lasteval": "Dernières évaluations",
+  "viesco-lateness": "Retard",
+  "viesco-latenesses-added": "Retard ajouté",
+  "viesco-latenesses-updated": "Retard mis à jour",
+  "viesco-leaving": "Départ",
+  "viesco-leaving-added": "Départ ajouté",
+  "viesco-leaving-updated": "Départ mis à jour",
+  "viesco-left": "Départ à",
+  "viesco-left-motive": "Motif du départ",
+  "viesco-memento": "Fiche élève",
+  "viesco-memento-born-date": "né le :",
+  "viesco-memento-relatives": "Responsables",
+  "viesco-no-register-today": "Il n'y a pas d'appel aujourd'hui",
+  "viesco-notifications": "Notifications",
+  "viesco-pickChild": "Choisissez un enfant",
+  "viesco-presences": "Présences",
+  "viesco-register": "Appel",
+  "viesco-register-date": "Appels du",
+  "viesco-register-validated": "Appel validé",
+  "viesco-report-card": "Relevé de notes",
+  "viesco-room": "Salle",
+  "viesco-session": "Séance",
+  "viesco-session-EmptyScreenText": "Aucune nouvelle séance...",
+  "viesco-several-days": "Plusieurs jours",
+  "viesco-single-day": "Un jour",
+  "viesco-tests": "Évaluations",
+  "viesco-timetable": "Emploi du temps",
+  "viesco-to": "au",
+  "viesco-to-hour": "Jusqu'à",
+  "viesco-trimester": "Trimestre",
+  "viesco-validate": "Valider",
+  "viesco-year": "Année",
+  "welcome": "Bienvenue",
+  "workspace": {
+    "emptyScreen": {
+      "owner": {
+        "text": "Stockez ici vos documents personnels : photos, vidéos, audio, fichiers PDF, ...",
+        "title": "Il n'y a rien sur votre étagère personnelle"
+      },
+      "protected": {
+        "text": "Retrouvez ici toutes les photos, vidéos et documents que vous avez utilisés dans votre réseau éducatif.",
+        "title": "Il n'y a rien sur l'étagère"
+      },
+      "shared": {
+        "text": "Retrouvez ici tous les documents que vous avez partagés aux autres et aussi ceux qui vous ont été partagés.",
+        "title": "Aucune ressource partagée"
+      },
+      "subfolder": {
+        "text": "Il n'y a aucun document dans ce dossier.",
+        "title": "Ce dossier est vide"
+      },
+      "trash": {
+        "text": "Vous retrouvez ici vos documents supprimés. Actuellement, tout est propre.",
+        "title": "Le panier est vide"
+      }
+    },
+    "file-added": "Fichier ajouté",
+    "folder-created": "Dossier créé",
+    "quota": {
+      "overflowTitle": "Quota atteint"
+    },
+    "successfully-copied": "Copie effectuée",
+    "successfully-deleted": "Suppression effectuée",
+    "successfully-edited": "Modification effectuée",
+    "successfully-moved": "Déplacement effectué",
+    "successfully-restored": "Restauration effectuée",
+    "tabName": "Espace documentaire"
+  },
+  "zimbra-add": "Ajouter",
+  "zimbra-all": "Tous",
+  "zimbra-attachment-error": "Echec de l'ajout de la pièce jointe",
+  "zimbra-bcc": "Cci",
+  "zimbra-cc": "Cc",
+  "zimbra-create": "Créer",
+  "zimbra-create-directory": "Créer un dossier",
+  "zimbra-create-directory-confirm": "Dossier créé",
+  "zimbra-delete": "Supprimer",
+  "zimbra-directories": "Dossiers",
+  "zimbra-directory-name": "Nom du dossier",
+  "zimbra-download-all": "Télécharger pièces jointes",
+  "zimbra-draft-created": "Brouillon créé",
+  "zimbra-draft-updated": "Brouillon mis à jour",
+  "zimbra-drafts": "Brouillons",
+  "zimbra-empty-mailbox-text": "Avec la Messagerie, commencez dès maintenant à communiquer avec les membres de votre réseau.",
+  "zimbra-empty-mailbox-title": "Pas l'ombre d'un message...",
+  "zimbra-external-mail-right-error": "Vous n'êtes pas autorisé à envoyer des mails vers l'extérieur",
+  "zimbra-forward": "Transférer",
+  "zimbra-forward-subject": "TR : ",
+  "zimbra-from": "De",
+  "zimbra-from-prefix": "De :",
+  "zimbra-inbox": "Boîte de réception",
+  "zimbra-mark-unread": "Marquer comme non lu",
+  "zimbra-message-deleted": "Message supprimé",
+  "zimbra-message-deleted-confirm": "Suppression de mail",
+  "zimbra-message-deleted-confirm-text": "Voulez-vous vraiment supprimer définitivement le(s) mail(s) sélectionné(s) ?",
+  "zimbra-message-moved": "Message déplacé",
+  "zimbra-message-restored": "Message restauré",
+  "zimbra-messages": "Messages",
+  "zimbra-messages-deleted": "Messages supprimés",
+  "zimbra-messages-moved": "Messages déplacés",
+  "zimbra-messages-restored": "Messages restaurés",
+  "zimbra-missing-receiver": "Ce message doit contenir au moins un destinataire",
+  "zimbra-move": "Déplacer",
+  "zimbra-move-to": "Déplacer vers",
+  "zimbra-outbox": "Messages envoyés",
+  "zimbra-quota-overflowText": "Votre espace de stockage de messagerie est plein. Vous ne pouvez plus recevoir ni envoyer de messages.",
+  "zimbra-quota-overflowTitle": "Quota atteint",
+  "zimbra-receiversCC": "Copie :",
+  "zimbra-reply": "Répondre",
+  "zimbra-reply-subject": "RE : ",
+  "zimbra-replyAll": "Répondre à tous",
+  "zimbra-restore": "Restaurer",
+  "zimbra-search-length-error": "Veuillez ajouter 3 caractères pour lancer la recherche",
+  "zimbra-see_detail": "Voir le détail",
+  "zimbra-send-attachment-progress": "Veuillez attendre l'ajout complet de la pièce jointe",
+  "zimbra-send-mail": "Message envoyé",
+  "zimbra-signature": "Signature",
+  "zimbra-signature-add": "Ajouter une signature",
+  "zimbra-signature-added": "Signature ajoutée avec succès",
+  "zimbra-signature-error": "Echec de l'ajout de la signature",
+  "zimbra-signature-use": "Ajouter à tous mes futurs messages.",
+  "zimbra-spams": "Pourriels",
+  "zimbra-storage": "Stockage",
+  "zimbra-subject": "Objet",
+  "zimbra-to": "À",
+  "zimbra-to-prefix": "À :",
+  "zimbra-trash": "Corbeille",
+  "zimbra-type-message": "Écrire un message...",
+  "zimbra-unknown": "Inconnu"
 }
