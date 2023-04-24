@@ -6,6 +6,7 @@ phrase:
       - file: ./assets/i18n/fr.json
         params:
           file_format: i18next_4
+          update_translations: false
   pull:
     targets:
       - file: ./assets/i18n/phrase.json
