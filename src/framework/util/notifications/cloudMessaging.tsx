@@ -52,7 +52,7 @@ function AppPushNotificationHandlerComponentUnconnected(
         const n = notificationAdapter(notificationData);
 
         dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Push Notification'));
+        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Push Notification', true));
         setNotification(undefined);
       }
     }
