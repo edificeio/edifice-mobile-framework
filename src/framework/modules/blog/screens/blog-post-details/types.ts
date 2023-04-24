@@ -28,7 +28,7 @@ export interface BlogPostDetailsScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
 }
 export interface BlogPostDetailsScreenNavParams {
-  notification: IResourceUriNotification;
+  notification?: IResourceUriNotification;
   blogPost?: BlogPost;
   blogId?: string;
   blog?: DisplayedBlog;

@@ -158,7 +158,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
     return (
       <TouchableOpacity
         onPress={() => {
-          this.props.navigation.navigate(`${moduleConfig.routeName}/notifPrefs/details`, { type: item[0] });
+          this.props.navigation.navigate(userRouteNames.notifPrefsDetails, { type: item[0] });
         }}>
         <ListItem
           leftElement={<SmallText>{translateMainItem(item)}</SmallText>}

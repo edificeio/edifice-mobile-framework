@@ -188,17 +188,17 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   }
 
   renderMailContent = mailInfos => {
-    const { navigationKey, navigation, fetchInit, isTrashed } = this.props;
+    const { navigationKey, navigation, isTrashed } = this.props;
     const isFolderDrafts = navigationKey === 'drafts';
     const isStateDraft = mailInfos.state === 'DRAFT';
 
     if (isStateDraft && isFolderDrafts) {
-      navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
+      navigation.navigate(conversationRouteNames.newMail, {
         type: DraftType.DRAFT,
         mailId: mailInfos.id,
       });
     } else {
-      navigation.navigate(`${moduleConfig.routeName}/mail-content`, {
+      navigation.navigate(conversationRouteNames.mailContent, {
         mailId: mailInfos.id,
         subject: mailInfos.subject,
         currentFolder: navigationKey || 'inbox',

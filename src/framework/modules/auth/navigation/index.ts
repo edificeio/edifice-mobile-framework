@@ -36,17 +36,18 @@ export const authRouteNames = {
 };
 
 export interface IAuthNavigationParams extends ParamListBase {
-  [authRouteNames.loginHome]: LoginHomeScreenNavParams;
-  [authRouteNames.loginWayf]: { platform: Platform };
-  [authRouteNames.wayf]: { platform: Platform };
-  [authRouteNames.activation]: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
-  [authRouteNames.forgot]: { platform: Platform; mode: ForgotMode };
-  [authRouteNames.revalidateTerms]: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
-  [authRouteNames.changePassword]: ChangePasswordScreenNavParams;
-  [authRouteNames.changeEmail]: AuthChangeEmailScreenNavParams;
-  [authRouteNames.changeMobile]: AuthChangeMobileScreenNavParams;
-  [authRouteNames.mfa]: AuthMFAScreenNavParams;
-  [authRouteNames.mfaModal]: AuthMFAScreenNavParams;
+  loginHome: LoginHomeScreenNavParams;
+  loginWayf: { platform: Platform };
+  wayf: { platform: Platform };
+  activation: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
+  forgot: { platform: Platform; mode: ForgotMode };
+  revalidateTerms: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
+  changePassword: ChangePasswordScreenNavParams;
+  changePasswordModal: ChangePasswordScreenNavParams;
+  changeEmail: AuthChangeEmailScreenNavParams;
+  changeMobile: AuthChangeMobileScreenNavParams;
+  mfa: AuthMFAScreenNavParams;
+  mfaModal: AuthMFAScreenNavParams;
 }
 
 export const getLoginRouteName = (platform?: Platform) => {

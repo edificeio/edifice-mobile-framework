@@ -38,7 +38,7 @@ export interface SchoolbookWordDetailsScreenDataProps {
   session: ISession | undefined;
 }
 export interface SchoolbookWordDetailsScreenNavigationParams {
-  notification: ISchoolbookNotification;
+  notification?: ISchoolbookNotification;
   schoolbookWordId: string;
   studentId: string;
 }
@@ -165,7 +165,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   };
 
   const openSchoolbookWordReport = () =>
-    props.navigation.navigate(`${moduleConfig.routeName}/report`, {
+    props.navigation.navigate(schoolbookRouteNames.report, {
       schoolbookWordId,
     });
 

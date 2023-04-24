@@ -160,7 +160,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       const newFilter = filter === Filter.ROOT ? id : filter;
       navigation.push(moduleConfig.routeName, { filter: newFilter, parentId: id, title });
     } else {
-      navigation.navigate(`${moduleConfig.routeName}/file-preview`, { file, title });
+      navigation.navigate(workspaceRouteNames.filePreview, { file, title });
     }
   };
 

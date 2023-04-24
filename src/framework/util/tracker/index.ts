@@ -303,6 +303,7 @@ export class ConcreteTrackerSet {
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
+    console.debug('[Track view]', category, action, name, value);
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
@@ -311,6 +312,7 @@ export class ConcreteTrackerSet {
   }
 
   async trackView(path: string[]) {
+    console.debug('[Track view]', path);
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
 
