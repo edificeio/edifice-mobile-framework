@@ -9,6 +9,6 @@ phrase:
           update_translations: false
   pull:
     targets:
-      - file: ./assets/i18n/phrase.json
+      - file: ./assets/i18n/fr.json
         params:
           file_format: i18next_4
