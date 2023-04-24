@@ -253,6 +253,8 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
               left: 0,
               right: 0,
             },
+            keyboardType: 'phone-pad',
+            inputMode: 'tel',
           }}
         />
         <CaptionItalicText style={styles.errorText}>

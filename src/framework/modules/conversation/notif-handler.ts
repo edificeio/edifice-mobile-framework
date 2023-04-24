@@ -18,24 +18,34 @@ import moduleConfig from './module-config';
 import { conversationRouteNames } from './navigation';
 
 const handleConversationNotificationAction: NotifHandlerThunkAction =
-  (notification, trackCategory, navigation) => async (dispatch, getState) => {
+  (notification, trackCategory, navigation, allowSwitchTab) => async (dispatch, getState) => {
     try {
       const notif = getAsResourceIdNotification(notification);
       // As conversation & zimbra use same type & event-type
       // We must redirect only conversation ones
       if (!notif || notif?.resource.uri.indexOf('conversation') === -1) return { managed: 0 };
 
-      const navAction = CommonActions.navigate({
-        name: computeTabRouteName(moduleConfig.routeName),
-        params: {
-          initial: false,
-          screen: conversationRouteNames.mailContent,
-          params: {
-            notification: notif,
-            mailId: notif.resource.id,
-          },
-        },
-      });
+      const navAction = CommonActions.navigate(
+        allowSwitchTab
+          ? {
+              name: computeTabRouteName(moduleConfig.routeName),
+              params: {
+                initial: false,
+                screen: conversationRouteNames.mailContent,
+                params: {
+                  notification: notif,
+                  mailId: notif.resource.id,
+                },
+              },
+            }
+          : {
+              name: conversationRouteNames.mailContent,
+              params: {
+                notification: notif,
+                mailId: notif.resource.id,
+              },
+            },
+      );
 
       handleNotificationNavigationAction(navAction);
 

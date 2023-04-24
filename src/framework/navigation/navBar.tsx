@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
   },
   backbutton: {
-    marginHorizontal: Platform.OS === 'android' ? -UI_SIZES.spacing.minor : 0,
+    marginHorizontal: 0,
   },
 });
 

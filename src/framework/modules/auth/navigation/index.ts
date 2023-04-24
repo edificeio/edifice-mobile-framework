@@ -25,6 +25,7 @@ export enum AuthRouteNames {
   forgot = 'Forgot',
   revalidateTerms = 'RevalidateTerms',
   changePassword = 'ChangePassword',
+  changePasswordModal = 'ChangePasswordModal',
   changeEmail = 'ChangeEmail',
   changeMobile = 'ChangeMobile',
   mfa = 'MFA',

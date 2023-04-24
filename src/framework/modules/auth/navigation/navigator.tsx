@@ -80,6 +80,15 @@ export default function () {
           headerTitle: navBarTitle(I18n.t('user.page.editPassword')),
         }}
       />
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen
+          name={AuthRouteNames.changePasswordModal}
+          component={ChangePasswordScreen}
+          options={{
+            headerTitle: navBarTitle(I18n.t('user.page.editPassword')),
+          }}
+        />
+      </Stack.Group>
       <Stack.Screen
         name={AuthRouteNames.changeEmail}
         component={AuthChangeEmailScreen}
