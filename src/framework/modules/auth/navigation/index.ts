@@ -156,8 +156,8 @@ export const getAuthNavigationState = (selectedPlatform?: Platform, loginRedirec
   const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
   const hasMultiplePlatforms = appConf.platforms.length > 1;
 
-  if (hasOnboardingTexts) routes.push({ name: 'Onboarding' });
-  if (hasMultiplePlatforms && (selectedPlatform || !routes.length)) routes.push({ name: 'PlatformSelect' });
+  if (hasOnboardingTexts) routes.push({ name: authRouteNames.onboarding });
+  if (hasMultiplePlatforms && (selectedPlatform || !routes.length)) routes.push({ name: authRouteNames.platforms });
   if (selectedPlatform || !routes.length)
     routes.push({
       name: getLoginRouteName(selectedPlatform),
