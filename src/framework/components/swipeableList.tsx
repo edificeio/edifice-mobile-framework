@@ -357,14 +357,3 @@ export default React.forwardRef(
     );
   },
 );
-
-export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<SwipeListView<any>> }) => {
-  useScrollToTop(
-    React.useRef({
-      scrollToTop: () => {
-        listRef.current?.scrollToTop();
-      },
-    }),
-  );
-  return null;
-};
