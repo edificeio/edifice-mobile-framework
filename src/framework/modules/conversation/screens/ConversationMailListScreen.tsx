@@ -173,7 +173,7 @@ class ConversationMailListScreen extends React.PureComponent<ConversationMailLis
           icon="ui-plus"
           onPress={() => {
             Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Nouveau mail');
-            navigation.navigate(`${moduleConfig.routeName}/new-mail`, {
+            navigation.navigate(conversationRouteNames.newMail, {
               type: DraftType.NEW,
               mailId: undefined,
               currentFolder: getActiveRouteState(navigation.getState()).key,

@@ -20,8 +20,8 @@ import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/frame
 import { ILoginResult, loginAction, logoutAction } from '~/framework/modules/auth/actions';
 import { ISession, LegalUrls } from '~/framework/modules/auth/model';
 import {
-  AuthRouteNames,
   IAuthNavigationParams,
+  authRouteNames,
   getAuthNavigationState,
   redirectLoginNavAction,
 } from '~/framework/modules/auth/navigation';
@@ -42,7 +42,7 @@ export interface IRevalidateTermsScreenEventProps {
 }
 export type IRevalidateTermsScreenProps = IRevalidateTermsScreenEventProps &
   IRevalidateTermsScreenDataProps &
-  NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.revalidateTerms>;
+  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.revalidateTerms>;
 
 // COMPONENT ======================================================================================
 

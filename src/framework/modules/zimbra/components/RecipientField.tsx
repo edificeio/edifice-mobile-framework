@@ -72,11 +72,12 @@ export const RecipientField = ({ hasZimbraSendExternalRight, selectedRecipients,
     if (value.length > 2) {
       setFoundRecipients([]);
       clearTimeout(searchTimeout.current);
-      searchTimeout.current = setTimeout(async () => {
+      searchTimeout.current = setTimeout(() => {
         if (!session) return;
         const selectedIds = selectedRecipients.map(recipient => recipient.id);
-        const recipients = await zimbraService.recipients.search(session, value);
-        setFoundRecipients(recipients.filter(recipient => !selectedIds.includes(recipient.id)));
+        zimbraService.recipients
+          .search(session, value)
+          .then(recipients => setFoundRecipients(recipients.filter(recipient => !selectedIds.includes(recipient.id))));
       }, 500);
     }
     return () => {

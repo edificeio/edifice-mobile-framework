@@ -42,7 +42,7 @@ import { ZimbraComposerScreenPrivateProps } from './types';
 interface ZimbraComposerScreenState {
   draft: IDraft;
   isDeleted: boolean;
-  isSent: boolean;
+  isSending: boolean;
   isSettingId: boolean;
   signature: string;
   signatureModalRef: React.RefObject<ModalBoxHandle>;
@@ -90,7 +90,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         attachments: [],
       },
       isDeleted: false,
-      isSent: false,
+      isSending: false,
       isSettingId: false,
       signature: '',
       signatureModalRef: React.createRef<ModalBoxHandle>(),
@@ -129,6 +129,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     } else if (!this.state.id && mailId) {
       this.setState({ id: mailId });
     }
+    if (this.state.isSending) this.setNavbar();
   };
 
   addAttachment = async (file: Asset | DocumentPicked) => {
@@ -179,28 +180,33 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       } else if (tempAttachment) {
         return Toast.showInfo(I18n.t('zimbra-send-attachment-progress'));
       }
-      this.setState({ isSent: true });
+      this.setState({ isSending: true });
       if (!session) throw new Error();
       await zimbraService.mail.send(session, this.getMailData(), id, draft.inReplyTo);
-      navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('zimbra-send-mail'));
+      this.setState({ isDeleted: true }, () => {
+        navigation.dispatch(CommonActions.goBack());
+        setTimeout(() => Toast.showSuccess(I18n.t('zimbra-send-mail')), 250);
+      });
     } catch {
-      this.setState({ isSent: false });
+      this.setState({ isSending: false });
       Toast.showError(I18n.t('common.error.text'));
     }
   };
 
   updateDraftOnBack = async () => {
+    const { isDeleted } = this.state;
     const { type } = this.props.route.params;
+
+    if (isDeleted) return;
     await this.saveDraft();
-    Toast.showSuccess(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'));
+    Toast.showInfo(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'));
   };
 
-  checkIsMailEmpty = () => {
+  checkIsDraftBlank = () => {
     const { type } = this.props.route.params;
-    const { draft, isDeleted, isSent } = this.state;
+    const { draft, isDeleted } = this.state;
 
-    if (isDeleted || isSent) return true;
+    if (isDeleted) return true;
     if (type !== DraftType.NEW && type !== DraftType.DRAFT) {
       return false;
     }
@@ -222,14 +228,12 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     const { type } = this.props.route.params;
 
     draft.body = draft.body.replace(/(\r\n|\n|\r)/gm, '<br>');
-    if (type === DraftType.REPLY || type === DraftType.REPLY_ALL) {
+    if (type === DraftType.REPLY || type === DraftType.REPLY_ALL || type === DraftType.FORWARD) {
       draft.threadBody = draft.threadBody?.replace('\n', '<br />');
     } else {
       draft.threadBody = draft.threadBody?.replace(/(<br>|<br \/>)/gs, '\n');
     }
-    if (draft.threadBody === undefined) {
-      draft.threadBody = '';
-    }
+    if (draft.threadBody === undefined) draft.threadBody = '';
 
     const ret = {};
     for (const key in draft) {
@@ -259,14 +263,15 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { navigation, session } = this.props;
       const { id } = this.state;
 
-      this.setState({ isDeleted: true });
-      if (!id) return navigation.dispatch(CommonActions.goBack());
-      if (!session) throw new Error();
-      await zimbraService.mails.trash(session, [id]);
-      navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('zimbra-message-deleted'));
+      if (id) {
+        if (!session) throw new Error();
+        await zimbraService.mails.trash(session, [id]);
+      }
+      this.setState({ isDeleted: true }, () => {
+        navigation.dispatch(CommonActions.goBack());
+        setTimeout(() => Toast.showSuccess(I18n.t('zimbra-message-deleted')), 250);
+      });
     } catch {
-      this.setState({ isDeleted: false });
       Toast.showError(I18n.t('common.error.text'));
     }
   };
@@ -276,14 +281,15 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { navigation, session } = this.props;
       const { id } = this.state;
 
-      this.setState({ isDeleted: true });
-      if (!id) return navigation.dispatch(CommonActions.goBack());
-      if (!session) throw new Error();
-      await zimbraService.mails.delete(session, [id]);
-      navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('zimbra-message-deleted'));
+      if (id) {
+        if (!session) throw new Error();
+        await zimbraService.mails.delete(session, [id]);
+      }
+      this.setState({ isDeleted: true }, () => {
+        navigation.dispatch(CommonActions.goBack());
+        setTimeout(() => Toast.showSuccess(I18n.t('zimbra-message-deleted')), 250);
+      });
     } catch {
-      this.setState({ isDeleted: false });
       Toast.showError(I18n.t('common.error.text'));
     }
   };
@@ -307,18 +313,19 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { mail, session } = this.props;
       const { draft, id, isSettingId } = this.state;
 
-      if ((!saveIfEmpty && this.checkIsMailEmpty()) || isSettingId) return;
+      if ((!saveIfEmpty && this.checkIsDraftBlank()) || isSettingId) return;
       if (!session) throw new Error();
       if (id) {
         await zimbraService.draft.update(session, id, this.getMailData());
+        return id;
       } else {
         this.setState({ isSettingId: true });
         const isForward = this.props.route.params.type === DraftType.FORWARD;
         const draftId = await zimbraService.draft.create(session, this.getMailData(), mail?.id, isForward);
         this.setState({ id: draftId, isSettingId: false });
         if (isForward && draft.inReplyTo) await zimbraService.draft.forward(session, draftId, draft.inReplyTo);
+        return draftId;
       }
-      return id;
     } catch {
       this.setState({ isSettingId: false });
     }
@@ -326,6 +333,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
   setNavbar() {
     const { navigation } = this.props;
+    const { isSending } = this.state;
     const { isTrashed } = this.props.route.params;
     const menuActions = [
       {
@@ -352,7 +360,11 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
             <NavBarAction icon="ui-attachment" />
           </PopupMenu>
           <View style={styles.navBarSendAction}>
-            <NavBarAction icon="ui-send" onPress={this.sendMail} />
+            {isSending ? (
+              <LoadingIndicator small customColor={theme.ui.text.inverse} />
+            ) : (
+              <NavBarAction icon="ui-send" onPress={this.sendMail} />
+            )}
           </View>
           <PopupMenu actions={menuActions}>
             <NavBarAction icon="ui-options" />
@@ -371,7 +383,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     return (
       <>
         <PreventBack
-          isDraftEdited={!this.checkIsMailEmpty()}
+          isDraftEdited={!this.checkIsDraftBlank()}
           isUploading={tempAttachment !== undefined}
           updateDraft={this.updateDraftOnBack}
         />

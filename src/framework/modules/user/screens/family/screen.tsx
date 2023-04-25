@@ -49,6 +49,7 @@ function UserFamilyScreen(props: UserFamilyScreenPrivateProps) {
         <SectionList
           alwaysBounceVertical={false}
           overScrollMode="never"
+          stickySectionHeadersEnabled={false}
           sections={childrenDataByStructures}
           keyExtractor={item => item.id}
           renderSectionHeader={({ section }) => {

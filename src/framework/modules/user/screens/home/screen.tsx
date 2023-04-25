@@ -1,5 +1,5 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { NavigationProp, useIsFocused, useNavigation, useScrollToTop } from '@react-navigation/native';
+import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -21,7 +21,7 @@ import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framewor
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
-import { AuthRouteNames } from '~/framework/modules/auth/navigation';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
@@ -174,9 +174,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         let needMfa: undefined | boolean;
         if (modificationType !== ModificationType.PASSWORD) needMfa = await fetchMFAValidationInfos();
         const routeNames = {
-          [ModificationType.EMAIL]: AuthRouteNames.changeEmail,
-          [ModificationType.MOBILE]: AuthRouteNames.changeMobile,
-          [ModificationType.PASSWORD]: AuthRouteNames.changePasswordModal,
+          [ModificationType.EMAIL]: authRouteNames.changeEmail,
+          [ModificationType.MOBILE]: authRouteNames.changeMobile,
+          [ModificationType.PASSWORD]: authRouteNames.changePasswordModal,
         };
         let routeName = routeNames[modificationType];
         const params = {
@@ -199,7 +199,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         const routeParams = params[modificationType];
         if (needMfa) {
           (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
-          routeName = AuthRouteNames.mfaModal;
+          routeName = authRouteNames.mfaModal;
         }
         if (isFocused) navigation.navigate(routeName, routeParams);
       } catch {
@@ -387,16 +387,9 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const logoutButton = useLogoutFeature(handleLogout);
   const versionButton = useVersionFeature(session);
 
-  const scrollRef = React.useRef<ScrollView>(null);
-  useScrollToTop(scrollRef);
-
   return (
     <PageView style={styles.page} showNetworkBar={false}>
-      <ScrollView
-        ref={scrollRef}
-        style={UI_STYLES.flex1}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}>
+      <ScrollView style={UI_STYLES.flex1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
         <View style={styles.sectionUserInfo}>
           {navBarDecoration}
           {avatarButton}

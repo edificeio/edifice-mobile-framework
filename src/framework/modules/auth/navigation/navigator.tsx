@@ -20,7 +20,7 @@ import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid'
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
-import { AuthRouteNames, IAuthNavigationParams } from '.';
+import { IAuthNavigationParams, authRouteNames } from '.';
 
 const Stack = getTypedRootStack<IAuthNavigationParams>();
 
@@ -28,53 +28,53 @@ export default function () {
   return (
     <Stack.Group screenOptions={navBarOptions}>
       <Stack.Group screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={AuthRouteNames.onboarding} component={OnboardingScreen} />
-        <Stack.Screen name={AuthRouteNames.platforms} component={PlatformSelectScreen} />
+        <Stack.Screen name={authRouteNames.onboarding} component={OnboardingScreen} />
+        <Stack.Screen name={authRouteNames.platforms} component={PlatformSelectScreen} />
       </Stack.Group>
       <Stack.Screen
-        name={AuthRouteNames.loginHome}
+        name={authRouteNames.loginHome}
         component={LoginHomeScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(route.params?.platform.displayName),
         })}
       />
       <Stack.Screen
-        name={AuthRouteNames.loginWayf}
+        name={authRouteNames.loginWayf}
         component={LoginWayfScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(route.params?.platform.displayName),
         })}
       />
       <Stack.Screen
-        name={AuthRouteNames.wayf}
+        name={authRouteNames.wayf}
         component={WayfScreen}
         options={{
           headerTitle: navBarTitle(I18n.t('login-wayf-main-title')),
         }}
       />
       <Stack.Screen
-        name={AuthRouteNames.activation}
+        name={authRouteNames.activation}
         component={ActivationScreen}
         options={{
           headerTitle: navBarTitle(I18n.t('activation-title')),
         }}
       />
       <Stack.Screen
-        name={AuthRouteNames.forgot}
+        name={authRouteNames.forgot}
         component={ForgotScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(route.params.mode === 'id' ? I18n.t('forgot-id') : I18n.t('forgot-password')),
         })}
       />
       <Stack.Screen
-        name={AuthRouteNames.revalidateTerms}
+        name={authRouteNames.revalidateTerms}
         component={RevalidateTermsScreen}
         options={{
           headerTitle: navBarTitle(I18n.t('user.revalidateTermsScreen.title')),
         }}
       />
       <Stack.Screen
-        name={AuthRouteNames.changePassword}
+        name={authRouteNames.changePassword}
         component={ChangePasswordScreen}
         options={{
           headerTitle: navBarTitle(I18n.t('user.page.editPassword')),
@@ -82,7 +82,7 @@ export default function () {
       />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen
-          name={AuthRouteNames.changePasswordModal}
+          name={authRouteNames.changePasswordModal}
           component={ChangePasswordScreen}
           options={{
             headerTitle: navBarTitle(I18n.t('user.page.editPassword')),
@@ -90,23 +90,23 @@ export default function () {
         />
       </Stack.Group>
       <Stack.Screen
-        name={AuthRouteNames.changeEmail}
+        name={authRouteNames.changeEmail}
         component={AuthChangeEmailScreen}
         options={authChangeEmailNavBar}
         initialParams={{}}
       />
       <Stack.Screen
-        name={AuthRouteNames.changeMobile}
+        name={authRouteNames.changeMobile}
         component={AuthChangeMobileScreen}
         options={authChangeMobileNavBar}
         initialParams={{}}
       />
-      <Stack.Screen name={AuthRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
+      <Stack.Screen name={authRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
-        <Stack.Screen name={AuthRouteNames.mfaModal} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
+        <Stack.Screen name={authRouteNames.mfaModal} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
       </Stack.Group>
     </Stack.Group>
   );
 }
 
-setModalModeForRoutes([AuthRouteNames.mfaModal]);
+setModalModeForRoutes([authRouteNames.mfaModal]);

@@ -215,7 +215,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   );
 
   const openSchoolbookWord = (schoolbookWordId: string) =>
-    props.navigation.navigate(`${moduleConfig.routeName}/details`, {
+    props.navigation.navigate(schoolbookRouteNames.details, {
       schoolbookWordId,
       studentId: selectedChildId,
     });

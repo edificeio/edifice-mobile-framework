@@ -92,7 +92,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
   };
 
   const onOpenBlog = (item: DisplayedBlog) => {
-    props.navigation.navigate(`${moduleConfig.routeName}/posts`, { selectedBlog: item });
+    props.navigation.navigate(blogRouteNames.blogPostList, { selectedBlog: item });
   };
 
   const onOpenFolder = (item: BlogFolder | 'root') => {

@@ -20,6 +20,10 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   navBarSendAction: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: UI_SIZES.dimensions.width.hug,
+    height: UI_SIZES.dimensions.width.hug,
     marginHorizontal: UI_SIZES.spacing.medium,
   },
   separatorContainer: {

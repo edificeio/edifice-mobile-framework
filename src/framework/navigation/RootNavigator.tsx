@@ -19,6 +19,8 @@ import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 
+import { Trackers } from '../util/tracker';
+import { useNavigationTracker } from '../util/tracker/useNavigationTracker';
 import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
@@ -78,12 +80,14 @@ function RootNavigator(props: RootNavigatorProps) {
 
   // === Render navigation container with initialState ===
 
+  const trackNavState = useNavigationTracker();
+
   const ret = React.useMemo(() => {
     return (
       <>
         <SplashScreenComponent key={isReady} />
         {isReady ? (
-          <NavigationContainer ref={navigationRef} initialState={initialNavState}>
+          <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
             <AppPushNotificationHandlerComponent>
               <RootStack.Navigator screenOptions={{ headerShown: true }}>
                 {routes}

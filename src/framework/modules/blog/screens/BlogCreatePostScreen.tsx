@@ -40,6 +40,8 @@ import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
+import { timelineRouteNames } from '../../timelinev2/navigation';
+
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
 }
@@ -250,7 +252,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       this.setState({
         onPublish: true,
       });
-      navigation.navigate(route.params.referrer ?? 'timeline', {
+      navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
         ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
       });
       dispatch(
