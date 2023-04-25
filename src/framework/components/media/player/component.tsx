@@ -30,7 +30,7 @@ export function computeNavBar({
       title: I18n.t('media-player-title'),
     }),
     headerTransparent: true,
-    headerStyle: { backgroundColor: theme.ui.shadowColor.toString() },
+    headerStyle: { backgroundColor: theme.palette.primary.regular.toString() },
   };
 }
 

@@ -6,8 +6,8 @@ export default class Toast {
     ToastMessage.show({
       type,
       text1: text,
-      position: 'bottom',
-      bottomOffset: 30,
+      position: 'top',
+      topOffset: 8,
     });
   }
 
