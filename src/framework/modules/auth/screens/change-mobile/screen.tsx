@@ -77,7 +77,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const [region, setRegion] = useState<CountryCode>('FR');
   const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
   const isMobileEmpty = isEmpty(mobile);
-  const isMobileStatePristine = mobileState === MobileState.PRISTINE;
+  const isMobileStateClean = mobileState === MobileState.STALE || mobileState === MobileState.PRISTINE;
 
   // Web 4.8+ compliance:
   //  -mobile verification APIs are available if /auth/user/requirements contains the needMfa field
@@ -179,9 +179,12 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           });
         } else {
           setIsSendingCode(false);
-          props.trySaveNewMobile({ mobile: mobileNumberFormatted });
-          props.navigation.goBack();
-          setTimeout(() => Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast')), 100);
+          setMobileState(MobileState.PRISTINE);
+          await props.trySaveNewMobile({ mobile: mobileNumberFormatted });
+          setTimeout(() => {
+            props.navigation.goBack();
+            Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast'));
+          });
         }
       } catch {
         Toast.showError(I18n.t('common.error.text'));
@@ -210,10 +213,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
 
   const changeMobile = useCallback(
     (number: string) => {
-      if (!isMobileStatePristine) setMobileState(MobileState.PRISTINE);
+      if (mobileState !== MobileState.STALE) setMobileState(MobileState.STALE);
       setMobile(number);
     },
-    [isMobileStatePristine],
+    [mobileState],
   );
 
   const refuseMobileVerification = useCallback(async () => {
@@ -225,7 +228,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   }, [navigation, tryLogout, platform]);
 
-  UNSTABLE_usePreventRemove(!isMobileEmpty && isScreenFocused, ({ data }) => {
+  UNSTABLE_usePreventRemove(!isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused, ({ data }) => {
     Alert.alert(I18n.t('auth-change-mobile-edit-alert-title'), I18n.t('auth-change-mobile-edit-alert-message'), [
       {
         text: I18n.t('common.discard'),
@@ -278,7 +281,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             onChangeFormattedText={onChangeMobile}
             onChangeCountry={onSetRegion}
             containerStyle={[
-              { borderColor: isMobileStatePristine ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
+              { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
               styles.input,
             ]}
             flagButtonStyle={styles.flagButton}
@@ -286,7 +289,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             textContainerStyle={[
               styles.inputTextContainer,
               {
-                borderColor: isMobileStatePristine ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
+                borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
               },
             ]}
             textInputStyle={styles.inputTextInput}
@@ -313,7 +316,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             }}
           />
           <CaptionItalicText style={styles.errorText}>
-            {isMobileStatePristine
+            {isMobileStateClean
               ? I18n.t('common.space')
               : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
               ? I18n.t('auth-change-mobile-error-same')
