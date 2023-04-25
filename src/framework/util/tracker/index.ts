@@ -258,17 +258,25 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     ).toLowerCase();
     const moduleAccessMap = {
       blog: 'Blog',
-      news: 'Actualites',
-      schoolbook: 'SchoolBook',
-      homework: 'Homeworks',
-      workspace: 'Workspace',
+      competences: 'Competences',
       conversation: 'Conversation',
+      diary: 'Diary',
+      edt: 'Edt',
+      homework: 'Homeworks',
+      homeworkAssistance: 'HomeworkAssistance',
+      mediacentre: 'Mediacentre',
+      news: 'Actualites',
+      presences: 'Presences',
+      schoolbook: 'SchoolBook',
+      support: 'Support',
       user: 'MyAccount',
-      zimbra: 'Zimbra',
       viesco: 'Presences',
+      workspace: 'Workspace',
+      zimbra: 'Zimbra',
     };
     let willLog = false;
     if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
+      // console.debug('Track entcore', moduleAccessMap[moduleName]);
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
           method: 'POST',
