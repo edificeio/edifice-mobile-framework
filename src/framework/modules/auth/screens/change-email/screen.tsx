@@ -16,7 +16,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, IAuthNavigationParams, getAuthNavigationState } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
@@ -28,13 +28,13 @@ import { ValidatorBuilder } from '~/utils/form';
 import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
 
-const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, AuthRouteNames.changeEmail>) =>
+const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeEmail>) =>
   route.params.navBarTitle || I18n.t('auth-change-email-verify');
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.changeEmail>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changeEmail>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
       navigation,
@@ -89,7 +89,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           }
         }
         await sendEmailVerificationCode(platform, toVerify);
-        navigation.navigate(AuthRouteNames.mfa, {
+        navigation.navigate(authRouteNames.mfa, {
           platform,
           rememberMe,
           modificationType,

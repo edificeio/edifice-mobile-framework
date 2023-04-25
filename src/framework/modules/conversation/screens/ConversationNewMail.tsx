@@ -71,11 +71,11 @@ type NewMail = {
 };
 
 export interface ConversationNewMailScreenNavigationParams {
-  addGivenAttachment: (file: Asset | DocumentPicked, sourceType: string) => void;
-  currentFolder: string;
-  getGoBack: () => void;
-  getSendDraft: () => void;
-  mailId: string;
+  addGivenAttachment?: (file: Asset | DocumentPicked, sourceType: string) => void;
+  currentFolder?: string;
+  getGoBack?: () => void;
+  getSendDraft?: () => void;
+  mailId?: string;
   type: DraftType;
 }
 
@@ -131,7 +131,7 @@ const HandleBack = (props: { isSending: boolean }) => {
   const route = useRoute();
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(!props.isSending, ({ data }) => {
-    route?.params?.getGoBack(() => {
+    route?.params?.getGoBack?.(() => {
       handleRemoveConfirmNavigationEvent(data.action, navigation);
     });
   });
@@ -186,7 +186,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         <NavBarActionsGroup
           elements={[
             {
-              ...(addGivenAttachment && (
+              ...(addGivenAttachment ? (
                 <PopupMenu
                   actions={[
                     cameraAction({ callback: addGivenAttachment }),
@@ -195,7 +195,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
                   ]}>
                   <NavBarAction icon="ui-attachment" />
                 </PopupMenu>
-              )),
+              ) : null),
             },
             {
               ...(sendDraft ? (

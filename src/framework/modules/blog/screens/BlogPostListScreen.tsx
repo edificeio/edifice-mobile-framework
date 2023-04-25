@@ -161,13 +161,13 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   };
 
   const onGoToPostCreationScreen = () =>
-    props.navigation.navigate(`${moduleConfig.routeName}/create`, {
+    props.navigation.navigate(blogRouteNames.blogCreatePost, {
       blog: selectedBlog,
       referrer: `${moduleConfig.routeName}/posts`,
     });
 
   const onOpenBlogPost = (item: BlogPost) => {
-    props.navigation.navigate(`${moduleConfig.routeName}/details`, {
+    props.navigation.navigate(blogRouteNames.blogPostDetails, {
       blogPost: item,
       blog: selectedBlog,
     });

@@ -8,7 +8,7 @@ import type {
   IChangePasswordPayload,
   ISession,
 } from '~/framework/modules/auth/model';
-import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IChangePasswordModel } from '~/framework/modules/user/actions';
 import type { Platform } from '~/framework/util/appConf';
 
@@ -39,7 +39,7 @@ export interface ChangePasswordScreenDispatchProps {
 export type ChangePasswordScreenPrivateProps = ChangePasswordScreenProps &
   ChangePasswordScreenStoreProps &
   ChangePasswordScreenDispatchProps &
-  NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.changePassword | AuthRouteNames.changePasswordModal>;
+  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>;
 
 export interface ChangePasswordScreenState extends IChangePasswordModel {
   typing: boolean;

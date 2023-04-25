@@ -166,7 +166,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
     const { navigation } = this.props;
     const blogShareNumber = blog.shared?.length;
     return (
-      <TouchableOpacity onPress={() => navigation.navigate(`${moduleConfig.routeName}/create`, { blog })}>
+      <TouchableOpacity onPress={() => navigation.navigate(blogRouteNames.blogCreatePost, { blog })}>
         <ListItem
           leftElement={
             <View style={styles.blogItem}>

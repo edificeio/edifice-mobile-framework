@@ -29,8 +29,16 @@ export function computeNavBar({
       route,
       title: I18n.t('media-player-title'),
     }),
-    headerShown: false,
+    headerTransparent: true,
+    headerStyle: { backgroundColor: theme.ui.shadowColor.toString() },
   };
+}
+
+export function computeHiddenNavBar({
+  navigation,
+  route,
+}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
+  return { ...computeNavBar({ navigation, route }), headerLeft: undefined, headerRight: undefined, headerTitle: '' };
 }
 
 function MediaPlayer(props: MediaPlayerProps) {
@@ -63,7 +71,10 @@ function MediaPlayer(props: MediaPlayerProps) {
         active: true,
         type: 'AVFoundationErrorDomain',
       });
-      navigation.setOptions({ headerShown: true });
+      navigation.setOptions({
+        ...computeNavBar({ navigation, route }),
+      });
+      StatusBar.setHidden(false);
     }
   };
 
@@ -73,13 +84,17 @@ function MediaPlayer(props: MediaPlayerProps) {
         active: true,
         type: 'connection',
       });
-      navigation.setOptions({ headerShown: true });
+      navigation.setOptions({
+        ...computeNavBar({ navigation, route }),
+      });
+      StatusBar.setHidden(false);
     } else {
       setError({
         active: false,
         type: '',
       });
-      navigation.setOptions({ headerShown: false });
+      navigation.setOptions({ ...computeHiddenNavBar({ navigation, route }) });
+      StatusBar.setHidden(true);
       setErrorMediaType();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,7 +177,8 @@ function MediaPlayer(props: MediaPlayerProps) {
               active: true,
               type: e.error.domain,
             });
-            navigation.setOptions({ headerShown: true });
+            navigation.setOptions({ ...computeNavBar({ navigation, route }) });
+            StatusBar.setHidden(false);
           }}
           rewindTime={10}
           showDuration

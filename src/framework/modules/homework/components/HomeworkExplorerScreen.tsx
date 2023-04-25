@@ -78,7 +78,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     const { navigation, onSelect } = this.props;
     const diaryId = diary?.id;
     onSelect(diaryId);
-    navigation.navigate(`${config.name}/tasks`, { diary });
+    navigation.navigate(homeworkRouteNames.homeworkTaskList, { diary });
     Trackers.trackEvent('Homework', 'SELECT');
   }
 

@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ILoginResult, loginAction } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';
-import type { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
@@ -31,7 +31,7 @@ export interface AuthMFAScreenStoreProps {
 }
 
 export interface AuthMFAScreenPrivateProps
-  extends NativeStackScreenProps<IAuthNavigationParams, typeof AuthRouteNames.mfa | typeof AuthRouteNames.mfaModal>,
+  extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.mfa | typeof authRouteNames.mfaModal>,
     AuthMFAScreenProps,
     AuthMFAScreenStoreProps,
     AuthMFAScreenDispatchProps {}

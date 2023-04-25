@@ -372,7 +372,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   goToFilters() {
     // this.listRef.current?.recenter();
-    this.props.navigation.navigate('timeline/filters');
+    this.props.navigation.navigate(timelineRouteNames.Filters);
   }
 
   doReportConfirm(notif: ITimelineNotification) {

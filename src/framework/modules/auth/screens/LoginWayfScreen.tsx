@@ -13,7 +13,7 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthError } from '~/framework/modules/auth/actions';
-import { AuthRouteNames, IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { handleAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
@@ -25,7 +25,7 @@ interface LoginWayfScreenDispatchProps {
   handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void;
 }
 interface ILoginWayfScreenProps
-  extends NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.loginWayf>,
+  extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginWayf>,
     ILoginWayfScreenStoreProps,
     LoginWayfScreenDispatchProps {}
 
@@ -128,7 +128,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
               text={I18n.t('login-wayf-main-button')}
               action={() => {
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
-                navigation.navigate(AuthRouteNames.wayf, { platform: route.params.platform });
+                navigation.navigate(authRouteNames.wayf, { platform: route.params.platform });
               }}
             />
           </View>

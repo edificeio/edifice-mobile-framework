@@ -299,10 +299,12 @@ export class ConcreteTrackerSet {
   }
 
   async trackDebugEvent(category: string, action: string, name?: string, value?: number) {
+    // console.debug('[Track debug event]', category, action, name, value);
     await Promise.all(this._trackers.filter(t => t.isDebugTracker()).map(t => t.trackEvent(category, action, name, value)));
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
+    // console.debug('[Track event]', category, action, name, value);
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
@@ -311,6 +313,7 @@ export class ConcreteTrackerSet {
   }
 
   async trackView(path: string[]) {
+    // console.debug('[Track view]', path.join('/'));
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
 

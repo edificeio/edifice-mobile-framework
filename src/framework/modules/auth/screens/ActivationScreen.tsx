@@ -34,7 +34,7 @@ import {
   ValueChangeArgs,
 } from '~/framework/modules/auth/components/ActivationForm';
 import { IActivationError, IActivationPayload, LegalUrls } from '~/framework/modules/auth/model';
-import { AuthRouteNames, IAuthNavigationParams, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -57,7 +57,7 @@ export interface IActivationPageEventProps {
 }
 export type IActivationPageProps = IActivationPageEventProps &
   IActivationPageDataProps &
-  NativeStackScreenProps<IAuthNavigationParams, AuthRouteNames.activation>;
+  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.activation>;
 
 // Activation Page Component -------------------------------------------------------------
 

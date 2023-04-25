@@ -44,7 +44,6 @@ export default StyleSheet.create({
     position: 'absolute',
     width: '100%',
     bottom: 0,
-    zIndex: 10,
     elevation: 10,
   },
 });
