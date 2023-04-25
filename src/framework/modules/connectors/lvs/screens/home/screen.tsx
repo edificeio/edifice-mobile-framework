@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import { IGlobalState } from '~/app/store';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { LvsNavigationParams, lvsRouteNames } from '~/framework/modules/lvs/navigation';
-import redirect from '~/framework/modules/lvs/service/redirect';
+import { LvsNavigationParams, lvsRouteNames } from '~/framework/modules/connectors/lvs/navigation';
+import redirect from '~/framework/modules/connectors/lvs/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import type { LvsHomeScreenPrivateProps } from './types';
