@@ -69,13 +69,21 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
         uploadedAttachments = await props.uploadAttachments(attachments);
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
-      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
       props.navigation.dispatch(CommonActions.goBack());
+      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
     } catch {
       setSending(false);
       Toast.showError(I18n.t('support.supportCreateTicketScreen.failure'));
     }
   };
+
+  const onCategoryOpen = React.useCallback(() => {
+    setStructureDropdownOpen(false);
+  }, []);
+
+  const onStructureOpen = React.useCallback(() => {
+    setCategoryDropdownOpen(false);
+  }, []);
 
   const renderPage = () => {
     const { apps, structures } = props;
@@ -94,11 +102,13 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             items={apps}
             setOpen={setCategoryDropdownOpen}
             setValue={setCategory}
+            onOpen={onCategoryOpen}
             style={styles.dropdownContainer}
             dropDownContainerStyle={styles.dropdownContainer}
             textStyle={styles.dropdownText}
             zIndex={2000}
             zIndexInverse={1000}
+            listMode="SCROLLVIEW"
           />
           {structures.length > 1 ? (
             <DropDownPicker
@@ -107,11 +117,13 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
               items={structures}
               setOpen={setStructureDropdownOpen}
               setValue={setStructure}
+              onOpen={onStructureOpen}
               style={styles.dropdownContainer}
               dropDownContainerStyle={styles.dropdownContainer}
               textStyle={styles.dropdownText}
               zIndex={1000}
               zIndexInverse={2000}
+              listMode="SCROLLVIEW"
             />
           ) : null}
           <SmallBoldText style={styles.inputLabelText}>
@@ -160,7 +172,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     );
   };
 
-  UNSTABLE_usePreventRemove(!!(subject || description), ({ data }) => {
+  UNSTABLE_usePreventRemove(!!(subject || description) && !isSending, ({ data }) => {
     Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
       {
         text: I18n.t('common.cancel'),
