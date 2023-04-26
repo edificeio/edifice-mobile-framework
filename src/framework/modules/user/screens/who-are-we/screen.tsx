@@ -7,6 +7,7 @@ import Rate, { AndroidMarket } from 'react-native-rate';
 import ActionButton from '~/framework/components/buttons/action';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { BodyText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -34,29 +35,31 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
       <View style={styles.photoWrapper}>
         <Picture type="Image" source={require('ASSETS/images/who-are-we.png')} style={styles.photo} resizeMode="cover" />
       </View>
-      <View style={styles.textWrapper}>
-        <BodyText>{I18n.t('user.whoAreWeScreen.description')}</BodyText>
-        <ActionButton
-          style={styles.button}
-          text={I18n.t('user.whoAreWeScreen.reviewApp')}
-          emoji="⭐️"
-          action={() => {
-            const options = {
-              AppleAppID: APPLE_APP_ID,
-              GooglePackageName: GOOGLE_PACKAGE_NAME,
-              preferredAndroidMarket: AndroidMarket.Google,
-              preferInApp: true,
-              inAppDelay: 0,
-            };
-            Rate.rate(options, (success, error) => {
-              if (error) {
-                Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
-                console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
-              }
-            });
-          }}
-        />
-      </View>
+      <ScrollView bottomInset>
+        <View style={styles.textWrapper}>
+          <BodyText>{I18n.t('user.whoAreWeScreen.description')}</BodyText>
+          <ActionButton
+            style={styles.button}
+            text={I18n.t('user.whoAreWeScreen.reviewApp')}
+            emoji="⭐️"
+            action={() => {
+              const options = {
+                AppleAppID: APPLE_APP_ID,
+                GooglePackageName: GOOGLE_PACKAGE_NAME,
+                preferredAndroidMarket: AndroidMarket.Google,
+                preferInApp: true,
+                inAppDelay: 0,
+              };
+              Rate.rate(options, (success, error) => {
+                if (error) {
+                  Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+                  console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
+                }
+              });
+            }}
+          />
+        </View>
+      </ScrollView>
     </PageView>
   );
 }

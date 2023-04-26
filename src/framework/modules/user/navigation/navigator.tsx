@@ -37,6 +37,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={pushNotifsItemsListNavBar}
           initialParams={{}}
         />
+        <Stack.Screen name={userRouteNames.whoAreWe} component={UserWhoAreWeScreen} options={whoAreWeNavBar} initialParams={{}} />
       </Stack.Group>
       <Stack.Screen
         name={userRouteNames.structures}
@@ -45,7 +46,6 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         initialParams={{}}
       />
       <Stack.Screen name={userRouteNames.family} component={UserFamilyScreen} options={familyNavBar} initialParams={{}} />
-      <Stack.Screen name={userRouteNames.whoAreWe} component={UserWhoAreWeScreen} options={whoAreWeNavBar} initialParams={{}} />
       <Stack.Screen
         name={userRouteNames.legalNotice}
         component={UserLegalNoticeScreen}
@@ -55,4 +55,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     </>
   ));
 
-setModalModeForRoutes([userRouteNames.notifPrefsDetails]);
+setModalModeForRoutes([userRouteNames.notifPrefsDetails, userRouteNames.whoAreWe]);
