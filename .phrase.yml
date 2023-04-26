@@ -6,8 +6,20 @@ phrase:
       - file: ./assets/i18n/fr.json
         params:
           file_format: simple_json
+      - file: ./assets/i18n/en.json
+        params:
+          file_format: simple_json
+      - file: ./assets/i18n/es.json
+        params:
+          file_format: simple_json
   pull:
     targets:
       - file: ./assets/i18n/fr.json
+        params:
+          file_format: simple_json
+      - file: ./assets/i18n/en.json
+        params:
+          file_format: simple_json
+      - file: ./assets/i18n/es.json
         params:
           file_format: simple_json
