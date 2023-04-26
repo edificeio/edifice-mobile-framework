@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, Platform, View } from 'react-native';
 import Rate, { AndroidMarket } from 'react-native-rate';
 
 import ActionButton from '~/framework/components/buttons/action';
@@ -47,7 +47,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
                 AppleAppID: APPLE_APP_ID,
                 GooglePackageName: GOOGLE_PACKAGE_NAME,
                 preferredAndroidMarket: AndroidMarket.Google,
-                preferInApp: true,
+                preferInApp: Platform.OS !== 'android',
                 inAppDelay: 0,
               };
               Rate.rate(options, (success, error) => {

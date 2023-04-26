@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 interface IChildPickerProps {
   children?: React.ReactNode;
   selectedChildId?: string;
-  userChildren?: { label: string; value: string; icon: () => void }[];
+  userChildren?: { label: string; value: string; icon: () => JSX.Element }[];
   selectChild: (childId: string) => void;
 }
 
@@ -54,6 +54,11 @@ const ChildPicker = ({ children, selectedChildId, userChildren = [], selectChild
     if (value && value !== selectedChildId) selectChild(value);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  React.useEffect(() => {
+    if (selectedChildId !== value) setValue(selectedChildId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedChildId]);
 
   return value ? (
     <View style={styles.container}>
