@@ -109,4 +109,4 @@ export default function () {
   );
 }
 
-setModalModeForRoutes([authRouteNames.mfaModal]);
+setModalModeForRoutes([authRouteNames.changePasswordModal, authRouteNames.mfaModal]);
