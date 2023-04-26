@@ -6,20 +6,26 @@ phrase:
       - file: ./assets/i18n/fr.json
         params:
           file_format: simple_json
+          locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
       - file: ./assets/i18n/en.json
         params:
           file_format: simple_json
+          locale_id: 0d41789e356f6f46dddb1117b9c43bd7
       - file: ./assets/i18n/es.json
         params:
           file_format: simple_json
+          locale_id: 80f576935a8cb9630a4a8bd0f2c4c122
   pull:
     targets:
       - file: ./assets/i18n/fr.json
         params:
           file_format: simple_json
+          locale_id: a3f0ad82fbd7ad5c3f72d15c1c66a60d
       - file: ./assets/i18n/en.json
         params:
           file_format: simple_json
+          locale_id: 0d41789e356f6f46dddb1117b9c43bd7
       - file: ./assets/i18n/es.json
         params:
           file_format: simple_json
+          locale_id: 80f576935a8cb9630a4a8bd0f2c4c122
