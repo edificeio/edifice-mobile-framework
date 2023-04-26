@@ -77,6 +77,8 @@
   "auth-change-mobile-edit-alert-message": "Su número de teléfono no se modificará. ¿Está seguro de que desea abandonar esta página?",
   "auth-change-mobile-edit-alert-title": "Las modificaciones no se han guardado.",
   "auth-change-mobile-edit-label": "Número nuevo de teléfono móvil",
+  "auth-change-mobile-edit-button": "Modificar mi número",
+  "auth-change-mobile-edit-message-unverified": "Debe ser un número de teléfono móvil",
   "auth-change-mobile-edit-message": "Al cambiar su número de teléfono se le pedirá que lo verifique por razones de seguridad.",
   "auth-change-mobile-edit-title": "Indique su número de teléfono móvil",
   "auth-change-mobile-edit-toast": "El número de teléfono se ha modificado correctamente.",

@@ -18,7 +18,6 @@ import {
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
-import { trigger } from 'react-native-haptic-feedback';
 
 import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
@@ -27,6 +26,7 @@ import { Picture, PictureProps } from '~/framework/components/picture';
 import { TextSizeStyle } from '~/framework/components/text';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
@@ -118,11 +118,8 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
         // Else, register the tab change that will be handled in preventRemove callback
         setNextTabJump(CommonActions.navigate({ key: event.target }));
       }
-      // Haptic feebback
-      trigger('impactLight', {
-        enableVibrateFallback: true,
-        ignoreAndroidSystemSettings: false,
-      });
+      // Feebback
+      Feedback.tabPressed();
     },
   } as ScreenListeners<NavigationState, EventMapBase>);
 

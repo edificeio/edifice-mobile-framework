@@ -77,6 +77,8 @@
   "auth-change-mobile-edit-alert-message": "Your phone number will not be changed. Are you sure you want to close this window?",
   "auth-change-mobile-edit-alert-title": "Your edits were not saved",
   "auth-change-mobile-edit-label": "New mobile phone number",
+  "auth-change-mobile-edit-button": "Edit my phone number",
+  "auth-change-mobile-edit-message-unverified": "You must enter a mobile phone number.",
   "auth-change-mobile-edit-message": "If you change your phone number, you will be asked to verify it for security purposes.",
   "auth-change-mobile-edit-title": "Enter your mobile phone number",
   "auth-change-mobile-edit-toast": "Your phone number was successfully changed.",
