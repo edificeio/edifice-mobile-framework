@@ -50,6 +50,11 @@ const StructurePicker = ({ selectedStructureId, structures = [], selectStructure
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
+  React.useEffect(() => {
+    if (selectedStructureId !== value) setValue(selectedStructureId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedStructureId]);
+
   return value && structures.length > 1 ? (
     <View style={styles.container}>
       <DropDownPicker
