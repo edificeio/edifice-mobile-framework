@@ -2,11 +2,13 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { logoutAction } from '~/framework/modules/auth/actions';
 import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthChangeMobileScreenDispatchProps {
   tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  trySaveNewMobile(updatedProfileValues: UpdatableProfileValues): Promise<void>;
 }
 
 export interface AuthChangeMobileScreenNavParams {
@@ -31,6 +33,7 @@ export enum MobileState {
   MOBILE_ALREADY_VERIFIED = 'mobileAlreadyVerified',
   MOBILE_FORMAT_INVALID = 'mobileFormatInvalid',
   PRISTINE = 'pristine',
+  STALE = 'stale',
 }
 
 export interface PageTexts {
