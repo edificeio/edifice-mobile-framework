@@ -127,11 +127,10 @@ export const computeNavBar = ({
   }),
 });
 
-const HandleBack = (props: { isSending: boolean }) => {
-  const route = useRoute();
+const HandleBack = (props: { isSending: boolean; onBack: (a: () => void) => any }) => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(!props.isSending, ({ data }) => {
-    route?.params?.getGoBack?.(() => {
+    props.onBack?.(() => {
       handleRemoveConfirmNavigationEvent(data.action, navigation);
     });
   });
@@ -175,8 +174,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const { id, isSending, webDraftWarning } = this.state;
     const draftType = route.params.type;
     const isSavedDraft = draftType === DraftType.DRAFT;
-    const addGivenAttachment = route.params.addGivenAttachment;
-    const sendDraft = route.params.getSendDraft;
+    const addGivenAttachment = this.navigationHeaderFunction.addGivenAttachment;
+    const sendDraft = this.navigationHeaderFunction.getSendDraft;
 
     navigation.setOptions({
       headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage', styles.title)),
@@ -693,7 +692,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const { attachments, body, ...headers } = mail;
     return (
       <>
-        <HandleBack isSending={isSending} />
+        <HandleBack isSending={isSending} onBack={this.navigationHeaderFunction.getGoBack} />
         <PageView style={{ backgroundColor: theme.ui.background.card }}>
           <NewMailComponent
             isFetching={isFetching || !!isPrefilling}
