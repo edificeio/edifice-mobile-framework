@@ -97,6 +97,7 @@ export const ButtonLineGroup = ({
           first={allowFirst && (childrenAsArray.length > 1 || !allowAlone) && index === 0}
           last={allowLast && (childrenAsArray.length > 1 || !allowAlone) && index === childrenAsArray.length - 1}
           alone={allowAlone && childrenAsArray.length === 1}
+          key={(node as React.ReactElement).key}
         />
       );
     } else return node;
