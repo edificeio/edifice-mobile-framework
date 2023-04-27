@@ -22,7 +22,6 @@ import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -341,7 +340,3 @@ export function Carousel(props: ICarouselProps) {
 }
 
 export default Carousel;
-
-export function openCarousel(props: ICarouselNavParams) {
-  navigate(ModalsRouteNames.Carousel, props);
-}
