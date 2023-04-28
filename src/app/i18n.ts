@@ -1,16 +1,16 @@
 /**
  * Internationalisation (i18n) loader and setup
  *
- * Usage : Import and use initI18n function when locale changes (setup is automatic on import)
- * Then, import native i18n-js and moment module and use them as normal.
+ * Usage: import and use the init() function when local changes (setup is automatic on import)
+ * Then, import and use the native i18next and moment modules.
  */
 import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
-import I18n from 'i18n-js';
+import i18n from 'i18next';
 import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
-import { I18nManager } from 'react-native';
+import { initReactI18next } from 'react-i18next';
 import * as RNLocalize from 'react-native-localize';
 
 export type SupportedLocales = 'fr' | 'en' | 'es';
@@ -22,14 +22,14 @@ const builtInTranslations = unflatten({
   es: require('ASSETS/i18n/es.json'),
 }) as { [locale in SupportedLocales]: object };
 
-// Overrides translations
+// Override translations
 const overrideTranslations = unflatten({
   fr: require('ASSETS/i18n/override/fr.json'),
   en: require('ASSETS/i18n/override/en.json'),
   es: require('ASSETS/i18n/override/es.json'),
 }) as { [locale in SupportedLocales]: object };
 
-// Finale translations
+// Final translations
 const arrayMerge = (a: [], b: []) => {
   const destination = a.slice();
   for (const i in b) {
@@ -37,8 +37,7 @@ const arrayMerge = (a: [], b: []) => {
   }
   return destination;
 };
-
-const finaleTranslations = Object.fromEntries(
+const finalTranslations = Object.fromEntries(
   Object.keys(builtInTranslations).map(k => [
     k,
     deepmerge<object>(builtInTranslations[k], overrideTranslations[k], {
@@ -48,29 +47,41 @@ const finaleTranslations = Object.fromEntries(
 );
 
 // Translation setup
-export const initI18n = () => {
-  I18n.fallbacks = true;
-  I18n.defaultLocale = 'en';
-  I18n.translations = finaleTranslations;
-  const res = RNLocalize.findBestLanguageTag(Object.keys(I18n.translations)) as {
+export const init = () => {
+  const resources = {
+    fr: { translation: finalTranslations.fr },
+    en: { translation: finalTranslations.en },
+    es: { translation: finalTranslations.es },
+  };
+  const fallbackLng = 'en';
+  const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(Object.keys(finalTranslations)) as {
     languageTag: string;
     isRTL: boolean;
   };
-  if (res) {
-    I18nManager.forceRTL(res.isRTL);
-    I18n.locale = res.languageTag;
-    const momentLocale = (I18n.locale as string).split('-')[0];
-    moment.locale(momentLocale);
-  } else {
-    I18n.locale = I18n.defaultLocale;
-    moment.locale(undefined);
-  }
-  return res?.languageTag ?? I18n.defaultLocale;
+  // Note: isRTL is unused since all supported languages are LTR
+  const languageTag = bestAvailableLanguage?.languageTag;
+
+  moment.locale(languageTag?.split('-')[0]);
+  i18n.use(initReactI18next).init({
+    resources,
+    fallbackLng,
+    lng: languageTag,
+
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+  return languageTag ?? fallbackLng;
 };
 
 let initDone = false;
 
 if (!initDone) {
-  initI18n();
+  init();
   initDone = true;
 }
+
+// Get wording based on key (in the correct language)
+export const get = (key: string) => {
+  return i18n.t(key);
+};
