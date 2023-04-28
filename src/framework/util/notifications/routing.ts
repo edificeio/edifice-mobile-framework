@@ -3,6 +3,7 @@
  * Router operations on opeening a notification
  */
 import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
+import { InteractionManager } from 'react-native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
@@ -145,6 +146,9 @@ export interface NotificationHandlerFactory<S, E, A extends Action> {
   (dispatch: ThunkDispatch<S, E, A>, getState: () => S): NotificationHandler;
 }
 
+let notificationThrotlingEvent = false;
+const NOTIFICATION_THROTLE_DELAY = 250;
+
 /**
  * Handles every action that must be dispatched, then dispatch the given navigation action.
  * Manage dispatch schedule if necessary.
@@ -152,6 +156,8 @@ export interface NotificationHandlerFactory<S, E, A extends Action> {
  */
 export const handleNotificationNavigationAction = (navAction: NavigationAction) => {
   // 1. Pop to top current stack. This allow to close open modals & trigger preventRemove handlers.
+  if (notificationThrotlingEvent) return;
+  notificationThrotlingEvent = true;
   let preventMove = false;
   const navState = navigationRef.getRootState();
   let leafState: Pick<typeof navState, 'index' | 'routes'> = navState;
@@ -170,11 +176,15 @@ export const handleNotificationNavigationAction = (navAction: NavigationAction) 
     // We set the `delayed` argument to true to ensure native modals are closed before triggering any other action.
     // This seems to be an issue of React Navigation 6 at this time. In the future, we can test with `false` to not use setTimeout to delay each nav action.
     setNextTabJump([StackActions.popToTop(), navAction], true);
+    notificationThrotlingEvent = false;
   } else {
     // We use setTimeout here to ensure native modals are closed before triggering any other action.
     // This seems to be an issue of React Navigation 6 at this time. In the future, we can test by calling directly dispatch function.
     setTimeout(() => {
       navigationRef.dispatch(navAction);
+      setTimeout(() => {
+        notificationThrotlingEvent = false;
+      }, NOTIFICATION_THROTLE_DELAY);
     });
   }
 };
