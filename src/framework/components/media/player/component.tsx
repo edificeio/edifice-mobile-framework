@@ -38,7 +38,14 @@ export function computeHiddenNavBar({
   navigation,
   route,
 }: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
-  return { ...computeNavBar({ navigation, route }), headerLeft: undefined, headerRight: undefined, headerTitle: '' };
+  return {
+    ...computeNavBar({ navigation, route }),
+    headerLeft: undefined,
+    headerRight: undefined,
+    headerTitle: '',
+    headerTransparent: true,
+    headerStyle: { backgroundColor: 'transparent' },
+  };
 }
 
 function MediaPlayer(props: MediaPlayerProps) {
