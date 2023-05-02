@@ -52,6 +52,29 @@ export interface ISchoolBookWordDetailsCardProps {
   schoolbookWord: IWordReport;
 }
 
+//FIXME: create/move to styles.ts
+const styles = {
+  acknowledgementsContainer: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  from: { flex: 1, marginLeft: UI_SIZES.spacing.minor },
+  fromContainer: { marginTop: UI_SIZES.spacing.medium, flexDirection: 'row', alignItems: 'center' },
+  headerIndicatorStyle: { justifyContent: 'center' },
+  headerStyle: {
+    backgroundColor: theme.palette.grey.fog,
+    paddingVertical: UI_SIZES.spacing.minor,
+    borderBottomColor: theme.palette.grey.pearl,
+    borderBottomWidth: UI_SIZES.dimensions.width.tiny,
+  },
+  modalBoxContainer: { flexGrow: 1, flexShrink: 1 },
+  responsesContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: UI_SIZES.spacing.minor,
+    marginVertical: -UI_SIZES.spacing.minor,
+  },
+  unacknowledged: { marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning.regular },
+  userListContentContainer: { flexGrow: 1 },
+};
+
 const SchoolbookWordDetailsCard = (
   {
     action,
@@ -71,13 +94,13 @@ const SchoolbookWordDetailsCard = (
   const modalBoxRef: { current: any } = React.createRef();
   const commentFieldRefs = React.useRef([]);
   const bottomEditorSheetRef: { current: any } = React.useRef();
+
   const [editedCommentId, setEditedCommentId] = React.useState<string>('');
   const [contentHeight, setContentHeight] = React.useState(0);
   const [viewHeight, setViewHeight] = React.useState(0);
 
   const usersTextMaxLines = 1;
-  const word = schoolbookWord?.word;
-  const report = schoolbookWord?.report;
+  const { word, report } = schoolbookWord;
   const schoolbookWordOwnerId = word?.ownerId;
   const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
@@ -150,29 +173,6 @@ const SchoolbookWordDetailsCard = (
       showSubscriptionRef.current?.remove();
     };
   });
-
-  //FIXME: create/move to styles.ts
-  const styles = {
-    acknowledgementsContainer: { flex: 1, flexDirection: 'row', alignItems: 'center' },
-    from: { flex: 1, marginLeft: UI_SIZES.spacing.minor },
-    fromContainer: { marginTop: UI_SIZES.spacing.medium, flexDirection: 'row', alignItems: 'center' },
-    headerIndicatorStyle: { justifyContent: 'center' },
-    headerStyle: {
-      backgroundColor: theme.palette.grey.fog,
-      paddingVertical: UI_SIZES.spacing.minor,
-      borderBottomColor: theme.palette.grey.pearl,
-      borderBottomWidth: UI_SIZES.dimensions.width.tiny,
-    },
-    modalBoxContainer: { flexGrow: 1, flexShrink: 1 },
-    responsesContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingVertical: UI_SIZES.spacing.minor,
-      marginVertical: -UI_SIZES.spacing.minor,
-    },
-    unacknowledged: { marginTop: UI_SIZES.spacing.small, alignSelf: 'center', color: theme.palette.status.warning.regular },
-    userListContentContainer: { flexGrow: 1 },
-  };
 
   const resourceView = React.useMemo(
     () => (
@@ -304,13 +304,6 @@ const SchoolbookWordDetailsCard = (
       modalBoxRef,
       report,
       schoolbookWordResponsesNumber,
-      styles.acknowledgementsContainer,
-      styles.from,
-      styles.fromContainer,
-      styles.headerIndicatorStyle,
-      styles.headerStyle,
-      styles.responsesContainer,
-      styles.unacknowledged,
       userType,
       word?.ackNumber,
       word?.category,
