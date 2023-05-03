@@ -1,18 +1,17 @@
+import { Moment } from 'moment';
+
 export interface IDevoir {
-  teacher: string;
-  date: moment.Moment;
-  title: string;
-  matiere: string;
-  diviseur: number;
   coefficient: string;
-  note: string;
+  competencesCount: number;
+  date: Moment;
+  diviseur: number;
+  id: number;
+  isEvaluated: boolean;
   moyenne: string;
-  competences: {
-    nom: string;
-    id: number;
-    id_devoir: number;
-    id_eleve: string;
-    id_competence: number;
-    evaluation: number;
-  }[];
+  name: string;
+  note: string;
+  subjectId: string;
+  teacher: string;
+  termId: number;
+  libelle?: string;
 }

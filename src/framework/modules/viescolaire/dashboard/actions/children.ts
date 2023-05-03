@@ -1,9 +1,6 @@
 import { Dispatch } from 'redux';
 
-import {
-  competencesDevoirsActionsCreators,
-  competencesMoyennesActionsCreators,
-} from '~/framework/modules/viescolaire/competences/actions';
+import { competencesDevoirsActionsCreators } from '~/framework/modules/viescolaire/competences/actions';
 import { dataActions as CoursesActions } from '~/framework/modules/viescolaire/dashboard/actions/courses';
 import { selectChildActionType } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { diaryHomeworksActionsCreators, diarySessionsActionsCreators } from '~/framework/modules/viescolaire/diary/actions';
@@ -24,8 +21,6 @@ export function selectChildAction(child: string) {
     dispatch(edtSlotsActionsCreators.clear());
     // Competences
     dispatch(competencesDevoirsActionsCreators.clear());
-    dispatch(competencesMoyennesActionsCreators.clear());
-
     dispatch(selectChild(child));
   };
 }

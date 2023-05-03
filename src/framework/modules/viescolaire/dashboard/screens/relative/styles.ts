@@ -11,7 +11,10 @@ export default StyleSheet.create({
   declareAbscenceText: {
     color: theme.palette.grey.white,
   },
-  dashboardPart: { paddingVertical: UI_SIZES.spacing.minor, paddingHorizontal: UI_SIZES.spacing.medium },
+  dashboardPart: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
   gridAllModules: {
     flexDirection: 'row',
     flexWrap: 'wrap',

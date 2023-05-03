@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -16,9 +16,12 @@ import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
-import { fetchCompetencesDevoirsAction, fetchCompetencesLevelsAction } from '~/framework/modules/viescolaire/competences/actions';
-import { DenseDevoirList } from '~/framework/modules/viescolaire/competences/components/Item';
-import { IDevoirsMatieres, ILevel } from '~/framework/modules/viescolaire/competences/model';
+import {
+  fetchCompetencesDevoirsAction,
+  fetchCompetencesLevelsAction,
+  fetchCompetencesSubjectsAction,
+} from '~/framework/modules/viescolaire/competences/actions';
+import { DashboardAssessmentCard } from '~/framework/modules/viescolaire/competences/components/Item';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
@@ -36,7 +39,6 @@ import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
-import { AsyncState } from '~/framework/util/redux/async';
 
 import styles from './styles';
 import type { DashboardStudentScreenPrivateProps } from './types';
@@ -69,6 +71,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
           moment().add(1, 'month').format('YYYY-MM-DD'),
         );
         this.props.fetchDevoirs(structureId, userId);
+        this.props.fetchSubjects(structureId);
       }),
     };
   }
@@ -176,45 +179,37 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
     );
   }
 
-  // Get the 5 last added evaluations
-  //Sort evaluations by dates, then by alphabetical order then by notes
-  getSortedEvaluationList = (evaluations: AsyncState<IDevoirsMatieres>) => {
-    return evaluations.data.devoirs
-      .sort(
-        (a, b) =>
-          moment(b.date).diff(moment(a.date)) ||
-          String(a.matiere.toLocaleLowerCase() ?? '').localeCompare(b.matiere.toLocaleLowerCase() ?? '') ||
-          Number(a.note) - Number(b.note),
-      )
-      .slice(0, 5);
-  };
-
-  private renderEvaluations(evaluations: AsyncState<IDevoirsMatieres>, levels: ILevel[]) {
-    const evaluationList = this.getSortedEvaluationList(evaluations);
+  private renderLastAssessments() {
     return (
-      <View style={styles.dashboardPart}>
-        <BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>
-        {evaluations && evaluations.data.devoirs && evaluationList !== undefined && evaluationList.length > 0 ? (
-          <DenseDevoirList devoirs={evaluationList} levels={levels} />
-        ) : (
-          <EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />
+      <FlatList
+        data={this.props.devoirs.data.slice(0, 5)}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <DashboardAssessmentCard
+            devoir={item}
+            subject={this.props.subjects.find(s => s.id === item.subjectId)}
+            levels={this.props.levels}
+          />
         )}
-      </View>
+        ListHeaderComponent={<BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>}
+        ListEmptyComponent={<EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />}
+        scrollEnabled={false}
+        style={styles.dashboardPart}
+      />
     );
   }
 
   scrollRef = React.createRef<typeof ScrollView>();
 
   public render() {
-    const { authorizedViescoApps, homeworks, evaluations, levels } = this.props;
+    const { authorizedViescoApps, devoirs, homeworks } = this.props;
 
     return (
       <PageView>
         {this.renderNavigationGrid()}
         <ScrollView ref={this.scrollRef}>
-          {authorizedViescoApps.diary && this.renderHomework(homeworks.data)}
-          {authorizedViescoApps.competences &&
-            (evaluations.isFetching ? <LoadingIndicator /> : this.renderEvaluations(evaluations, levels))}
+          {authorizedViescoApps.diary ? this.renderHomework(homeworks.data) : null}
+          {authorizedViescoApps.competences ? devoirs.isFetching ? <LoadingIndicator /> : this.renderLastAssessments() : null}
         </ScrollView>
       </PageView>
     );
@@ -234,10 +229,11 @@ export default connect(
         edt: session?.apps.some(app => app.address === '/edt'),
         presences: session?.apps.some(app => app.address === '/presences'),
       },
-      evaluations: competencesState.devoirsMatieres,
+      devoirs: competencesState.devoirs,
       homeworks: diaryState.homeworks,
       levels: competencesState.levels.data,
       structureId: session?.user.structures?.[0]?.id,
+      subjects: competencesState.subjects.data,
       userId: session?.user.id,
     };
   },
@@ -259,6 +255,11 @@ export default connect(
           undefined,
           true,
         ) as unknown as DashboardStudentScreenPrivateProps['fetchLevels'],
+        fetchSubjects: tryActionLegacy(
+          fetchCompetencesSubjectsAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['fetchSubjects'],
         fetchTeachers: tryActionLegacy(
           fetchDiaryTeachersAction,
           undefined,

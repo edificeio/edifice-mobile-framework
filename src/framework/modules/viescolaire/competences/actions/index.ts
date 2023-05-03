@@ -6,7 +6,7 @@ import { ThunkAction } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IClassGroups, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
-import { IDevoirsMatieres, ILevel, IMoyenne, IUserChild } from '~/framework/modules/viescolaire/competences/model';
+import { ICompetence, IDevoir, IDomaine, ILevel, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/competences/reducer';
 import { competencesService } from '~/framework/modules/viescolaire/competences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
@@ -31,21 +31,61 @@ export const fetchCompetencesClassGroupsAction =
   };
 
 /**
- * Fetch the homeworks.
+ * Fetch the competences.
  */
-export const competencesDevoirsActionsCreators = createAsyncActionCreators(actionTypes.devoirsMatieres);
+export const competencesCompetencesActionsCreators = createAsyncActionCreators(actionTypes.competences);
+export const fetchCompetencesAction =
+  (studentId: string, classId: string): ThunkAction<Promise<ICompetence[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      dispatch(competencesCompetencesActionsCreators.clear());
+      const session = assertSession();
+      dispatch(competencesCompetencesActionsCreators.request());
+      const competences = await competencesService.competences.get(session, studentId, classId);
+      dispatch(competencesCompetencesActionsCreators.receipt(competences));
+      return competences;
+    } catch (e) {
+      dispatch(competencesCompetencesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch the assessments.
+ */
+export const competencesDevoirsActionsCreators = createAsyncActionCreators(actionTypes.devoirs);
 export const fetchCompetencesDevoirsAction =
-  (structureId: string, eleve: string, periods?: string, matiere?: string): ThunkAction<Promise<IDevoirsMatieres>, any, any, any> =>
+  (structureId: string, studentId: string): ThunkAction<Promise<IDevoir[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       dispatch(competencesDevoirsActionsCreators.clear());
       const session = assertSession();
       dispatch(competencesDevoirsActionsCreators.request());
-      const devoirs = await competencesService.devoirs.get(session, structureId, eleve, periods, matiere);
+      const devoirs = await competencesService.devoirs.get(session, structureId, studentId);
       dispatch(competencesDevoirsActionsCreators.receipt(devoirs));
       return devoirs;
     } catch (e) {
       dispatch(competencesDevoirsActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch the assessments.
+ */
+export const competencesDomainesActionsCreators = createAsyncActionCreators(actionTypes.domaines);
+export const fetchCompetencesDomainesAction =
+  (classId: string): ThunkAction<Promise<IDomaine[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      dispatch(competencesDomainesActionsCreators.clear());
+      const session = assertSession();
+      dispatch(competencesDomainesActionsCreators.request());
+      const domaines = await competencesService.domaines.get(session, classId);
+      dispatch(competencesDomainesActionsCreators.receipt(domaines));
+      return domaines;
+    } catch (e) {
+      dispatch(competencesDomainesActionsCreators.error(e as Error));
       throw e;
     }
   };
@@ -71,21 +111,21 @@ export const fetchCompetencesLevelsAction =
   };
 
 /**
- * Fetch the grades.
+ * Fetch the subjects.
  */
-export const competencesMoyennesActionsCreators = createAsyncActionCreators(actionTypes.moyennes);
-export const fetchCompetencesMoyennesAction =
-  (structureId: string, studentId: string, periodId?: string): ThunkAction<Promise<IMoyenne[]>, any, any, any> =>
+export const competencesSubjectsActionsCreators = createAsyncActionCreators(actionTypes.subjects);
+export const fetchCompetencesSubjectsAction =
+  (structureId: string): ThunkAction<Promise<ISubject[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      dispatch(competencesMoyennesActionsCreators.clear());
+      dispatch(competencesSubjectsActionsCreators.clear());
       const session = assertSession();
-      dispatch(competencesMoyennesActionsCreators.request());
-      const moyennes = await competencesService.moyennes.get(session, structureId, studentId, periodId);
-      dispatch(competencesMoyennesActionsCreators.receipt(moyennes));
-      return moyennes;
+      dispatch(competencesSubjectsActionsCreators.request());
+      const subjects = await competencesService.subjects.get(session, structureId);
+      dispatch(competencesSubjectsActionsCreators.receipt(subjects));
+      return subjects;
     } catch (e) {
-      dispatch(competencesMoyennesActionsCreators.error(e as Error));
+      dispatch(competencesSubjectsActionsCreators.error(e as Error));
       throw e;
     }
   };
@@ -114,12 +154,12 @@ export const fetchCompetencesTermsAction =
  */
 export const competencesUserChildrenActionsCreators = createAsyncActionCreators(actionTypes.userChildren);
 export const fetchCompetencesUserChildrenAction =
-  (relativeId: string): ThunkAction<Promise<IUserChild[]>, any, any, any> =>
+  (structureId: string, relativeId: string): ThunkAction<Promise<IUserChild[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
       dispatch(competencesUserChildrenActionsCreators.request());
-      const userChildren = await competencesService.userChildren.get(session, relativeId);
+      const userChildren = await competencesService.userChildren.get(session, structureId, relativeId);
       dispatch(competencesUserChildrenActionsCreators.receipt(userChildren));
       return userChildren;
     } catch (e) {
