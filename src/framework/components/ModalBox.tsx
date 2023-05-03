@@ -43,14 +43,16 @@ export interface ModalBoxHandle {
 
 export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ content }, ref) => {
   const [showModal, setShowModal] = React.useState(false);
-  const doDismissModal = () => setShowModal(false);
-  const doShowModal = () => setShowModal(true);
+  const doDismissModal = React.useCallback(() => setShowModal(false), []);
+  const doShowModal = React.useCallback(() => setShowModal(true), []);
   React.useImperativeHandle(ref, () => ({ doShowModal, doDismissModal }));
 
   return (
     <NativeModal
       useNativeDriver
       useNativeDriverForBackdrop
+      backdropTransitionOutTiming={0}
+      hideModalContentWhileAnimating
       isVisible={showModal}
       onBackdropPress={doDismissModal}
       style={styles.nativeModal}>

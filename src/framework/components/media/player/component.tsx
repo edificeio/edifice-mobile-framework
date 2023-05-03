@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -31,6 +32,7 @@ export function computeNavBar({
     }),
     headerTransparent: true,
     headerStyle: { backgroundColor: theme.palette.primary.regular.toString() },
+    headerShown: true,
   };
 }
 
@@ -38,84 +40,103 @@ export function computeHiddenNavBar({
   navigation,
   route,
 }: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
-  return { ...computeNavBar({ navigation, route }), headerLeft: undefined, headerRight: undefined, headerTitle: '' };
+  return {
+    headerShown: false,
+  };
 }
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const { route, navigation } = props;
-  const source = route.params.source;
-  const type = route.params.type;
+  const { route, navigation, connected } = props;
+  const { source, type, filetype } = route.params;
 
   const isAudio = type === MediaType.AUDIO;
-  let isChangingOrientation = false;
-
-  const [error, setError] = React.useState({
-    active: false,
-    type: '',
-  });
+  const isChangingOrientation = React.useRef(false);
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
+  const isPortrait = React.useMemo(() => orientation === PORTRAIT, [orientation]);
+  useDeviceOrientationChange(newOrientation => {
+    const isPortraitOrLandscape =
+      newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
+    if (isPortraitOrLandscape && newOrientation !== orientation) {
+      isChangingOrientation.current = true;
+      setOrientation(newOrientation);
+    }
+  });
+
   const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
 
-  const handleBack = () => {
-    StatusBar.setHidden(false);
-    setTimeout(() => {
-      props.navigation.goBack();
-    }, 10);
-  };
+  const [error, setError] = React.useState<string | undefined>(undefined);
+  const navigationHidden = React.useRef<boolean | undefined>(undefined);
 
-  const setErrorMediaType = () => {
-    const filetype = route.params.filetype;
-    if (filetype === 'video/avi' || filetype === 'video/x-msvideo') {
-      setError({
-        active: true,
-        type: 'AVFoundationErrorDomain',
-      });
-      navigation.setOptions({
-        ...computeNavBar({ navigation, route }),
-      });
-      StatusBar.setHidden(false);
-    }
-  };
-
-  React.useEffect(() => {
-    if (!props.connected) {
-      setError({
-        active: true,
-        type: 'connection',
-      });
-      navigation.setOptions({
-        ...computeNavBar({ navigation, route }),
-      });
-      StatusBar.setHidden(false);
-    } else {
-      setError({
-        active: false,
-        type: '',
-      });
-      navigation.setOptions({ ...computeHiddenNavBar({ navigation, route }) });
+  const hideNavigation = React.useCallback(() => {
+    if (navigationHidden.current !== true) {
       StatusBar.setHidden(true);
-      setErrorMediaType();
+      navigation.setOptions({
+        ...computeHiddenNavBar({ navigation, route }),
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.connected]);
+    navigationHidden.current = true;
+  }, [navigation, route]);
 
+  const showNavigation = React.useCallback(() => {
+    if (navigationHidden.current !== false) {
+      StatusBar.setHidden(false);
+      navigation.setOptions({
+        ...computeNavBar({ navigation, route }),
+      });
+    }
+    navigationHidden.current = false;
+  }, [navigation, route]);
+
+  const handleBack = React.useCallback(() => {
+    if (navigationHidden.current !== false) StatusBar.setHidden(false);
+    navigationHidden.current = false;
+    setTimeout(() => {
+      navigation.goBack();
+    }, 10);
+  }, [navigation]);
+
+  // Force show statusbar when quit the screen. This prevent a bug when close the screen when lansdcape orientation.
   React.useEffect(() => {
-    setErrorMediaType();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      StatusBar.setHidden(false);
+    };
   }, []);
 
-  const handleHardwareBack = () => {
+  const setErrorMediaType = React.useCallback(() => {
+    if (filetype === 'video/avi' || filetype === 'video/x-msvideo') {
+      setError('AVFoundationErrorDomain');
+      showNavigation();
+      return false;
+    }
+    return true;
+  }, [filetype, showNavigation]);
+
+  React.useEffect(() => {
+    if (!connected) {
+      setError('connection');
+      showNavigation();
+    } else {
+      setError(undefined);
+      if (setErrorMediaType()) {
+        setTimeout(() => hideNavigation());
+      }
+    }
+  }, [hideNavigation, connected, setErrorMediaType, showNavigation]);
+
+  const handleHardwareBack = React.useCallback(() => {
     handleBack();
     return true;
-  };
+  }, [handleBack]);
 
-  const handleVideoPlayerEnd = () => {
+  const handleVideoPlayerEnd = React.useCallback(() => {
     setVideoPlayerControlTimeoutDelay(999999);
-  };
+  }, []);
 
   const renderError = () => {
-    switch (error.type) {
+    switch (error) {
+      case undefined:
+        return null;
       case 'connection':
         return <EmptyConnectionScreen />;
       case 'AVFoundationErrorDomain':
@@ -125,7 +146,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     }
   };
 
-  const getSource = () => {
+  const realSource = React.useMemo(() => {
     // Add "file://" if absolute url is provided
     let src = Object.assign({}, source);
     if (typeof source === 'string') {
@@ -140,10 +161,17 @@ function MediaPlayer(props: MediaPlayerProps) {
       src.uri = new URL(source.uri).href;
     }
     return src;
-  };
+  }, [source]);
 
-  const getPlayer = () => {
-    const isPortrait = orientation === PORTRAIT;
+  const onError = React.useCallback(
+    (e: any) => {
+      setError(e.error.domain);
+      showNavigation();
+    },
+    [showNavigation],
+  );
+
+  const player = React.useMemo(() => {
     if (type === MediaType.WEB)
       return (
         <>
@@ -156,69 +184,54 @@ function MediaPlayer(props: MediaPlayerProps) {
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
             scrollEnabled={false}
-            source={getSource()}
+            source={realSource}
             startInLoadingState
             style={isPortrait ? styles.playerPortrait : styles.playerLandscape}
           />
         </>
       );
-    return (
-      <>
-        <VideoPlayer
-          alwaysShowControls={isAudio}
-          controlTimeoutDelay={videoPlayerControlTimeoutDelay}
-          disableFullscreen
-          disableVolume
-          ignoreSilentSwitch="ignore"
-          onBack={handleBack}
-          onEnd={handleVideoPlayerEnd}
-          onError={(e: any) => {
-            setError({
-              active: true,
-              type: e.error.domain,
-            });
-            navigation.setOptions({ ...computeNavBar({ navigation, route }) });
-            StatusBar.setHidden(false);
-          }}
-          rewindTime={10}
-          showDuration
-          showOnStart
-          showOnEnd
-          source={getSource()}
-        />
-      </>
-    );
-  };
+    else
+      return (
+        <>
+          <VideoPlayer
+            alwaysShowControls={isAudio}
+            controlTimeoutDelay={videoPlayerControlTimeoutDelay}
+            disableFullscreen
+            disableVolume
+            ignoreSilentSwitch="ignore"
+            onBack={handleBack}
+            onEnd={handleVideoPlayerEnd}
+            onError={onError}
+            rewindTime={10}
+            showDuration
+            showOnStart
+            showOnEnd
+            source={realSource}
+          />
+        </>
+      );
+  }, [type, isPortrait, handleBack, realSource, isAudio, videoPlayerControlTimeoutDelay, handleVideoPlayerEnd, onError]);
 
-  useDeviceOrientationChange(newOrientation => {
-    const isPortraitOrLandscape =
-      newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
-    if (isPortraitOrLandscape && newOrientation !== orientation) {
-      isChangingOrientation = true;
-      setOrientation(newOrientation);
-    }
-  });
-
+  // Manage orientation
+  const isFocused = useIsFocused();
   React.useEffect(() => {
-    if (!isAudio) Orientation.unlockAllOrientations();
-    setTimeout(() => {
-      if (!error.active) StatusBar.setHidden(true);
-    }, 10);
-    // Manage Android back button
+    if (isFocused && !isAudio) Orientation.unlockAllOrientations();
+    return () => {
+      if (isChangingOrientation.current) Orientation.lockToPortrait();
+    };
+  }, [isAudio, isFocused]);
+
+  // Manage Android back button
+  React.useEffect(() => {
     const backHandler = BackHandler.addEventListener('hardwareBackPress', handleHardwareBack);
     return () => {
       backHandler.remove();
-      if (!isChangingOrientation) {
-        Orientation.lockToPortrait();
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      isChangingOrientation = false;
     };
-  });
+  }, [handleHardwareBack]);
 
   return (
     <PageView style={styles.page} showNetworkBar={false}>
-      {!error.active ? getPlayer() : renderError()}
+      {!error ? player : renderError()}
     </PageView>
   );
 }

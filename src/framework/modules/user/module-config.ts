@@ -5,7 +5,8 @@ import type { UserState } from './reducer';
 export default new NavigableModuleConfig<'user', UserState>({
   name: 'user',
   entcoreScope: [],
-  matchEntcoreApp: () => true,
+  matchEntcoreApp: () => false, // There is no corresponding backend app
+  hasRight: () => true, // By the way, this module must always be available
 
   displayI18n: 'MyAccount',
   displayAs: 'tabModule',

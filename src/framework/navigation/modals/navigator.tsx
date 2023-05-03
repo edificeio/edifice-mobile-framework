@@ -26,7 +26,13 @@ export default (
     </RootStack.Group>
     <RootStack.Group
       screenOptions={{
-        presentation: 'fullScreenModal',
+        // We must use these options instead of a regular modal, because on this screen the `headerShown` option is dynamic.
+        // This is a limitation of React Navigation v6.
+        animation: 'slide_from_bottom',
+        fullScreenGestureEnabled: true,
+        customAnimationOnGesture: true,
+        gestureDirection: 'vertical',
+        // presentation: 'fullScreenModal',
       }}>
       <RootStack.Screen name={ModalsRouteNames.MediaPlayer} options={MediaPlayerNavBar} component={MediaPlayer} />
     </RootStack.Group>

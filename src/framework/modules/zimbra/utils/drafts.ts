@@ -1,8 +1,10 @@
 import { decode } from 'html-entities';
-import I18n from 'i18n-js';
 
 import { getSession } from '~/framework/modules/auth/reducer';
 import { DraftType, IDraft, IMail, IRecipient } from '~/framework/modules/zimbra/model';
+
+const FORWARD_PREFIX = 'Tr : ';
+const REPLY_PREFIX = 'Re : ';
 
 const getRecipientName = (displayNames: string[][], id: string): string =>
   displayNames.find(displayName => displayName[0] === id)?.[1] ?? '';
@@ -30,35 +32,25 @@ const getThreadBody = (mail: IMail): string => {
     '<hr class="ng-scope">' +
     '<p class="ng-scope"></p>' +
     '<p class="medium-text ng-scope">' +
-    '<span translate="" key="transfer.from"><span class="no-style ng-scope">De : </span></span>' +
-    '<em class="ng-binding">' +
-    getRecipientName(mail.displayNames, mail.from) +
-    '</em>' +
+    '<span translate="" key="transfer.from"><span class="no-style ng-scope">De :</span></span>' +
+    `<em class="ng-binding"> ${getRecipientName(mail.displayNames, mail.from)}</em>` +
     '<br>' +
-    '<span class="medium-importance" translate="" key="transfer.date"><span class="no-style ng-scope">Date: </span></span>' +
-    '<em class="ng-binding">' +
-    mail.date.format('DD/MM/YYYY HH:mm') +
-    '</em>' +
+    '<span class="medium-importance" translate="" key="transfer.date"><span class="no-style ng-scope">Date :</span></span>' +
+    `<em class="ng-binding"> ${mail.date.format('dddd D MMMM Y')}</em>` +
     '<br>' +
-    '<span class="medium-importance" translate="" key="transfer.subject"><span class="no-style ng-scope">Objet : </span></span>' +
-    '<em class="ng-binding">' +
-    mail.subject +
-    '</em>' +
+    '<span class="medium-importance" translate="" key="transfer.subject"><span class="no-style ng-scope">Objet :</span></span>' +
+    `<em class="ng-binding"> ${mail.subject}</em>` +
     '<br>' +
-    '<span class="medium-importance" translate="" key="transfer.to"><span class="no-style ng-scope">A : </span></span>' +
-    '<em class="medium-importance">' +
-    mail.to.map(id => getRecipientName(mail.displayNames, id)).join(', ') +
-    '</em>';
+    '<span class="medium-importance" translate="" key="transfer.to"><span class="no-style ng-scope">À :</span></span>' +
+    `<em class="ng-binding"> ${mail.to.map(id => getRecipientName(mail.displayNames, id)).join(', ')}</em>`;
 
   if (mail.cc.length) {
-    header += `<br><span class="medium-importance" translate="" key="transfer.cc">
-    <span class="no-style ng-scope">Copie à : </span>
-    </span><em class="medium-importance ng-scope">${mail.cc.map(id => getRecipientName(mail.displayNames, id)).join(', ')}</em>`;
+    header +=
+      '<br>' +
+      '<span class="medium-importance" translate="" key="transfer.cc"><span class="no-style ng-scope">Copie à :</span></span>' +
+      `<em class="ng-binding"> ${mail.cc.map(id => getRecipientName(mail.displayNames, id)).join(', ')}</em>`;
   }
-
-  header +=
-    '</p><blockquote class="ng-scope"><p class="ng-scope" style="font-size: 24px; line-height: 24px;">' + mail.body + '</p>';
-
+  header += `</p><blockquote class="ng-scope">${mail.body}</blockquote>`;
   return header;
 };
 
@@ -67,7 +59,7 @@ export const initDraftFromMail = (mail: IMail, draftType: DraftType): Partial<ID
     case DraftType.REPLY: {
       return {
         to: [getRecipient(mail.displayNames, mail.from)],
-        subject: I18n.t('zimbra-reply-subject') + mail.subject,
+        subject: REPLY_PREFIX + mail.subject,
         threadBody: getThreadBody(mail),
         inReplyTo: mail.id,
       };
@@ -79,14 +71,14 @@ export const initDraftFromMail = (mail: IMail, draftType: DraftType): Partial<ID
           ...mail.to.filter(id => id !== getSession()?.user.id).map(id => getRecipient(mail.displayNames, id)),
         ],
         cc: mail.cc.filter(id => id !== mail.from).map(id => getRecipient(mail.displayNames, id)),
-        subject: I18n.t('zimbra-reply-subject') + mail.subject,
+        subject: REPLY_PREFIX + mail.subject,
         threadBody: getThreadBody(mail),
         inReplyTo: mail.id,
       };
     }
     case DraftType.FORWARD: {
       return {
-        subject: I18n.t('zimbra-forward-subject') + mail.subject,
+        subject: FORWARD_PREFIX + mail.subject,
         body: '',
         threadBody: getThreadBody(mail),
         attachments: mail.attachments,

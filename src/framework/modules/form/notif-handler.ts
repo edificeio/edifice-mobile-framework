@@ -38,29 +38,30 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
         return { managed: 0 };
       }
       const distributions = await formService.distributions.getFromForm(session, formId);
-      const distribution =
-        distributions.length === 1 ? distributions[0] : distributions.find(d => d.status === DistributionStatus.TO_DO);
 
       // 2. Compute nav action
       const navAction = CommonActions.navigate({
         name: computeTabRouteName(timelineModuleConfig.routeName),
-        params: distribution
-          ? {
-              initial: false,
-              screen: formRouteNames.distribution,
-              params: {
-                id: distribution.id,
-                status: distribution.status,
-                formId: form.id,
-                title: form.title,
-                editable: form.editable,
+        params:
+          form.multiple && (distributions.length > 1 || distributions[0]?.status !== DistributionStatus.TO_DO)
+            ? {
+                initial: false,
+                screen: formRouteNames.home,
+                params: {
+                  notificationFormId: form.id,
+                },
+              }
+            : {
+                initial: false,
+                screen: formRouteNames.distribution,
+                params: {
+                  id: distributions[0].id,
+                  status: distributions[0].status,
+                  formId: form.id,
+                  title: form.title,
+                  editable: form.editable,
+                },
               },
-            }
-          : {
-              initial: false,
-              screen: formRouteNames.home,
-              params: {},
-            },
       });
 
       // 3. Go !

@@ -1,4 +1,4 @@
-import CarouselScreen, { openCarousel } from './screen';
+import CarouselScreen from './screen';
 
-export { CarouselScreen, openCarousel };
+export { CarouselScreen };
 export default CarouselScreen;
