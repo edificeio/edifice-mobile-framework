@@ -61,6 +61,8 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   const [position, setPosition] = React.useState(0);
   const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
   const [responses, setResponses] = React.useState<IQuestionResponse[]>([]);
+  const [isLoadingNext, setLoadingNext] = React.useState<boolean>(false);
+  const [isLoadingPrevious, setLoadingPrevious] = React.useState<boolean>(false);
   const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
   const flatListRef = React.useRef<FlatList>(null);
   const modalBoxRef = React.useRef<ModalBoxHandle>(null);
@@ -221,21 +223,19 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
   };
 
-  const saveChanges = async () => {
+  const goToPreviousPosition = async () => {
     try {
+      setLoadingPrevious(true);
       await postResponsesChanges();
-      Toast.showSuccess(I18n.t('form.answersWellSaved'));
+      setLoadingPrevious(false);
+      const history = positionHistory;
+      setPosition(history[history.length - 1]);
+      history.pop();
+      setPositionHistory(history);
     } catch {
+      setLoadingPrevious(false);
       Toast.showError(I18n.t('common.error.text'));
     }
-  };
-
-  const goToPreviousPosition = () => {
-    postResponsesChanges();
-    const history = positionHistory;
-    setPosition(history[history.length - 1]);
-    history.pop();
-    setPositionHistory(history);
   };
 
   const updatePosition = (newPosition: number) => {
@@ -243,21 +243,28 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     setPosition(newPosition);
   };
 
-  const goToNextPosition = () => {
-    postResponsesChanges().then(() => Toast.showSuccess(I18n.t('form.answersWellSaved')));
-    const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
-    if (conditionalQuestion) {
-      const res = responses.find(r => r.questionId === conditionalQuestion.id);
-      const sectionId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextSectionId;
-      if (sectionId === null) {
-        return updatePosition(props.elementsCount);
+  const goToNextPosition = async () => {
+    try {
+      setLoadingNext(true);
+      await postResponsesChanges();
+      setLoadingNext(false);
+      const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
+      if (conditionalQuestion) {
+        const res = responses.find(r => r.questionId === conditionalQuestion.id);
+        const sectionId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextSectionId;
+        if (sectionId === null) {
+          return updatePosition(props.elementsCount);
+        }
+        const sectionPosition = props.elements.find(e => getIsElementSection(e) && e.id === sectionId)?.position;
+        if (sectionPosition) {
+          return updatePosition(sectionPosition - 1);
+        }
       }
-      const sectionPosition = props.elements.find(e => getIsElementSection(e) && e.id === sectionId)?.position;
-      if (sectionPosition) {
-        return updatePosition(sectionPosition - 1);
-      }
+      updatePosition(position + 1);
+    } catch {
+      setLoadingNext(false);
+      Toast.showError(I18n.t('common.error.text'));
     }
-    updatePosition(position + 1);
   };
 
   const submitDistribution = async (structureId: string) => {
@@ -334,8 +341,10 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     }
     return (
       <View style={styles.actionsContainer}>
-        {positionHistory.length ? <ActionButton text={I18n.t('previous')} type="secondary" action={goToPreviousPosition} /> : null}
-        <ActionButton text={I18n.t('next')} action={goToNextPosition} disabled={isMandatoryAnswerMissing} />
+        {positionHistory.length ? (
+          <ActionButton text={I18n.t('previous')} type="secondary" action={goToPreviousPosition} loading={isLoadingPrevious} />
+        ) : null}
+        <ActionButton text={I18n.t('next')} action={goToNextPosition} disabled={isMandatoryAnswerMissing} loading={isLoadingNext} />
       </View>
     );
   };
@@ -396,8 +405,13 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           {
             text: I18n.t('common.quit'),
             onPress: async () => {
-              await saveChanges();
-              handleRemoveConfirmNavigationEvent(data.action, props.navigation);
+              try {
+                await postResponsesChanges();
+                handleRemoveConfirmNavigationEvent(data.action, props.navigation);
+                Toast.showSuccess(I18n.t('form.answersWellSaved'));
+              } catch {
+                Toast.showError(I18n.t('common.error.text'));
+              }
             },
             style: 'destructive',
           },
