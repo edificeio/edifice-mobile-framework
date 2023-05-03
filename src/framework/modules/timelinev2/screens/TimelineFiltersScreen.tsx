@@ -80,7 +80,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     this.updateNavBar();
     return (
       <>
-        <PreventBack onPreventBack={!areFiltersUnchanged || noneSet} />
+        <PreventBack onPreventBack={(!areFiltersUnchanged || noneSet) && Object.keys(notifFilterSettings).length > 0} />
         <PageView>{this.renderList()}</PageView>
       </>
     );
