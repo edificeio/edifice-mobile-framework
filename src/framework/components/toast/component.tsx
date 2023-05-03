@@ -19,7 +19,6 @@ export default class Toast {
   static showError(text: string = I18n.t('common.error.text')) {
     this.showToast('error', text);
     Feedback.errorDisplayed();
-    e;
   }
 
   static showInfo(text: string) {
