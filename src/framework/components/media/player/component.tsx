@@ -45,7 +45,7 @@ export function computeLoadingNavBar({
     ...navBarOptions({
       navigation,
       route,
-      title: 'Loading',
+      title: '',
     }),
     headerTransparent: true,
     headerStyle: { backgroundColor: theme.ui.shadowColor.toString() },
@@ -131,6 +131,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, [filetype, showNavigation]);
 
   React.useEffect(() => {
+    StatusBar.setHidden(true);
     if (!connected) {
       setError('connection');
       showNavigation();
@@ -269,6 +270,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     [orientation],
   );
 
+  console.debug('render');
   return (
     <PageView style={wrapperStyle} showNetworkBar={false}>
       {!error ? player : renderError()}
