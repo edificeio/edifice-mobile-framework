@@ -9,6 +9,7 @@ import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyMediaNotSupportedScreen } from '~/framework/components/emptyMediaNotSupported';
@@ -207,6 +208,7 @@ function MediaPlayer(props: MediaPlayerProps) {
             showOnStart
             showOnEnd
             source={realSource}
+            videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
           />
         </>
       );
@@ -229,8 +231,19 @@ function MediaPlayer(props: MediaPlayerProps) {
     };
   }, [handleHardwareBack]);
 
+  // force page to be 100% height of the screen
+  const wrapperStyle = React.useMemo(
+    () => [
+      styles.page,
+      {
+        height: orientation === PORTRAIT ? UI_SIZES.screen.height : UI_SIZES.screen.width,
+      },
+    ],
+    [orientation],
+  );
+
   return (
-    <PageView style={styles.page} showNetworkBar={false}>
+    <PageView style={wrapperStyle} showNetworkBar={false}>
       {!error ? player : renderError()}
     </PageView>
   );

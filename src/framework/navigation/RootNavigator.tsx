@@ -2,7 +2,7 @@
  * Startup is a conditionnaly rendered content based on app startup status.
  * It can render the SplashScreen, auth flow or main flow in function of token loading and status.
  */
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
@@ -18,9 +18,8 @@ import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
+import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
-import { Trackers } from '../util/tracker';
-import { useNavigationTracker } from '../util/tracker/useNavigationTracker';
 import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
@@ -46,6 +45,15 @@ export interface RootNavigatorStoreProps {
 export type RootNavigatorProps = RootNavigatorStoreProps;
 
 const RootStack = getTypedRootStack();
+
+// We add a dark background to prevent blinking when tabBar shows/hides
+const navTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: theme.ui.shadowColor.toString(),
+  },
+};
 
 function RootNavigator(props: RootNavigatorProps) {
   const { logged, session, isReady, autoLoginResult, dispatch } = props;
@@ -87,7 +95,7 @@ function RootNavigator(props: RootNavigatorProps) {
       <>
         <SplashScreenComponent key={isReady} />
         {isReady ? (
-          <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
+          <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState} theme={navTheme}>
             <AppPushNotificationHandlerComponent>
               <RootStack.Navigator screenOptions={{ headerShown: true }}>
                 {routes}
@@ -98,7 +106,7 @@ function RootNavigator(props: RootNavigatorProps) {
         ) : null}
       </>
     );
-  }, [isReady, initialNavState, routes]);
+  }, [isReady, initialNavState, trackNavState, routes]);
 
   return ret;
 }
