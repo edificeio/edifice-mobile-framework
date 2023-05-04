@@ -30,6 +30,7 @@ import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
+import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
 import { setNextTabJump } from './nextTabJump';
@@ -130,6 +131,7 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
     <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName}>
       {ModuleScreens.all}
       {authNavigation}
+      {modals}
     </RootStack.Navigator>
   );
 }
