@@ -37,6 +37,22 @@ export function computeNavBar({
   };
 }
 
+export function computeLoadingNavBar({
+  navigation,
+  route,
+}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
+  return {
+    ...navBarOptions({
+      navigation,
+      route,
+      title: 'Loading',
+    }),
+    headerTransparent: true,
+    headerStyle: { backgroundColor: theme.ui.shadowColor.toString() },
+    headerShown: true,
+  };
+}
+
 export function computeHiddenNavBar({
   navigation,
   route,
@@ -68,6 +84,7 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
+  const isLoadingRef = React.useRef<boolean>(true);
 
   const hideNavigation = React.useCallback(() => {
     if (navigationHidden.current !== true) {
@@ -120,7 +137,11 @@ function MediaPlayer(props: MediaPlayerProps) {
     } else {
       setError(undefined);
       if (setErrorMediaType()) {
-        setTimeout(() => hideNavigation());
+        setTimeout(() => {
+          if (!isLoadingRef.current) {
+            hideNavigation();
+          }
+        });
       }
     }
   }, [hideNavigation, connected, setErrorMediaType, showNavigation]);
@@ -172,6 +193,11 @@ function MediaPlayer(props: MediaPlayerProps) {
     [showNavigation],
   );
 
+  const onLoad = React.useCallback(() => {
+    isLoadingRef.current = false;
+    hideNavigation();
+  }, [hideNavigation]);
+
   const player = React.useMemo(() => {
     if (type === MediaType.WEB)
       return (
@@ -203,6 +229,7 @@ function MediaPlayer(props: MediaPlayerProps) {
             onBack={handleBack}
             onEnd={handleVideoPlayerEnd}
             onError={onError}
+            onLoad={onLoad}
             rewindTime={10}
             showDuration
             showOnStart
@@ -212,7 +239,7 @@ function MediaPlayer(props: MediaPlayerProps) {
           />
         </>
       );
-  }, [type, isPortrait, handleBack, realSource, isAudio, videoPlayerControlTimeoutDelay, handleVideoPlayerEnd, onError]);
+  }, [type, isPortrait, handleBack, realSource, isAudio, videoPlayerControlTimeoutDelay, handleVideoPlayerEnd, onError, onLoad]);
 
   // Manage orientation
   const isFocused = useIsFocused();
