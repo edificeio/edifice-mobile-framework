@@ -1,4 +1,4 @@
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -168,6 +168,9 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           //await Promise.all(questionIds.map(id => formService.distribution.deleteQuestionResponses(session, distributionId, id)));
           res = responses.filter(r => questionIds?.includes(r.questionId));
           //res.map(r => (r.id = undefined));
+        } else if (question.type === QuestionType.ORDER) {
+          await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
+          res.map(r => (r.id = undefined));
         }
         await Promise.all(
           res.map(response => {
@@ -183,7 +186,14 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
               );
             } else {
               return formService.question
-                .createResponse(session, response.questionId, distributionId, response.choiceId ?? null, response.answer)
+                .createResponse(
+                  session,
+                  response.questionId,
+                  distributionId,
+                  response.choiceId ?? null,
+                  response.answer,
+                  response.choicePosition ?? null,
+                )
                 .then(r => (response.id = r.id));
             }
           }),
@@ -209,7 +219,14 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                 answer: '',
               };
               return formService.question
-                .createResponse(session, response.questionId, distributionId, null, response.answer)
+                .createResponse(
+                  session,
+                  response.questionId,
+                  distributionId,
+                  null,
+                  response.answer,
+                  response.choicePosition ?? null,
+                )
                 .then(r => {
                   response.id = r.id;
                   updateQuestionResponses(id, [response]);
