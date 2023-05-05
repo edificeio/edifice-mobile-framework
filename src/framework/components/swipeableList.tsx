@@ -97,6 +97,11 @@ const styles = StyleSheet.create({
 
 const defaultSwipeActionWidth = 100;
 
+let isScrollingWhileTouchSwipeAction = false;
+const setIsScrollingWhileTouchSwipeAction = () => {
+  isScrollingWhileTouchSwipeAction = true;
+};
+
 const SwipeAction = <ItemT extends { key: string }>(
   props: ISwipeAction<ItemT> & {
     rowMap: RowMap<ItemT>;
@@ -123,13 +128,20 @@ const SwipeAction = <ItemT extends { key: string }>(
           }}
         />
       ) : null,
-    [overlapWidth, props.backgroundColor, props.direction],
+    [overlapWidth, props.backgroundColor, props.direction, props.isFirstAction],
   );
   return (
     <View style={wrapperStyle}>
       <TouchableOpacity
-        onPress={async e => {
-          return props.action(props.rowMap, e);
+        onPressIn={() => {
+          isScrollingWhileTouchSwipeAction = false;
+        }}
+        onPressOut={e => {
+          setTimeout(() => {
+            if (!isScrollingWhileTouchSwipeAction) {
+              return props.action(props.rowMap, e);
+            }
+          }, 25); // 🍔 ! We want to ensure onScrollBeginDrag event will be fired before this !!
         }}>
         <View
           style={[
@@ -351,6 +363,7 @@ export default React.forwardRef(
           onRowClose={onRowClose}
           ListFooterComponent={realListFooterComponent}
           scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
+          onScrollBeginDrag={setIsScrollingWhileTouchSwipeAction}
         />
         <ScrollToTopHandler listRef={ref as React.RefObject<SwipeListView<any>>} />
       </>
