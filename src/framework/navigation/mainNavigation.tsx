@@ -23,7 +23,6 @@ import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { TextSizeStyle } from '~/framework/components/text';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
