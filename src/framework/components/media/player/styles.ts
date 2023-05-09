@@ -38,4 +38,9 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.screen.topInset,
     width: UI_SIZES.screen.width,
   },
+  errorScreen: {
+    backgroundColor: 'transparent',
+    height: UI_SIZES.screen.height,
+    justifyContent: 'center',
+  },
 });
