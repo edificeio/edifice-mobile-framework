@@ -30,6 +30,7 @@
 		<array>
 			<string>http</string>
 			<string>https</string>
+			<string>moodlemobile</string>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true />
