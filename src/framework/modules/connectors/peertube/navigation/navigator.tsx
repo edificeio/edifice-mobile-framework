@@ -15,7 +15,11 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         component={ConnectorRedirectScreen}
         options={homeNavBar}
         initialParams={{
-          url: 'https://peertube.lyceeconnecte.fr',
+          url: encodeURIComponent(
+            `https://mon.lyceeconnecte.fr/auth/oauth2/auth?response_type=code&scope=directory&client_id=peertube&state=state&redirect_uri=${encodeURIComponent(
+              'https://peertube.lyceeconnecte.fr/proxy',
+            )}`,
+          ),
         }}
       />
     </>

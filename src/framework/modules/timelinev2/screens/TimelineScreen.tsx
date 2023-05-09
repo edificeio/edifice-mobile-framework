@@ -92,6 +92,9 @@ export interface ITimelineItem {
   data: ITimelineNotification | IEntcoreFlashMessage;
 }
 
+const NOTIFICATION_THROTLE_DELAY = 250;
+let notificationOpenThrottle = true;
+
 // UTILS ==========================================================================================
 
 const getTimelineItems = (flashMessages: IFlashMessages_State_Data, notifications: INotifications_State) => {
@@ -362,8 +365,13 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       if (isResourceUriNotification(nn)) openUrl((nn as IResourceUriNotification).resource.uri);
       return { managed: 1 };
     };
-    if (this.props.handleOpenNotification)
+    if (notificationOpenThrottle && this.props.handleOpenNotification) {
+      notificationOpenThrottle = false;
       this.props.handleOpenNotification(n, fallbackHandleNotificationAction, this.props.navigation);
+      setTimeout(() => {
+        notificationOpenThrottle = true;
+      }, NOTIFICATION_THROTLE_DELAY);
+    }
   }
 
   async doDismissFlashMessage(flashMessageId: number) {

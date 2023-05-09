@@ -19,6 +19,5 @@ const trackViewIfNeeded = async (routeNameRef: React.MutableRefObject<string | u
 
 export const useNavigationTracker = () => {
   const routeNameRef = React.useRef<string>();
-  console.debug('Recreate useNavigationTracker');
   return () => trackViewIfNeeded(routeNameRef, navigationRef.getCurrentRoute()?.name);
 };

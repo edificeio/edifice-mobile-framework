@@ -38,41 +38,29 @@ interface IFormOrderCardProps {
   onEditQuestion?: () => void;
 }
 
-const sortChoices = (choices: IQuestionChoice[], answer?: string) => {
-  if (!answer) {
-    return choices;
-  }
-  const result: IQuestionChoice[] = [];
-  const choiceIds = answer
-    .replace(/\[|\]|/g, '')
-    .split(',')
-    .map(Number);
-
-  for (const choiceId of choiceIds) {
-    const choice = choices.find(c => c.id === choiceId);
-    if (choice) {
-      result.push(choice);
-    }
-  }
-  return result;
+const sortChoices = (choices: IQuestionChoice[], responses: IQuestionResponse[]): IQuestionChoice[] => {
+  if (!responses.length) return choices;
+  const ids = responses
+    .filter(r => r.choicePosition)
+    .sort((a, b) => a.choicePosition! - b.choicePosition!)
+    .map(r => r.choiceId);
+  return choices.slice().sort((a, b) => ids.indexOf(a.id) - ids.indexOf(b.id));
 };
 
 export const FormOrderCard = ({ isDisabled, question, responses, onChangeAnswer, onEditQuestion }: IFormOrderCardProps) => {
-  const [choices, setChoices] = React.useState<IQuestionChoice[]>(sortChoices(question.choices, responses[0]?.answer));
+  const [choices, setChoices] = React.useState<IQuestionChoice[]>(sortChoices(question.choices, responses));
   const { title, mandatory } = question;
 
   React.useEffect(() => {
-    const answer = `[${choices.map(choice => choice.id).join(',')}]`;
-
-    if (responses.length) {
-      responses[0].answer = answer;
-    } else {
-      responses.push({
-        answer,
+    onChangeAnswer(
+      question.id,
+      choices.map((choice, index) => ({
         questionId: question.id,
-      });
-    }
-    onChangeAnswer(question.id, responses);
+        answer: choice.value,
+        choiceId: choice.id,
+        choicePosition: index + 1,
+      })),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [choices]);
 

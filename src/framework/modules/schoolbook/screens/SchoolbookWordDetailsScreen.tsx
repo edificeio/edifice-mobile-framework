@@ -21,7 +21,6 @@ import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
-import moduleConfig from '~/framework/modules/schoolbook/module-config';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-handler';
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';

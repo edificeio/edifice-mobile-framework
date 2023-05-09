@@ -3,6 +3,7 @@
  */
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -22,7 +23,6 @@ import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
@@ -158,6 +158,8 @@ export function Carousel(props: ICarouselProps) {
     [imageViewerRef],
   );
 
+  const headerHeight = useHeaderHeight();
+
   const downloadFile = React.useCallback(
     async (url: string | ImageURISource) => {
       const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
@@ -224,12 +226,12 @@ export function Carousel(props: ICarouselProps) {
         } else {
           await CameraRoll.save(realFilePath);
         }
-        Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
+        Toast.showSuccess(I18n.t('save.to.camera.roll.success'), { topOffset: headerHeight });
       } catch {
-        Toast.showError(I18n.t('save.to.camera.roll.error'));
+        Toast.showError(I18n.t('save.to.camera.roll.error'), { topOffset: headerHeight });
       }
     },
-    [data, downloadFile],
+    [data, downloadFile, headerHeight],
   );
 
   const onShare = React.useCallback(
@@ -245,16 +247,16 @@ export function Carousel(props: ICarouselProps) {
       } catch (e) {
         if (e instanceof PermissionError) {
           Alert.alert(
-            I18n.t('share.permission.blocked.title'),
-            I18n.t('share.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+            I18n.t('share-permission-blocked-title'),
+            I18n.t('share-permission-blocked-text', { appName: DeviceInfo.getApplicationName() }),
           );
           return undefined;
         } else {
-          Toast.showError(I18n.t('share-error'));
+          Toast.showError(I18n.t('share-error'), { topOffset: headerHeight });
         }
       }
     },
-    [downloadFile],
+    [downloadFile, headerHeight],
   );
 
   const loadingComponent = React.useMemo(() => <Loading />, []);
@@ -341,7 +343,3 @@ export function Carousel(props: ICarouselProps) {
 }
 
 export default Carousel;
-
-export function openCarousel(props: ICarouselNavParams) {
-  navigate(ModalsRouteNames.Carousel, props);
-}

@@ -40,6 +40,7 @@ export const computeNavBar = ({
 const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProps) => {
   const modalBoxRef = React.useRef<ModalBoxHandle>(null);
   const [modalDistributions, setModalDistributions] = React.useState<IFormDistributions | undefined>();
+  const [hasOpenedNotificationForm, setOpenedNotificationForm] = React.useState<boolean>(false);
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -91,6 +92,19 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
+
+  React.useEffect(() => {
+    const { notificationFormId } = props.route.params;
+    if (!notificationFormId || loadingState !== AsyncPagedLoadingState.DONE || hasOpenedNotificationForm) return;
+    const item = props.formDistributions.find(f => f.id === notificationFormId);
+
+    if (item) {
+      setModalDistributions(item);
+      modalBoxRef.current?.doShowModal();
+      setOpenedNotificationForm(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingState]);
 
   const openDistribution = (id: number, status: DistributionStatus, form: IForm) => {
     modalBoxRef.current?.doDismissModal();

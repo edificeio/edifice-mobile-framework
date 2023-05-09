@@ -18,10 +18,10 @@ export const setModalModeForRoutes = (routeNames: string[]) => {
 export const isModalModeOnThisRoute = (routeName: string) => routesWithTabBarHiddenOnAndroid.includes(routeName);
 
 export const getAndroidTabBarStyleForNavState = (navState: NavigationState) => {
-  if (Platform.OS !== 'android') return undefined;
   const currentTab = navState.routes[navState.index];
   const currentScreen =
     currentTab?.state && currentTab.state.index !== undefined ? currentTab.state.routes[currentTab.state.index] : undefined;
   const hideTabBar = currentScreen?.name && isModalModeOnThisRoute(currentScreen?.name);
+  if (Platform.OS !== 'android') return undefined;
   return hideTabBar ? { display: 'none' as const } : undefined;
 };

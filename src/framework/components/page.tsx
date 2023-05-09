@@ -59,7 +59,7 @@ export const PageViewStyle = styled.View({
   backgroundColor: theme.ui.background.page,
 });
 export const PageViewContainer = (props: PageViewProps) => {
-  const { children, gutters, statusBar = 'primary', ...viewProps } = props;
+  const { children, gutters, showNetworkBar = true, statusBar = 'primary', ...viewProps } = props;
   const route = useRoute();
 
   const gutterStyle = React.useMemo(
@@ -95,7 +95,7 @@ export const PageViewContainer = (props: PageViewProps) => {
     <PageViewStyle {...viewProps}>
       <>
         {statusBarComponent}
-        <DEPRECATED_ConnectionTrackingBar />
+        {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
         <View style={gutterStyle}>
           {children}

@@ -17,7 +17,9 @@ export interface FormDistributionListScreenProps {
   fetchForms: () => Promise<IForm[]>;
 }
 
-export interface FormDistributionListScreenNavParams {}
+export interface FormDistributionListScreenNavParams {
+  notificationFormId?: number;
+}
 
 export interface FormDistributionListScreenPrivateProps
   extends NativeStackScreenProps<FormNavigationParams, 'home'>,

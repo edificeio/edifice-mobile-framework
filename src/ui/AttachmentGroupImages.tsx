@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FlatList, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel';
+import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Image, formatSource } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';

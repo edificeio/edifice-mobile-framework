@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
+import { UI_STYLES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
 import { SmallText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -23,7 +24,7 @@ export const CheckboxButton = ({
   return (
     <TouchableOpacity onPress={onPress}>
       <ListItem
-        leftElement={<SmallText>{I18n.t(title)}</SmallText>}
+        leftElement={<SmallText style={UI_STYLES.flexShrink1}>{I18n.t(title)}</SmallText>}
         rightElement={
           <Checkbox
             {...(isChecked && isAllButton ? { customCheckboxColor: theme.ui.text.light } : {})}

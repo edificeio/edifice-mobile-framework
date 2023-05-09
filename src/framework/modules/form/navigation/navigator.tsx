@@ -13,7 +13,12 @@ import { FormNavigationParams, formRouteNames } from '.';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<FormNavigationParams>(moduleConfig.name, Stack => (
     <>
-      <Stack.Screen name={formRouteNames.home} component={FormDistributionListScreen} options={distributionListNavBar} />
+      <Stack.Screen
+        name={formRouteNames.home}
+        component={FormDistributionListScreen}
+        options={distributionListNavBar}
+        initialParams={{}}
+      />
       <Stack.Screen name={formRouteNames.distribution} component={FormDistributionScreen} options={distributionNavBar} />
     </>
   ));
