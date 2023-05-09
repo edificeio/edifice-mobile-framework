@@ -9,6 +9,7 @@ export interface ConnectorRedirectScreenProps {}
 
 export interface ConnectorRedirectScreenNavParams {
   url: string;
+  appUrl?: string;
 }
 
 export interface ConnectorRedirectScreenPrivateProps
