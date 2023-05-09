@@ -96,6 +96,7 @@ interface IBackendQuestionResponse {
   choice_id?: number;
   distribution_id: number;
   original_id?: number;
+  choice_position?: number;
   custom_answer: string;
 }
 
@@ -205,6 +206,7 @@ const questionResponseAdapter: (data: IBackendQuestionResponse) => IQuestionResp
     answer: data.answer,
     choiceId: data.choice_id,
     customAnswer: data.custom_answer,
+    choicePosition: data.choice_position,
   } as IQuestionResponse;
 };
 
@@ -345,6 +347,7 @@ export const formService = {
       distributionId: number,
       choiceId: number | null,
       answer: string,
+      choicePosition: number | null,
     ) => {
       const api = `/formulaire/questions/${questionId}/responses`;
       const body = JSON.stringify({
@@ -353,6 +356,7 @@ export const formService = {
         choice_id: choiceId,
         answer,
         responder_id: session.user.id,
+        choice_position: choicePosition,
       });
       const response = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',

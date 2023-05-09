@@ -9,6 +9,7 @@ import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyMediaNotSupportedScreen } from '~/framework/components/emptyMediaNotSupported';
@@ -32,6 +33,22 @@ export function computeNavBar({
     }),
     headerTransparent: true,
     headerStyle: { backgroundColor: theme.palette.primary.regular.toString() },
+    headerShown: true,
+  };
+}
+
+export function computeLoadingNavBar({
+  navigation,
+  route,
+}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
+  return {
+    ...navBarOptions({
+      navigation,
+      route,
+      title: '',
+    }),
+    headerTransparent: true,
+    headerStyle: { backgroundColor: theme.ui.shadowColor.toString() },
     headerShown: true,
   };
 }
@@ -67,6 +84,7 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
+  const isLoadingRef = React.useRef<boolean>(true);
 
   const hideNavigation = React.useCallback(() => {
     if (navigationHidden.current !== true) {
@@ -113,13 +131,18 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, [filetype, showNavigation]);
 
   React.useEffect(() => {
+    StatusBar.setHidden(true);
     if (!connected) {
       setError('connection');
       showNavigation();
     } else {
       setError(undefined);
       if (setErrorMediaType()) {
-        setTimeout(() => hideNavigation());
+        setTimeout(() => {
+          if (!isLoadingRef.current) {
+            hideNavigation();
+          }
+        });
       }
     }
   }, [hideNavigation, connected, setErrorMediaType, showNavigation]);
@@ -171,6 +194,11 @@ function MediaPlayer(props: MediaPlayerProps) {
     [showNavigation],
   );
 
+  const onLoad = React.useCallback(() => {
+    isLoadingRef.current = false;
+    hideNavigation();
+  }, [hideNavigation]);
+
   const player = React.useMemo(() => {
     if (type === MediaType.WEB)
       return (
@@ -202,15 +230,17 @@ function MediaPlayer(props: MediaPlayerProps) {
             onBack={handleBack}
             onEnd={handleVideoPlayerEnd}
             onError={onError}
+            onLoad={onLoad}
             rewindTime={10}
             showDuration
             showOnStart
             showOnEnd
             source={realSource}
+            videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
           />
         </>
       );
-  }, [type, isPortrait, handleBack, realSource, isAudio, videoPlayerControlTimeoutDelay, handleVideoPlayerEnd, onError]);
+  }, [type, isPortrait, handleBack, realSource, isAudio, videoPlayerControlTimeoutDelay, handleVideoPlayerEnd, onError, onLoad]);
 
   // Manage orientation
   const isFocused = useIsFocused();
@@ -229,8 +259,20 @@ function MediaPlayer(props: MediaPlayerProps) {
     };
   }, [handleHardwareBack]);
 
+  // force page to be 100% height of the screen
+  const wrapperStyle = React.useMemo(
+    () => [
+      styles.page,
+      {
+        height: orientation === PORTRAIT ? UI_SIZES.screen.height : UI_SIZES.screen.width,
+      },
+    ],
+    [orientation],
+  );
+
+  console.debug('render');
   return (
-    <PageView style={styles.page} showNetworkBar={false}>
+    <PageView style={wrapperStyle} showNetworkBar={false}>
       {!error ? player : renderError()}
     </PageView>
   );
