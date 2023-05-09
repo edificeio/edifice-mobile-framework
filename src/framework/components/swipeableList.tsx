@@ -98,9 +98,6 @@ const styles = StyleSheet.create({
 const defaultSwipeActionWidth = 100;
 
 let isScrollingWhileTouchSwipeAction = false;
-const setIsScrollingWhileTouchSwipeAction = () => {
-  isScrollingWhileTouchSwipeAction = true;
-};
 
 const SwipeAction = <ItemT extends { key: string }>(
   props: ISwipeAction<ItemT> & {
@@ -214,6 +211,7 @@ export default React.forwardRef(
       ListFooterComponent,
       scrollIndicatorInsets,
       renderItem,
+      onScrollBeginDrag,
       ...otherListProps
     } = props;
     const animatedRefs = React.useRef<{ [key: string]: Animated.Value }>({});
@@ -300,6 +298,14 @@ export default React.forwardRef(
     const closeCurrentRow = (rowKey: string) => {
       rowMapRef.current?.[rowKey]?.closeRow();
     };
+
+    const setIsScrollingWhileTouchSwipeAction = React.useCallback(
+      event => {
+        isScrollingWhileTouchSwipeAction = true;
+        onScrollBeginDrag?.(event);
+      },
+      [onScrollBeginDrag],
+    );
 
     const realRenderItem = React.useCallback(
       (info, rowMap) => {

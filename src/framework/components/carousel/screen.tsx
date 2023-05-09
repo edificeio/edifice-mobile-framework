@@ -176,26 +176,31 @@ export function Carousel(props: ICarouselProps) {
     [data],
   );
 
+  const getSyncedFile = React.useCallback(
+    async (url: string | ImageURISource) => {
+      let sf: SyncedFile;
+      const foundData = data.find(d => (d.src = url));
+      const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
+      if (realUrl!.indexOf('file://') > -1) {
+        sf = new SyncedFile(
+          new LocalFile({ filepath: realUrl!, filetype: foundData?.mime!, filename: '' }, { _needIOSReleaseSecureAccess: false }),
+          {
+            url: realUrl!,
+          },
+        );
+      } else {
+        sf = await downloadFile(url);
+      }
+      return sf;
+    },
+    [data, downloadFile],
+  );
+
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
       try {
-        let sf: SyncedFile;
+        const sf = await getSyncedFile(url);
         try {
-          const foundData = data.find(d => (d.src = url));
-          const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
-          if (realUrl!.indexOf('file://') > -1) {
-            sf = new SyncedFile(
-              new LocalFile(
-                { filepath: realUrl!, filetype: foundData?.mime!, filename: '' },
-                { _needIOSReleaseSecureAccess: false },
-              ),
-              {
-                url: realUrl!,
-              },
-            );
-          } else {
-            sf = await downloadFile(url);
-          }
           if (!sf) return;
           const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
           const permissions = Platform.select<Permission[]>({
@@ -231,18 +236,19 @@ export function Carousel(props: ICarouselProps) {
         Toast.showError(I18n.t('save.to.camera.roll.error'), { topOffset: headerHeight });
       }
     },
-    [data, downloadFile, headerHeight],
+    [getSyncedFile, headerHeight],
   );
 
   const onShare = React.useCallback(
     async (url: string | ImageURISource) => {
       try {
-        const sf = await downloadFile(url);
+        const sf = await getSyncedFile(url);
         if (!sf) return;
         await Share.open({
           type: sf.filetype || 'text/html',
           url: Platform.OS === 'android' ? 'file://' + sf.filepath : sf.filepath,
           showAppsToView: true,
+          failOnCancel: false,
         });
       } catch (e) {
         if (e instanceof PermissionError) {
@@ -256,7 +262,7 @@ export function Carousel(props: ICarouselProps) {
         }
       }
     },
-    [downloadFile, headerHeight],
+    [getSyncedFile, headerHeight],
   );
 
   const loadingComponent = React.useMemo(() => <Loading />, []);

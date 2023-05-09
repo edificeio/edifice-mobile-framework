@@ -132,6 +132,10 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
       />
     );
   }
+
+  componentDidMount(): void {
+    this.props.navigation.setOptions(computeNavBar(this.props));
+  }
 }
 
 export default HomeworkExplorerScreen;
