@@ -1,4 +1,4 @@
-import { StackNavigationState } from '@react-navigation/native';
+import { Route, StackNavigationState } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
@@ -30,6 +30,7 @@ import { getMailListState } from '~/framework/modules/conversation/state/mailLis
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
+import { registerCustomRouteTracking } from '~/framework/util/tracker/useNavigationTracker';
 
 export type IInit = {
   data: IInitMail;
@@ -286,22 +287,26 @@ const mapDispatchToProps = dispatch => {
 // ------------------------------------------------------------------------------------------------
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConversationMailListScreen);
-// const ConversationMailListScreenConnectedWithTracking = withViewTracking(props => {
-//   const key = props.route.params.key;;
-//   const getValue = () => {
-//     switch (key) {
-//       case 'inbox':
-//       case undefined:
-//         return 'inbox';
-//       case 'sendMessages':
-//         return 'outbox';
-//       case 'drafts':
-//         return 'drafts';
-//       case 'trash':
-//         return 'trash';
-//       default:
-//         return 'folder';
-//     }
-//   };
-//   return [moduleConfig.trackingName.toLowerCase(), getValue()];
-// })(ConversationMailListScreenConnected);
+
+registerCustomRouteTracking(
+  conversationRouteNames.home,
+  (route: Route<typeof conversationRouteNames.home, ConversationNavigationParams['home']>) => {
+    const key = route.params.key;
+    const getValue = () => {
+      switch (key) {
+        case 'inbox':
+        case undefined:
+          return 'inbox';
+        case 'sendMessages':
+          return 'outbox';
+        case 'drafts':
+          return 'drafts';
+        case 'trash':
+          return 'trash';
+        default:
+          return 'folder';
+      }
+    };
+    return `${moduleConfig.trackingName}/${getValue()}`;
+  },
+);
