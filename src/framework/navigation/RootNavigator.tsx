@@ -46,15 +46,6 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 
 const RootStack = getTypedRootStack();
 
-// We add a dark background to prevent blinking when tabBar shows/hides
-const navTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: theme.ui.shadowColor.toString(),
-  },
-};
-
 function RootNavigator(props: RootNavigatorProps) {
   const { logged, session, isReady, autoLoginResult, dispatch } = props;
   const isFullyLogged = !!(logged && session); // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
@@ -95,7 +86,7 @@ function RootNavigator(props: RootNavigatorProps) {
       <>
         <SplashScreenComponent key={isReady} />
         {isReady ? (
-          <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState} theme={navTheme}>
+          <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
             <AppPushNotificationHandlerComponent>
               <RootStack.Navigator screenOptions={{ headerShown: true }}>
                 {routes}
