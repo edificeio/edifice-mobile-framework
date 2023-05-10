@@ -113,7 +113,7 @@
     "react-native-image-picker": "5.3.1",
     "react-native-keyboard-avoiding-scroll-view": "1.0.1",
     "react-native-layout-debug": "1.1.1",
-    "react-native-localize": "2.2.6",
+    "react-native-localize": "3.0.0",
     "react-native-matomo": "git+https://github.com/BonifyByForteil/react-native-matomo.git",
     "react-native-media-console": "2.0.6",
     "react-native-modal": "13.0.1",
