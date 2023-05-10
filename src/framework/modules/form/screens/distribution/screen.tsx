@@ -1,8 +1,9 @@
-import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -10,6 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -439,7 +441,11 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
-  return <PageComponent>{renderPage()}</PageComponent>;
+  return (
+    <GestureHandlerRootView style={UI_STYLES.flex1}>
+      <PageComponent>{renderPage()}</PageComponent>
+    </GestureHandlerRootView>
+  );
 };
 
 export default connect(
