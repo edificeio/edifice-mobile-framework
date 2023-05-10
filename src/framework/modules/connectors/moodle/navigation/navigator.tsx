@@ -15,6 +15,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         component={ConnectorRedirectScreen}
         options={homeNavBar}
         initialParams={{
+          appUrl: 'moodlemobile://https://moodle.lyceeconnecte.fr',
           url: 'https://mon.lyceeconnecte.fr/moodle',
         }}
       />

@@ -8,8 +8,6 @@ import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
 import I18n from 'i18n-js';
 import moment from 'moment';
-// Moment.js translations
-// import "moment/locale/en"; // Built-in locale
 import 'moment/locale/es';
 import 'moment/locale/fr';
 import { I18nManager } from 'react-native';
@@ -54,7 +52,7 @@ export const initI18n = () => {
   I18n.fallbacks = true;
   I18n.defaultLocale = 'en';
   I18n.translations = finaleTranslations;
-  const res = RNLocalize.findBestAvailableLanguage(Object.keys(I18n.translations)) as {
+  const res = RNLocalize.findBestLanguageTag(Object.keys(I18n.translations)) as {
     languageTag: string;
     isRTL: boolean;
   };

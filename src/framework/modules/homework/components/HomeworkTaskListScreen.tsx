@@ -111,7 +111,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('Homework'),
+    // No title until data is loaded
+    // title: I18n.t('Homework'),
   }),
 });
 
@@ -128,10 +129,14 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     } else return null;
   }
 
-  componentDidMount() {
+  updateNavBarTitle() {
     this.props.navigation.setOptions({
       headerTitle: navBarTitle(this.props.diaryInformation?.title),
     });
+  }
+
+  componentDidMount() {
+    this.updateNavBarTitle();
   }
 
   componentDidUpdate(prevProps: any) {
@@ -143,6 +148,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     if (prevProps.diaryId !== diaryId) {
       this.setState({ pastDateLimit: today() });
     }
+    this.updateNavBarTitle();
   }
 
   // Render

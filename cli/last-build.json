@@ -1,6 +1,6 @@
 {
-  "last": "2023-05-03 19:00:16",
-  "notes": "Merge remote-tracking branch 'origin/dev/1.9.5' into dev/1.9.6\nfix(player): MB-1580 fix player navBar\nfix(zimbra): AMZ-121 replace reply/forward prefix i18n keys with constants, edit thread body\nfix(form): AMV2-560 await reponses save when changing position, show loading indicator in actions\nfix: MB-1584: display timeline & user if account has no apps\nfix(form): AMV2-560 change notif handler, open distributions modal when redirecting on multiple answer form\nfix: remove invalid expression in error toast\nfeat(i18n): AMV2-569 add crre notif type keys, set flex shrink to checkbox title\nfix: navBar was visible on player\nfix: MB-1545 fix android haptic feedback on tab switch\nfix: MB-1571 open notification throttle\nfix: MB-1576 fix modal flickering when closed\nrelease: 1.9.5-rc.2(1090521)\nfix: MB-1570 toaster show 3 sec\nfix: MB-1571 fix double-tap timeline notification\nfix: MB-1558 remove network bar on user home screen\nRevert \"chore(phrase): create configuration file\"\nRevert \"chore(phrase): added locale_id key to configuration\"\nfix(conversation): MB-1567 fix crash when navigate 2 times to new mail page\nfix: remove cycle import\nchore: remove tracker log\nfix: use key prop in ButtonLineGroup\nrelease: 1.9.6-alpha.1(1090601)",
-  "version": "1.9.6-alpha.2(1090602)",
+  "last": "2023-05-09 22:33:04",
+  "notes": "Squashed commit of the following:\nupgrade(stack): Upgrade some packages && patches\nfeat(moodle): AMV2-413 add moodle url scheme to ios\nfeat(moodle): AMV2-413 redirect to dedicated app if installed\nSquashed commit of the following:\nSquashed commit of the following:\nfix(peertube): AMV2-423 double encode uri\nrelease: 1.9.6-alpha.2(1090602)",
+  "version": "1.9.6-alpha.3(1090603)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

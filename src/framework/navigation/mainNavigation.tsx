@@ -23,7 +23,6 @@ import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
-import { TextSizeStyle } from '~/framework/components/text';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
@@ -180,8 +179,19 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
           height: UI_SIZES.elements.tabbarHeight + UI_SIZES.screen.bottomInset,
           ...getAndroidTabBarStyleForNavState(navigation.getState()),
         },
-        tabBarLabelStyle: { fontSize: TextSizeStyle.Small.fontSize, marginBottom: UI_SIZES.elements.tabbarLabelMargin },
-        tabBarIconStyle: { marginTop: UI_SIZES.elements.tabbarLabelMargin },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          lineHeight: undefined,
+          marginBottom: UI_SIZES.elements.tabbarLabelMarginBottom,
+        },
+        tabBarIconStyle: {
+          marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
+          height: UI_SIZES.elements.tabbarIconSize,
+          width: UI_SIZES.elements.tabbarIconSize,
+        },
+        tabBarItemStyle: {
+          justifyContent: 'space-between',
+        },
         tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
         tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
         tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),

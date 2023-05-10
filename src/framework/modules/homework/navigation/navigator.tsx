@@ -17,12 +17,7 @@ import { HomeworkNavigationParams, homeworkRouteNames } from '.';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<HomeworkNavigationParams>(moduleConfig.name, Stack => (
     <>
-      <Stack.Screen
-        name={homeworkRouteNames.home}
-        component={HomeworkInitialScreen}
-        options={{ headerTitle: navBarTitle(I18n.t('Homework')) }}
-        initialParams={undefined}
-      />
+      <Stack.Screen name={homeworkRouteNames.home} component={HomeworkInitialScreen} options={{}} initialParams={undefined} />
       <Stack.Screen
         name={homeworkRouteNames.homeworkExplorer}
         component={HomeworkExplorerScreen}

@@ -156,7 +156,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarAction
-          title={I18n.t('timeline.filtersScreen.apply')}
+          icon="ui-check"
           disabled={areFiltersUnchanged || noneSet}
           onPress={() => this.doSetFilters(selectedFilters)}
         />
