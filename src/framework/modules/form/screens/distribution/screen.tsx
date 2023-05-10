@@ -194,6 +194,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                   distributionId,
                   response.choiceId ?? null,
                   response.answer,
+                  response.customAnswer ?? null,
                   response.choicePosition ?? null,
                 )
                 .then(r => (response.id = r.id));
@@ -227,6 +228,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                   distributionId,
                   null,
                   response.answer,
+                  response.customAnswer ?? null,
                   response.choicePosition ?? null,
                 )
                 .then(r => {
