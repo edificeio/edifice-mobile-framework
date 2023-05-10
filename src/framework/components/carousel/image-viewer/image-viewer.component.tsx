@@ -647,7 +647,6 @@ export default class ImageViewer extends React.Component<Props, State> {
           <View style={[{ bottom: 0, position: 'absolute', zIndex: 9 }, this.props.footerContainerStyle]}>
             {this!.props!.renderFooter!(this.state.currentShowIndex || 0)}
           </View>
-          <Toast />
         </Animated.View>
       </Animated.View>
     );

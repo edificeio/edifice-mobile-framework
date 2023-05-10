@@ -231,12 +231,12 @@ export function Carousel(props: ICarouselProps) {
         } else {
           await CameraRoll.save(realFilePath);
         }
-        Toast.showSuccess(I18n.t('save.to.camera.roll.success'), { topOffset: headerHeight });
+        Toast.showSuccess(I18n.t('save.to.camera.roll.success'));
       } catch {
-        Toast.showError(I18n.t('save.to.camera.roll.error'), { topOffset: headerHeight });
+        Toast.showError(I18n.t('save.to.camera.roll.error'));
       }
     },
-    [getSyncedFile, headerHeight],
+    [getSyncedFile],
   );
 
   const onShare = React.useCallback(
@@ -258,11 +258,11 @@ export function Carousel(props: ICarouselProps) {
           );
           return undefined;
         } else {
-          Toast.showError(I18n.t('share-error'), { topOffset: headerHeight });
+          Toast.showError(I18n.t('share-error'));
         }
       }
     },
-    [getSyncedFile, headerHeight],
+    [getSyncedFile],
   );
 
   const loadingComponent = React.useMemo(() => <Loading />, []);

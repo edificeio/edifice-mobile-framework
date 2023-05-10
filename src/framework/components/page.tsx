@@ -28,6 +28,7 @@ import Toast from 'react-native-toast-message';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
@@ -88,8 +89,10 @@ export const PageViewContainer = (props: PageViewProps) => {
               android: <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
             },
       ),
-    [],
+    [statusBar],
   );
+
+  const isModal = isModalModeOnThisRoute(route.name);
 
   return (
     <PageViewStyle {...viewProps}>
@@ -97,10 +100,8 @@ export const PageViewContainer = (props: PageViewProps) => {
         {statusBarComponent}
         {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
-        <View style={gutterStyle}>
-          {children}
-          <Toast />
-        </View>
+        <View style={gutterStyle}>{children}</View>
+        {isModal ? <Toast /> : null}
       </>
     </PageViewStyle>
   );
