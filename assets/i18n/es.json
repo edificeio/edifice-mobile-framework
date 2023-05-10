@@ -824,6 +824,7 @@
   "timeline.notifType.forum.subject-updated": "Modificación de una discusión en el foro",
   "timeline.notifType.homeworks.entries.modified": "Actualización del cuaderno semanal",
   "timeline.notifType.homeworks.share": "Cuaderno semanal compartido ",
+  "timeline.notifType.magneto.share_board": "Compartir un tablero",
   "timeline.notifType.messagerie.return-message": "Devolución de un mensaje",
   "timeline.notifType.messagerie.send-message": "Recepción de un mensaje",
   "timeline.notifType.messagerie.storage": "Espacio de almacenamiento casi lleno",

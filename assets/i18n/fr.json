@@ -824,6 +824,7 @@
   "timeline.notifType.forum.subject-updated": "Modification d'une discussion dans le forum",
   "timeline.notifType.homeworks.entries.modified": "Mise à jour du cahier de textes",
   "timeline.notifType.homeworks.share": "Partage d'un cahier de textes",
+  "timeline.notifType.magneto.share_board": "Partage d'un tableau",
   "timeline.notifType.messagerie.return-message": "Retour d'un message",
   "timeline.notifType.messagerie.send-message": "Réception d'un message",
   "timeline.notifType.messagerie.storage": "Espace de stockage bientôt plein",

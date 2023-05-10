@@ -824,6 +824,7 @@
   "timeline.notifType.forum.subject-updated": "Forum discussion modified",
   "timeline.notifType.homeworks.entries.modified": "Homework notebook updated",
   "timeline.notifType.homeworks.share": "Homework notebook shared",
+  "timeline.notifType.magneto.share_board": "Board shared",
   "timeline.notifType.messagerie.return-message": "Message return",
   "timeline.notifType.messagerie.send-message": "Message received",
   "timeline.notifType.messagerie.storage": "Storage space almost full",
