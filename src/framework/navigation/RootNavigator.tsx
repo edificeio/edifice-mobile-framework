@@ -2,10 +2,11 @@
  * Startup is a conditionnaly rendered content based on app startup status.
  * It can render the SplashScreen, auth flow or main flow in function of token loading and status.
  */
-import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
+import Toast from 'react-native-toast-message';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
@@ -86,14 +87,17 @@ function RootNavigator(props: RootNavigatorProps) {
       <>
         <SplashScreenComponent key={isReady} />
         {isReady ? (
-          <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
-            <AppPushNotificationHandlerComponent>
-              <RootStack.Navigator screenOptions={{ headerShown: true }}>
-                {routes}
-                {modals}
-              </RootStack.Navigator>
-            </AppPushNotificationHandlerComponent>
-          </NavigationContainer>
+          <>
+            <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
+              <AppPushNotificationHandlerComponent>
+                <RootStack.Navigator screenOptions={{ headerShown: true }}>
+                  {routes}
+                  {modals}
+                </RootStack.Navigator>
+              </AppPushNotificationHandlerComponent>
+              <Toast />
+            </NavigationContainer>
+          </>
         ) : null}
       </>
     );

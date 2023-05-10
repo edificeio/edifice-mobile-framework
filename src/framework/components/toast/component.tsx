@@ -3,7 +3,11 @@ import ToastMessage, { ToastShowParams } from 'react-native-toast-message';
 
 import Feedback from '~/framework/util/feedback/feedback';
 
+import { UI_SIZES } from '../constants';
+
 const TOAST_VISIBILITY_TIME = 3000;
+
+const TOAST_MARGIN = UI_SIZES.spacing.minor;
 
 export default class Toast {
   private static showToast(type: string, text: string, options: ToastShowParams = {}) {
@@ -12,7 +16,7 @@ export default class Toast {
       type,
       text1: text,
       position: 'top',
-      topOffset: 8 + topOffset,
+      topOffset: TOAST_MARGIN + UI_SIZES.elements.navbarHeight + UI_SIZES.screen.topInset + topOffset,
       visibilityTime: TOAST_VISIBILITY_TIME,
       ...otherOpts,
     });
