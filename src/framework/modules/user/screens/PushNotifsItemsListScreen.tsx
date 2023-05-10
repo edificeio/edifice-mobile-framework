@@ -73,6 +73,7 @@ export const computeNavBar = ({
     navigation,
     route,
     title: I18n.t('directory-notificationsTitle'),
+    titleStyle: { width: undefined },
   }),
 });
 
