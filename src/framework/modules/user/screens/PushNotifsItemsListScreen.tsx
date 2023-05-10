@@ -131,7 +131,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarAction
-          title={I18n.t('common.apply')}
+          icon="ui-check"
           disabled={this.state.arePrefsUnchanged}
           onPress={() => {
             this.setState({ loadingState: PushNotifsItemsListLoadingState.UPDATE });
