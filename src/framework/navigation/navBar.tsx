@@ -16,6 +16,10 @@ import { isEmpty } from '~/framework/util/object';
 
 import { isModalModeOnThisRoute } from './hideTabBarAndroid';
 
+const backbuttonStyle = {
+  marginHorizontal: 0,
+};
+
 const navBarTitleStyle: TextStyle = {
   color: theme.ui.text.inverse,
   textAlign: 'center',
@@ -55,7 +59,7 @@ export const navBarOptions: (props: {
         if (isModalModeOnThisRoute(route.name)) {
           return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" />;
         } else {
-          return <HeaderBackButton {...props} onPress={navigation.goBack} />;
+          return <HeaderBackButton {...props} style={backbuttonStyle} onPress={navigation.goBack} />;
         }
       } else return null;
     },

@@ -18,10 +18,10 @@ export default StyleSheet.create({
     zIndex: 9999999,
   },
   overlayLandscape: {
-    height: 60,
+    height: 36,
   },
   overlayPortrait: {
-    height: 80,
+    height: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
   },
   page: {
     backgroundColor: theme.palette.grey.darkness,
@@ -30,12 +30,13 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.darkness,
     height: UI_SIZES.screen.width,
     width: UI_SIZES.screen.height,
+    marginTop: 36,
   },
   playerPortrait: {
     backgroundColor: theme.palette.grey.darkness,
     height: UI_SIZES.screen.height,
     marginBottom: UI_SIZES.screen.bottomInset,
-    marginTop: UI_SIZES.screen.topInset,
+    marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
     width: UI_SIZES.screen.width,
   },
   errorScreen: {

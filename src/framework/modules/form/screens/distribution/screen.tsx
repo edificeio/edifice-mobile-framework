@@ -1,4 +1,4 @@
-import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
@@ -194,6 +194,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                   distributionId,
                   response.choiceId ?? null,
                   response.answer,
+                  response.customAnswer ?? null,
                   response.choicePosition ?? null,
                 )
                 .then(r => (response.id = r.id));
@@ -227,6 +228,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
                   distributionId,
                   null,
                   response.answer,
+                  response.customAnswer ?? null,
                   response.choicePosition ?? null,
                 )
                 .then(r => {

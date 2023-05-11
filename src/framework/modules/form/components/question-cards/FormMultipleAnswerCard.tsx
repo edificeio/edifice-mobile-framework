@@ -62,6 +62,7 @@ export const FormMultipleAnswerCard = ({
         }
         return r;
       });
+      if (choice.isCustom) setCustomAnswer('');
     } else {
       // AMV2-472 temporary fix until form web 1.6.0
       if (responses.length === 1 && !responses[0].choiceId) {

@@ -155,11 +155,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     if (type === MediaType.WEB)
       return (
         <>
-          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]}>
-            <TouchableOpacity onPress={handleBack}>
-              <NamedSVG height={24} width={24} name="ui-close" fill={theme.palette.grey.white} />
-            </TouchableOpacity>
-          </View>
+          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]} />
           <WebView
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
