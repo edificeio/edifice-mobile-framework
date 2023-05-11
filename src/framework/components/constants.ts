@@ -84,8 +84,8 @@ export const UI_SIZES = {
     actionButtonBorder: 2,
     icon: 24,
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
-    /** @deprecated use useHeaderHeight() instead */
-    navbarHeight: 56,
+    /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
+    navbarHeight: Platform.select({ ios: 44, default: 56 }),
     navbarButtonSize: 32,
     navbarIconSize: 24,
     navbarMargin: 16,

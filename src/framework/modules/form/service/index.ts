@@ -347,6 +347,7 @@ export const formService = {
       distributionId: number,
       choiceId: number | null,
       answer: string,
+      customAnswer: string | null,
       choicePosition: number | null,
     ) => {
       const api = `/formulaire/questions/${questionId}/responses`;
@@ -356,6 +357,7 @@ export const formService = {
         choice_id: choiceId,
         answer,
         responder_id: session.user.id,
+        custom_answer: customAnswer,
         choice_position: choicePosition,
       });
       const response = (await signedFetchJson(`${session.platform.url}${api}`, {

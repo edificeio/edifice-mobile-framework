@@ -48,7 +48,7 @@ export const FormMultipleAnswerCard = ({
   onEditQuestion,
 }: IFormMultipleAnswerCardProps) => {
   const [selectedChoices, setSelectedChoices] = React.useState<number[]>(responses.map(response => response.choiceId!));
-  const [customAnswer, setCustomAnswer] = React.useState(responses[0]?.customAnswer ?? '');
+  const [customAnswer, setCustomAnswer] = React.useState<string>(responses.find(r => r.customAnswer?.length)?.customAnswer ?? '');
   const { title, mandatory, choices } = question;
 
   const onSelectChoice = (choice: IQuestionChoice) => {
@@ -62,6 +62,7 @@ export const FormMultipleAnswerCard = ({
         }
         return r;
       });
+      if (choice.isCustom) setCustomAnswer('');
     } else {
       // AMV2-472 temporary fix until form web 1.6.0
       if (responses.length === 1 && !responses[0].choiceId) {
