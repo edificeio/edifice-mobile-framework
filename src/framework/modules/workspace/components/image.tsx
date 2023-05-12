@@ -13,13 +13,13 @@ import ImageOptional from '~/ui/ImageOptional';
 const styles = StyleSheet.create({
   iconContainer: {
     width: UI_SIZES.screen.width,
-    height: UI_SIZES.screen.height - 160,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   imageContainer: {
     width: UI_SIZES.screen.width,
-    height: UI_SIZES.screen.height - 160,
+    flexGrow: 1,
   },
 });
 

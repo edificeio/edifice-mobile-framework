@@ -30,14 +30,18 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.darkness,
     height: UI_SIZES.screen.width,
     width: UI_SIZES.screen.height,
-    marginTop: 36,
   },
   playerPortrait: {
     backgroundColor: theme.palette.grey.darkness,
-    height: UI_SIZES.screen.height,
+    height: UI_SIZES.screen.height - UI_SIZES.screen.topInset - UI_SIZES.screen.bottomInset,
     marginBottom: UI_SIZES.screen.bottomInset,
-    marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
+    marginTop: UI_SIZES.screen.topInset,
     width: UI_SIZES.screen.width,
+  },
+  externalPlayerLandscape: { marginTop: 36 },
+  externalPlayerPortrait: {
+    marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
+    height: UI_SIZES.screen.height - UI_SIZES.screen.topInset - UI_SIZES.screen.bottomInset - UI_SIZES.elements.navbarHeight,
   },
   errorScreen: {
     backgroundColor: 'transparent',
