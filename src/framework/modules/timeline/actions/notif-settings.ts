@@ -4,20 +4,20 @@ import { ThunkDispatch } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
-import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notifDefinitions';
+import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notif-definitions';
 import {
   INotifFilterSettings,
   actions as notifFilterSettingsActions,
-} from '~/framework/modules/timeline/reducer/notifSettings/notifFilterSettings';
+} from '~/framework/modules/timeline/reducer/notif-settings/notif-filter-settings';
 import {
   IPushNotifsSettings,
   actions as pushNotifsSettingsActions,
-} from '~/framework/modules/timeline/reducer/notifSettings/pushNotifsSettings';
+} from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 
-import { loadNotificationsDefinitionsAction } from './notifDefinitions';
+import { loadNotificationsDefinitionsAction } from './notif-definitions';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {

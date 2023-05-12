@@ -7,7 +7,7 @@ import { TouchableContentCard } from '~/framework/components/card';
 import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
-import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flashMessages';
+import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import HtmlContentView from '~/ui/HtmlContentView';
 

@@ -7,7 +7,7 @@ import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { ITimelineNotification, getAsEnrichedNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
-import NotificationTopInfo from './NotificationTopInfo';
+import NotificationTopInfo from './notification-top-info';
 
 interface ITimelineNotificationProps {
   notification: ITimelineNotification;

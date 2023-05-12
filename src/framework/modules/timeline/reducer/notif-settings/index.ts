@@ -1,7 +1,7 @@
 import { CombinedState, combineReducers } from 'redux';
 
-import notifFilterSettings, { NotifFilterSettingsState } from './notifFilterSettings';
-import pushNotifsSettings, { PushNotifsSettingsState } from './pushNotifsSettings';
+import notifFilterSettings, { NotifFilterSettingsState } from './notif-filter-settings';
+import pushNotifsSettings, { PushNotifsSettingsState } from './push-notifs-settings';
 
 // State
 

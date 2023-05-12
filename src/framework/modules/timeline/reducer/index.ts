@@ -3,11 +3,11 @@ import { CombinedState, combineReducers } from 'redux';
 import { IGlobalState, Reducers } from '~/app/store';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 
-import flashMessages, { FlashMessagesState } from './flashMessages';
-import notifDefinitions, { NotifDefinitionsState } from './notifDefinitions';
-import { NotificationFilter } from './notifDefinitions/notifFilters';
-import notifSettings, { NotifSettingsState } from './notifSettings';
-import { IPushNotifsSettings } from './notifSettings/pushNotifsSettings';
+import flashMessages, { FlashMessagesState } from './flash-messages';
+import notifDefinitions, { NotifDefinitionsState } from './notif-definitions';
+import { NotificationFilter } from './notif-definitions/notif-filters';
+import notifSettings, { NotifSettingsState } from './notif-settings';
+import { IPushNotifsSettings } from './notif-settings/push-notifs-settings';
 import notifications, { NotificationsState } from './notifications';
 
 // State

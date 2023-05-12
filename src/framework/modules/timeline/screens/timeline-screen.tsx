@@ -26,11 +26,11 @@ import {
   loadNotificationsPageAction,
   startLoadNotificationsAction,
 } from '~/framework/modules/timeline/actions';
-import { TimelineFlashMessage } from '~/framework/modules/timeline/components/TimelineFlashMessage';
-import { TimelineNotification } from '~/framework/modules/timeline/components/TimelineNotification';
+import { TimelineFlashMessage } from '~/framework/modules/timeline/components/timeline-flash-message';
+import { TimelineNotification } from '~/framework/modules/timeline/components/timeline-notification';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flashMessages';
+import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';

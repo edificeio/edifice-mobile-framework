@@ -22,7 +22,7 @@ import { Icon } from '~/framework/components/picture';
 import { SmallActionText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notifSettings';
+import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
   IPushNotifsSettingsByType,
@@ -30,7 +30,7 @@ import {
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
 } from '~/framework/modules/timeline/reducer';
-import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notifSettings/pushNotifsSettings';
+import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import moduleConfig from '~/framework/modules/user/module-config';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';

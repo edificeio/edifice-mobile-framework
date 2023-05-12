@@ -6,14 +6,14 @@ import { ThunkDispatch } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
-import { actions as flashMessagesActions } from '~/framework/modules/timeline/reducer/flashMessages';
-import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notifDefinitions';
-import * as notifSettingsStateHandler from '~/framework/modules/timeline/reducer/notifSettings';
+import { actions as flashMessagesActions } from '~/framework/modules/timeline/reducer/flash-messages';
+import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notif-definitions';
+import * as notifSettingsStateHandler from '~/framework/modules/timeline/reducer/notif-settings';
 import { actions as notificationsActions } from '~/framework/modules/timeline/reducer/notifications';
 import { flashMessagesService, notificationsService } from '~/framework/modules/timeline/service';
 
-import { loadNotificationsDefinitionsAction } from './notifDefinitions';
-import { loadNotificationFiltersSettingsAction } from './notifSettings';
+import { loadNotificationsDefinitionsAction } from './notif-definitions';
+import { loadNotificationFiltersSettingsAction } from './notif-settings';
 
 const $prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   let state = moduleConfig.getState(getState()) as TimelineState;

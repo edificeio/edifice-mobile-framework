@@ -4,9 +4,9 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import {
   computeNotificationFilterList,
   getAuthorizedNotificationFilterList,
-} from '~/framework/modules/timeline/reducer/notifDefinitions';
-import { actions as notifFiltersAsyncActions } from '~/framework/modules/timeline/reducer/notifDefinitions/notifFilters';
-import { actions as notifTypesAsyncActions } from '~/framework/modules/timeline/reducer/notifDefinitions/notifTypes';
+} from '~/framework/modules/timeline/reducer/notif-definitions';
+import { actions as notifFiltersAsyncActions } from '~/framework/modules/timeline/reducer/notif-definitions/notif-filters';
+import { actions as notifTypesAsyncActions } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import { notifFiltersService, registeredNotificationsService } from '~/framework/modules/timeline/service';
 
 export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatch, getState: () => any) => {
