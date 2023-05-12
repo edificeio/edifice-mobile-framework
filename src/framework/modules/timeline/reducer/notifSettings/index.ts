@@ -1,23 +1,22 @@
-import { CombinedState, combineReducers } from "redux";
+import { CombinedState, combineReducers } from 'redux';
 
-import { INotifFilterSettings_State } from "./notifFilterSettings";
-import notifFilterSettings from "./notifFilterSettings";
-import pushNotifsSettings, { IPushNotifsSettings_State } from "./pushNotifsSettings";
+import notifFilterSettings, { NotifFilterSettingsState } from './notifFilterSettings';
+import pushNotifsSettings, { PushNotifsSettingsState } from './pushNotifsSettings';
 
 // State
 
-export type INotifSettings_State = CombinedState<{
-    notifFilterSettings: INotifFilterSettings_State,
-    pushNotifsSettings: IPushNotifsSettings_State
-}>
+export type NotifSettingsState = CombinedState<{
+  notifFilterSettings: NotifFilterSettingsState;
+  pushNotifsSettings: PushNotifsSettingsState;
+}>;
 
 // Reducer
 
 export default combineReducers({
-    notifFilterSettings,
-    pushNotifsSettings
+  notifFilterSettings,
+  pushNotifsSettings,
 });
 
 // Getters
 
-export const getAreNotificationFilterSettingsLoaded = (state: INotifSettings_State) => state.notifFilterSettings.lastSuccess;
+export const getAreNotificationFilterSettingsLoaded = (state: NotifSettingsState) => state.notifFilterSettings.lastSuccess;

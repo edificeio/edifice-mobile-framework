@@ -23,10 +23,10 @@ import { SmallActionText, SmallText, TextSizeStyle } from '~/framework/component
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notifSettings';
-import timelineModuleConfig from '~/framework/modules/timeline/moduleConfig';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
   IPushNotifsSettingsByType,
-  ITimeline_State,
+  TimelineState,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
 } from '~/framework/modules/timeline/reducer';
@@ -37,7 +37,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';
 
 export interface IPushNotifsTopicsListScreenDataProps {
-  timelineState: ITimeline_State;
+  timelineState: TimelineState;
   session: ISession;
 }
 
@@ -197,7 +197,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
 }
 
 const mapStateToProps: (s: IGlobalState) => IPushNotifsTopicsListScreenDataProps = s => {
-  const timelineState = timelineModuleConfig.getState(s) as ITimeline_State;
+  const timelineState = timelineModuleConfig.getState(s) as TimelineState;
   const session = getSession()!;
   return {
     timelineState,

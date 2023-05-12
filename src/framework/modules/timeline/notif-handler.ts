@@ -10,7 +10,7 @@ import {
   registerNotifHandlers,
 } from '~/framework/util/notifications/routing';
 
-import moduleConfig from './moduleConfig';
+import moduleConfig from './module-config';
 import { timelineRouteNames } from './navigation';
 
 const handleFlashMsgNotificationAction: NotifHandlerThunkAction =

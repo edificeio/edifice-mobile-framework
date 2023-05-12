@@ -1,7 +1,7 @@
 import I18n from 'i18n-js';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { registerTimelineWorkflow } from '~/framework/modules/timeline/timelineModules';
+import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 

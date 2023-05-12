@@ -2,8 +2,8 @@ import I18n from 'i18n-js';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
-import { ITimeline_State } from '~/framework/modules/timeline/reducer';
+import moduleConfig from '~/framework/modules/timeline/module-config';
+import { TimelineState } from '~/framework/modules/timeline/reducer';
 import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notifDefinitions';
 import {
   INotifFilterSettings,
@@ -25,7 +25,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     const session = assertSession();
     const userId = session.user.id;
     // 1 - Load notification definitions if necessary
-    let state = moduleConfig.getState(getState()) as ITimeline_State;
+    let state = moduleConfig.getState(getState()) as TimelineState;
     if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
       await dispatch(loadNotificationsDefinitionsAction());
     }
@@ -78,7 +78,7 @@ export const loadPushNotifsSettingsAction = () => async (dispatch: ThunkDispatch
     dispatch(pushNotifsSettingsActions.request());
     const session = assertSession();
     // 1 - Load notification definitions if necessary
-    let state = moduleConfig.getState(getState()) as ITimeline_State;
+    let state = moduleConfig.getState(getState()) as TimelineState;
     if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
       await dispatch(loadNotificationsDefinitionsAction());
     }

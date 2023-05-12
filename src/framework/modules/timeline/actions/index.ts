@@ -4,8 +4,8 @@
 import { ThunkDispatch } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
-import { ITimeline_State } from '~/framework/modules/timeline/reducer';
+import moduleConfig from '~/framework/modules/timeline/module-config';
+import { TimelineState } from '~/framework/modules/timeline/reducer';
 import { actions as flashMessagesActions } from '~/framework/modules/timeline/reducer/flashMessages';
 import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notifDefinitions';
 import * as notifSettingsStateHandler from '~/framework/modules/timeline/reducer/notifSettings';
@@ -16,7 +16,7 @@ import { loadNotificationsDefinitionsAction } from './notifDefinitions';
 import { loadNotificationFiltersSettingsAction } from './notifSettings';
 
 const $prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-  let state = moduleConfig.getState(getState()) as ITimeline_State;
+  let state = moduleConfig.getState(getState()) as TimelineState;
   // 1 - Load notification definitions if necessary
   if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
     await dispatch(loadNotificationsDefinitionsAction());
@@ -37,7 +37,7 @@ const $prepareNotificationsAction = () => async (dispatch: ThunkDispatch<any, an
 export const startLoadNotificationsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     const session = assertSession();
-    const state = (await dispatch($prepareNotificationsAction())) as unknown as ITimeline_State; // TS BUG: await is needed here
+    const state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
     if (state.notifications.isFetching) return;
 
     // Load notifications page 0 & flash messages (after reset)
@@ -72,7 +72,7 @@ export const loadNotificationsPageAction =
   (page?: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       const session = assertSession();
-      let state = (await dispatch($prepareNotificationsAction())) as unknown as ITimeline_State; // TS BUG: await is needed here
+      let state = (await dispatch($prepareNotificationsAction())) as unknown as TimelineState; // TS BUG: await is needed here
       page = page || state.notifications.nextPage;
       if (state.notifications.isFetching) return;
 
@@ -104,7 +104,7 @@ export const dismissFlashMessageAction =
       dispatch(flashMessagesActions.dismissRequest(flashMessageId));
       await flashMessagesService.dismiss(session, flashMessageId);
       dispatch(flashMessagesActions.dismissReceipt(flashMessageId));
-    } catch {
+    } catch (e) {
       // ToDo: Error handling (notifier: "votre action n'a pas été correctement exécutée (problème de connexion)")
       dispatch(flashMessagesActions.dismissError(flashMessageId));
       throw e;

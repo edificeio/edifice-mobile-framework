@@ -1,4 +1,4 @@
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import {
   AsyncPagedState,
@@ -9,16 +9,16 @@ import {
 
 // State
 
-export type INotifications_State_Data = ITimelineNotification[];
-export type INotifications_State = AsyncPagedState<INotifications_State_Data>;
+export type NotificationsStateData = ITimelineNotification[];
+export type NotificationsState = AsyncPagedState<NotificationsStateData>;
 
 // Reducer
 
-const initialState: INotifications_State_Data = [];
+const initialState: NotificationsStateData = [];
 const pageSize = 25;
 
 export const actionTypes = createAsyncPagedActionTypes(moduleConfig.namespaceActionType('NOTIFICATIONS'));
-export const actions = createAsyncPagedActionCreators<INotifications_State_Data>(actionTypes);
+export const actions = createAsyncPagedActionCreators<NotificationsStateData>(actionTypes);
 
 export default createSessionAsyncPagedReducer(initialState, actionTypes, pageSize);
 

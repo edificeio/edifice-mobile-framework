@@ -12,10 +12,10 @@ import FlatList from '~/framework/components/flatList';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notifSettings';
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { ITimeline_State } from '~/framework/modules/timeline/reducer';
-import { INotificationFilter } from '~/framework/modules/timeline/reducer/notifDefinitions/notifFilters';
+import { TimelineState } from '~/framework/modules/timeline/reducer';
+import { NotificationFilter } from '~/framework/modules/timeline/reducer/notifDefinitions/notifFilters';
 import { INotifFilterSettings } from '~/framework/modules/timeline/reducer/notifSettings/notifFilterSettings';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -23,7 +23,7 @@ import { shallowEqual } from '~/framework/util/object';
 
 export interface ITimelineFiltersScreenDataProps {
   notifFilterSettings: INotifFilterSettings;
-  notifFilters: INotificationFilter[];
+  notifFilters: NotificationFilter[];
 }
 export interface ITimelineFiltersScreenEventProps {
   handleSetFilters(selectedFilters: INotifFilterSettings): Promise<void>;
@@ -105,7 +105,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     );
   }
 
-  renderFilterItem(item: INotificationFilter) {
+  renderFilterItem(item: NotificationFilter) {
     const { selectedFilters } = this.state;
     return <CheckboxButton onPress={() => this.doToggleFilter(item)} title={item.i18n} isChecked={selectedFilters[item.type]} />;
   }
@@ -121,7 +121,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     this.mounted = false;
   }
 
-  doToggleFilter(item: INotificationFilter) {
+  doToggleFilter(item: NotificationFilter) {
     if (!this.mounted) return;
     const { selectedFilters } = this.state;
     this.setState({
@@ -166,7 +166,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
 }
 
 const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s => {
-  const ts = moduleConfig.getState(s) as ITimeline_State;
+  const ts = moduleConfig.getState(s) as TimelineState;
   return {
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
     notifFilters:

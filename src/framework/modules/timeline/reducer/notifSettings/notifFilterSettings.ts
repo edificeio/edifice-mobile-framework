@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 import {
   AsyncState,
   createAsyncActionCreators,
@@ -15,8 +15,8 @@ export interface INotifFilterSettings {
   [type: string]: boolean;
 }
 
-export type INotifFilterSettings_State_Data = INotifFilterSettings;
-export type INotifFilterSettings_State = AsyncState<INotifFilterSettings_State_Data>;
+export type NotifFilterSettingsStateData = INotifFilterSettings;
+export type NotifFilterSettingsState = AsyncState<NotifFilterSettingsStateData>;
 
 // Reducer
 
@@ -30,21 +30,21 @@ export const actionTypes = {
   setError: moduleConfig.namespaceActionType('NOTIFICATION_FILTERS_SET_ERROR'),
 };
 export const actions = {
-  ...createAsyncActionCreators<INotifFilterSettings_State_Data>(actionTypes),
+  ...createAsyncActionCreators<NotifFilterSettingsStateData>(actionTypes),
   put: (data: INotifFilterSettings) => ({ type: actionTypes.put, data }),
-  setRequest: (selectedFilters: INotifFilterSettings_State_Data) => ({ type: actionTypes.setRequest, selectedFilters }),
-  setReceipt: (selectedFilters: INotifFilterSettings_State_Data) => ({ type: actionTypes.setReceipt, selectedFilters }),
-  setError: (selectedFilters: INotifFilterSettings_State_Data) => ({ type: actionTypes.setError, selectedFilters }),
+  setRequest: (selectedFilters: NotifFilterSettingsStateData) => ({ type: actionTypes.setRequest, selectedFilters }),
+  setReceipt: (selectedFilters: NotifFilterSettingsStateData) => ({ type: actionTypes.setReceipt, selectedFilters }),
+  setError: (selectedFilters: NotifFilterSettingsStateData) => ({ type: actionTypes.setError, selectedFilters }),
 };
 
-const actionsHandlerMap: IReducerActionsHandlerMap<INotifFilterSettings_State_Data> = {
+const actionsHandlerMap: IReducerActionsHandlerMap<NotifFilterSettingsStateData> = {
   [actionTypes.put]: (s, a) => {
     const action = a as Action & { data: INotifFilterSettings };
     return { ...s, ...action.data };
   },
   [actionTypes.setRequest]: s => s,
   [actionTypes.setReceipt]: (s, a) => {
-    const action = a as Action & { selectedFilters: INotifFilterSettings_State_Data };
+    const action = a as Action & { selectedFilters: NotifFilterSettingsStateData };
     return { ...s, ...action.selectedFilters };
   },
   [actionTypes.setError]: s => s,

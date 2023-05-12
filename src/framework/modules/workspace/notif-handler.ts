@@ -4,7 +4,7 @@
 import { CommonActions } from '@react-navigation/native';
 import I18n from 'i18n-js';
 
-import timelineModuleConfig from '~/framework/modules/timeline/moduleConfig';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import {
   NotifHandlerThunkAction,

@@ -1,8 +1,8 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { ITimeline_State } from './reducer';
+import { TimelineState } from './reducer';
 
-export default new NavigableModuleConfig<'timeline', ITimeline_State>({
+export default new NavigableModuleConfig<'timeline', TimelineState>({
   name: 'timeline',
   entcoreScope: ['timeline', 'userbook'],
   matchEntcoreApp: app => app.prefix === '/timeline',

@@ -22,9 +22,9 @@ import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notifSettings';
-import timelineModuleConfig from '~/framework/modules/timeline/moduleConfig';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
-  ITimeline_State,
+  TimelineState,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
 } from '~/framework/modules/timeline/reducer';
@@ -36,7 +36,7 @@ import Notifier from '~/framework/util/notifier';
 import { shallowEqual } from '~/framework/util/object';
 
 export interface IPushNotifsItemsListScreenDataProps {
-  timelineState: ITimeline_State;
+  timelineState: TimelineState;
   session: ISession;
 }
 
@@ -253,7 +253,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
 }
 
 const mapStateToProps: (s: IGlobalState) => IPushNotifsItemsListScreenDataProps = s => {
-  const timelineState = timelineModuleConfig.getState(s) as ITimeline_State;
+  const timelineState = timelineModuleConfig.getState(s) as TimelineState;
   const session = getSession()!;
   return {
     timelineState,

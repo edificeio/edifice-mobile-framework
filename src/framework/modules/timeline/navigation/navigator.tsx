@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 import TimelineFiltersScreen, {
   computeNavBar as TimelineFiltersNavBar,
 } from '~/framework/modules/timeline/screens/TimelineFiltersScreen';

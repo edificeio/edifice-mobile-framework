@@ -1,4 +1,4 @@
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 import {
   AsyncState,
   createAsyncActionCreators,
@@ -19,15 +19,15 @@ export interface IEntcoreNotificationType {
   key: string;
 }
 
-export type INotifTypes_State_Data = IEntcoreNotificationType[];
-export type INotifTypes_State = AsyncState<INotifTypes_State_Data>;
+export type NotifTypesStateData = IEntcoreNotificationType[];
+export type NotifTypesState = AsyncState<NotifTypesStateData>;
 
 // Reducer
 
-const initialState: INotifTypes_State_Data = [];
+const initialState: NotifTypesStateData = [];
 
 export const actionTypes = createAsyncActionTypes(moduleConfig.namespaceActionType('NOTIFICATION_TYPES'));
-export const actions = createAsyncActionCreators<INotifTypes_State_Data>(actionTypes);
+export const actions = createAsyncActionCreators<NotifTypesStateData>(actionTypes);
 
 export default createSessionAsyncReducer(initialState, actionTypes);
 

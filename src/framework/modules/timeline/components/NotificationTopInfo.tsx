@@ -10,16 +10,22 @@ import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card'
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { APPBADGES } from '~/framework/modules/timeline/appBadges';
-import { ITimelineNotification } from '~/framework/util/notifications';
+import { APPBADGES } from '~/framework/modules/timeline/app-badges';
+import {
+  INamedResourceNotification,
+  ITimelineNotification,
+  getAsNamedResourceNotification,
+  getAsSenderNotification,
+} from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: ISession }) => {
   const message = notification && notification.message;
   const type = notification && notification.type;
   const date = notification && notification.date;
-  const sender = notification && notification.sender; // ToDo fix types here
-  const resource = notification && notification.resource;
+  const sender = notification && getAsSenderNotification(notification)?.sender;
+  const resource =
+    notification && (getAsNamedResourceNotification(notification)?.resource as Partial<INamedResourceNotification['resource']>);
 
   let formattedMessage = message;
   if (message) {

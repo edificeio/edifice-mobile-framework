@@ -28,13 +28,13 @@ import {
 } from '~/framework/modules/timeline/actions';
 import { TimelineFlashMessage } from '~/framework/modules/timeline/components/TimelineFlashMessage';
 import { TimelineNotification } from '~/framework/modules/timeline/components/TimelineNotification';
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { IEntcoreFlashMessage, IFlashMessages_State_Data } from '~/framework/modules/timeline/reducer/flashMessages';
-import { INotifications_State } from '~/framework/modules/timeline/reducer/notifications';
+import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flashMessages';
+import { NotificationsState } from '~/framework/modules/timeline/reducer/notifications';
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
-import { getTimelineWorkflows } from '~/framework/modules/timeline/timelineModules';
+import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
@@ -53,8 +53,8 @@ import {
 // TYPES ==========================================================================================
 
 export interface ITimelineScreenDataProps {
-  flashMessages: IFlashMessages_State_Data;
-  notifications: INotifications_State;
+  flashMessages: FlashMessagesStateData;
+  notifications: NotificationsState;
   session: ISession;
 }
 export interface ITimelineScreenEventProps {
@@ -97,7 +97,7 @@ let notificationOpenThrottle = true;
 
 // UTILS ==========================================================================================
 
-const getTimelineItems = (flashMessages: IFlashMessages_State_Data, notifications: INotifications_State) => {
+const getTimelineItems = (flashMessages: FlashMessagesStateData, notifications: NotificationsState) => {
   const msgs = flashMessages ?? [];
   const notifs = notifications && notifications.data ? notifications.data : [];
   const ret = [] as (ITimelineItem & { key: string })[];

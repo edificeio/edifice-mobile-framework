@@ -9,7 +9,7 @@ import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notifDefinitions/notifTypes';
 import {
   IPushNotifsSettings,
-  IPushNotifsSettings_State_Data,
+  PushNotifsSettingsStateData,
 } from '~/framework/modules/timeline/reducer/notifSettings/pushNotifsSettings';
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
@@ -111,13 +111,13 @@ export const pushNotifsService = {
     const notifPrefs = {} as IPushNotifsSettings;
     const data = await pushNotifsService._getConfig(session);
     for (const k in data) {
-      if (data[k].hasOwnProperty('push-notif') && data[k]['push-notif'] !== undefined) {
+      if (data[k]['push-notif'] !== undefined) {
         notifPrefs[k] = data[k]['push-notif']!;
       }
     }
     return notifPrefs;
   },
-  set: async (session: ISession, changes: IPushNotifsSettings_State_Data) => {
+  set: async (session: ISession, changes: PushNotifsSettingsStateData) => {
     const api = '/userbook/preference/timeline';
     const method = 'PUT';
     const notifPrefsUpdated = {} as { 'push-notif': boolean };

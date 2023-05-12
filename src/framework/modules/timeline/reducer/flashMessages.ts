@@ -1,4 +1,4 @@
-import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/module-config';
 import {
   AsyncState,
   createAsyncActionCreators,
@@ -27,12 +27,12 @@ export interface IEntcoreFlashMessage {
   dismiss?: boolean; // Has the user asked for dismiss
 }
 
-export type IFlashMessages_State_Data = IEntcoreFlashMessage[];
-export type IFlashMessages_State = AsyncState<IFlashMessages_State_Data>;
+export type FlashMessagesStateData = IEntcoreFlashMessage[];
+export type FlashMessagesState = AsyncState<FlashMessagesStateData>;
 
 // Reducer
 
-const initialState: IFlashMessages_State_Data = [];
+const initialState: FlashMessagesStateData = [];
 
 export const actionTypes = {
   ...createAsyncActionTypes(moduleConfig.namespaceActionType('FLASHMESSAGES')),
@@ -41,21 +41,21 @@ export const actionTypes = {
   dismissError: moduleConfig.namespaceActionType('FLASHMESSAGE_DISMISS_ERROR'),
 };
 export const actions = {
-  ...createAsyncActionCreators<IFlashMessages_State_Data>(actionTypes),
+  ...createAsyncActionCreators<FlashMessagesStateData>(actionTypes),
   dismissRequest: (flashMessageId: number) => ({ type: actionTypes.dismissRequest, flashMessageId }),
   dismissReceipt: (flashMessageId: number) => ({ type: actionTypes.dismissReceipt, flashMessageId }),
   dismissError: (flashMessageId: number) => ({ type: actionTypes.dismissError, flashMessageId }),
 };
 
 const dismissFlashMessageActionsHandlerMap = {
-  [actionTypes.dismissRequest]: (state: IFlashMessages_State_Data, action) => {
+  [actionTypes.dismissRequest]: (state: FlashMessagesStateData, action) => {
     return state.map(flashMessage =>
       flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: true } : flashMessage,
     );
   },
-  [actionTypes.dismissReceipt]: (state: IFlashMessages_State_Data, action) =>
+  [actionTypes.dismissReceipt]: (state: FlashMessagesStateData, action) =>
     state.filter(flashMessage => flashMessage.id !== action.flashMessageId),
-  [actionTypes.dismissError]: (state: IFlashMessages_State_Data, action) => {
+  [actionTypes.dismissError]: (state: FlashMessagesStateData, action) => {
     return state.map(flashMessage =>
       flashMessage.id === action.flashMessageId ? { ...flashMessage, dismiss: false } : flashMessage,
     );
