@@ -21,6 +21,9 @@ import { AllModulesBackup } from '~/infra/oauth';
 import { initI18n } from './i18n';
 import { IStoreProp, connectWithStore } from './store';
 
+const FlipperAsyncStorage = __DEV__ ? require('rn-flipper-async-storage-advanced').default : undefined;
+const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage /> : null;
+
 /**
  * Code that listen to App State changes
  */
@@ -69,11 +72,14 @@ function App(props: AppProps) {
   useTrackers();
   useNavigationDevPlugins();
   return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <Provider store={props.store}>
-        <Navigation />
-      </Provider>
-    </SafeAreaProvider>
+    <>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <Provider store={props.store}>
+          <Navigation />
+        </Provider>
+      </SafeAreaProvider>
+      {FlipperAsyncStorageElement}
+    </>
   );
 }
 
