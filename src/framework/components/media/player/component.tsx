@@ -31,6 +31,7 @@ export function computeNavBar({
     }),
     headerTransparent: true,
     headerStyle: { backgroundColor: 'transparent' },
+    headerShadowVisible: false,
   };
 }
 
