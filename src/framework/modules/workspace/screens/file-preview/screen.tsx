@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import {
   downloadThenOpenWorkspaceFileAction,
@@ -54,7 +55,9 @@ const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => 
 
   return (
     <PageView>
-      <TouchableOpacity onPress={preview}>{renderImage(props.file, false, props.file.name)}</TouchableOpacity>
+      <TouchableOpacity onPress={preview} style={UI_STYLES.flexGrow1}>
+        {renderImage(props.file, false, props.file.name)}
+      </TouchableOpacity>
       <View style={styles.actionsContainer}>
         {Platform.OS !== 'ios' ? (
           <ButtonIconText name="download" onPress={download}>
