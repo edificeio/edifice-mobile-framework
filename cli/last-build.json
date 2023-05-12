@@ -1,6 +1,6 @@
 {
-  "last": "2023-05-11 12:23:54",
-  "notes": "release: 1.9.5-rc.4(1090523)",
-  "version": "1.9.5-rc.5(1090524)",
+  "last": "2023-05-12 15:28:11",
+  "notes": "fix(workspace): MB-1623 fix android preview page title\nfix(workspace): fix android preview page layout\nfix: remove player navbar shadow\nfix(user): MB-1619 change password is now fullscreen modal\nfix(player): video position\nrelease: 1.9.5-rc.5(1090524)",
+  "version": "1.9.5-rc.6(1090525)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
