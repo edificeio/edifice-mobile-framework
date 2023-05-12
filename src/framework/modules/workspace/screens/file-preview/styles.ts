@@ -4,6 +4,6 @@ export default StyleSheet.create({
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    height: 90,
+    flex: 0,
   },
 });

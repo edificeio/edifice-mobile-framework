@@ -31,6 +31,7 @@ export function computeNavBar({
     }),
     headerTransparent: true,
     headerStyle: { backgroundColor: 'transparent' },
+    headerShadowVisible: false,
   };
 }
 
@@ -162,7 +163,11 @@ function MediaPlayer(props: MediaPlayerProps) {
             scrollEnabled={false}
             source={realSource}
             startInLoadingState
-            style={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+            style={
+              isPortrait
+                ? [styles.playerPortrait, styles.externalPlayerPortrait]
+                : [styles.playerLandscape, styles.externalPlayerLandscape]
+            }
           />
         </>
       );
