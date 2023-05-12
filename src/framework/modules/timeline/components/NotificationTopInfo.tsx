@@ -10,7 +10,7 @@ import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card'
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { APPBADGES } from '~/framework/modules/timelinev2/appBadges';
+import { APPBADGES } from '~/framework/modules/timeline/appBadges';
 import { ITimelineNotification } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 

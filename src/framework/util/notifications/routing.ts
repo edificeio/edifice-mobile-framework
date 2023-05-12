@@ -7,8 +7,8 @@ import { InteractionManager } from 'react-native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
-import { timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
+import timelineModuleConfig from '~/framework/modules/timeline/moduleConfig';
+import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navigate, navigationRef } from '~/framework/navigation/helper';
 import { setNextTabJump } from '~/framework/navigation/nextTabJump';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';

@@ -1,6 +1,6 @@
 import { CommonActions } from '@react-navigation/native';
 
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import timelineModuleConfig from '~/framework/modules/timeline/moduleConfig';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {

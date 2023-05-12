@@ -9,7 +9,7 @@ import type { Reducer } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import { PictureProps } from '~/framework/components/picture';
-import { updateAppBadges } from '~/framework/modules/timelinev2/appBadges';
+import { updateAppBadges } from '~/framework/modules/timeline/appBadges';
 import { toSnakeCase } from '~/framework/util/string';
 
 //  8888888888          888                                              d8888

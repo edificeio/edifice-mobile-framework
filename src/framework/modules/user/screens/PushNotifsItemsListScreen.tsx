@@ -21,14 +21,14 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { updatePushNotifsSettingsAction } from '~/framework/modules/timelinev2/actions/notifSettings';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notifSettings';
+import timelineModuleConfig from '~/framework/modules/timeline/moduleConfig';
 import {
   ITimeline_State,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
-} from '~/framework/modules/timelinev2/reducer';
-import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+} from '~/framework/modules/timeline/reducer';
+import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notifSettings/pushNotifsSettings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';

@@ -4,10 +4,10 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import {
   computeNotificationFilterList,
   getAuthorizedNotificationFilterList,
-} from '~/framework/modules/timelinev2/reducer/notifDefinitions';
-import { actions as notifFiltersAsyncActions } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifFilters';
-import { actions as notifTypesAsyncActions } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifTypes';
-import { notifFiltersService, registeredNotificationsService } from '~/framework/modules/timelinev2/service';
+} from '~/framework/modules/timeline/reducer/notifDefinitions';
+import { actions as notifFiltersAsyncActions } from '~/framework/modules/timeline/reducer/notifDefinitions/notifFilters';
+import { actions as notifTypesAsyncActions } from '~/framework/modules/timeline/reducer/notifDefinitions/notifTypes';
+import { notifFiltersService, registeredNotificationsService } from '~/framework/modules/timeline/service';
 
 export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatch, getState: () => any) => {
   try {

@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 
-import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/moduleConfig';
 import {
   AsyncState,
   createAsyncActionCreators,

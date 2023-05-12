@@ -25,16 +25,16 @@ import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
   startLoadNotificationsAction,
-} from '~/framework/modules/timelinev2/actions';
-import { TimelineFlashMessage } from '~/framework/modules/timelinev2/components/TimelineFlashMessage';
-import { TimelineNotification } from '~/framework/modules/timelinev2/components/TimelineNotification';
-import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
-import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timelinev2/navigation';
-import { IEntcoreFlashMessage, IFlashMessages_State_Data } from '~/framework/modules/timelinev2/reducer/flashMessages';
-import { INotifications_State } from '~/framework/modules/timelinev2/reducer/notifications';
-import { getTimelineWorkflowInformation } from '~/framework/modules/timelinev2/rights';
-import { notificationsService } from '~/framework/modules/timelinev2/service';
-import { getTimelineWorkflows } from '~/framework/modules/timelinev2/timelineModules';
+} from '~/framework/modules/timeline/actions';
+import { TimelineFlashMessage } from '~/framework/modules/timeline/components/TimelineFlashMessage';
+import { TimelineNotification } from '~/framework/modules/timeline/components/TimelineNotification';
+import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
+import { IEntcoreFlashMessage, IFlashMessages_State_Data } from '~/framework/modules/timeline/reducer/flashMessages';
+import { INotifications_State } from '~/framework/modules/timeline/reducer/notifications';
+import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
+import { notificationsService } from '~/framework/modules/timeline/service';
+import { getTimelineWorkflows } from '~/framework/modules/timeline/timelineModules';
 import { navigate } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';

@@ -22,7 +22,7 @@ import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/n
 import type { INewsNotification } from '~/framework/modules/news/notif-handler';
 import type { INews, INewsComment } from '~/framework/modules/news/reducer';
 import { newsUriCaptureFunction } from '~/framework/modules/news/service';
-import NotificationTopInfo from '~/framework/modules/timelinev2/components/NotificationTopInfo';
+import NotificationTopInfo from '~/framework/modules/timeline/components/NotificationTopInfo';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';

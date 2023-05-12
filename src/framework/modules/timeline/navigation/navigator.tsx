@@ -1,10 +1,10 @@
 import * as React from 'react';
 
-import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/moduleConfig';
 import TimelineFiltersScreen, {
   computeNavBar as TimelineFiltersNavBar,
-} from '~/framework/modules/timelinev2/screens/TimelineFiltersScreen';
-import TimelineScreen, { computeNavBar as TimelineNavBar } from '~/framework/modules/timelinev2/screens/TimelineScreen';
+} from '~/framework/modules/timeline/screens/TimelineFiltersScreen';
+import TimelineScreen, { computeNavBar as TimelineNavBar } from '~/framework/modules/timeline/screens/TimelineScreen';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';

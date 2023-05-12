@@ -5,12 +5,12 @@ import deepmerge from 'deepmerge';
 import queryString from 'query-string';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { IEntcoreFlashMessage } from '~/framework/modules/timelinev2/reducer/flashMessages';
-import { IEntcoreNotificationType } from '~/framework/modules/timelinev2/reducer/notifDefinitions/notifTypes';
+import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flashMessages';
+import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notifDefinitions/notifTypes';
 import {
   IPushNotifsSettings,
   IPushNotifsSettings_State_Data,
-} from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+} from '~/framework/modules/timeline/reducer/notifSettings/pushNotifsSettings';
 import { IEntcoreTimelineNotification, ITimelineNotification, notificationAdapter } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 

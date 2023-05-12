@@ -1,6 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 
-import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import moduleConfig from '~/framework/modules/timeline/moduleConfig';
 import { IAbstractNotification } from '~/framework/util/notifications';
 
 export const timelineRouteNames = {

@@ -2,18 +2,18 @@ import I18n from 'i18n-js';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
-import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
-import * as notifDefinitionsStateHandler from '~/framework/modules/timelinev2/reducer/notifDefinitions';
+import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import { ITimeline_State } from '~/framework/modules/timeline/reducer';
+import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notifDefinitions';
 import {
   INotifFilterSettings,
   actions as notifFilterSettingsActions,
-} from '~/framework/modules/timelinev2/reducer/notifSettings/notifFilterSettings';
+} from '~/framework/modules/timeline/reducer/notifSettings/notifFilterSettings';
 import {
   IPushNotifsSettings,
   actions as pushNotifsSettingsActions,
-} from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
-import { pushNotifsService } from '~/framework/modules/timelinev2/service';
+} from '~/framework/modules/timeline/reducer/notifSettings/pushNotifsSettings';
+import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 

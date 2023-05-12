@@ -4,13 +4,13 @@
 import { ThunkDispatch } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import moduleConfig from '~/framework/modules/timelinev2/moduleConfig';
-import { ITimeline_State } from '~/framework/modules/timelinev2/reducer';
-import { actions as flashMessagesActions } from '~/framework/modules/timelinev2/reducer/flashMessages';
-import * as notifDefinitionsStateHandler from '~/framework/modules/timelinev2/reducer/notifDefinitions';
-import * as notifSettingsStateHandler from '~/framework/modules/timelinev2/reducer/notifSettings';
-import { actions as notificationsActions } from '~/framework/modules/timelinev2/reducer/notifications';
-import { flashMessagesService, notificationsService } from '~/framework/modules/timelinev2/service';
+import moduleConfig from '~/framework/modules/timeline/moduleConfig';
+import { ITimeline_State } from '~/framework/modules/timeline/reducer';
+import { actions as flashMessagesActions } from '~/framework/modules/timeline/reducer/flashMessages';
+import * as notifDefinitionsStateHandler from '~/framework/modules/timeline/reducer/notifDefinitions';
+import * as notifSettingsStateHandler from '~/framework/modules/timeline/reducer/notifSettings';
+import { actions as notificationsActions } from '~/framework/modules/timeline/reducer/notifications';
+import { flashMessagesService, notificationsService } from '~/framework/modules/timeline/service';
 
 import { loadNotificationsDefinitionsAction } from './notifDefinitions';
 import { loadNotificationFiltersSettingsAction } from './notifSettings';

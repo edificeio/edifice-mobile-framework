@@ -22,15 +22,15 @@ import { Icon } from '~/framework/components/picture';
 import { SmallActionText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { loadPushNotifsSettingsAction } from '~/framework/modules/timelinev2/actions/notifSettings';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notifSettings';
+import timelineModuleConfig from '~/framework/modules/timeline/moduleConfig';
 import {
   IPushNotifsSettingsByType,
   ITimeline_State,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
-} from '~/framework/modules/timelinev2/reducer';
-import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+} from '~/framework/modules/timeline/reducer';
+import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notifSettings/pushNotifsSettings';
 import moduleConfig from '~/framework/modules/user/module-config';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
