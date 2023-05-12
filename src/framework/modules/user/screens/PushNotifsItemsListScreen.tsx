@@ -7,7 +7,6 @@ import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -16,6 +15,7 @@ import CheckboxButton from '~/framework/components/buttons/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
