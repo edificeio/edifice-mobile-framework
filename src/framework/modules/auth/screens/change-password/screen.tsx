@@ -179,7 +179,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
 
     return (
-      <KeyboardPageView scrollable style={styles.page}>
+      <KeyboardPageView scrollable safeArea style={styles.page}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
           <FormContainer>
             <View style={styles.viewInfoForm}>
