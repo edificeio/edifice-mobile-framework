@@ -30,6 +30,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    title: route.params.title,
   }),
 });
 
