@@ -8,7 +8,6 @@ export default new NavigableModuleConfig<'timeline', ITimeline_State>({
   matchEntcoreApp: app => app.prefix === '/timeline',
   hasRight: () => true, // The timeline is always displayed
 
-  routeName: 'timeline',
   displayI18n: 'timeline.tabName',
   displayAs: 'tabModule',
   displayOrder: 0,
