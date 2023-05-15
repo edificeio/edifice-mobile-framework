@@ -30,7 +30,7 @@ import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~
 import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -240,6 +240,9 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       {
         text: I18n.t('common.continue'),
         style: 'cancel',
+        onPress: () => {
+          clearConfirmNavigationEvent();
+        },
       },
     ]);
   });

@@ -38,7 +38,7 @@ import {
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { formService } from '~/framework/modules/form/service';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -422,6 +422,9 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           {
             text: I18n.t('common.cancel'),
             style: 'cancel',
+            onPress: () => {
+              clearConfirmNavigationEvent();
+            },
           },
           {
             text: I18n.t('common.quit'),

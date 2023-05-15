@@ -45,7 +45,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
@@ -92,6 +92,9 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
         {
           text: I18n.t('common.continue'),
           style: 'default',
+          onPress: () => {
+            clearConfirmNavigationEvent();
+          },
         },
       ],
     );

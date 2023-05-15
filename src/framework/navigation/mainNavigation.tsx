@@ -28,11 +28,12 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
+import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
-import { setNextTabJump } from './nextTabJump';
+import { NAVIGATE_CLOSE_DELAY, consumeModalCloseAction, setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
@@ -116,18 +117,24 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
         navigation.navigate({ key: event.target });
       } else {
         // Else, register the tab change that will be handled in preventRemove callback
-        setNextTabJump(CommonActions.navigate({ key: event.target }));
+        setConfirmQuitAction(CommonActions.navigate({ key: event.target }));
       }
       // Feebback
       Feedback.tabPressed();
     },
   } as ScreenListeners<NavigationState, EventMapBase>);
 
+const stackListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
+  transitionEnd: event => {
+    handleCloseModalActions(navigation);
+  },
+});
+
 export function TabStack({ module }: { module: AnyNavigableModule }) {
   const RootStack = getTypedRootStack();
   const authNavigation = useAuthNavigation();
   return (
-    <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName}>
+    <RootStack.Navigator screenOptions={navBarOptions} initialRouteName={module.config.routeName} screenListeners={stackListeners}>
       {ModuleScreens.all}
       {authNavigation}
       {modals}
