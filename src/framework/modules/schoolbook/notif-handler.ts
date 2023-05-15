@@ -8,7 +8,7 @@ import { CommonActions } from '@react-navigation/native';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
 import {

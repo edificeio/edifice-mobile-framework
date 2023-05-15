@@ -3,7 +3,7 @@ import I18n from 'i18n-js';
 import { Alert } from 'react-native';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import {

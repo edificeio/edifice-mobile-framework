@@ -28,7 +28,7 @@ import {
   publishBlogPostResourceRight,
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
-import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
+import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
@@ -40,7 +40,7 @@ import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
-import { timelineRouteNames } from '../../timelinev2/navigation';
+import { timelineRouteNames } from '../../timeline/navigation';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;

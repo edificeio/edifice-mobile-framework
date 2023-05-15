@@ -10,7 +10,7 @@ import { CommonActions } from '@react-navigation/native';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import { blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { getAsResourceUriNotification } from '~/framework/util/notifications';
 import {

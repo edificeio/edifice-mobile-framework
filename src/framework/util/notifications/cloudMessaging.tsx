@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
+import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';

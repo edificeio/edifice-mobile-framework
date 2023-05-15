@@ -7,7 +7,6 @@ import deepmerge from 'deepmerge';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -16,19 +15,20 @@ import CheckboxButton from '~/framework/components/buttons/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { updatePushNotifsSettingsAction } from '~/framework/modules/timelinev2/actions/notifSettings';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
+import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
+import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import {
-  ITimeline_State,
+  TimelineState,
   getDefaultPushNotifsSettingsByType,
   getPushNotifsSettingsByType,
-} from '~/framework/modules/timelinev2/reducer';
-import { IPushNotifsSettings } from '~/framework/modules/timelinev2/reducer/notifSettings/pushNotifsSettings';
+} from '~/framework/modules/timeline/reducer';
+import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -36,7 +36,7 @@ import Notifier from '~/framework/util/notifier';
 import { shallowEqual } from '~/framework/util/object';
 
 export interface IPushNotifsItemsListScreenDataProps {
-  timelineState: ITimeline_State;
+  timelineState: TimelineState;
   session: ISession;
 }
 
@@ -253,7 +253,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
 }
 
 const mapStateToProps: (s: IGlobalState) => IPushNotifsItemsListScreenDataProps = s => {
-  const timelineState = timelineModuleConfig.getState(s) as ITimeline_State;
+  const timelineState = timelineModuleConfig.getState(s) as TimelineState;
   const session = getSession()!;
   return {
     timelineState,
