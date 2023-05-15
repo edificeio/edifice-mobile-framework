@@ -202,40 +202,29 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     Toast.showInfo(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'));
   };
 
-  checkIsDraftBlank = () => {
+  checkIsDraftBlank = (): boolean => {
+    const { draft, isDeleted, tempAttachment } = this.state;
     const { type } = this.props.route.params;
-    const { draft, isDeleted } = this.state;
 
     if (isDeleted) return true;
-    if (type !== DraftType.NEW && type !== DraftType.DRAFT) {
-      return false;
-    }
-    for (const key in draft) {
-      const value = draft[key];
-      if (
-        ((key === 'to' || key === 'cc' || key === 'bcc' || key === 'attachments') && value.length > 0) ||
-        ((key === 'subject' || key === 'body') && value !== '') ||
-        (this.state.tempAttachment !== null && this.state.tempAttachment !== undefined)
-      ) {
-        return false;
-      }
-    }
-    return true;
+    if (type !== DraftType.NEW && type !== DraftType.DRAFT) return false;
+    return (
+      !draft.to.length &&
+      !draft.cc.length &&
+      !draft.bcc.length &&
+      !draft.attachments.length &&
+      !draft.subject &&
+      !draft.body &&
+      !tempAttachment
+    );
   };
 
   getMailData = (): IMail => {
     const { draft, signature, useSignature } = this.state;
     const { type } = this.props.route.params;
+    const ret = {};
 
     draft.body = draft.body.replace(/(\r\n|\n|\r)/gm, '<br>');
-    if (type === DraftType.REPLY || type === DraftType.REPLY_ALL || type === DraftType.FORWARD) {
-      draft.threadBody = draft.threadBody?.replace('\n', '<br />');
-    } else {
-      draft.threadBody = draft.threadBody?.replace(/(<br>|<br \/>)/gs, '\n');
-    }
-    if (draft.threadBody === undefined) draft.threadBody = '';
-
-    const ret = {};
     for (const key in draft) {
       const value = draft[key];
       if (key === 'to' || key === 'cc' || key === 'bcc') {
