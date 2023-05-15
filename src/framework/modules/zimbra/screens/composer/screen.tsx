@@ -219,32 +219,23 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     );
   };
 
-  getMailData = (): IMail => {
+  getMailData = (): Partial<IMail> => {
     const { draft, signature, useSignature } = this.state;
     const { type } = this.props.route.params;
-    const ret = {};
+    let body = draft.body.replace(/(\r\n|\n|\r)/gm, '<br>');
 
-    draft.body = draft.body.replace(/(\r\n|\n|\r)/gm, '<br>');
-    for (const key in draft) {
-      const value = draft[key];
-      if (key === 'to' || key === 'cc' || key === 'bcc') {
-        ret[key] = value.map(user => user.id);
-      } else if (key === 'body') {
-        if (signature && useSignature) {
-          if (type === DraftType.DRAFT) {
-            ret[key] = value + draft.threadBody;
-          } else {
-            const sign = '<br><div class="signature new-signature ng-scope">' + signature + '</div>\n\n';
-            ret[key] = value + sign + draft.threadBody;
-          }
-        } else {
-          ret[key] = value + draft.threadBody;
-        }
-      } else {
-        ret[key] = value;
-      }
+    if (signature && useSignature && type !== DraftType.DRAFT) {
+      body += `<div class="signature new-signature ng-scope">${signature.replace(/\n/g, '<br>')}</div>`;
     }
-    return ret as IMail;
+    body += draft.threadBody;
+    return {
+      to: draft.to.map(recipient => recipient.id),
+      cc: draft.cc.map(recipient => recipient.id),
+      bcc: draft.bcc.map(recipient => recipient.id),
+      subject: draft.subject,
+      body,
+      attachments: draft.attachments,
+    };
   };
 
   trashDraft = async () => {

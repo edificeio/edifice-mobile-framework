@@ -6,6 +6,8 @@ import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
+const BLANK_SUBJECT = '(Aucun objet)';
+
 type IBackendAttachment = {
   id: string;
   filename: string;
@@ -223,7 +225,7 @@ export const zimbraService = {
       );
       return attachments.map(attachment => attachmentAdapter(attachment, session.platform.url, draftId));
     },
-    create: async (session: ISession, mail: IMail, inReplyTo?: string, isForward?: boolean) => {
+    create: async (session: ISession, mail: Partial<IMail>, inReplyTo?: string, isForward?: boolean) => {
       let api = '/zimbra/draft';
       if (inReplyTo) api += `?In-Reply-To=${inReplyTo}`;
       if (isForward) api += '&reply=F';
@@ -246,7 +248,7 @@ export const zimbraService = {
         method: 'PUT',
       });
     },
-    update: async (session: ISession, draftId: string, mail: IMail) => {
+    update: async (session: ISession, draftId: string, mail: Partial<IMail>) => {
       const api = `/zimbra/draft/${draftId}`;
       const body = JSON.stringify(mail);
       await fetchJSONWithCache(api, {
@@ -341,10 +343,11 @@ export const zimbraService = {
       if (!('id' in mail)) throw new Error();
       return mailAdapter(mail, session.platform.url) as IMail;
     },
-    send: async (session: ISession, mail: IMail, draftId?: string, inReplyTo?: string) => {
+    send: async (session: ISession, mail: Partial<IMail>, draftId?: string, inReplyTo?: string) => {
       let api = '/zimbra/send';
       if (draftId) api += `?id=${draftId}`;
       if (inReplyTo) api += `&In-Reply-To=${inReplyTo}`;
+      if (!mail.subject) mail.subject = BLANK_SUBJECT;
       const body = JSON.stringify(mail);
       await fetchJSONWithCache(api, {
         method: 'POST',
