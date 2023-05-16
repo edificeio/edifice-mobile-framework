@@ -9,6 +9,13 @@ export default StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'space-between',
   },
+  dropdown: {
+    borderColor: theme.palette.primary.regular,
+    borderWidth: 1,
+  },
+  dropdownText: {
+    color: theme.ui.text.regular,
+  },
   recapHeader: {
     paddingVertical: UI_SIZES.spacing.small,
     alignSelf: 'flex-end',

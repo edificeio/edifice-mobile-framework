@@ -3,6 +3,7 @@ import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, ScrollView, TextInput, View } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
@@ -39,6 +40,8 @@ export const computeNavBar = ({
 
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
   const [date, setDate] = React.useState<Moment>(moment());
+  const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
+  const [reason, setReason] = React.useState<number | null>(props.route.params.event?.reason_id ?? null);
   const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
   const [isCreating, setCreating] = React.useState<boolean>(false);
   const [isDeleting, setDeleting] = React.useState<boolean>(false);
@@ -65,10 +68,10 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       if (type === EventType.LATENESS && absence) {
         await presencesService.event.delete(session, absence.id);
       }
-      if (event === undefined) {
-        await presencesService.event.create(session, student.id, callId, type, start, end, comment);
+      if (event && event.id) {
+        await presencesService.event.update(session, event.id, student.id, callId, type, start, end, reason, comment);
       } else {
-        await presencesService.event.update(session, event.id!, student.id, callId, type, start, end, comment);
+        await presencesService.event.create(session, student.id, callId, type, start, end, reason, comment);
       }
       await presencesService.classCall.updateStatus(session, callId, 2);
       navigation.goBack();
@@ -95,7 +98,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
   };
 
   const renderPage = () => {
-    const { endDate, event, startDate, student, type } = props.route.params;
+    const { endDate, event, reasons, startDate, student, type } = props.route.params;
     const mainColor =
       type === EventType.LATENESS ? viescoTheme.palette.presencesEvents.lateness : viescoTheme.palette.presencesEvents.departure;
     const mainText = I18n.t(type === EventType.LATENESS ? 'viesco-arrived' : 'viesco-left');
@@ -116,13 +119,32 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             <DateTimePicker mode="time" value={date} onChange={value => setDate(value)} color={mainColor} />
           </View>
           <SmallText style={styles.commentText}>{inputLabel}</SmallText>
-          <TextInput
-            value={comment}
-            onChangeText={text => setComment(text)}
-            multiline
-            textAlignVertical="top"
-            style={styles.commentInput}
-          />
+          {type === EventType.LATENESS ? (
+            <DropDownPicker
+              open={isDropdownOpen}
+              value={reason}
+              items={
+                reasons?.map(r => ({
+                  label: r.label,
+                  value: r.id,
+                })) ?? []
+              }
+              setOpen={setDropdownOpen}
+              setValue={setReason}
+              placeholder={I18n.t('viesco-no-reason')}
+              style={styles.dropdown}
+              dropDownContainerStyle={styles.dropdown}
+              textStyle={styles.dropdownText}
+            />
+          ) : (
+            <TextInput
+              value={comment}
+              onChangeText={text => setComment(text)}
+              multiline
+              textAlignVertical="top"
+              style={styles.commentInput}
+            />
+          )}
         </View>
         <View style={styles.actionsContainer}>
           {event !== undefined ? (

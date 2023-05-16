@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { ICourse } from '~/framework/modules/viescolaire/presences/model';
+import { ICourse, IEventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -21,6 +21,7 @@ export interface PresencesCourseListScreenProps {
     endDate: string,
     multipleSlot?: boolean,
   ) => Promise<ICourse[]>;
+  fetchEventReasons: (structureId: string) => Promise<IEventReason[]>;
   fetchMultipleSlotsSetting: (structureId: string) => Promise<boolean>;
   fetchRegisterPreference: () => Promise<string>;
 }
