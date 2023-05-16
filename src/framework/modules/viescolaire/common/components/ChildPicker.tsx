@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
 interface IChildPickerProps {
   children?: React.ReactNode;
   selectedChildId?: string;
-  userChildren?: { label: string; value: string; icon: () => JSX.Element }[];
+  userChildren?: { label: string; value: string; icon: () => React.JSX.Element }[];
   selectChild: (childId: string) => void;
 }
 
@@ -85,11 +85,13 @@ export default connect(
 
     return {
       selectedChildId: viescoState.children.selectedChild,
-      userChildren: getFlattenedChildren(session?.user.children)?.map(child => ({
-        label: `${child.firstName} ${child.lastName}`,
-        value: child.id,
-        icon: () => <SingleAvatar userId={child.id} size={24} />,
-      })),
+      userChildren: getFlattenedChildren(session?.user.children)
+        ?.filter(child => child.classesNames.length > 0)
+        .map(child => ({
+          label: `${child.firstName} ${child.lastName}`,
+          value: child.id,
+          icon: () => <SingleAvatar userId={child.id} size={24} />,
+        })),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
