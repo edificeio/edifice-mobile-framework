@@ -1,11 +1,12 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { IClassCall } from '~/framework/modules/viescolaire/presences/model';
+import { IClassCall, IEventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface PresencesCallScreenProps {
+  eventReasons: IEventReason[];
   initialLoadingState: AsyncPagedLoadingState;
   classCall?: IClassCall;
   session?: ISession;

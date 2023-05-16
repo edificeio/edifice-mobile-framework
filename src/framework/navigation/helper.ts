@@ -6,13 +6,14 @@
 import {
   CommonActions,
   NavigationAction,
+  NavigationHelpers,
   NavigationProp,
   ParamListBase,
   Route,
   createNavigationContainerRef,
 } from '@react-navigation/native';
 
-import { consumeNextTabJump } from './nextTabJump';
+import { NAVIGATE_CLOSE_DELAY, consumeConfirmQuitAction, consumeModalCloseAction } from './nextTabJump';
 
 export interface INavigationParams extends ParamListBase {}
 export const navigationRef = createNavigationContainerRef<INavigationParams>();
@@ -42,7 +43,7 @@ export const useNavigationDevPlugins = () => {
 };
 
 export const handleRemoveConfirmNavigationEvent = (action: NavigationAction, navigation: NavigationProp<ParamListBase>) => {
-  const [nextJumps, delayed] = consumeNextTabJump();
+  const [nextJumps, delayed] = consumeConfirmQuitAction();
   nextJumps.unshift(action);
   if (delayed) {
     const consumeOne = () => {
@@ -51,7 +52,7 @@ export const handleRemoveConfirmNavigationEvent = (action: NavigationAction, nav
         if (!next) return;
         navigation.dispatch(next);
         consumeOne();
-      });
+      }, NAVIGATE_CLOSE_DELAY);
     };
     consumeOne();
   } else {
@@ -59,4 +60,27 @@ export const handleRemoveConfirmNavigationEvent = (action: NavigationAction, nav
       navigation.dispatch(next);
     });
   }
+};
+
+export const handleCloseModalActions = (navigation: NavigationHelpers<ParamListBase>) => {
+  const [nextJumps, delayed] = consumeModalCloseAction();
+  if (delayed) {
+    const consumeOne = () => {
+      setTimeout(() => {
+        const next = nextJumps.shift();
+        if (!next) return;
+        navigation.dispatch(next);
+        consumeOne();
+      }, NAVIGATE_CLOSE_DELAY);
+    };
+    consumeOne();
+  } else {
+    nextJumps.forEach(next => {
+      navigation.dispatch(next);
+    });
+  }
+};
+
+export const clearConfirmNavigationEvent = () => {
+  consumeConfirmQuitAction();
 };

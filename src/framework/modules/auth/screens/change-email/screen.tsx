@@ -19,7 +19,7 @@ import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -140,6 +140,9 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       {
         text: I18n.t('common.continue'),
         style: 'cancel',
+        onPress: () => {
+          clearConfirmNavigationEvent();
+        },
       },
     ]);
   });

@@ -12,7 +12,6 @@ import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IMemento } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -31,9 +30,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-memento'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {

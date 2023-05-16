@@ -17,11 +17,18 @@ type IBackendSchoolYear = {
 };
 
 type IBackendTerm = {
+  id: number;
+  id_etablissement: string;
+  libelle: string | null;
   timestamp_dt: string;
   timestamp_fn: string;
-  ordre: number;
-  type: number;
+  date_fin_saisie: string;
+  id_classe: string;
   id_type: number;
+  date_conseil_classe: string;
+  publication_bulletin: boolean;
+  type: number;
+  ordre: number;
 };
 
 type IBackendUser = {

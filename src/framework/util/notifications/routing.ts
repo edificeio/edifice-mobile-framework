@@ -3,14 +3,16 @@
  * Router operations on opeening a notification
  */
 import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
-import { InteractionManager } from 'react-native';
+import { Alert } from 'react-native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
+import Toast from '~/framework/components/toast';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navigate, navigationRef } from '~/framework/navigation/helper';
-import { setNextTabJump } from '~/framework/navigation/nextTabJump';
+import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
+import { setConfirmQuitAction, setModalCloseAction } from '~/framework/navigation/nextTabJump';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import { openUrl } from '~/framework/util/linking';
 import { Trackers } from '~/framework/util/tracker';
@@ -168,23 +170,29 @@ export const handleNotificationNavigationAction = (navAction: NavigationAction) 
   if (leafState.index !== undefined && leafState.index !== 0) {
     navigationRef.dispatch(StackActions.popToTop());
     const newState = navigationRef.getRootState();
-    preventMove = JSON.stringify(navState) === JSON.stringify(newState);
+    preventMove = JSON.stringify(navState) === JSON.stringify(newState); // It's ugly but the two states are not the same object even when the content is the same. :/
   }
 
   // 2. Call / schedule given nav action. If there was preventRemove, we must include popToTop again in the scheduled actions to close the modal.
   if (preventMove) {
     // We set the `delayed` argument to true to ensure native modals are closed before triggering any other action.
     // This seems to be an issue of React Navigation 6 at this time. In the future, we can test with `false` to not use setTimeout to delay each nav action.
-    setNextTabJump([StackActions.popToTop(), navAction], true);
+    setConfirmQuitAction([StackActions.popToTop(), navAction], true);
     notificationThrotlingEvent = false;
   } else {
-    // We use setTimeout here to ensure native modals are closed before triggering any other action.
-    // This seems to be an issue of React Navigation 6 at this time. In the future, we can test by calling directly dispatch function.
-    setTimeout(() => {
-      navigationRef.dispatch(navAction);
+    // If current route is modal, we'll need to wait until it closes.
+    if (isModalModeOnThisRoute(leafState.routes[leafState.index].name)) {
+      setModalCloseAction([navAction], true);
+      notificationThrotlingEvent = false;
+    } else {
+      // We use setTimeout here to ensure native modals are closed before triggering any other action.
+      // This seems to be an issue of React Navigation 6 at this time. In the future, we can test by calling directly dispatch function.
       setTimeout(() => {
-        notificationThrotlingEvent = false;
-      }, NOTIFICATION_THROTLE_DELAY);
-    });
+        navigationRef.dispatch(navAction);
+        setTimeout(() => {
+          notificationThrotlingEvent = false;
+        }, NOTIFICATION_THROTLE_DELAY);
+      });
+    }
   }
 };

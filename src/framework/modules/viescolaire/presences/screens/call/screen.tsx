@@ -41,9 +41,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-register'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
@@ -154,7 +151,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   };
 
   const renderStudentsList = () => {
-    const { classCall, navigation } = props;
+    const { classCall, eventReasons, navigation } = props;
     const { id } = props.route.params;
     const students = classCall!.students.sort((a, b) => a.name.localeCompare(b.name));
     students.forEach(student => (student.key = student.id));
@@ -222,6 +219,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                     startDate: classCall.start_date,
                     endDate: classCall.end_date,
                     event: item.events.find(e => e.type_id === 2),
+                    reasons: eventReasons.filter(reason => reason.reasonTypeId === 2),
                   });
                   row[item.key]?.closeRow();
                 },
@@ -286,6 +284,7 @@ export default connect(
 
     return {
       classCall: presencesState.classCall.data,
+      eventReasons: presencesState.eventReasons.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       session,
     };

@@ -5,7 +5,14 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
-import { IChildrenEvents, IClassCall, ICourse, IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import {
+  IChildrenEvents,
+  IClassCall,
+  ICourse,
+  IEventReason,
+  IHistory,
+  IUserChild,
+} from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
@@ -14,6 +21,7 @@ interface IPresencesReduxStateData {
   childrenEvents?: IChildrenEvents;
   classCall?: IClassCall;
   courses: ICourse[];
+  eventReasons: IEventReason[];
   history: IHistory;
   registerPreference: string;
   schoolYear?: ISchoolYear;
@@ -26,6 +34,7 @@ export interface IPresencesReduxState {
   childrenEvents: AsyncState<IChildrenEvents | undefined>;
   classCall: AsyncState<IClassCall | undefined>;
   courses: AsyncState<ICourse[]>;
+  eventReasons: AsyncState<IEventReason[]>;
   history: AsyncState<IHistory>;
   registerPreference: AsyncState<string>;
   schoolYear: AsyncState<ISchoolYear | undefined>;
@@ -36,6 +45,7 @@ export interface IPresencesReduxState {
 const initialState: IPresencesReduxStateData = {
   allowMultipleSlots: true,
   courses: [],
+  eventReasons: [],
   history: {
     latenesses: [],
     departures: [],
@@ -56,6 +66,7 @@ export const actionTypes = {
   classCall: createAsyncActionTypes(moduleConfig.namespaceActionType('CLASS_CALL')),
   courses: createAsyncActionTypes(moduleConfig.namespaceActionType('COURSES')),
   createAbsence: createAsyncActionTypes(moduleConfig.namespaceActionType('CREATE_ABSENCE')),
+  eventReasons: createAsyncActionTypes(moduleConfig.namespaceActionType('EVENT_REASONS')),
   history: createAsyncActionTypes(moduleConfig.namespaceActionType('HISTORY')),
   multipleSlotsSetting: createAsyncActionTypes(moduleConfig.namespaceActionType('MULTIPLE_SLOTS_SETTING')),
   registerPreference: createAsyncActionTypes(moduleConfig.namespaceActionType('REGISTER_PREFERENCE')),
@@ -69,6 +80,7 @@ const reducer = combineReducers({
   childrenEvents: createSessionAsyncReducer(initialState.childrenEvents, actionTypes.childrenEvents),
   classCall: createSessionAsyncReducer(initialState.classCall, actionTypes.classCall),
   courses: createSessionAsyncReducer(initialState.courses, actionTypes.courses),
+  eventReasons: createSessionAsyncReducer(initialState.eventReasons, actionTypes.eventReasons),
   history: createSessionAsyncReducer(initialState.history, actionTypes.history),
   registerPreference: createSessionAsyncReducer(initialState.registerPreference, actionTypes.registerPreference),
   schoolYear: createSessionAsyncReducer(initialState.schoolYear, actionTypes.schoolYear),

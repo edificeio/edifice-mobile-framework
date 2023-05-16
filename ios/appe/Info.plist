@@ -5,7 +5,7 @@
 		<key>BundleVersionOverride</key>
 		<string>dev/default</string>
 		<key>BundleVersionType</key>
-		<string></string>
+		<string>alpha.4</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>fr_FR</string>
 		<key>CFBundleDisplayName</key>
@@ -30,6 +30,7 @@
 		<array>
 			<string>http</string>
 			<string>https</string>
+			<string>moodlemobile</string>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true />

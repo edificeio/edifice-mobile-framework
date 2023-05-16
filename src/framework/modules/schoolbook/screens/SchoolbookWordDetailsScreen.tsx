@@ -26,7 +26,7 @@ import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-ha
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -250,6 +250,9 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         {
           text: I18n.t('common.continue'),
           style: 'default',
+          onPress: () => {
+            clearConfirmNavigationEvent();
+          },
         },
       ],
     );

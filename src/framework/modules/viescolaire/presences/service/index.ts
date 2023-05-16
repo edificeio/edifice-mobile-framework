@@ -9,6 +9,7 @@ import {
   IClassCall,
   ICourse,
   ICourseRegister,
+  IEventReason,
   IForgottenNotebook,
   IHistoryEvent,
   IIncident,
@@ -71,6 +72,7 @@ type IBackendClassCall = {
         start_date: string;
         register_id: string;
         type_id: number;
+        reason_id: number | null;
       }[];
     }[];
   }[];
@@ -110,6 +112,22 @@ type IBackendEvent = {
   register_id: number;
   type_id: number;
   reason_id: number;
+};
+
+type IBackendEventReason = {
+  id: number;
+  structure_id: string;
+  label: string;
+  proving: boolean;
+  comment: string;
+  default: boolean;
+  group: boolean;
+  hidden: boolean;
+  absence_compliance: boolean;
+  created: string;
+  reason_type_id: number;
+  reason_alert_rules: string[];
+  used: boolean;
 };
 
 type IBackendHistoryEvent = {
@@ -204,6 +222,7 @@ type IBackendUserChild = {
 };
 
 type IBackendCourseList = IBackendCourse[];
+type IBackendEventReasonList = IBackendEventReason[];
 type IBackendHistoryEventList = IBackendHistoryEvent[];
 type IBackendUserChildren = IBackendUserChild[];
 
@@ -272,6 +291,14 @@ const eventAdapter = (data: IBackendEvent): ICallEvent => {
     type_id: data.type_id,
     reason_id: data.reason_id,
   } as ICallEvent;
+};
+
+const eventReasonAdapter = (data: IBackendEventReason): IEventReason => {
+  return {
+    id: data.id,
+    label: data.label,
+    reasonTypeId: data.reason_type_id,
+  } as IEventReason;
 };
 
 const historyEventAdapter = (data: IBackendHistoryEvent): IHistoryEvent => {
@@ -487,7 +514,8 @@ export const presencesService = {
       type: EventType,
       startDate: moment.Moment,
       endDate: moment.Moment,
-      comment: string,
+      reasonId: number | null,
+      comment?: string,
     ) => {
       const api = '/presences/events';
       const body = JSON.stringify({
@@ -496,6 +524,7 @@ export const presencesService = {
         type_id: type as number,
         start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
         end_date: endDate.format('YYYY-MM-DD HH:mm:ss'),
+        reason_id: reasonId,
         comment,
       });
       const event = (await fetchJSONWithCache(api, {
@@ -518,7 +547,8 @@ export const presencesService = {
       type: EventType,
       startDate: moment.Moment,
       endDate: moment.Moment,
-      comment: string,
+      reasonId: number | null,
+      comment?: string,
     ) => {
       const api = `/presences/events/${id}`;
       const body = JSON.stringify({
@@ -527,6 +557,7 @@ export const presencesService = {
         type_id: type as number,
         start_date: startDate.format('YYYY-MM-DD HH:mm:ss'),
         end_date: endDate.format('YYYY-MM-DD HH:mm:ss'),
+        reason_id: reasonId,
         comment,
       });
       const event = (await fetchJSONWithCache(api, {
@@ -534,6 +565,13 @@ export const presencesService = {
         body,
       })) as IBackendEvent;
       return eventAdapter(event);
+    },
+  },
+  eventReasons: {
+    get: async (session: ISession, structureId: string) => {
+      const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
+      const eventReasons = (await fetchJSONWithCache(api)) as IBackendEventReasonList;
+      return eventReasons.map(eventReason => eventReasonAdapter(eventReason)) as IEventReason[];
     },
   },
   history: {

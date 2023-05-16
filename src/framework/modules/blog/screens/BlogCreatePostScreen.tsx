@@ -29,7 +29,7 @@ import {
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import Notifier from '~/framework/util/notifier';
@@ -163,6 +163,9 @@ function PreventBack(props: { isEditing: boolean }) {
         {
           text: I18n.t('common.continue'),
           style: 'default',
+          onPress: () => {
+            clearConfirmNavigationEvent();
+          },
         },
       ],
     );

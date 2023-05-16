@@ -21,6 +21,7 @@ import StructurePicker from '~/framework/modules/viescolaire/common/components/S
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import {
   fetchPresencesCoursesAction,
+  fetchPresencesEventReasonsAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
@@ -45,9 +46,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-presences'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps) => {
@@ -63,6 +61,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       if (!structureId || !teacherId) throw new Error();
       const allowMultipleSlots = await props.fetchMultipleSlotsSetting(structureId);
       const registerPreference = await props.fetchRegisterPreference();
+      await props.fetchEventReasons(structureId);
       const today = moment().format('YYYY-MM-DD');
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
@@ -210,6 +209,11 @@ export default connect(
           undefined,
           true,
         ) as unknown as PresencesCourseListScreenPrivateProps['fetchCourses'],
+        fetchEventReasons: tryActionLegacy(
+          fetchPresencesEventReasonsAction,
+          undefined,
+          true,
+        ) as unknown as PresencesCourseListScreenPrivateProps['fetchEventReasons'],
         fetchMultipleSlotsSetting: tryActionLegacy(
           fetchPresencesMultipleSlotSettingAction,
           undefined,

@@ -6,7 +6,14 @@ import { ThunkAction } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
-import { IChildrenEvents, IClassCall, ICourse, IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import {
+  IChildrenEvents,
+  IClassCall,
+  ICourse,
+  IEventReason,
+  IHistory,
+  IUserChild,
+} from '~/framework/modules/viescolaire/presences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
@@ -70,6 +77,25 @@ export const fetchPresencesCoursesAction =
       return courses;
     } catch (e) {
       dispatch(presencesCoursesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+/**
+ * Fetch event reasons.
+ */
+export const presencesEventReasonsActionsCreators = createAsyncActionCreators(actionTypes.eventReasons);
+export const fetchPresencesEventReasonsAction =
+  (structureId: string): ThunkAction<Promise<IEventReason[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesEventReasonsActionsCreators.request());
+      const eventReasons = await presencesService.eventReasons.get(session, structureId);
+      dispatch(presencesEventReasonsActionsCreators.receipt(eventReasons));
+      return eventReasons;
+    } catch (e) {
+      dispatch(presencesEventReasonsActionsCreators.error(e as Error));
       throw e;
     }
   };

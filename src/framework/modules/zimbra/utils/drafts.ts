@@ -87,17 +87,20 @@ export const initDraftFromMail = (mail: IMail, draftType: DraftType): Partial<ID
     }
     case DraftType.DRAFT: {
       let threadBody = '';
-      if (mail.body.length) {
-        threadBody = mail.body.split('<br><br>').slice(1).join('<br><br>');
-        if (threadBody) threadBody.concat('<br><br>', threadBody);
+      if (mail.body) {
+        // Slice replied/forwarded mail information from body and assign it to threadBody
+        const index = mail.body.indexOf('<br /><br /><p class="row ng-scope"></p>');
+        if (index !== -1) {
+          threadBody = mail.body.slice(index);
+          mail.body = mail.body.slice(0, index);
+        }
       }
-
       return {
         to: mail.to.map(id => getRecipient(mail.displayNames, id)),
         cc: mail.cc.map(id => getRecipient(mail.displayNames, id)),
         bcc: mail.bcc.map(id => getRecipient(mail.displayNames, id)),
         subject: mail.subject,
-        body: deleteHtmlContent(mail.body.split('<br><br>')[0]),
+        body: deleteHtmlContent(mail.body),
         threadBody,
         attachments: mail.attachments,
       };

@@ -18,7 +18,6 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import {
@@ -47,9 +46,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-timetable'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.edt,
-  },*/
 });
 
 const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {

@@ -30,7 +30,7 @@ import {
 } from '~/framework/modules/timeline/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';
 import { shallowEqual } from '~/framework/util/object';
@@ -84,6 +84,9 @@ function PreventBack(props: { hasChanged: boolean }) {
       {
         text: I18n.t('common.cancel'),
         style: 'cancel',
+        onPress: () => {
+          clearConfirmNavigationEvent();
+        },
       },
       {
         text: I18n.t('common.quit'),

@@ -1,8 +1,8 @@
+import { ICompetence } from './competence';
 import { IDevoir } from './devoir';
-import { IDevoirsMatieres } from './devoirs-matieres';
+import { IDomaine } from './domaine';
 import { ILevel } from './level';
-import { IMatiere } from './matiere';
-import { IMoyenne } from './moyenne';
+import { ISubject } from './subject';
 import { IUserChild } from './user-child';
 
-export { IDevoir, IDevoirsMatieres, ILevel, IMatiere, IMoyenne, IUserChild };
+export { ICompetence, IDevoir, IDomaine, ILevel, ISubject, IUserChild };
