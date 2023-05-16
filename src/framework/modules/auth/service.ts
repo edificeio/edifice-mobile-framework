@@ -124,7 +124,7 @@ export interface UserPrivateData {
   childrenStructure?: {
     structureName: string;
     children: {
-      classNames: string[];
+      classesNames: string[];
       displayName: string;
       externalId?: string;
       id: string;

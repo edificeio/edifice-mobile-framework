@@ -6,13 +6,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
-import Toast from 'react-native-toast-message';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import Toast from '~/framework/components/toast';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';

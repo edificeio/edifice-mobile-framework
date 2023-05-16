@@ -80,7 +80,7 @@ export interface ILoggedUser extends IUser, ILoggedUserProfile {
 }
 
 export interface UserChild {
-  classNames: string[];
+  classesNames: string[];
   displayName: string;
   externalId?: string;
   lastName: string;
