@@ -127,8 +127,8 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
     });
   };
 
-  const renderEmpty = () => {
-    return <EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />;
+  const renderEmpty = (title: string) => {
+    return <EmptyScreen svgImage="empty-evaluations" title={title} />;
   };
 
   const renderError = () => {
@@ -217,7 +217,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
               .filter(i => i.devoirs.length)}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => <SubjectAverageCard devoirs={item.devoirs} name={item.name} />}
-            ListEmptyComponent={renderEmpty()}
+            ListEmptyComponent={renderEmpty(I18n.t('viesco-empty-subject-averages'))}
             style={styles.listContainer}
           />
         ) : (
@@ -232,7 +232,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 onPress={() => openAssessment(item)}
               />
             )}
-            ListEmptyComponent={renderEmpty()}
+            ListEmptyComponent={renderEmpty(I18n.t('viesco-eval-EmptyScreenText'))}
             style={styles.listContainer}
           />
         )}
