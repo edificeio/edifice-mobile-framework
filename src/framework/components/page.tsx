@@ -23,8 +23,6 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import Toast from 'react-native-toast-message';
 import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
@@ -33,12 +31,14 @@ import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 import { UI_SIZES } from './constants';
+import { ScreenToast } from './toast/component';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
   // xmasTheme?: boolean;
   statusBar?: 'primary' | 'light' | 'dark';
+  showToast?: boolean;
 }
 
 export const pageGutterSize = UI_SIZES.spacing.medium;
@@ -60,7 +60,7 @@ export const PageViewStyle = styled.View({
   backgroundColor: theme.ui.background.page,
 });
 export const PageViewContainer = (props: PageViewProps) => {
-  const { children, gutters, showNetworkBar = true, statusBar = 'primary', ...viewProps } = props;
+  const { children, gutters, showNetworkBar = true, statusBar = 'primary', showToast = true, ...viewProps } = props;
   const route = useRoute();
 
   const gutterStyle = React.useMemo(
@@ -101,7 +101,7 @@ export const PageViewContainer = (props: PageViewProps) => {
         {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
-        {isModal ? <Toast /> : null}
+        {isModal && showToast ? <ScreenToast /> : null}
       </>
     </PageViewStyle>
   );
