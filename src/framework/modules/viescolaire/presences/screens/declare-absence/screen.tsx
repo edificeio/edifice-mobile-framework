@@ -37,9 +37,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-absence-declaration'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPrivateProps) => {

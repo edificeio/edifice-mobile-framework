@@ -9,7 +9,6 @@ import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
 import {
   fetchDiaryHomeworksAction,
@@ -36,9 +35,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('Homework'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.diary,
-  },*/
 });
 
 class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScreenPrivateProps> {

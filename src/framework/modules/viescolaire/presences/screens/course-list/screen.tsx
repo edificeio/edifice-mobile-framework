@@ -46,9 +46,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-presences'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps) => {

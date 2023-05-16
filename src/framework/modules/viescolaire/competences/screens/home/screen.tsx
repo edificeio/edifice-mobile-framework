@@ -14,7 +14,6 @@ import ScrollView from '~/framework/components/scrollView';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   fetchCompetencesDevoirsAction,
   fetchCompetencesLevelsAction,
@@ -41,9 +40,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-tests'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.competences,
-  },*/
 });
 
 const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {

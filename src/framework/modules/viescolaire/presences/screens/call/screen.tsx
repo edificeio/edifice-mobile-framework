@@ -41,9 +41,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-register'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {

@@ -12,7 +12,6 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { fetchCourseListFromTeacherAction } from '~/framework/modules/viescolaire/dashboard/actions/courses';
 import { getCoursesListState } from '~/framework/modules/viescolaire/dashboard/state/courses';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
@@ -43,9 +42,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('Homework'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.diary,
-  },*/
 });
 
 class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPrivateProps, TimetableState> {

@@ -8,8 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -19,21 +17,31 @@ import { SmallBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { fetchPresencesHistoryAction, fetchPresencesSchoolYearAction, fetchPresencesTermsAction, fetchPresencesUserChildrenAction } from '~/framework/modules/viescolaire/presences/actions';
-import { DepartureCard, ForgotNotebookCard, IncidentCard, LatenessCard, NoReasonCard, PunishmentCard, RegularizedCard, UnregularizedCard } from '~/framework/modules/viescolaire/presences/components/PresenceCard';
+import {
+  fetchPresencesHistoryAction,
+  fetchPresencesSchoolYearAction,
+  fetchPresencesTermsAction,
+  fetchPresencesUserChildrenAction,
+} from '~/framework/modules/viescolaire/presences/actions';
+import {
+  DepartureCard,
+  ForgotNotebookCard,
+  IncidentCard,
+  LatenessCard,
+  NoReasonCard,
+  PunishmentCard,
+  RegularizedCard,
+  UnregularizedCard,
+} from '~/framework/modules/viescolaire/presences/components/PresenceCard';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-
-
 import styles from './styles';
 import { PresencesHistoryScreenPrivateProps } from './types';
-
 
 export const computeNavBar = ({
   navigation,
@@ -44,9 +52,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('viesco-history'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {

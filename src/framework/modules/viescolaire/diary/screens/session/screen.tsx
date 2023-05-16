@@ -5,7 +5,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import DisplaySession from '~/framework/modules/viescolaire/diary/components/DisplaySession';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -19,9 +18,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t('Homework'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.diary,
-  },*/
 });
 
 class DiarySessionScreen extends React.PureComponent<any> {

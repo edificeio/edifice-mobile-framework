@@ -33,9 +33,6 @@ export const computeNavBar = ({
     route,
     title: I18n.t(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
   }),
-  /*headerStyle: {
-    backgroundColor: viescoTheme.palette.presences,
-  },*/
 });
 
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
