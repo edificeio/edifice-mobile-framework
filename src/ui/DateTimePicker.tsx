@@ -1,6 +1,6 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import React, { useState } from 'react';
+import moment, { Moment } from 'moment';
+import React from 'react';
 import { ColorValue, Platform, StyleSheet, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
@@ -31,13 +31,13 @@ interface IDateTimeButtonProps {
 
 interface IDateTimePickerProps {
   mode: 'time' | 'date';
-  value: moment.Moment;
+  value: Moment;
   color?: ColorValue;
   isDisabled?: boolean;
-  maximumDate?: moment.Moment;
-  minimumDate?: moment.Moment;
+  maximumDate?: Moment;
+  minimumDate?: Moment;
   style?: ViewStyle;
-  onChange: (value: moment.Moment) => void;
+  onChange: (value: Moment) => void;
 }
 
 const DateTimeButton: React.FunctionComponent<IDateTimeButtonProps> = ({
@@ -63,7 +63,8 @@ const DateTimePickerIOS: React.FunctionComponent<IDateTimePickerProps> = ({
   style,
   onChange,
 }: IDateTimePickerProps) => {
-  const [date, setDate] = useState(value);
+  const [date, setDate] = React.useState<Moment>(value);
+
   return (
     <DateTimePicker
       mode={mode}
@@ -93,8 +94,9 @@ const DateTimePickerAndroid: React.FunctionComponent<IDateTimePickerProps> = ({
   style,
   onChange,
 }: IDateTimePickerProps) => {
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(value);
+  const [isModalVisible, setModalVisible] = React.useState<boolean>(false);
+  const [selectedTime, setSelectedTime] = React.useState<Moment>(value);
+
   return (
     <>
       <DateTimeButton

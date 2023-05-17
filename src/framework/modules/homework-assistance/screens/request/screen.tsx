@@ -131,6 +131,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
     const { openingTime } = props.config.settings;
     const isDateValid = getIsDateValid(props.config, date, time);
     const isActionDisabled = !service || !phoneNumber || !isDateValid;
+
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
