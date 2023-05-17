@@ -540,6 +540,8 @@
   "login-wayf-select-text": "Votre compte EduConnect est lié à plusieurs comptes de l'ENT.\r\n\r\nChoisissez le compte avec lequel vous voulez vous connecter.",
   "login-wayf-select-title": "Choix du compte",
   "lvs.tabName": "LVS",
+  "lvs-home-title": "LVS",
+  "lvs-redirect-error-text": "Impossible de rediriger sur LVS.",
   "mailbox.alert.deletedThread.text": "Votre conversation a été supprimée. Nous ne pouvons pas vous restituer l'historique de la conversation.",
   "mailbox.alert.deletedThread.title": "Lecture impossible",
   "me-indicator": "(moi)",

@@ -1,9 +1,10 @@
 import theme from '~/app/theme';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
+const LVSRegex = /la[- ]+vie[- ]+scolaire/i;
+const LVSTestString = 'LVS';
 function hasConnectorApp(entcoreApp: IEntcoreApp): boolean {
-  const regex = /la[- ]+vie[- ]+scolaire/i;
-  return entcoreApp.address.toUpperCase().includes('LVS') || regex.test(entcoreApp.address);
+  return entcoreApp.address.toUpperCase().includes(LVSTestString) || LVSRegex.test(entcoreApp.address);
 }
 
 export default new NavigableModuleConfig<'lvs', null>({
@@ -13,5 +14,5 @@ export default new NavigableModuleConfig<'lvs', null>({
 
   displayI18n: 'lvs.tabName',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'Icon', name: 'lvs', color: theme.palette.primary.regular },
+  displayPicture: { type: 'NamedSvg', name: 'lvs' },
 });
