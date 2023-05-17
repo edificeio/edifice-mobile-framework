@@ -1,6 +1,6 @@
 {
-  "last": "2023-05-16 20:36:11",
-  "notes": "fix: MB-1631 fix toast position\nfeat(viesco): AMVS327 only show students belonging to a class in child picker\nupgrade(stack): Packages upgrade\nfeat(competences): AMVS-295 set another empty screen title for subject averages\nfeat(competences): AMVS-357 use new api routes to fetch assessments and subjects\nchore(viesco): remove comments and unused imports\nfeat(presences): AMVS-322 add reason picker in lateness declaration\nrelease: 1.9.6-alpha.4(1090604)",
-  "version": "1.9.6-alpha.5(1090605)",
+  "last": "2023-05-17 14:44:42",
+  "notes": "chore(stack): Build errors fix\nchore(stack):Release build errors fix\nfeat(presences): AVMS-326 set courses swiper index to last started course\nupgrade(stack): Fix reanimated version\nrelease: 1.9.6-alpha.5(1090605)",
+  "version": "1.9.6-alpha.6(1090606)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
