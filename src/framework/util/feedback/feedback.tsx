@@ -8,7 +8,7 @@ enum FeedbackType {
 
 const HapticFeebackType = [
   Platform.select({ ios: 'notificationError', default: 'notificationError' }), // FeedbackType.ERROR_DISPLAYED
-  Platform.select({ ios: 'soft', default: 'soft' }), // FeedbackType.TAB_PRESSED
+  Platform.select({ ios: 'soft', default: 'keyboardTap' }), // FeedbackType.TAB_PRESSED
 ];
 
 export default class Feedback {
@@ -16,7 +16,7 @@ export default class Feedback {
     // Haptic feedback
     trigger(HapticFeebackType[type], {
       enableVibrateFallback: true,
-      ignoreAndroidSystemSettings: false,
+      ignoreAndroidSystemSettings: true,
     });
   }
 
