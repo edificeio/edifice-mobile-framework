@@ -63,23 +63,27 @@ interface ICourseListProps {
 }
 
 interface ICourseListState {
-  currentIndex: number;
+  initialIndex: number;
 }
 
 export default class CourseList extends React.PureComponent<ICourseListProps, ICourseListState> {
-  constructor(props) {
+  constructor(props: ICourseListProps) {
     super(props);
 
     this.state = {
-      currentIndex: this.getCurrentCourseIndex(props.courses),
+      initialIndex: this.getCurrentCourseIndex(props.courses),
     };
   }
 
-  private getCurrentCourseIndex(courses) {
-    const courseIndexNow = courses.findIndex(course =>
-      moment().isBetween(moment(course.startDate).subtract(1, 'minutes'), moment(course.endDate)),
-    );
-    return courseIndexNow !== -1 ? courseIndexNow : 0;
+  private getCurrentCourseIndex(courses: ICourse[]): number {
+    let index = 0;
+    const now = moment();
+
+    for (const course of courses) {
+      if (course.startDate.subtract(15, 'minutes').isAfter(now)) return index;
+      index += 1;
+    }
+    return index;
   }
 
   public render() {
@@ -95,7 +99,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
           ) : courses.length ? (
             <Swiper
               horizontal
-              index={this.state.currentIndex}
+              index={this.state.initialIndex}
               dot={<View style={styles.carouselDot} />}
               activeDotStyle={styles.carouselActiveDot}
               paginationStyle={styles.carouselPagination}

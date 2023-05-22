@@ -540,6 +540,8 @@
   "login-wayf-select-text": "Su cuenta EduConnect está vinculada a varias cuentas del EAV.\r\n\r\nSeleccione la cuenta con la que desea conectarse.",
   "login-wayf-select-title": "Seleccionar cuenta",
   "lvs.tabName": "LVS",
+  "lvs-home-title": "LVS",
+  "lvs-redirect-error-text": "No se puede redireccionar a LVS.",
   "mailbox.alert.deletedThread.text": "La conversación se ha eliminado. No podemos restaurar el histórico de la conversación.",
   "mailbox.alert.deletedThread.title": "Lectura imposible",
   "me-indicator": "(yo)",

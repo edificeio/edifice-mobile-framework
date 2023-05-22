@@ -1,6 +1,6 @@
 {
-  "last": "2023-05-09 22:33:04",
-  "notes": "Squashed commit of the following:\nupgrade(stack): Upgrade some packages && patches\nfeat(moodle): AMV2-413 add moodle url scheme to ios\nfeat(moodle): AMV2-413 redirect to dedicated app if installed\nSquashed commit of the following:\nSquashed commit of the following:\nfix(peertube): AMV2-423 double encode uri\nrelease: 1.9.6-alpha.2(1090602)",
-  "version": "1.9.6-alpha.3(1090603)",
+  "last": "2023-05-17 14:44:42",
+  "notes": "chore(stack): Build errors fix\nchore(stack):Release build errors fix\nfeat(presences): AVMS-326 set courses swiper index to last started course\nupgrade(stack): Fix reanimated version\nrelease: 1.9.6-alpha.5(1090605)",
+  "version": "1.9.6-alpha.6(1090606)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

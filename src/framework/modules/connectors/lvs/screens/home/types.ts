@@ -12,6 +12,4 @@ export interface LvsHomeScreenNavParams {
   connector: IEntcoreApp;
 }
 
-export interface LvsHomeScreenPrivateProps extends NativeStackScreenProps<LvsNavigationParams, 'home'>, LvsHomeScreenProps {
-  // @scaffolder add HOC props here
-}
+export interface LvsHomeScreenPrivateProps extends NativeStackScreenProps<LvsNavigationParams, 'home'>, LvsHomeScreenProps {}

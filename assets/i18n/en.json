@@ -540,6 +540,8 @@
   "login-wayf-select-text": "Your EduConnect account is connected to several VLE accounts.\r\n\r\nChoose the account you want to sign in with.",
   "login-wayf-select-title": "Select account",
   "lvs.tabName": "LVS",
+  "lvs-home-title": "LVS",
+  "lvs-redirect-error-text": "Cannot redirect to LVS.",
   "mailbox.alert.deletedThread.text": "Your conversation was deleted. We cannot restore your conversation history.",
   "mailbox.alert.deletedThread.title": "Deleted thread",
   "me-indicator": "(me)",

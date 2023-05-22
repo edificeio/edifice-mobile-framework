@@ -130,6 +130,7 @@ const imports = {
   homework1D: import('ASSETS/icons/moduleIcons/homework1D.svg'),
   homework2D: import('ASSETS/icons/moduleIcons/homework2D.svg'),
   homeworkAssistance: import('ASSETS/icons/moduleIcons/homeworkAssistance.svg'),
+  lvs: import('ASSETS/icons/moduleIcons/lvs.svg'),
   mediacentre: import('ASSETS/icons/moduleIcons/mediacentre.svg'),
   messages: import('ASSETS/icons/moduleIcons/messages.svg'),
   moodle: import('ASSETS/icons/moduleIcons/moodle.svg'),

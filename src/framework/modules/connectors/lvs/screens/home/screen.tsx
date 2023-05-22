@@ -20,7 +20,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('lvs.tabName'),
+    title: I18n.t('lvs-home-title'),
   }),
 });
 
@@ -31,8 +31,8 @@ function LvsHomeScreen(props: LvsHomeScreenPrivateProps) {
     return <EmptyConnectionScreen />;
   } else {
     // Not in useEffect => normal, we want to execute this at first time.
-    redirect(session, connector.address).catch(e => {
-      Alert.alert('Error' + e);
+    redirect(session, connector.address).catch(() => {
+      Alert.alert(I18n.t('lvs-redirect-error-text'));
     });
     props.navigation.goBack();
     return <View />;
