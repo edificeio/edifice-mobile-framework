@@ -54,7 +54,7 @@ export const init = () => {
     es: { translation: finalTranslations.es },
   };
   const fallbackLng = 'en';
-  const bestAvailableLanguage = RNLocalize.findBestAvailableLanguage(Object.keys(finalTranslations)) as {
+  const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(finalTranslations)) as {
     languageTag: string;
     isRTL: boolean;
   };
