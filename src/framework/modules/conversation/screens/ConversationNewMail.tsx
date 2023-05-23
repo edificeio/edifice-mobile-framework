@@ -1,11 +1,4 @@
-import {
-  CommonActions,
-  NavigationProp,
-  ParamListBase,
-  UNSTABLE_usePreventRemove,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
@@ -14,6 +7,8 @@ import { Alert, AlertButton, Keyboard, Platform, StyleSheet } from 'react-native
 import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -28,14 +23,7 @@ import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { deleteMailsAction, trashMailsAction } from '~/framework/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/framework/modules/conversation/actions/mailContent';
-import {
-  addAttachmentAction,
-  deleteAttachmentAction,
-  forwardMailAction,
-  makeDraftMailAction,
-  sendMailAction,
-  updateDraftMailAction,
-} from '~/framework/modules/conversation/actions/newMail';
+import { addAttachmentAction, deleteAttachmentAction, forwardMailAction, makeDraftMailAction, sendMailAction, updateDraftMailAction } from '~/framework/modules/conversation/actions/newMail';
 import { fetchVisiblesAction } from '~/framework/modules/conversation/actions/visibles';
 import NewMailComponent from '~/framework/modules/conversation/components/NewMail';
 import moduleConfig from '~/framework/modules/conversation/module-config';
@@ -48,6 +36,7 @@ import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/file
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
+
 
 const styles = StyleSheet.create({
   title: { width: undefined },
@@ -178,7 +167,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const sendDraft = this.navigationHeaderFunction.getSendDraft;
 
     navigation.setOptions({
-      headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage', styles.title)),
+      headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'), styles.title),
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
