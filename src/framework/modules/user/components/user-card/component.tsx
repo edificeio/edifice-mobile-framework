@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
