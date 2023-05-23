@@ -1,8 +1,12 @@
 import * as React from 'react';
-import { ImageProps, ImageURISource, Image as RNImage } from 'react-native';
+import { ImageProps, ImageURISource, Image as RNImage, StyleSheet, View } from 'react-native';
 import { FastImageProps, default as RNFastImage } from 'react-native-fast-image';
 
+import theme from '~/app/theme';
 import { urlSigner } from '~/infra/oauth';
+
+import { UI_SIZES } from '../components/constants';
+import { NamedSVG } from '../components/picture';
 
 interface IMediaCommonAttributes {
   src: string | ImageURISource;
@@ -45,20 +49,43 @@ export function formatMediaSourceArray(medias: IMediaCommonAttributes[]) {
   return medias.map(m => formatMediaSource(m));
 }
 
+const style = StyleSheet.create({
+  image: {
+    flex: 1,
+    justifyContent: 'space-around',
+    margin: UI_SIZES.spacing.minor,
+  },
+  svg: { alignSelf: 'center', flex: 0 },
+});
+
+export const UnavailableImage = () => (
+  <View style={style.image}>
+    <NamedSVG style={style.svg} name="image-not-found" fill={theme.palette.grey.stone} />
+  </View>
+);
+
 export class Image extends React.PureComponent<ImageProps> {
   render() {
-    const { source, ...rest } = this.props;
-    const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
-    return <RNImage source={hasSource ? urlSigner.signURISource(source) : undefined} {...rest} />;
+    try {
+      const { source, ...rest } = this.props;
+      const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
+      return <RNImage source={hasSource ? urlSigner.signURISource(source) : undefined} {...rest} />;
+    } catch {
+      return <UnavailableImage {...this.props} />;
+    }
   }
 }
 
 export class FastImage extends React.PureComponent<FastImageProps> {
   render() {
-    const { source, ...rest } = this.props;
-    const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
-    const newSource = hasSource ? urlSigner.signURISource(source) : undefined;
-    // if (newSource) newSource.cache = RNFastImage.cacheControl.web;
-    return <RNFastImage source={newSource} {...rest} />;
+    try {
+      const { source, ...rest } = this.props;
+      const hasSource = typeof source === 'object' ? (source as ImageURISource).uri !== undefined : true;
+      const newSource = hasSource ? urlSigner.signURISource(source) : undefined;
+      // if (newSource) newSource.cache = RNFastImage.cacheControl.web;
+      return <RNFastImage source={newSource} {...rest} />;
+    } catch {
+      return <UnavailableImage {...this.props} />;
+    }
   }
 }
