@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
 import { View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -22,13 +22,13 @@ import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+  `${ackNumber}/${total} ${I18n.get(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
 const acknowledgedString = (isWordAcknowledged: boolean) =>
-  I18n.t(`schoolbook.${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
+  I18n.get(`schoolbook.${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
 const responsesString = (responses: number) =>
   responses === 1
-    ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
-    : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
+    ? `1 ${I18n.get('schoolbook.response').toLowerCase()}`
+    : `${responses} ${I18n.get('schoolbook.responses').toLowerCase()}`;
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
@@ -98,7 +98,7 @@ export const SchoolbookWordSummaryCard = ({
               icon={<SingleAvatar status={undefined} size={36} userId={owner} />}
               text={
                 <CaptionText numberOfLines={usersTextMaxLines}>
-                  {`${I18n.t('common.from')} `}
+                  {`${I18n.get('common.from')} `}
                   <CaptionBoldText>{ownerName}</CaptionBoldText>
                 </CaptionText>
               }
@@ -126,7 +126,7 @@ export const SchoolbookWordSummaryCard = ({
             <ImageLabel
               cachedSVG
               imageType={ImageType.svg}
-              text={I18n.t(`schoolbook.categories.${category}`)}
+              text={I18n.get(`schoolbook.categories.${category}`)}
               imageName={`schoolbook-${category}`}
               color={theme.color.schoolbook.categories[category]}
             />

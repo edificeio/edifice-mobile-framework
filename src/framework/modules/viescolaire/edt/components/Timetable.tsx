@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -108,7 +108,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
             <View style={styles.roomView}>
               <Icon name="pin_drop" size={16} />
               <SmallText numberOfLines={1}>
-                &nbsp;{I18n.t('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
+                &nbsp;{I18n.get('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
               </SmallText>
             </View>
           ) : null}
@@ -165,7 +165,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     return (
       <View style={styles.container}>
         <View style={styles.weekPickerView}>
-          <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
+          <SmallText style={styles.weekText}>{I18n.get('viesco-edt-week-of')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />
         </View>
         {isRefreshing ? (

@@ -1,8 +1,8 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import { I18n } from '~/app/i18n';
 import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import DisplayHomework from '~/framework/modules/viescolaire/diary/components/DisplayHomework';
@@ -17,7 +17,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.diaryTitle ?? I18n.t('Homework'),
+    title: route.params.diaryTitle ?? I18n.get('Homework'),
   }),
 });
 

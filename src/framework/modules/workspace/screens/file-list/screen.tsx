@@ -1,13 +1,13 @@
 import { HeaderBackButton } from '@react-navigation/elements';
 import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform, RefreshControl, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
@@ -58,7 +58,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('workspace.tabName'),
+    title: I18n.get('workspace.tabName'),
   }),
 });
 
@@ -214,7 +214,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(selectedFiles.length === 1 && filter === Filter.OWNER
           ? [
               {
-                title: I18n.t('rename'),
+                title: I18n.get('rename'),
                 action: () => openModal(WorkspaceModalType.EDIT),
                 icon: {
                   ios: 'pencil',
@@ -226,7 +226,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter !== Filter.TRASH
           ? [
               {
-                title: I18n.t('copy'),
+                title: I18n.get('copy'),
                 action: () => openModal(WorkspaceModalType.DUPLICATE),
                 icon: {
                   ios: 'square.on.square',
@@ -238,7 +238,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter === Filter.OWNER
           ? [
               {
-                title: I18n.t('move'),
+                title: I18n.get('move'),
                 action: () => openModal(WorkspaceModalType.MOVE),
                 icon: {
                   ios: 'arrow.up.square',
@@ -250,7 +250,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter === Filter.TRASH
           ? [
               {
-                title: I18n.t('conversation.restore'),
+                title: I18n.get('conversation.restore'),
                 action: restoreSelectedFiles,
                 icon: {
                   ios: 'arrow.uturn.backward.circle',
@@ -262,7 +262,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(Platform.OS !== 'ios' && !isFolderSelected
           ? [
               {
-                title: I18n.t('download'),
+                title: I18n.get('download'),
                 action: () => openModal(WorkspaceModalType.DOWNLOAD),
                 icon: {
                   ios: 'square.and.arrow.down',
@@ -289,7 +289,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter === Filter.OWNER
           ? [
               {
-                title: I18n.t('create-folder'),
+                title: I18n.get('create-folder'),
                 action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
                 icon: {
                   ios: 'folder.badge.plus',
@@ -331,7 +331,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerTitle: navBarTitle(props.route.params.title ?? I18n.t('workspace.tabName')),
+      headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace.tabName')),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);
@@ -342,8 +342,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     return (
       <EmptyScreen
         svgImage={image}
-        title={I18n.t(`workspace.emptyScreen.${screen}.title`)}
-        text={I18n.t(`workspace.emptyScreen.${screen}.text`)}
+        title={I18n.get(`workspace.emptyScreen.${screen}.title`)}
+        text={I18n.get(`workspace.emptyScreen.${screen}.text`)}
       />
     );
   };
@@ -404,7 +404,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.success.regular,
-                      actionText: I18n.t('conversation.restore'),
+                      actionText: I18n.get('conversation.restore'),
                       actionIcon: 'ui-unarchive',
                     },
                   ]
@@ -421,7 +421,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.t('delete'),
+                      actionText: I18n.get('delete'),
                       actionIcon: 'ui-trash',
                     },
                   ]
@@ -436,7 +436,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.t('delete'),
+                      actionText: I18n.get('delete'),
                       actionIcon: 'ui-trash',
                     },
                   ]

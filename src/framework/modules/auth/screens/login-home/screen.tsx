@@ -1,11 +1,11 @@
 import styled from '@emotion/native';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { InteractionManager, ScrollView, TextInput, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -176,7 +176,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
             {this.renderLogo()}
             <TextInputLine
               inputRef={this.setInputLoginRef}
-              placeholder={I18n.t('Login')}
+              placeholder={I18n.get('Login')}
               onChangeText={this.onLoginChanged.bind(this)}
               value={login}
               hasError={!!error}
@@ -188,13 +188,13 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
             <TextInputLine
               isPasswordField
               inputRef={this.setInputPasswordRef}
-              placeholder={I18n.t('Password')}
+              placeholder={I18n.get('Password')}
               onChangeText={this.onPasswordChanged.bind(this)}
               value={password}
               hasError={!!error}
             />
             <View style={styles.inputCheckbox}>
-              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('AutoLogin')}</CaptionText>
+              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.get('AutoLogin')}</CaptionText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
@@ -203,11 +203,11 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
             </View>
             <SmallText style={styles.textError}>
               {error
-                ? I18n.t('auth-error-' + error, {
+                ? I18n.get('auth-error-' + error, {
                     version: DeviceInfo.getVersion(),
                     errorcode: error,
                     currentplatform: platform.url,
-                    defaultValue: I18n.t('auth-error-other', {
+                    defaultValue: I18n.get('auth-error-other', {
                       version: DeviceInfo.getVersion(),
                       errorcode: error,
                       currentplatform: platform.url,
@@ -227,7 +227,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                 <ActionButton
                   action={() => this.goToWeb()}
                   disabled={false}
-                  text={I18n.t('LoginWeb')}
+                  text={I18n.get('LoginWeb')}
                   loading={false}
                   iconName="ui-externalLink"
                 />
@@ -235,7 +235,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                 <ActionButton
                   action={() => this.doLogin()}
                   disabled={this.isSubmitDisabled}
-                  text={I18n.t('Connect')}
+                  text={I18n.get('Connect')}
                   loading={this.state.loginState === 'RUNNING' || this.state.loginState === 'DONE'}
                 />
               )}
@@ -246,14 +246,14 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                   onPress={() => {
                     navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' });
                   }}>
-                  {I18n.t('forgot-password')}
+                  {I18n.get('forgot-password')}
                 </SmallText>
                 <SmallText
                   style={styles.textForgotId}
                   onPress={() => {
                     navigation.navigate(authRouteNames.forgot, { platform, mode: 'id' });
                   }}>
-                  {I18n.t('forgot-id')}
+                  {I18n.get('forgot-id')}
                 </SmallText>
               </View>
             </View>

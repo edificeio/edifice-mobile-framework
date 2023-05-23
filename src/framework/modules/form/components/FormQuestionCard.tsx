@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { Card } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -51,12 +51,12 @@ export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps
             <View style={styles.childrenContainer}>{children}</View>
             {onClearAnswer ? (
               <View style={styles.actionContainer}>
-                <ButtonTextIcon title={I18n.t('form.clearAnswer')} onPress={() => onClearAnswer()} />
+                <ButtonTextIcon title={I18n.get('form.clearAnswer')} onPress={() => onClearAnswer()} />
               </View>
             ) : null}
             {onEditQuestion ? (
               <View style={styles.actionContainer}>
-                <ButtonTextIcon title={I18n.t('common.modify')} onPress={() => onEditQuestion()} />
+                <ButtonTextIcon title={I18n.get('common.modify')} onPress={() => onEditQuestion()} />
               </View>
             ) : null}
           </View>

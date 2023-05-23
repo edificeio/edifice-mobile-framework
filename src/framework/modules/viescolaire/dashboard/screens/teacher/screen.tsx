@@ -1,9 +1,9 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
@@ -28,7 +28,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco'),
+    title: I18n.get('viesco'),
   }),
 });
 
@@ -47,7 +47,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
             {props.authorizedViescoApps.edt && (
               <ModuleButton
                 onPress={() => props.navigation.navigate(edtRouteNames.home)}
-                text={I18n.t('viesco-timetable')}
+                text={I18n.get('viesco-timetable')}
                 color={viescoTheme.palette.edt}
                 imageSrc={require('ASSETS/viesco/edt.png')}
               />
@@ -55,7 +55,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
             {props.authorizedViescoApps.diary && (
               <ModuleButton
                 onPress={() => props.navigation.navigate(diaryRouteNames.timetable)}
-                text={I18n.t('Homework')}
+                text={I18n.get('Homework')}
                 color={viescoTheme.palette.diary}
                 imageSrc={require('ASSETS/viesco/cdt.png')}
               />
@@ -65,8 +65,8 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
       ) : (
         <EmptyScreen
           svgImage="empty-viesco"
-          title={I18n.t('viesco-empty-screen-title')}
-          text={I18n.t('viesco-empty-screen-text')}
+          title={I18n.get('viesco-empty-screen-title')}
+          text={I18n.get('viesco-empty-screen-text')}
         />
       )}
     </PageView>

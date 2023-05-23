@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import ActionButton from '~/framework/components/buttons/action';
@@ -62,7 +62,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
       setUpdating(false);
     } catch {
       setUpdating(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -71,7 +71,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.t('zimbra-signature')}</BodyText>
+          <BodyText>{I18n.get('zimbra-signature')}</BodyText>
           <TextInput
             value={text}
             onChangeText={value => setText(value)}
@@ -81,9 +81,9 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
           />
           <TouchableOpacity onPress={() => setGlobal(!isGlobal)} style={styles.isGlobalContainer}>
             <Checkbox checked={isGlobal} onPress={() => setGlobal(!isGlobal)} />
-            <SmallText style={styles.isGlobalText}>{I18n.t('zimbra-signature-use')}</SmallText>
+            <SmallText style={styles.isGlobalText}>{I18n.get('zimbra-signature-use')}</SmallText>
           </TouchableOpacity>
-          <ActionButton text={I18n.t('zimbra-add')} action={updateSignature} loading={isUpdating} />
+          <ActionButton text={I18n.get('zimbra-add')} action={updateSignature} loading={isUpdating} />
         </View>
       }
     />

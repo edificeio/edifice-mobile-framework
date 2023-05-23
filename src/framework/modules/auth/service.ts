@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 
-import { SupportedLocales } from '~/app/i18n';
+import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { Connection } from '~/infra/Connection';
@@ -466,7 +466,7 @@ export async function removeFirebaseToken(platform: Platform) {
   }
 }
 
-export async function getAuthTranslationKeys(platform: Platform, language: SupportedLocales) {
+export async function getAuthTranslationKeys(platform: Platform, language: I18n.SupportedLocales) {
   try {
     // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
     const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language, 'X-Device-Id': uniqueId() } });

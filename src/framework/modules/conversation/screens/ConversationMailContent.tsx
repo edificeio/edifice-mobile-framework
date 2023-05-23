@@ -1,13 +1,13 @@
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -127,7 +127,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
     const popupActionsMenu = [
       {
-        title: I18n.t('conversation.markUnread'),
+        title: I18n.get('conversation.markUnread'),
         action: () => this.markAsRead(),
         icon: {
           ios: 'eye.slash',
@@ -135,7 +135,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         },
       },
       {
-        title: I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
+        title: I18n.get(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
         action: () => this.showModal(),
         icon: {
           ios: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
@@ -191,7 +191,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   mailMoved = () => {
     const { navigation } = this.props;
     navigation.dispatch(CommonActions.goBack());
-    Toast.showInfo(I18n.t('conversation.messageMoved'));
+    Toast.showInfo(I18n.get('conversation.messageMoved'));
   };
 
   markAsRead = async () => {
@@ -220,7 +220,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         await deleteMails([mailId]);
       } else await trashMails([mailId]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`));
+      Toast.showSuccess(I18n.get(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`));
     } catch {
       // TODO: Manage error
     }
@@ -282,7 +282,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         <View style={styles.containerFooter}>
           <FooterButton
             icon="reply"
-            text={I18n.t('conversation.reply')}
+            text={I18n.get('conversation.reply')}
             onPress={() => {
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre');
@@ -296,7 +296,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
           />
           <FooterButton
             icon="reply_all"
-            text={I18n.t('conversation.replyAll')}
+            text={I18n.get('conversation.replyAll')}
             onPress={() => {
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre à tous');
@@ -310,7 +310,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
           />
           <FooterButton
             icon="forward"
-            text={I18n.t('conversation.forward')}
+            text={I18n.get('conversation.forward')}
             onPress={() => {
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Transférer');

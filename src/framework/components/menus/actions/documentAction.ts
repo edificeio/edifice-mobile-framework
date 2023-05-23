@@ -1,9 +1,9 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
-import I18n from 'i18n-js';
 import { Alert, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 
+import { I18n } from '~/app/i18n';
 import { assertPermissions } from '~/framework/util/permissions';
 
 import { MenuPickerActionProps } from './types';
@@ -35,14 +35,14 @@ export default function documentAction(props: MenuPickerActionProps & { synchron
       });
     } catch {
       Alert.alert(
-        I18n.t('document.permission.blocked.title'),
-        I18n.t('document.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('document.permission.blocked.title'),
+        I18n.get('document.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   };
 
   return {
-    title: I18n.t('common-picker-document'),
+    title: I18n.get('common-picker-document'),
     icon: {
       ios: 'doc.badge.plus',
       android: 'ic_upload_file',

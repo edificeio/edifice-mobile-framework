@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -63,7 +63,7 @@ export class AttachmentGroup extends React.PureComponent<
             }}>
             <View style={{ flexDirection: 'row' }}>
               <SmallBoldText style={{ marginRight: UI_SIZES.spacing.tiny }}>
-                {I18n.t(`attachment${attachments.length > 1 ? 's' : ''}`)}
+                {I18n.get(`attachment${attachments.length > 1 ? 's' : ''}`)}
               </SmallBoldText>
               <Icon
                 color={theme.ui.text.regular}
@@ -78,7 +78,7 @@ export class AttachmentGroup extends React.PureComponent<
                   this.setState({ downloadAll: true });
                   onDownloadAll && onDownloadAll();
                 }}>
-                <CaptionText style={{ color: theme.palette.complementary.blue.regular }}>{I18n.t('download-all')}</CaptionText>
+                <CaptionText style={{ color: theme.palette.complementary.blue.regular }}>{I18n.get('download-all')}</CaptionText>
               </RNGHTouchableOpacity>
             ) : null}
           </BubbleStyle>

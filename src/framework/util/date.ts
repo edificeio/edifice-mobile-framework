@@ -1,5 +1,6 @@
-import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
+
+import { I18n } from '~/app/i18n';
 
 moment.relativeTimeThreshold('m', 60);
 
@@ -7,7 +8,7 @@ export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
   const now = moment();
 
   if (!pastDate || !pastDate.isValid()) {
-    return I18n.t('common.date.invalid');
+    return I18n.get('common.date.invalid');
   }
 
   if (longFormat) {
@@ -17,13 +18,13 @@ export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
   }
 
   if (/*less than 1min*/ pastDate.isAfter(now.clone().subtract(1, 'minute'))) {
-    return I18n.t('common.date.now');
+    return I18n.get('common.date.now');
   } else if (/*less than 3h*/ pastDate.isSameOrAfter(now.clone().subtract(3, 'hour'))) {
     return pastDate.fromNow();
   } else if (/*today*/ pastDate.isSame(now, 'day')) {
     return pastDate.format('HH[:]mm');
   } else if (/*yesterday*/ pastDate.clone().add(1, 'day').isSame(now, 'day')) {
-    return I18n.t('common.date.yesterday');
+    return I18n.get('common.date.yesterday');
   } else if (/*less than 7d*/ pastDate.isSameOrAfter(now.clone().subtract(6, 'day').startOf('day'))) {
     return pastDate.format('dddd');
   } else if (/*this year*/ pastDate.isSame(now, 'year')) {
@@ -39,15 +40,15 @@ export const displayDate = (date: Moment, format?: 'short' | 'extraShort', showH
   const otherYearFormat = isShortFormat ? 'ddd D MMM Y' : isExtraShortFormat ? 'DD/MM/YY' : 'dddd D MMMM Y';
 
   if (!date || !date.isValid()) {
-    return I18n.t('common.date.invalid');
+    return I18n.get('common.date.invalid');
   }
 
   if (/*yesterday*/ date.clone().add(1, 'day').isSame(now, 'day')) {
-    return I18n.t('common.date.yesterday');
+    return I18n.get('common.date.yesterday');
   } else if (/*today*/ date.isSame(now, 'day')) {
-    return I18n.t('common.date.today');
+    return I18n.get('common.date.today');
   } else if (/*tomorrow*/ date.clone().subtract(1, 'day').isSame(now, 'day')) {
-    return I18n.t('common.date.tomorrow');
+    return I18n.get('common.date.tomorrow');
   } else if (/*this year*/ date.isSame(now, 'year')) {
     return date.format(thisYearFormat);
   } /*other year*/ else return date.format(otherYearFormat);
@@ -55,7 +56,7 @@ export const displayDate = (date: Moment, format?: 'short' | 'extraShort', showH
 
 export const getDayOfTheWeek = (date: Moment) => {
   if (!date || !date.isValid()) {
-    return I18n.t('common.date.invalid');
+    return I18n.get('common.date.invalid');
   }
   return date.locale('en').format('dddd').toLowerCase();
 };

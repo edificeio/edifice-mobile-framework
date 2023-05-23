@@ -4,12 +4,12 @@
 import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import deepmerge from 'deepmerge';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -72,7 +72,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('directory-notificationsTitle'),
+    title: I18n.get('directory-notificationsTitle'),
     titleStyle: { width: undefined },
   }),
 });
@@ -80,16 +80,16 @@ export const computeNavBar = ({
 function PreventBack(props: { hasChanged: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.hasChanged, ({ data }) => {
-    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('common.confirmationLeaveAlert.title'), I18n.get('common.confirmationLeaveAlert.message'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common.cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.t('common.quit'),
+        text: I18n.get('common.quit'),
         style: 'destructive',
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, navigation);
@@ -180,7 +180,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
     const subListData =
       Object.entries(items) && Object.entries(items).length > 0
         ? Object.entries(items).sort((a, b) =>
-            I18n.t(`timeline.notifType.${a[0]}`).localeCompare(I18n.t(`timeline.notifType.${b[0]}`)),
+            I18n.get(`timeline.notifType.${a[0]}`).localeCompare(I18n.get(`timeline.notifType.${b[0]}`)),
           )
         : [];
     const hasEmptySubListData = subListData.length === 0;

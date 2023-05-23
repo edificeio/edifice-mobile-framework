@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -47,7 +47,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
   return (
     <>
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.t('zimbra-to')} : </SmallText>
+        <SmallText>{I18n.get('zimbra-to')} : </SmallText>
         <RecipientField
           hasZimbraSendExternalRight={hasZimbraSendExternalRight}
           selectedRecipients={headers.to}
@@ -66,7 +66,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
       {isExpanded ? (
         <>
           <View style={styles.headerContainer}>
-            <SmallText>{I18n.t('zimbra-cc')} : </SmallText>
+            <SmallText>{I18n.get('zimbra-cc')} : </SmallText>
             <RecipientField
               hasZimbraSendExternalRight={hasZimbraSendExternalRight}
               selectedRecipients={headers.cc}
@@ -74,7 +74,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
             />
           </View>
           <View style={styles.headerContainer}>
-            <SmallText>{I18n.t('zimbra-bcc')} : </SmallText>
+            <SmallText>{I18n.get('zimbra-bcc')} : </SmallText>
             <RecipientField
               hasZimbraSendExternalRight={hasZimbraSendExternalRight}
               selectedRecipients={headers.bcc}
@@ -84,7 +84,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
         </>
       ) : null}
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.t('zimbra-subject')} : </SmallText>
+        <SmallText>{I18n.get('zimbra-subject')} : </SmallText>
         <TextInput
           defaultValue={headers.subject}
           onChangeText={text => onChange({ ...headers, subject: text })}

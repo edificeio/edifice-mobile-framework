@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
@@ -33,7 +33,7 @@ const mapDropdownItems = (choices: IQuestionChoice[]): { id?: string; value: str
   return [
     {
       id: undefined,
-      value: I18n.t('form.selectAnOption'),
+      value: I18n.get('form.selectAnOption'),
     },
     ...choices.map(choice => {
       return {
@@ -102,7 +102,7 @@ export const FormSingleAnswerCard = ({
               value={customAnswer}
               onChangeText={onChangeCustomAnswer}
               editable={!isDisabled}
-              placeholder={I18n.t('form.enterYourAnswer')}
+              placeholder={I18n.get('form.enterYourAnswer')}
               style={styles.customAnswerInput}
             />
           ) : null}

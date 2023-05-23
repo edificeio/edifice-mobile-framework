@@ -1,7 +1,7 @@
 import { CommonActions } from '@react-navigation/native';
-import I18n from 'i18n-js';
 import { Alert } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
@@ -34,7 +34,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
       const form = await formService.form.get(session, formId);
       const hasResponderRight = await formService.form.hasResponderRight(session, formId);
       if (!form || form.archived || !hasResponderRight) {
-        Alert.alert(I18n.t('form.missingFormAlert'));
+        Alert.alert(I18n.get('form.missingFormAlert'));
         return { managed: 0 };
       }
       const distributions = await formService.distributions.getFromForm(session, formId);

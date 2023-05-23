@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -56,7 +56,7 @@ export class CallCard extends React.PureComponent<ICallCardProps> {
     const isCourseEditable = !moment(course.startDate).subtract(15, 'minutes').isAfter(moment());
     const opacity = isCourseNow ? 1 : 0.4;
     const hoursText = `${moment(course.startDate).format('LT')} - ${moment(course.endDate).format('LT')}`;
-    const roomText = `${I18n.t('viesco-room')} ${course.roomLabels}`;
+    const roomText = `${I18n.get('viesco-room')} ${course.roomLabels}`;
     return (
       <ArticleContainer>
         <LeftColoredItem

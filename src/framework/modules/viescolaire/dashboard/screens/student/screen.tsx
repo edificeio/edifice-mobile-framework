@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { View } from 'react-native';
@@ -7,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/flatList';
@@ -52,7 +52,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco'),
+    title: I18n.get('viesco'),
   }),
 });
 
@@ -96,7 +96,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.presences && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(presencesRouteNames.history)}
-            text={I18n.t('viesco-history')}
+            text={I18n.get('viesco-history')}
             color={viescoTheme.palette.presences}
             icon="access_time"
             nbModules={nbModules}
@@ -105,7 +105,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.edt && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(edtRouteNames.home)}
-            text={I18n.t('viesco-timetable')}
+            text={I18n.get('viesco-timetable')}
             color={viescoTheme.palette.edt}
             icon="calendar_today"
             nbModules={nbModules}
@@ -114,7 +114,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.diary && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(diaryRouteNames.homeworkList)}
-            text={I18n.t('Homework')}
+            text={I18n.get('Homework')}
             color={viescoTheme.palette.diary}
             icon="checkbox-multiple-marked"
             nbModules={nbModules}
@@ -123,7 +123,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.competences && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(competencesRouteNames.home)}
-            text={I18n.t('viesco-tests')}
+            text={I18n.get('viesco-tests')}
             color={viescoTheme.palette.competences}
             icon="equalizer"
             nbModules={nbModules}
@@ -154,16 +154,16 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
 
     return (
       <View style={styles.dashboardPart}>
-        <BodyBoldText>{I18n.t('viesco-homework')}</BodyBoldText>
+        <BodyBoldText>{I18n.get('viesco-homework')}</BodyBoldText>
         {!Object.keys(homeworksByDate).length ? (
-          <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-homework" title={I18n.get('viesco-homework-EmptyScreenText')} />
         ) : null}
         {Object.keys(homeworksByDate).map(date => (
           <>
             <SmallText style={styles.subtitle}>
               {moment(date).isSame(tomorrowDate, 'day')
-                ? I18n.t('viesco-homework-fortomorrow')
-                : `${I18n.t('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
+                ? I18n.get('viesco-homework-fortomorrow')
+                : `${I18n.get('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
             </SmallText>
             {homeworksByDate[date].map(homework => (
               <HomeworkItem
@@ -197,8 +197,8 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
             openAssessment={() => this.openAssessment(item)}
           />
         )}
-        ListHeaderComponent={<BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>}
-        ListEmptyComponent={<EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />}
+        ListHeaderComponent={<BodyBoldText>{I18n.get('viesco-lasteval')}</BodyBoldText>}
+        ListEmptyComponent={<EmptyScreen svgImage="empty-evaluations" title={I18n.get('viesco-eval-EmptyScreenText')} />}
         scrollEnabled={false}
         style={styles.dashboardPart}
       />

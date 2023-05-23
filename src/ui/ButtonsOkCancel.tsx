@@ -1,6 +1,7 @@
 import styled from '@emotion/native';
-import I18n from 'i18n-js';
 import * as React from 'react';
+
+import { I18n } from '~/app/i18n';
 
 import { ButtonTextIcon } from './ButtonTextIcon';
 
@@ -26,7 +27,7 @@ export const ButtonsOkCancel = ({ onCancel, onValid, title, cancelText }: Button
   <ButtonStyled>
     {/* FIXME: Should fire events instead of translating them down or use onPress={onValid} and onPress={onCancel}. */}
     <ButtonTextIcon onPress={() => onValid()} title={title} />
-    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.t('Cancel')} />
+    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.get('Cancel')} />
   </ButtonStyled>
 );
 export const ButtonsOkOnly = ({ onValid, title }: ButtonsOkProps) => (
@@ -38,7 +39,7 @@ export const ButtonsOkOnly = ({ onValid, title }: ButtonsOkProps) => (
 export const ButtonsOkCancelReverse = ({ onCancel, onValid, title, cancelText }: ButtonsOkCancelProps) => (
   <ButtonStyled>
     {/* FIXME: Should fire events instead of translating them down or use onPress={onValid} and onPress={onCancel}. */}
-    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.t('Cancel')} />
+    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.get('Cancel')} />
     <ButtonTextIcon onPress={() => onValid()} title={title} />
   </ButtonStyled>
 );

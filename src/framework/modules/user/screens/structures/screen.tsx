@@ -1,8 +1,8 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ContainerView } from '~/framework/components/buttons/line';
 import { PageView } from '~/framework/components/page';
@@ -22,7 +22,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('directory-structuresTitle'),
+    title: I18n.get('directory-structuresTitle'),
   }),
 });
 
@@ -58,7 +58,7 @@ function UserStructuresScreen(props: UserStructuresScreenPrivateProps) {
             {classe}
           </SmallText>
         )}
-        ListHeaderComponent={<SmallText style={styles.listHeader}>{I18n.t('structuresTitle')}</SmallText>}
+        ListHeaderComponent={<SmallText style={styles.listHeader}>{I18n.get('structuresTitle')}</SmallText>}
         stickySectionHeadersEnabled={false}
         alwaysBounceVertical={false}
         overScrollMode="never"

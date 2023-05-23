@@ -2,12 +2,12 @@
  * Blog post list
  */
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { FlatList, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -55,7 +55,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('blog.appName'),
+    title: I18n.get('blog.appName'),
   }),
 });
 
@@ -187,7 +187,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
 
     props.navigation.setOptions({
-      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.t('blog.appName')),
+      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog.appName')),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasBlogPostCreationRights && !hasError ? (
@@ -206,11 +206,11 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-blog"
-        title={I18n.t(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
-        text={I18n.t(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
+        title={I18n.get(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
+        text={I18n.get(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         {...(hasBlogPostCreationRights
           ? {
-              buttonText: I18n.t('blog.blogPostListScreen.emptyScreen.button'),
+              buttonText: I18n.get('blog.blogPostListScreen.emptyScreen.button'),
               buttonAction: onGoToPostCreationScreen,
             }
           : {})}

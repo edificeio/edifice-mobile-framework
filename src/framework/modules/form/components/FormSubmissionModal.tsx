@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -47,11 +47,11 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.t('form.formDistributionScreen.submissionModal.title')}</BodyText>
+          <BodyText>{I18n.get('form.formDistributionScreen.submissionModal.title')}</BodyText>
           <SmallText style={styles.topMargin}>
-            {I18n.t('form.formDistributionScreen.submissionModal.upperText')}
+            {I18n.get('form.formDistributionScreen.submissionModal.upperText')}
             {props.structures.length > 1 ? (
-              <NestedText> {I18n.t('form.formDistributionScreen.submissionModal.selectStructure')}</NestedText>
+              <NestedText> {I18n.get('form.formDistributionScreen.submissionModal.selectStructure')}</NestedText>
             ) : null}
           </SmallText>
           {props.structures.length > 1 ? (
@@ -68,7 +68,7 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
           ) : null}
           <View style={{ zIndex: -1 }}>
             <SmallText style={styles.topMargin}>
-              {I18n.t(
+              {I18n.get(
                 props.status === DistributionStatus.ON_CHANGE
                   ? 'form.formDistributionScreen.submissionModal.lowerText.replace'
                   : props.editable
@@ -77,7 +77,7 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
               )}
             </SmallText>
             <ActionButton
-              text={I18n.t('common.confirm')}
+              text={I18n.get('common.confirm')}
               action={() => props.onSubmit(structureId)}
               loading={props.loading}
               style={styles.topMargin}

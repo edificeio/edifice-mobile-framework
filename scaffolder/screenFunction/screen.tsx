@@ -1,5 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
+import { I18n } from '~/app/i18n';
 import * as React from 'react';
 
 import { PageView } from '~/framework/components/page';
@@ -17,7 +17,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('{{moduleName}}-{{screenName}}-title'),
+    title: I18n.get('{{moduleName}}-{{screenName}}-title'),
   }),
 });
 

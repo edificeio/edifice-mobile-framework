@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
 import { LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import RoundButton from '~/framework/components/buttons/round';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -184,7 +184,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
     () => (
       <TextInput
         ref={inputRef}
-        placeholder={I18n.t(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
+        placeholder={I18n.get(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
         placeholderTextColor={theme.palette.grey.graphite}
         multiline
         scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
@@ -238,13 +238,13 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('common.modify')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
               <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.t('common.delete')}
+                {I18n.get('common.delete')}
               </SmallBoldText>
             </TouchableOpacity>
           ) : null}
@@ -254,7 +254,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
               <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.t('common.delete')}
+                {I18n.get('common.delete')}
               </SmallBoldText>
             </TouchableOpacity>
           ) : null}

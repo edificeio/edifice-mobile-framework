@@ -1,9 +1,9 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Platform, View } from 'react-native';
 import Rate, { AndroidMarket } from 'react-native-rate';
 
+import { I18n } from '~/app/i18n';
 import ActionButton from '~/framework/components/buttons/action';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
@@ -22,7 +22,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('directory-whoAreWeTitle'),
+    title: I18n.get('directory-whoAreWeTitle'),
   }),
 });
 
@@ -37,10 +37,10 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
       </View>
       <ScrollView bottomInset>
         <View style={styles.textWrapper}>
-          <BodyText>{I18n.t('user.whoAreWeScreen.description')}</BodyText>
+          <BodyText>{I18n.get('user.whoAreWeScreen.description')}</BodyText>
           <ActionButton
             style={styles.button}
-            text={I18n.t('user.whoAreWeScreen.reviewApp')}
+            text={I18n.get('user.whoAreWeScreen.reviewApp')}
             emoji="⭐️"
             action={() => {
               const options = {
@@ -52,7 +52,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
               };
               Rate.rate(options, (success, error) => {
                 if (error) {
-                  Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+                  Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
                   console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
                 }
               });

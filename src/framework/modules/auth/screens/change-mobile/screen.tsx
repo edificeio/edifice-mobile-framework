@@ -1,6 +1,5 @@
 import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Platform, TouchableOpacity, View } from 'react-native';
 import PhoneInput, {
@@ -15,6 +14,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -39,7 +39,7 @@ import styles from './styles';
 import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
 
 const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeMobile>) =>
-  route.params.navBarTitle || I18n.t('auth-change-mobile-verify');
+  route.params.navBarTitle || I18n.get('auth-change-mobile-verify');
 
 export const computeNavBar = ({
   navigation,
@@ -102,24 +102,24 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     if (!requirementsChecked) checkRequirements();
   }, [platform, requirementsChecked]);
 
-  const button = isCheckMobile ? I18n.t('auth-change-mobile-verify-button') : I18n.t('auth-change-mobile-edit-button');
+  const button = isCheckMobile ? I18n.get('auth-change-mobile-verify-button') : I18n.get('auth-change-mobile-edit-button');
   const message = isModifyingMobile
     ? isCheckMobile
-      ? I18n.t('auth-change-mobile-edit-message')
-      : I18n.t('auth-change-mobile-edit-message-unverified')
-    : I18n.t('auth-change-mobile-verify-message');
+      ? I18n.get('auth-change-mobile-edit-message')
+      : I18n.get('auth-change-mobile-edit-message-unverified')
+    : I18n.get('auth-change-mobile-verify-message');
   const texts: PageTexts = isModifyingMobile
     ? {
         button,
         message,
-        label: I18n.t('auth-change-mobile-edit-label'),
-        title: I18n.t('auth-change-mobile-edit-title'),
+        label: I18n.get('auth-change-mobile-edit-label'),
+        title: I18n.get('auth-change-mobile-edit-title'),
       }
     : {
         button,
         message,
-        label: I18n.t('auth-change-mobile-verify-label'),
-        title: I18n.t('auth-change-mobile-verify-title'),
+        label: I18n.get('auth-change-mobile-verify-label'),
+        title: I18n.get('auth-change-mobile-verify-title'),
       };
 
   useEffect(() => {
@@ -183,11 +183,11 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           await props.trySaveNewMobile({ mobile: mobileNumberFormatted });
           setTimeout(() => {
             props.navigation.goBack();
-            Toast.showSuccess(I18n.t('auth-change-mobile-edit-toast'));
+            Toast.showSuccess(I18n.get('auth-change-mobile-edit-toast'));
           });
         }
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('common.error.text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -224,21 +224,21 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   }, [navigation, tryLogout, platform]);
 
   UNSTABLE_usePreventRemove(!isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused, ({ data }) => {
-    Alert.alert(I18n.t('auth-change-mobile-edit-alert-title'), I18n.t('auth-change-mobile-edit-alert-message'), [
+    Alert.alert(I18n.get('auth-change-mobile-edit-alert-title'), I18n.get('auth-change-mobile-edit-alert-message'), [
       {
-        text: I18n.t('common.discard'),
+        text: I18n.get('common.discard'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
         style: 'destructive',
       },
       {
-        text: I18n.t('common.continue'),
+        text: I18n.get('common.continue'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
@@ -276,7 +276,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             <SmallBoldText style={styles.inputTitle}>{texts.label}</SmallBoldText>
           </View>
           <PhoneInput
-            placeholder={I18n.t('auth-change-mobile-placeholder')}
+            placeholder={I18n.get('auth-change-mobile-placeholder')}
             ref={phoneInputRef}
             value={mobile}
             defaultCode={region}
@@ -302,10 +302,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             }
             countryPickerProps={{
               filterProps: {
-                placeholder: I18n.t('auth-change-mobile-country-placeholder'),
+                placeholder: I18n.get('auth-change-mobile-country-placeholder'),
                 autoFocus: true,
               },
-              language: countryListLanguages[I18n.currentLocale()] ?? countryListLanguages.DEFAULT,
+              language: countryListLanguages[I18n.language] ?? countryListLanguages.DEFAULT,
             }}
             textInputProps={{
               hitSlop: {
@@ -320,10 +320,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           />
           <CaptionItalicText style={styles.errorText}>
             {isMobileStateClean
-              ? I18n.t('common.space')
+              ? I18n.get('common.space')
               : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
-              ? I18n.t('auth-change-mobile-error-same')
-              : I18n.t('auth-change-mobile-error-invalid')}
+              ? I18n.get('auth-change-mobile-error-same')
+              : I18n.get('auth-change-mobile-error-invalid')}
           </CaptionItalicText>
           <ActionButton
             style={styles.sendButton}
@@ -334,7 +334,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           />
           {isModifyingMobile ? null : (
             <TouchableOpacity style={styles.logoutButton} onPress={onRefuseMobileVerification}>
-              <SmallBoldText style={styles.logoutText}>{I18n.t('auth-change-mobile-verify-disconnect')}</SmallBoldText>
+              <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-mobile-verify-disconnect')}</SmallBoldText>
             </TouchableOpacity>
           )}
         </View>

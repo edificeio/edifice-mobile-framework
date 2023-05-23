@@ -1,7 +1,6 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
@@ -9,6 +8,7 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
@@ -45,7 +45,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('MyAccount'),
+    title: I18n.get('MyAccount'),
   }),
   headerShadowVisible: false,
 });
@@ -127,9 +127,9 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     () => (
       <>
         <BodyBoldText style={styles.userInfoName}>{session?.user.displayName}</BodyBoldText>
-        <SmallText style={styles.userInfoType}>{I18n.t(`profileTypes.${session?.user.type}`)}</SmallText>
+        <SmallText style={styles.userInfoType}>{I18n.get(`profileTypes.${session?.user.type}`)}</SmallText>
         <ActionButton
-          text={I18n.t('user.page.userFileButton')}
+          text={I18n.get('user.page.userFileButton')}
           type="secondary"
           action={() => {
             navigation.navigate(userRouteNames.profile, {});
@@ -181,12 +181,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         let routeName = routeNames[modificationType];
         const params = {
           [ModificationType.EMAIL]: {
-            navBarTitle: I18n.t('user.page.editEmail'),
+            navBarTitle: I18n.get('user.page.editEmail'),
             modificationType: ModificationType.EMAIL,
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeEmailScreenNavParams,
           [ModificationType.MOBILE]: {
-            navBarTitle: I18n.t('user.page.editMobile'),
+            navBarTitle: I18n.get('user.page.editMobile'),
             modificationType: ModificationType.MOBILE,
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeMobileScreenNavParams,
@@ -203,7 +203,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         }
         if (isFocused) navigation.navigate(routeName, routeParams);
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('common.error.text'));
       } finally {
         setCurrentLoadingMenu(undefined);
       }
@@ -220,7 +220,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     () => (
       <>
         <View style={styles.section}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.t('user.page.configuration')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle}>{I18n.get('user.page.configuration')}</HeadingSText>
           <ButtonLineGroup>
             <LineButton
               title="directory-notificationsTitle"
@@ -274,7 +274,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.t('user.page.others')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle}>{I18n.get('user.page.others')}</HeadingSText>
           <ButtonLineGroup>
             {showWhoAreWe ? (
               <LineButton
@@ -309,13 +309,13 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
    * Caution: Alert callbacks eats any exception thrown silently.
    */
   const doLogout = React.useCallback(() => {
-    Alert.alert('', I18n.t('auth-disconnectConfirm'), [
+    Alert.alert('', I18n.get('auth-disconnectConfirm'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common.cancel'),
         style: 'default',
       },
       {
-        text: I18n.t('directory-disconnectButton'),
+        text: I18n.get('directory-disconnectButton'),
         style: 'destructive',
         onPress: () => handleLogout(),
       },
@@ -328,7 +328,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
   return React.useMemo(() => {
     return (
       <TouchableOpacity onPress={doLogout}>
-        <SmallBoldText style={styles.logoutButton}>{I18n.t('directory-disconnectButton')}</SmallBoldText>
+        <SmallBoldText style={styles.logoutButton}>{I18n.get('directory-disconnectButton')}</SmallBoldText>
       </TouchableOpacity>
     );
   }, [doLogout]);
@@ -354,7 +354,7 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
         <SmallBoldText style={styles.versionButton}>
-          {I18n.t('version-number')} {useVersionFeature.versionNumber}
+          {I18n.get('version-number')} {useVersionFeature.versionNumber}
           {isVersionDetailsShown ? ` ${useVersionFeature.versionType} (${useVersionFeature.buildNumber})` : null}
         </SmallBoldText>
         {isVersionDetailsShown ? (

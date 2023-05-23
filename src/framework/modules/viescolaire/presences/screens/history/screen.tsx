@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
@@ -8,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -50,7 +50,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-history'),
+    title: I18n.get('viesco-history'),
   }),
 });
 
@@ -151,9 +151,9 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const renderHistory = () => {
     const { history, terms } = props;
     const dropdownTerms = [
-      { label: I18n.t('viesco-fullyear'), value: 'year' },
+      { label: I18n.get('viesco-fullyear'), value: 'year' },
       ...terms.map(term => ({
-        label: `${I18n.t('viesco-trimester')} ${term.order}`,
+        label: `${I18n.get('viesco-trimester')} ${term.order}`,
         value: term.order.toString(),
       })),
     ];
@@ -210,7 +210,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             <TouchableOpacity
               onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
               style={styles.declareAbsenceButton}>
-              <SmallBoldText style={styles.declareAbscenceText}>{I18n.t('viesco-declareAbsence')}</SmallBoldText>
+              <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('viesco-declareAbsence')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
         </ChildPicker>

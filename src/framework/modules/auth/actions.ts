@@ -1,9 +1,8 @@
 import CookieManager from '@react-native-cookies/cookies';
-import I18n from 'i18n-js';
 import DeviceInfo from 'react-native-device-info';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { SupportedLocales } from '~/app/i18n';
+import { I18n } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
@@ -74,14 +73,14 @@ function getLegalUrlsAction(platform: Platform) {
     // === 1: Load legal document urls
     try {
       const legalUrls: LegalUrls = {
-        cgu: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cgu'), platform),
-        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.personalDataProtection'), platform),
-        cookies: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cookies'), platform),
+        cgu: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.cgu'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.personalDataProtection'), platform),
+        cookies: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.cookies'), platform),
       };
-      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.locale as SupportedLocales);
+      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.language as I18n.SupportedLocales);
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
-          authTranslationKeys['auth.charter'] || I18n.t('user.legalUrl.userCharter'),
+          authTranslationKeys['auth.charter'] || I18n.get('user.legalUrl.userCharter'),
           platform,
         );
       }
@@ -242,7 +241,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
       });
       // === 3 - Check whether the activation was successfull
       if (!res.ok) {
-        throw createActivationError('activation', I18n.t('activation-errorSubmit'));
+        throw createActivationError('activation', I18n.get('activation-errorSubmit'));
       }
       // a json response can contains an error field
       if (res.headers.get('content-type')?.indexOf('application/json') !== -1) {
@@ -273,7 +272,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
       return redirect;
     } catch (e) {
       if ((e as IActivationError).name === 'EACTIVATION') throw e;
-      else throw createActivationError('activation', I18n.t('activation-errorSubmit'), '', e as object);
+      else throw createActivationError('activation', I18n.get('activation-errorSubmit'), '', e as object);
     }
   };
 }
@@ -402,7 +401,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       });
       // === 3 - Check whether the password change was successfull
       if (!res.ok) {
-        throw createChangePasswordError('change password', I18n.t('changePassword-errorSubmit'));
+        throw createChangePasswordError('change password', I18n.get('changePassword-errorSubmit'));
       }
       // a json response can contains an error field
       if (res.headers.get('content-type') && res.headers.get('content-type')!.indexOf('application/json') !== -1) {
@@ -412,9 +411,9 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
           const pwdRegex = getState().user.changePassword?.context?.passwordRegex;
           const regexp = new RegExp(pwdRegex);
           if (pwdRegex && !regexp.test(p.newPassword)) {
-            throw createChangePasswordError('change password', I18n.t('changePassword-errorRegex'));
+            throw createChangePasswordError('change password', I18n.get('changePassword-errorRegex'));
           } else {
-            throw createChangePasswordError('change password', I18n.t('changePassword-errorFields'));
+            throw createChangePasswordError('change password', I18n.get('changePassword-errorFields'));
           }
         }
       }
@@ -423,7 +422,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
     } catch (e) {
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
-      else throw createChangePasswordError('change password', I18n.t('changePassword-errorSubmit'));
+      else throw createChangePasswordError('change password', I18n.get('changePassword-errorSubmit'));
     }
   };
 }

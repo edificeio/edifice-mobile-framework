@@ -1,8 +1,8 @@
 import { Picker } from '@react-native-picker/picker';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -125,7 +125,7 @@ const DropdownIOS = ({
                 setModalVisible(false);
                 onSelect(tempValue!);
               }}
-              title={I18n.t('common-ok')}
+              title={I18n.get('common-ok')}
             />
           </ModalContentBlock>
         </ModalContent>

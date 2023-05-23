@@ -1,10 +1,10 @@
 /**
  * Player (audio/video)
  */
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleHeight, getScaleImageSize } from '~/framework/components/constants';
 import MediaIcon from '~/framework/components/media/icon';
@@ -45,7 +45,7 @@ class MediaButton extends React.Component<IPlayerProps> {
 
     const getPreviewVideo = () => {
       return !source || !type ? (
-        <SmallItalicText>{I18n.t(`${type || 'media'}NotAvailable`)}</SmallItalicText>
+        <SmallItalicText>{I18n.get(`${type || 'media'}NotAvailable`)}</SmallItalicText>
       ) : (
         <TouchableOpacity onPress={() => this.showMediaPlayer()} style={[styles.previewVideo, style]}>
           <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" />

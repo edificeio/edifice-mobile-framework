@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import { Alert } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
+import { I18n } from '~/app/i18n';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { assertPermissions } from '~/framework/util/permissions';
 
@@ -30,14 +30,14 @@ export default function cameraAction(props: MenuPickerActionProps & { useFrontCa
       });
     } catch {
       Alert.alert(
-        I18n.t('camera.permission.blocked.title'),
-        I18n.t('camera.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('camera.permission.blocked.title'),
+        I18n.get('camera.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   };
 
   return {
-    title: I18n.t('common-photoPicker-take'),
+    title: I18n.get('common-photoPicker-take'),
     icon: {
       ios: 'camera',
       android: 'ic_camera',

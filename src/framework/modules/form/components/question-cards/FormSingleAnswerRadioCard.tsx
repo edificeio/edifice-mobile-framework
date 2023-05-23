@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
@@ -116,7 +116,7 @@ export const FormSingleAnswerRadioCard = ({
                   value={customAnswer}
                   onChangeText={text => onChangeCustomAnswer(text, item)}
                   editable={!isDisabled}
-                  placeholder={I18n.t('form.enterYourAnswer')}
+                  placeholder={I18n.get('form.enterYourAnswer')}
                   style={styles.customAnswerInput}
                 />
               ) : null}

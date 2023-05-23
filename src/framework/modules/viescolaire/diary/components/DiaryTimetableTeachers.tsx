@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -133,7 +133,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     return (
       <View style={styles.homeworksContainer}>
         <BodyBoldText>
-          {I18n.t('viesco-homework')}
+          {I18n.get('viesco-homework')}
           {homeworks.length > 1 && ' (' + homeworks.length + ')'}
         </BodyBoldText>
         <TouchableOpacity
@@ -235,7 +235,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
       <PageContainer>
         <View style={styles.refreshContainer}>
           <View style={styles.weekPickerView}>
-            <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
+            <SmallText style={styles.weekText}>{I18n.get('viesco-edt-week-of')}</SmallText>
             <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.diary} />
           </View>
           {courses.isFetching || courses.isPristine ? (

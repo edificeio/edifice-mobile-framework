@@ -1,11 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { RefreshControl, SafeAreaView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
@@ -39,7 +39,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('homeworkAssistance.tabName'),
+    title: I18n.get('homeworkAssistance.tabName'),
   }),
 });
 
@@ -92,7 +92,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
         <SmallText style={styles.primaryText}>{body}</SmallText>
         <Picture type="NamedSvg" name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
         <View>
-          <SmallText>{I18n.t('homeworkAssistance.serviceAvailable')}</SmallText>
+          <SmallText>{I18n.get('homeworkAssistance.serviceAvailable')}</SmallText>
           <View style={styles.rowContainer}>
             <Picture type="NamedSvg" name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.secondaryText}>{days}</SmallText>
@@ -106,7 +106,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
             <SmallText style={styles.secondaryText}>{info}</SmallText>
           </View>
         </View>
-        <ActionButton text={I18n.t('homeworkAssistance.makeARequest')} action={goToRequest} style={styles.actionContainer} />
+        <ActionButton text={I18n.get('homeworkAssistance.makeARequest')} action={goToRequest} style={styles.actionContainer} />
       </SafeAreaView>
     );
   };

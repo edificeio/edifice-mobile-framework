@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, Platform, RefreshControl, ScrollView, Switch, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -7,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -45,7 +45,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-tests'),
+    title: I18n.get('viesco-tests'),
   }),
 });
 
@@ -146,7 +146,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
     return (
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.t('viesco-report-card')}</SmallText>
+        <SmallText>{I18n.get('viesco-report-card')}</SmallText>
         <View style={styles.dropdownsContainer}>
           <DropDownPicker
             open={isTermDropdownOpen}
@@ -174,10 +174,10 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
           />
         </View>
         <View style={styles.headerRow}>
-          <SmallBoldText>{I18n.t(displaySubjectAverages ? 'viesco-average' : 'viesco-last-grades')}</SmallBoldText>
+          <SmallBoldText>{I18n.get(displaySubjectAverages ? 'viesco-average' : 'viesco-last-grades')}</SmallBoldText>
           {showColorSwitch ? (
             <View style={styles.switchContainer}>
-              <SmallText style={styles.colorsText}>{I18n.t('viesco-colors')}</SmallText>
+              <SmallText style={styles.colorsText}>{I18n.get('viesco-colors')}</SmallText>
               <Switch
                 value={areAverageColorsShown}
                 onValueChange={() => {
@@ -217,7 +217,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
               .filter(i => i.devoirs.length)}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => <SubjectAverageCard devoirs={item.devoirs} name={item.name} />}
-            ListEmptyComponent={renderEmpty(I18n.t('viesco-empty-subject-averages'))}
+            ListEmptyComponent={renderEmpty(I18n.get('viesco-empty-subject-averages'))}
             style={styles.listContainer}
           />
         ) : (
@@ -232,7 +232,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 onPress={() => openAssessment(item)}
               />
             )}
-            ListEmptyComponent={renderEmpty(I18n.t('viesco-eval-EmptyScreenText'))}
+            ListEmptyComponent={renderEmpty(I18n.get('viesco-eval-EmptyScreenText'))}
             style={styles.listContainer}
           />
         )}
@@ -274,15 +274,15 @@ export default connect(
       devoirs: competencesState.devoirs.data,
       dropdownItems: {
         terms: [
-          { label: I18n.t('viesco-competences-period'), value: 'default' },
+          { label: I18n.get('viesco-competences-period'), value: 'default' },
           ...competencesState.terms.data.map(term => ({
-            label: `${I18n.t('viesco-competences-period-' + term.type)} ${term.order}`,
+            label: `${I18n.get('viesco-competences-period-' + term.type)} ${term.order}`,
             value: term.typeId.toString(),
           })),
-          { label: I18n.t('viesco-year'), value: 'year' },
+          { label: I18n.get('viesco-year'), value: 'year' },
         ],
         subjects: [
-          { label: I18n.t('viesco-competences-subject'), value: 'default' },
+          { label: I18n.get('viesco-competences-subject'), value: 'default' },
           ...competencesState.subjects.data
             .filter(subject => competencesState.devoirs.data.some(devoir => devoir.subjectId === subject.id))
             .map(subject => ({

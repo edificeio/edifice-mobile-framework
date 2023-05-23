@@ -15,10 +15,10 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -79,7 +79,7 @@ const createTabIcon = (
 
 const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
   return {
-    tabBarLabel: I18n.t(moduleConfig.displayI18n),
+    tabBarLabel: I18n.get(moduleConfig.displayI18n),
     tabBarIcon: props => {
       return createTabIcon(moduleConfig, props);
     },

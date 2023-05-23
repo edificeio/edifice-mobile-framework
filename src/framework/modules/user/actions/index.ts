@@ -1,10 +1,10 @@
 /**
  * Thunk actions for module user
  */
-import I18n from 'i18n-js';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
@@ -19,12 +19,12 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
     const isUpdatingPhoto = newValues.photo !== undefined;
     const notifierId = `profile${isUpdatingPhoto ? 'One' : 'Two'}`;
-    const notifierSuccessText = I18n.t(`ProfileChange${isUpdatingPhoto ? 'Avatar' : ''}Success`);
+    const notifierSuccessText = I18n.get(`ProfileChange${isUpdatingPhoto ? 'Avatar' : ''}Success`);
     const getNotifierErrorText = () => {
       if (isUpdatingPhoto) {
-        return !newValues.photo ? I18n.t('ProfileDeleteAvatarError') : I18n.t('ProfileChangeAvatarErrorAssign');
+        return !newValues.photo ? I18n.get('ProfileDeleteAvatarError') : I18n.get('ProfileChangeAvatarErrorAssign');
       } else {
-        return I18n.t('ProfileChangeError');
+        return I18n.get('ProfileChangeError');
       }
     };
 
@@ -72,7 +72,7 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
         dispatch(
           notifierShowAction({
             id: notifierId,
-            text: I18n.t('ProfileChangeLoginError'),
+            text: I18n.get('ProfileChangeLoginError'),
             icon: 'close',
             type: 'error',
           }),

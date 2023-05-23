@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
@@ -101,14 +101,14 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
       ) : (
         <View style={styles.container}>
           <BottomMenu
-            title={I18n.t('common.addFiles')}
+            title={I18n.get('common.addFiles')}
             actions={[
               cameraAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
               galleryAction({ callback: file => addFile(filePickedToLocalFile(file)), multiple: true }),
               documentAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
             ]}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-              <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
+              <SmallActionText style={styles.actionText}>{I18n.get('common.addFiles')}</SmallActionText>
               <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
             </View>
           </BottomMenu>

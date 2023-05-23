@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -47,11 +47,11 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
       await createFolder(name);
       fetchInit();
       onClose();
-      Toast.showInfo(I18n.t('conversation.createDirectoryConfirm'));
+      Toast.showInfo(I18n.get('conversation.createDirectoryConfirm'));
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
       onClose();
-      Toast.showError(I18n.t(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'));
+      Toast.showError(I18n.get(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'));
     } finally {
       this.setState({ name: '' });
     }
@@ -74,21 +74,21 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
       <ModalBox isVisible={show} backdropOpacity={0.5}>
         <ModalContent style={styles.modalContent}>
           <ModalContentBlock>
-            <SmallBoldText>{I18n.t('conversation.createDirectory')}</SmallBoldText>
+            <SmallBoldText>{I18n.get('conversation.createDirectory')}</SmallBoldText>
           </ModalContentBlock>
           <View style={styles.inputContainer}>
             <TextInput
               autoFocus
               value={name}
               onChangeText={this.onNameChange}
-              placeholder={I18n.t('conversation.directoryName')}
+              placeholder={I18n.get('conversation.directoryName')}
               underlineColorAndroid={theme.palette.grey.grey}
               style={textInputStyle}
             />
           </View>
           <ModalContentBlock style={styles.modalContentBlock}>
             <DialogButtonCancel onPress={onClose} />
-            <DialogButtonOk disabled={!name} label={I18n.t('conversation.create')} onPress={this.onConfirm} />
+            <DialogButtonOk disabled={!name} label={I18n.get('conversation.create')} onPress={this.onConfirm} />
           </ModalContentBlock>
         </ModalContent>
       </ModalBox>

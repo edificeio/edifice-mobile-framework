@@ -1,11 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
@@ -31,7 +31,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
+    title: I18n.get(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
   }),
 });
 
@@ -74,7 +74,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       navigation.goBack();
     } catch {
       setCreating(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -90,7 +90,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       navigation.goBack();
     } catch {
       setDeleting(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -98,8 +98,8 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { endDate, event, reasons, startDate, student, type } = props.route.params;
     const mainColor =
       type === EventType.LATENESS ? viescoTheme.palette.presencesEvents.lateness : viescoTheme.palette.presencesEvents.departure;
-    const mainText = I18n.t(type === EventType.LATENESS ? 'viesco-arrived' : 'viesco-left');
-    const inputLabel = I18n.t(type === EventType.LATENESS ? 'viesco-arrived-motive' : 'viesco-left-motive');
+    const mainText = I18n.get(type === EventType.LATENESS ? 'viesco-arrived' : 'viesco-left');
+    const inputLabel = I18n.get(type === EventType.LATENESS ? 'viesco-arrived-motive' : 'viesco-left-motive');
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -128,7 +128,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
               }
               setOpen={setDropdownOpen}
               setValue={setReason}
-              placeholder={I18n.t('viesco-no-reason')}
+              placeholder={I18n.get('viesco-no-reason')}
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropdown}
               textStyle={styles.dropdownText}
@@ -146,7 +146,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
         <View style={styles.actionsContainer}>
           {event !== undefined ? (
             <ActionButton
-              text={I18n.t('delete')}
+              text={I18n.get('delete')}
               type="secondary"
               action={deleteEvent}
               loading={isDeleting}
@@ -154,7 +154,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             />
           ) : null}
           <ActionButton
-            text={I18n.t('viesco-confirm')}
+            text={I18n.get('viesco-confirm')}
             action={createEvent}
             disabled={!date.isBetween(startDate, endDate)}
             loading={isCreating}

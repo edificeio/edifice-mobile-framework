@@ -3,12 +3,12 @@
  */
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import deepmerge from 'deepmerge';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -31,7 +31,6 @@ import {
   getPushNotifsSettingsByType,
 } from '~/framework/modules/timeline/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
-import moduleConfig from '~/framework/modules/user/module-config';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';
@@ -74,13 +73,7 @@ const styles = StyleSheet.create({
 });
 
 const translateMainItem = (item: [string, IPushNotifsSettings]) => {
-  const backupMissingTranslation = I18n.missingTranslation;
-  I18n.missingTranslation = function (scope, options) {
-    return undefined;
-  };
-  const t = I18n.t(`timeline.PushNotifsSettingsScreen.appType-override.${item[0]}`);
-  I18n.missingTranslation = backupMissingTranslation;
-  return t || I18n.t(`timeline.appType.${item[0]}`);
+  return I18n.get([`timeline.PushNotifsSettingsScreen.appType-override.${item[0]}`, `timeline.appType.${item[0]}`]);
 };
 
 export const computeNavBar = ({
@@ -90,7 +83,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('directory-notificationsTitle'),
+    title: I18n.get('directory-notificationsTitle'),
   }),
 });
 
@@ -155,6 +148,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
     const itemsValues = Object.values(items);
     const total = itemsValues.length;
     const totalOn = itemsValues.filter(v => v).length;
+    const isTotalOnSingle = totalOn === 1;
     return (
       <TouchableOpacity
         onPress={() => {
@@ -165,7 +159,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
           rightElement={
             <View style={styles.item}>
               <SmallActionText style={{ ...TextSizeStyle.Small }}>
-                {I18n.t(`user.pushNotifsSettingsScreen.countOutOfTotal`, {
+                {I18n.get(`user.pushNotifsSettingsScreen.countOutOfTotal.${isTotalOnSingle ? 'one' : 'other'}`, {
                   count: totalOn,
                   total,
                 })}

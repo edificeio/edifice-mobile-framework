@@ -1,5 +1,6 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
+
+import { I18n } from '~/app/i18n';
 
 export enum CarnetDeBordSection {
   CAHIER_DE_TEXTES = 1, // No falsy values in this
@@ -119,13 +120,13 @@ const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
   'n.rdu': 'pronote.carnetDeBord.releveDeNotes.value.nrdu',
 };
 export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
-  if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
+  if (note === undefined) return I18n.get('pronote.carnetDeBord.noInfo');
   const noteLowerCase = note.toString().toLowerCase();
   if (Object.prototype.hasOwnProperty.call(carnetDeBordReleveDeNotesDevoirSpecialValueI18n, noteLowerCase)) {
-    return I18n.t(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
+    return I18n.get(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
   } else
     return bareme
-      ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
+      ? I18n.get('pronote.carnetDeBord.releveDeNotes.note', {
           note,
           bareme,
         })
@@ -213,8 +214,8 @@ const carnetDeBordVieScolaireTypeI18n = {
 
 export function formatCarnetDeBordVieScolaireType(type?: string) {
   return type && Object.prototype.hasOwnProperty.call(carnetDeBordVieScolaireTypeI18n, type)
-    ? I18n.t(carnetDeBordVieScolaireTypeI18n[type])
-    : I18n.t('pronote.carnetDeBord.noInfo');
+    ? I18n.get(carnetDeBordVieScolaireTypeI18n[type])
+    : I18n.get('pronote.carnetDeBord.noInfo');
 }
 const carnetDeBordCompetencesValueI18n = {
   1: 'pronote.carnetDeBord.competences.value.1',
@@ -228,8 +229,8 @@ const carnetDeBordCompetencesValueI18n = {
 };
 export function formatCarnetDeBordCompetencesValue(value?: number) {
   return value && Object.prototype.hasOwnProperty.call(carnetDeBordCompetencesValueI18n, value)
-    ? I18n.t(carnetDeBordCompetencesValueI18n[value])
-    : I18n.t('pronote.carnetDeBord.noInfo');
+    ? I18n.get(carnetDeBordCompetencesValueI18n[value])
+    : I18n.get('pronote.carnetDeBord.noInfo');
 }
 
 export class PronoteCdbInitError extends Error {}

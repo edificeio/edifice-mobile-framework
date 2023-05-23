@@ -5,11 +5,11 @@
  * a function that return the html string from the data got by url with `source`.
  * Has a `opts` prop that are the HtmlConverter's options.
  */
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewProps } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
@@ -143,7 +143,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
     if (error) {
       return (
         <View {...this.props}>
-          <SmallItalicText>{I18n.t('common-ErrorLoadingResource')}</SmallItalicText>
+          <SmallItalicText>{I18n.get('common-ErrorLoadingResource')}</SmallItalicText>
         </View>
       );
     } else if (!loading && !hasContent) {
@@ -152,7 +152,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
           <SmallItalicText>{emptyMessage}</SmallItalicText>
         </View>
       ) : (
-        emptyMessage || <SmallItalicText>{I18n.t('noContent')}</SmallItalicText>
+        emptyMessage || <SmallItalicText>{I18n.get('noContent')}</SmallItalicText>
       );
     } else {
       return (

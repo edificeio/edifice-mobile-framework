@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl } from 'react-native';
@@ -7,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -133,7 +133,7 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
         name: course.classes[0] ?? course.groups[0],
       });
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 

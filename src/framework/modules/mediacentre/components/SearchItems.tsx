@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -72,7 +72,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<IS
       <View style={styles.searchBarContainer}>
         <TextInput
           defaultValue={value}
-          placeholder={I18n.t('mediacentre.find-resources')}
+          placeholder={I18n.get('mediacentre.find-resources')}
           returnKeyType="search"
           clearButtonMode="while-editing"
           onChangeText={text => setValue(text)}

@@ -2,8 +2,8 @@
  * Workspace notif handler
  */
 import { CommonActions } from '@react-navigation/native';
-import I18n from 'i18n-js';
 
+import { I18n } from '~/app/i18n';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import {
@@ -62,7 +62,7 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
       const parentId = index > 0 ? folderUri.substring(index + 7) : 'shared';
       const title =
         notification.backupData.params.resourceFolderName === 'Documents personnels'
-          ? I18n.t('shared')
+          ? I18n.get('shared')
           : notification.backupData.params.resourceFolderName;
 
       // 2. actual navigation action

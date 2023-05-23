@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -149,7 +149,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
       <TextInput
         style={styles.searchBarInput}
         value={searchValue}
-        placeholder={I18n.t('Search')}
+        placeholder={I18n.get('Search')}
         returnKeyType="search"
         clearButtonMode="while-editing"
         autoCorrect={false}

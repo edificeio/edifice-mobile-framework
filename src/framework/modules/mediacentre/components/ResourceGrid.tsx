@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -51,7 +51,7 @@ export class ResourceGrid extends React.PureComponent<IResourceGridProps> {
           <SmallBoldText style={styles.titleText}>{title.toLocaleUpperCase()}</SmallBoldText>
           {resources.length > size ? (
             <TouchableOpacity onPress={this.onShowAll}>
-              <SmallText style={styles.displayAllText}>{I18n.t('mediacentre.display-all')}</SmallText>
+              <SmallText style={styles.displayAllText}>{I18n.get('mediacentre.display-all')}</SmallText>
             </TouchableOpacity>
           ) : null}
         </View>

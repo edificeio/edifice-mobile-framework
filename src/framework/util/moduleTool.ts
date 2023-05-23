@@ -2,7 +2,6 @@
  * ModuleTool
  * Everything for managing and declaring modules
  */
-import I18n from 'i18n-js';
 import React from 'react';
 import { ColorValue } from 'react-native';
 import type { Reducer } from 'redux';

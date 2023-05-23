@@ -1,9 +1,9 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -20,7 +20,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('lvs-home-title'),
+    title: I18n.get('lvs-home-title'),
   }),
 });
 
@@ -32,7 +32,7 @@ function LvsHomeScreen(props: LvsHomeScreenPrivateProps) {
   } else {
     // Not in useEffect => normal, we want to execute this at first time.
     redirect(session, connector.address).catch(() => {
-      Alert.alert(I18n.t('lvs-redirect-error-text'));
+      Alert.alert(I18n.get('lvs-redirect-error-text'));
     });
     props.navigation.goBack();
     return <View />;

@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
@@ -7,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -39,7 +39,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-register'),
+    title: I18n.get('viesco-register'),
   }),
 });
 
@@ -116,7 +116,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -130,7 +130,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -143,10 +143,10 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       if (!session) throw new Error();
       await presencesService.classCall.updateStatus(session, id, 3);
       navigation.goBack();
-      Toast.showSuccess(I18n.t('viesco-register-validated'));
+      Toast.showSuccess(I18n.get('viesco-register-validated'));
     } catch {
       setValidating(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -238,7 +238,12 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
             ],
           })}
         />
-        <ActionButton text={I18n.t('viesco-validate')} action={validateCall} loading={isValidating} style={styles.validateButton} />
+        <ActionButton
+          text={I18n.get('viesco-validate')}
+          action={validateCall}
+          loading={isValidating}
+          style={styles.validateButton}
+        />
       </>
     ) : null;
   };
@@ -256,7 +261,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
           {classroom ? (
             <View style={styles.classroomContainer}>
               <Icon name="pin_drop" size={18} />
-              <SmallText style={styles.classroomText}>{I18n.t('viesco-room') + ' ' + classroom}</SmallText>
+              <SmallText style={styles.classroomText}>{I18n.get('viesco-room') + ' ' + classroom}</SmallText>
             </View>
           ) : null}
           <SmallBoldText style={styles.nameText}>{name}</SmallBoldText>

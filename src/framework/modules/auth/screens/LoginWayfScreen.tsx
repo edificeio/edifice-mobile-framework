@@ -1,11 +1,11 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { InteractionManager, SafeAreaView, StyleSheet, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -109,14 +109,14 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.safeAreaInner}>
             <PFLogo pf={route.params.platform} />
-            <SmallText style={styles.textCenter}>{I18n.t('login-wayf-main-text')}</SmallText>
+            <SmallText style={styles.textCenter}>{I18n.get('login-wayf-main-text')}</SmallText>
             <SmallText style={styles.textError}>
               {error
-                ? I18n.t('auth-error-' + error, {
+                ? I18n.get('auth-error-' + error, {
                     version: DeviceInfo.getVersion(),
                     errorcode: error,
                     currentplatform: platform.url,
-                    defaultValue: I18n.t('auth-error-other', {
+                    defaultValue: I18n.get('auth-error-other', {
                       version: DeviceInfo.getVersion(),
                       errorcode: error,
                       currentplatform: platform.url,
@@ -125,7 +125,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
                 : ''}
             </SmallText>
             <ActionButton
-              text={I18n.t('login-wayf-main-button')}
+              text={I18n.get('login-wayf-main-button')}
               action={() => {
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
                 navigation.navigate(authRouteNames.wayf, { platform: route.params.platform });

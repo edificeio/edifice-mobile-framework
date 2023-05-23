@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -60,7 +60,7 @@ export const MailListSearchbar = (props: MailListSearchbarProps) => {
     const { query } = props;
 
     if (query.length > 0 && query.length < 3) {
-      return Toast.showError(I18n.t('zimbra-search-length-error'));
+      return Toast.showError(I18n.get('zimbra-search-length-error'));
     }
     props.onSearch();
   };
@@ -75,7 +75,7 @@ export const MailListSearchbar = (props: MailListSearchbarProps) => {
         value={props.query}
         onChangeText={props.onChangeQuery}
         onSubmitEditing={searchMails}
-        placeholder={I18n.t('common.search')}
+        placeholder={I18n.get('common.search')}
         placeholderTextColor={theme.ui.text.regular}
         autoCapitalize="none"
         autoCorrect={false}

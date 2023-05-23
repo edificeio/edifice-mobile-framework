@@ -1,6 +1,5 @@
 import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -8,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
@@ -38,7 +38,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('support.tabName'),
+    title: I18n.get('support.tabName'),
   }),
 });
 
@@ -70,10 +70,10 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
       props.navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
+      Toast.showSuccess(I18n.get('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
     } catch {
       setSending(false);
-      Toast.showError(I18n.t('support.supportCreateTicketScreen.failure'));
+      Toast.showError(I18n.get('support.supportCreateTicketScreen.failure'));
     }
   };
 
@@ -94,8 +94,8 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     return hasTicketCreationRights ? (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
-          <BodyBoldText style={styles.titleText}>{I18n.t('support.supportCreateTicketScreen.reportIncident')}</BodyBoldText>
-          <SmallText style={styles.informationText}>{I18n.t('support.supportCreateTicketScreen.mobileOnly')}</SmallText>
+          <BodyBoldText style={styles.titleText}>{I18n.get('support.supportCreateTicketScreen.reportIncident')}</BodyBoldText>
+          <SmallText style={styles.informationText}>{I18n.get('support.supportCreateTicketScreen.mobileOnly')}</SmallText>
           <DropDownPicker
             open={isCategoryDropdownOpen}
             value={category}
@@ -125,12 +125,12 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
           ) : null}
           <View style={{ zIndex: -2 }}>
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.t('support.supportCreateTicketScreen.subject')}
+              {i18n.get('support.supportCreateTicketScreen.subject')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.t('support.supportCreateTicketScreen.description')}
+              {i18n.get('support.supportCreateTicketScreen.description')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput
@@ -142,14 +142,14 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             />
             <View style={styles.attachmentsContainer}>
               <BottomMenu
-                title={I18n.t('common.addFiles')}
+                title={i18n.get('common.addFiles')}
                 actions={[
                   cameraAction({ callback: addAttachment }),
                   galleryAction({ callback: addAttachment, multiple: true }),
                   documentAction({ callback: addAttachment }),
                 ]}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-                  <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
+                  <SmallActionText style={styles.actionText}>{i18n.get('common.addFiles')}</SmallActionText>
                   <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
                 </View>
               </BottomMenu>
@@ -164,24 +164,24 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             </View>
           </View>
         </View>
-        <ActionButton text={I18n.t('common.send')} action={sendTicket} disabled={isActionDisabled} loading={isSending} />
+        <ActionButton text={I18n.get('common.send')} action={sendTicket} disabled={isActionDisabled} loading={isSending} />
       </ScrollView>
     ) : (
-      <EmptyScreen svgImage="empty-support" title={I18n.t('support.supportCreateTicketScreen.emptyScreen.title')} />
+      <EmptyScreen svgImage="empty-support" title={I18n.get('support.supportCreateTicketScreen.emptyScreen.title')} />
     );
   };
 
   UNSTABLE_usePreventRemove(!!(subject || description) && !isSending, ({ data }) => {
-    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('common.confirmationLeaveAlert.title'), I18n.get('common.confirmationLeaveAlert.message'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common.cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.t('common.quit'),
+        text: I18n.get('common.quit'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
@@ -200,7 +200,7 @@ export default connect(
     const apps = [] as any[];
     for (const app of gs.auth.session.apps) {
       if (app.address && app.name && app.address.length > 0 && app.name.length > 0) {
-        const translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
+        const translation = I18n.get('modules-names.' + app.displayName.toLowerCase());
         if (translation.substring(0, 9) !== '[missing ') {
           apps.push({ ...app, name: translation });
         } else if (/^[A-Z]/.test(app.displayName)) {
@@ -210,7 +210,7 @@ export default connect(
     }
     apps.push({
       address: 'modules-names.other',
-      name: I18n.t('modules-names.other'),
+      name: I18n.get('modules-names.other'),
     });
     apps.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 

@@ -1,10 +1,10 @@
 import { Route, StackNavigationState } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { fetchCountAction } from '~/framework/modules/conversation/actions/count';
@@ -103,7 +103,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('conversation.appName'),
+    title: I18n.get('conversation.appName'),
   }),
 });
 

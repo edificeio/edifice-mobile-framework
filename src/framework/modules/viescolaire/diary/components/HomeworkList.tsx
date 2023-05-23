@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -99,7 +99,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
           {index === 0 ||
           moment(item.due_date).format('DD/MM/YY') !== moment(homeworksArray[index - 1].due_date).format('DD/MM/YY') ? (
             <SmallBoldText>
-              {I18n.t('viesco-homework-fordate')} {moment(item.due_date).format('dddd Do MMMM')}
+              {I18n.get('viesco-homework-fordate')} {moment(item.due_date).format('dddd Do MMMM')}
             </SmallBoldText>
           ) : null}
           <HomeworkItem
@@ -112,7 +112,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
           />
         </View>
       )}
-      ListEmptyComponent={<EmptyComponent title={I18n.t('viesco-homework-EmptyScreenText')} />}
+      ListEmptyComponent={<EmptyComponent title={I18n.get('viesco-homework-EmptyScreenText')} />}
     />
   );
 };
@@ -140,7 +140,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
           />
         </View>
       )}
-      ListEmptyComponent={<EmptyComponent title={I18n.t('viesco-session-EmptyScreenText')} />}
+      ListEmptyComponent={<EmptyComponent title={I18n.get('viesco-session-EmptyScreenText')} />}
     />
   );
 };
@@ -187,7 +187,7 @@ export default (props: HomeworkListProps) => {
       {userType === UserType.Relative ? <ChildPicker /> : null}
       <View style={styles.homeworkPart}>
         <View style={styles.grid}>
-          <SmallText>{I18n.t('viesco-from')}</SmallText>
+          <SmallText>{I18n.get('viesco-from')}</SmallText>
           <DateTimePicker
             mode="date"
             style={styles.datePicker}
@@ -196,7 +196,7 @@ export default (props: HomeworkListProps) => {
             onChange={setStartDate}
             color={viescoTheme.palette.diary}
           />
-          <SmallText>{I18n.t('viesco-to')}</SmallText>
+          <SmallText>{I18n.get('viesco-to')}</SmallText>
           <DateTimePicker
             mode="date"
             style={styles.datePicker}
@@ -208,7 +208,7 @@ export default (props: HomeworkListProps) => {
         </View>
         <View style={styles.grid}>
           <View style={styles.gridHomeworkTitle}>
-            <SmallText>{I18n.t('viesco-homework')}</SmallText>
+            <SmallText>{I18n.get('viesco-homework')}</SmallText>
           </View>
           <Switch
             style={styles.gridSwith}
@@ -219,7 +219,7 @@ export default (props: HomeworkListProps) => {
             {...switchProps}
           />
           <View style={styles.gridSesionTitle}>
-            <SmallText>{I18n.t('viesco-session')}</SmallText>
+            <SmallText>{I18n.get('viesco-session')}</SmallText>
           </View>
         </View>
         {switchValue === SwitchState.HOMEWORK ? (

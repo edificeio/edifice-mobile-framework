@@ -2,11 +2,11 @@
  * Schoolbook word report
  */
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React from 'react';
 import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import ModalBox from '~/framework/components/ModalBox';
 import UserList from '~/framework/components/UserList';
@@ -49,7 +49,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('schoolbook.appName'),
+    title: I18n.get('schoolbook.appName'),
   }),
 });
 
@@ -85,9 +85,9 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       modalBoxRef?.current?.doDismissModal();
       if (!session) throw new Error('missing session');
       await schoolbookService.word.resend(session, schoolbookWordId);
-      Toast.showInfo(I18n.t('schoolbook.schoolbookWordReportScreen.reminderToast.text'));
+      Toast.showInfo(I18n.get('schoolbook.schoolbookWordReportScreen.reminderToast.text'));
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -114,7 +114,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
         .then(wordId => fetchSchoolbookWord(wordId))
         .then(() =>
           props.navigation.setOptions({
-            headerTitle: navBarTitle(schoolbookWord?.word?.title || I18n.t('schoolbook.appName')),
+            headerTitle: navBarTitle(schoolbookWord?.word?.title || I18n.get('schoolbook.appName')),
           }),
         )
         .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
@@ -149,13 +149,13 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
 
   const renderSchoolbookWordReport = () => {
     const acknowledgementsString = (ackNumber: number, total: number) =>
-      `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+      `${ackNumber}/${total} ${I18n.get(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
     const unacknowledgementsString = (ackNumber: number, total: number) =>
-      `${total - ackNumber}/${total} ${I18n.t(
+      `${total - ackNumber}/${total} ${I18n.get(
         `schoolbook.schoolbookWordReportScreen.unacknowledgement${total - ackNumber === 1 ? '' : 's'}`,
       ).toLowerCase()}`;
     const acknowledgedByString = (acknowledgments: IAcknowledgment[]) =>
-      `${I18n.t('schoolbook.schoolbookWordReportScreen.acknowledgedBy')}${acknowledgments?.map(
+      `${I18n.get('schoolbook.schoolbookWordReportScreen.acknowledgedBy')}${acknowledgments?.map(
         acknowledgment => ` ${acknowledgment.parentName}`,
       )}`;
 
@@ -183,7 +183,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
                   {acknowledgementsString(word?.ackNumber, word?.total)}
                 </HeadingSText>
                 <SmallText style={styles.acknowledgementsText}>
-                  {I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidAcknowledge')}
+                  {I18n.get('schoolbook.schoolbookWordReportScreen.relativesDidAcknowledge')}
                 </SmallText>
                 <FlatList
                   bottomInset={false}
@@ -253,15 +253,15 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
                   {hasSchoolbookWordResendRights ? (
                     <ActionButton
                       type="secondary"
-                      text={I18n.t('schoolbook.schoolbookWordReportScreen.reminder')}
+                      text={I18n.get('schoolbook.schoolbookWordReportScreen.reminder')}
                       iconName="pictos-send"
                       action={() => modalBoxRef?.current?.doShowModal()}
                     />
                   ) : null}
                 </View>
                 <SmallText style={styles.unacknowledgementsText}>
-                  {`${I18n.t('schoolbook.schoolbookWordReportScreen.relativesDidNotAcknowledge')}${
-                    hasSchoolbookWordResendRights ? ' ' + I18n.t('schoolbook.schoolbookWordReportScreen.reminderPossible') : ''
+                  {`${I18n.get('schoolbook.schoolbookWordReportScreen.relativesDidNotAcknowledge')}${
+                    hasSchoolbookWordResendRights ? ' ' + I18n.get('schoolbook.schoolbookWordReportScreen.reminderPossible') : ''
                   }`}
                 </SmallText>
                 <UserList
@@ -281,13 +281,15 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
           ref={modalBoxRef}
           content={
             <>
-              <HeadingSText>{I18n.t('schoolbook.schoolbookWordReportScreen.reminderModal.title')}</HeadingSText>
-              <BodyText style={styles.modalBoxText}>{I18n.t('schoolbook.schoolbookWordReportScreen.reminderModal.text')}</BodyText>
+              <HeadingSText>{I18n.get('schoolbook.schoolbookWordReportScreen.reminderModal.title')}</HeadingSText>
+              <BodyText style={styles.modalBoxText}>
+                {I18n.get('schoolbook.schoolbookWordReportScreen.reminderModal.text')}
+              </BodyText>
               <View style={styles.modalBoxButtons}>
                 <TouchableOpacity onPress={() => modalBoxRef?.current?.doDismissModal()}>
-                  <SmallBoldText style={styles.modalBoxCancel}>{I18n.t('common.cancel')}</SmallBoldText>
+                  <SmallBoldText style={styles.modalBoxCancel}>{I18n.get('common.cancel')}</SmallBoldText>
                 </TouchableOpacity>
-                <ActionButton text={I18n.t('common.send')} iconName="pictos-send" action={() => sendSchoolbookWordReminder()} />
+                <ActionButton text={I18n.get('common.send')} iconName="pictos-send" action={() => sendSchoolbookWordReminder()} />
               </View>
             </>
           }

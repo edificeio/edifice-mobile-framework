@@ -1,10 +1,10 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -28,7 +28,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-memento'),
+    title: I18n.get('viesco-memento'),
   }),
 });
 
@@ -90,7 +90,7 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="cake-variant" />
             <SmallText>
-              {memento.birth_date ? `${I18n.t('viesco-memento-born-date')} ${moment(memento.birth_date).format('L')}` : '-'}
+              {memento.birth_date ? `${I18n.get('viesco-memento-born-date')} ${moment(memento.birth_date).format('L')}` : '-'}
             </SmallText>
           </View>
           <View style={styles.infoLine}>
@@ -105,7 +105,7 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
         </View>
         {memento.relatives.length ? (
           <View style={[styles.relativesInfos, styles.shadow]}>
-            <SmallText style={styles.relativesTitleText}>{I18n.t('viesco-memento-relatives')}</SmallText>
+            <SmallText style={styles.relativesTitleText}>{I18n.get('viesco-memento-relatives')}</SmallText>
             {memento.relatives.map(relative => (
               <View style={styles.relativesContainer}>
                 {relative.name ? (

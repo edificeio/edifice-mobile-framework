@@ -1,11 +1,11 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -112,7 +112,7 @@ export const computeNavBar = ({
     navigation,
     route,
     // No title until data is loaded
-    // title: I18n.t('Homework'),
+    // title: I18n.get('Homework'),
   }),
 });
 
@@ -219,7 +219,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                       marginTop: UI_SIZES.spacing.big,
                       marginBottom: UI_SIZES.spacing.small,
                     }}>
-                    <Label color={theme.palette.grey.grey} text={I18n.t('homework.homeworkTaskListScreen.noFutureHomework')} />
+                    <Label color={theme.palette.grey.grey} text={I18n.get('homework.homeworkTaskListScreen.noFutureHomework')} />
                   </View>
                 </>
               );
@@ -275,7 +275,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           // eslint-disable-next-line react/no-unstable-nested-components
           ListHeaderComponent={() => {
             const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
-            const labelText = I18n.t(
+            const labelText = I18n.get(
               `homework.homeworkTaskListScreen.${noRemainingPastHomework ? 'noMorePastHomework' : 'displayPastDays'}`,
             );
             return hasPastHomeWork ? (
@@ -303,12 +303,12 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
             noFutureHomeworkHiddenPast ? (
               <EmptyScreen
                 svgImage="empty-hammock"
-                title={I18n.t(
+                title={I18n.get(
                   `homework-tasks-emptyScreenTitle${
                     hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? '-NoTasks' : '-NoTasks-NoCreationRights'
                   }`,
                 )}
-                text={I18n.t(
+                text={I18n.get(
                   `homework-tasks-emptyScreenText${
                     hasPastHomeWork
                       ? hasCreateHomeworkResourceRight
@@ -319,7 +319,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                       : '-NoTasks-NoCreationRights'
                   }`,
                 )}
-                buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createActivity') : undefined}
+                buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-createActivity') : undefined}
                 buttonUrl={`/homeworks#/view-homeworks/${diaryId}`}
                 buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
               />
@@ -339,7 +339,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           </View>
           <View style={styles.footerText}>
             <SmallText style={{ color: theme.palette.grey.graphite }}>
-              {I18n.t('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
+              {I18n.get('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
             </SmallText>
           </View>
         </View>

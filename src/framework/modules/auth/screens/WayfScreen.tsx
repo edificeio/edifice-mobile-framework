@@ -1,6 +1,5 @@
 import CookieManager from '@react-native-cookies/cookies';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -10,6 +9,7 @@ import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -144,7 +144,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     () => {
       Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
       return (
-        <EmptyScreen svgImage="empty-content" text={I18n.t('login-wayf-empty-text')} title={I18n.t('login-wayf-empty-title')} />
+        <EmptyScreen svgImage="empty-content" text={I18n.get('login-wayf-empty-text')} title={I18n.get('login-wayf-empty-title')} />
       );
     },
     // WAYFPageMode.ERROR: Display error message
@@ -155,11 +155,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={STYLES.errorMsg}>
             {this.error
-              ? I18n.t('auth-error-' + this.error, {
+              ? I18n.get('auth-error-' + this.error, {
                   version: DeviceInfo.getVersion(),
                   errorcode: this.error,
                   currentplatform: this.props.route.params.platform.url,
-                  defaultValue: I18n.t('auth-error-other', {
+                  defaultValue: I18n.get('auth-error-other', {
                     version: DeviceInfo.getVersion(),
                     errorcode: this.error,
                     currentplatform: this.props.route.params.platform.url,
@@ -167,7 +167,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
                 })
               : ''}
           </SmallText>
-          <ActionButton text={I18n.t('login-wayf-error-retry')} action={() => this.displayWebview()} />
+          <ActionButton text={I18n.get('login-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
       );
     },
@@ -177,7 +177,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
-          <SmallText style={STYLES.text}>{I18n.t('login-wayf-loading-text')}</SmallText>
+          <SmallText style={STYLES.text}>{I18n.get('login-wayf-loading-text')}</SmallText>
           <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
@@ -192,12 +192,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
             this.setState({ dropdownOpened: false });
           }}>
           <View style={STYLES.container}>
-            <SmallText style={STYLES.text}>{I18n.t('login-wayf-select-text')}</SmallText>
+            <SmallText style={STYLES.text}>{I18n.get('login-wayf-select-text')}</SmallText>
             <DropDownPicker
               dropDownContainerStyle={STYLES.selectContainer}
               items={this.dropdownItems}
               open={this.state.dropdownOpened}
-              placeholder={I18n.t('login-wayf-select-placeholder')}
+              placeholder={I18n.get('login-wayf-select-placeholder')}
               placeholderStyle={STYLES.selectPlaceholder}
               setOpen={() =>
                 this.setState({
@@ -212,11 +212,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
             />
             <View style={STYLES.submitButton}>
               <ActionButton
-                text={I18n.t('login-wayf-select-button')}
+                text={I18n.get('login-wayf-select-button')}
                 disabled={this.dropdownValue === null}
                 action={() => this.loginWithCustomToken()}
               />
-              {/*<Small style={WAYFPage.STYLES.help}>{I18n.t('login-wayf-select-help')}</Small>*/}
+              {/*<Small style={WAYFPage.STYLES.help}>{I18n.get('login-wayf-select-help')}</Small>*/}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -268,7 +268,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     // Update page title
     this.props.navigation.setOptions({
       headerTitle: navBarTitle(
-        I18n.t(this.state.mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title'),
+        I18n.get(this.state.mode === WAYFPageMode.SELECT ? 'login-wayf-select-title' : 'login-wayf-main-title'),
       ),
     });
   }

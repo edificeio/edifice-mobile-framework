@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -96,7 +96,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
     return (
       <View>
         <SmallBoldText style={styles.dateText}>
-          {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
+          {I18n.get('viesco-register-date')} {moment().format('DD MMMM YYYY')}
         </SmallBoldText>
         <View style={styles.renderContainer}>
           {isFetching ? (
@@ -122,7 +122,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
           ) : (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />
-              <BodyBoldText style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</BodyBoldText>
+              <BodyBoldText style={styles.noCallText}>{I18n.get('viesco-no-register-today')}</BodyBoldText>
               <View style={[styles.noCallChip, styles.presentColor]} />
             </>
           )}

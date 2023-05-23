@@ -1,12 +1,12 @@
 import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
@@ -55,7 +55,7 @@ function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; upda
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isDraftEdited || props.isUploading, ({ data }) => {
     if (props.isUploading) {
-      return Alert.alert(I18n.t('zimbra-send-attachment-progress'));
+      return Alert.alert(I18n.get('zimbra-send-attachment-progress'));
     }
     props.updateDraft();
     handleRemoveConfirmNavigationEvent(data.action, navigation);
@@ -148,7 +148,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Succès');
     } catch {
       this.setState({ tempAttachment: undefined });
-      Toast.showError(I18n.t('zimbra-attachment-error'));
+      Toast.showError(I18n.get('zimbra-attachment-error'));
       this.props.handlePickFileError('conversation');
       Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Échec');
     }
@@ -165,7 +165,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }));
       await zimbraService.draft.deleteAttachment(session, id, attachmentId);
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -175,20 +175,20 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { draft, id, tempAttachment } = this.state;
 
       if (!draft.to.length && !draft.cc.length && !draft.bcc.length) {
-        return Toast.showError(I18n.t('zimbra-missing-receiver'));
+        return Toast.showError(I18n.get('zimbra-missing-receiver'));
       } else if (tempAttachment) {
-        return Toast.showInfo(I18n.t('zimbra-send-attachment-progress'));
+        return Toast.showInfo(I18n.get('zimbra-send-attachment-progress'));
       }
       this.setState({ isSending: true });
       if (!session) throw new Error();
       await zimbraService.mail.send(session, this.getMailData(), id, draft.inReplyTo);
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.t('zimbra-send-mail')), 250);
+        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-send-mail')), 250);
       });
     } catch {
       this.setState({ isSending: false });
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -198,7 +198,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
     if (isDeleted) return;
     await this.saveDraft();
-    Toast.showInfo(I18n.t(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'));
+    Toast.showInfo(I18n.get(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'));
   };
 
   checkIsDraftBlank = (): boolean => {
@@ -248,10 +248,10 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.t('zimbra-message-deleted')), 250);
+        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-message-deleted')), 250);
       });
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -266,21 +266,21 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.t('zimbra-message-deleted')), 250);
+        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-message-deleted')), 250);
       });
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
   alertPermanentDeletion = () => {
-    Alert.alert(I18n.t('zimbra-message-deleted-confirm'), I18n.t('zimbra-message-deleted-confirm-text'), [
+    Alert.alert(I18n.get('zimbra-message-deleted-confirm'), I18n.get('zimbra-message-deleted-confirm-text'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common.cancel'),
         style: 'default',
       },
       {
-        text: I18n.t('common.delete'),
+        text: I18n.get('common.delete'),
         onPress: this.deleteDraft,
         style: 'destructive',
       },
@@ -316,7 +316,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     const { isTrashed } = this.props.route.params;
     const menuActions = [
       {
-        title: I18n.t('zimbra-signature-add'),
+        title: I18n.get('zimbra-signature-add'),
         action: () => this.state.signatureModalRef.current?.doShowModal(),
         icon: {
           ios: 'pencil',
@@ -393,7 +393,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
                 multiline
                 textAlignVertical="top"
                 scrollEnabled={false}
-                placeholder={I18n.t('zimbra-type-message')}
+                placeholder={I18n.get('zimbra-type-message')}
                 placeholderTextColor={theme.ui.text.light}
                 style={styles.bodyInput}
               />

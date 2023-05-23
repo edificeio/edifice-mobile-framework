@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallActionText, SmallText } from '~/framework/components/text';
@@ -99,7 +99,7 @@ export const RecipientField = ({ hasZimbraSendExternalRight, selectedRecipients,
       if (hasZimbraSendExternalRight) {
         addRecipient({ id: value, displayName: value } as IRecipient);
       } else {
-        Toast.showError(I18n.t('zimbra-external-mail-right-error'));
+        Toast.showError(I18n.get('zimbra-external-mail-right-error'));
       }
     }
     if (value) setValue('');

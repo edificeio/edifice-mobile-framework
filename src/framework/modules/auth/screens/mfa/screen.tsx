@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import Lottie from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
@@ -8,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_VALUES } from '~/framework/components/constants';
@@ -66,7 +66,7 @@ export const computeNavBar = ({
   typeof authRouteNames.mfa | typeof authRouteNames.mfaModal
 >): NativeStackNavigationOptions => {
   const routeParams = route.params;
-  const title = routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.t('auth-mfa-title');
+  const title = routeParams.isEmailMFA || routeParams.isMobileMFA ? routeParams.navBarTitle : I18n.get('auth-mfa-title');
   return {
     ...navBarOptions({
       navigation,
@@ -119,26 +119,26 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
 
   const texts: PageTexts = isEmailMFA
     ? {
-        feedback: I18n.t(`auth-mfa-email-feedback-${codeState.toLowerCase()}`),
-        message: I18n.t('auth-mfa-email-message'),
-        messageSent: `${I18n.t('auth-mfa-email-message-sent')} ${email}.`,
-        resendToast: I18n.t('auth-mfa-email-toast'),
-        title: I18n.t('auth-mfa-email-title'),
+        feedback: I18n.get(`auth-mfa-email-feedback-${codeState.toLowerCase()}`),
+        message: I18n.get('auth-mfa-email-message'),
+        messageSent: `${I18n.get('auth-mfa-email-message-sent')} ${email}.`,
+        resendToast: I18n.get('auth-mfa-email-toast'),
+        title: I18n.get('auth-mfa-email-title'),
       }
     : isMobileMFA
     ? {
-        feedback: I18n.t(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
-        message: I18n.t('auth-mfa-mobile-message'),
-        messageSent: `${I18n.t('auth-mfa-mobile-message-sent')} ${mobile}.`,
-        resendToast: I18n.t('auth-mfa-mobile-toast'),
-        title: I18n.t('auth-mfa-mobile-title'),
+        feedback: I18n.get(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+        message: I18n.get('auth-mfa-mobile-message'),
+        messageSent: `${I18n.get('auth-mfa-mobile-message-sent')} ${mobile}.`,
+        resendToast: I18n.get('auth-mfa-mobile-toast'),
+        title: I18n.get('auth-mfa-mobile-title'),
       }
     : {
-        feedback: I18n.t(`auth-mfa-feedback-${codeState.toLowerCase()}`),
-        message: I18n.t('auth-mfa-message'),
-        messageSent: `${I18n.t('auth-mfa-message-sent')} ${mobile}.`,
-        resendToast: I18n.t('auth-mfa-toast'),
-        title: I18n.t('auth-mfa-title'),
+        feedback: I18n.get(`auth-mfa-feedback-${codeState.toLowerCase()}`),
+        message: I18n.get('auth-mfa-message'),
+        messageSent: `${I18n.get('auth-mfa-message-sent')} ${mobile}.`,
+        resendToast: I18n.get('auth-mfa-toast'),
+        title: I18n.get('auth-mfa-title'),
       };
 
   const setResendTimer = () => {
@@ -220,7 +220,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     setResendTimer();
     const resendResponse = await resendVerificationCode();
     if (resendResponse === ResendResponse.FAIL) {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     } else if (resendResponse === ResendResponse.SUCCESS) {
       Toast.showSuccess(texts.resendToast);
       if (codeState === CodeState.CODE_EXPIRED) startAnimation(CodeState.CODE_RESENT);
@@ -239,16 +239,16 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       try {
         await tryUpdateProfile(isModifyingEmail ? { email } : { mobile });
         navigation.navigate(userRouteNames.home);
-        Toast.showSuccess(I18n.t(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'));
+        Toast.showSuccess(I18n.get(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'));
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('common.error.text'));
       }
     } else {
       try {
         const redirect = await tryLogin(platform, undefined, rememberMe);
         redirectLoginNavAction(redirect, platform, navigation);
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('common.error.text'));
       }
     }
   }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryLogin, platform, rememberMe]);
@@ -258,7 +258,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   useEffect(() => {
     if (!isVerifyingActive) {
       if (isCodeStateUnknown) {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('common.error.text'));
       } else if (isCodeCorrect && isEmailOrMobileMFA) {
         setTimeout(() => redirectEmailOrMobileMFA(), CODE_REDIRECTION_DELAY);
       }
@@ -349,7 +349,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           </View>
         </View>
         <View style={styles.resendContainer}>
-          <SmallText style={styles.issueText}>{I18n.t('auth-mfa-issue')}</SmallText>
+          <SmallText style={styles.issueText}>{I18n.get('auth-mfa-issue')}</SmallText>
           <TouchableOpacity
             style={[styles.resendButton, { opacity: resendOpacity }]}
             disabled={isResendInactive}
@@ -361,7 +361,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               width={UI_SIZES.dimensions.width.medium}
               height={UI_SIZES.dimensions.height.medium}
             />
-            <BodyBoldText style={styles.resendText}>{I18n.t('auth-mfa-resend')}</BodyBoldText>
+            <BodyBoldText style={styles.resendText}>{I18n.get('auth-mfa-resend')}</BodyBoldText>
           </TouchableOpacity>
         </View>
       </View>

@@ -1,11 +1,11 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { KeyboardAvoidingView, KeyboardTypeOptions, Platform, SafeAreaView, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ContainerTextInput, ContainerView } from '~/framework/components/buttons/line';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -122,7 +122,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 onDeleteAvatar={this.onDeleteAvatar.bind(this)}
               />
               {this.renderItem({
-                title: I18n.t('Login'),
+                title: I18n.get('Login'),
                 getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || session?.user.login),
                 editable: true,
                 setter: loginAlias => this.setState({ loginAlias }),
@@ -130,25 +130,25 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 placeholder: session?.user.login,
               })}
               {this.renderItem({
-                title: I18n.t('Firstname'),
+                title: I18n.get('Firstname'),
                 getter: () => session?.user.firstName,
               })}
               {this.renderItem({
-                title: I18n.t('Lastname'),
+                title: I18n.get('Lastname'),
                 getter: () => session?.user.lastName,
               })}
               {this.renderItem({
-                title: I18n.t('DisplayName'),
+                title: I18n.get('DisplayName'),
                 getter: () => this.state.displayName,
                 editable: session?.user.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
               {this.renderItem({
-                title: I18n.t('EmailAddress'),
+                title: I18n.get('EmailAddress'),
                 getter: () => session?.user.email,
               })}
               {this.renderItem({
-                title: I18n.t('Phone'),
+                title: I18n.get('Phone'),
                 getter: () => this.state.homePhone,
                 editable: true,
                 setter: homePhone => this.setState({ homePhone }),
@@ -156,14 +156,14 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 validator: { key: 'homePhoneValid', regex: ValidatorBuilder.PHONE_REGEX },
               })}
               {this.renderItem({
-                title: I18n.t('CellPhone'),
+                title: I18n.get('CellPhone'),
                 getter: () => session?.user.mobile,
               })}
               {this.renderItem({
-                title: I18n.t('Birthdate'),
+                title: I18n.get('Birthdate'),
                 getter: () =>
                   session?.user.birthDate?.format('L') === 'Invalid date'
-                    ? I18n.t('common-InvalidDate')
+                    ? I18n.get('common-InvalidDate')
                     : session?.user.birthDate?.format('L'),
               })}
             </SafeAreaView>
@@ -265,7 +265,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('MyProfile'),
+    title: I18n.get('MyProfile'),
   }),
 });
 
@@ -287,7 +287,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
         // eslint-disable-next-line react/no-unstable-nested-components
         headerLeft: () => (
           <NavBarAction
-            title={I18n.t('Cancel')}
+            title={I18n.get('Cancel')}
             onPress={() => {
               navigation.setParams({ edit: false });
               navigation.setParams({ updatedProfileValues: undefined });
@@ -299,7 +299,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
         // Since this page will be soon rewritten, this better to just comment instead of clean the code.
         // headerRight: () => (
         //   <NavBarAction
-        //     title={I18n.t('Save')}
+        //     title={I18n.get('Save')}
         //     onPress={() => {
         //       const values = route.params.updatedProfileValues as IProfilePageState;
         //       if (!isEmpty(values)) {
@@ -309,7 +309,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
         //             route.params.onSave(route.params.updatedProfileValues);
         //           }
         //         } else {
-        //           Alert.alert(I18n.t('common-ErrorUnknown2'), I18n.t('ProfileInvalidInformation'));
+        //           Alert.alert(I18n.get('common-ErrorUnknown2'), I18n.get('ProfileInvalidInformation'));
         //         }
         //       } else {
         //         navigation.setParams({ edit: false });
@@ -344,7 +344,7 @@ const uploadAvatarError = () => {
     dispatch(
       notifierShowAction({
         id: 'profileOne',
-        text: I18n.t('ProfileChangeAvatarErrorUpload'),
+        text: I18n.get('ProfileChangeAvatarErrorUpload'),
         icon: 'close',
         type: 'error',
       }),

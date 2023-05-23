@@ -2,12 +2,12 @@
  * Schoolbook word list
  */
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import UserList from '~/framework/components/UserList';
@@ -63,7 +63,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('schoolbook.appName'),
+    title: I18n.get('schoolbook.appName'),
   }),
   headerRight: undefined,
 });
@@ -260,7 +260,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
           <PopupMenu
             actions={[
               linkAction({
-                title: I18n.t('schoolbook.word.create'),
+                title: I18n.get('schoolbook.word.create'),
                 action: () => {
                   //TODO: get session.platform from redux
                   if (!session?.platform) {
@@ -306,15 +306,15 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-schoolbook"
-        title={I18n.t(
+        title={I18n.get(
           `schoolbook.schoolbookWordListScreen.emptyScreen.title${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`,
         )}
-        text={I18n.t(
+        text={I18n.get(
           `schoolbook.schoolbookWordListScreen.emptyScreen.text${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`,
         )}
         {...(hasSchoolbookWordCreationRights
           ? {
-              buttonText: I18n.t('schoolbook.word.create'),
+              buttonText: I18n.get('schoolbook.word.create'),
               buttonUrl: '/schoolbook#/list',
             }
           : {})}

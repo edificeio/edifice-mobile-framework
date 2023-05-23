@@ -1,5 +1,4 @@
-import I18n from 'i18n-js';
-
+import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IFolder, actionTypes } from '~/framework/modules/workspace/reducer';
@@ -15,7 +14,7 @@ export const listWorkspaceFoldersAction = () => async (dispatch, getState) => {
     const folders: IFolder[] = [
       {
         id: 'owner',
-        name: I18n.t('owner'),
+        name: I18n.get('owner'),
         parentId: '0',
         sortNo: 'owner',
         children: [],
@@ -42,7 +41,7 @@ export const createWorkspaceFolderAction = (name: string, parentId: string) => a
     const session = assertSession();
     const folder = await workspaceService.folder.create(session, name, parentId);
     dispatch(workspaceCreateFolderActionsCreators.receipt(folder));
-    Toast.showSuccess(I18n.t('workspace.folder-created'));
+    Toast.showSuccess(I18n.get('workspace.folder-created'));
     return folder;
   } catch (e) {
     dispatch(workspaceCreateFolderActionsCreators.error(e as Error));

@@ -1,10 +1,10 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -32,7 +32,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('form.formDistributionListScreen.title'),
+    title: I18n.get('form.formDistributionListScreen.title'),
   }),
 });
 
@@ -133,8 +133,8 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
     return (
       <EmptyScreen
         svgImage="empty-form"
-        title={I18n.t('form.formDistributionListScreen.emptyScreen.title')}
-        text={I18n.t('form.formDistributionListScreen.emptyScreen.text')}
+        title={I18n.get('form.formDistributionListScreen.emptyScreen.title')}
+        text={I18n.get('form.formDistributionListScreen.emptyScreen.text')}
       />
     );
   };

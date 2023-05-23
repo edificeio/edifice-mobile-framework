@@ -2,9 +2,9 @@
  * Custom handler for React Native Linking API
  * Handle auto-login feature + alert confirmation
  */
-import I18n from 'i18n-js';
 import { Alert, Linking } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { urlSigner } from '~/infra/oauth';
 
@@ -59,15 +59,15 @@ export async function openUrl(
 
     if (showConfirmation) {
       Alert.alert(
-        customLabels?.title ?? I18n.t('common.redirect.browser.title'),
-        customLabels?.message ?? I18n.t('common.redirect.browser.message'),
+        customLabels?.title ?? I18n.get('common.redirect.browser.title'),
+        customLabels?.message ?? I18n.get('common.redirect.browser.message'),
         [
           {
-            text: customLabels?.cancel ?? I18n.t('common.cancel'),
+            text: customLabels?.cancel ?? I18n.get('common.cancel'),
             style: 'cancel',
           },
           {
-            text: customLabels?.continue ?? I18n.t('common.continue'),
+            text: customLabels?.continue ?? I18n.get('common.continue'),
             onPress: () => verifyAndOpenUrl(finalUrl!),
             style: 'default',
           },
@@ -78,8 +78,8 @@ export async function openUrl(
       );
     } else verifyAndOpenUrl(finalUrl!);
   } catch (e) {
-    const title = customLabels?.errorTitle ?? customLabels?.error ?? I18n.t('common.redirect.browser.error');
-    const message = customLabels?.error ?? (title ? undefined : I18n.t('common.redirect.browser.error'));
+    const title = customLabels?.errorTitle ?? customLabels?.error ?? I18n.get('common.redirect.browser.error');
+    const message = customLabels?.error ?? (title ? undefined : I18n.get('common.redirect.browser.error'));
     Alert.alert(title, message);
     if (generateException) throw e;
   }

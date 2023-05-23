@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
@@ -8,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
@@ -49,7 +49,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('homeworkAssistance.myRequest'),
+    title: I18n.get('homeworkAssistance.myRequest'),
   }),
 });
 
@@ -111,10 +111,10 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       await props.addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
       setSendingRequest(false);
       props.navigation.goBack();
-      Toast.showSuccess(I18n.t('homeworkAssistance.requestSent'));
+      Toast.showSuccess(I18n.get('homeworkAssistance.requestSent'));
     } catch {
       setSendingRequest(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -153,14 +153,14 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
             items={props.services}
             setOpen={setServiceDropdownOpen}
             setValue={setService}
-            placeholder={I18n.t('homeworkAssistance.chooseASubject')}
+            placeholder={I18n.get('homeworkAssistance.chooseASubject')}
             style={styles.dropdownContainer}
             containerStyle={{ zIndex: -1 }}
             dropDownContainerStyle={styles.dropdownContainer}
             textStyle={styles.dropdownText}
           />
           <View style={{ zIndex: -2 }}>
-            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
+            <SmallText style={styles.textMargin}>{i18n.get('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
             <TextInput
               placeholder="+33 (0)6..."
               value={phoneNumber}
@@ -169,7 +169,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               style={styles.phoneNumberInput}
             />
             <View style={styles.rowContainer}>
-              <SmallText>{I18n.t('homeworkAssistance.dateOfCall')}</SmallText>
+              <SmallText>{i18n.get('homeworkAssistance.dateOfCall')}</SmallText>
               <DateTimePicker
                 mode="date"
                 value={date}
@@ -179,7 +179,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               />
             </View>
             <View style={styles.rowContainer}>
-              <SmallText>{I18n.t('homeworkAssistance.time')}</SmallText>
+              <SmallText>{i18n.get('homeworkAssistance.time')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={time}
@@ -189,9 +189,9 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
                 color={theme.palette.secondary.regular}
               />
             </View>
-            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.additionalInformation')}</SmallText>
+            <SmallText style={styles.textMargin}>{i18n.get('homeworkAssistance.additionalInformation')}</SmallText>
             <TextInput
-              placeholder={I18n.t('homeworkAssistance.detailsAbout')}
+              placeholder={i18n.get('homeworkAssistance.detailsAbout')}
               value={information}
               onChangeText={text => setInformation(text)}
               multiline
@@ -202,10 +202,10 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
         </View>
         <View>
           {!isDateValid ? (
-            <AlertCard type="failure" text={I18n.t('homeworkAssistance.serviceClosedError')} style={styles.errorAlert} />
+            <AlertCard type="failure" text={I18n.get('homeworkAssistance.serviceClosedError')} style={styles.errorAlert} />
           ) : null}
           <ActionButton
-            text={I18n.t('homeworkAssistance.sendMyRequest')}
+            text={I18n.get('homeworkAssistance.sendMyRequest')}
             action={sendRequest}
             disabled={isActionDisabled}
             loading={isSendingRequest}

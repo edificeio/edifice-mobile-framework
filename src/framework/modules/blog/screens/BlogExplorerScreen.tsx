@@ -2,13 +2,13 @@
  * Blog explorer
  */
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React, { useEffect } from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
@@ -63,7 +63,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('blog.appName'),
+    title: I18n.get('blog.appName'),
   }),
 });
 
@@ -133,7 +133,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     const currentFolderId = props.route.params.folderId;
     const currentFolder = props.tree ? props.tree.folders.find(f => f.id === currentFolderId) : null;
     props.navigation.setOptions({
-      headerTitle: navBarTitle(currentFolder ? currentFolder.name : I18n.t('blog.appName')),
+      headerTitle: navBarTitle(currentFolder ? currentFolder.name : I18n.get('blog.appName')),
     });
   }, [props.navigation, props.route.params.folderId, props.tree]);
 
@@ -141,9 +141,9 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.t('blog.blogsEmptyScreen.title')}
-        text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}
+        title={I18n.get('blog.blogsEmptyScreen.title')}
+        text={I18n.get(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.get('blog.blogsEmptyScreen.button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
     );

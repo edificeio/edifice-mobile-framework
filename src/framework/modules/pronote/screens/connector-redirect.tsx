@@ -1,11 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import type { ISession } from '~/framework/modules/auth/model';
@@ -37,7 +37,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('pronote-home-title'),
+    title: I18n.get('pronote-home-title'),
   }),
 });
 

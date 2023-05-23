@@ -1,11 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -62,7 +62,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t(PAGE_TITLE_I18N[route.params.type]),
+    title: I18n.get(PAGE_TITLE_I18N[route.params.type]),
   }),
 });
 
@@ -162,7 +162,7 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
             if (data.address && props.session) redirect(props.session, data.address, pageId);
           }}
           iconName="pictos-external-link"
-          text={I18n.t('pronote.carnetDeBord.openInPronote')}
+          text={I18n.get('pronote.carnetDeBord.openInPronote')}
         />
       </ScrollView>
     </PageView>
@@ -173,28 +173,28 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
       return [...(data.PageCahierDeTextes?.TravailAFairePast ?? []), ...(data.PageCahierDeTextes?.TravailAFaireFuture ?? [])].map(
         taf => ({
-          date: I18n.t('pronote.carnetDeBord.cahierDeTextes.PourDate', {
-            date: taf.PourLe ? displayDate(taf.PourLe) : I18n.t('pronote.carnetDeBord.noInfo'),
+          date: I18n.get('pronote.carnetDeBord.cahierDeTextes.PourDate', {
+            date: taf.PourLe ? displayDate(taf.PourLe) : I18n.get('pronote.carnetDeBord.noInfo'),
           }),
-          label: taf.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
-          description: taf.Descriptif || `<p>${I18n.t('pronote.carnetDeBord.noInfo')}</p>`,
+          label: taf.Matiere || I18n.get('pronote.carnetDeBord.noInfo'),
+          description: taf.Descriptif || `<p>${I18n.get('pronote.carnetDeBord.noInfo')}</p>`,
         }),
       );
     }
     case CarnetDeBordSection.NOTES: {
       return [...(data.PageReleveDeNotes?.DevoirsPast ?? []), ...(data.PageReleveDeNotes?.DevoirsFuture ?? [])].map(item => ({
-        label: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
-        date: item.Date ? displayDate(item.Date) : I18n.t('pronote.carnetDeBord.noInfo'),
+        label: item.Matiere || I18n.get('pronote.carnetDeBord.noInfo'),
+        date: item.Date ? displayDate(item.Date) : I18n.get('pronote.carnetDeBord.noInfo'),
         value: formatCarnetDeBordReleveDeNotesDevoirNoteBareme(item.Note, item.Bareme),
       }));
     }
     case CarnetDeBordSection.COMPETENCES: {
       return [...(data.PageCompetences?.CompetencesPast ?? []), ...(data.PageCompetences?.CompetencesFuture ?? [])].map(item => ({
-        label: item.Matiere || I18n.t('pronote.carnetDeBord.noInfo'),
-        date: item.Date ? displayDate(item.Date) : I18n.t('pronote.carnetDeBord.noInfo'),
+        label: item.Matiere || I18n.get('pronote.carnetDeBord.noInfo'),
+        date: item.Date ? displayDate(item.Date) : I18n.get('pronote.carnetDeBord.noInfo'),
         value: item.NiveauDAcquisition?.Genre
           ? splitWords(formatCarnetDeBordCompetencesValue(item.NiveauDAcquisition.Genre), 2)
-          : I18n.t('pronote.carnetDeBord.noInfo'),
+          : I18n.get('pronote.carnetDeBord.noInfo'),
       }));
     }
     case CarnetDeBordSection.VIE_SCOLAIRE: {
@@ -205,31 +205,31 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
             ? item.DateDebut && item.DateFin
               ? item.DateDebut.isSame(item.DateFin, 'day')
                 ? item.DateDebut.isSame(item.DateFin, 'minute')
-                  ? displayDate(item.DateDebut) + I18n.t('common.space') + item.DateDebut.format('LT')
+                  ? displayDate(item.DateDebut) + I18n.get('common.space') + item.DateDebut.format('LT')
                   : displayDate(item.DateDebut) +
-                    I18n.t('common.space') +
-                    I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                    I18n.get('common.space') +
+                    I18n.get('pronote.carnetDeBord.vieScolaire.dateFromTo', {
                       start: item.DateDebut.format('LT'),
                       end: item.DateFin.format('LT'),
                     })
-                : I18n.t('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                : I18n.get('pronote.carnetDeBord.vieScolaire.dateFromTo', {
                     start: displayDate(item.DateDebut),
                     end: displayDate(item.DateFin),
                   })
-              : I18n.t('pronote.carnetDeBord.noInfo')
+              : I18n.get('pronote.carnetDeBord.noInfo')
             : item.Date
             ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
-              ? displayDate(item.Date) + I18n.t('common.space') + item.Date.format('LT')
+              ? displayDate(item.Date) + I18n.get('common.space') + item.Date.format('LT')
               : displayDate(item.Date)
-            : I18n.t('pronote.carnetDeBord.noInfo'),
+            : I18n.get('pronote.carnetDeBord.noInfo'),
         description:
           item.type === 'Absence' || item.type === 'Retard'
-            ? item.Motif || I18n.t('pronote.carnetDeBord.noInfo')
+            ? item.Motif || I18n.get('pronote.carnetDeBord.noInfo')
             : item.type === 'Punition' || item.type === 'Sanction'
-            ? item.Nature || I18n.t('pronote.carnetDeBord.noInfo')
+            ? item.Nature || I18n.get('pronote.carnetDeBord.noInfo')
             : item.type === 'Observation'
-            ? item.Observation || I18n.t('pronote.carnetDeBord.noInfo')
-            : I18n.t('pronote.carnetDeBord.noInfo'),
+            ? item.Observation || I18n.get('pronote.carnetDeBord.noInfo')
+            : I18n.get('pronote.carnetDeBord.noInfo'),
       }));
     }
   }

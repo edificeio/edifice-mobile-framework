@@ -1,7 +1,7 @@
 import { decode } from 'html-entities';
-import I18n from 'i18n-js';
 import * as React from 'react';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -129,7 +129,7 @@ const renderAudioVideoPreview = (media: IMedia) => {
   if (!media.src) {
     return (
       <SmallItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
-        {I18n.t(`${media.type || 'media'}NotAvailable`)}
+        {I18n.get(`${media.type || 'media'}NotAvailable`)}
       </SmallItalicText>
     );
   }

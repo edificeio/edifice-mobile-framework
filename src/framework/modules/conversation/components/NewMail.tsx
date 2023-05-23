@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import React, { ReactChild, ReactElement } from 'react';
 import { Alert, Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -160,7 +160,7 @@ const MailContactField = connect((state: IGlobalState) => ({
 
     const noUserFound = text => {
       if (text) {
-        Alert.alert(I18n.t('conversation-errorUser-title', { user: text }), I18n.t('conversation-errorUser-text'));
+        Alert.alert(I18n.get('conversation-errorUser-title', { user: text }), I18n.get('conversation-errorUser-text'));
       }
       onUserType('');
       inputRef.current?.focus();
@@ -308,7 +308,7 @@ const Body = ({ style, value, onChange, autofocus }) => {
     <View style={[styles.mailPart, styles.bodyAdditionalStyle, style]}>
       <TextInput
         ref={textInputRef}
-        placeholder={I18n.t('conversation.typeMessage')}
+        placeholder={I18n.get('conversation.typeMessage')}
         textAlignVertical="top"
         multiline
         scrollEnabled={false}
@@ -368,7 +368,7 @@ const Fields = ({
   const commonFields = (
     <SafeAreaView style={styles.commonFieldsContainer}>
       <HeaderSubject
-        title={I18n.t('conversation.subject')}
+        title={I18n.get('conversation.subject')}
         value={headers.subject}
         onChange={subject => onHeaderChange({ ...headers, subject })}
         key="subject"
@@ -398,18 +398,18 @@ const Fields = ({
           </TouchableOpacity>
         )
       }
-      title={I18n.t('conversation.to')}
+      title={I18n.get('conversation.to')}
       key="to"
       onOpenSearch={v => setIsSearchingUsers({ to: v })}>
       {showExtraFields ? (
         <MailContactField
-          title={I18n.t('conversation.cc')}
+          title={I18n.get('conversation.cc')}
           value={headers.cc}
           onChange={cc => onHeaderChange({ ...headers, cc })}
           key="cc"
           onOpenSearch={v => setIsSearchingUsers({ cc: v })}>
           <MailContactField
-            title={I18n.t('conversation.bcc')}
+            title={I18n.get('conversation.bcc')}
             value={headers.cci}
             onChange={cci => onHeaderChange({ ...headers, cci })}
             key="cci"

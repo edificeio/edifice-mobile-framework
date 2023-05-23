@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
@@ -69,7 +69,7 @@ export class MailListItem extends React.PureComponent<IMailListItemProps> {
     const { mail } = this.props;
 
     const displayName = mail.displayNames.find(item => item[0] === id);
-    return displayName?.[1] ?? I18n.t('zimbra-unknown');
+    return displayName?.[1] ?? I18n.get('zimbra-unknown');
   };
 
   public render() {

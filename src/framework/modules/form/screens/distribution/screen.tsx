@@ -1,12 +1,12 @@
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -248,7 +248,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       setPositionHistory(history);
     } catch {
       setLoadingPrevious(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -277,7 +277,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       updatePosition(position + 1);
     } catch {
       setLoadingNext(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -298,15 +298,15 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       }
       modalBoxRef.current?.doDismissModal();
       props.navigation.goBack();
-      Toast.showSuccess(I18n.t('form.answersSent'));
+      Toast.showSuccess(I18n.get('form.answersSent'));
     } catch {
       setSubmitting(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
   const renderEmpty = () => {
-    return <EmptyScreen svgImage="empty-form-access" title={I18n.t('form.formDistributionScreen.emptyScreen.title')} />;
+    return <EmptyScreen svgImage="empty-form-access" title={I18n.get('form.formDistributionScreen.emptyScreen.title')} />;
   };
 
   const renderError = () => {
@@ -318,7 +318,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   };
 
   const renderSummaryHeading = () => {
-    return isPositionAtSummary ? <HeadingSText style={styles.summaryText}>{I18n.t('form.summary')}</HeadingSText> : null;
+    return isPositionAtSummary ? <HeadingSText style={styles.summaryText}>{I18n.get('form.summary')}</HeadingSText> : null;
   };
 
   const renderElement = (item: IFormElement) => {
@@ -350,15 +350,20 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   const renderPositionActions = () => {
     if (isPositionAtSummary) {
       return status !== DistributionStatus.FINISHED || editable ? (
-        <ActionButton text={I18n.t('form.finishAndSend')} action={() => modalBoxRef.current?.doShowModal()} />
+        <ActionButton text={I18n.get('form.finishAndSend')} action={() => modalBoxRef.current?.doShowModal()} />
       ) : null;
     }
     return (
       <View style={styles.actionsContainer}>
         {positionHistory.length ? (
-          <ActionButton text={I18n.t('previous')} type="secondary" action={goToPreviousPosition} loading={isLoadingPrevious} />
+          <ActionButton text={I18n.get('previous')} type="secondary" action={goToPreviousPosition} loading={isLoadingPrevious} />
         ) : null}
-        <ActionButton text={I18n.t('next')} action={goToNextPosition} disabled={isMandatoryAnswerMissing} loading={isLoadingNext} />
+        <ActionButton
+          text={I18n.get('next')}
+          action={goToNextPosition}
+          disabled={isMandatoryAnswerMissing}
+          loading={isLoadingNext}
+        />
       </View>
     );
   };
@@ -409,25 +414,25 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE && !isSubmitting,
     ({ data }) => {
       Alert.alert(
-        I18n.t('form.formDistributionScreen.leaveAlert.title'),
-        I18n.t('form.formDistributionScreen.leaveAlert.message'),
+        I18n.get('form.formDistributionScreen.leaveAlert.title'),
+        I18n.get('form.formDistributionScreen.leaveAlert.message'),
         [
           {
-            text: I18n.t('common.cancel'),
+            text: I18n.get('common.cancel'),
             style: 'cancel',
             onPress: () => {
               clearConfirmNavigationEvent();
             },
           },
           {
-            text: I18n.t('common.quit'),
+            text: I18n.get('common.quit'),
             onPress: async () => {
               try {
                 await postResponsesChanges();
                 handleRemoveConfirmNavigationEvent(data.action, props.navigation);
-                Toast.showSuccess(I18n.t('form.answersWellSaved'));
+                Toast.showSuccess(I18n.get('form.answersWellSaved'));
               } catch {
-                Toast.showError(I18n.t('common.error.text'));
+                Toast.showError(I18n.get('common.error.text'));
               }
             },
             style: 'destructive',

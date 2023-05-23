@@ -1,8 +1,8 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -90,11 +90,11 @@ const FavoriteAction: React.FunctionComponent<IFavoriteActionProps> = (props: IF
     <ActionButton
       icon="star"
       color={theme.palette.complementary.yellow.regular}
-      text={I18n.t('mediacentre.remove-favorite')}
+      text={I18n.get('mediacentre.remove-favorite')}
       onPress={removeFavorite}
     />
   ) : (
-    <ActionButton icon="star" color={theme.palette.grey.grey} text={I18n.t('mediacentre.add-favorite')} onPress={addFavorite} />
+    <ActionButton icon="star" color={theme.palette.grey.grey} text={I18n.get('mediacentre.add-favorite')} onPress={addFavorite} />
   );
 };
 
@@ -111,7 +111,7 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
 
   copyToClipboard = () => {
     Clipboard.setString(this.props.resource.link);
-    Toast.showInfo(I18n.t('mediacentre.link-copied'));
+    Toast.showInfo(I18n.get('mediacentre.link-copied'));
   };
 
   public render() {
@@ -122,7 +122,7 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
           <ResourceImage image={resource.image} style={styles.cardImage} resizeMode="contain" />
           <View style={styles.actionsContainer}>
             <FavoriteAction {...this.props} />
-            <ActionButton icon="link" text={I18n.t('mediacentre.copy-link')} onPress={this.copyToClipboard} />
+            <ActionButton icon="link" text={I18n.get('mediacentre.copy-link')} onPress={this.copyToClipboard} />
           </View>
           {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={25} style={styles.sourceImage} /> : null}
         </View>

@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
@@ -103,12 +103,12 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
     <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
       {inInbox || (
         <View style={styles.usersContainer}>
-          <CaptionText style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</CaptionText>
+          <CaptionText style={styles.greyColor}>{I18n.get('conversation.fromPrefix')}</CaptionText>
           <User userId={contacts.from[0]} userName={contacts.from[1]} />
         </View>
       )}
       <View style={styles.usersContainer}>
-        <SmallText style={styles.greyColor}>{I18n.t('conversation.toPrefix')}</SmallText>
+        <SmallText style={styles.greyColor}>{I18n.get('conversation.toPrefix')}</SmallText>
         <View style={styles.users}>
           {contacts.to.map(person => (
             <User userId={person[0]} userName={person[1]} />
@@ -117,7 +117,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       </View>
       {contacts.cc && contacts.cc.length > 0 && (
         <View style={styles.usersContainer}>
-          <SmallText style={styles.greyColor}>{I18n.t('conversation.ccPrefix')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('conversation.ccPrefix')}</SmallText>
           <View style={styles.users}>
             {contacts.cc.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -127,7 +127,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       )}
       {contacts.cci && contacts.cci.length > 0 && (
         <View style={styles.usersContainer}>
-          <SmallText style={styles.greyColor}>{I18n.t('conversation.bccPrefix')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('conversation.bccPrefix')}</SmallText>
           <View style={styles.users}>
             {contacts.cci.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -145,7 +145,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const isFolderInbox = currentFolder === 'inbox';
   const mailContacts = getMailPeople(mailInfos);
-  if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.t('conversation.emptyTo'), false]];
+  if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.get('conversation.emptyTo'), false]];
   const contactsToMore = mailContacts.to.length + mailContacts.cc.length + mailContacts.cci.length - 1;
 
   return (
@@ -177,10 +177,10 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
                 ) : (
                   <CaptionText style={styles.sendersCollapsed} numberOfLines={1}>
-                    <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
+                    <NestedText style={{ color: styles.greyColor.color }}>{I18n.get('conversation.toPrefix') + ' '}</NestedText>
                     <NestedText style={{ color: theme.palette.primary.regular }}>
                       {mailContacts.to[0][1]}
-                      {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
+                      {contactsToMore > 0 ? I18n.get('conversation.toMore', { count: contactsToMore }) : null}
                     </NestedText>
                   </CaptionText>
                 )}
@@ -238,7 +238,7 @@ export const RenderPJs = ({
               try {
                 await sf.open();
               } catch {
-                Toast.showError(I18n.t('download-error-generic'));
+                Toast.showError(I18n.get('download-error-generic'));
               }
             }}>
             <View style={styles.attachmentSubContainer}>
@@ -262,9 +262,9 @@ export const RenderPJs = ({
                     try {
                       const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                       await sf.mirrorToDownloadFolder();
-                      Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
+                      Toast.showSuccess(I18n.get('download-success-name', { name: sf.filename }));
                     } catch {
-                      Toast.showError(I18n.t('download-error-generic'));
+                      Toast.showError(I18n.get('download-error-generic'));
                     }
                   }}
                   style={{ paddingHorizontal: UI_SIZES.spacing.small }}>

@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl } from 'react-native';
@@ -7,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -44,7 +44,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-presences'),
+    title: I18n.get('viesco-presences'),
   }),
 });
 
@@ -131,7 +131,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         name: course.classes[0] ?? course.groups[0],
       });
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -145,7 +145,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
   };
 
   const renderCourseList = () => {
-    const dateText = `${I18n.t('viesco-register-date')} ${moment().format('DD MMMM YYYY')}`;
+    const dateText = `${I18n.get('viesco-register-date')} ${moment().format('DD MMMM YYYY')}`;
     return (
       <>
         <SmallBoldText style={styles.dateText}>{dateText}</SmallBoldText>
@@ -156,7 +156,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
           refreshControl={
             <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.t('viesco-no-register-today')} />}
+          ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('viesco-no-register-today')} />}
         />
       </>
     );

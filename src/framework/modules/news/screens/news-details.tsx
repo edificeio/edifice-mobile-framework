@@ -1,11 +1,11 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -157,7 +157,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
   ): void {
     if (prevState.newsData?.title !== this.state.newsData?.title) {
       this.props.navigation.setParams({
-        title: this.state.newsData?.title ?? I18n.t('timeline.newsDetailsScreen.title'),
+        title: this.state.newsData?.title ?? I18n.get('timeline.newsDetailsScreen.title'),
       });
     }
   }
@@ -208,7 +208,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           {resourceUri ? (
             <View style={{ marginTop: UI_SIZES.spacing.small }}>
               <ActionButton
-                text={I18n.t('common.openInBrowser')}
+                text={I18n.get('common.openInBrowser')}
                 url={resourceUri}
                 action={() => Trackers.trackEvent('News', 'GO TO', 'View in Browser')}
                 type="secondary"
@@ -225,7 +225,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
             }
             rightElement={
               <SmallText>
-                {newsComments!.length} {I18n.t(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
+                {newsComments!.length} {I18n.get(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
               </SmallText>
             }
           />

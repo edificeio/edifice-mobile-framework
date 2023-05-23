@@ -1,6 +1,5 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { BackHandler, Platform, StatusBar, TouchableOpacity, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
@@ -8,6 +7,7 @@ import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } fr
 import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -119,8 +119,8 @@ function MediaPlayer(props: MediaPlayerProps) {
       <EmptyScreen
         customStyle={styles.errorScreen}
         svgImage="image-not-found"
-        title={I18n.t(i18nKeys[0])}
-        text={I18n.t(i18nKeys[1])}
+        title={I18n.get(i18nKeys[0])}
+        text={I18n.get(i18nKeys[1])}
         svgFillColor={theme.palette.grey.fog}
         textColor={theme.palette.grey.fog}
       />

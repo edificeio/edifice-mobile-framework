@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
+import { I18n } from '~/app/i18n';
 import GridList from '~/framework/components/GridList';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
@@ -26,14 +26,14 @@ const styles = StyleSheet.create({
 class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
   private renderGrid(modules?: NavigableModuleArray) {
     const allModules = (modules ?? [])?.sort((a, b) =>
-      I18n.t(a.config.displayI18n).localeCompare(I18n.t(b.config.displayI18n)),
+      I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
 
     const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
       return (
         <TouchableSelectorPictureCard
           onPress={() => this.props.navigation.navigate(item.config.routeName)}
-          text={I18n.t(item.config.displayI18n)}
+          text={I18n.get(item.config.displayI18n)}
           picture={
             item.config.displayPicture
               ? item.config.displayPicture.type === 'NamedSvg'
@@ -77,10 +77,10 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
   private renderFooter() {
     return (
       <>
-        <ActionButton text={I18n.t('myapp-accessWeb')} url="/welcome" type="secondary" />
+        <ActionButton text={I18n.get('myapp-accessWeb')} url="/welcome" type="secondary" />
         <InfoBubble
-          infoText={I18n.t('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}
-          infoTitle={I18n.t('myapp-infoBubbleTitle')}
+          infoText={I18n.get('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}
+          infoTitle={I18n.get('myapp-infoBubbleTitle')}
           infoImage={require('ASSETS/images/my-apps-infobubble.png')}
           infoBubbleType="floating"
           infoBubbleId="myAppsScreen.redirect"

@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ContentCardHeader, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -38,7 +38,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
       const color = nb ? theme.palette.status.success.regular : theme.palette.status.failure.regular;
       return (
         <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
-          {I18n.t('form.answersNb', { nb })}
+          {I18n.get('form.answersNb', { nb })}
         </SmallBoldText>
       );
     }
@@ -46,7 +46,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
     const color = status === DistributionStatus.TO_DO ? theme.palette.status.failure.regular : theme.palette.status.success.regular;
     return (
       <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
-        {I18n.t(status === DistributionStatus.TO_DO ? 'form.awaitingResponse' : 'form.answeredOnDate', {
+        {I18n.get(status === DistributionStatus.TO_DO ? 'form.awaitingResponse' : 'form.answeredOnDate', {
           date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
         })}
       </SmallBoldText>
@@ -68,7 +68,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
                 <View>
                   <SmallText>{ownerName}</SmallText>
                   <SmallItalicText style={{ color: theme.ui.text.light }}>
-                    {I18n.t('common.sentOnDate', { date: dateSending?.format('DD/MM/YYYY, HH:mm') })}
+                    {I18n.get('common.sentOnDate', { date: dateSending?.format('DD/MM/YYYY, HH:mm') })}
                   </SmallItalicText>
                 </View>
               }

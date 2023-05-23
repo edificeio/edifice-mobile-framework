@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -75,7 +75,7 @@ export default ({
           <View style={styles.itemRowStyle}>
             <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
             <SmallText>
-              {I18n.t('viesco-room')} {item.roomLabels}
+              {I18n.get('viesco-room')} {item.roomLabels}
             </SmallText>
           </View>
         )}

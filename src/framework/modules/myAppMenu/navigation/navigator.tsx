@@ -1,6 +1,6 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 
+import { I18n } from '~/app/i18n';
 import moduleConfig from '~/framework/modules/myAppMenu/moduleConfig';
 import { myAppsModules } from '~/framework/modules/myAppMenu/myAppsModules';
 import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
@@ -19,7 +19,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
         name={myAppsRouteNames.Home}
         component={MyAppsContainer}
         options={{
-          headerTitle: navBarTitle(I18n.t('MyApplications')),
+          headerTitle: navBarTitle(I18n.get('MyApplications')),
         }}
         initialParams={undefined}
       />

@@ -2,10 +2,10 @@
  * These tools are used in htmlParser/rn for the second step of parsing.
  * The aim is to render a React Native Element from INugget array.
  */
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ImageURISource, TextStyle, View, ViewStyle } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';
@@ -342,7 +342,7 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
   if (!nugget.src) {
     return (
       <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
-        {I18n.t(`audioNotAvailable`)}
+        {I18n.get(`audioNotAvailable`)}
       </BodyItalicText>
     );
   }
@@ -363,7 +363,7 @@ function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = 
   if (!nugget.src) {
     return (
       <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
-        {I18n.t(`videoNotAvailable`)}
+        {I18n.get(`videoNotAvailable`)}
       </BodyItalicText>
     );
   }

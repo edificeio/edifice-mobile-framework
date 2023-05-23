@@ -19,7 +19,7 @@ import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { AllModulesBackup } from '~/infra/oauth';
 
-import { init } from './i18n';
+import { I18n } from './i18n';
 import { IStoreProp, connectWithStore } from './store';
 
 const FlipperAsyncStorage = __DEV__ ? require('rn-flipper-async-storage-advanced').default : undefined;
@@ -29,7 +29,7 @@ const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage />
  * Code that listens to App State changes
  */
 function useAppState() {
-  const [currentLocale, setCurrentLocale] = React.useState<ReturnType<typeof init>>(init());
+  const [currentLocale, setCurrentLocale] = React.useState<ReturnType<typeof I18n.init>>(I18n.init());
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
@@ -40,7 +40,7 @@ function useAppState() {
         const locales = RNLocalize.getLocales();
         const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
         if (newLocale !== currentLocale) {
-          setCurrentLocale(init());
+          setCurrentLocale(I18n.init());
         }
       } else if (nextAppState === 'background') {
         // Track background state

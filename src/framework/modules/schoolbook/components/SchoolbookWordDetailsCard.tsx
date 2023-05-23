@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { EmitterSubscription, Keyboard, Platform, TouchableOpacity, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
@@ -31,14 +31,16 @@ import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
-const unacknowledgedString = (userType: UserType) => I18n.t(`schoolbook.acknowledgementNeeded${userType}`);
+  `${ackNumber}/${total} ${I18n.get(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+const unacknowledgedString = (userType: UserType) => I18n.get(`schoolbook.acknowledgementNeeded${userType}`);
 const recipientsString = (report: IConcernedStudent[]) =>
-  getHasSingleRecipientForTeacher(report) ? report[0].ownerName : `${report.length} ${I18n.t('schoolbook.students').toLowerCase()}`;
+  getHasSingleRecipientForTeacher(report)
+    ? report[0].ownerName
+    : `${report.length} ${I18n.get('schoolbook.students').toLowerCase()}`;
 const responsesString = (responses: number) =>
   responses === 1
-    ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
-    : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
+    ? `1 ${I18n.get('schoolbook.response').toLowerCase()}`
+    : `${responses} ${I18n.get('schoolbook.responses').toLowerCase()}`;
 
 export interface ISchoolBookWordDetailsCardProps {
   action: () => void;
@@ -229,7 +231,7 @@ const SchoolbookWordDetailsCard = (
               }
               text={
                 <CaptionText numberOfLines={usersTextMaxLines}>
-                  {`${I18n.t(`common.${isTeacher ? 'forRecipients' : 'from'}`)} `}
+                  {`${I18n.get(`common.${isTeacher ? 'forRecipients' : 'from'}`)} `}
                   <CaptionBoldText
                     style={{
                       color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.primary.regular,
@@ -264,7 +266,7 @@ const SchoolbookWordDetailsCard = (
           <View style={styles.fromContainer}>
             <SingleAvatar status={undefined} size={36} userId={word?.ownerId} />
             <SmallText style={styles.from} numberOfLines={usersTextMaxLines}>
-              {`${I18n.t('common.from')} `}
+              {`${I18n.get('common.from')} `}
               <SmallBoldText>{word?.ownerName}</SmallBoldText>
             </SmallText>
           </View>
@@ -278,7 +280,7 @@ const SchoolbookWordDetailsCard = (
             }}>
             <ImageLabel
               cachedSVG
-              text={I18n.t(`schoolbook.categories.${word?.category}`)}
+              text={I18n.get(`schoolbook.categories.${word?.category}`)}
               imageName={`schoolbook-${word?.category}`}
               imageType={ImageType.svg}
               color={theme.color.schoolbook.categories[word?.category]}
@@ -377,7 +379,7 @@ const SchoolbookWordDetailsCard = (
         !isWordAcknowledged ? (
           <BottomButtonSheet
             displayShadow={doesContentExceedView}
-            text={I18n.t('schoolbook.acknowledge')}
+            text={I18n.get('schoolbook.acknowledge')}
             action={action}
             loading={isAcknowledgingWord}
           />
@@ -397,10 +399,10 @@ const SchoolbookWordDetailsCard = (
         content={
           <View style={styles.modalBoxContainer}>
             <HeadingSText style={{ marginBottom: UI_SIZES.spacing.tiny }}>
-              {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
+              {I18n.get('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
             </HeadingSText>
             <SmallText style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
-              {I18n.t('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
+              {I18n.get('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </SmallText>
             <UserList
               ref={flatListModalRef}

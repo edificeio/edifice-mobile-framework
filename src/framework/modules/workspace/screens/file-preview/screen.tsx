@@ -1,11 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -62,11 +62,11 @@ const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => 
       <View style={styles.actionsContainer}>
         {Platform.OS !== 'ios' ? (
           <ButtonIconText name="download" onPress={download}>
-            {I18n.t('download')}
+            {I18n.get('download')}
           </ButtonIconText>
         ) : null}
         <ButtonIconText name="share-variant" onPress={share}>
-          {I18n.t('share')}
+          {I18n.get('share')}
         </ButtonIconText>
       </View>
     </PageView>

@@ -1,13 +1,13 @@
 import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
@@ -79,18 +79,18 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.t(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
-      I18n.t(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.get(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.get(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
       [
         {
-          text: I18n.t('common.quit'),
+          text: I18n.get('common.quit'),
           style: 'destructive',
           onPress: () => {
             handleRemoveConfirmNavigationEvent(data.action, navigation);
           },
         },
         {
-          text: I18n.t('common.continue'),
+          text: I18n.get('common.continue'),
           style: 'default',
           onPress: () => {
             clearConfirmNavigationEvent();
@@ -219,7 +219,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       } else await handlePublishBlogPostComment(ids, comment);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+      Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
     }
   }
 
@@ -234,7 +234,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       await handleDeleteBlogPostComment(ids);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+      Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
     }
   }
 
@@ -249,7 +249,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
       await handleDeleteBlogPost(ids);
     } catch {
-      Alert.alert(I18n.t('common.error.title'), I18n.t('common.error.text'));
+      Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
     }
   }
 
@@ -302,7 +302,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     }
 
     const menuItemOpenBrowser = linkAction({
-      title: I18n.t('common.openInBrowser'),
+      title: I18n.get('common.openInBrowser'),
       action: () => {
         if (!session) return;
         const url = `${session.platform!.url}${resourceUri}`;
@@ -317,13 +317,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             menuItemOpenBrowser,
             deleteAction({
               action: () => {
-                Alert.alert(I18n.t('common.deletionPostBlogTitle'), I18n.t('common.deletionPostBlogText'), [
+                Alert.alert(I18n.get('common.deletionPostBlogTitle'), I18n.get('common.deletionPostBlogText'), [
                   {
-                    text: I18n.t('common.cancel'),
+                    text: I18n.get('common.cancel'),
                     style: 'default',
                   },
                   {
-                    text: I18n.t('common.delete'),
+                    text: I18n.get('common.delete'),
                     style: 'destructive',
                     onPress: () => {
                       this.doDeleteBlogPost(blogPostData!._id).then(() => {
@@ -494,7 +494,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : blogPostData?.state === 'SUBMITTED' ? (
       hasPublishBlogPostRight ? (
         <BottomButtonSheet
-          text={I18n.t('blog.post.publishAction')}
+          text={I18n.get('blog.post.publishAction')}
           action={async () => {
             try {
               await this.props.handlePublishBlogPost({ blogId: blogInfos!.id, postId: blogPostData._id });
@@ -513,7 +513,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                 notifierShowAction({
                   type: 'error',
                   id: `${moduleConfig.routeName}/details`,
-                  text: I18n.t('common.error.text'),
+                  text: I18n.get('common.error.text'),
                 }),
               );
             }
@@ -521,7 +521,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         />
       ) : (
         <BottomSheet
-          content={<SmallBoldText style={styles.footerWaitingValidation}>{I18n.t('blog.post.waitingValidation')}</SmallBoldText>}
+          content={<SmallBoldText style={styles.footerWaitingValidation}>{I18n.get('blog.post.waitingValidation')}</SmallBoldText>}
         />
       )
     ) : null;
@@ -540,14 +540,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                 icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
                 text={
                   blogPostData?.author.username ? (
-                    <SmallBoldText numberOfLines={1}>{`${I18n.t('common.by')} ${blogPostData?.author.username}`}</SmallBoldText>
+                    <SmallBoldText numberOfLines={1}>{`${I18n.get('common.by')} ${blogPostData?.author.username}`}</SmallBoldText>
                   ) : undefined
                 }
                 date={blogPostData?.modified}
               />
             }>
             {blogPostData?.state === 'SUBMITTED' ? (
-              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.t('blog.post.needValidation')}</SmallBoldText>
+              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog.post.needValidation')}</SmallBoldText>
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>
@@ -591,13 +591,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         onDeleteComment={
           hasDeleteCommentBlogPostRight || (session && hasPermissionManager(blogInfos!, session))
             ? () => {
-                Alert.alert(I18n.t('common.deletion'), I18n.t('common.comment.confirmationDelete'), [
+                Alert.alert(I18n.get('common.deletion'), I18n.get('common.comment.confirmationDelete'), [
                   {
-                    text: I18n.t('common.cancel'),
+                    text: I18n.get('common.cancel'),
                     style: 'default',
                   },
                   {
-                    text: I18n.t('common.delete'),
+                    text: I18n.get('common.delete'),
                     style: 'destructive',
                     onPress: () => this.doDeleteComment(blogPostComment.id),
                   },

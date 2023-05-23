@@ -1,10 +1,10 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -91,7 +91,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('mediacentre.tabName'),
+    title: I18n.get('mediacentre.tabName'),
   }),
 });
 
@@ -188,20 +188,20 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   const addFavorite = async (resourceId: string, resource: IResource) => {
     try {
       await props.addFavorite(resourceId, resource);
-      Toast.showSuccess(I18n.t('mediacentre.favorite-added'));
+      Toast.showSuccess(I18n.get('mediacentre.favorite-added'));
       props.fetchFavorites();
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
   const removeFavorite = async (resourceId: string, resource: Source) => {
     try {
       await props.removeFavorite(resourceId, resource);
-      Toast.showSuccess(I18n.t('mediacentre.favorite-removed'));
+      Toast.showSuccess(I18n.get('mediacentre.favorite-removed'));
       props.fetchFavorites();
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('common.error.text'));
     }
   };
 
@@ -211,7 +211,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
     if (isFetchingSources) {
       return <LoadingIndicator />;
     }
-    return <EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />;
+    return <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre.empty-screen')} />;
   };
 
   // RENDER =======================================================================================
@@ -224,7 +224,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
         <View style={styles.mainContainer}>
           <View style={styles.searchContainer}>
             <SearchBar onSubmitEditing={onSearch} ref={searchBarRef} />
-            <IconButtonText icon="search" text={I18n.t('mediacentre.advanced-search')} onPress={showSearchModal} />
+            <IconButtonText icon="search" text={I18n.get('mediacentre.advanced-search')} onPress={showSearchModal} />
           </View>
           {searchState !== SearchState.NONE ? (
             <SearchContent
@@ -243,7 +243,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
               renderItem={({ item }) => (
                 <ResourceGrid
                   {...props}
-                  title={I18n.t(item.title)}
+                  title={I18n.get(item.title)}
                   resources={item.resources}
                   size={sections.length > 1 ? 4 : 8}
                   onShowAll={showResources}
@@ -266,7 +266,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
                 props.isFetchingSections ? (
                   <LoadingIndicator customStyle={styles.loadingIndicator} />
                 ) : (
-                  <EmptyScreen svgImage="empty-mediacentre" title={I18n.t('mediacentre.empty-screen')} />
+                  <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre.empty-screen')} />
                 )
               }
             />

@@ -1,5 +1,4 @@
 import { filesize } from 'filesize';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, Platform, Pressable, View, ViewStyle } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
@@ -7,6 +6,7 @@ import Permissions, { PERMISSIONS } from 'react-native-permissions';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -95,7 +95,7 @@ const openFile = (notifierId: string, file: SyncedFile | undefined) => {
       try {
         file.open();
       } catch {
-        Toast.showError(I18n.t('download-error-generic'));
+        Toast.showError(I18n.get('download-error-generic'));
       }
     }
   };
@@ -107,9 +107,9 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
       try {
         file.mirrorToDownloadFolder();
         //Toast.hide(lastToast);
-        lastToast = Toast.showSuccess(toastMessage ?? I18n.t('download-success-name', { name: file.filename }));
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.get('download-success-name', { name: file.filename }));
       } catch {
-        Toast.showError(I18n.t('download-error-generic'));
+        Toast.showError(I18n.get('download-error-generic'));
       }
     }
   };
@@ -159,7 +159,7 @@ class Attachment extends React.PureComponent<
       if (canDownload) {
         await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
           requestAnimationFrame(() => {
-            if (this.props.onDownloadFile) this.props.onDownloadFile(notifierId, lf, I18n.t('download-success-all'));
+            if (this.props.onDownloadFile) this.props.onDownloadFile(notifierId, lf, I18n.get('download-success-all'));
           });
         }).catch(() => {
           // TODO: Manage error
@@ -222,7 +222,7 @@ class Attachment extends React.PureComponent<
             </View>
             <View style={{ flex: 1, flexDirection: 'row' }}>
               {downloadState === DownloadState.Error ? (
-                <SmallText style={{ color: theme.palette.status.failure.regular }}>{I18n.t('download-error') + ' '}</SmallText>
+                <SmallText style={{ color: theme.palette.status.failure.regular }}>{I18n.get('download-error') + ' '}</SmallText>
               ) : null}
               <SmallText style={{ flex: 1 }} ellipsizeMode="middle" numberOfLines={1}>
                 <SmallText
@@ -235,14 +235,14 @@ class Attachment extends React.PureComponent<
                   {(editMode && (att as ILocalAttachment).name) ||
                     (att as IRemoteAttachment).filename ||
                     (att as IRemoteAttachment).displayName ||
-                    I18n.t('download-untitled')}
-                  {!this.attId && I18n.t('download-invalidUrl')}
+                    I18n.get('download-untitled')}
+                  {!this.attId && I18n.get('download-invalidUrl')}
                 </SmallText>
                 <SmallText style={{ color: theme.ui.text.light, flex: 0 }}>
                   {downloadState === DownloadState.Success
-                    ? ' ' + I18n.t('download-open')
+                    ? ' ' + I18n.get('download-open')
                     : downloadState === DownloadState.Error
-                    ? ' ' + I18n.t('tryagain')
+                    ? ' ' + I18n.get('tryagain')
                     : (this.props.attachment as IRemoteAttachment).size
                     ? `${filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
                     : ''}

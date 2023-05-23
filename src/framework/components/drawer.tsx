@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Animated, StyleSheet, TextStyle, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker, { ItemType } from 'react-native-dropdown-picker';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_ANIMATIONS, UI_SIZES, UI_VALUES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
@@ -200,7 +200,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
             // Update state => toggle will be called
             this.setState({ drawerOpen: !this.closeAfterSelecting });
           }}
-          placeholder={I18n.t('conversation.selectDirectory')}
+          placeholder={I18n.get('conversation.selectDirectory')}
           placeholderStyle={styles.placeholder}
           labelProps={{ numberOfLines: 1 }}
           itemLabelProps={{ numberOfLines: 1 }}

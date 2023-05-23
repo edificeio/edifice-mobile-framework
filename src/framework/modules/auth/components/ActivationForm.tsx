@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { TextInput } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { IActivationPayload } from '~/framework/modules/auth/model';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
@@ -100,7 +100,7 @@ export function InputLogin(props: { login: string; form: ActivationFormModel; on
   return (
     <TextInputLine
       inputRef={ref => (props.form.inputLogin = ref)}
-      placeholder={I18n.t('Login')}
+      placeholder={I18n.get('Login')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.login}
       hasError={props.form.showLoginError(props.login)}
@@ -115,7 +115,7 @@ export function InputPassword(props: { password: string; form: ActivationFormMod
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputPassword = ref)}
-      placeholder={I18n.t('Password')}
+      placeholder={I18n.get('Password')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.password}
       hasError={props.form.showPasswordError(props.password)}
@@ -128,7 +128,7 @@ export function InputPasswordConfirm(props: { confirm: string; form: ActivationF
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputConfirm = ref)}
-      placeholder={I18n.t('PasswordConfirm')}
+      placeholder={I18n.get('PasswordConfirm')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.confirm}
       hasError={props.form.showConfirmError(props.confirm)}
@@ -140,7 +140,7 @@ export function InputEmail(props: { email: string; form: ActivationFormModel; on
   return (
     <TextInputLine
       inputRef={ref => (props.form.inputEmail = ref)}
-      placeholder={I18n.t('Email')}
+      placeholder={I18n.get('Email')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.email}
       hasError={props.form.showEmailError(props.email)}
@@ -157,7 +157,7 @@ export function InputPhone(props: { phone: string; form: ActivationFormModel; on
   return (
     <TextInputLine
       inputRef={ref => (props.form.inputPhone = ref)}
-      placeholder={I18n.t('CellPhone')}
+      placeholder={I18n.get('CellPhone')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.phone}
       hasError={props.form.showPhoneError(props.phone)}
