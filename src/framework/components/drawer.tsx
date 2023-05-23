@@ -34,6 +34,52 @@ export interface IDrawerState {
   drawerOpen: boolean;
 }
 
+const styles = StyleSheet.create({
+  arrowContainer: {
+    marginRight: UI_SIZES.spacing.minor,
+  },
+  arrowUp: {
+    transform: [{ rotate: '180deg' }],
+  },
+  backdrop: {
+    backgroundColor: theme.ui.shadowColor,
+    marginTop: ITEM_HEIGHT,
+    zIndex: -1,
+  },
+  container: {
+    position: 'absolute',
+    width: '100%',
+  },
+  dropDownContainer: {
+    borderRadius: LIST_RADIUS,
+    borderWidth: undefined,
+  },
+  label: {
+    color: theme.palette.secondary.regular,
+  },
+  listItemContainer: {
+    height: ITEM_HEIGHT,
+    paddingLeft: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny, // A little random here but it looks cool
+  },
+  placeholder: {
+    ...TextFontStyle.Italic,
+    ...TextSizeStyle.Normal,
+    color: theme.palette.secondary.regular,
+  },
+  style: {
+    borderBottomColor: theme.ui.border.listItem,
+    borderBottomWidth: 1,
+    borderRadius: undefined,
+    borderWidth: undefined,
+    height: ITEM_HEIGHT,
+    position: 'absolute',
+  },
+  text: {
+    ...TextFontStyle.Bold,
+    overflow: 'hidden',
+  },
+});
+
 export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
   // Initial state
   state: IDrawerState = {
@@ -183,49 +229,3 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  arrowContainer: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  arrowUp: {
-    transform: [{ rotate: '180deg' }],
-  },
-  backdrop: {
-    backgroundColor: theme.ui.shadowColor,
-    marginTop: ITEM_HEIGHT,
-  },
-  container: {
-    position: 'absolute',
-    width: '100%',
-    elevation: 1,
-  },
-  dropDownContainer: {
-    borderRadius: LIST_RADIUS,
-    borderWidth: undefined,
-  },
-  label: {
-    color: theme.palette.secondary.regular,
-  },
-  listItemContainer: {
-    height: ITEM_HEIGHT,
-    paddingLeft: UI_SIZES.spacing.large + UI_SIZES.spacing.tiny, // A little random here but it looks cool
-  },
-  placeholder: {
-    ...TextFontStyle.Italic,
-    ...TextSizeStyle.Normal,
-    color: theme.palette.secondary.regular,
-  },
-  style: {
-    borderBottomColor: theme.ui.border.listItem,
-    borderBottomWidth: 1,
-    borderRadius: undefined,
-    borderWidth: undefined,
-    height: ITEM_HEIGHT,
-    position: 'absolute',
-  },
-  text: {
-    ...TextFontStyle.Bold,
-    overflow: 'hidden',
-  },
-});

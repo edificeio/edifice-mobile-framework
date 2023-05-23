@@ -1,7 +1,6 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
