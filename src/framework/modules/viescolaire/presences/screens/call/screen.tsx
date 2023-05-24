@@ -104,7 +104,15 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       const { id } = props.route.params;
 
       if (!classCall || !session) throw new Error();
-      await presencesService.event.create(session, studentId, id, EventType.ABSENCE, classCall.start_date, classCall.end_date, '');
+      await presencesService.event.create(
+        session,
+        studentId,
+        id,
+        EventType.ABSENCE,
+        classCall.start_date,
+        classCall.end_date,
+        null,
+      );
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {

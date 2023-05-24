@@ -1,15 +1,16 @@
 // Permission handler
 import { Platform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { PERMISSIONS, Permission, PermissionStatus, RESULTS, check, request } from 'react-native-permissions';
 
 const permissionsScenarios = {
   'documents.read': Platform.select<true | Permission>({
     ios: true,
-    android: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    android: DeviceInfo.getApiLevelSync() >= 33 ? true : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
   })!,
   'galery.read': Platform.select<true | Permission>({
     ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
-    android: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    android: DeviceInfo.getApiLevelSync() >= 33 ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
   })!,
   camera: Platform.select<true | Permission>({
     ios: PERMISSIONS.IOS.CAMERA,

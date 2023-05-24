@@ -1,5 +1,6 @@
+import I18n from 'i18n-js';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, FlexAlignType, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -7,30 +8,53 @@ import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framewor
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { ICompetence, IDevoir, IDomaine, ILevel, ISubject } from '~/framework/modules/viescolaire/competences/model';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { ArticleContainer } from '~/ui/ContainerContent';
+import { ButtonsOkOnly } from '~/ui/ButtonsOkCancel';
+import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
-  competenceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  competenceRoundContainer: {
+    width: '25%',
+    justifyContent: 'center',
   },
-  competenceNameText: {
-    width: '85%',
+  competenceRoundContainerWidthQuarter: {
+    width: '25%',
+  },
+  competenceRoundContainerWidthAuto: {
+    width: 'auto',
   },
   competenceRound: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 50,
-    height: 50,
+    borderRadius: 45,
+    minWidth: 60,
+    minHeight: 60,
     backgroundColor: theme.palette.grey.white,
-    borderRadius: 25,
+    justifyContent: 'center',
   },
-  levelColorContainer: {
+  competenceRoundText: {
+    textAlign: 'center',
+  },
+  competenceRoundModalStyle: {
+    width: '100%',
+  },
+  competenceRoundModalContentStyle: {
+    marginLeft: -UI_SIZES.spacing.medium,
+    marginRight: UI_SIZES.spacing.medium,
+  },
+  competenceRoundModalText: {
+    width: '85%',
+  },
+  round: {
     marginLeft: UI_SIZES.spacing.tiny,
     height: 25,
     width: 25,
     borderRadius: UI_SIZES.spacing.medium,
+  },
+  modalBlock: {
+    width: '92%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.minor,
   },
   shadow: {
     shadowColor: theme.ui.shadowColor,
@@ -66,11 +90,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const getLevelColor = (evaluation: number, levels: ILevel[]) => {
-  const cycleLevels = levels.filter(level => level.cycle === 'Cycle 3');
-
+const getColorfromCompetence = (evaluation: number, levels: ILevel[]) => {
+  const cycleLevels = levels.filter(obj => {
+    return obj.cycle === 'Cycle 3';
+  });
   if (evaluation >= 0 && evaluation < cycleLevels.length) {
-    return cycleLevels[evaluation].couleur ?? cycleLevels[evaluation].default;
+    const color = cycleLevels[evaluation].couleur;
+    return color ? color : cycleLevels[evaluation].default;
   }
   return theme.palette.grey.cloudy;
 };
@@ -87,24 +113,75 @@ const getCompetenceName = (competence: ICompetence, domaines: IDomaine[]): strin
   return '';
 };
 
-export const CompetenceRound = ({ onPress }: { onPress: () => void }) => {
-  /*const renderItem = ({ item }: { item: ICompetence }) => {
-    return (
-      <ArticleContainer style={styles.competenceContainer}>
-        <SmallText style={styles.competenceNameText}>{getCompetenceName(item, domaines)}</SmallText>
-        <View style={[styles.levelColorContainer, { backgroundColor: getLevelColor(item.evaluation, levels) }]} />
-      </ArticleContainer>
-    );
-  };*/
+const CompetenceRoundModal = (competence: ICompetence, domaines: IDomaine[], levels: ILevel[]) => (
+  <ModalContentBlock style={styles.modalBlock}>
+    <SmallText style={styles.competenceRoundModalText}>{getCompetenceName(competence, domaines)}</SmallText>
+    <View style={[styles.round, { backgroundColor: getColorfromCompetence(competence.evaluation, levels) }]} />
+  </ModalContentBlock>
+);
 
+export const CompetenceRound = ({
+  competences,
+  stateFullRound,
+  size,
+  domaines,
+  levels,
+}: {
+  competences: ICompetence[];
+  stateFullRound: FlexAlignType;
+  size: number;
+  domaines: IDomaine[];
+  levels: ILevel[];
+}) => {
+  const [isVisible, toggleVisible] = React.useState(false);
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.competenceRound, styles.shadow]}>
-      <HeadingSText>C</HeadingSText>
-    </TouchableOpacity>
+    <View
+      style={[
+        styles.competenceRoundContainer,
+        stateFullRound === 'flex-end' ? styles.competenceRoundContainerWidthAuto : styles.competenceRoundContainerWidthQuarter,
+        { alignItems: stateFullRound },
+      ]}>
+      {competences.length > 0 && (
+        <TouchableOpacity
+          style={[styles.competenceRound, styles.shadow, { minHeight: size, minWidth: size }]}
+          onPress={() => toggleVisible(!isVisible)}>
+          <HeadingSText style={styles.competenceRoundText}>C</HeadingSText>
+        </TouchableOpacity>
+      )}
+
+      {isVisible && (
+        <ModalBox isVisible={isVisible}>
+          <ModalContent>
+            <FlatList
+              style={styles.competenceRoundModalStyle}
+              contentContainerStyle={styles.competenceRoundModalContentStyle}
+              showsVerticalScrollIndicator={false}
+              data={competences}
+              renderItem={({ item, index }) => CompetenceRoundModal(item, domaines, levels)}
+            />
+            <ModalContentBlock>
+              <ButtonsOkOnly onValid={() => toggleVisible(false)} title={I18n.t('viesco-close').toUpperCase()} />
+            </ModalContentBlock>
+          </ModalContent>
+        </ModalBox>
+      )}
+    </View>
   );
 };
 
-export const DashboardAssessmentCard = ({ devoir, levels, subject }: { devoir: IDevoir; levels: ILevel[]; subject?: ISubject }) => (
+export const DashboardAssessmentCard = ({
+  devoir,
+  competences,
+  domaines,
+  levels,
+  subject,
+}: {
+  devoir: IDevoir;
+  competences: ICompetence[];
+  domaines: IDomaine[];
+  levels: ILevel[];
+  subject?: ISubject;
+}) => (
   <LeftColoredItem shadow color={viescoTheme.palette.competences} style={styles.denseDevoirListContainer}>
     <View style={styles.denseDevoirListMatiereContainer}>
       <SmallBoldText style={styles.denseDevoirListMatiereText} numberOfLines={1}>
@@ -112,7 +189,9 @@ export const DashboardAssessmentCard = ({ devoir, levels, subject }: { devoir: I
       </SmallBoldText>
       <SmallText>{devoir.date.format('L')}</SmallText>
     </View>
-    {devoir.competencesCount ? <CompetenceRound levels={levels} /> : null}
+    {devoir.competencesCount ? (
+      <CompetenceRound competences={competences} domaines={domaines} levels={levels} size={35} stateFullRound="flex-end" />
+    ) : null}
     {isNaN(Number(devoir.note)) ? (
       <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note}</BodyBoldText>
     ) : (

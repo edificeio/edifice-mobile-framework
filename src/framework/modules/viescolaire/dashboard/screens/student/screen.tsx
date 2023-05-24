@@ -18,7 +18,9 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
 import {
+  fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
+  fetchCompetencesDomainesAction,
   fetchCompetencesLevelsAction,
   fetchCompetencesSubjectsAction,
 } from '~/framework/modules/viescolaire/competences/actions';
@@ -78,9 +80,11 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
   }
 
   public componentDidMount() {
-    const { structureId } = this.props;
-    this.props.fetchTeachers(structureId);
+    const { classes, structureId, userId } = this.props;
+    this.props.fetchCompetences(userId, classes[0]);
+    this.props.fetchDomaines(classes[0]);
     this.props.fetchLevels(structureId);
+    this.props.fetchTeachers(structureId);
   }
 
   private renderNavigationGrid() {
@@ -188,8 +192,10 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         renderItem={({ item }) => (
           <DashboardAssessmentCard
             devoir={item}
-            subject={this.props.subjects.find(s => s.id === item.subjectId)}
+            competences={this.props.competences.filter(competence => competence.devoirId === item.id)}
+            domaines={this.props.domaines}
             levels={this.props.levels}
+            subject={this.props.subjects.find(subject => subject.id === item.subjectId)}
           />
         )}
         ListHeaderComponent={<BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>}
@@ -230,7 +236,10 @@ export default connect(
         edt: session?.apps.some(app => app.address === '/edt'),
         presences: session?.apps.some(app => app.address === '/presences'),
       },
+      classes: session?.user.classes ?? [],
+      competences: competencesState.competences.data,
       devoirs: competencesState.devoirs,
+      domaines: competencesState.domaines.data,
       homeworks: diaryState.homeworks,
       levels: competencesState.levels.data,
       structureId: session?.user.structures?.[0]?.id,
@@ -241,11 +250,21 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
+        fetchCompetences: tryActionLegacy(
+          fetchCompetencesAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['fetchCompetences'],
         fetchDevoirs: tryActionLegacy(
           fetchCompetencesDevoirsAction,
           undefined,
           true,
         ) as unknown as DashboardStudentScreenPrivateProps['fetchDevoirs'],
+        fetchDomaines: tryActionLegacy(
+          fetchCompetencesDomainesAction,
+          undefined,
+          true,
+        ) as unknown as DashboardStudentScreenPrivateProps['fetchDomaines'],
         fetchHomeworks: tryActionLegacy(
           fetchDiaryHomeworksAction,
           undefined,

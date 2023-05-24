@@ -17,11 +17,12 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import {
   fetchPresencesCoursesAction,
+  fetchPresencesEventReasonsAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
 import CourseList from '~/framework/modules/viescolaire/presences/components/CourseListOld';
-import { ICourse } from '~/framework/modules/viescolaire/presences/model';
+import { ICourse, IEventReason } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -46,6 +47,7 @@ type IPresencesCourseListScreenOldProps = {
   ) => Promise<ICourse[]>;
   fetchMultipleSlotsSetting: (structureId: string) => Promise<boolean>;
   fetchRegisterPreference: () => Promise<string>;
+  fetchEventReasons: (structureId: string) => Promise<IEventReason[]>;
 } & NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.memento>;
 
 const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps) => {
@@ -61,6 +63,7 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
       if (!structureId || !teacherId) throw new Error();
       const allowMultipleSlots = await props.fetchMultipleSlotsSetting(structureId);
       const registerPreference = await props.fetchRegisterPreference();
+      await props.fetchEventReasons(structureId);
       const today = moment().format('YYYY-MM-DD');
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
@@ -189,6 +192,7 @@ export default connect(
         fetchCourses: tryActionLegacy(fetchPresencesCoursesAction, undefined, true),
         fetchMultipleSlotsSetting: tryActionLegacy(fetchPresencesMultipleSlotSettingAction, undefined, true),
         fetchRegisterPreference: tryActionLegacy(fetchPresencesRegisterPreferenceAction, undefined, true),
+        fetchEventReasons: tryActionLegacy(fetchPresencesEventReasonsAction, undefined, true),
       },
       dispatch,
     ),

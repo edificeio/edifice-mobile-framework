@@ -3,6 +3,9 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
+const BORDER_WIDTH = 1;
+const BORDER_RADIUS = 16;
+
 export default StyleSheet.create({
   lineButtonText: {
     flex: 1,
@@ -16,23 +19,29 @@ export default StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: theme.ui.background.card,
-    borderWidth: 1,
-    borderBottomWidth: 0,
+    borderLeftWidth: BORDER_WIDTH,
+    borderRightWidth: BORDER_WIDTH,
+    borderBottomWidth: BORDER_WIDTH,
+    borderTopWidth: 0,
     borderColor: theme.palette.grey.cloudy,
     justifyContent: 'flex-start',
     padding: UI_SIZES.spacing.medium,
   },
   containerAlone: {
-    borderBottomWidth: 1,
-    borderRadius: 16,
+    borderTopWidth: BORDER_WIDTH,
+    borderTopLeftRadius: BORDER_RADIUS,
+    borderTopRightRadius: BORDER_RADIUS,
+    borderBottomLeftRadius: BORDER_RADIUS,
+    borderBottomRightRadius: BORDER_RADIUS,
   },
   containerFirst: {
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderTopWidth: BORDER_WIDTH,
+    borderTopLeftRadius: BORDER_RADIUS,
+    borderTopRightRadius: BORDER_RADIUS,
   },
   containerLast: {
-    borderBottomWidth: 1,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+    borderTopWidth: 0,
+    borderBottomLeftRadius: BORDER_RADIUS,
+    borderBottomRightRadius: BORDER_RADIUS,
   },
 });
