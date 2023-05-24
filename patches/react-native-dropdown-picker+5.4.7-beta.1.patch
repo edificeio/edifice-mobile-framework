@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
-index e3fb93b..c329b18 100644
+index 08c6a68..cc301c7 100644
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
 +++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
 @@ -41,7 +41,8 @@ import {
@@ -44,7 +44,7 @@ index e3fb93b..c329b18 100644
              </View>
          </>
 diff --git a/node_modules/react-native-dropdown-picker/src/constants/index.js b/node_modules/react-native-dropdown-picker/src/constants/index.js
-index f4e9c76..5a2bc5b 100644
+index 23d34eb..b01bd10 100644
 --- a/node_modules/react-native-dropdown-picker/src/constants/index.js
 +++ b/node_modules/react-native-dropdown-picker/src/constants/index.js
 @@ -134,3 +134,5 @@ export const ASCII_CODE = (str) => {

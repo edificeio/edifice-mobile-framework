@@ -1,6 +1,6 @@
 {
-  "last": "2023-05-17 14:44:42",
-  "notes": "chore(stack): Build errors fix\nchore(stack):Release build errors fix\nfeat(presences): AVMS-326 set courses swiper index to last started course\nupgrade(stack): Fix reanimated version\nrelease: 1.9.6-alpha.5(1090605)",
-  "version": "1.9.6-alpha.6(1090606)",
+  "last": "2023-05-22 13:14:29",
+  "notes": "upgrade(stack): Last stack upgrade before rc.1\nfix(feedback): MB-1630, Tune Android selected Tabbar item feedback\nfix(homework-assistance): AMV2-575 wrong date format\nchore(lvs): MB-1265 lvs review + svg icon\nrelease: 1.9.6-alpha.6(1090606)",
+  "version": "1.9.6-rc.1(1090607)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
