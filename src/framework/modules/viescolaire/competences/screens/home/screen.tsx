@@ -19,7 +19,10 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import {
+  fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
+  fetchCompetencesDomainesAction,
+  fetchCompetencesLevelsAction,
   fetchCompetencesSubjectsAction,
   fetchCompetencesTermsAction,
   fetchCompetencesUserChildrenAction,
@@ -70,13 +73,17 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       getItemJson<boolean>(STORAGE_KEY).then(value => {
         if (value) setAverageColorsShown(true);
       });
-      await Promise.all([props.fetchDevoirs(structureId, childId), props.fetchSubjects(structureId)]);
+      await props.fetchDevoirs(structureId, childId);
+      await props.fetchSubjects(structureId);
       let childClasses = classes?.[0];
       if (userType === UserType.Relative) {
         const children = await props.fetchUserChildren(structureId, userId);
         childClasses = children.find(c => c.id === childId)?.idClasse;
       }
       await props.fetchTerms(structureId, childClasses ?? '');
+      await props.fetchCompetences(childId, childClasses ?? '');
+      await props.fetchDomaines(childClasses ?? '');
+      await props.fetchLevels(structureId);
     } catch {
       throw new Error();
     }
@@ -195,7 +202,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
   };
 
   const renderAssessments = () => {
-    const { subjects } = props;
+    const { competences, domaines, levels, subjects } = props;
     const displaySubjectAverages = term !== 'default' && subject === 'default';
     const devoirs = props.devoirs.filter(devoir => {
       if (term !== 'default' && term !== 'year' && devoir.termId !== Number(term)) return false;
@@ -227,6 +234,9 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
             renderItem={({ item }) => (
               <AssessmentCard
                 assessment={item}
+                competences={competences.filter(competence => competence.devoirId === item.id)}
+                domaines={domaines}
+                levels={levels}
                 subject={subjects.find(s => s.id === item.subjectId)}
                 showAverageColor={areAverageColorsShown}
                 onPress={() => openAssessment(item)}
@@ -270,8 +280,10 @@ export default connect(
 
     return {
       classes: session?.user.classes,
+      competences: competencesState.competences.data,
       childId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
       devoirs: competencesState.devoirs.data,
+      domaines: competencesState.domaines.data,
       dropdownItems: {
         terms: [
           { label: I18n.t('viesco-competences-period'), value: 'default' },
@@ -295,6 +307,7 @@ export default connect(
         competencesState.devoirs.isPristine || competencesState.subjects.isPristine
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
+      levels: competencesState.levels.data,
       structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
       subjects: competencesState.subjects.data,
       userChildren: competencesState.userChildren.data,
@@ -305,11 +318,26 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
+        fetchCompetences: tryActionLegacy(
+          fetchCompetencesAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchCompetences'],
         fetchDevoirs: tryActionLegacy(
           fetchCompetencesDevoirsAction,
           undefined,
           true,
         ) as unknown as CompetencesHomeScreenPrivateProps['fetchDevoirs'],
+        fetchDomaines: tryActionLegacy(
+          fetchCompetencesDomainesAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchDomaines'],
+        fetchLevels: tryActionLegacy(
+          fetchCompetencesLevelsAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchLevels'],
         fetchSubjects: tryActionLegacy(
           fetchCompetencesSubjectsAction,
           undefined,

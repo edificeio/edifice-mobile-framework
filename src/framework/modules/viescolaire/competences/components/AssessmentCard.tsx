@@ -5,7 +5,7 @@ import theme from '~/app/theme';
 import { CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeadingSText, NestedText, SmallBoldText, SmallInverseText, SmallText } from '~/framework/components/text';
-import { IDevoir, ISubject } from '~/framework/modules/viescolaire/competences/model';
+import { ICompetence, IDevoir, IDomaine, ILevel, ISubject } from '~/framework/modules/viescolaire/competences/model';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
 import { CompetenceRound } from './Item';
@@ -37,6 +37,9 @@ const styles = StyleSheet.create({
 
 interface IAssessmentCardProps {
   assessment: IDevoir;
+  competences: ICompetence[];
+  domaines: IDomaine[];
+  levels: ILevel[];
   subject?: ISubject;
   showAverageColor?: boolean;
   onPress: () => void;
@@ -53,7 +56,7 @@ export class AssessmentCard extends React.PureComponent<IAssessmentCardProps> {
   };
 
   public render() {
-    const { assessment, subject, showAverageColor } = this.props;
+    const { assessment, competences, domaines, levels, subject, showAverageColor } = this.props;
     const color = showAverageColor
       ? this.getScoreColor(
           parseFloat(assessment.note.replace(/\./g, ',').replace(',', '.')),
@@ -75,7 +78,9 @@ export class AssessmentCard extends React.PureComponent<IAssessmentCardProps> {
               <SmallText numberOfLines={1}>{assessment.name}</SmallText>
               <SmallText>{assessment.date.format('L')}</SmallText>
             </View>
-            {assessment.competencesCount ? <CompetenceRound onPress={this.props.onPress} /> : null}
+            {assessment.competencesCount ? (
+              <CompetenceRound competences={competences} domaines={domaines} levels={levels} size={60} stateFullRound="center" />
+            ) : null}
           </View>
           <View style={[styles.rightContainer, { backgroundColor: color }]}>
             {isNaN(Number(assessment.note)) ? (
