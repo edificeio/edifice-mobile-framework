@@ -44,15 +44,14 @@ const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: theme.ui.shadowColor,
     marginTop: ITEM_HEIGHT,
-    zIndex: -1,
   },
   container: {
     position: 'absolute',
     width: '100%',
   },
   dropDownContainer: {
+    borderRadius: LIST_RADIUS,
     borderWidth: undefined,
-    position: 'relative',
   },
   label: {
     color: theme.palette.secondary.regular,
@@ -73,7 +72,6 @@ const styles = StyleSheet.create({
     borderWidth: undefined,
     height: ITEM_HEIGHT,
     position: 'absolute',
-    zIndex: 1,
   },
   text: {
     ...TextFontStyle.Bold,
@@ -207,8 +205,10 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
           itemLabelProps={{ numberOfLines: 1 }}
           textStyle={styles.text}
           labelStyle={styles.label}
-          listMode="SCROLLVIEW"
-          scrollViewProps={{ nestedScrollEnabled: true, showsVerticalScrollIndicator: false, alwaysBounceVertical: false }}
+          flatListProps={{
+            showsVerticalScrollIndicator: false,
+            alwaysBounceVertical: false,
+          }}
           style={styles.style}
           dropDownContainerStyle={styles.dropDownContainer}
           listItemContainerStyle={styles.listItemContainer}
