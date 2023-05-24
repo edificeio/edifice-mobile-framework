@@ -75,12 +75,20 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
     };
   }
 
+  componentDidUpdate(prevProps: ICourseListProps) {
+    const { courses } = this.props;
+
+    if (prevProps.courses.length !== courses.length) {
+      this.setState({ initialIndex: this.getCurrentCourseIndex(courses) });
+    }
+  }
+
   private getCurrentCourseIndex(courses: ICourse[]): number {
     let index = 0;
     const now = moment();
 
     for (const course of courses) {
-      if (course.startDate.subtract(15, 'minutes').isAfter(now)) return index;
+      if (course.startDate.clone().subtract(15, 'minutes').isAfter(now)) return index;
       index += 1;
     }
     return index;
