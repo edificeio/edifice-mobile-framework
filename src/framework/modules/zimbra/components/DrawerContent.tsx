@@ -14,7 +14,7 @@ import { CaptionBoldText, HeadingXSText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framework/modules/zimbra/actions';
-import { DefaultFolder, IFolder, IQuota } from '~/framework/modules/zimbra/model';
+import { IFolder, IQuota, SystemFolder } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -78,11 +78,11 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<string>('/Inbox');
   const modalBoxRef = React.useRef<ModalBoxHandle>(null);
   const defaultFolders = [
-    { name: DefaultFolder.INBOX, path: '/Inbox' },
-    { name: DefaultFolder.SENT, path: '/Sent' },
-    { name: DefaultFolder.DRAFTS, path: '/Drafts' },
-    { name: DefaultFolder.TRASH, path: '/Trash' },
-    { name: DefaultFolder.JUNK, path: '/Junk' },
+    { name: SystemFolder.INBOX, path: '/Inbox' },
+    { name: SystemFolder.SENT, path: '/Sent' },
+    { name: SystemFolder.DRAFTS, path: '/Drafts' },
+    { name: SystemFolder.TRASH, path: '/Trash' },
+    { name: SystemFolder.JUNK, path: '/Junk' },
   ];
 
   React.useEffect(() => {

@@ -1,18 +1,18 @@
 import I18n from 'i18n-js';
 
-import { DefaultFolder } from '~/framework/modules/zimbra/model';
+import { SystemFolder } from '~/framework/modules/zimbra/model';
 
-export const getFolderName = (folder: DefaultFolder | string): string => {
+export const getFolderName = (folder: SystemFolder | string): string => {
   switch (folder) {
-    case DefaultFolder.DRAFTS:
+    case SystemFolder.DRAFTS:
       return I18n.t('zimbra-drafts');
-    case DefaultFolder.INBOX:
+    case SystemFolder.INBOX:
       return I18n.t('zimbra-inbox');
-    case DefaultFolder.JUNK:
+    case SystemFolder.JUNK:
       return I18n.t('zimbra-spams');
-    case DefaultFolder.SENT:
+    case SystemFolder.SENT:
       return I18n.t('zimbra-outbox');
-    case DefaultFolder.TRASH:
+    case SystemFolder.TRASH:
       return I18n.t('zimbra-trash');
     default:
       return folder;

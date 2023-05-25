@@ -1,4 +1,4 @@
-export enum DefaultFolder {
+export enum SystemFolder {
   DRAFTS = 'Drafts',
   INBOX = 'Inbox',
   JUNK = 'Junk',

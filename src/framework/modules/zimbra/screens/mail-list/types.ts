@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ISession } from '~/framework/modules/auth/model';
 import type { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
-import type { DefaultFolder, IFolder, IMail, IQuota } from '~/framework/modules/zimbra/model';
+import type { IFolder, IMail, IQuota, SystemFolder } from '~/framework/modules/zimbra/model';
 import type { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -11,7 +11,7 @@ export interface ZimbraMailListScreenProps {
 }
 
 export interface ZimbraMailListScreenNavParams {
-  folderName: DefaultFolder | string;
+  folderName: SystemFolder | string;
   folderPath: string;
 }
 
