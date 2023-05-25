@@ -66,21 +66,23 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
               textStyle={styles.dropdownText}
             />
           ) : null}
-          <SmallText style={styles.topMargin}>
-            {I18n.t(
-              props.status === DistributionStatus.ON_CHANGE
-                ? 'form.formDistributionScreen.submissionModal.lowerText.replace'
-                : props.editable
-                ? 'form.formDistributionScreen.submissionModal.lowerText.editable'
-                : 'form.formDistributionScreen.submissionModal.lowerText.default',
-            )}
-          </SmallText>
-          <ActionButton
-            text={I18n.t('common.confirm')}
-            action={() => props.onSubmit(structureId)}
-            loading={props.loading}
-            style={styles.topMargin}
-          />
+          <View style={{ zIndex: -1 }}>
+            <SmallText style={styles.topMargin}>
+              {I18n.t(
+                props.status === DistributionStatus.ON_CHANGE
+                  ? 'form.formDistributionScreen.submissionModal.lowerText.replace'
+                  : props.editable
+                  ? 'form.formDistributionScreen.submissionModal.lowerText.editable'
+                  : 'form.formDistributionScreen.submissionModal.lowerText.default',
+              )}
+            </SmallText>
+            <ActionButton
+              text={I18n.t('common.confirm')}
+              action={() => props.onSubmit(structureId)}
+              loading={props.loading}
+              style={styles.topMargin}
+            />
+          </View>
         </View>
       }
     />

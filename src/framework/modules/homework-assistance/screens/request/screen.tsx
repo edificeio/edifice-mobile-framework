@@ -145,8 +145,6 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               style={styles.dropdownContainer}
               dropDownContainerStyle={styles.dropdownContainer}
               textStyle={styles.dropdownText}
-              zIndex={2000}
-              zIndexInverse={1000}
             />
           ) : undefined}
           <DropDownPicker
@@ -157,49 +155,50 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
             setValue={setService}
             placeholder={I18n.t('homeworkAssistance.chooseASubject')}
             style={styles.dropdownContainer}
+            containerStyle={{ zIndex: -1 }}
             dropDownContainerStyle={styles.dropdownContainer}
             textStyle={styles.dropdownText}
-            zIndex={1000}
-            zIndexInverse={2000}
           />
-          <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
-          <TextInput
-            placeholder="+33 (0)6..."
-            value={phoneNumber}
-            onChangeText={text => setPhoneNumber(text.replace(/[^+0-9]/g, ''))}
-            keyboardType="phone-pad"
-            style={styles.phoneNumberInput}
-          />
-          <View style={styles.rowContainer}>
-            <SmallText>{I18n.t('homeworkAssistance.dateOfCall')}</SmallText>
-            <DateTimePicker
-              mode="date"
-              value={date}
-              onChange={value => setDate(value)}
-              minimumDate={moment().startOf('day')}
-              color={theme.palette.secondary.regular}
+          <View style={{ zIndex: -2 }}>
+            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
+            <TextInput
+              placeholder="+33 (0)6..."
+              value={phoneNumber}
+              onChangeText={text => setPhoneNumber(text.replace(/[^+0-9]/g, ''))}
+              keyboardType="phone-pad"
+              style={styles.phoneNumberInput}
+            />
+            <View style={styles.rowContainer}>
+              <SmallText>{I18n.t('homeworkAssistance.dateOfCall')}</SmallText>
+              <DateTimePicker
+                mode="date"
+                value={date}
+                onChange={value => setDate(value)}
+                minimumDate={moment().startOf('day')}
+                color={theme.palette.secondary.regular}
+              />
+            </View>
+            <View style={styles.rowContainer}>
+              <SmallText>{I18n.t('homeworkAssistance.time')}</SmallText>
+              <DateTimePicker
+                mode="time"
+                value={time}
+                onChange={value => setTime(value)}
+                minimumDate={openingTime.start}
+                maximumDate={openingTime.end}
+                color={theme.palette.secondary.regular}
+              />
+            </View>
+            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.additionalInformation')}</SmallText>
+            <TextInput
+              placeholder={I18n.t('homeworkAssistance.detailsAbout')}
+              value={information}
+              onChangeText={text => setInformation(text)}
+              multiline
+              textAlignVertical="top"
+              style={styles.informationInput}
             />
           </View>
-          <View style={styles.rowContainer}>
-            <SmallText>{I18n.t('homeworkAssistance.time')}</SmallText>
-            <DateTimePicker
-              mode="time"
-              value={time}
-              onChange={value => setTime(value)}
-              minimumDate={openingTime.start}
-              maximumDate={openingTime.end}
-              color={theme.palette.secondary.regular}
-            />
-          </View>
-          <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.additionalInformation')}</SmallText>
-          <TextInput
-            placeholder={I18n.t('homeworkAssistance.detailsAbout')}
-            value={information}
-            onChangeText={text => setInformation(text)}
-            multiline
-            textAlignVertical="top"
-            style={styles.informationInput}
-          />
         </View>
         <View>
           {!isDateValid ? (

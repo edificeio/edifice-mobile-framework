@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { RefreshControl, TouchableOpacity } from 'react-native';
+import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -172,14 +172,16 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             textStyle={styles.dropdownText}
           />
         ) : null}
-        <NoReasonCard elements={history.noReason.filter(e => e.start_date.isBetween(startDate, endDate))} />
-        <UnregularizedCard elements={history.unregularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
-        <RegularizedCard elements={history.regularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
-        <LatenessCard elements={history.latenesses.filter(e => e.start_date.isBetween(startDate, endDate))} />
-        <IncidentCard elements={history.incidents.filter(e => e.date.isBetween(startDate, endDate))} />
-        <PunishmentCard elements={history.punishments.filter(e => e.start_date.isBetween(startDate, endDate))} />
-        <ForgotNotebookCard elements={history.forgottenNotebooks.filter(e => e.date.isBetween(startDate, endDate))} />
-        <DepartureCard elements={history.departures.filter(e => e.start_date.isBetween(startDate, endDate))} />
+        <View style={{ zIndex: -1 }}>
+          <NoReasonCard elements={history.noReason.filter(e => e.start_date.isBetween(startDate, endDate))} />
+          <UnregularizedCard elements={history.unregularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
+          <RegularizedCard elements={history.regularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
+          <LatenessCard elements={history.latenesses.filter(e => e.start_date.isBetween(startDate, endDate))} />
+          <IncidentCard elements={history.incidents.filter(e => e.date.isBetween(startDate, endDate))} />
+          <PunishmentCard elements={history.punishments.filter(e => e.start_date.isBetween(startDate, endDate))} />
+          <ForgotNotebookCard elements={history.forgottenNotebooks.filter(e => e.date.isBetween(startDate, endDate))} />
+          <DepartureCard elements={history.departures.filter(e => e.start_date.isBetween(startDate, endDate))} />
+        </View>
       </ScrollView>
     );
   };

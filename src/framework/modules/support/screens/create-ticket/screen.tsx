@@ -104,10 +104,8 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             setValue={setCategory}
             onOpen={onCategoryOpen}
             style={styles.dropdownContainer}
-            dropDownContainerStyle={styles.dropdownContainer}
+            dropDownContainerStyle={[styles.dropdownContainer, Platform.OS === 'android' && { position: 'relative', top: -16 }]}
             textStyle={styles.dropdownText}
-            zIndex={2000}
-            zIndexInverse={1000}
             listMode="SCROLLVIEW"
           />
           {structures.length > 1 ? (
@@ -119,50 +117,51 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
               setValue={setStructure}
               onOpen={onStructureOpen}
               style={styles.dropdownContainer}
+              containerStyle={{ zIndex: -1 }}
               dropDownContainerStyle={styles.dropdownContainer}
               textStyle={styles.dropdownText}
-              zIndex={1000}
-              zIndexInverse={2000}
               listMode="SCROLLVIEW"
             />
           ) : null}
-          <SmallBoldText style={styles.inputLabelText}>
-            {I18n.t('support.supportCreateTicketScreen.subject')}
-            <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
-          </SmallBoldText>
-          <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
-          <SmallBoldText style={styles.inputLabelText}>
-            {I18n.t('support.supportCreateTicketScreen.description')}
-            <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
-          </SmallBoldText>
-          <TextInput
-            value={description}
-            onChangeText={text => setDescription(text)}
-            multiline
-            textAlignVertical="top"
-            style={styles.descriptionInput}
-          />
-          <View style={styles.attachmentsContainer}>
-            <BottomMenu
-              title={I18n.t('common.addFiles')}
-              actions={[
-                cameraAction({ callback: addAttachment }),
-                galleryAction({ callback: addAttachment, multiple: true }),
-                documentAction({ callback: addAttachment }),
-              ]}>
-              <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-                <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
-                <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
-              </View>
-            </BottomMenu>
-            {attachments.map(attachment => (
-              <Attachment
-                key={attachment.filename}
-                name={attachment.filename}
-                type={attachment.filetype}
-                onRemove={() => removeAttachment(attachment.filepath)}
-              />
-            ))}
+          <View style={{ zIndex: -2 }}>
+            <SmallBoldText style={styles.inputLabelText}>
+              {I18n.t('support.supportCreateTicketScreen.subject')}
+              <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
+            </SmallBoldText>
+            <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
+            <SmallBoldText style={styles.inputLabelText}>
+              {I18n.t('support.supportCreateTicketScreen.description')}
+              <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
+            </SmallBoldText>
+            <TextInput
+              value={description}
+              onChangeText={text => setDescription(text)}
+              multiline
+              textAlignVertical="top"
+              style={styles.descriptionInput}
+            />
+            <View style={styles.attachmentsContainer}>
+              <BottomMenu
+                title={I18n.t('common.addFiles')}
+                actions={[
+                  cameraAction({ callback: addAttachment }),
+                  galleryAction({ callback: addAttachment, multiple: true }),
+                  documentAction({ callback: addAttachment }),
+                ]}>
+                <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
+                  <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
+                  <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
+                </View>
+              </BottomMenu>
+              {attachments.map(attachment => (
+                <Attachment
+                  key={attachment.filename}
+                  name={attachment.filename}
+                  type={attachment.filetype}
+                  onRemove={() => removeAttachment(attachment.filepath)}
+                />
+              ))}
+            </View>
           </View>
         </View>
         <ActionButton text={I18n.t('common.send')} action={sendTicket} disabled={isActionDisabled} loading={isSending} />
