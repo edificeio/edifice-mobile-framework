@@ -76,13 +76,6 @@ export namespace I18n {
     return languageTag ?? fallbackLng;
   };
 
-  let initDone = false;
-
-  if (!initDone) {
-    init();
-    initDone = true;
-  }
-
   // Get the current detected or set language
   export const language = i18n.language;
 
