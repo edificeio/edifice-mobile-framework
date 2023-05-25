@@ -165,9 +165,10 @@ export function Carousel(props: ICarouselProps) {
     async (url: string | ImageURISource) => {
       const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
       if (!realUrl) throw new Error('[Carousel] cannot download : no url provided.');
+      const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
       const permissions = Platform.select<Permission[]>({
         ios: [],
-        android: [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+        android: androidVersionMajor >= 13 ? [] : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
       })!;
       await assertPermissions(permissions);
       const foundData = data.find(d => (d.src = url));

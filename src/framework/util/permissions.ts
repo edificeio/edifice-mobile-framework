@@ -18,7 +18,7 @@ const permissionsScenarios = {
   })!,
   'documents.write': Platform.select<true | Permission>({
     ios: true,
-    android: PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
+    android: DeviceInfo.getApiLevelSync() >= 33 ? true : PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
   })!,
 };
 
