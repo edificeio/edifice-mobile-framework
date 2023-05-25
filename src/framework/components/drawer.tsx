@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: theme.ui.shadowColor,
     marginTop: ITEM_HEIGHT,
+    zIndex: -1,
   },
   container: {
     position: 'absolute',

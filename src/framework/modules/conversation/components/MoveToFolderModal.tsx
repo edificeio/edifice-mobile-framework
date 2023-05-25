@@ -25,6 +25,7 @@ export type ConversationMoveToFolderModalProps = ConversationMoveToFolderModalEv
 
 interface ConversationMoveToFolderModalState {
   openDropdown: boolean;
+  dropdownWidth: number | undefined;
 }
 
 export default class MoveToFolderModal extends React.Component<
@@ -35,6 +36,7 @@ export default class MoveToFolderModal extends React.Component<
     super(props);
     this.state = {
       openDropdown: false,
+      dropdownWidth: undefined,
     };
   }
 
@@ -54,14 +56,19 @@ export default class MoveToFolderModal extends React.Component<
       }
     }
     const isMoveImpossible = options.length === 0;
+    const HEIGHT_ITEM_DROPDOWN = 40;
     //FIXME: create/move to styles.ts
     const styles = StyleSheet.create({
-      buttonsContainer: { flexDirection: 'row' },
-      dropDownPicker: { borderColor: theme.palette.primary.regular, borderWidth: 1 },
+      buttonsContainer: { flexDirection: 'row', zIndex: -1 },
+      dropDownPicker: { borderColor: theme.palette.primary.regular, borderWidth: 1, marginTop: UI_SIZES.spacing.big },
       dropDownPickerContainer: {
         borderColor: theme.palette.primary.regular,
         borderWidth: 1,
+        height: HEIGHT_ITEM_DROPDOWN * options.length,
         maxHeight: 120,
+        position: 'relative',
+        top: 0,
+        width: this.state.dropdownWidth ?? 0,
       },
       modalBoxContainer: { alignItems: 'stretch' },
       modalContent: {
@@ -71,6 +78,7 @@ export default class MoveToFolderModal extends React.Component<
         width: undefined,
         justifyContent: 'space-between',
       },
+      text: { textAlign: 'center' },
     });
 
     return (
@@ -83,42 +91,50 @@ export default class MoveToFolderModal extends React.Component<
           closeModal();
         }}>
         <ModalContent style={styles.modalContent}>
-          <SmallBoldText>{I18n.t(modalTitle)}</SmallBoldText>
-          {isMoveImpossible ? (
-            <SmallBoldText>{I18n.t('conversation.moveImpossible')}</SmallBoldText>
-          ) : (
-            <DropDownPicker
-              open={openDropdown}
-              items={options}
-              value={selectedFolder}
-              setOpen={() => this.setState({ openDropdown: !openDropdown })}
-              setValue={callback => selectFolder(callback(selectedFolder))}
-              placeholder={I18n.t('conversation.moveSelect')}
-              placeholderStyle={{ color: theme.ui.text.light, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
-              textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
-              style={styles.dropDownPicker}
-              dropDownContainerStyle={styles.dropDownPickerContainer}
-            />
-          )}
-          <View style={styles.buttonsContainer}>
-            <ActionButton
-              text={I18n.t('Cancel')}
-              type="secondary"
-              action={() => {
-                selectFolder('');
-                closeModal();
-              }}
-            />
-            <ActionButton
-              text={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
-              style={{ marginLeft: UI_SIZES.spacing.medium }}
-              disabled={isMoveImpossible || !selectedFolder}
-              action={() => {
-                selectFolder('');
-                confirm();
-              }}
-            />
+          <View>
+            <SmallBoldText style={styles.text}>{I18n.t(modalTitle)}</SmallBoldText>
+            {isMoveImpossible ? (
+              <SmallBoldText style={styles.text}>{I18n.t('conversation.moveImpossible')}</SmallBoldText>
+            ) : (
+              <DropDownPicker
+                open={openDropdown}
+                items={options}
+                value={selectedFolder}
+                setOpen={() => this.setState({ openDropdown: !openDropdown })}
+                setValue={callback => selectFolder(callback(selectedFolder))}
+                placeholder={I18n.t('conversation.moveSelect')}
+                placeholderStyle={{ color: theme.ui.text.light, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
+                textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
+                style={styles.dropDownPicker}
+                dropDownContainerStyle={styles.dropDownPickerContainer}
+                onLayout={({ nativeEvent }) => {
+                  if (nativeEvent.layout.width !== this.state.dropdownWidth)
+                    this.setState({ dropdownWidth: nativeEvent.layout.width });
+                }}
+              />
+            )}
           </View>
+          {!openDropdown ? (
+            <View style={styles.buttonsContainer}>
+              <ActionButton
+                text={I18n.t('Cancel')}
+                type="secondary"
+                action={() => {
+                  selectFolder('');
+                  closeModal();
+                }}
+              />
+              <ActionButton
+                text={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
+                style={{ marginLeft: UI_SIZES.spacing.medium }}
+                disabled={isMoveImpossible || !selectedFolder}
+                action={() => {
+                  selectFolder('');
+                  confirm();
+                }}
+              />
+            </View>
+          ) : null}
         </ModalContent>
       </ModalBox>
     );
