@@ -4,7 +4,6 @@ import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -18,7 +17,7 @@ import { fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framewor
 import { DefaultFolder, IFolder, IQuota } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 
 import CreateFolderModal from './modals/CreateFolderModal';
 
@@ -62,13 +61,18 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CustomDrawerContentProps extends DrawerContentComponentProps {
+interface CustomDrawerContentStoreProps {
   folders: IFolder[];
   quota: IQuota;
   session?: ISession;
-  fetchQuota: () => Promise<IQuota>;
-  fetchRootFolders: () => Promise<IFolder[]>;
 }
+
+interface CustomDrawerContentDispatchProps {
+  tryFetchQuota: (...args: Parameters<typeof fetchZimbraQuotaAction>) => Promise<IQuota>;
+  tryFetchRootFolders: (...args: Parameters<typeof fetchZimbraRootFoldersAction>) => Promise<IFolder[]>;
+}
+
+type CustomDrawerContentProps = DrawerContentComponentProps & CustomDrawerContentStoreProps & CustomDrawerContentDispatchProps;
 
 const DrawerContent = (props: CustomDrawerContentProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<string>('/Inbox');
@@ -82,8 +86,8 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
   ];
 
   React.useEffect(() => {
-    props.fetchQuota();
-    props.fetchRootFolders();
+    props.tryFetchQuota();
+    props.tryFetchRootFolders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -103,7 +107,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
   };
 
   const refreshDrawer = () => {
-    props.fetchRootFolders();
+    props.tryFetchRootFolders();
     modalBoxRef.current?.doDismissModal();
     props.navigation.openDrawer();
   };
@@ -197,15 +201,11 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<CustomDrawerContentDispatchProps>(
       {
-        fetchQuota: tryActionLegacy(fetchZimbraQuotaAction, undefined, true) as unknown as CustomDrawerContentProps['fetchQuota'],
-        fetchRootFolders: tryActionLegacy(
-          fetchZimbraRootFoldersAction,
-          undefined,
-          true,
-        ) as unknown as CustomDrawerContentProps['fetchRootFolders'],
+        tryFetchQuota: tryAction(fetchZimbraQuotaAction),
+        tryFetchRootFolders: tryAction(fetchZimbraRootFoldersAction),
       },
       dispatch,
     ),

@@ -6,7 +6,6 @@ import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -31,13 +30,13 @@ import { initDraftFromMail } from '~/framework/modules/zimbra/utils/drafts';
 import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
-import { ZimbraComposerScreenPrivateProps } from './types';
+import { ZimbraComposerScreenDispatchProps, ZimbraComposerScreenPrivateProps } from './types';
 
 interface ZimbraComposerScreenState {
   draft: IDraft;
@@ -103,13 +102,13 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
     if (mailId) {
       this.setState({ isPrefilling: true });
-      this.props.fetchMail(mailId);
+      this.props.tryFetchMail(mailId);
     }
     if (type !== DraftType.DRAFT) {
       this.saveDraft();
     }
     this.setNavbar();
-    const signature = await this.props.fetchSignature();
+    const signature = await this.props.tryFetchSignature();
     this.setState({
       signature: signature.preference.signature,
       useSignature: signature.preference.useSignature,
@@ -150,7 +149,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     } catch {
       this.setState({ tempAttachment: undefined });
       Toast.showError(I18n.t('zimbra-attachment-error'));
-      this.props.onPickFileError('conversation');
+      this.props.handlePickFileError('conversation');
       Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Échec');
     }
   };
@@ -425,7 +424,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
             signature={this.props.signature}
             onChange={(text: string) => {
               this.setState({ signature: text, useSignature: true });
-              this.props.fetchSignature();
+              this.props.tryFetchSignature();
               this.state.signatureModalRef.current?.doDismissModal();
             }}
           />
@@ -448,20 +447,12 @@ export default connect(
       signature: zimbraState.signature.data,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<ZimbraComposerScreenDispatchProps>(
       {
-        fetchMail: tryActionLegacy(
-          fetchZimbraMailAction,
-          undefined,
-          true,
-        ) as unknown as ZimbraComposerScreenPrivateProps['fetchMail'],
-        fetchSignature: tryActionLegacy(
-          fetchZimbraSignatureAction,
-          undefined,
-          true,
-        ) as unknown as ZimbraComposerScreenPrivateProps['fetchSignature'],
-        onPickFileError: tryActionLegacy(pickFileError, undefined, true),
+        handlePickFileError: handleAction(pickFileError),
+        tryFetchMail: tryAction(fetchZimbraMailAction),
+        tryFetchSignature: tryAction(fetchZimbraSignatureAction),
       },
       dispatch,
     ),

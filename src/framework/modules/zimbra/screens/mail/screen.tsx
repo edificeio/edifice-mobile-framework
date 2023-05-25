@@ -5,7 +5,6 @@ import * as React from 'react';
 import { Alert, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
@@ -25,12 +24,12 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
-import { ZimbraMailScreenPrivateProps } from './types';
+import { ZimbraMailScreenDispatchProps, ZimbraMailScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -56,9 +55,9 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       const { rootFolders } = props;
       const { id } = props.route.params;
 
-      await props.fetchMail(id);
-      await props.fetchQuota();
-      if (!rootFolders.length) await props.fetchRootFolders();
+      await props.tryFetchMail(id);
+      await props.tryFetchQuota();
+      if (!rootFolders.length) await props.tryFetchRootFolders();
     } catch {
       throw new Error();
     }
@@ -312,20 +311,12 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<ZimbraMailScreenDispatchProps>(
       {
-        fetchMail: tryActionLegacy(fetchZimbraMailAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchMail'],
-        fetchQuota: tryActionLegacy(
-          fetchZimbraQuotaAction,
-          undefined,
-          true,
-        ) as unknown as ZimbraMailScreenPrivateProps['fetchQuota'],
-        fetchRootFolders: tryActionLegacy(
-          fetchZimbraRootFoldersAction,
-          undefined,
-          true,
-        ) as unknown as ZimbraMailScreenPrivateProps['fetchRootFolders'],
+        tryFetchMail: tryAction(fetchZimbraMailAction),
+        tryFetchQuota: tryAction(fetchZimbraQuotaAction),
+        tryFetchRootFolders: tryAction(fetchZimbraRootFoldersAction),
       },
       dispatch,
     ),

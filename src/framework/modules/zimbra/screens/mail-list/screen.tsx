@@ -8,7 +8,6 @@ import * as React from 'react';
 import { Alert, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
@@ -35,11 +34,11 @@ import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zi
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 import { navBarTitle } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { ZimbraMailListScreenPrivateProps } from './types';
+import { ZimbraMailListScreenDispatchProps, ZimbraMailListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -80,7 +79,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       const { folderPath } = props.route.params;
 
       if (page !== currentPage) setCurrentPage(page);
-      let newMails = await props.fetchMailsFromFolder(folderPath, page, ignoreQuery ? undefined : query);
+      let newMails = await props.tryFetchMailsFromFolder(folderPath, page, ignoreQuery ? undefined : query);
       setSearchActive(query.length > 0 && !ignoreQuery);
       if (flushList) {
         setFetchNextCallable(true);
@@ -449,14 +448,10 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<ZimbraMailListScreenDispatchProps>(
       {
-        fetchMailsFromFolder: tryActionLegacy(
-          fetchZimbraMailsFromFolderAction,
-          undefined,
-          true,
-        ) as unknown as ZimbraMailListScreenPrivateProps['fetchMailsFromFolder'],
+        tryFetchMailsFromFolder: tryAction(fetchZimbraMailsFromFolderAction),
       },
       dispatch,
     ),
