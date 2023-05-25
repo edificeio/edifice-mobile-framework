@@ -6,7 +6,6 @@ import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'rea
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
@@ -40,11 +39,11 @@ import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/n
 import { formService } from '~/framework/modules/form/service';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { FormDistributionScreenPrivateProps } from './types';
+import { FormDistributionScreenDispatchProps, FormDistributionScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -86,8 +85,8 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         setHasResponderRight(false);
         return;
       }
-      const content = await props.fetchFormContent(formId);
-      const res = await props.fetchDistributionResponses(distributionId);
+      const content = await props.tryFetchFormContent(formId);
+      const res = await props.tryFetchDistributionResponses(distributionId);
       setResponses(res);
       if (content.elementsCount && status !== DistributionStatus.TO_DO) {
         setPosition(content.elementsCount);
@@ -466,19 +465,11 @@ export default connect(
         }) ?? [],
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<FormDistributionScreenDispatchProps>(
       {
-        fetchDistributionResponses: tryActionLegacy(
-          fetchDistributionResponsesAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionScreenPrivateProps['fetchDistributionResponses'],
-        fetchFormContent: tryActionLegacy(
-          fetchFormContentAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionScreenPrivateProps['fetchFormContent'],
+        tryFetchDistributionResponses: tryAction(fetchDistributionResponsesAction),
+        tryFetchFormContent: tryAction(fetchFormContentAction),
       },
       dispatch,
     ),

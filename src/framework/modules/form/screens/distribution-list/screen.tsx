@@ -4,7 +4,6 @@ import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
@@ -21,10 +20,10 @@ import { DistributionStatus, IForm } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import { FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
+import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -49,8 +48,8 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
 
   const fetchList = async () => {
     try {
-      await props.fetchDistributions();
-      await props.fetchForms();
+      await props.tryFetchDistributions();
+      await props.tryFetchForms();
     } catch {
       throw new Error();
     }
@@ -207,19 +206,11 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<FormDistributionListScreenDispatchProps>(
       {
-        fetchDistributions: tryActionLegacy(
-          fetchFormDistributionsAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionListScreenPrivateProps['fetchDistributions'],
-        fetchForms: tryActionLegacy(
-          fetchFormsReceivedAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionListScreenPrivateProps['fetchForms'],
+        tryFetchDistributions: tryAction(fetchFormDistributionsAction),
+        tryFetchForms: tryAction(fetchFormsReceivedAction),
       },
       dispatch,
     ),
