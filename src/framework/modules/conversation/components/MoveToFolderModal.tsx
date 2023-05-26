@@ -117,7 +117,7 @@ export default class MoveToFolderModal extends React.Component<
           {!openDropdown ? (
             <View style={styles.buttonsContainer}>
               <ActionButton
-                text={I18n.t('Cancel')}
+                text={I18n.get('Cancel')}
                 type="secondary"
                 action={() => {
                   selectFolder('');
@@ -125,7 +125,7 @@ export default class MoveToFolderModal extends React.Component<
                 }}
               />
               <ActionButton
-                text={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
+                text={I18n.get(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
                 style={{ marginLeft: UI_SIZES.spacing.medium }}
                 disabled={isMoveImpossible || !selectedFolder}
                 action={() => {
