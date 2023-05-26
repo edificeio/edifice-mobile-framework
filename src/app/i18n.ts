@@ -80,7 +80,8 @@ export namespace I18n {
   export const language = i18n.language;
 
   // Get wording based on key (in the correct language)
+  // Note: the "returnDetails" option is set to false, as we always want to return a string (not a details object)
   export const get = (key: Parameters<typeof i18n.t>[0], options?: Parameters<typeof i18n.t>[1]) => {
-    return i18n.t(key, options);
+    return i18n.t(key, { ...options, returnDetails: false });
   };
 }
