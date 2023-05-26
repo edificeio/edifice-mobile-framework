@@ -104,6 +104,7 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
             action={moveMails}
             disabled={!selectedFolderId}
             loading={isMoving}
+            style={{ zIndex: -1 }}
           />
         </View>
       }

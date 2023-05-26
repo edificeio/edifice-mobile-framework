@@ -222,22 +222,20 @@ const HeaderSubject = ({
     color: theme.ui.text.regular,
   } as ViewStyle;
 
-  const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const [currentValue, updateCurrentValue] = React.useState(value);
-
-  React.useEffect(() => {
-    clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = setTimeout(() => onChange(currentValue), 500);
-
-    return () => {
-      clearTimeout(textUpdateTimeout.current);
-    };
-  }, [currentValue, onChange]);
 
   return (
     <View style={[headerStyle, style]}>
       <SmallText style={{ color: theme.ui.text.light }}>{title} : </SmallText>
-      <TextInput style={inputStyle} defaultValue={value} numberOfLines={1} onChangeText={text => updateCurrentValue(text)} />
+      <TextInput
+        style={inputStyle}
+        defaultValue={value}
+        numberOfLines={1}
+        onChangeText={text => {
+          onChange(text);
+          updateCurrentValue(text);
+        }}
+      />
     </View>
   );
 };
@@ -279,7 +277,6 @@ const Attachments = ({
 };
 
 const Body = ({ style, value, onChange, autofocus }) => {
-  const textUpdateTimeout = React.useRef<NodeJS.Timeout>();
   const br2nl = (text: string) => {
     return text?.replace(/<br\/?>/gm, '\n').replace(/<div>\s*?<\/div>/gm, '\n');
   };
@@ -289,15 +286,6 @@ const Body = ({ style, value, onChange, autofocus }) => {
   const valueFormated = HtmlToText(nl2br(value), false).render;
   const [currentValue, updateCurrentValue] = React.useState(valueFormated);
   const [keyboardStatus, setKeyboardStatus] = React.useState(0); // State used just to force-update the component whenever it changes
-
-  React.useEffect(() => {
-    clearTimeout(textUpdateTimeout.current);
-    textUpdateTimeout.current = setTimeout(() => onChange(currentValue), 500);
-
-    return () => {
-      clearTimeout(textUpdateTimeout.current);
-    };
-  }, [currentValue, onChange]);
 
   React.useEffect(() => {
     const showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
@@ -327,7 +315,11 @@ const Body = ({ style, value, onChange, autofocus }) => {
         style={styles.bodyInput}
         defaultValue={value}
         value={br2nl(currentValue)}
-        onChangeText={text => updateCurrentValue(nl2br(text))}
+        onChangeText={text => {
+          const newText = nl2br(text);
+          onChange(newText);
+          updateCurrentValue(newText);
+        }}
         key={keyboardStatus}
       />
     </View>

@@ -71,6 +71,9 @@ const STYLES = StyleSheet.create({
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
   },
+  submitButton: {
+    zIndex: -1,
+  },
 });
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
@@ -207,7 +210,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
               textStyle={STYLES.selectText}
               value={this.dropdownValue}
             />
-            <View>
+            <View style={STYLES.submitButton}>
               <ActionButton
                 text={I18n.t('login-wayf-select-button')}
                 disabled={this.dropdownValue === null}
