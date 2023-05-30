@@ -17,12 +17,9 @@ import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
-import {
-  fetchCompetencesDevoirsAction,
-  fetchCompetencesLevelsAction,
-  fetchCompetencesSubjectsAction,
-} from '~/framework/modules/viescolaire/competences/actions';
+import { fetchCompetencesDevoirsAction, fetchCompetencesSubjectsAction } from '~/framework/modules/viescolaire/competences/actions';
 import { DashboardAssessmentCard } from '~/framework/modules/viescolaire/competences/components/Item';
+import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
@@ -80,7 +77,15 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
   public componentDidMount() {
     const { structureId } = this.props;
     this.props.fetchTeachers(structureId);
-    this.props.fetchLevels(structureId);
+  }
+
+  private openAssessment(assessment: IDevoir) {
+    const { classes, navigation } = this.props;
+
+    navigation.navigate(competencesRouteNames.assessment, {
+      assessment,
+      studentClass: classes?.[0] ?? '',
+    });
   }
 
   private renderNavigationGrid() {
@@ -189,7 +194,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
           <DashboardAssessmentCard
             devoir={item}
             subject={this.props.subjects.find(s => s.id === item.subjectId)}
-            levels={this.props.levels}
+            openAssessment={() => this.openAssessment(item)}
           />
         )}
         ListHeaderComponent={<BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>}
@@ -230,9 +235,9 @@ export default connect(
         edt: session?.apps.some(app => app.address === '/edt'),
         presences: session?.apps.some(app => app.address === '/presences'),
       },
+      classes: session?.user.classes,
       devoirs: competencesState.devoirs,
       homeworks: diaryState.homeworks,
-      levels: competencesState.levels.data,
       structureId: session?.user.structures?.[0]?.id,
       subjects: competencesState.subjects.data,
       userId: session?.user.id,
@@ -251,11 +256,6 @@ export default connect(
           undefined,
           true,
         ) as unknown as DashboardStudentScreenPrivateProps['fetchHomeworks'],
-        fetchLevels: tryActionLegacy(
-          fetchCompetencesLevelsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchLevels'],
         fetchSubjects: tryActionLegacy(
           fetchCompetencesSubjectsAction,
           undefined,

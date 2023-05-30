@@ -20,10 +20,11 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
 import {
   fetchCompetencesDevoirsAction,
-  fetchCompetencesLevelsAction,
   fetchCompetencesSubjectsAction,
+  fetchCompetencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/competences/actions';
 import { DashboardAssessmentCard } from '~/framework/modules/viescolaire/competences/components/Item';
+import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
@@ -60,7 +61,7 @@ export const computeNavBar = ({
 
 class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScreenPrivateProps> {
   public componentDidMount() {
-    const { childId, structureId } = this.props;
+    const { childId, structureId, userId } = this.props;
 
     this.props.fetchTeachers(this.props.structureId);
     this.props.fetchHomeworks(
@@ -71,7 +72,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
     );
     this.props.fetchDevoirs(structureId, childId);
     this.props.fetchSubjects(structureId);
-    this.props.fetchLevels(structureId);
+    this.props.fetchUserChildren(structureId, userId);
   }
 
   public componentDidUpdate(prevProps) {
@@ -79,7 +80,6 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
 
     if (prevProps.childId !== childId) {
       this.props.fetchTeachers(this.props.structureId);
-      this.props.fetchLevels(structureId);
       this.props.fetchHomeworks(
         childId,
         structureId,
@@ -89,6 +89,15 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
       this.props.fetchDevoirs(structureId, childId);
       this.props.fetchSubjects(structureId);
     }
+  }
+
+  private openAssessment(assessment: IDevoir) {
+    const { childId, navigation, userChildren } = this.props;
+
+    navigation.navigate(competencesRouteNames.assessment, {
+      assessment,
+      studentClass: userChildren.find(child => child.id === childId)?.idClasse ?? '',
+    });
   }
 
   private renderNavigationGrid() {
@@ -194,7 +203,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
           <DashboardAssessmentCard
             devoir={item}
             subject={this.props.subjects.find(s => s.id === item.subjectId)}
-            levels={this.props.levels}
+            openAssessment={() => this.openAssessment(item)}
           />
         )}
         ListHeaderComponent={<BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>}
@@ -249,9 +258,9 @@ export default connect(
       hasRightToCreateAbsence:
         session?.authorizedActions.some(action => action.displayName === 'presences.absence.statements.create') ?? false,
       homeworks: diaryState.homeworks,
-      levels: competencesState.levels.data,
       structureId: getSelectedChildStructure(state)?.id,
       subjects: competencesState.subjects.data,
+      userChildren: competencesState.userChildren.data,
       userId: session?.user.id,
     };
   },
@@ -268,11 +277,6 @@ export default connect(
           undefined,
           true,
         ) as unknown as DashboardRelativeScreenPrivateProps['fetchHomeworks'],
-        fetchLevels: tryActionLegacy(
-          fetchCompetencesLevelsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardRelativeScreenPrivateProps['fetchLevels'],
         fetchSubjects: tryActionLegacy(
           fetchCompetencesSubjectsAction,
           undefined,
@@ -283,6 +287,11 @@ export default connect(
           undefined,
           true,
         ) as unknown as DashboardRelativeScreenPrivateProps['fetchTeachers'],
+        fetchUserChildren: tryActionLegacy(
+          fetchCompetencesUserChildrenAction,
+          undefined,
+          true,
+        ) as unknown as DashboardRelativeScreenPrivateProps['fetchUserChildren'],
       },
       dispatch,
     ),
