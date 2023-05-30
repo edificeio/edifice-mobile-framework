@@ -442,7 +442,7 @@
   "download-success-all": "Archivos guardados en Descargas",
   "download-success-name": "{{name}} guardado en Descargas",
   "download-untitled": "Documento adjunto sin título",
-  "element.tabName": "Riot - Element",
+  "element.tabName": "Element",
   "federatedAccount-instructions": "Si su institución le ha comunicado que use su cuenta académica o una cuenta de servicio de matrícula (EduConnect, SAPIA, ARENA u otra), las informaciones de conexión para la aplicación móvil se pueden encontrar en la versión web de la plataforma.",
   "federatedAccount-instructions-details": "• Conéctese a su red educativa desde su navegador web haciendo clic en el botón de abajo\n\n• Accede a la página \"Mi cuenta\"\n\n• Recupere el nombre de usuario y generar una contraseña temporal\n\n• Regrese a la aplicación móvil y use sus credenciales en la pantalla de inicio de sesión",
   "federatedAccount-link": "Conexión para las cuentas académicas y cuentas de servicio de matrícula (EduConnect, SAPIA, ARENA,...)",
