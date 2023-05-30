@@ -46,12 +46,14 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
             {this.showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
           </HeadingLText>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiper} activeDotStyle={[styles.swiper, styles.swiperActive]}>
-            {(I18n.get('user.onboardingScreen.onboarding') as unknown as string[]).map((onboardingText, index) => (
-              <View key={index} style={styles.swiperItem}>
-                <NamedSVG name={`onboarding-${index}`} style={styles.swiperItemImage} />
-                <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>
-              </View>
-            ))}
+            {(I18n.get('user.onboardingScreen.onboarding', { returnObjects: true }) as unknown as string[]).map(
+              (onboardingText, index) => (
+                <View key={index} style={styles.swiperItem}>
+                  <NamedSVG name={`onboarding-${index}`} style={styles.swiperItemImage} />
+                  <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>
+                </View>
+              ),
+            )}
           </Swiper>
         </View>
         <View style={styles.buttons}>
