@@ -7,11 +7,14 @@
 import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
 import i18n from 'i18next';
+import ChainedBackend from 'i18next-chained-backend';
+import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
 import { initReactI18next } from 'react-i18next';
 import * as RNLocalize from 'react-native-localize';
+import Phrase from 'react-native-phrase-sdk';
 
 export namespace I18n {
   export type SupportedLocales = 'fr' | 'en' | 'es';
@@ -55,24 +58,44 @@ export namespace I18n {
       en: { translation: finalTranslations.en },
       es: { translation: finalTranslations.es },
     };
+
+    const phrase = new Phrase('DISTRIBUTION_ID', 'ENVIRONMENT_ID', require('./package.json').version, 'i18next');
+    const backendPhrase = resourcesToBackend((language, namespace, callback) => {
+      phrase
+        .requestTranslation(language)
+        .then(remoteResources => {
+          callback(null, remoteResources);
+        })
+        .catch(error => {
+          callback(error, null);
+        });
+    });
+    const backendFallback = resourcesToBackend(resources);
+
+    // Note: isRTL is unused since all supported languages are LTR
     const fallbackLng = 'en';
     const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(finalTranslations)) as {
       languageTag: string;
       isRTL: boolean;
     };
-    // Note: isRTL is unused since all supported languages are LTR
     const languageTag = bestAvailableLanguage?.languageTag;
 
     moment.locale(languageTag?.split('-')[0]);
-    i18n.use(initReactI18next).init({
-      resources,
-      fallbackLng,
-      lng: languageTag,
-      compatibilityJSON: 'v3',
-      interpolation: {
-        escapeValue: false,
-      },
-    });
+    i18n
+      .use(ChainedBackend)
+      .use(initReactI18next)
+      .init({
+        resources,
+        fallbackLng,
+        lng: languageTag,
+        compatibilityJSON: 'v3',
+        interpolation: {
+          escapeValue: false,
+        },
+        backend: {
+          backends: [backendPhrase, backendFallback],
+        },
+      });
     return languageTag ?? fallbackLng;
   };
 
