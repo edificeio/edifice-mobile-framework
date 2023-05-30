@@ -141,6 +141,7 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
   // Multiple answer
   const onSelectChoice = (child: IQuestion, choice: IQuestionChoice) => {
     let res = responses.filter(r => r.questionId === child.id);
+
     if (values[child.id]?.includes(choice.id)) {
       values[child.id] = values[child.id].filter(id => id !== choice.id);
       res = res.filter(r => r.choiceId !== choice.id);
@@ -157,11 +158,12 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
         questionId: child.id,
       });
     }
-    onChangeAnswer(child.id, responses);
+    onChangeAnswer(child.id, res);
   };
 
   const updateShadows = (nativeEvent: NativeScrollEvent) => {
     const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
+
     setQuestionShadowVisible(contentOffset.x > 0);
     setEndShadowVisible(contentOffset.x + layoutMeasurement.width < contentSize.width);
   };
