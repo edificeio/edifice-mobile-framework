@@ -122,6 +122,7 @@ const imports = {
   competences: import('ASSETS/icons/moduleIcons/competences.svg'),
   diary: import('ASSETS/icons/moduleIcons/diary.svg'),
   edt: import('ASSETS/icons/moduleIcons/edt.svg'),
+  element: import('ASSETS/icons/moduleIcons/element.svg'),
   exercices: import('ASSETS/icons/moduleIcons/exercices.svg'),
   files: import('ASSETS/icons/moduleIcons/files.svg'),
   form: import('ASSETS/icons/moduleIcons/form.svg'),
