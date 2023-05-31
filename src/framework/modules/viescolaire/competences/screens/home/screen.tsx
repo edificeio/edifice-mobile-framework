@@ -212,7 +212,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
               .map(s => ({
                 id: s.id,
                 name: s.name,
-                devoirs: devoirs.filter(d => d.isEvaluated && d.subjectId === s.id),
+                devoirs: devoirs.filter(d => d.isEvaluated && d.subjectId === s.id).sort((a, b) => a.date.diff(b.date)),
               }))
               .filter(i => i.devoirs.length)}
             keyExtractor={item => item.id.toString()}
