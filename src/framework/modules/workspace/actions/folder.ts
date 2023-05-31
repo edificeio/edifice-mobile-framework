@@ -41,7 +41,7 @@ export const createWorkspaceFolderAction = (name: string, parentId: string) => a
     const session = assertSession();
     const folder = await workspaceService.folder.create(session, name, parentId);
     dispatch(workspaceCreateFolderActionsCreators.receipt(folder));
-    Toast.showSuccess(I18n.get('workspace.folder-created'));
+    Toast.showSuccess(I18n.get('workspace-folder-folder-created'));
     return folder;
   } catch (e) {
     dispatch(workspaceCreateFolderActionsCreators.error(e as Error));

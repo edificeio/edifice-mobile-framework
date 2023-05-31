@@ -25,7 +25,7 @@ export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => as
       parent: parentId as IWorkspaceUploadParams['parent'],
     });
     dispatch(workspaceUploadActionsCreators.receipt(file));
-    Toast.showSuccess(I18n.get('workspace.file-added'));
+    Toast.showSuccess(I18n.get('workspace-file-transfer-file-added'));
   } catch (e: any) {
     // Full storage management
     // statusCode = 400 on iOS and code = 'ENOENT' on Android
@@ -77,7 +77,7 @@ export const copyWorkspaceFilesAction =
       dispatch(workspaceCopyActionsCreators.request());
       await workspaceService.files.copy(session, parentId, files, destinationId);
       dispatch(workspaceCopyActionsCreators.receipt(files.length));
-      Toast.showSuccess(I18n.get('workspace.successfully-copied'));
+      Toast.showSuccess(I18n.get('workspace-file-transfer-successfully-copied'));
     } catch (e) {
       dispatch(workspaceCopyActionsCreators.error(e as Error));
       throw e;
@@ -95,7 +95,7 @@ export const moveWorkspaceFilesAction =
       dispatch(workspaceMoveActionsCreators.request());
       await workspaceService.files.move(session, parentId, files, destinationId);
       dispatch(workspaceMoveActionsCreators.receipt(files.length));
-      Toast.showSuccess(I18n.get('workspace.successfully-moved'));
+      Toast.showSuccess(I18n.get('workspace-file-transfer-successfully-moved'));
     } catch (e) {
       dispatch(workspaceMoveActionsCreators.error(e as Error));
       throw e;
@@ -112,7 +112,7 @@ export const restoreWorkspaceFilesAction = (parentId: string, files: string[]) =
     dispatch(workspaceRestoreActionsCreators.request());
     await workspaceService.files.restore(session, parentId, files);
     dispatch(workspaceRestoreActionsCreators.receipt(files.length));
-    Toast.showSuccess(I18n.get('workspace.successfully-restored'));
+    Toast.showSuccess(I18n.get('workspace-file-transfer-successfully-restored'));
   } catch (e) {
     dispatch(workspaceRestoreActionsCreators.error(e as Error));
     throw e;
@@ -129,7 +129,7 @@ export const trashWorkspaceFilesAction = (parentId: string, files: string[]) => 
     dispatch(workspaceTrashActionsCreators.request());
     await workspaceService.files.trash(session, parentId, files);
     dispatch(workspaceTrashActionsCreators.receipt(files.length));
-    Toast.showSuccess(I18n.get('workspace.successfully-deleted'));
+    Toast.showSuccess(I18n.get('workspace-file-transfer-successfully-deleted'));
   } catch (e) {
     dispatch(workspaceTrashActionsCreators.error(e as Error));
     throw e;
@@ -146,7 +146,7 @@ export const deleteWorkspaceFilesAction = (parentId: string, files: string[]) =>
     dispatch(workspaceDeleteActionsCreators.request());
     await workspaceService.files.delete(session, parentId, files);
     dispatch(workspaceDeleteActionsCreators.receipt(files.length));
-    Toast.showSuccess(I18n.get('workspace.successfully-deleted'));
+    Toast.showSuccess(I18n.get('workspace-file-transfer-successfully-deleted'));
   } catch (e) {
     dispatch(workspaceDeleteActionsCreators.error(e as Error));
     throw e;
@@ -167,7 +167,7 @@ export const renameWorkspaceFileAction = (file: IFile, name: string) => async (d
       await workspaceService.file.rename(session, file.id, name);
     }
     dispatch(workspaceRenameActionsCreators.receipt(name));
-    Toast.showSuccess(I18n.get('workspace.successfully-edited'));
+    Toast.showSuccess(I18n.get('workspace-file-transfer-successfully-edited'));
   } catch (e) {
     dispatch(workspaceRenameActionsCreators.error(e as Error));
     throw e;
