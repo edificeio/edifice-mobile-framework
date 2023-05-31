@@ -64,7 +64,7 @@ export namespace I18n {
     const phrase = new Phrase(
       phraseSecrets.distributionId,
       phraseSecrets.environmentId,
-      require('./package.json').version,
+      require('../../package.json').version,
       'i18next',
     );
     const backendPhrase = resourcesToBackend((language, namespace, callback) => {
