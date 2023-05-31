@@ -16,6 +16,8 @@ import { initReactI18next } from 'react-i18next';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 
+import phraseSecrets from '../../phrase.json';
+
 export namespace I18n {
   export type SupportedLocales = 'fr' | 'en' | 'es';
 
@@ -59,7 +61,12 @@ export namespace I18n {
       es: { translation: finalTranslations.es },
     };
 
-    const phrase = new Phrase('DISTRIBUTION_ID', 'ENVIRONMENT_ID', require('./package.json').version, 'i18next');
+    const phrase = new Phrase(
+      phraseSecrets.distributionId,
+      phraseSecrets.environmentId,
+      require('./package.json').version,
+      'i18next',
+    );
     const backendPhrase = resourcesToBackend((language, namespace, callback) => {
       phrase
         .requestTranslation(language)
