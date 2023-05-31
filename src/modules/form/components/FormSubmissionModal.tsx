@@ -4,11 +4,11 @@ import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
-import ModalBox from '~/framework/components/ModalBox';
+import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, NestedText, SmallText } from '~/framework/components/text';
-import { DistributionStatus } from '~/modules/form/reducer';
+import { DistributionStatus } from '~/framework/modules/form/model';
 
 const styles = StyleSheet.create({
   topMargin: {
@@ -32,52 +32,61 @@ const styles = StyleSheet.create({
 
 interface IFormSubmissionModalProps {
   editable: boolean;
-  modalBoxRef: any;
+  loading: boolean;
   status: DistributionStatus;
   structures: { label: string; value: string }[];
   onSubmit: (structure: string) => void;
 }
 
-export const FormSubmissionModal = ({ editable, modalBoxRef, status, structures, onSubmit }: IFormSubmissionModalProps) => {
-  const [isDropdownOpened, setDropdownOpened] = React.useState(false);
-  const [structureId, setStructureId] = React.useState(structures[0].value);
+const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModalProps>((props, ref) => {
+  const [isDropdownOpen, setDropdownOpen] = React.useState(false);
+  const [structureId, setStructureId] = React.useState(props.structures[0].value);
 
   return (
     <ModalBox
-      ref={modalBoxRef}
+      ref={ref}
       content={
         <View>
           <BodyText>{I18n.t('form.formDistributionScreen.submissionModal.title')}</BodyText>
           <SmallText style={styles.topMargin}>
             {I18n.t('form.formDistributionScreen.submissionModal.upperText')}
-            {structures.length > 1 ? (
+            {props.structures.length > 1 ? (
               <NestedText> {I18n.t('form.formDistributionScreen.submissionModal.selectStructure')}</NestedText>
             ) : null}
           </SmallText>
-          {structures.length > 1 ? (
+          {props.structures.length > 1 ? (
             <DropDownPicker
-              open={isDropdownOpened}
+              open={isDropdownOpen}
               value={structureId}
-              items={structures}
-              setOpen={setDropdownOpened}
+              items={props.structures}
+              setOpen={setDropdownOpen}
               setValue={setStructureId}
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropdownContainer}
               textStyle={styles.dropdownText}
             />
           ) : null}
-          <SmallText style={styles.topMargin}>
-            {I18n.t(
-              status === DistributionStatus.ON_CHANGE
-                ? 'form.formDistributionScreen.submissionModal.lowerText.replace'
-                : editable
-                ? 'form.formDistributionScreen.submissionModal.lowerText.editable'
-                : 'form.formDistributionScreen.submissionModal.lowerText.default',
-            )}
-          </SmallText>
-          <ActionButton text={I18n.t('common.confirm')} action={() => onSubmit(structureId)} style={styles.topMargin} />
+          <View style={{ zIndex: -1 }}>
+            <SmallText style={styles.topMargin}>
+              {I18n.t(
+                props.status === DistributionStatus.ON_CHANGE
+                  ? 'form.formDistributionScreen.submissionModal.lowerText.replace'
+                  : props.editable
+                  ? 'form.formDistributionScreen.submissionModal.lowerText.editable'
+                  : 'form.formDistributionScreen.submissionModal.lowerText.default',
+              )}
+            </SmallText>
+            <ActionButton
+              text={I18n.t('common.confirm')}
+              action={() => props.onSubmit(structureId)}
+              loading={props.loading}
+              style={styles.topMargin}
+            />
+          </View>
         </View>
       }
     />
   );
-};
+});
+
+export default FormSubmissionModal;

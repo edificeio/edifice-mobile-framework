@@ -1,32 +1,28 @@
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import React from 'react';
-import { Platform, RefreshControl, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-tiny-toast';
-import { NavigationActions, NavigationEventSubscription } from 'react-navigation';
+import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
-import theme from '~/app/theme';
+import { IGlobalState } from '~/app/store';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { Picture } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText } from '~/framework/components/text';
-import { tryAction } from '~/framework/util/redux/actions';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { getUserSession } from '~/framework/util/session';
-import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/modules/form/actions';
-import { FormSectionCard } from '~/modules/form/components/FormSectionCard';
-import { FormSubmissionModal } from '~/modules/form/components/FormSubmissionModal';
-import { getQuestionCard } from '~/modules/form/components/questionCards';
-import moduleConfig from '~/modules/form/moduleConfig';
+import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
+import { FormSectionCard } from '~/framework/modules/form/components/FormSectionCard';
+import FormSubmissionModal from '~/framework/modules/form/components/FormSubmissionModal';
+import { getQuestionCard } from '~/framework/modules/form/components/question-cards';
 import {
   DistributionStatus,
   IFormElement,
@@ -38,23 +34,40 @@ import {
   getIsElementSection,
   getIsMandatoryAnswerMissing,
   getPositionHistory,
-} from '~/modules/form/reducer';
-import { formService } from '~/modules/form/service';
+} from '~/framework/modules/form/model';
+import moduleConfig from '~/framework/modules/form/module-config';
+import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
+import { formService } from '~/framework/modules/form/service';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { IFormDistributionScreenProps } from './types';
+import { FormDistributionScreenPrivateProps } from './types';
 
-const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
-  const distributionId = props.navigation.getParam('id');
-  const editable = props.navigation.getParam('editable');
-  const formId = props.navigation.getParam('formId');
-  const status = props.navigation.getParam('status');
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<FormNavigationParams, typeof formRouteNames.distribution>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+    title: route.params.title,
+  }),
+});
+
+const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
+  const { id: distributionId, editable, formId, status } = props.route.params;
   const [hasResponderRight, setHasResponderRight] = React.useState(true);
   const [position, setPosition] = React.useState(0);
   const [positionHistory, setPositionHistory] = React.useState<number[]>([]);
   const [responses, setResponses] = React.useState<IQuestionResponse[]>([]);
-  const flatListRef = React.useRef<typeof FlatList>();
-  const modalRef: { current: any } = React.createRef();
+  const [isLoadingNext, setLoadingNext] = React.useState<boolean>(false);
+  const [isLoadingPrevious, setLoadingPrevious] = React.useState<boolean>(false);
+  const [isSubmitting, setSubmitting] = React.useState<boolean>(false);
+  const flatListRef = React.useRef<FlatList>(null);
+  const modalBoxRef = React.useRef<ModalBoxHandle>(null);
   const isPositionAtSummary = position === props.elementsCount;
   const listElements = isPositionAtSummary ? formatSummary(props.elements, responses) : formatElement(props.elements[position]);
   const isMandatoryAnswerMissing = getIsMandatoryAnswerMissing(listElements, responses);
@@ -66,22 +79,22 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
 
   const fetchDistribution = async () => {
     try {
-      const session = getUserSession();
+      const { session } = props;
+
+      if (!session) throw new Error();
       if (!(await formService.form.hasResponderRight(session, formId))) {
         setHasResponderRight(false);
         return;
       }
       const content = await props.fetchFormContent(formId);
-      if (content) {
-        const res = await props.fetchDistributionResponses(distributionId);
-        setResponses(res);
-        if (content?.elementsCount && status !== DistributionStatus.TO_DO) {
-          setPosition(content.elementsCount);
-          setPositionHistory(getPositionHistory(content.elements, res));
-        }
+      const res = await props.fetchDistributionResponses(distributionId);
+      setResponses(res);
+      if (content.elementsCount && status !== DistributionStatus.TO_DO) {
+        setPosition(content.elementsCount);
+        setPositionHistory(getPositionHistory(content.elements, res));
       }
-    } catch (e) {
-      throw e;
+    } catch {
+      throw new Error();
     }
   };
 
@@ -99,25 +112,19 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-  };
-
-  const focusEventListener = React.useRef<NavigationEventSubscription>();
   React.useEffect(() => {
-    focusEventListener.current = props.navigation.addListener('didFocus', () => {
-      fetchOnNavigation();
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
-    return () => {
-      focusEventListener.current?.remove();
-    };
-  }, []);
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation]);
 
   React.useEffect(() => {
-    flatListRef.current?.scrollToOffset({ x: 0, y: 0, animated: false });
+    flatListRef.current?.scrollToOffset({ animated: false, offset: 0 });
   }, [position]);
 
-  const updateResponses = (questionId: number, newResponses: IQuestionResponse[]) => {
+  const updateQuestionResponses = (questionId: number, newResponses: IQuestionResponse[]) => {
     const res = responses.filter(response => response.questionId !== questionId);
     res.push(...newResponses);
     setResponses(res);
@@ -142,8 +149,10 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
 
   const postResponsesChanges = async () => {
     try {
+      const { session } = props;
       const questions = listElements.filter(e => !getIsElementSection(e)) as IQuestion[];
-      const session = getUserSession();
+
+      if (!session) throw new Error();
       for (const question of questions) {
         let res = responses.filter(r => r.questionId === question.id);
         // Delete responses of multiple answer and matrix questions
@@ -152,7 +161,7 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
           const unselectedResponses = res.filter(r => r.toDelete);
           await formService.responses.delete(session, formId, unselectedResponses);
           res = res.filter(r => !r.toDelete);
-          updateResponses(question.id, res);
+          updateQuestionResponses(question.id, res);
           //await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
           //res.map(r => (r.id = undefined));
         } else if (question.type === QuestionType.MATRIX) {
@@ -161,6 +170,9 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
           //await Promise.all(questionIds.map(id => formService.distribution.deleteQuestionResponses(session, distributionId, id)));
           res = responses.filter(r => questionIds?.includes(r.questionId));
           //res.map(r => (r.id = undefined));
+        } else if (question.type === QuestionType.ORDER) {
+          await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
+          res.map(r => (r.id = undefined));
         }
         await Promise.all(
           res.map(response => {
@@ -176,7 +188,15 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
               );
             } else {
               return formService.question
-                .createResponse(session, response.questionId, distributionId, response.choiceId ?? null, response.answer)
+                .createResponse(
+                  session,
+                  response.questionId,
+                  distributionId,
+                  response.choiceId ?? null,
+                  response.answer,
+                  response.customAnswer ?? null,
+                  response.choicePosition ?? null,
+                )
                 .then(r => (response.id = r.id));
             }
           }),
@@ -202,35 +222,41 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
                 answer: '',
               };
               return formService.question
-                .createResponse(session, response.questionId, distributionId, null, response.answer)
+                .createResponse(
+                  session,
+                  response.questionId,
+                  distributionId,
+                  null,
+                  response.answer,
+                  response.customAnswer ?? null,
+                  response.choicePosition ?? null,
+                )
                 .then(r => {
                   response.id = r.id;
-                  updateResponses(id, [response]);
+                  updateQuestionResponses(id, [response]);
                 });
             }),
           );
         }
       }
-    } catch (e) {
-      throw e;
+    } catch {
+      throw new Error();
     }
   };
 
-  const onSave = async () => {
+  const goToPreviousPosition = async () => {
     try {
+      setLoadingPrevious(true);
       await postResponsesChanges();
-      Toast.showSuccess(I18n.t('form.answersWellSaved'), { ...UI_ANIMATIONS.toast });
-    } catch (e) {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      setLoadingPrevious(false);
+      const history = positionHistory;
+      setPosition(history[history.length - 1]);
+      history.pop();
+      setPositionHistory(history);
+    } catch {
+      setLoadingPrevious(false);
+      Toast.showError(I18n.t('common.error.text'));
     }
-  };
-
-  const goToPreviousPosition = () => {
-    postResponsesChanges();
-    const history = positionHistory;
-    setPosition(history[history.length - 1]);
-    history.pop();
-    setPositionHistory(history);
   };
 
   const updatePosition = (newPosition: number) => {
@@ -238,27 +264,37 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
     setPosition(newPosition);
   };
 
-  const goToNextPosition = () => {
-    postResponsesChanges();
-    const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
-    if (conditionalQuestion) {
-      const res = responses.find(r => r.questionId === conditionalQuestion.id);
-      const sectionId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextSectionId;
-      if (sectionId === null) {
-        return updatePosition(props.elementsCount);
+  const goToNextPosition = async () => {
+    try {
+      setLoadingNext(true);
+      await postResponsesChanges();
+      setLoadingNext(false);
+      const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
+      if (conditionalQuestion) {
+        const res = responses.find(r => r.questionId === conditionalQuestion.id);
+        const sectionId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextSectionId;
+        if (sectionId === null) {
+          return updatePosition(props.elementsCount);
+        }
+        const sectionPosition = props.elements.find(e => getIsElementSection(e) && e.id === sectionId)?.position;
+        if (sectionPosition) {
+          return updatePosition(sectionPosition - 1);
+        }
       }
-      const sectionPosition = props.elements.find(e => getIsElementSection(e) && e.id === sectionId)?.position;
-      if (sectionPosition) {
-        return updatePosition(sectionPosition - 1);
-      }
+      updatePosition(position + 1);
+    } catch {
+      setLoadingNext(false);
+      Toast.showError(I18n.t('common.error.text'));
     }
-    updatePosition(position + 1);
   };
 
   const submitDistribution = async (structureId: string) => {
     try {
-      const session = getUserSession();
+      const { session } = props;
       const structure = props.structures.find(s => s.value === structureId);
+
+      setSubmitting(true);
+      if (!session) throw new Error();
       const distribution = await formService.distribution.get(session, distributionId);
       distribution.structure = structure?.label;
       if (status === DistributionStatus.TO_DO) {
@@ -267,22 +303,13 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
       } else if (distribution.originalId) {
         await formService.distribution.replace(session, distributionId, distribution.originalId);
       }
-      modalRef?.current?.doDismissModal();
-      props.navigation.dispatch(NavigationActions.back());
-      Toast.showSuccess(I18n.t('form.answersSent'), { ...UI_ANIMATIONS.toast });
-    } catch (e) {
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      modalBoxRef.current?.doDismissModal();
+      props.navigation.goBack();
+      Toast.showSuccess(I18n.t('form.answersSent'));
+    } catch {
+      setSubmitting(false);
+      Toast.showError(I18n.t('common.error.text'));
     }
-  };
-
-  const navBarInfo = {
-    title: props.navigation.getParam('title'),
-    right:
-      loadingRef.current === AsyncPagedLoadingState.DONE && !isPositionAtSummary ? (
-        <TouchableOpacity onPress={() => onSave()} style={styles.saveActionContainer}>
-          <Picture type="NamedSvg" name="ui-save" fill={theme.ui.text.inverse} width={24} height={24} />
-        </TouchableOpacity>
-      ) : undefined,
   };
 
   const renderEmpty = () => {
@@ -291,8 +318,7 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -322,7 +348,7 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
         question={item}
         responses={questionResponses}
         isDisabled={isPositionAtSummary}
-        onChangeAnswer={updateResponses}
+        onChangeAnswer={updateQuestionResponses}
         onEditQuestion={onEditQuestion}
       />
     );
@@ -331,25 +357,15 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
   const renderPositionActions = () => {
     if (isPositionAtSummary) {
       return status !== DistributionStatus.FINISHED || editable ? (
-        <ActionButton text={I18n.t('form.finishAndSend')} action={() => modalRef?.current?.doShowModal()} />
+        <ActionButton text={I18n.t('form.finishAndSend')} action={() => modalBoxRef.current?.doShowModal()} />
       ) : null;
     }
     return (
       <View style={styles.actionsContainer}>
         {positionHistory.length ? (
-          <ActionButton
-            text={I18n.t('back')}
-            type="secondary"
-            action={() => goToPreviousPosition()}
-            style={styles.positionActionContainer}
-          />
+          <ActionButton text={I18n.t('previous')} type="secondary" action={goToPreviousPosition} loading={isLoadingPrevious} />
         ) : null}
-        <ActionButton
-          text={I18n.t('next')}
-          action={() => goToNextPosition()}
-          disabled={isMandatoryAnswerMissing}
-          style={styles.positionActionContainer}
-        />
+        <ActionButton text={I18n.t('next')} action={goToNextPosition} disabled={isMandatoryAnswerMissing} loading={isLoadingNext} />
       </View>
     );
   };
@@ -358,9 +374,7 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
     return hasResponderRight ? (
       <>
         <FlatList
-          ref={ref => {
-            flatListRef.current = ref;
-          }}
+          ref={flatListRef}
           keyboardShouldPersistTaps="handled"
           removeClippedSubviews={false}
           data={listElements}
@@ -372,8 +386,9 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
           contentContainerStyle={styles.listContainer}
         />
         <FormSubmissionModal
+          ref={modalBoxRef}
           editable={editable}
-          modalBoxRef={modalRef}
+          loading={isSubmitting}
           status={status}
           structures={props.structures}
           onSubmit={submitDistribution}
@@ -387,9 +402,6 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
         return renderDistribution();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
@@ -400,36 +412,79 @@ const FormDistributionScreen = (props: IFormDistributionScreenProps) => {
     }
   };
 
-  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+  UNSTABLE_usePreventRemove(
+    status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE && !isSubmitting,
+    ({ data }) => {
+      Alert.alert(
+        I18n.t('form.formDistributionScreen.leaveAlert.title'),
+        I18n.t('form.formDistributionScreen.leaveAlert.message'),
+        [
+          {
+            text: I18n.t('common.cancel'),
+            style: 'cancel',
+            onPress: () => {
+              clearConfirmNavigationEvent();
+            },
+          },
+          {
+            text: I18n.t('common.quit'),
+            onPress: async () => {
+              try {
+                await postResponsesChanges();
+                handleRemoveConfirmNavigationEvent(data.action, props.navigation);
+                Toast.showSuccess(I18n.t('form.answersWellSaved'));
+              } catch {
+                Toast.showError(I18n.t('common.error.text'));
+              }
+            },
+            style: 'destructive',
+          },
+        ],
+      );
+    },
+  );
+
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
   return (
-    <PageComponent navigation={props.navigation} navBarWithBack={navBarInfo} safeArea={false}>
-      {renderPage()}
-    </PageComponent>
+    <GestureHandlerRootView style={UI_STYLES.flex1}>
+      <PageComponent>{renderPage()}</PageComponent>
+    </GestureHandlerRootView>
   );
 };
 
 export default connect(
-  (gs: IGlobalState) => {
-    const state = moduleConfig.getState(gs);
+  (state: IGlobalState) => {
+    const formState = moduleConfig.getState(state);
+    const session = getSession();
+
     return {
-      elements: state.formContent.data.elements,
-      elementsCount: state.formContent.data.elementsCount,
+      elements: formState.formContent.data.elements,
+      elementsCount: formState.formContent.data.elementsCount,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
-      session: getUserSession(),
-      structures: gs.user.info.schools.map(school => {
-        return {
-          label: school.name,
-          value: school.id,
-        };
-      }),
+      session,
+      structures:
+        session?.user.structures?.map(school => {
+          return {
+            label: school.name,
+            value: school.id,
+          };
+        }) ?? [],
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        fetchDistributionResponses: tryAction(fetchDistributionResponsesAction, undefined, true),
-        fetchFormContent: tryAction(fetchFormContentAction, undefined, true),
+        fetchDistributionResponses: tryActionLegacy(
+          fetchDistributionResponsesAction,
+          undefined,
+          true,
+        ) as unknown as FormDistributionScreenPrivateProps['fetchDistributionResponses'],
+        fetchFormContent: tryActionLegacy(
+          fetchFormContentAction,
+          undefined,
+          true,
+        ) as unknown as FormDistributionScreenPrivateProps['fetchFormContent'],
       },
       dispatch,
     ),

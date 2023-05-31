@@ -5,7 +5,7 @@
 		<key>BundleVersionOverride</key>
 		<string>dev/default</string>
 		<key>BundleVersionType</key>
-		<string>rc.2</string>
+		<string>rc.3</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>fr_FR</string>
 		<key>CFBundleDisplayName</key>
@@ -21,15 +21,16 @@
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.9.4</string>
+		<string>1.9.6</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleVersion</key>
-		<string>1090403</string>
+		<string>1090609</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>
 			<string>https</string>
+			<string>moodlemobile</string>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true />
@@ -51,11 +52,14 @@
 			</dict>
 		</dict>
 		<key>NSCameraUsageDescription</key>
-		<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+		<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif
+			et pour choisir votre photo de profil.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
-		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et
+			pour choisir votre photo de profil.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+		<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et
+			pour choisir votre photo de profil.</string>
 		<key>UIAppFonts</key>
 		<array>
 			<string>icomoon.ttf</string>

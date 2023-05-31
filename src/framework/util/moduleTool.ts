@@ -11,7 +11,7 @@ import type { Reducer } from 'redux';
 
 import { IGlobalState } from '~/AppStore';
 import { PictureProps } from '~/framework/components/picture';
-import { updateAppBadges } from '~/framework/modules/timelinev2/appBadges';
+import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toSnakeCase } from '~/framework/util/string';
 import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 

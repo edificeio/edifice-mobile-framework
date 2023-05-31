@@ -1,37 +1,49 @@
+import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, Platform, TextInput, View } from 'react-native';
+import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Asset } from 'react-native-image-picker';
-import Toast from 'react-native-tiny-toast';
-import { NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
+import { cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, NestedBoldText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
+import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
+import { getSupportWorkflowInformation } from '~/framework/modules/support/rights';
+import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
+import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
-import { tryAction } from '~/framework/util/redux/actions';
-import { getUserSession } from '~/framework/util/session';
-import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/modules/support/actions';
-import { getSupportWorkflowInformation } from '~/modules/support/rights';
-import { Attachment } from '~/modules/zimbra/components/Attachment';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import { ISupportCreateTicketScreenProps } from './types';
+import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
+
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<SupportNavigationParams, typeof supportRouteNames.home>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+    title: I18n.t('support.tabName'),
+  }),
+});
 
 const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
-  const hasTicketCreationRights = getSupportWorkflowInformation(props.session)?.createTicket;
+  const hasTicketCreationRights = props.session && getSupportWorkflowInformation(props.session)?.createTicket;
   const [isCategoryDropdownOpen, setCategoryDropdownOpen] = React.useState(false);
   const [isStructureDropdownOpen, setStructureDropdownOpen] = React.useState(false);
   const [category, setCategory] = React.useState(props.apps[0]?.value);
@@ -41,7 +53,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
   const [attachments, setAttachments] = React.useState<LocalFile[]>([]);
   const [isSending, setSending] = React.useState(false);
 
-  const addAttachment = (file: Asset | DocumentPicked) => {
+  const addAttachment = file => {
     setAttachments(previousAttachments => [...previousAttachments, new LocalFile(file, { _needIOSReleaseSecureAccess: false })]);
   };
 
@@ -57,31 +69,21 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
         uploadedAttachments = await props.uploadAttachments(attachments);
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
-      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }), {
-        ...UI_ANIMATIONS.toast,
-      });
-      props.navigation.dispatch(NavigationActions.back());
-    } catch (e) {
+      props.navigation.dispatch(CommonActions.goBack());
+      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
+    } catch {
       setSending(false);
-      Toast.show(I18n.t('support.supportCreateTicketScreen.failure'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('support.supportCreateTicketScreen.failure'));
     }
   };
 
-  const handleGoBack = () => {
-    const { navigation } = props;
-    if (!subject && !description) return true;
-    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
-      {
-        text: I18n.t('common.cancel'),
-        style: 'cancel',
-      },
-      {
-        text: I18n.t('common.quit'),
-        style: 'destructive',
-        onPress: () => navigation.dispatch(NavigationActions.back()),
-      },
-    ]);
-  };
+  const onCategoryOpen = React.useCallback(() => {
+    setStructureDropdownOpen(false);
+  }, []);
+
+  const onStructureOpen = React.useCallback(() => {
+    setCategoryDropdownOpen(false);
+  }, []);
 
   const renderPage = () => {
     const { apps, structures } = props;
@@ -100,11 +102,11 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             items={apps}
             setOpen={setCategoryDropdownOpen}
             setValue={setCategory}
+            onOpen={onCategoryOpen}
             style={styles.dropdownContainer}
-            dropDownContainerStyle={styles.dropdownContainer}
+            dropDownContainerStyle={[styles.dropdownContainer, Platform.OS === 'android' && { position: 'relative', top: -16 }]}
             textStyle={styles.dropdownText}
-            zIndex={2000}
-            zIndexInverse={1000}
+            listMode="SCROLLVIEW"
           />
           {structures.length > 1 ? (
             <DropDownPicker
@@ -113,78 +115,90 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
               items={structures}
               setOpen={setStructureDropdownOpen}
               setValue={setStructure}
+              onOpen={onStructureOpen}
               style={styles.dropdownContainer}
+              containerStyle={{ zIndex: -1 }}
               dropDownContainerStyle={styles.dropdownContainer}
               textStyle={styles.dropdownText}
-              zIndex={1000}
-              zIndexInverse={2000}
+              listMode="SCROLLVIEW"
             />
           ) : null}
-          <SmallBoldText style={styles.inputLabelText}>
-            {I18n.t('support.supportCreateTicketScreen.subject')}
-            <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
-          </SmallBoldText>
-          <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
-          <SmallBoldText style={styles.inputLabelText}>
-            {I18n.t('support.supportCreateTicketScreen.description')}
-            <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
-          </SmallBoldText>
-          <TextInput
-            value={description}
-            onChangeText={text => setDescription(text)}
-            multiline
-            textAlignVertical="top"
-            style={styles.descriptionInput}
-          />
-          <View style={styles.attachmentsContainer}>
-            <BottomMenu
-              title={I18n.t('common.addFiles')}
-              actions={[
-                cameraAction({ callback: addAttachment }),
-                galleryAction({ callback: addAttachment, multiple: true }),
-                documentAction({ callback: addAttachment }),
-              ]}>
-              <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-                <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
-                <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
-              </View>
-            </BottomMenu>
-            {attachments.map(attachment => (
-              <Attachment
-                key={attachment.filename}
-                name={attachment.filename}
-                type={attachment.filetype}
-                onRemove={() => removeAttachment(attachment.filepath)}
-              />
-            ))}
+          <View style={{ zIndex: -2 }}>
+            <SmallBoldText style={styles.inputLabelText}>
+              {I18n.t('support.supportCreateTicketScreen.subject')}
+              <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
+            </SmallBoldText>
+            <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
+            <SmallBoldText style={styles.inputLabelText}>
+              {I18n.t('support.supportCreateTicketScreen.description')}
+              <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
+            </SmallBoldText>
+            <TextInput
+              value={description}
+              onChangeText={text => setDescription(text)}
+              multiline
+              textAlignVertical="top"
+              style={styles.descriptionInput}
+            />
+            <View style={styles.attachmentsContainer}>
+              <BottomMenu
+                title={I18n.t('common.addFiles')}
+                actions={[
+                  cameraAction({ callback: addAttachment }),
+                  galleryAction({ callback: addAttachment, multiple: true }),
+                  documentAction({ callback: addAttachment }),
+                ]}>
+                <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
+                  <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
+                  <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
+                </View>
+              </BottomMenu>
+              {attachments.map(attachment => (
+                <Attachment
+                  key={attachment.filename}
+                  name={attachment.filename}
+                  type={attachment.filetype}
+                  onRemove={() => removeAttachment(attachment.filepath)}
+                />
+              ))}
+            </View>
           </View>
         </View>
-        <ActionButton
-          text={I18n.t('common.send')}
-          action={sendTicket}
-          disabled={isActionDisabled}
-          loading={isSending}
-          style={styles.actionContainer}
-        />
+        <ActionButton text={I18n.t('common.send')} action={sendTicket} disabled={isActionDisabled} loading={isSending} />
       </ScrollView>
     ) : (
       <EmptyScreen svgImage="empty-support" title={I18n.t('support.supportCreateTicketScreen.emptyScreen.title')} />
     );
   };
 
-  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+  UNSTABLE_usePreventRemove(!!(subject || description) && !isSending, ({ data }) => {
+    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+      {
+        text: I18n.t('common.cancel'),
+        style: 'cancel',
+        onPress: () => {
+          clearConfirmNavigationEvent();
+        },
+      },
+      {
+        text: I18n.t('common.quit'),
+        onPress: () => {
+          handleRemoveConfirmNavigationEvent(data.action, props.navigation);
+        },
+        style: 'destructive',
+      },
+    ]);
+  });
 
-  return (
-    <PageComponent navigation={props.navigation} navBarWithBack={{ title: I18n.t('support.tabName') }} onBack={handleGoBack}>
-      {renderPage()}
-    </PageComponent>
-  );
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+
+  return <PageComponent>{renderPage()}</PageComponent>;
 };
 
 export default connect(
   (gs: IGlobalState) => {
     const apps = [] as any[];
-    for (const app of gs.user.info.appsInfo) {
+    for (const app of gs.auth.session.apps) {
       if (app.address && app.name && app.address.length > 0 && app.name.length > 0) {
         const translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
         if (translation.substring(0, 9) !== '[missing ') {
@@ -207,20 +221,24 @@ export default connect(
           value: app.address,
         };
       }),
-      structures: gs.user.info.schools.map(school => {
+      structures: gs.auth.session.user.structures.map(school => {
         return {
           label: school.name,
           value: school.id,
         };
       }),
-      session: getUserSession(),
+      session: getSession(),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        postTicket: tryAction(postSupportTicketAction, undefined, true),
-        uploadAttachments: tryAction(uploadSupportTicketAttachmentsAction, undefined, true),
+        postTicket: tryActionLegacy(postSupportTicketAction, undefined, true) as ISupportCreateTicketScreenEventProps['postTicket'],
+        uploadAttachments: tryActionLegacy(
+          uploadSupportTicketAttachmentsAction,
+          undefined,
+          true,
+        ) as unknown as ISupportCreateTicketScreenEventProps['uploadAttachments'],
       },
       dispatch,
     ),

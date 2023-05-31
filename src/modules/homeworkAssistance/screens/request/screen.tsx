@@ -1,47 +1,66 @@
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, RefreshControl, TextInput, View } from 'react-native';
+import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Toast from 'react-native-tiny-toast';
-import { NavigationActions, NavigationEventSubscription } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import ActionButton from '~/framework/components/buttons/action';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallText } from '~/framework/components/text';
-import { tryAction } from '~/framework/util/redux/actions';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { UserType, getUserSession } from '~/framework/util/session';
+import Toast from '~/framework/components/toast';
+import { getFlattenedChildren } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { UserType } from '~/framework/modules/auth/service';
 import {
   fetchHomeworkAssistanceConfigAction,
   fetchHomeworkAssistanceServicesAction,
   postHomeworkAssistanceRequestAction,
-} from '~/modules/homeworkAssistance/actions';
-import moduleConfig from '~/modules/homeworkAssistance/moduleConfig';
-import { getIsDateValid } from '~/modules/homeworkAssistance/reducer';
+} from '~/framework/modules/homework-assistance/actions';
+import { getIsDateValid } from '~/framework/modules/homework-assistance/model';
+import moduleConfig from '~/framework/modules/homework-assistance/module-config';
+import {
+  HomeworkAssistanceNavigationParams,
+  homeworkAssistanceRouteNames,
+} from '~/framework/modules/homework-assistance/navigation';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
-import { IHomeworkAssistanceRequestScreenProps } from './types';
+import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
 
-const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreenProps) => {
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<
+  HomeworkAssistanceNavigationParams,
+  typeof homeworkAssistanceRouteNames.request
+>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+    title: I18n.t('homeworkAssistance.myRequest'),
+  }),
+});
+
+const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenPrivateProps) => {
   const [isChildDropdownOpen, setChildDropdownOpen] = React.useState(false);
   const [isServiceDropdownOpen, setServiceDropdownOpen] = React.useState(false);
   const [child, setChild] = React.useState(props.children ? props.children[0]?.value : null);
   const [service, setService] = React.useState(null);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [date, setDate] = React.useState(moment().startOf('day'));
-  const [time, setTime] = React.useState(props.config.settings.openingTime.start);
+  const [time, setTime] = React.useState(props.config!.settings.openingTime.start);
   const [information, setInformation] = React.useState('');
   const [isSendingRequest, setSendingRequest] = React.useState(false);
 
@@ -54,8 +73,8 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
     try {
       await props.fetchConfig();
       await props.fetchServices();
-    } catch (e) {
-      throw e;
+    } catch {
+      throw new Error();
     }
   };
 
@@ -73,50 +92,46 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const fetchOnNavigation = () => {
-    if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-  };
-
-  const focusEventListener = React.useRef<NavigationEventSubscription>();
   React.useEffect(() => {
-    focusEventListener.current = props.navigation.addListener('didFocus', () => {
-      fetchOnNavigation();
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
     });
-    return () => {
-      focusEventListener.current?.remove();
-    };
-  }, []);
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation]);
 
   const sendRequest = async () => {
     try {
-      const { services, children, structureName, className, addRequest } = props;
+      const { services, children, structureName, className } = props;
       const selectedService = services.find(s => s.value === service);
-      if (!selectedService) return;
+
+      if (!selectedService) throw new Error();
       setSendingRequest(true);
       const student = children ? children.find(c => c.value === child) : undefined;
-      await addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
+      await props.addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
       setSendingRequest(false);
-      props.navigation.dispatch(NavigationActions.back());
-      Toast.showSuccess(I18n.t('homeworkAssistance.requestSent'), { ...UI_ANIMATIONS.toast });
-    } catch (e) {
+      props.navigation.goBack();
+      Toast.showSuccess(I18n.t('homeworkAssistance.requestSent'));
+    } catch {
       setSendingRequest(false);
-      Toast.show(I18n.t('common.error.text'), { ...UI_ANIMATIONS.toast });
+      Toast.showError(I18n.t('common.error.text'));
     }
   };
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
   };
 
   const renderRequest = () => {
+    if (!props.config) return renderError();
     const { openingTime } = props.config.settings;
     const isDateValid = getIsDateValid(props.config, date, time);
     const isActionDisabled = !service || !phoneNumber || !isDateValid;
+
     return (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
@@ -130,8 +145,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
               style={styles.dropdownContainer}
               dropDownContainerStyle={styles.dropdownContainer}
               textStyle={styles.dropdownText}
-              zIndex={2000}
-              zIndexInverse={1000}
             />
           ) : undefined}
           <DropDownPicker
@@ -142,43 +155,50 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
             setValue={setService}
             placeholder={I18n.t('homeworkAssistance.chooseASubject')}
             style={styles.dropdownContainer}
+            containerStyle={{ zIndex: -1 }}
             dropDownContainerStyle={styles.dropdownContainer}
             textStyle={styles.dropdownText}
-            zIndex={1000}
-            zIndexInverse={2000}
           />
-          <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
-          <TextInput
-            placeholder="+33 (0)6..."
-            value={phoneNumber}
-            onChangeText={text => setPhoneNumber(text.replace(/[^+0-9]/g, ''))}
-            keyboardType="phone-pad"
-            style={styles.phoneNumberInput}
-          />
-          <View style={styles.rowContainer}>
-            <SmallText>{I18n.t('homeworkAssistance.dateOfCall')}</SmallText>
-            <DateTimePicker mode="date" value={date} onChange={value => setDate(value)} color={theme.palette.secondary.regular} />
-          </View>
-          <View style={styles.rowContainer}>
-            <SmallText>{I18n.t('homeworkAssistance.time')}</SmallText>
-            <DateTimePicker
-              mode="time"
-              value={time}
-              onChange={value => setTime(value)}
-              minimumDate={openingTime.start}
-              maximumDate={openingTime.end}
-              color={theme.palette.secondary.regular}
+          <View style={{ zIndex: -2 }}>
+            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
+            <TextInput
+              placeholder="+33 (0)6..."
+              value={phoneNumber}
+              onChangeText={text => setPhoneNumber(text.replace(/[^+0-9]/g, ''))}
+              keyboardType="phone-pad"
+              style={styles.phoneNumberInput}
+            />
+            <View style={styles.rowContainer}>
+              <SmallText>{I18n.t('homeworkAssistance.dateOfCall')}</SmallText>
+              <DateTimePicker
+                mode="date"
+                value={date}
+                onChange={value => setDate(value)}
+                minimumDate={moment().startOf('day')}
+                color={theme.palette.secondary.regular}
+              />
+            </View>
+            <View style={styles.rowContainer}>
+              <SmallText>{I18n.t('homeworkAssistance.time')}</SmallText>
+              <DateTimePicker
+                mode="time"
+                value={time}
+                onChange={value => setTime(value)}
+                minimumDate={openingTime.start}
+                maximumDate={openingTime.end}
+                color={theme.palette.secondary.regular}
+              />
+            </View>
+            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.additionalInformation')}</SmallText>
+            <TextInput
+              placeholder={I18n.t('homeworkAssistance.detailsAbout')}
+              value={information}
+              onChangeText={text => setInformation(text)}
+              multiline
+              textAlignVertical="top"
+              style={styles.informationInput}
             />
           </View>
-          <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.additionalInformation')}</SmallText>
-          <TextInput
-            placeholder={I18n.t('homeworkAssistance.detailsAbout')}
-            value={information}
-            onChangeText={text => setInformation(text)}
-            multiline
-            textAlignVertical="top"
-            style={styles.informationInput}
-          />
         </View>
         <View>
           {!isDateValid ? (
@@ -186,7 +206,7 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
           ) : null}
           <ActionButton
             text={I18n.t('homeworkAssistance.sendMyRequest')}
-            action={() => sendRequest()}
+            action={sendRequest}
             disabled={isActionDisabled}
             loading={isSendingRequest}
             style={isActionDisabled ? styles.actionContainerDisabled : styles.actionContainerEnabled}
@@ -199,9 +219,6 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
   const renderPage = () => {
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
         return renderRequest();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
@@ -212,47 +229,54 @@ const HomeworkAssistanceRequestScreen = (props: IHomeworkAssistanceRequestScreen
     }
   };
 
-  const PageComponent = Platform.select({ ios: KeyboardPageView, android: PageView })!;
+  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
-  return (
-    <PageComponent
-      navigation={props.navigation}
-      navBarWithBack={{ title: I18n.t('homeworkAssistance.myRequest') }}
-      safeArea={false}>
-      {renderPage()}
-    </PageComponent>
-  );
+  return <PageComponent>{renderPage()}</PageComponent>;
 };
 
 export default connect(
-  (gs: IGlobalState) => {
-    const state = moduleConfig.getState(gs);
+  (state: IGlobalState) => {
+    const homeworkAssistanceState = moduleConfig.getState(state);
+    const session = getSession();
+
     return {
       children:
-        gs.user.info.type === UserType.Relative
-          ? Object.entries(gs.user.info.children).map(([key, value]: [string, any]) => {
-              return {
-                value: key,
-                label: `${value.firstName} ${value.lastName}`,
-                ...value,
-              };
-            })
+        session?.user.type === UserType.Relative
+          ? getFlattenedChildren(session?.user.children)?.map(child => ({
+              value: child.id,
+              label: `${child.firstName} ${child.lastName}`,
+              ...child,
+            }))
           : undefined,
-      className: gs.user.info.classNames ? gs.user.info.classNames[0] : '',
-      config: state.config.data,
+      className: session?.user.classes?.[0] ?? '',
+      config: homeworkAssistanceState.config.data,
       initialLoadingState:
-        state.config.isPristine || state.services.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
-      services: state.services.data,
-      session: getUserSession(),
-      structureName: gs.user.info.structureNames[0] ?? '',
+        homeworkAssistanceState.config.isPristine || homeworkAssistanceState.services.isPristine
+          ? AsyncPagedLoadingState.PRISTINE
+          : AsyncPagedLoadingState.DONE,
+      services: homeworkAssistanceState.services.data,
+      session,
+      structureName: session?.user.structures?.[0].name ?? '',
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
-        addRequest: tryAction(postHomeworkAssistanceRequestAction, undefined, true),
-        fetchConfig: tryAction(fetchHomeworkAssistanceConfigAction, undefined, true),
-        fetchServices: tryAction(fetchHomeworkAssistanceServicesAction, undefined, true),
+        addRequest: tryActionLegacy(
+          postHomeworkAssistanceRequestAction,
+          undefined,
+          true,
+        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['addRequest'],
+        fetchConfig: tryActionLegacy(
+          fetchHomeworkAssistanceConfigAction,
+          undefined,
+          true,
+        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchConfig'],
+        fetchServices: tryActionLegacy(
+          fetchHomeworkAssistanceServicesAction,
+          undefined,
+          true,
+        ) as unknown as HomeworkAssistanceRequestScreenPrivateProps['fetchServices'],
       },
       dispatch,
     ),

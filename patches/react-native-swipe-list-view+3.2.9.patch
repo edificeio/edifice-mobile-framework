@@ -1,0 +1,26 @@
+diff --git a/node_modules/react-native-swipe-list-view/components/SwipeListView.js b/node_modules/react-native-swipe-list-view/components/SwipeListView.js
+index 07dc767..10d80e0 100644
+--- a/node_modules/react-native-swipe-list-view/components/SwipeListView.js
++++ b/node_modules/react-native-swipe-list-view/components/SwipeListView.js
+@@ -343,6 +343,10 @@ class SwipeListView extends PureComponent {
+         }
+     }
+ 
++    scrollToTop = () => {
++        this._listView._listRef._scrollRef.scrollTo({y: 0});
++    };
++
+     // In most use cases this is no longer used. Only in the case we are passed renderListView={true}
+     // there may be legacy code that passes a this.props.renderRow func so we keep this for legacy purposes
+     renderRow(rowData, secId, rowId, rowMap) {
+diff --git a/node_modules/react-native-swipe-list-view/types/index.d.ts b/node_modules/react-native-swipe-list-view/types/index.d.ts
+index bd71cf6..6c08d37 100644
+--- a/node_modules/react-native-swipe-list-view/types/index.d.ts
++++ b/node_modules/react-native-swipe-list-view/types/index.d.ts
+@@ -502,5 +502,6 @@ interface IUseFlatListProps<T> extends FlatListPropsOverride<T>, IPropsSwipeList
+ 
+ export class SwipeListView<T> extends Component<Partial<IUseSectionListProps<T>> | Partial<IUseFlatListProps<T>>> {
+ 	closeAllOpenRows: () => void;
++	scrollToTop: () => void;
+ 	render(): JSX.Element;
+ }

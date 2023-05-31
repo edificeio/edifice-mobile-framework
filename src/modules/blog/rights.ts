@@ -1,11 +1,12 @@
-/**
- * Blog workflow
- */
-import { registerTimelineWorkflow } from '~/framework/modules/timelinev2/timelineModules';
-import { resourceHasRight } from '~/framework/util/resourceRights';
-import { IUserSession } from '~/framework/util/session';
+import I18n from 'i18n-js';
 
-import { IBlog } from './reducer';
+import { ISession } from '~/framework/modules/auth/model';
+import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
+import { navigate } from '~/framework/navigation/helper';
+import { resourceHasRight } from '~/framework/util/resourceRights';
+
+import { blogRouteNames } from './navigation';
+import { Blog } from './reducer';
 
 export const createBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|create';
 export const submitBlogPostResourceRight = 'org-entcore-blog-controllers-PostController|submit';
@@ -24,7 +25,7 @@ export const deleteBlogResourceRight = 'org-entcore-blog-controllers-BlogControl
 
 export const addBlogFolderResourceRight = 'org.entcore.blog.controllers.FoldersController|add';
 
-export const getBlogPostRight = (blog: IBlog, session: IUserSession) => {
+export const getBlogPostRight = (blog: Blog, session: ISession) => {
   const hasPublishRight = resourceHasRight(blog, publishBlogPostResourceRight, session);
   const hasSubmitRight = resourceHasRight(blog, submitBlogPostResourceRight, session);
   const hasCreateRight = resourceHasRight(blog, createBlogPostResourceRight, session);
@@ -42,21 +43,21 @@ export const getBlogPostRight = (blog: IBlog, session: IUserSession) => {
   } else return undefined;
 };
 
-export const hasPermissionManager = (blog: IBlog, session: IUserSession) => {
+export const hasPermissionManager = (blog: Blog, session: ISession) => {
   return blog && (blog.author.userId === session.user.id || resourceHasRight(blog, deleteBlogResourceRight, session));
 };
 
-export const getBlogWorkflowInformation = (session: IUserSession) => ({
+export const getBlogWorkflowInformation = (session: ISession) => ({
   blog: {
-    list: session.user.authorizedActions.some(a => a.name === listBlogsResourceRight),
-    print: session.user.authorizedActions.some(a => a.name === printBlogResourceRight),
-    view: session.user.authorizedActions.some(a => a.name === viewBlogResourceRight),
-    create: session.user.authorizedActions.some(a => a.name === createBlogResourceRight),
-    createPublic: session.user.authorizedActions.some(a => a.name === createPublicBlogResourceRight),
-    publish: session.user.authorizedActions.some(a => a.name === publishBlogResourceRight),
+    list: session.authorizedActions.some(a => a.name === listBlogsResourceRight),
+    print: session.authorizedActions.some(a => a.name === printBlogResourceRight),
+    view: session.authorizedActions.some(a => a.name === viewBlogResourceRight),
+    create: session.authorizedActions.some(a => a.name === createBlogResourceRight),
+    createPublic: session.authorizedActions.some(a => a.name === createPublicBlogResourceRight),
+    publish: session.authorizedActions.some(a => a.name === publishBlogResourceRight),
   },
   folder: {
-    add: session.user.authorizedActions.some(a => a.name === addBlogFolderResourceRight),
+    add: session.authorizedActions.some(a => a.name === addBlogFolderResourceRight),
   },
 });
 
@@ -65,9 +66,10 @@ export default () =>
     const wk = getBlogWorkflowInformation(session);
     return (
       wk.blog.create && {
-        icon: 'bullhorn',
-        i18n: 'blog.resourceName',
-        goTo: { routeName: 'timeline/blog/select' },
+        title: I18n.t('blog.resourceName'),
+        action: () => {
+          navigate(blogRouteNames.home);
+        },
       }
     );
   });

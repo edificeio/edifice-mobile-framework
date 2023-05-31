@@ -78,8 +78,9 @@ export default combineReducers({
 
 export const getIsDateValid = (config: IConfig, date: Moment, time: Moment): boolean => {
   const { openingDays, exclusions, openingTime } = config.settings;
-  const weekday = getDayOfTheWeek(date);
   const allowedWeekDays = Object.keys(openingDays).filter(day => openingDays[day]);
+  const weekday = getDayOfTheWeek(date.clone());
+
   if (!allowedWeekDays.includes(weekday)) return false;
   for (const exclusion of exclusions) {
     if (date.isSameOrAfter(exclusion.start, 'day') && date.isSameOrBefore(exclusion.end, 'day')) return false;

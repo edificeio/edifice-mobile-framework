@@ -27,3 +27,8 @@ function FlatList<ItemT>(props: FlatListProps<ItemT>, ref) {
 }
 FlatList.scrollIndicatorInsets = { right: 0.001 };
 export default React.forwardRef(FlatList);
+
+export function ScrollToTopHandler({ listRef }: { listRef: React.RefObject<RNFlatList<any>> }) {
+  useScrollToTop(listRef);
+  return null;
+}

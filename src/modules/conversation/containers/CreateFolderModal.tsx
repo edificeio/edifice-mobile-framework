@@ -1,20 +1,34 @@
 import I18n from 'i18n-js';
 import React from 'react';
-import { View, ViewStyle } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
-import Toast from 'react-native-tiny-toast';
+import { StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText } from '~/framework/components/text';
-import { postFolderAction } from '~/modules/conversation/actions/folders';
-import { fetchInitAction } from '~/modules/conversation/actions/initMails';
+import Toast from '~/framework/components/toast';
+import { postFolderAction } from '~/framework/modules/conversation/actions/folders';
+import { fetchInitAction } from '~/framework/modules/conversation/actions/initMails';
 import { DialogButtonCancel, DialogButtonOk } from '~/ui/ConfirmDialog';
 import { ModalBox, ModalContent, ModalContentBlock } from '~/ui/Modal';
 
-class CreateFolderModal extends React.PureComponent<any, any> {
+export type ConversationCreateFolderModalEventProps = {
+  createFolder: (name: string, parentId?: string) => void;
+  fetchInit: () => void;
+  onClose: () => void;
+};
+export type ConversationCreateFolderModalDataProps = {
+  show: boolean;
+};
+export type ConversationCreateFolderModalProps = ConversationCreateFolderModalEventProps & ConversationCreateFolderModalDataProps;
+
+interface ConversationCreateFolderModalState {
+  name: string;
+}
+
+class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModalProps, ConversationCreateFolderModalState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,9 +37,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
   }
 
   onNameChange = newName => {
-    this.setState({
-      name: newName,
-    });
+    this.setState({ name: newName });
   };
 
   onConfirm = async () => {
@@ -35,21 +47,11 @@ class CreateFolderModal extends React.PureComponent<any, any> {
       await createFolder(name);
       fetchInit();
       onClose();
-      Toast.show(I18n.t('conversation.createDirectoryConfirm'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showInfo(I18n.t('conversation.createDirectoryConfirm'));
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
       onClose();
-      Toast.show(I18n.t(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
+      Toast.showError(I18n.t(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'));
     } finally {
       this.setState({ name: '' });
     }
@@ -57,17 +59,24 @@ class CreateFolderModal extends React.PureComponent<any, any> {
 
   public render() {
     const { name } = this.state;
-    const { show } = this.props;
+    const { show, onClose } = this.props;
     const textInputStyle = {
       color: theme.ui.text.regular,
     } as ViewStyle;
+    //FIXME: create/move to styles.ts
+    const styles = StyleSheet.create({
+      inputContainer: { width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium },
+      modalContent: { width: 350 },
+      modalContentBlock: { flexDirection: 'row' },
+    });
+    // Ignore ModalBox lint errors
     return (
       <ModalBox isVisible={show} backdropOpacity={0.5}>
-        <ModalContent style={{ width: 350 }}>
+        <ModalContent style={styles.modalContent}>
           <ModalContentBlock>
             <SmallBoldText>{I18n.t('conversation.createDirectory')}</SmallBoldText>
           </ModalContentBlock>
-          <View style={{ width: '100%', marginBottom: UI_SIZES.spacing.big, paddingHorizontal: UI_SIZES.spacing.medium }}>
+          <View style={styles.inputContainer}>
             <TextInput
               autoFocus
               value={name}
@@ -77,9 +86,9 @@ class CreateFolderModal extends React.PureComponent<any, any> {
               style={textInputStyle}
             />
           </View>
-          <ModalContentBlock style={{ flexDirection: 'row' }}>
-            <DialogButtonCancel onPress={this.props.onClose} />
-            <DialogButtonOk disabled={!this.state.name} label={I18n.t('conversation.create')} onPress={this.onConfirm} />
+          <ModalContentBlock style={styles.modalContentBlock}>
+            <DialogButtonCancel onPress={onClose} />
+            <DialogButtonOk disabled={!name} label={I18n.t('conversation.create')} onPress={this.onConfirm} />
           </ModalContentBlock>
         </ModalContent>
       </ModalBox>
@@ -87,7 +96,7 @@ class CreateFolderModal extends React.PureComponent<any, any> {
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: IGlobalState) => {
   return {};
 };
 

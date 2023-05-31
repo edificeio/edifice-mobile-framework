@@ -1,29 +1,26 @@
-import { decode } from 'html-entities';
+import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
-import { Alert, AlertButton, Keyboard, Platform, View } from 'react-native';
+import { Alert, AlertButton, Keyboard, Platform, StyleSheet } from 'react-native';
 import { Asset } from 'react-native-image-picker';
-import Toast from 'react-native-tiny-toast';
-import { NavigationInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_ANIMATIONS } from '~/framework/components/constants';
-import { HeaderAction, HeaderIcon } from '~/framework/components/header';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { DocumentPicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
+import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
-import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
-import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
-import { tryAction } from '~/framework/util/redux/actions';
-import { IUserSession, getUserSession } from '~/framework/util/session';
-import { Trackers } from '~/framework/util/tracker';
-import withViewTracking from '~/framework/util/tracker/withViewTracking';
-import { pickFileError } from '~/infra/actions/pickFile';
-import { deleteMailsAction, trashMailsAction } from '~/modules/conversation/actions/mail';
-import { clearMailContentAction, fetchMailContentAction } from '~/modules/conversation/actions/mailContent';
+import Toast from '~/framework/components/toast';
+import { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { deleteMailsAction, trashMailsAction } from '~/framework/modules/conversation/actions/mail';
+import { clearMailContentAction, fetchMailContentAction } from '~/framework/modules/conversation/actions/mailContent';
 import {
   addAttachmentAction,
   deleteAttachmentAction,
@@ -31,12 +28,23 @@ import {
   makeDraftMailAction,
   sendMailAction,
   updateDraftMailAction,
-} from '~/modules/conversation/actions/newMail';
-import { fetchVisiblesAction } from '~/modules/conversation/actions/visibles';
-import NewMailComponent from '~/modules/conversation/components/NewMail';
-import moduleConfig from '~/modules/conversation/moduleConfig';
-import { ISearchUsers } from '~/modules/conversation/service/newMail';
-import { IMail, getMailContentState } from '~/modules/conversation/state/mailContent';
+} from '~/framework/modules/conversation/actions/newMail';
+import { fetchVisiblesAction } from '~/framework/modules/conversation/actions/visibles';
+import NewMailComponent from '~/framework/modules/conversation/components/NewMail';
+import moduleConfig from '~/framework/modules/conversation/module-config';
+import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation';
+import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
+import { IMail, getMailContentState } from '~/framework/modules/conversation/state/mailContent';
+import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { Trackers } from '~/framework/util/tracker';
+import { pickFileError } from '~/infra/actions/pickFile';
+
+const styles = StyleSheet.create({
+  title: { width: undefined },
+});
 
 export enum DraftType {
   NEW,
@@ -46,11 +54,29 @@ export enum DraftType {
   FORWARD,
 }
 
-interface ICreateMailEventProps {
+type NewMail = {
+  to: ISearchUsers;
+  cc: ISearchUsers;
+  cci: ISearchUsers;
+  subject: string;
+  body: string;
+  attachments: Omit<IDistantFile, 'url'>[];
+};
+
+export interface ConversationNewMailScreenNavigationParams {
+  addGivenAttachment?: (file: Asset | DocumentPicked, sourceType: string) => void;
+  currentFolder?: string;
+  getGoBack?: () => void;
+  getSendDraft?: () => void;
+  mailId?: string;
+  type: DraftType;
+}
+
+interface ConversationNewMailScreenEventProps {
   setup: () => void;
   sendMail: (mailDatas: object, draftId: string | undefined, inReplyTo: string) => void;
   forwardMail: (draftId: string, inReplyTo: string) => void;
-  makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => Promise<void>;
+  makeDraft: (mailDatas: object, inReplyTo: string, isForward: boolean) => Promise<string>;
   updateDraft: (mailId: string, mailDatas: object) => void;
   trashMessage: (mailId: string[]) => void;
   deleteMessage: (mailId: string[]) => void;
@@ -61,15 +87,17 @@ interface ICreateMailEventProps {
   clearContent: () => void;
 }
 
-interface ICreateMailOtherProps {
+interface ConversationNewMailScreenDataProps {
   isFetching: boolean;
   mail: IMail;
-  session: IUserSession;
+  session: ISession;
 }
 
-type NewMailContainerProps = ICreateMailEventProps & ICreateMailOtherProps & NavigationInjectedProps;
+export type ConversationNewMailScreenProps = ConversationNewMailScreenEventProps &
+  ConversationNewMailScreenDataProps &
+  NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.newMail>;
 
-interface ICreateMailState {
+interface ConversationNewMailScreenState {
   id?: string;
   mail: NewMail;
   tempAttachment?: any;
@@ -77,18 +105,32 @@ interface ICreateMailState {
   prevBody?: string;
   replyTo?: string;
   webDraftWarning: boolean;
+  isSending: boolean;
 }
 
-type NewMail = {
-  to: ISearchUsers;
-  cc: ISearchUsers;
-  cci: ISearchUsers;
-  subject: string;
-  body: string;
-  attachments: IDistantFile[];
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<ConversationNavigationParams, typeof conversationRouteNames.newMail>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+    title: I18n.t('conversation.newMessage'),
+    titleStyle: styles.title,
+  }),
+});
+
+const HandleBack = (props: { isSending: boolean; onBack: (a: () => void) => any }) => {
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  UNSTABLE_usePreventRemove(!props.isSending, ({ data }) => {
+    props.onBack?.(() => {
+      handleRemoveConfirmNavigationEvent(data.action, navigation);
+    });
+  });
+  return null;
 };
 
-class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreateMailState> {
+class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, ConversationNewMailScreenState> {
   constructor(props) {
     super(props);
 
@@ -96,54 +138,84 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       mail: { to: [], cc: [], cci: [], subject: '', body: '', attachments: [] },
       prevBody: '',
       webDraftWarning: false,
+      isSending: false,
     };
   }
 
   componentDidMount = () => {
-    this.props.navigation.setParams(this.navigationHeaderFunction);
-    if (this.props.navigation.getParam('mailId') !== undefined) {
+    const { fetchMailContent, route, navigation, clearContent, setup } = this.props;
+    const { id } = this.state;
+    const draftType = route.params.type;
+    const mailId = route.params.mailId;
+    navigation.setParams(this.navigationHeaderFunction);
+    if (mailId) {
       this.setState({ isPrefilling: true });
-      this.props.fetchMailContent(this.props.navigation.getParam('mailId'));
-    }
-    const draftType = this.props.navigation.getParam('type');
-    if (draftType === DraftType.REPLY) {
-      /* empty */
-    }
-    if (draftType === DraftType.REPLY_ALL) {
-      /* empty */
+      fetchMailContent(mailId);
     }
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
     }
-    this.props.clearContent();
-    this.props.setup();
-    if (
-      this.props.navigation.getParam('mailId') !== undefined &&
-      this.state.id === undefined &&
-      this.props.navigation.getParam('type') === DraftType.DRAFT
-    ) {
-      this.setState({ id: this.props.navigation.getParam('mailId') });
+    clearContent();
+    setup();
+    if (mailId && !id && draftType === DraftType.DRAFT) {
+      this.setState({ id: mailId });
     }
   };
 
-  componentDidUpdate = async (prevProps: NewMailContainerProps, prevState) => {
-    if (prevProps.mail !== this.props.mail) {
+  componentDidUpdate = async (prevProps: ConversationNewMailScreenProps) => {
+    const { mail, navigation, route } = this.props;
+    const { id, isSending, webDraftWarning } = this.state;
+    const draftType = route.params.type;
+    const isSavedDraft = draftType === DraftType.DRAFT;
+    const addGivenAttachment = this.navigationHeaderFunction.addGivenAttachment;
+    const sendDraft = this.navigationHeaderFunction.getSendDraft;
+
+    navigation.setOptions({
+      headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'), styles.title),
+      // React Navigation 6 uses this syntax to setup nav options
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <NavBarActionsGroup
+          elements={[
+            {
+              ...(addGivenAttachment ? (
+                <PopupMenu
+                  actions={[
+                    cameraAction({ callback: addGivenAttachment }),
+                    galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
+                    documentAction({ callback: addGivenAttachment }),
+                  ]}>
+                  <NavBarAction icon="ui-attachment" />
+                </PopupMenu>
+              ) : null),
+            },
+            {
+              ...(sendDraft ? (
+                isSending ? (
+                  <LoadingIndicator small customColor={theme.ui.text.inverse} />
+                ) : (
+                  <NavBarAction onPress={sendDraft} icon="ui-send" />
+                )
+              ) : null),
+            },
+          ]}
+        />
+      ),
+    });
+
+    if (prevProps.mail !== mail) {
       const prefilledMailRet = this.getPrefilledMail();
       if (!prefilledMailRet) return;
-      const { mail, ...rest } = prefilledMailRet;
-      if (!mail) return;
+      const { mail: prefilledMail, ...rest } = prefilledMailRet;
+      if (!prefilledMail) return;
       this.setState(prevState => ({
         ...prevState,
         ...rest,
-        mail: { ...prevState.mail, ...(mail as IMail) },
+        mail: { ...prevState.mail, ...(prefilledMail as IMail) },
         isPrefilling: false,
       }));
-    } else if (
-      this.props.navigation.getParam('mailId') !== undefined &&
-      this.state.id === undefined &&
-      this.props.navigation.getParam('type') === DraftType.DRAFT
-    )
-      if (this.props.navigation.getParam('type', DraftType.NEW) === DraftType.DRAFT && !this.state.webDraftWarning) {
+    } else if (route.params.mailId && !id && route.params.type === DraftType.DRAFT)
+      if ((route.params.type ?? DraftType.NEW) === DraftType.DRAFT && !webDraftWarning) {
         // Check if html tags are present in body
         const removeWrapper = (text: string) => {
           return text.replace(/^<div class="ng-scope mobile-application-wrapper">(.*)/, '$1').replace(/(.*)<\/div>$/, '$1');
@@ -151,7 +223,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         let checkBody = removeWrapper(this.props.mail.body);
         checkBody = checkBody.split('<hr class="ng-scope">')[0];
         checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
-        if (/<(\"[^\"]*\"|'[^']*'|[^'\">])*>/.test(checkBody)) {
+        if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(checkBody)) {
           this.setState({ webDraftWarning: true });
           Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
             {
@@ -173,6 +245,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
 
   navigationHeaderFunction = {
     addGivenAttachment: async (file: Asset | DocumentPicked, sourceType: string) => {
+      const { onPickFileError } = this.props;
       const actionName =
         'Rédaction mail - Insérer - Pièce jointe - ' +
         ({
@@ -184,34 +257,25 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         await this.getAttachmentData(new LocalFile(file, { _needIOSReleaseSecureAccess: false }));
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Succès');
       } catch {
-        this.props.onPickFileError('conversation');
+        onPickFileError('conversation');
         Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', actionName + ' - Échec');
       }
     },
     getSendDraft: async () => {
-      if (this.state.mail.to.length === 0) {
+      const { mail, tempAttachment } = this.state;
+      if (mail.to.length === 0) {
         Keyboard.dismiss();
-        Toast.show(I18n.t('conversation.missingReceiver'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showError(I18n.t('conversation.missingReceiver'));
         return;
-      } else if (this.state.tempAttachment && this.state.tempAttachment !== null) {
+      } else if (tempAttachment && tempAttachment !== null) {
         Keyboard.dismiss();
-        Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showInfo(I18n.t('conversation.sendAttachmentProgress'));
         return;
-      } else if (!this.state.mail.body || !this.state.mail.subject) {
+      } else if (!mail.body || !mail.subject) {
         Keyboard.dismiss();
         Alert.alert(
-          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Title`),
-          I18n.t(`conversation.missing${!this.state.mail.body ? 'Body' : 'Subject'}Message`),
+          I18n.t(`conversation.missing${!mail.body ? 'Body' : 'Subject'}Title`),
+          I18n.t(`conversation.missing${!mail.body ? 'Body' : 'Subject'}Message`),
           [
             {
               text: I18n.t('common.send'),
@@ -236,40 +300,28 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           await deleteMessage([id]);
           navigation.goBack();
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Succès');
-          Toast.show(I18n.t('conversation.messageDeleted'), {
-            position: Toast.position.BOTTOM,
-            mask: false,
-            containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-            ...UI_ANIMATIONS.toast,
-          });
+          Toast.showSuccess(I18n.t('conversation.messageDeleted'));
         } catch {
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
         }
       }
       navigation.goBack();
     },
-    getGoBack: async () => {
-      const { navigation, trashMessage, deleteMessage } = this.props;
+    getGoBack: async backAction => {
+      const { trashMessage, deleteMessage, route } = this.props;
       const { tempAttachment, mail, id } = this.state;
       const { to, cc, cci, subject, body, attachments } = mail;
-      const mailId = navigation.getParam('mailId');
-      const draftType = navigation.getParam('type');
+      const mailId = route.params.mailId;
+      const draftType = route.params.type;
       const isNewDraft = draftType === DraftType.NEW;
       const isSavedDraft = draftType === DraftType.DRAFT;
-      const navParams = navigation.state;
-      const onGoBack = navParams.params && navParams.params.onGoBack;
       const isUploadingAttachment = tempAttachment && tempAttachment !== null;
       const isDraftEmpty =
         to.length === 0 && cc.length === 0 && cci.length === 0 && subject === '' && body === '' && attachments.length === 0;
 
       if (isUploadingAttachment) {
         Keyboard.dismiss();
-        Toast.show(I18n.t('conversation.sendAttachmentProgress'), {
-          position: Toast.position.BOTTOM,
-          mask: false,
-          containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-          ...UI_ANIMATIONS.toast,
-        });
+        Toast.showInfo(I18n.t('conversation.sendAttachmentProgress'));
       } else if (!isDraftEmpty) {
         const textToDisplay = {
           title: 'conversation.saveDraftTitle',
@@ -286,7 +338,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                         await trashMessage([id]);
                         await deleteMessage([id]);
                       }
-                      onGoBack && onGoBack();
                       Trackers.trackEventOfModule(
                         moduleConfig,
                         'Ecrire un mail',
@@ -299,7 +350,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                         'Rédaction mail - Sortir - Supprimer le brouillon - Échec',
                       );
                     }
-                    navigation.goBack();
+                    backAction();
                   },
                   style: 'destructive',
                 },
@@ -313,7 +364,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                   await trashMessage([id]);
                   await deleteMessage([id]);
                 }
-                onGoBack && onGoBack();
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -321,7 +371,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                     ? 'Rédaction mail - Sortir - Annuler les modifications - Succès'
                     : 'Rédaction mail - Sortir - Abandonner le brouillon - Succès',
                 );
-              } catch (err) {
+              } catch {
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -330,7 +380,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                     : 'Rédaction mail - Sortir - Abandonner le brouillon - Échec',
                 );
               }
-              navigation.goBack();
+              backAction();
             },
             style: isSavedDraft ? 'default' : 'destructive',
           },
@@ -339,7 +389,6 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
             onPress: async () => {
               try {
                 await this.saveDraft();
-                onGoBack && onGoBack();
                 Trackers.trackEventOfModule(
                   moduleConfig,
                   'Ecrire un mail',
@@ -352,7 +401,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
                   'Rédaction mail - Sortir - Sauvegarder le brouillon - Échec',
                 );
               }
-              navigation.goBack();
+              backAction();
             },
             style: 'default',
           },
@@ -372,36 +421,26 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         } else if (isSavedDraft) {
           await this.saveDraft();
         }
-        onGoBack && onGoBack();
-        navigation.goBack();
+        backAction();
       }
     },
   };
 
   getPrefilledMail = () => {
-    if (!this.props.mail || (this.props.mail as unknown as []).length === 0) return undefined;
-    const draftType = this.props.navigation.getParam('type', DraftType.NEW);
-    const getDisplayName = id => this.props.mail.displayNames.find(([userId]) => userId === id)?.[1];
-    const getUser = id => ({ id, displayName: getDisplayName(id) });
-
-    const deleteHtmlContent = function (text) {
-      const regexp = /<(\S+)[^>]*>(.*)<\/\1>/gs;
-
-      if (regexp.test(text)) {
-        return deleteHtmlContent(text.replace(regexp, '$2'));
-      } else {
-        return decode(text);
-      }
-    };
+    const { mail, route, session } = this.props;
+    if (!mail || (mail as unknown as []).length === 0) return undefined;
+    const draftType = route.params.type ?? DraftType.NEW;
+    const getDisplayName = (id: string) => mail.displayNames.find(([userId]) => userId === id)?.[1];
+    const getUser = (id: string) => ({ id, displayName: getDisplayName(id) });
 
     const getPrevBody = () => {
       const getUserArrayToString = users => users.map(getDisplayName).join(', ');
 
-      const from = getDisplayName(this.props.mail.from);
-      const date = moment(this.props.mail.date).format('DD/MM/YYYY HH:mm');
-      const subject = this.props.mail.subject;
+      const from = getDisplayName(mail.from);
+      const date = moment(mail.date).format('DD/MM/YYYY HH:mm');
+      const subject = mail.subject;
 
-      const to = getUserArrayToString(this.props.mail.to);
+      const to = getUserArrayToString(mail.to);
 
       let header =
         '<br>' +
@@ -430,8 +469,8 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
         to +
         '</em>';
 
-      if (this.props.mail.cc?.length > 0) {
-        const cc = getUserArrayToString(this.props.mail.cc);
+      if (mail.cc?.length > 0) {
+        const cc = getUserArrayToString(mail.cc);
 
         header += `<br><span class="medium-importance" translate="" key="transfer.cc">
         <span class="no-style ng-scope">Copie à : </span>
@@ -441,7 +480,7 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
       header +=
         '</p><blockquote class="ng-scope">' +
         '<p class="ng-scope" style="font-size: 24px; line-height: 24px;">' +
-        this.props.mail.body +
+        mail.body +
         '</p>';
 
       return header;
@@ -450,14 +489,11 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     switch (draftType) {
       case DraftType.REPLY: {
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            to:
-              this.props.navigation.getParam('currentFolder') === 'sendMessages'
-                ? this.props.mail.to.map(getUser)
-                : [this.props.mail.from].map(getUser),
-            subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
+            to: route.params.currentFolder === 'sendMessages' ? mail.to.map(getUser) : [mail.from].map(getUser),
+            subject: I18n.t('conversation.replySubject') + mail.subject,
           },
         };
       }
@@ -466,13 +502,13 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           id: any;
           displayName: any;
         }[];
-        if (this.props.navigation.getParam('currentFolder') === 'sendMessages') {
-          to.push(...this.props.mail.to.map(getUser));
+        if (route.params.currentFolder === 'sendMessages') {
+          to.push(...mail.to.map(getUser));
         } else {
-          to.push(getUser(this.props.mail.from));
+          to.push(getUser(mail.from));
           let i = 0;
-          for (const user of this.props.mail.to) {
-            if (user !== this.props.session.user.id && this.props.mail.to.indexOf(user) === i) {
+          for (const user of mail.to) {
+            if (user !== session?.user?.id && mail.to.indexOf(user) === i) {
               to.push(getUser(user));
             }
             ++i;
@@ -482,55 +518,54 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
           id: any;
           displayName: any;
         }[];
-        for (const id of this.props.mail.cc) {
-          if (id !== this.props.mail.from) cc.push(getUser(id));
+        for (const id of mail.cc) {
+          if (id !== mail.from) cc.push(getUser(id));
         }
         const cci = [] as {
           id: any;
           displayName: any;
         }[];
-        for (const id of this.props.mail.cci) {
-          if (id !== this.props.mail.from) cci.push(getUser(id));
+        for (const id of mail.cci) {
+          if (id !== mail.from) cci.push(getUser(id));
         }
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
             to,
             cc,
             cci,
-            subject: I18n.t('conversation.replySubject') + this.props.mail.subject,
+            subject: I18n.t('conversation.replySubject') + mail.subject,
           },
         };
       }
       case DraftType.FORWARD: {
         return {
-          replyTo: this.props.mail.id,
+          replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            subject: I18n.t('conversation.forwardSubject') + this.props.mail.subject,
+            subject: I18n.t('conversation.forwardSubject') + mail.subject,
             body: '',
-            attachments: this.props.mail.attachments,
+            attachments: mail.attachments,
           },
         };
       }
       case DraftType.DRAFT: {
         let prevbody = '';
-        if (this.props.mail.body?.length > 0) {
-          prevbody +=
-            '<hr class="ng-scope">' + this.props.mail.body.split('<hr class="ng-scope">').slice(1).join('<hr class="ng-scope">');
+        if (mail.body?.length > 0) {
+          prevbody += '<hr class="ng-scope">' + mail.body.split('<hr class="ng-scope">').slice(1).join('<hr class="ng-scope">');
         }
-        const current_body = this.props.mail.body.split('<hr class="ng-scope">')[0];
+        const currentBody = mail.body.split('<hr class="ng-scope">')[0];
 
         return {
           prevBody: prevbody,
           mail: {
-            to: this.props.mail.to.map(getUser),
-            cc: this.props.mail.cc.map(getUser),
-            cci: this.props.mail.cci.map(getUser),
-            subject: this.props.mail.subject,
-            body: current_body,
-            attachments: this.props.mail.attachments,
+            to: mail.to.map(getUser),
+            cc: mail.cc.map(getUser),
+            cci: mail.cci.map(getUser),
+            subject: mail.subject,
+            body: currentBody,
+            attachments: mail.attachments,
           },
         };
       }
@@ -569,51 +604,58 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
   };
 
   getAttachmentData = async (file: LocalFile) => {
+    const { addAttachment } = this.props;
     this.setState({ tempAttachment: file });
-
     try {
+      const mailId = await this.saveDraft();
+      const newAttachment = await addAttachment(mailId, file);
       await this.saveDraft();
-      const newAttachment = await this.props.addAttachment(this.state.id!, file);
       this.setState(prevState => ({
         mail: { ...prevState.mail, attachments: [...prevState.mail.attachments, newAttachment] },
         tempAttachment: null,
       }));
-    } catch (e) {
+    } catch (e: any) {
       Keyboard.dismiss();
-      Toast.show(
-        e.response.body === '{"error":"file.too.large"}' ? I18n.t('fullStorage') : I18n.t('conversation.attachmentError'),
-        {
-          position: Toast.position.BOTTOM,
-          ...UI_ANIMATIONS.toast,
-        },
-      );
+      // Full storage management
+      // statusCode = 400 on iOS and code = 'ENOENT' on Android
+      if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
+        Toast.showError(I18n.t('fullStorage'));
+      } else {
+        Toast.showError(I18n.t('conversation.attachmentError'));
+      }
       this.setState({ tempAttachment: null });
       throw e;
     }
   };
 
   forwardDraft = async () => {
+    const { forwardMail } = this.props;
+    const { id, replyTo } = this.state;
     try {
-      this.props.forwardMail(this.state.id, this.state.replyTo);
+      forwardMail(id, replyTo);
     } catch {
       // TODO: Manage error
     }
   };
 
   saveDraft = async () => {
-    const draftType = this.props.navigation.getParam('type');
+    const { mail, makeDraft, route, updateDraft } = this.props;
+    const { id } = this.state;
+    const draftType = route.params.type;
     const isSavedDraft = draftType === DraftType.DRAFT;
-    const mailId = this.props.navigation.getParam('mailId');
+    const mailId = route.params.mailId;
 
-    if (this.state.id === undefined || (!isSavedDraft && this.state.id === mailId)) {
-      const inReplyTo = this.props.mail.id;
-      const isForward = this.props.navigation.getParam('type') === DraftType.FORWARD;
-      const idDraft = await this.props.makeDraft(this.getMailData(), inReplyTo, isForward);
+    if (!id || (!isSavedDraft && id === mailId)) {
+      const inReplyTo = mail.id;
+      const isForward = route.params.type === DraftType.FORWARD;
+      const idDraft = await makeDraft(this.getMailData(), inReplyTo, isForward);
 
       this.setState({ id: idDraft });
       if (isForward) this.forwardDraft();
+      return idDraft;
     } else {
-      this.props.updateDraft(this.state.id, this.getMailData());
+      updateDraft(id, this.getMailData());
+      return id;
     }
   };
 
@@ -621,98 +663,57 @@ class NewMailContainer extends React.PureComponent<NewMailContainerProps, ICreat
     try {
       const { navigation, sendMail } = this.props;
       const { id, replyTo } = this.state;
-      const navParams = navigation.state;
 
-      sendMail(this.getMailData(), id, replyTo);
+      this.setState({ isSending: true });
       Keyboard.dismiss();
-      Toast.show(I18n.t('conversation.sendMail'), {
-        position: Toast.position.BOTTOM,
-        mask: false,
-        containerStyle: { width: '95%', backgroundColor: theme.palette.grey.black },
-        ...UI_ANIMATIONS.toast,
-      });
-
-      if (navParams.params && navParams.params.onGoBack) navParams.params.onGoBack();
-      navigation.goBack();
+      await sendMail(this.getMailData(), id, replyTo);
+      navigation.dispatch(CommonActions.goBack());
+      Toast.showSuccess(I18n.t('conversation.sendMail'));
     } catch {
+      Toast.showError(I18n.t('conversation-send-error'));
       // TODO: Manage error
+    } finally {
+      this.setState({ isSending: false });
     }
   };
 
-  navBarInfo = () => {
-    const { navigation } = this.props;
-    // const askForAttachment = navigation.getParam('getAskForAttachment');
-    const addGivenAttachment = navigation.getParam('addGivenAttachment');
-    const sendDraft = navigation.getParam('getSendDraft');
-    // const deleteDraft = navigation.getParam('getDeleteDraft');
-    const draftType = navigation.getParam('type');
-    const isSavedDraft = draftType === DraftType.DRAFT;
-    return {
-      title: I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'),
-      right: (
-        <View style={{ flexDirection: 'row' }}>
-          {addGivenAttachment && (
-            <View style={{ width: 48, alignItems: 'center' }}>
-              <PopupMenu
-                actions={[
-                  cameraAction({ callback: addGivenAttachment }),
-                  galleryAction({ callback: addGivenAttachment, multiple: true, synchrone: true }),
-                  documentAction({ callback: addGivenAttachment }),
-                ]}>
-                <HeaderIcon name="attachment" />
-              </PopupMenu>
-            </View>
-          )}
-          {sendDraft && <HeaderAction style={{ width: 48, alignItems: 'center' }} onPress={sendDraft} iconName="outbox" />}
-          {/* {deleteDraft && isSavedDraft && (
-            <HeaderAction style={{ width: 40, alignItems: 'center' }} onPress={deleteDraft} iconName="delete" />
-          )} */}
-        </View>
-      ),
-    };
-  };
-
   public render() {
-    const { navigation } = this.props;
-    const { isPrefilling, mail } = this.state;
-    const draftType = navigation.getParam('type');
+    const { deleteAttachment, isFetching, route } = this.props;
+    const { id, isPrefilling, isSending, mail, tempAttachment, prevBody } = this.state;
+    const draftType = route.params.type;
     const isReplyDraft = draftType === DraftType.REPLY || draftType === DraftType.REPLY_ALL; // true: body.
     const { attachments, body, ...headers } = mail;
-
     return (
-      <PageView
-        navigation={navigation}
-        navBarWithBack={this.navBarInfo()}
-        onBack={() => {
-          navigation.getParam('getGoBack', navigation.goBack)();
-        }}
-        style={{ backgroundColor: theme.ui.background.card }}>
-        <NewMailComponent
-          isFetching={this.props.isFetching || !!isPrefilling}
-          headers={headers}
-          onDraftSave={this.saveDraft}
-          onHeaderChange={headers => this.setState(prevState => ({ mail: { ...prevState.mail, ...headers } }))}
-          body={this.state.mail.body.replace(/<br>/gs, '\n')}
-          onBodyChange={body => this.setState(prevState => ({ mail: { ...prevState.mail, body } }))}
-          attachments={
-            this.state.tempAttachment ? [...this.state.mail.attachments, this.state.tempAttachment] : this.state.mail.attachments
-          }
-          onAttachmentChange={attachments => this.setState(prevState => ({ mail: { ...prevState.mail, attachments } }))}
-          onAttachmentDelete={attachmentId => this.props.deleteAttachment(this.state.id, attachmentId)}
-          prevBody={this.state.prevBody}
-          isReplyDraft={isReplyDraft}
-        />
-      </PageView>
+      <>
+        <HandleBack isSending={isSending} onBack={this.navigationHeaderFunction.getGoBack} />
+        <PageView style={{ backgroundColor: theme.ui.background.card }}>
+          <NewMailComponent
+            isFetching={isFetching || !!isPrefilling}
+            headers={headers}
+            onDraftSave={this.saveDraft}
+            onHeaderChange={changedHeaders => this.setState(prevState => ({ mail: { ...prevState.mail, ...changedHeaders } }))}
+            body={mail.body.replace(/<br>/gs, '\n')}
+            onBodyChange={changedBody => this.setState(prevState => ({ mail: { ...prevState.mail, body: changedBody } }))}
+            attachments={tempAttachment ? [...mail.attachments, tempAttachment] : mail.attachments}
+            onAttachmentChange={changedAttachments =>
+              this.setState(prevState => ({ mail: { ...prevState.mail, attachments: changedAttachments } }))
+            }
+            onAttachmentDelete={attachmentId => deleteAttachment(id, attachmentId)}
+            prevBody={prevBody}
+            isReplyDraft={isReplyDraft}
+          />
+        </PageView>
+      </>
     );
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: IGlobalState) => {
   const { isFetching, data } = getMailContentState(state);
   return {
     mail: data,
     isFetching,
-    session: getUserSession(),
+    session: getSession(),
   };
 };
 
@@ -720,7 +721,7 @@ const mapDispatchToProps = (dispatch: any) => {
   return bindActionCreators(
     {
       setup: fetchVisiblesAction,
-      sendMail: tryAction(sendMailAction, [moduleConfig, 'Envoyer un mail', `Rédaction mail - Envoyer`]),
+      sendMail: sendMailAction,
       forwardMail: forwardMailAction,
       makeDraft: makeDraftMailAction,
       updateDraft: updateDraftMailAction,
@@ -736,6 +737,4 @@ const mapDispatchToProps = (dispatch: any) => {
   );
 };
 
-const NewMailContainerConnected = connect(mapStateToProps, mapDispatchToProps)(NewMailContainer);
-
-export default withViewTracking([moduleConfig.trackingName.toLowerCase(), 'editor'])(NewMailContainerConnected);
+export default connect(mapStateToProps, mapDispatchToProps)(NewMailScreen);
