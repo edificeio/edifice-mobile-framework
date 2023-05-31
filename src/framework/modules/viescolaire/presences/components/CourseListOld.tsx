@@ -84,14 +84,11 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
   }
 
   private getCurrentCourseIndex(courses: ICourse[]): number {
-    let index = 0;
     const now = moment();
+    let index = courses.findIndex(course => course.startDate.clone().subtract(15, 'minutes').isAfter(now)) - 1;
 
-    for (const course of courses) {
-      if (course.startDate.clone().subtract(15, 'minutes').isAfter(now)) return index;
-      index += 1;
-    }
-    return index;
+    if (index === -2) index = courses.length - 1;
+    return Math.max(index, 0);
   }
 
   public render() {
