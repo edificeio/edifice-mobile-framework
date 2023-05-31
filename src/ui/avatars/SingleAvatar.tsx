@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Avatar, Size, Status } from './Avatar';
+import Avatar, { Size, Status } from './Avatar';
 
 export interface IAvatarsState {
   size?: {

@@ -7,10 +7,9 @@ import { ActivityIndicator, View } from 'react-native';
 import theme from '~/app/theme';
 import styles from '~/framework/components/buttons/line/styles';
 import { UI_SIZES } from '~/framework/components/constants';
+import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-
-import { NamedSVG } from '../../picture';
 
 export const ContainerView = styled.View({
   alignItems: 'center',
@@ -101,6 +100,7 @@ export const ButtonLineGroup = ({
           first={allowFirst && (childrenAsArray.length > 1 || !allowAlone) && index === 0}
           last={allowLast && (childrenAsArray.length > 1 || !allowAlone) && index === childrenAsArray.length - 1}
           alone={allowAlone && childrenAsArray.length === 1}
+          key={(node as React.ReactElement).key}
         />
       );
     } else return node;

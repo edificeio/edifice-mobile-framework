@@ -2,14 +2,13 @@ import { Picker } from '@react-native-picker/picker';
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { useState } from 'react';
-import { Platform, StyleSheet, View, ViewStyle } from 'react-native';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText } from '~/framework/components/text';
 import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
-import { Icon } from '~/ui/icons/Icon';
 
 import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from './Modal';
 
@@ -88,12 +87,12 @@ const DropdownIOS = ({ keyId, title, renderItem, keyExtractor, style, data, plac
 
   return (
     <View style={styles.fullView}>
-      <TouchableWithoutFeedback style={[selectedStyle, styles.dropdownButton, style]} onPress={() => toggleModal(true)}>
+      <TouchableOpacity style={[selectedStyle, styles.dropdownButton, style]} onPress={() => toggleModal(true)}>
         <SmallBoldText style={styles.fullView} numberOfLines={1}>
           {placeholder ? placeholder : value ? getItemRenderer(data.find(item => getItemKeyExtractor(item) === value)) : ' '}
         </SmallBoldText>
         <Icon size={20} name="arrow_down" />
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
       <ModalBox isVisible={visible} onDismiss={() => toggleModal(false)}>
         <ModalContent style={styles.modalContent}>
           {!!title && (
@@ -102,7 +101,7 @@ const DropdownIOS = ({ keyId, title, renderItem, keyExtractor, style, data, plac
             </ModalContentBlock>
           )}
           <View style={styles.dropdownPicker}>
-            <Picker selectedValue={selected} onValueChange={(value, label) => selectValue(value as string)}>
+            <Picker selectedValue={selected} onValueChange={(v, label) => selectValue(v as string)}>
               {data.map(item => (
                 <Picker.Item label={getItemRenderer(item)} value={getItemKeyExtractor(item)} />
               ))}

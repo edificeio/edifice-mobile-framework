@@ -3,17 +3,14 @@
  * Everything for managing and declaring modules
  */
 import I18n from 'i18n-js';
+import React from 'react';
 import { ColorValue } from 'react-native';
-import { NavigationComponent, NavigationRouteConfig } from 'react-navigation';
-import type { NavigationParams, NavigationRoute, NavigationRouteConfigMap } from 'react-navigation';
-import type { StackNavigationOptions, StackNavigationProp } from 'react-navigation-stack/lib/typescript/src/vendor/types';
 import type { Reducer } from 'redux';
 
-import { IGlobalState } from '~/AppStore';
+import { IGlobalState } from '~/app/store';
 import { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toSnakeCase } from '~/framework/util/string';
-import { createMainTabNavOption } from '~/navigation/helpers/mainTabNavigator';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -442,7 +439,7 @@ export interface INavigableModuleBase<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
-  Root extends NavigationComponent<any, any>,
+  Root extends React.ReactElement,
 > extends IModule<Name, ConfigType, State> {
   getRoot(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]): Root;
 }
@@ -450,7 +447,7 @@ export interface INavigableModule<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
-  Root extends NavigationComponent<any, any>,
+  Root extends React.ReactElement,
 > extends INavigableModuleBase<Name, ConfigType, State, Root> {
   // ToDo add Module methods here
 }
@@ -459,7 +456,7 @@ export interface INavigableModuleDeclaration<
   Name extends string,
   ConfigType extends IModuleConfig<Name, State>,
   State,
-  Root extends NavigationComponent<any, any>,
+  Root extends React.ReactElement,
 > extends INavigableModuleBase<Name, ConfigType, State, Root>,
     IModuleRedux<State> {}
 
@@ -467,7 +464,7 @@ export class NavigableModule<
     Name extends string,
     ConfigType extends INavigableModuleConfig<Name, State>,
     State,
-    Root extends NavigationComponent<any, any>,
+    Root extends React.ReactElement,
   >
   extends Module<Name, ConfigType, State>
   implements IModule<Name, ConfigType, State>
@@ -480,8 +477,6 @@ export class NavigableModule<
 
   #root?: Root;
 
-  #route?: NavigationRouteConfig<any, any>;
-
   constructor(moduleDeclaration: INavigableModuleDeclaration<Name, ConfigType, State, Root>) {
     const { getRoot } = moduleDeclaration;
     super(moduleDeclaration);
@@ -491,14 +486,13 @@ export class NavigableModule<
   handleInit(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
     super.handleInit(matchingApps, matchingWidgets);
     this.#root = this.getRoot(matchingApps, matchingWidgets);
-    this.#route = this.createModuleRoute(matchingApps, matchingWidgets);
     if (this.config.displayBadges) {
       updateAppBadges(this.config.displayBadges);
     }
   }
 
   get isReady() {
-    return super.isReady && !!this.#root && !!this.#route;
+    return super.isReady && !!this.#root;
   }
 
   get root() {
@@ -506,40 +500,13 @@ export class NavigableModule<
     return this.#root;
   }
 
-  get route() {
-    if (!this.#route) throw new Error(`Try to get route of non-initialized module '${this.config.name}'`);
-    return this.#route;
-  }
-
-  createModuleRoute(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
-    return {
-      screen: this.root,
-      navigationOptions: createMainTabNavOption(
-        I18n.t(this.config.displayI18n),
-        this.config.displayPicture,
-        this.config.displayPictureFocus,
-      ),
-    };
-  }
-
   get() {
     return super.get() as Required<NavigableModule<Name, ConfigType, State, Root>>;
   }
 }
 
-export type UnknownNavigableModule = NavigableModule<
-  string,
-  INavigableModuleConfig<string, unknown>,
-  unknown,
-  NavigationComponent<any, any>
->;
-export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, NavigationComponent<any, any>>;
-
-export type RouteMap = NavigationRouteConfigMap<
-  StackNavigationOptions,
-  StackNavigationProp<NavigationRoute<NavigationParams>, NavigationParams>,
-  unknown
->;
+export type UnknownNavigableModule = NavigableModule<string, INavigableModuleConfig<string, unknown>, unknown, React.ReactElement>;
+export type AnyNavigableModule = NavigableModule<string, INavigableModuleConfig<string, any>, any, React.ReactElement>;
 
 //  888b     d888               888          888                 d8888
 //  8888b   d8888               888          888                d88888
@@ -625,14 +592,6 @@ export class NavigableModuleArray<
         ),
       ),
     );
-  }
-
-  getRoutes() {
-    const routes = {} as { [k: string]: NavigationRouteConfig<any, any, unknown> };
-    for (const m of this) {
-      routes[m.config.routeName] = m.get().route;
-    }
-    return routes;
   }
 }
 
@@ -756,10 +715,3 @@ export const dynamiclyRegisterModules = <ModuleType extends AnyNavigableModule =
   });
   return modules; // Allow chaining
 };
-
-// Tab modules register ===========================================================================
-
-// ToDo : move this into the future Navigation Manager ?
-
-export const tabModules = new ModuleRegister<AnyNavigableModule>();
-setGlobalRegister('tabModule', tabModules);

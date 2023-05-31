@@ -18,14 +18,13 @@ export default StyleSheet.create({
     zIndex: 9999999,
   },
   overlayLandscape: {
-    height: 60,
+    height: 36,
   },
   overlayPortrait: {
-    height: 80,
+    height: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
   },
   page: {
     backgroundColor: theme.palette.grey.darkness,
-    //position: 'relative',
   },
   playerLandscape: {
     backgroundColor: theme.palette.grey.darkness,
@@ -34,9 +33,19 @@ export default StyleSheet.create({
   },
   playerPortrait: {
     backgroundColor: theme.palette.grey.darkness,
-    height: UI_SIZES.screen.height,
+    height: UI_SIZES.screen.height - UI_SIZES.screen.topInset - UI_SIZES.screen.bottomInset,
     marginBottom: UI_SIZES.screen.bottomInset,
     marginTop: UI_SIZES.screen.topInset,
     width: UI_SIZES.screen.width,
+  },
+  externalPlayerLandscape: { marginTop: 36 },
+  externalPlayerPortrait: {
+    marginTop: UI_SIZES.screen.topInset + UI_SIZES.elements.navbarHeight,
+    height: UI_SIZES.screen.height - UI_SIZES.screen.topInset - UI_SIZES.screen.bottomInset - UI_SIZES.elements.navbarHeight,
+  },
+  errorScreen: {
+    backgroundColor: 'transparent',
+    height: UI_SIZES.screen.height,
+    justifyContent: 'center',
   },
 });

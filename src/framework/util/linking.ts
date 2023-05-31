@@ -5,9 +5,8 @@
 import I18n from 'i18n-js';
 import { Alert, Linking } from 'react-native';
 
+import { assertSession } from '~/framework/modules/auth/reducer';
 import { urlSigner } from '~/infra/oauth';
-
-import { IUserSession, getUserSession } from './session';
 
 export interface OpenUrlCustomLabels {
   title?: string;
@@ -15,53 +14,49 @@ export interface OpenUrlCustomLabels {
   continue?: string;
   cancel?: string;
   error?: string;
+  errorTitle?: string;
 }
 
+const verifyAndOpenUrl = async (finalUrl: string) => {
+  const isSupported = await Linking.canOpenURL(finalUrl);
+  if (isSupported === true) {
+    await Linking.openURL(finalUrl);
+  } else {
+    throw new Error('openUrl : url provided is not supported');
+  }
+};
+
 export async function openUrl(
-  urlOrGetUrl?: string | ((session: IUserSession) => string | false | undefined | Promise<string | false | undefined>),
+  url?: string,
   customLabels?: OpenUrlCustomLabels,
   generateException?: boolean,
   showConfirmation: boolean = true,
   autoLogin: boolean = true,
 ): Promise<void> {
   try {
-    const session = getUserSession();
-    if (autoLogin && !session) {
-      throw new Error('openUrl : no active session.');
-    }
-    // 1. compute url redirection if function provided
-    if (!urlOrGetUrl) {
-      throw new Error('openUrl : no url provided.');
-    }
-    let url = typeof urlOrGetUrl === 'string' ? urlOrGetUrl : await urlOrGetUrl(session);
     if (!url) {
       throw new Error('openUrl : no url provided.');
     }
-    // 1. compute url redirection if function provided
-    url = urlSigner.getAbsoluteUrl(url);
-    try {
-      if (urlSigner.getIsUrlSignable(url) && autoLogin) {
-        const customToken = await session.oauth.getQueryParamToken();
-        if (customToken) {
-          // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
-          const urlObj = new URL(url);
-          urlObj.searchParams.append('queryparam_token', customToken);
-          url = urlObj.href;
+
+    let finalUrl = urlSigner.getAbsoluteUrl(url);
+
+    if (autoLogin) {
+      try {
+        const session = assertSession();
+        if (urlSigner.getIsUrlSignable(finalUrl)) {
+          const customToken = await session.oauth2.getQueryParamToken();
+          if (customToken && finalUrl) {
+            // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
+            const urlObj = new URL(finalUrl);
+            urlObj.searchParams.append('queryparam_token', customToken);
+            finalUrl = urlObj.href;
+          }
         }
+      } catch {
+        // Do nothing. We just don't have customToken.
       }
-    } catch (e) {
-      // DO nothing. We just don't have customToken.
     }
-    const finalUrl: string = url;
-    // 2. Show confirmation or open url directly
-    const verifyAndOpenUrl = async () => {
-      const isSupported = await Linking.canOpenURL(finalUrl);
-      if (isSupported === true) {
-        await Linking.openURL(finalUrl);
-      } else {
-        throw new Error('openUrl : url provided is not supported');
-      }
-    };
+
     if (showConfirmation) {
       Alert.alert(
         customLabels?.title ?? I18n.t('common.redirect.browser.title'),
@@ -73,7 +68,7 @@ export async function openUrl(
           },
           {
             text: customLabels?.continue ?? I18n.t('common.continue'),
-            onPress: () => verifyAndOpenUrl(),
+            onPress: () => verifyAndOpenUrl(finalUrl!),
             style: 'default',
           },
         ],
@@ -81,9 +76,11 @@ export async function openUrl(
           cancelable: true,
         },
       );
-    } else verifyAndOpenUrl();
+    } else verifyAndOpenUrl(finalUrl!);
   } catch (e) {
-    Alert.alert(customLabels?.error ?? I18n.t('common.redirect.browser.error'));
+    const title = customLabels?.errorTitle ?? customLabels?.error ?? I18n.t('common.redirect.browser.error');
+    const message = customLabels?.error ?? (title ? undefined : I18n.t('common.redirect.browser.error'));
+    Alert.alert(title, message);
     if (generateException) throw e;
   }
 }

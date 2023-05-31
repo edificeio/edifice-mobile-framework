@@ -7,6 +7,7 @@ import { IAppBadgeInfo, IAppBadgesInfoDeclaration } from '~/framework/util/modul
 // all badges have default values that can be overrided with their moduleConfig.
 
 const variableColor = appConf.is1d ? theme.palette.primary.regular : theme.palette.complementary.green.regular;
+
 export let APPBADGES: {
   [key: string]: IAppBadgeInfo;
 } = {

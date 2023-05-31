@@ -1,14 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
+import { ThunkDispatch } from 'redux-thunk';
 
-import { getStore } from '~/App';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { getLoginStackToDisplay } from '~/navigation/helpers/loginRouteName';
-import { getRootNavState, resetNavigation } from '~/navigation/helpers/navHelper';
-import { actionTypeLoginError } from '~/user/actions/actionTypes/login';
+import { getStore } from '~/app/store';
+import { sessionInvalidateAction } from '~/framework/modules/auth/actions';
+import { AuthError, RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
+import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
+import { Platform } from '~/framework/util/appConf';
 
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
+
+/** singleton boolean to prevent logout multiple time when parallel fetchs fails */
+let isFailing: boolean = false;
 
 /**
  * Perform a fetch operation with a oAuth Token. Use it like fetch().
@@ -21,25 +25,24 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
     try {
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
     } catch (err) {
-      setTimeout(() => {
-        const currentNavState = getRootNavState().nav;
-        const currentRoute = currentNavState.routes[currentNavState.index];
-        if (currentRoute.routeName === 'Main') {
-          const stack = getLoginStackToDisplay(DEPRECATED_getCurrentPlatform()!.name);
-          resetNavigation(stack, stack.length - 1);
-        }
-      });
-      getStore().dispatch({
-        type: actionTypeLoginError,
-        errmsg: (err as any).type,
-      });
+      if (isFailing) throw err;
+      isFailing = true;
+      // We consider assume here user user is logged out, but we don't really destroy his session => sessionInvalidate.
+      let platform: Platform;
+      try {
+        platform = assertSession().platform;
+        await (getStore().dispatch as ThunkDispatch<any, any, any>)(sessionInvalidateAction(platform, err as AuthError));
+      } catch {
+        // Cannot remove FCM token if we havn't platform. Just dispatch error in this case.
+        getStore().dispatch(authActions.sessionError((err as AuthError)?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+      }
+      isFailing = false;
       throw err;
     }
   }
   const req = OAuth2RessourceOwnerPasswordClient.connection.signRequest(requestInfo, init);
-  const ret = fetch(req);
   CookieManager.clearAll();
-  return ret;
+  return fetch(req);
 }
 
 /**
@@ -49,17 +52,17 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
  * @param init request options
  */
 export async function signedFetchJson(url: string | Request, init?: RequestInit): Promise<unknown> {
-  try {
-    const response = await signedFetch(url, init);
-    // TODO check if response is OK
-    return await response.json();
-  } catch (err) {
-    throw err;
-  }
+  const response = await signedFetch(url, init);
+  // TODO check if response is OK
+  return response.json();
 }
 
 export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
-  return signedFetchJson(DEPRECATED_getCurrentPlatform()!.url + url, init);
+  const session = getSession();
+  if (!session) {
+    throw new Error('Fetch : no active session');
+  }
+  return signedFetchJson(session.platform.url + url, init);
 }
 
 const CACHE_KEY_PREFIX = 'request-';
@@ -80,48 +83,40 @@ export async function fetchWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = DEPRECATED_getCurrentPlatform()!.url,
-  getBody = (r: Response) => r.text(),
+  platform: string | undefined = assertSession().platform.url,
+  getBody: (r: Response) => any = r => r.text(),
   getCacheResult = (cr: any) => new Response(...cr),
 ) {
-  try {
-    if (!platform) throw new Error('must specify a platform');
-    // TODO bugfix : cache key must depends on userID and platformID.
-    const cacheKey = CACHE_KEY_PREFIX + path;
-    const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
-    if (Connection.isOnline && (forceSync || !dataFromCache)) {
-      let response =
-        path.indexOf(DEPRECATED_getCurrentPlatform()!.url) === -1
-          ? await signedFetch(`${platform}${path}`, init)
-          : await signedFetch(`${path}`, init);
-      const r2 = response.clone();
-      const resJson = response;
-      const resText = response.clone();
-      response = r2;
+  if (!platform) throw new Error('must specify a platform');
+  // TODO bugfix : cache key must depends on userID and platformID.
+  const cacheKey = CACHE_KEY_PREFIX + path;
+  const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
+  if (Connection.isOnline && (forceSync || !dataFromCache)) {
+    let response =
+      path.indexOf(platform) === -1 ? await signedFetch(`${platform}${path}`, init) : await signedFetch(`${path}`, init);
+    const r2 = response.clone();
+    response = r2;
 
-      // TODO: check if response is OK
-      const cacheResponse = {
-        body: await getBody(response.clone()),
-        init: {
-          headers: response.headers,
-          status: response.status,
-          statusText: response.statusText,
-        },
-      };
-      await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
-      const ret = await getBody(response);
-      return ret;
-    }
-
-    if (dataFromCache) {
-      const cacheResponse = JSON.parse(dataFromCache);
-      return getCacheResult(cacheResponse);
-    }
-
-    return null;
-  } catch (e) {
-    throw e;
+    // TODO: check if response is OK
+    const cacheResponse = {
+      body: await getBody(response.clone()),
+      init: {
+        headers: response.headers,
+        status: response.status,
+        statusText: response.statusText,
+      },
+    };
+    await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
+    const ret = await getBody(response);
+    return ret;
   }
+
+  if (dataFromCache) {
+    const cacheResponse = JSON.parse(dataFromCache);
+    return getCacheResult(cacheResponse);
+  }
+
+  return null;
 }
 
 /**
@@ -137,7 +132,7 @@ export async function fetchJSONWithCache(
   path: string,
   init: any = {},
   forceSync: boolean = true,
-  platform: string = DEPRECATED_getCurrentPlatform()!.url,
+  platform: string | undefined = assertSession().platform.url,
 ) {
   return fetchWithCache(
     path,

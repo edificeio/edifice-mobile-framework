@@ -7,10 +7,10 @@ import AppCenter from 'appcenter';
 import Analytics from 'appcenter-analytics';
 import Matomo from 'react-native-matomo';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { getSession } from '~/framework/modules/auth/reducer';
 import appConf from '~/framework/util/appConf';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
-import { urlSigner } from '~/infra/oauth';
+import { uniqueId, urlSigner } from '~/infra/oauth';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
@@ -33,8 +33,10 @@ export abstract class AbstractTracker<OptionsType> {
     return this._isReady;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  protected async _init() {}
+  // Init procedure. Override _init() function to create custom trackers.
+  protected async _init() {
+    // Nothing to do for AbstractTracker
+  }
 
   async init() {
     try {
@@ -199,13 +201,13 @@ export class ConcreteAppCenterTracker extends AbstractTracker<undefined> {
 }
 
 export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
-  reportQueue: Request[] = [];
-
-  sending: boolean = false;
-
   errorCount: number = 0;
 
   lastModulename: string | undefined = undefined;
+
+  reportQueue: Request[] = [];
+
+  sending: boolean = false;
 
   async sendReportQueue() {
     if (this.sending) return; // Once at a time
@@ -213,7 +215,11 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     while (this.sending && this.reportQueue.length) {
       try {
         const req = this.reportQueue[0].clone();
-        const res = await fetch(urlSigner.signRequest(this.reportQueue[0]));
+        const res = await fetch(urlSigner.signRequest(this.reportQueue[0]), {
+          headers: {
+            'X-Device-Id': uniqueId(),
+          },
+        });
         if (res.ok) {
           this.reportQueue.shift();
           this.errorCount = 0;
@@ -230,40 +236,49 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
   }
 
   async _init() {
-    // Nothing to do, configuration comes oauth connection
+    // Nothing to do here
   }
 
-  async _setUserId(_id: string) {
+  async _setUserId(id: string) {
     return false; // Nothing here
   }
 
-  async _setCustomDimension(_id: number, _name: string, _value: string) {
+  async _setCustomDimension(id: number, name: string, value: string) {
     return false; // Nothing here
   }
 
-  async _trackEvent(_category: string, _action: string, _name?: string, _value?: number) {
+  async _trackEvent(category: string, action: string, name?: string, value?: number) {
     return false; // Nothing here
   }
 
   async _trackView(path: string[]) {
+    const platform = getSession()?.platform;
     const moduleName = (
       path[0] === 'timeline' ? (['blog', 'news', 'schoolbook'].includes(path[2]?.toLowerCase()) ? path[2] : 'timeline') : path[0]
     ).toLowerCase();
     const moduleAccessMap = {
       blog: 'Blog',
-      news: 'Actualites',
-      schoolbook: 'SchoolBook',
-      homework: 'Homeworks',
-      workspace: 'Workspace',
+      competences: 'Competences',
       conversation: 'Conversation',
+      diary: 'Diary',
+      edt: 'Edt',
+      homework: 'Homeworks',
+      homeworkAssistance: 'HomeworkAssistance',
+      mediacentre: 'Mediacentre',
+      news: 'Actualites',
+      presences: 'Presences',
+      schoolbook: 'SchoolBook',
+      support: 'Support',
       user: 'MyAccount',
-      zimbra: 'Zimbra',
       viesco: 'Presences',
+      workspace: 'Workspace',
+      zimbra: 'Zimbra',
     };
     let willLog = false;
-    if (this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
+    if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
+      // console.debug('Track entcore', moduleAccessMap[moduleName]);
       this.reportQueue.push(
-        new Request(`${DEPRECATED_getCurrentPlatform()!.url}/infra/event/mobile/store`, {
+        new Request(`${platform!.url}/infra/event/mobile/store`, {
           method: 'POST',
           body: JSON.stringify({ module: moduleAccessMap[moduleName] }),
         }),
@@ -292,10 +307,12 @@ export class ConcreteTrackerSet {
   }
 
   async trackDebugEvent(category: string, action: string, name?: string, value?: number) {
+    // console.debug('[Track debug event]', category, action, name, value);
     await Promise.all(this._trackers.filter(t => t.isDebugTracker()).map(t => t.trackEvent(category, action, name, value)));
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
+    // console.debug('[Track event]', category, action, name, value);
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
@@ -304,6 +321,7 @@ export class ConcreteTrackerSet {
   }
 
   async trackView(path: string[]) {
+    // console.debug('[Track view]', path.join('/'));
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
 

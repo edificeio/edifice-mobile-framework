@@ -1,6 +1,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
@@ -9,7 +9,7 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { ArticleContainer } from '~/ui/ContainerContent';
-import { HtmlContentView } from '~/ui/HtmlContentView';
+import HtmlContentView from '~/ui/HtmlContentView';
 
 interface ITimelineFlashMessageProps {
   flashMessage: IEntcoreFlashMessage;
@@ -21,6 +21,26 @@ interface ITimelineFlashMessageState {
   measuredText: boolean;
   isExtended: boolean;
 }
+
+const styles = StyleSheet.create({
+  containerOpaque: {
+    width: '100%',
+    opacity: 1,
+  },
+  containerTransparent: {
+    width: '100%',
+    opacity: 0,
+  },
+  header: {
+    maxHeight: getScaleHeight(20) * (4 + 1),
+    overflow: 'hidden',
+  },
+  seeMore: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+});
 
 export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMessageProps, ITimelineFlashMessageState> {
   state = {
@@ -38,14 +58,14 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const signatureColor = flashMessage && flashMessage.signatureColor;
     const contents = flashMessage && flashMessage.contents;
     const appLanguage = I18n.currentLocale();
-    const contentsHasAppLanguage = contents && contents.hasOwnProperty(appLanguage);
+    const contentsHasAppLanguage = contents && Object.prototype.hasOwnProperty.call(contents, appLanguage);
     const contentsLanguages = contents && Object.keys(contents);
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];
     const maxLines = 4,
       maxHeight = getScaleHeight(20) * maxLines;
 
     return contents && contentsLanguages.length > 0 ? (
-      <ArticleContainer style={{ width: '100%', opacity: measuredText ? 1 : 0 }}>
+      <ArticleContainer style={measuredText ? styles.containerOpaque : styles.containerTransparent}>
         <TouchableContentCard
           activeOpacity={1}
           onPress={() => {
@@ -67,17 +87,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             backgroundColor: color ? theme.palette.flashMessages[color] : customColor || theme.palette.secondary.regular,
           }}
           header={
-            <View
-              style={
-                isExtended
-                  ? {}
-                  : longText
-                  ? {
-                      maxHeight: getScaleHeight(20) * (4 + 1),
-                      overflow: 'hidden',
-                    }
-                  : {}
-              }>
+            <View style={isExtended ? {} : longText ? styles.header : {}}>
               <HtmlContentView
                 html={flashMessageHtml}
                 opts={{
@@ -95,9 +105,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 }}
                 onLayout={e => {
                   if (!measuredText) {
-                    const flashMessageHeight = e.nativeEvent.layout.height;
-                    const longText = flashMessageHeight >= maxHeight;
-                    this.setState({ longText, measuredText: true });
+                    this.setState({ longText: e.nativeEvent.layout.height >= maxHeight, measuredText: true });
                   }
                 }}
               />
@@ -106,7 +114,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             </View>
           }>
           {longText && !isExtended ? (
-            <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <View style={styles.seeMore}>
               <SmallBoldText style={{ color: theme.ui.text.inverse }}>{I18n.t('seeMore')}</SmallBoldText>
               <Icon
                 name="arrow_down"

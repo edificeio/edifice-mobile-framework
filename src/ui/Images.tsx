@@ -2,10 +2,9 @@ import styled from '@emotion/native';
 import * as React from 'react';
 import { ImageProps, ImageURISource, View, ViewStyle } from 'react-native';
 import RNFastImage from 'react-native-fast-image';
-import { withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
-import { openCarousel } from '~/framework/components/carousel';
+import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
@@ -106,20 +105,18 @@ class Images extends React.Component<
   {
     images: { src: ImageURISource; alt?: string; linkTo?: string }[];
     style?: ViewStyle;
-    navigation: any;
-    // windowDimensions: any;
   },
   any
 > {
   public openImage(startIndex: any) {
-    const { images, navigation } = this.props;
+    const { images } = this.props;
     const data = images.map(img => ({
       type: 'image' as 'image',
       src: img.src,
       ...(img.alt ? { alt: img.alt } : undefined),
       ...(img.linkTo ? { link: img.linkTo } : undefined),
     }));
-    openCarousel({ data, startIndex }, navigation);
+    openCarousel({ data, startIndex });
   }
 
   public images() {
@@ -201,7 +198,7 @@ class Images extends React.Component<
             </QuarterImage>
             <QuarterImage style={{ height: heightRatio / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(3)}>
               <StretchImage source={getImageSource(images[3].src)} />
-              {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 5 }} onPress={() => this.openImage(3)} />}
+              {images.length > 4 && <Overlay style={{ height: heightRatio / 2 - 2 }} onPress={() => this.openImage(3)} />}
               {images.length > 4 && (
                 <BubbleView style={{ bottom: heightRatio / 4 - 15, justifyContent: 'center' }}>
                   <SmallInverseText
@@ -242,4 +239,4 @@ class Images extends React.Component<
 //   }
 // }
 
-export default /*withWindowDimensions*/ withNavigation(Images);
+export default /*withWindowDimensions*/ Images;

@@ -2,11 +2,10 @@
  * Notifications
  * Types and tools for managing Notification data
  */
-
 import moment, { Moment } from 'moment';
 import { ImageURISource } from 'react-native';
 
-import { IUserSession } from '~/framework/util/session';
+import { ISession } from '~/framework/modules/auth/model';
 
 // Types
 
@@ -109,6 +108,11 @@ export const isResourceUriNotification = (n: IAbstractNotification) =>
 export const getAsResourceUriNotification = (n: IAbstractNotification) =>
   isResourceUriNotification(n) ? (n as IResourceUriNotification) : undefined;
 
+export const isResourceIdNotification = (n: IAbstractNotification) =>
+  !!(n as ITimelineNotification & Partial<IResourceIdNotification>).resource?.id;
+export const getAsResourceIdNotification = (n: IAbstractNotification) =>
+  isResourceIdNotification(n) ? (n as IResourceIdNotification) : undefined;
+
 export const isNamedResourceNotification = (n: IAbstractNotification) =>
   !!(n as ITimelineNotification & Partial<INamedResourceNotification>).resource?.name;
 export const getAsNamedResourceNotification = (n: IAbstractNotification) =>
@@ -119,7 +123,7 @@ export const isEnrichedNotification = (n: ITimelineNotification) =>
 export const getAsEnrichedNotification = (n: ITimelineNotification) =>
   isEnrichedNotification(n) ? (n as IEnrichedNotification) : undefined;
 
-export const isMyNotification = (n: ISenderNotification, u: IUserSession) => n.sender.id === u.user.id;
+export const isMyNotification = (n: ISenderNotification, u: ISession) => n.sender.id === u.user.id;
 
 // Adapter
 

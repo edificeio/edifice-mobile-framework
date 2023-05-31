@@ -4,7 +4,6 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { NavigationInjectedProps, withNavigation } from 'react-navigation';
 
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleHeight, getScaleImageSize } from '~/framework/components/constants';
@@ -18,15 +17,12 @@ import { urlSigner } from '~/infra/oauth';
 import styles from './styles';
 import { IPlayerProps } from './types';
 
-class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps> {
+class MediaButton extends React.Component<IPlayerProps> {
   showMediaPlayer() {
-    openMediaPlayer(
-      {
-        type: this.props.type as MediaType,
-        source: urlSigner.signURISource(this.props.source),
-      },
-      this.props.navigation,
-    );
+    openMediaPlayer({
+      type: this.props.type as MediaType,
+      source: urlSigner.signURISource(this.props.source),
+    });
   }
 
   iconSizeAudio = getScaleImageSize(20);
@@ -75,4 +71,4 @@ class MediaButton extends React.Component<IPlayerProps & NavigationInjectedProps
   }
 }
 
-export default withNavigation(MediaButton);
+export default MediaButton;

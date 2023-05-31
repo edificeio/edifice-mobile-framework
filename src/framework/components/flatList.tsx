@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import { FlatList as RNFlatList, FlatListProps as RNFlatListProps, View } from 'react-native';
 
@@ -16,10 +17,13 @@ function FlatList<ItemT>(props: FlatListProps<ItemT>, ref) {
       ListFooterComponent
     );
   }, [bottomInset, ListFooterComponent]);
+  const listRef = React.useRef<RNFlatList>(null);
+  useScrollToTop(listRef);
+  ref = listRef;
   return (
     <RNFlatList
       {...otherProps}
-      ref={ref}
+      ref={listRef}
       ListFooterComponent={realListFooterComponent}
       scrollIndicatorInsets={scrollIndicatorInsets || FlatList.scrollIndicatorInsets} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
     />

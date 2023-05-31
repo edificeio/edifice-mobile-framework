@@ -1,8 +1,12 @@
-import appThemeOverride from '~/app/override/appconf';
+import appConfOverride from '~/app/override/appconf';
 
-export default {
+const emptyAppConf = {
   matomo: undefined,
   webviewIdentifier: undefined,
   platforms: [],
-  ...appThemeOverride,
+};
+
+export default {
+  ...emptyAppConf,
+  ...appConfOverride,
 };

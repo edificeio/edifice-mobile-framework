@@ -59,7 +59,7 @@ export const extractMediaFromHtml = (html: string) => {
       attachments: foundAttachmentGroup[0].match(attachmentRegex),
     }));
 
-  const unsortedMedia = [] as { index: number; type: string; src: string }[];
+  const unsortedMedia = [] as IMedia[];
 
   foundImages &&
     foundImages.forEach(foundImage => {

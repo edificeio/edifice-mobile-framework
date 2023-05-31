@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StatusBar, StyleSheet } from 'react-native';
+import { Dimensions, Insets, Platform, StyleSheet } from 'react-native';
 import DeviceInfo, { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
@@ -64,6 +64,7 @@ export const UI_SIZES = {
       large: 22,
       larger: 24,
       largerPlus: 28,
+      hug: 32,
       largePlus: 36,
       huge: 38,
     },
@@ -74,6 +75,7 @@ export const UI_SIZES = {
       mediumPlus: 20,
       large: 22,
       larger: 24,
+      hug: 32,
       largePlus: 36,
       huge: 38,
     },
@@ -82,10 +84,16 @@ export const UI_SIZES = {
     actionButtonBorder: 2,
     icon: 24,
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
-    navbarHeight: 56,
-    statusbarHeight: StatusBar.currentHeight,
+    /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
+    navbarHeight: Platform.select({ ios: 44, default: 56 }),
+    navbarButtonSize: 32,
+    navbarIconSize: 24,
+    navbarMargin: 16,
+    statusbarHeight: Platform.select({ ios: 19, default: 0 }),
     tabbarHeight: 56,
-    tabbarIconSize: 24,
+    tabbarIconSize: Platform.select({ ios: 25, default: 19 }),
+    tabbarLabelMarginBottom: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 6 }),
+    tabbarLabelMarginTop: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
   },
@@ -141,13 +149,28 @@ export const UI_SIZES = {
 export const UI_STYLES = StyleSheet.create({
   clickZone: { minHeight: 48, minWidth: 48 },
   flex1: { flex: 1 },
+  flex0: { flex: 0 },
   flexGrow1: { flexGrow: 1 },
   flexShrink1: { flexShrink: 1 },
   justifyEnd: { justifyContent: 'flex-end' },
   row: { flexDirection: 'row' },
   rowStretch: { flexDirection: 'row', alignItems: 'stretch', height: '100%' },
+  width100: { width: '100%' },
 });
 
 export const UI_VALUES = {
   modalOpacity: 0.4,
+  opacity: {
+    half: 0.5,
+    modal: 0.4,
+    opaque: 1,
+    transparent: 0,
+  },
+};
+
+export const genericHitSlop: Insets = {
+  top: UI_SIZES.spacing.minor,
+  bottom: UI_SIZES.spacing.minor,
+  left: UI_SIZES.spacing.minor,
+  right: UI_SIZES.spacing.minor,
 };

@@ -3,9 +3,10 @@ import { Asset } from 'react-native-image-picker';
 
 export type ImagePicked = Required<Pick<Asset, 'uri' | 'type' | 'fileName' | 'fileSize' | 'base64' | 'width' | 'height'>>;
 
-export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri' | 'type'>> & {
+export type DocumentPicked = Required<Pick<DocumentPickerResponse, 'uri'>> & {
   fileName: string;
   fileSize: number;
+  type: string | undefined;
 };
 
 export interface MenuAction {

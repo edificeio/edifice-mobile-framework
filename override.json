@@ -1,0 +1,392 @@
+{
+    "override": "dev/default",
+    "appid": "com.ode.mobile",
+    "appname": "Dev Pocket",
+    "files": {
+        "override.json": [
+            "__overrides__/common/override.json",
+            "__overrides__/dev/default/override.json"
+        ],
+        ".phrase.yml": [
+            "__overrides__/common/.phrase.yml"
+        ],
+        "src/platforms/colibri.ts": [
+            "__overrides__/common/platforms/colibri.ts"
+        ],
+        "src/platforms/demo-grand-est.ts": [
+            "__overrides__/common/platforms/demo-grand-est.ts"
+        ],
+        "src/platforms/ent77.ts": [
+            "__overrides__/common/platforms/ent77.ts"
+        ],
+        "src/platforms/formation-hdf.ts": [
+            "__overrides__/common/platforms/formation-hdf.ts"
+        ],
+        "src/platforms/formation-idf.ts": [
+            "__overrides__/common/platforms/formation-idf.ts"
+        ],
+        "src/platforms/formation-normandie.ts": [
+            "__overrides__/common/platforms/formation-normandie.ts"
+        ],
+        "src/platforms/formation.ts": [
+            "__overrides__/common/platforms/formation.ts"
+        ],
+        "src/platforms/hdf.ts": [
+            "__overrides__/common/platforms/hdf.ts"
+        ],
+        "src/platforms/idf.ts": [
+            "__overrides__/common/platforms/idf.ts"
+        ],
+        "src/platforms/localhost.ts": [
+            "__overrides__/common/platforms/localhost.ts"
+        ],
+        "src/platforms/lyceeconnecte.ts": [
+            "__overrides__/common/platforms/lyceeconnecte.ts"
+        ],
+        "src/platforms/moncollege.ts": [
+            "__overrides__/common/platforms/moncollege.ts"
+        ],
+        "src/platforms/ng.ts": [
+            "__overrides__/common/platforms/ng.ts"
+        ],
+        "src/platforms/normandie.ts": [
+            "__overrides__/common/platforms/normandie.ts"
+        ],
+        "src/platforms/paris.ts": [
+            "__overrides__/common/platforms/paris.ts"
+        ],
+        "src/platforms/province-sud.ts": [
+            "__overrides__/common/platforms/province-sud.ts"
+        ],
+        "src/platforms/rd.ts": [
+            "__overrides__/common/platforms/rd.ts"
+        ],
+        "src/platforms/recette-ent77.ts": [
+            "__overrides__/common/platforms/recette-ent77.ts"
+        ],
+        "src/platforms/recette-na.ts": [
+            "__overrides__/common/platforms/recette-na.ts"
+        ],
+        "src/platforms/recette-paris.ts": [
+            "__overrides__/common/platforms/recette-paris.ts"
+        ],
+        "src/platforms/recette.ts": [
+            "__overrides__/common/platforms/recette.ts"
+        ],
+        "src/platforms/reunion.ts": [
+            "__overrides__/common/platforms/reunion.ts"
+        ],
+        "src/platforms/saas.ts": [
+            "__overrides__/common/platforms/saas.ts"
+        ],
+        "assets/platforms/logo-ariane-57.png": [
+            "__overrides__/common/assets/platforms/logo-ariane-57.png"
+        ],
+        "assets/platforms/logo-cgi.png": [
+            "__overrides__/common/assets/platforms/logo-cgi.png"
+        ],
+        "assets/platforms/logo-colibri.png": [
+            "__overrides__/common/assets/platforms/logo-colibri.png"
+        ],
+        "assets/platforms/logo-e-primo.png": [
+            "__overrides__/common/assets/platforms/logo-e-primo.png"
+        ],
+        "assets/platforms/logo-ent77.png": [
+            "__overrides__/common/assets/platforms/logo-ent77.png"
+        ],
+        "assets/platforms/logo-grand-est.png": [
+            "__overrides__/common/assets/platforms/logo-grand-est.png"
+        ],
+        "assets/platforms/logo-hdf.png": [
+            "__overrides__/common/assets/platforms/logo-hdf.png"
+        ],
+        "assets/platforms/logo-idf.png": [
+            "__overrides__/common/assets/platforms/logo-idf.png"
+        ],
+        "assets/platforms/logo-leo.png": [
+            "__overrides__/common/assets/platforms/logo-leo.png"
+        ],
+        "assets/platforms/logo-localhost.png": [
+            "__overrides__/common/assets/platforms/logo-localhost.png"
+        ],
+        "assets/platforms/logo-lycee-connecte.png": [
+            "__overrides__/common/assets/platforms/logo-lycee-connecte.png"
+        ],
+        "assets/platforms/logo-mayotte.png": [
+            "__overrides__/common/assets/platforms/logo-mayotte.png"
+        ],
+        "assets/platforms/logo-moncollege.png": [
+            "__overrides__/common/assets/platforms/logo-moncollege.png"
+        ],
+        "assets/platforms/logo-neo.png": [
+            "__overrides__/common/assets/platforms/logo-neo.png"
+        ],
+        "assets/platforms/logo-normandie.png": [
+            "__overrides__/common/assets/platforms/logo-normandie.png"
+        ],
+        "assets/platforms/logo-ode.png": [
+            "__overrides__/common/assets/platforms/logo-ode.png"
+        ],
+        "assets/platforms/logo-one.png": [
+            "__overrides__/common/assets/platforms/logo-one.png"
+        ],
+        "assets/platforms/logo-paris.png": [
+            "__overrides__/common/assets/platforms/logo-paris.png"
+        ],
+        "assets/platforms/logo-province-sud-neo.png": [
+            "__overrides__/common/assets/platforms/logo-province-sud-neo.png"
+        ],
+        "assets/platforms/logo-province-sud-one.png": [
+            "__overrides__/common/assets/platforms/logo-province-sud-one.png"
+        ],
+        "assets/platforms/logo-reunion.png": [
+            "__overrides__/common/assets/platforms/logo-reunion.png"
+        ],
+        "assets/platforms/logo-somme.png": [
+            "__overrides__/common/assets/platforms/logo-somme.png"
+        ],
+        "assets/platforms/logo-wilapa.png": [
+            "__overrides__/common/assets/platforms/logo-wilapa.png"
+        ],
+        "src/app/override/appconf.ts": [
+            "__overrides__/dev/default/appconf.ts"
+        ],
+        "src/app/override/modules.ts": [
+            "__overrides__/dev/default/modules.ts"
+        ],
+        "ios/appe/AppCenter-Config.plist": [
+            "__overrides__/dev/default/ios/AppCenter-Config.plist"
+        ],
+        "ios/appe/GoogleService-Info.plist": [
+            "__overrides__/dev/default/ios/GoogleService-Info.plist"
+        ],
+        "android/app/src/main/assets/appcenter-config.json": [
+            "__overrides__/dev/default/android/appcenter-config.json"
+        ],
+        "android/app/google-services.json": [
+            "__overrides__/dev/default/android/google-services.json"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/Contents.json": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/Contents.json"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-1024.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-1024.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-20.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-20.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-20@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-20@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-20@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-20@3x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-29.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-29.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-29@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-29@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-29@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-29@3x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-40.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-40.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-40@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-40@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-40@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-40@3x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-60@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-60@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-60@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-60@3x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-76.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-76.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-76@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-76@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/AppIcon.appiconset/icon-83.5@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/AppIcon.appiconset/icon-83.5@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Contents.json": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Contents.json"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-1125h.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-1125h.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-568h@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-568h@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-667h@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-667h@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-736h@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-736h@3x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Landscape-X.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Landscape-X.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Landscape-XR.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Landscape-XR.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Landscape-XS-Max.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Landscape-XS-Max.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Landscape.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Landscape.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Landscape@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Landscape@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Landscape@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Landscape@3x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Portrait-XR.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Portrait-XR.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Portrait-XS-Max.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Portrait-XS-Max.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Portrait.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Portrait.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default-Portrait@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default-Portrait@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchImage.launchimage/Default@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchImage.launchimage/Default@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.AspectFill.imageset/Contents.json": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.AspectFill.imageset/Contents.json"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.AspectFill.imageset/LaunchScreen-AspectFill.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.AspectFill.imageset/LaunchScreen-AspectFill.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.AspectFill.imageset/LaunchScreen-AspectFill@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.AspectFill.imageset/LaunchScreen-AspectFill@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.AspectFill.imageset/LaunchScreen-AspectFill@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.AspectFill.imageset/LaunchScreen-AspectFill@3x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.Center.imageset/Contents.json": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.Center.imageset/Contents.json"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.Center.imageset/LaunchScreen-Center.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.Center.imageset/LaunchScreen-Center.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.Center.imageset/LaunchScreen-Center@2x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.Center.imageset/LaunchScreen-Center@2x.png"
+        ],
+        "ios/appe/Assets.xcassets/LaunchScreen.Center.imageset/LaunchScreen-Center@3x.png": [
+            "__overrides__/dev/default/ios/Assets.xcassets/LaunchScreen.Center.imageset/LaunchScreen-Center@3x.png"
+        ],
+        "android/app/src/main/res/drawable-hdpi/background.png": [
+            "__overrides__/dev/default/android/res/drawable-hdpi/background.png"
+        ],
+        "android/app/src/main/res/drawable-hdpi/icon.png": [
+            "__overrides__/dev/default/android/res/drawable-hdpi/icon.png"
+        ],
+        "android/app/src/main/res/drawable-hdpi/icon_round.png": [
+            "__overrides__/dev/default/android/res/drawable-hdpi/icon_round.png"
+        ],
+        "android/app/src/main/res/drawable-hdpi/icon_white.png": [
+            "__overrides__/dev/default/android/res/drawable-hdpi/icon_white.png"
+        ],
+        "android/app/src/main/res/drawable-hdpi/logo.png": [
+            "__overrides__/dev/default/android/res/drawable-hdpi/logo.png"
+        ],
+        "android/app/src/main/res/drawable-ldpi/background.png": [
+            "__overrides__/dev/default/android/res/drawable-ldpi/background.png"
+        ],
+        "android/app/src/main/res/drawable-ldpi/icon.png": [
+            "__overrides__/dev/default/android/res/drawable-ldpi/icon.png"
+        ],
+        "android/app/src/main/res/drawable-ldpi/icon_round.png": [
+            "__overrides__/dev/default/android/res/drawable-ldpi/icon_round.png"
+        ],
+        "android/app/src/main/res/drawable-ldpi/icon_white.png": [
+            "__overrides__/dev/default/android/res/drawable-ldpi/icon_white.png"
+        ],
+        "android/app/src/main/res/drawable-ldpi/logo.png": [
+            "__overrides__/dev/default/android/res/drawable-ldpi/logo.png"
+        ],
+        "android/app/src/main/res/drawable-mdpi/background.png": [
+            "__overrides__/dev/default/android/res/drawable-mdpi/background.png"
+        ],
+        "android/app/src/main/res/drawable-mdpi/icon.png": [
+            "__overrides__/dev/default/android/res/drawable-mdpi/icon.png"
+        ],
+        "android/app/src/main/res/drawable-mdpi/icon_round.png": [
+            "__overrides__/dev/default/android/res/drawable-mdpi/icon_round.png"
+        ],
+        "android/app/src/main/res/drawable-mdpi/icon_white.png": [
+            "__overrides__/dev/default/android/res/drawable-mdpi/icon_white.png"
+        ],
+        "android/app/src/main/res/drawable-mdpi/logo.png": [
+            "__overrides__/dev/default/android/res/drawable-mdpi/logo.png"
+        ],
+        "android/app/src/main/res/drawable-xhdpi/background.png": [
+            "__overrides__/dev/default/android/res/drawable-xhdpi/background.png"
+        ],
+        "android/app/src/main/res/drawable-xhdpi/icon.png": [
+            "__overrides__/dev/default/android/res/drawable-xhdpi/icon.png"
+        ],
+        "android/app/src/main/res/drawable-xhdpi/icon_round.png": [
+            "__overrides__/dev/default/android/res/drawable-xhdpi/icon_round.png"
+        ],
+        "android/app/src/main/res/drawable-xhdpi/icon_white.png": [
+            "__overrides__/dev/default/android/res/drawable-xhdpi/icon_white.png"
+        ],
+        "android/app/src/main/res/drawable-xhdpi/logo.png": [
+            "__overrides__/dev/default/android/res/drawable-xhdpi/logo.png"
+        ],
+        "android/app/src/main/res/drawable-xxhdpi/background.png": [
+            "__overrides__/dev/default/android/res/drawable-xxhdpi/background.png"
+        ],
+        "android/app/src/main/res/drawable-xxhdpi/icon.png": [
+            "__overrides__/dev/default/android/res/drawable-xxhdpi/icon.png"
+        ],
+        "android/app/src/main/res/drawable-xxhdpi/icon_round.png": [
+            "__overrides__/dev/default/android/res/drawable-xxhdpi/icon_round.png"
+        ],
+        "android/app/src/main/res/drawable-xxhdpi/icon_white.png": [
+            "__overrides__/dev/default/android/res/drawable-xxhdpi/icon_white.png"
+        ],
+        "android/app/src/main/res/drawable-xxhdpi/logo.png": [
+            "__overrides__/dev/default/android/res/drawable-xxhdpi/logo.png"
+        ],
+        "android/app/src/main/res/drawable-xxxhdpi/background.png": [
+            "__overrides__/dev/default/android/res/drawable-xxxhdpi/background.png"
+        ],
+        "android/app/src/main/res/drawable-xxxhdpi/icon.png": [
+            "__overrides__/dev/default/android/res/drawable-xxxhdpi/icon.png"
+        ],
+        "android/app/src/main/res/drawable-xxxhdpi/icon_round.png": [
+            "__overrides__/dev/default/android/res/drawable-xxxhdpi/icon_round.png"
+        ],
+        "android/app/src/main/res/drawable-xxxhdpi/icon_white.png": [
+            "__overrides__/dev/default/android/res/drawable-xxxhdpi/icon_white.png"
+        ],
+        "android/app/src/main/res/drawable-xxxhdpi/logo.png": [
+            "__overrides__/dev/default/android/res/drawable-xxxhdpi/logo.png"
+        ]
+    },
+    "specialUpdates": [
+        "ios/appe/Info.plist",
+        "ios/appe.xcodeproj/project.pbxproj",
+        "android/gradle.properties"
+    ],
+    "stack": [
+        "common",
+        "dev/default"
+    ]
+}

@@ -4,10 +4,10 @@ import { TextStyle, TouchableOpacityProps } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 
 import TouchableOpacity from './CustomTouchableOpacity';
-import { Icon } from './icons/Icon';
 
 export interface ButtonTextIconProps {
   onPress: () => any;

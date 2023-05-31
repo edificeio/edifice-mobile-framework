@@ -15,7 +15,10 @@ import {
   ViewStyle,
 } from 'react-native';
 import ImageZoom from 'react-native-image-pan-zoom';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import Toast from 'react-native-toast-message';
 
+import { UI_SIZES } from '../../constants';
 import styles from './image-viewer.style';
 import { IImageInfo, IImageSize, Props, State } from './image-viewer.type';
 
@@ -436,7 +439,8 @@ export default class ImageViewer extends React.Component<Props, State> {
       this.hasLayout = true;
 
       this.width = event.nativeEvent.layout.width;
-      this.height = event.nativeEvent.layout.height;
+      // Override height of the container since we want this only fullscreen
+      this.height = UI_SIZES.screen.height; // event.nativeEvent.layout.height;
       this.styles = styles(this.width, this.height, this.props.backgroundColor || 'transparent');
 
       // 强制刷新

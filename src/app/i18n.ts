@@ -13,19 +13,21 @@ import 'moment/locale/fr';
 import { I18nManager } from 'react-native';
 import * as RNLocalize from 'react-native-localize';
 
+export type SupportedLocales = 'fr' | 'en' | 'es';
+
 // Built-in translations
 const builtInTranslations = unflatten({
   fr: require('ASSETS/i18n/fr.json'),
   en: require('ASSETS/i18n/en.json'),
   es: require('ASSETS/i18n/es.json'),
-});
+}) as { [locale in SupportedLocales]: object };
 
 // Overrides translations
 const overrideTranslations = unflatten({
   fr: require('ASSETS/i18n/override/fr.json'),
   en: require('ASSETS/i18n/override/en.json'),
   es: require('ASSETS/i18n/override/es.json'),
-});
+}) as { [locale in SupportedLocales]: object };
 
 // Finale translations
 const arrayMerge = (a: [], b: []) => {
@@ -63,6 +65,7 @@ export const initI18n = () => {
     I18n.locale = I18n.defaultLocale;
     moment.locale(undefined);
   }
+  return res?.languageTag ?? I18n.defaultLocale;
 };
 
 let initDone = false;

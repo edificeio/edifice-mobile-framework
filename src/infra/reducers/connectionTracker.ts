@@ -1,3 +1,7 @@
+import { AnyAction } from 'redux';
+
+import { IGlobalState, Reducers } from '~/app/store';
+
 export interface ConnectionTrackerState {
   connected: boolean;
   loading: boolean;
@@ -10,7 +14,7 @@ const initialState = {
   visible: false,
 };
 
-export default (state: ConnectionTrackerState = initialState, action): ConnectionTrackerState => {
+const reducer = (state: ConnectionTrackerState = initialState, action: AnyAction): ConnectionTrackerState => {
   if (action.type === 'SHOW_CONNECTION_TRACKER') {
     return {
       ...state,
@@ -50,3 +54,9 @@ export default (state: ConnectionTrackerState = initialState, action): Connectio
 
   return state;
 };
+
+Reducers.register('connectionTracker', reducer);
+
+export const getState = (state: IGlobalState) => state.connectionTracker as ConnectionTrackerState;
+
+export default reducer;

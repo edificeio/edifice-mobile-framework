@@ -7,7 +7,7 @@ import { AppRegistry } from 'react-native';
 import 'react-native-url-polyfill/auto';
 
 import { name as appName } from './app.json';
-import App from './src/App';
+import App from './src/app/index';
 import './wdyr';
 
 // from https://stackoverflow.com/a/35305611/6111343

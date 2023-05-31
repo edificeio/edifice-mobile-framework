@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CaptionText } from '~/framework/components/text';
 
-import { Avatar, Size } from './Avatar';
+import Avatar, { Size } from './Avatar';
 
 const SkippedContainer = styled.View({
   borderRadius: 15,

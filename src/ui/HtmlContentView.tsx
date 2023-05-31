@@ -8,10 +8,13 @@
 import I18n from 'i18n-js';
 import * as React from 'react';
 import { View, ViewProps } from 'react-native';
+import { connect } from 'react-redux';
 
+import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 import { Loading } from '~/ui/Loading';
@@ -20,6 +23,7 @@ import { IRemoteAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 
 export interface IHtmlContentViewProps extends ViewProps {
+  session?: ISession;
   navigation?: any;
   html?: string;
   source?: string;
@@ -28,9 +32,9 @@ export interface IHtmlContentViewProps extends ViewProps {
   loadingComp?: JSX.Element;
   onHtmlError?: () => void;
   getContentFromResource?: (responseJson: any) => string;
-  onDownload?: (att: IRemoteAttachment) => void;
-  onError?: (att: IRemoteAttachment) => void;
-  onOpen?: (att: IRemoteAttachment) => void;
+  onDownload?: () => void;
+  onError?: () => void;
+  onOpen?: () => void;
   onDownloadAll?: () => void;
 }
 
@@ -43,8 +47,8 @@ interface IHtmlContentViewState {
   jsx?: JSX.Element; // Computed jsx
 }
 
-export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlContentViewState> {
-  public constructor(props) {
+class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlContentViewState> {
+  public constructor(props: IHtmlContentViewProps | Readonly<IHtmlContentViewProps>) {
     super(props);
     this.state = {
       loading: false,
@@ -68,12 +72,13 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
       await this.compute();
     } catch (e) {
       this.setState({ error: true });
-      onHtmlError && onHtmlError();
+      if (onHtmlError) onHtmlError();
       throw e;
     }
   }
 
   public generateAttachments(html: string) {
+    const { session } = this.props;
     const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
     const attachmentGroupsHtml = html.match(attachmentGroupRegex);
     const attachmentsHtml = attachmentGroupsHtml && attachmentGroupsHtml.join().match(/<a.*?>.*?<\/a>/g);
@@ -83,13 +88,13 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
         const attUrl = attHtml.match(/href="(.*?)"/g);
         const attDisplayName = attHtml.match(/<\/div>.*?<\/a>/g);
         return {
-          url: attUrl && `${DEPRECATED_getCurrentPlatform()!.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
+          url: attUrl && `${session?.platform?.url}${attUrl[0].replace('href="', '').replace('"', '')}`,
           displayName: attDisplayName && attDisplayName[0].replace(/<\/div>/g, '').replace(/<\/a>/g, ''),
         } as IRemoteAttachment;
       });
     html = html.replace(attachmentGroupRegex, '');
     this.setState({ html });
-    attachments && this.setState({ attachments });
+    if (attachments) this.setState({ attachments });
   }
 
   public async compute() {
@@ -112,7 +117,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
 
       if (!responseHtml) {
         this.setState({ error: true });
-        onHtmlError && onHtmlError();
+        if (onHtmlError) onHtmlError();
       } else this.setState({ html: responseHtml });
     } else if (!jsx) {
       // Else, if there is not JSX, try to compute it
@@ -131,7 +136,7 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
   public render() {
     const { error, jsx, attachments, loading } = this.state;
     const { loadingComp, emptyMessage, onDownload, onError, onDownloadAll, onOpen } = this.props;
-    const hasContent = jsx && jsx.props.children.some((child: any) => child != undefined && child != null);
+    const hasContent = jsx && jsx.props.children.some((child: any) => child !== undefined && child != null);
     const loadingComponent = loadingComp || <Loading />;
     const hasAttachments = attachments && attachments.length;
 
@@ -168,3 +173,11 @@ export class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, 
     }
   }
 }
+
+const mapStateToProps: (state: IGlobalState) => {
+  session?: ISession;
+} = state => {
+  return { session: getSession() };
+};
+
+export default connect(mapStateToProps, undefined)(HtmlContentView);

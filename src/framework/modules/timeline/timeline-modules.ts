@@ -1,21 +1,13 @@
 /**
  * A specific moduleMap that exists inside timeline
  */
-
-import I18n from 'i18n-js';
-import type { NavigationNavigateActionPayload } from 'react-navigation';
-
-import { CustomRegister, RouteMap } from '~/framework/util/moduleTool';
-import { IUserSession } from '~/framework/util/session';
-
-// Timeline module register =======================================================================
-
-export const timelineSubModules = new CustomRegister<RouteMap, RouteMap>(items => items.reduce((acc, s) => ({ ...acc, ...s }), {}));
+import { MenuAction } from '~/framework/components/menus/actions';
+import { ISession } from '~/framework/modules/auth/model';
 
 // Timeline workflow ==============================================================================
 
 export interface ITimelineWorkflowDefinition {
-  (session: IUserSession): undefined | false | { icon: string; i18n: string; goTo: NavigationNavigateActionPayload };
+  (session: ISession): undefined | false | MenuAction;
 }
 const registeredTimelineWorkflows: ITimelineWorkflowDefinition[] = [];
 export const registerTimelineWorkflow = (def: ITimelineWorkflowDefinition) => {
@@ -27,12 +19,4 @@ export const registerTimelineWorkflows = (def: ITimelineWorkflowDefinition[]) =>
 };
 export const getRegisteredTimelineWorkflow = () => registeredTimelineWorkflows;
 
-export const getTimelineWorkflows = (session: IUserSession) =>
-  registeredTimelineWorkflows
-    .map(d => d(session))
-    .filter(dr => dr)
-    .sort((a, b) => I18n.t((a as { i18n: string }).i18n).localeCompare((b as { i18n: string }).i18n)) as unknown as {
-    icon: string;
-    i18n: string;
-    goTo: NavigationNavigateActionPayload;
-  }[];
+export const getTimelineWorkflows = (session: ISession) => registeredTimelineWorkflows.map(d => d(session)).filter(dr => dr);

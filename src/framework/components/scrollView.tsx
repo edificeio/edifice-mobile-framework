@@ -1,3 +1,4 @@
+import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import { ScrollView as RNScrollView, ScrollViewProps as RNScrollViewProps } from 'react-native';
 
@@ -15,6 +16,8 @@ function ScrollView(props: ScrollViewProps, ref) {
   const scrollViewRef: { current: any } = React.useRef();
   const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
   React.useImperativeHandle(ref, () => ({ scrollToEnd }));
+
+  useScrollToTop(scrollViewRef);
 
   return (
     <RNScrollView

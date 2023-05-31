@@ -11,8 +11,8 @@ export default {
 
   platforms: [
     // Recettes
-    require("~/platforms/recette"),
-    require("~/platforms/recette-leo"),
+    require("~/platforms/recette")["recette"],
+    require("~/platforms/recette")["recette-release"],
     require("~/platforms/recette-ent77"),
     require("~/platforms/recette-paris"),
     require("~/platforms/recette-na")["recette-na"],

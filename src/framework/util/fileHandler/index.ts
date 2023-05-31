@@ -2,6 +2,7 @@
  * File Manager
  */
 import getPath from '@flyerhq/react-native-android-uri-path';
+import { NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 import { Platform } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from 'react-native-document-picker';
@@ -15,7 +16,6 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
-import { NavigationInjectedProps } from 'react-navigation';
 
 import { assertPermissions } from '~/framework/util/permissions';
 
@@ -213,13 +213,13 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   /**
    * Opens the file with the native device's reader.
    */
-  async open(navigation: NavigationInjectedProps['navigation']) {
+  async open() {
     // Add "file://" if absolute url is provided
     if (!this.filepath.includes('://')) {
       this.filepath = 'file://' + this.filepath;
       this._filepathNative = 'file://' + this._filepathNative;
     }
-    await openDocument(this, navigation);
+    await openDocument(this);
   }
 
   /**
@@ -298,7 +298,7 @@ export class SyncedFile<DFType extends IDistantFile = IDistantFile> implements L
 
   releaseIfNeeded = () => LocalFile.prototype.releaseIfNeeded.call(this.lf);
 
-  open = (navigation: NavigationInjectedProps['navigation']) => LocalFile.prototype.open.call(this.lf, navigation);
+  open = () => LocalFile.prototype.open.call(this.lf);
 
   setExtension = (ext: string) => LocalFile.prototype.setExtension.call(this.lf, ext);
 

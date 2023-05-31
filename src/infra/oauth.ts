@@ -8,8 +8,8 @@ import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
 import { Source } from 'react-native-fast-image';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
-import { IMedia } from '~/framework/util/media';
+import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 
@@ -43,7 +43,7 @@ export interface IOAuthQueryParamToken {
 
 export type OAuthCustomTokens = IOAuthCustomToken[];
 
-export enum OAuthErrorType {
+export enum OAuth2ErrorCode {
   // Response errors
   BAD_CREDENTIALS = 'bad_credentials',
   BAD_SAML = 'bad_saml',
@@ -66,7 +66,7 @@ export enum OAuthErrorType {
 }
 
 export interface OAuthErrorDetails {
-  type: OAuthErrorType;
+  type: OAuth2ErrorCode;
   error?: string;
   description?: string;
 }
@@ -93,6 +93,14 @@ export class OAuthClientInfo {
   }
 }
 
+export const uniqueId = () => {
+  try {
+    return getSession()?.user?.uniqueId ?? '';
+  } catch {
+    return '';
+  }
+};
+
 export class OAuth2RessourceOwnerPasswordClient {
   /**
    * Common headers to all oauth2 flow requets
@@ -101,6 +109,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     // tslint:disable-next-line:prettier
     Accept: 'application/json, application/x-www-form-urlencoded',
     'Content-Type': 'application/x-www-form-urlencoded',
+    'X-Device-Id': uniqueId,
   };
 
   /**
@@ -137,13 +146,13 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public createAuthError(body: { error: string; error_description?: string }): OAuthError;
   public createAuthError<T extends object>(
-    type: OAuthErrorType,
+    type: OAuth2ErrorCode,
     error: string,
     description?: string,
     additionalData?: T,
   ): OAuthError & T;
   public createAuthError<T extends object>(
-    bodyOrType: { error: string; error_description?: string } | OAuthErrorType,
+    bodyOrType: { error: string; error_description?: string } | OAuth2ErrorCode,
     error?: string,
     description?: string,
     additionalData?: T,
@@ -154,31 +163,31 @@ export class OAuth2RessourceOwnerPasswordClient {
       // create from body
       Object.assign(err, bodyOrType);
       if (bodyOrType.error === 'invalid_client') {
-        err.type = OAuthErrorType.INVALID_CLIENT;
+        err.type = OAuth2ErrorCode.INVALID_CLIENT;
       } else if (bodyOrType.error === 'invalid_grant') {
-        err.type = OAuthErrorType.INVALID_GRANT;
+        err.type = OAuth2ErrorCode.INVALID_GRANT;
       } else if (bodyOrType.error === 'access_denied') {
         if (bodyOrType.error_description === 'auth.error.authenticationFailed') {
-          err.type = OAuthErrorType.BAD_CREDENTIALS;
+          err.type = OAuth2ErrorCode.BAD_CREDENTIALS;
         } else if (bodyOrType.error_description === 'auth.error.blockedUser') {
-          err.type = OAuthErrorType.BLOCKED_USER;
+          err.type = OAuth2ErrorCode.BLOCKED_USER;
         } else if (bodyOrType.error_description === 'auth.error.blockedProfileType') {
-          err.type = OAuthErrorType.BLOCKED_TYPE;
+          err.type = OAuth2ErrorCode.BLOCKED_TYPE;
         } else if (bodyOrType.error_description === 'auth.error.global') {
-          err.type = OAuthErrorType.PLATFORM_UNAVAILABLE;
+          err.type = OAuth2ErrorCode.PLATFORM_UNAVAILABLE;
         } else if (bodyOrType.error_description === 'auth.error.ban') {
-          err.type = OAuthErrorType.TOO_MANY_TRIES;
+          err.type = OAuth2ErrorCode.TOO_MANY_TRIES;
         } else {
-          err.type = OAuthErrorType.UNKNOWN_DENIED;
+          err.type = OAuth2ErrorCode.UNKNOWN_DENIED;
         }
       } else if (bodyOrType.error === 'quota_overflow') {
-        err.type = OAuthErrorType.TOO_LOAD;
+        err.type = OAuth2ErrorCode.TOO_LOAD;
       } else {
-        err.type = OAuthErrorType.UNKNOWN_RESPONSE;
+        err.type = OAuth2ErrorCode.UNKNOWN_RESPONSE;
       }
     } else if (bodyOrType && typeof bodyOrType !== 'object' && error) {
       // create from type
-      err.type = bodyOrType as unknown as OAuthErrorType;
+      err.type = bodyOrType as unknown as OAuth2ErrorCode;
       err.error = error;
       err.description = description;
       additionalData && Object.assign(err, additionalData);
@@ -199,7 +208,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     } catch (e) {
       const err: OAuthError = new Error('EAUTH: invalid Json oauth response') as OAuthError;
       err.name = 'EAUTH';
-      err.type = OAuthErrorType.UNKNOWN_RESPONSE;
+      err.type = OAuth2ErrorCode.UNKNOWN_RESPONSE;
       err.description = 'Body is not JSON data.';
       throw err;
     }
@@ -257,7 +266,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         method: options.method,
       });
     } catch (err) {
-      if (err instanceof Error) (err as OAuthError).type = OAuthErrorType.NETWORK_ERROR;
+      if (err instanceof Error) (err as OAuthError).type = OAuth2ErrorCode.NETWORK_ERROR;
       throw err;
     } finally {
       CookieManager.clearAll();
@@ -272,7 +281,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     try {
       data = await this.parseResponseJSON(response);
     } catch (err) {
-      if (err instanceof Error) (err as OAuthError).type = OAuthErrorType.PARSE_ERROR;
+      if (err instanceof Error) (err as OAuthError).type = OAuth2ErrorCode.PARSE_ERROR;
       throw err;
     }
     // 5: Check if response is error
@@ -288,7 +297,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private async getNewToken(grantType: string, parms: any, saveToken: boolean = true): Promise<IOAuthToken> {
     if (!this.clientInfo) {
-      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
+      throw this.createAuthError(OAuth2ErrorCode.NOT_INITIALIZED, 'no client info provided');
     }
     // 1: Build request
     const body = {
@@ -311,7 +320,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       });
       // 3: Build token from data
       if (!data.hasOwnProperty('access_token')) {
-        throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
+        throw this.createAuthError(OAuth2ErrorCode.BAD_RESPONSE, 'no access_token returned', '', { data });
       }
       this.token = {
         ...data,
@@ -324,7 +333,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       return this.token!;
     } catch (err) {
       const error = err as Error;
-      error.name = '[oAuth] getToken failed: ' + error.name;
+      error.message = '[oAuth] getToken failed: ' + error.message;
       throw error;
     }
   }
@@ -350,12 +359,20 @@ export class OAuth2RessourceOwnerPasswordClient {
     return this.getNewToken('password', { username, password }, saveToken);
   }
 
+  public static async getStoredTokenStr(): Promise<string | undefined> {
+    const rawStoredToken = await AsyncStorage.getItem('token');
+    if (!rawStoredToken) {
+      return undefined;
+    }
+    return rawStoredToken;
+  }
+
   /**
    * Read stored token in local storage. No-op if no token is stored, return undefined.
    */
-  public async loadToken(): Promise<IOAuthToken | undefined> {
+  public async loadToken(fromData?: string): Promise<IOAuthToken | undefined> {
     try {
-      const rawStoredToken = await AsyncStorage.getItem('token');
+      const rawStoredToken = fromData ?? (await OAuth2RessourceOwnerPasswordClient.getStoredTokenStr());
       if (!rawStoredToken) {
         return undefined;
       }
@@ -391,7 +408,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public async refreshToken(): Promise<IOAuthToken> {
     if (!this.clientInfo) {
-      throw this.createAuthError(OAuthErrorType.NOT_INITIALIZED, 'no client info provided');
+      throw this.createAuthError(OAuth2ErrorCode.NOT_INITIALIZED, 'no client info provided');
     }
     if (!this.token || !this.token.refresh_token) throw new Error('[oAuth] refreshToken: No refresh token provided.');
 
@@ -416,7 +433,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         method: 'POST',
       });
       if (!data.hasOwnProperty('access_token')) {
-        throw this.createAuthError(OAuthErrorType.BAD_RESPONSE, 'no access_token returned', '', { data });
+        throw this.createAuthError(OAuth2ErrorCode.BAD_RESPONSE, 'no access_token returned', '', { data });
       }
       // 3: Construct the token with received data
       this.token = {
@@ -508,7 +525,8 @@ export class OAuth2RessourceOwnerPasswordClient {
         OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY,
       );
       if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
-        const url = `${DEPRECATED_getCurrentPlatform()!.url}/auth/oauth2/token?type=queryparam`;
+        const session = assertSession();
+        const url = `${session.platform.url}/auth/oauth2/token?type=queryparam`;
         const data = await this.request(url, {
           headers: urlSigner.getAuthHeader(),
         });
@@ -567,11 +585,16 @@ export const createAppScopesLegacy = () => [...new Set([...createAppScopes(), ..
 export const urlSigner = {
   /**
    * Prepend url with domain name if needed.
+   * Uses the current platform as domain, but custom platform can be used as a second optional argument.
    */
-  getAbsoluteUrl: (url?: string) => {
-    return (
-      url && (url.startsWith('//') ? `https:${url}` : url.startsWith('/') ? `${DEPRECATED_getCurrentPlatform()!.url}${url}` : url)
-    );
+  getAbsoluteUrl: (url?: string, pf?: Platform) => {
+    if (!url) return undefined;
+    if (url.startsWith('//')) return `https:${url}`;
+    if (url.startsWith('/')) {
+      if (!pf) pf = assertSession().platform;
+      return `${pf.url}${url}`;
+    }
+    return url;
   },
 
   /**
@@ -580,7 +603,8 @@ export const urlSigner = {
    * @returns
    */
   getRelativeUrl: (absoluteUrl?: string) => {
-    return absoluteUrl && absoluteUrl.replace(DEPRECATED_getCurrentPlatform()!.url, '').split('?')[0];
+    const pf = assertSession().platform;
+    return absoluteUrl && absoluteUrl.replace(pf.url, '').split('?')[0];
   },
 
   /**
@@ -589,7 +613,8 @@ export const urlSigner = {
    * If the url contains a protocol identifier, it not be signed.
    */
   getIsUrlSignable: (absoluteUrl?: string) => {
-    return absoluteUrl && (absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf(DEPRECATED_getCurrentPlatform()!.url) !== -1);
+    const pf = assertSession().platform;
+    return absoluteUrl && (absoluteUrl.indexOf('://') === -1 || absoluteUrl.indexOf(pf.url) !== -1);
   },
 
   /**
@@ -681,3 +706,16 @@ export const urlSigner = {
     return typeof URISource === 'string' ? URISource : URISource.uri;
   },
 };
+
+export function initOAuth2(platform: Platform) {
+  OAuth2RessourceOwnerPasswordClient.connection = new OAuth2RessourceOwnerPasswordClient(
+    `${platform.url}/auth/oauth2/token`,
+    platform.oauth.client_id,
+    platform.oauth.client_secret,
+    createAppScopesLegacy(),
+  );
+}
+
+export function destroyOAuth2() {
+  return OAuth2RessourceOwnerPasswordClient.connection?.eraseToken();
+}

@@ -2,17 +2,21 @@
  * Actions for file handler
  */
 import FileViewer from 'react-native-file-viewer';
-import { NavigationInjectedProps } from 'react-navigation';
-import { ThunkDispatch } from 'redux-thunk';
+import type { ThunkDispatch } from 'redux-thunk';
 
-import { openCarousel } from '~/framework/components/carousel';
+import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
-import { getUserSession } from '~/framework/util/session';
+import { assertSession } from '~/framework/modules/auth/reducer';
+import fileTransferService, {
+  IDownloadCallbaks,
+  IDownloadParams,
+  IUploadCallbaks,
+  IUploadParams,
+} from '~/framework/util/fileHandler/service';
+import type { IMedia } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-import { IMedia } from '../media';
-import fileTransferService, { IDownloadCallbaks, IDownloadParams, IUploadCallbaks, IUploadParams } from './service';
 
 export const startUploadFileAction =
   <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
@@ -23,7 +27,7 @@ export const startUploadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startUploadFile(session, file, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -36,7 +40,7 @@ export const startUploadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startUploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -49,7 +53,7 @@ export const uploadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.uploadFile(session, file, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -62,7 +66,7 @@ export const uploadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.uploadFiles(session, files, params, adapter, callbacks, syncedFileClass);
   };
 
@@ -74,7 +78,7 @@ export const startDownloadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
   };
 
@@ -86,7 +90,7 @@ export const startDownloadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.startDownloadFiles(session, files, params, callbacks, syncedFileClass);
   };
 
@@ -98,7 +102,7 @@ export const downloadFileAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.downloadFile(session, file, params, callbacks, syncedFileClass);
   };
 
@@ -110,7 +114,7 @@ export const downloadFilesAction =
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) =>
   (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const session = getUserSession();
+    const session = assertSession();
     return fileTransferService.downloadFiles(session, files, params, callbacks, syncedFileClass);
   };
 
@@ -128,10 +132,7 @@ const getMediaTypeFromMime = (mime: string | null | undefined): IMedia['type'] |
   }
 };
 
-export const openDocument = async (
-  document: IDistantFile | LocalFile | IMedia,
-  navigation: NavigationInjectedProps['navigation'], // ToDo: Remove this proptery when RN6
-) => {
+export const openDocument = async (document: IDistantFile | LocalFile | IMedia) => {
   let mediaType: IMedia['type'] | undefined;
   let syncedFile: SyncedFile | undefined;
   let localFile: LocalFile | undefined;
@@ -140,7 +141,7 @@ export const openDocument = async (
   if (isDocumentDistantFile(document)) {
     mediaType = getMediaTypeFromMime(document.filetype);
     if (!mediaType) {
-      const session = getUserSession();
+      const session = assertSession();
       syncedFile = await fileTransferService.downloadFile(session, document, {});
       localFile = syncedFile.lf;
     } else {
@@ -160,38 +161,29 @@ export const openDocument = async (
 
   switch (mediaType) {
     case 'image':
-      openCarousel(
-        {
-          data: [
-            onlineMedia ?? {
-              type: 'image',
-              src: localFile?.filepath!,
-              mime: localFile?.filetype,
-            },
-          ],
-        },
-        navigation,
-      );
+      openCarousel({
+        data: [
+          onlineMedia ?? {
+            type: 'image',
+            src: localFile?.filepath!,
+            mime: localFile?.filetype,
+          },
+        ],
+      });
       break;
     case 'audio':
-      openMediaPlayer(
-        {
-          type: MediaType.AUDIO,
-          source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
-          filetype: document.filetype,
-        },
-        navigation,
-      );
+      openMediaPlayer({
+        type: MediaType.AUDIO,
+        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+        filetype: document.filetype,
+      });
       break;
     case 'video':
-      openMediaPlayer(
-        {
-          type: MediaType.VIDEO,
-          source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
-          filetype: document.filetype,
-        },
-        navigation,
-      );
+      openMediaPlayer({
+        type: MediaType.VIDEO,
+        source: urlSigner.signURISource(onlineMedia?.src ?? localFile?.filepath),
+        filetype: document.filetype,
+      });
       break;
     default:
       if (localFile) {

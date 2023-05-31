@@ -4,13 +4,14 @@ import * as React from 'react';
 import { ActivityIndicator, Animated, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { Icon } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
 import { checkConnection, watchConnection } from '~/infra/actions/connectionTracker';
+import { getState as getConnectionTrackerState } from '~/infra/reducers/connectionTracker';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
-
-import { Icon } from './icons/Icon';
 
 const TrackingContainer = styled(TouchableOpacity)({
   flexDirection: 'row',
@@ -153,11 +154,7 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 }
 
 export default connect(
-  (state: any) => ({
-    connected: !!state.connectionTracker.connected,
-    loading: !!state.connectionTracker.loading,
-    visible: !!state.connectionTracker.visible,
-  }),
+  (state: IGlobalState) => getConnectionTrackerState(state),
   dispatch => ({
     watch: () => watchConnection(dispatch)(),
     check: () => checkConnection(dispatch)(),

@@ -16,13 +16,12 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
-import { DEPRECATED_getCurrentPlatform } from '~/framework/util/_legacy_appConf';
+import { ISession } from '~/framework/modules/auth/model';
 import { assertPermissions } from '~/framework/util/permissions';
-import { IUserSession } from '~/framework/util/session';
+import { getSafeFileName } from '~/framework/util/string';
 import { urlSigner } from '~/infra/oauth';
 
 import { IAnyDistantFile, IDistantFile, LocalFile, SyncedFile } from '.';
-import { getSafeFileName } from '../string';
 
 export interface IUploadCommonParams {
   fields?: { [key: string]: string };
@@ -56,14 +55,14 @@ const mimeAliases = {
 const fileTransferService = {
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
   startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
     callbacks?: IUploadCallbaks,
     syncedFileClass?: new (...arguments_: [SyncedFileType['lf'], SyncedFileType['df']]) => SyncedFileType,
   ) => {
-    const url = DEPRECATED_getCurrentPlatform()!.url + params.url;
+    const url = session.platform.url + params.url;
     const job = RNFS.uploadFiles({
       files: [{ ...file, name: 'file' }],
       toUrl: url,
@@ -100,7 +99,7 @@ const fileTransferService = {
 
   /** Upload a file to the given url. */
   uploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -116,7 +115,7 @@ const fileTransferService = {
   },
 
   startUploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -127,7 +126,7 @@ const fileTransferService = {
   },
 
   uploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -141,7 +140,7 @@ const fileTransferService = {
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
   startDownloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -238,7 +237,7 @@ const fileTransferService = {
 
   /** Download a file that exists in the server. */
   downloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -253,7 +252,7 @@ const fileTransferService = {
   },
 
   startDownloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -263,7 +262,7 @@ const fileTransferService = {
   },
 
   downloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: IUserSession,
+    session: ISession,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,

@@ -34,6 +34,7 @@
  *     hiddenItemStyle={UI_STYLES.justifyEnd} // Optional. style for every action
  * />
  */
+import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import {
   Animated,
@@ -65,9 +66,11 @@ declare module 'react' {
 export interface ISwipeAction<ItemT extends { key: string }> {
   action: (row: RowMap<ItemT>, e: GestureResponderEvent) => void;
   actionIcon?: string;
+  actionIconSize?: number;
   actionColor?: ColorValue;
   actionText?: string;
   backgroundColor?: ColorValue;
+  isFirstAction?: boolean;
   style?: ViewStyle;
 }
 
@@ -94,6 +97,8 @@ const styles = StyleSheet.create({
 
 const defaultSwipeActionWidth = 100;
 
+let isScrollingWhileTouchSwipeAction = false;
+
 const SwipeAction = <ItemT extends { key: string }>(
   props: ISwipeAction<ItemT> & {
     rowMap: RowMap<ItemT>;
@@ -107,7 +112,7 @@ const SwipeAction = <ItemT extends { key: string }>(
   const overlapWidth = React.useMemo(() => UI_SIZES.screen.width - props.swipeActionWidth, [props.swipeActionWidth]);
   const overlapElement = React.useMemo(
     () =>
-      props.backgroundColor ? (
+      props.backgroundColor && props.isFirstAction ? (
         <View
           // eslint-disable-next-line react-native/no-inline-styles
           style={{
@@ -120,13 +125,20 @@ const SwipeAction = <ItemT extends { key: string }>(
           }}
         />
       ) : null,
-    [overlapWidth, props.backgroundColor, props.direction],
+    [overlapWidth, props.backgroundColor, props.direction, props.isFirstAction],
   );
   return (
     <View style={wrapperStyle}>
       <TouchableOpacity
-        onPress={async e => {
-          return props.action(props.rowMap, e);
+        onPressIn={() => {
+          isScrollingWhileTouchSwipeAction = false;
+        }}
+        onPressOut={e => {
+          setTimeout(() => {
+            if (!isScrollingWhileTouchSwipeAction) {
+              return props.action(props.rowMap, e);
+            }
+          }, 25); // 🍔 ! We want to ensure onScrollBeginDrag event will be fired before this !!
         }}>
         <View
           style={[
@@ -141,8 +153,8 @@ const SwipeAction = <ItemT extends { key: string }>(
           {overlapElement}
           {props.actionIcon ? (
             <NamedSVG
-              width={16}
-              height={16}
+              width={props.actionIconSize ?? 16}
+              height={props.actionIconSize ?? 16}
               fill={props.actionColor || (props.backgroundColor ? theme.ui.text.inverse : theme.palette.primary.regular)}
               name={props.actionIcon}
             />
@@ -173,6 +185,17 @@ export interface SwipeableListProps<ItemT extends { key: string }>
   itemSwipeActionProps?: (info: ListRenderItemInfo<ItemT>) => ISwipeActionProps<ItemT> | null;
 }
 
+export const ScrollToTopHandler = ({ listRef }: { listRef: React.RefObject<SwipeListView<any>> }) => {
+  useScrollToTop(
+    React.useRef({
+      scrollToTop: () => {
+        listRef?.current?.scrollToTop();
+      },
+    }),
+  );
+  return null;
+};
+
 export default React.forwardRef(
   <ItemT extends { key: string }>( // need to write "extends" because we're in a tsx file
     props: SwipeableListProps<ItemT> & FlatListProps<ItemT>,
@@ -188,6 +211,7 @@ export default React.forwardRef(
       ListFooterComponent,
       scrollIndicatorInsets,
       renderItem,
+      onScrollBeginDrag,
       ...otherListProps
     } = props;
     const animatedRefs = React.useRef<{ [key: string]: Animated.Value }>({});
@@ -208,9 +232,10 @@ export default React.forwardRef(
         if (!actions || (!actions.left && !actions.right)) return null;
         return (
           <View style={[UI_STYLES.rowStretch, hiddenRowStyle]}>
-            {actions?.left?.map(p => (
+            {actions?.left?.map((p, index) => (
               <SwipeAction
                 {...p}
+                key={index}
                 style={
                   [
                     hiddenItemStyle,
@@ -222,19 +247,22 @@ export default React.forwardRef(
                 }
                 rowMap={rowmap}
                 animatedRefs={animatedRefs.current}
-                swipeActionWidth={(swipeActionWidth ?? defaultSwipeActionWidth) * actions.left!.length}
+                swipeActionWidth={swipeActionWidth ?? defaultSwipeActionWidth}
                 direction="left"
+                isFirstAction={!index}
               />
             ))}
             <View style={UI_STYLES.flex1} />
-            {actions?.right?.map(p => (
+            {actions?.right?.map((p, index) => (
               <SwipeAction
                 {...p}
+                key={index}
                 style={[hiddenItemStyle, p.style] as ViewStyle}
                 rowMap={rowmap}
                 animatedRefs={animatedRefs.current}
-                swipeActionWidth={(swipeActionWidth ?? defaultSwipeActionWidth) * actions.right!.length}
+                swipeActionWidth={swipeActionWidth ?? defaultSwipeActionWidth}
                 direction="right"
+                isFirstAction={!index}
               />
             ))}
           </View>
@@ -270,6 +298,14 @@ export default React.forwardRef(
     const closeCurrentRow = (rowKey: string) => {
       rowMapRef.current?.[rowKey]?.closeRow();
     };
+
+    const setIsScrollingWhileTouchSwipeAction = React.useCallback(
+      event => {
+        isScrollingWhileTouchSwipeAction = true;
+        onScrollBeginDrag?.(event);
+      },
+      [onScrollBeginDrag],
+    );
 
     const realRenderItem = React.useCallback(
       (info, rowMap) => {
@@ -322,17 +358,21 @@ export default React.forwardRef(
     }
 
     return (
-      <SwipeListView
-        {...otherListProps}
-        data={data}
-        ref={ref}
-        // onSwipeValueChange={onSwipeValueChange}
-        renderItem={realRenderItem}
-        onRowOpen={onRowOpen}
-        onRowClose={onRowClose}
-        ListFooterComponent={realListFooterComponent}
-        scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
-      />
+      <>
+        <SwipeListView
+          {...otherListProps}
+          data={data}
+          ref={ref}
+          // onSwipeValueChange={onSwipeValueChange}
+          renderItem={realRenderItem}
+          onRowOpen={onRowOpen}
+          onRowClose={onRowClose}
+          ListFooterComponent={realListFooterComponent}
+          scrollIndicatorInsets={scrollIndicatorInsets ?? { right: 0.001 }} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
+          onScrollBeginDrag={setIsScrollingWhileTouchSwipeAction}
+        />
+        <ScrollToTopHandler listRef={ref as React.RefObject<SwipeListView<any>>} />
+      </>
     );
   },
 );

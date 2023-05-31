@@ -7,9 +7,7 @@ import { Image } from '~/framework/util/media';
 import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
 
-import { Image } from '../util/media';
-import { ActionButton } from './action-button';
-import { Card, InfoCard } from './card';
+import { Card, InfoCard } from './card/base';
 import { UI_SIZES } from './constants';
 import { CaptionText, SmallBoldText, SmallText } from './text';
 import { Toggle } from './toggle';

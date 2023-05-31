@@ -5,7 +5,8 @@ import { TimelineState } from './reducer';
 export default new NavigableModuleConfig<'timeline', TimelineState>({
   name: 'timeline',
   entcoreScope: ['timeline', 'userbook'],
-  matchEntcoreApp: entcoreApp => true, // The timeline is always displayed
+  matchEntcoreApp: app => app.prefix === '/timeline',
+  hasRight: () => true, // The timeline is always displayed
 
   displayI18n: 'timeline.tabName',
   displayAs: 'tabModule',

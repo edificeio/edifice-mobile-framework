@@ -3,35 +3,24 @@
  * All tools to manage push-notifications opening
  */
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import React, { PropsWithChildren, useEffect, useState } from 'react';
-import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-
-
-import { IGlobalState } from '~/AppStore';
-import { startLoadNotificationsAction } from '~/framework/modules/timelinev2/actions';
-import timelineModuleConfig from '~/framework/modules/timelinev2/moduleConfig';
-
-
+import { IGlobalState } from '~/app/store';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 
 import { IEntcoreTimelineNotification, notificationAdapter } from '.';
 import { defaultNotificationActionStack, handleNotificationAction } from './routing';
 
-
-export async function requestUserPermission() {
-  const authorizationStatus = await messaging().requestPermission();
-
-  if (authorizationStatus) {
-  }
-}
-
-function _AppPushNotificationHandlerComponent(props: PropsWithChildren<{
-  isLoggedIn: boolean;
-  apps: string[];
-  dispatch: ThunkDispatch<any, any, any>;
-}>) {
+function AppPushNotificationHandlerComponentUnconnected(
+  props: PropsWithChildren<{
+    isLoggedIn: boolean;
+    dispatch: ThunkDispatch<any, any, any>;
+  }>,
+) {
   const [notification, setNotification] = useState<FirebaseMessagingTypes.RemoteMessage | undefined>(undefined);
 
   useEffect(() => {
@@ -51,30 +40,30 @@ function _AppPushNotificationHandlerComponent(props: PropsWithChildren<{
       });
   }, []);
 
-  if (notification && props.isLoggedIn) {
-    if (notification.data) {
-      const notificationData = {
-        ...notification.data,
-        params: notification.data.params && JSON.parse(notification.data.params),
-      } as IEntcoreTimelineNotification;
-      const n = notificationAdapter(notificationData);
+  const navigation = useNavigation<NavigationProp<ParamListBase, keyof ParamListBase, string>>();
+  const { isLoggedIn, dispatch } = props;
+  useEffect(() => {
+    if (notification && isLoggedIn) {
+      if (notification.data) {
+        const notificationData = {
+          ...notification.data,
+          params: notification.data.params && JSON.parse(notification.data.params),
+        } as IEntcoreTimelineNotification;
+        const n = notificationAdapter(notificationData);
 
-      props.dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
-      props.dispatch(
-        handleNotificationAction(n, defaultNotificationActionStack, 'Push Notification', timelineModuleConfig.routeName),
-      );
-      setNotification(undefined);
+        dispatch(startLoadNotificationsAction()); // Lasy-load, no need to await here.
+        dispatch(handleNotificationAction(n, defaultNotificationActionStack, navigation, 'Push Notification', true));
+        setNotification(undefined);
+      }
     }
-    SplashScreen.hide();
-  }
+  }, [dispatch, isLoggedIn, navigation, notification]);
 
   return <>{props.children}</>;
-};
+}
 
 const mapStateToProps = (s: IGlobalState) => {
   return {
-    isLoggedIn: s?.user?.auth?.loggedIn as boolean,
-    apps: s?.user?.auth?.apps as string[],
+    isLoggedIn: getAuthState(s).logged,
   };
 };
 
@@ -85,4 +74,4 @@ const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>) => ({
 export const AppPushNotificationHandlerComponent = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(_AppPushNotificationHandlerComponent);
+)(AppPushNotificationHandlerComponentUnconnected);

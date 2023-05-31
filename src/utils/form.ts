@@ -15,7 +15,7 @@ export interface IValidatorContext<T> {
 /// validators: take as parameter a string and return true if valid
 ///
 function notEmpty(text: string) {
-  return text && text.trim().length > 0;
+  return !!text && text.trim().length > 0;
 }
 function matchRegex(text: string, regex: RegExp | string) {
   if (!text || !regex) {
@@ -25,7 +25,7 @@ function matchRegex(text: string, regex: RegExp | string) {
   return regexObject.test(text);
 }
 function compareString(text1: string, text2: string, match: boolean) {
-  return match ? text1 == text2 : text1 != text2;
+  return match ? text1 === text2 : text1 !== text2;
 }
 
 ///
@@ -34,8 +34,11 @@ function compareString(text1: string, text2: string, match: boolean) {
 export class ValidatorBuilder {
   static MAIL_REGEX =
     /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
+
   static PHONE_REGEX = /^(00|\+)?(?:[0-9] ?-?\.?){6,15}$/;
+
   validators: IValidator[] = [];
+
   withRequired(required: boolean) {
     if (required) {
       this.validators.push(notEmpty);
@@ -48,22 +51,26 @@ export class ValidatorBuilder {
     });
     return this;
   }
+
   withPhone() {
     return this.withRegex(ValidatorBuilder.PHONE_REGEX);
   }
+
   withEmail() {
     return this.withRegex(ValidatorBuilder.MAIL_REGEX);
   }
+
   withCompareString(other: ValueGetter<string>, match: boolean) {
     this.validators.push(value => {
       return compareString(value, other(), match);
     });
     return this;
   }
+
   build<T>(): IValidatorContext<T> {
     const isValid = value => {
       let valid = true;
-      for (let va of this.validators) {
+      for (const va of this.validators) {
         if (!va(value)) {
           valid = false;
         }

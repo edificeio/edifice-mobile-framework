@@ -1,6 +1,6 @@
 {
-  "last": "2023-05-26 13:17:20",
-  "notes": "fix(crash): MB-1637, patch react-native-haptic-feedback\nfix(conversation): MB-1652, Remove timeouts to generate onChange events on Subject && Body\nfeat(dropdown): MB-1639 MB-1640, fix it with negative zIndex && position relative to dropdown container\nfix(dropdown): AMV2-447 set negative zIndex to views rendered above dropdown picker\nfix: MB-1646 fix permissions android for download\nrelease: 1.9.6-rc.2(1090608)",
-  "version": "1.9.6-rc.3(1090609)",
+  "last": "2023-05-24 19:39:57",
+  "notes": "fix(presences): AMVS-326 update dashboard swiper index\nfix(presences): AMVS-322 fetch event reasons from teacher dashboard too\nfix(presences): AMVS-358 create call absence uses wrong reasonId value type\nfix(competences): AMVS-357 adapt competences modal to new models\nchore(build): Fix typo\nfix: MB-1646 update galery permission for Android sdk 33+\nchore: add missing dependency react-is\nfix(user): MB-1643 android rendering issue of border-radius\nfix(dropdown): update version react-native-dropdown-picker to fix somes bugs in RN 0.71\nfix: MB-909 crash on android when no token\nfix(conversation): MB-1642, Set undefined for navbar title width\nfix(user): MB-1642, Use RN TouchableOpacity instead oo RNGH one\nfix(conversation): MB-1640, Use ScrollView instead of Flatlist for listMode\nfix(conversation): MB-1639, Use negative zIndex for Drawer background\nrelease: 1.9.6-rc.1(1090607)",
+  "version": "1.9.6-rc.2(1090608)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

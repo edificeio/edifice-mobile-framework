@@ -16,10 +16,13 @@ export default function createReducer<StateType>(
   initialState: StateType,
   reducerActionsHandlerMap: IReducerActionsHandlerMap<StateType>,
 ): Reducer<StateType, AnyAction> {
-  return (state: StateType = initialState, action: AnyAction) => {
+  return (state: StateType = initialState, action: AnyAction = { type: undefined }) => {
     return reducerActionsHandlerMap[action.type] ? reducerActionsHandlerMap[action.type](state, action) : state;
   };
 }
+
+export const createEndSessionActionType = (sessionNameUppercase: string = 'SESSION') =>
+  endSessionActionType + '_' + sessionNameUppercase;
 
 /**
  * Work as equal as reducerFactory, but can handle a special action type that reset data.
@@ -39,9 +42,6 @@ export function createSessionReducer<StateType>(
     ...sessionActions,
   });
 }
-
-export const createEndSessionActionType = (sessionNameUppercase: string = 'SESSION') =>
-  endSessionActionType + '_' + sessionNameUppercase;
 
 export const createEndSessionAction = (sessionNameUppercase?: string) => ({
   type: createEndSessionActionType(sessionNameUppercase),

@@ -4,7 +4,7 @@ import React from 'react';
 import { ColorValue, Platform, StyleSheet, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { TouchCardWithoutPadding } from '~/framework/components/card';
+import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
