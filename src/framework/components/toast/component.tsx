@@ -90,7 +90,6 @@ function useToastStyles(type: ToastParams['type'], picture: ToastParams['props']
             fill: colorShades.regular,
             width: UI_SIZES.elements.icon,
             height: UI_SIZES.elements.icon,
-            // style: { backgroundColor: 'pink' },
           } as PictureProps)),
     }),
     [colorShades, picture, type],

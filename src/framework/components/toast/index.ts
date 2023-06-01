@@ -1,5 +1,6 @@
 import ToastMessage, { ToastShowParams } from 'react-native-toast-message';
 
+import { I18n } from '~/app/i18n';
 import Feedback from '~/framework/util/feedback/feedback';
 
 import { DEFAULTS } from './component';
@@ -28,7 +29,7 @@ function showToast(type: string, text: string, options: ToastOptions = {}) {
   showToastGeneric(type, text, { ...options, visibilityTime: options.duration ?? DEFAULTS.visibilityTime, autoHide: true });
 }
 
-export const showError = (text: string = I18n.t('common.error.text'), options?: ToastOptions) => {
+export const showError = (text: string = I18n.get('common.error.text'), options?: ToastOptions) => {
   showToast('error', text, options);
   Feedback.errorDisplayed();
 };
@@ -50,7 +51,7 @@ function showToastPermanent(type: string, text: string, options: ToastOptions = 
   showToastGeneric(type, text, { ...options, autoHide: false });
 }
 
-export const showErrorPermanent = (text: string = I18n.t('common.error.text'), options?: ToastOptions) => {
+export const showErrorPermanent = (text: string = I18n.get('common.error.text'), options?: ToastOptions) => {
   showToastPermanent('error', text, options);
   Feedback.errorDisplayed();
 };

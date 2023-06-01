@@ -14,7 +14,6 @@ export interface ToastOptions {
   onLabelPress?: () => void;
   duration?: number;
   icon?: PictureProps;
-  url?: string;
 }
 
 export interface ToastProps {

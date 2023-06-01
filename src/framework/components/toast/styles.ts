@@ -49,7 +49,6 @@ export default StyleSheet.create({
   },
   cardText: {
     flex: 1,
-    // backgroundColor: 'pink',
   },
   progress: {
     position: 'absolute',
