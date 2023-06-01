@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -38,7 +39,7 @@ const LevelLegendModal = React.forwardRef<ModalBoxHandle, ILevelLegendModalProps
               <SmallText>{item.libelle}</SmallText>
             </View>
           )}
-          ListHeaderComponent={<BodyText>{I18n.t('competences-levellegendmodal-title')}</BodyText>}
+          ListHeaderComponent={<BodyText>{I18n.get('competences-levellegendmodal-title')}</BodyText>}
           scrollEnabled={false}
         />
       }

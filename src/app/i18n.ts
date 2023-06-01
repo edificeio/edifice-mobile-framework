@@ -9,16 +9,15 @@ import { unflatten } from 'flat';
 import i18n, { InitOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
 import resourcesToBackend from 'i18next-resources-to-backend';
-// eslint-disable-next-line import/order
 import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
-// eslint-disable-next-line import/order
-import phraseSecrets from 'phrase.json';
 import { initReactI18next } from 'react-i18next';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
+
+const phraseSecrets = require('ROOT/phrase.json');
 
 export namespace I18n {
   export type SupportedLocales = 'fr' | 'en' | 'es';
