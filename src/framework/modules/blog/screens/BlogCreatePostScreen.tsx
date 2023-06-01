@@ -257,15 +257,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
         ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
       });
-      dispatch(
-        notifierShowAction({
-          id: route.params.referrer ?? 'timeline',
-          text: notifierSuccessText,
-          icon: 'checked',
-          type: 'success',
-          duration: 8000,
-        }),
-      );
+      Toast.showSuccess(notifierSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {
         Toast.showError(I18n.get('fullStorage'));
