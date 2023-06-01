@@ -24,6 +24,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteBlogPostAction,
@@ -48,7 +49,6 @@ import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunctio
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -508,14 +508,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                   blogPost: newBlogPostData,
                 });
               }
+              Toast.showSuccess(I18n.get('blog-post-details-publish-success'));
             } catch {
-              this.props.dispatch(
-                notifierShowAction({
-                  type: 'error',
-                  id: `${moduleConfig.routeName}/details`,
-                  text: I18n.get('common.error.text'),
-                }),
-              );
+              Toast.showError(I18n.get('common.error.text'));
             }
           }}
         />

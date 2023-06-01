@@ -182,6 +182,7 @@
   "blog.post.waitingValidation": "Entrada de blog a la espera de validación",
   "blog.resourceName": "Entrada de blog",
   "blog.tabName": "Blog",
+  "blog-post-details-publish-success": "La entrada de blog se ha publicado correctamente.",
   "bottom-menu-add-media": "Agregar contenido multimedia",
   "bottom-menu-change-avatar": "Cambiar la foto de perfil",
   "camera.permission.blocked.title": "Acceso denegado a la cámara",

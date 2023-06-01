@@ -184,6 +184,7 @@
   "blog.post.waitingValidation": "Billet en attente de validation",
   "blog.resourceName": "Billet de blog",
   "blog.tabName": "Blog",
+  "blog-post-details-publish-success": "Le billet a bien été publié.",
   "camera.permission.blocked.title": "Accès à l’appareil photo refusé",
   "camera.permission.blocked.text": "{{appName}} ne peut pas accéder à l’appareil photo. Vous pouvez autoriser l’accès via les réglages de l’application dans les paramètres du téléphone.",
   "carousel.counter": "{{current}} / {{total}}",

@@ -182,6 +182,7 @@
   "blog.post.waitingValidation": "Post ready for approval",
   "blog.resourceName": "Blog post",
   "blog.tabName": "Blog",
+  "blog-post-details-publish-success": "The post has been published.",
   "bottom-menu-add-media": "Add multimedia content",
   "bottom-menu-change-avatar": "Change your profile photo",
   "camera.permission.blocked.title": "Access to camera denied",

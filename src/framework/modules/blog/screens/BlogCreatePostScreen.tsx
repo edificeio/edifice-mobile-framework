@@ -33,8 +33,6 @@ import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
-import Notifier from '~/framework/util/notifier';
-import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
@@ -234,7 +232,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       // Create and submit/publish post
       await handleSendBlogPost(blog, title, htmlContent, uploadedPostImages);
 
-      // Track action, load/navigate to timeline and display notifier
+      // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
       const event = {
         [createBlogPostResourceRight]: 'Enregistrer',
@@ -243,7 +241,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       }[blogPostDisplayRight];
       const eventName = `Rédaction blog - ${event}`;
       const eventCategory = route.params.referrer ? 'Blog' : 'Timeline';
-      const notifierSuccessText = {
+      const toastSuccessText = {
         [createBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.createSuccess'),
         [submitBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.submitSuccess'),
         [publishBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.publishSuccess'),
@@ -257,7 +255,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
         ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
       });
-      Toast.showSuccess(notifierSuccessText);
+      Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {
         Toast.showError(I18n.get('fullStorage'));
@@ -411,7 +409,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       <>
         <PreventBack isEditing={isEditing} />
         <KeyboardPageView scrollable={false}>
-          <Notifier id="createPost" />
           {/* ToDo : don't use magic keywords like this. */}
           <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.scrollView}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
