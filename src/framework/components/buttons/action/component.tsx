@@ -12,8 +12,8 @@ import { isEmpty } from '~/framework/util/object';
 import styles from './styles';
 import { ActionButtonProps } from './types';
 
-export const pictureSize = TextSizeStyle.Normal.fontSize! + (TextSizeStyle.Normal.lineHeight! - TextSizeStyle.Normal.fontSize!) / 2;
-
+export const defaultPictureSize =
+  TextSizeStyle.Normal.fontSize! + (TextSizeStyle.Normal.lineHeight! - TextSizeStyle.Normal.fontSize!) / 2;
 export const ActionButton = ({
   text,
   iconName,
@@ -26,19 +26,26 @@ export const ActionButton = ({
   loading,
   type,
   style,
+  pictureSize,
+  pictureFill,
+  textColor,
 }: ActionButtonProps) => {
   const Component = disabled ? View : TouchableOpacity;
   const [layoutWidth, setLayoutWidth] = useState(0);
 
   // props depending styles
-  const textStyle = {
-    primary: {
-      color: theme.ui.text.inverse,
-    },
-    secondary: {
-      color: disabled ? theme.ui.text.light : theme.palette.primary.regular,
-    },
-  };
+  const textStyle = textColor
+    ? {
+        color: textColor,
+      }
+    : {
+        primary: {
+          color: theme.ui.text.inverse,
+        },
+        secondary: {
+          color: disabled ? theme.ui.text.light : theme.palette.primary.regular,
+        },
+      }[type ?? 'primary'];
 
   const viewStyle = {
     primary: {
@@ -47,7 +54,7 @@ export const ActionButton = ({
     secondary: {},
   };
 
-  const pictureFill = {
+  const defaultPictureFill = {
     primary: theme.ui.text.inverse,
     secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
@@ -83,19 +90,19 @@ export const ActionButton = ({
         : {})}
       {...(loading ? { disabled: true } : {})}>
       {loading ? (
-        <ActivityIndicator color={textStyle[type ?? 'primary'].color} style={{ height: TextSizeStyle.Normal.lineHeight }} />
+        <ActivityIndicator color={textStyle.color} style={{ height: TextSizeStyle.Normal.lineHeight }} />
       ) : (
         <>
-          <SmallBoldText numberOfLines={1} style={textStyle[type ?? 'primary']}>
+          <SmallBoldText numberOfLines={1} style={textStyle}>
             {text}
           </SmallBoldText>
           {url || iconName ? (
             <Picture
               type="NamedSvg"
               name={iconName || 'pictos-external-link'}
-              width={pictureSize}
-              height={pictureSize}
-              fill={pictureFill[type ?? 'primary']}
+              width={pictureSize ?? defaultPictureSize}
+              height={pictureSize ?? defaultPictureSize}
+              fill={pictureFill ?? defaultPictureFill[type ?? 'primary']}
               style={pictureStyle}
             />
           ) : emoji ? (

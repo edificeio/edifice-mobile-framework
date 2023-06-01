@@ -97,6 +97,9 @@ export const UI_SIZES = {
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
   },
+  border: {
+    thin: 1,
+  },
   radius: {
     small: 4,
     medium: 8,

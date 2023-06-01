@@ -22,7 +22,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { ScreenToast, TOAST_MARGIN } from '~/framework/components/toast/component';
+import { DEFAULTS, ToastHandler } from '~/framework/components/toast/component';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
@@ -347,7 +347,7 @@ export function Carousel(props: ICarouselProps) {
       <PageView style={styles.page} showNetworkBar={false} showToast={false}>
         <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
         {imageViewer}
-        <ScreenToast topOffset={navBarAndStatusBarHeight + TOAST_MARGIN} />
+        <ToastHandler offset={navBarAndStatusBarHeight + DEFAULTS.offset} />
       </PageView>
     </GestureHandlerRootView>
   );

@@ -1,4 +1,4 @@
-import { LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native';
+import { ColorValue, LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native';
 
 export interface ActionButtonProps {
   text: string;
@@ -13,4 +13,7 @@ export interface ActionButtonProps {
   type?: 'primary' | 'secondary';
   style?: StyleProp<ViewStyle>;
   onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
+  pictureSize?: number;
+  pictureFill?: ColorValue;
+  textColor?: ColorValue;
 }

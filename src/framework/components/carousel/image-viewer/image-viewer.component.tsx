@@ -15,8 +15,6 @@ import {
   ViewStyle,
 } from 'react-native';
 import ImageZoom from 'react-native-image-pan-zoom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import Toast from 'react-native-toast-message';
 
 import { UI_SIZES } from '../../constants';
 import styles from './image-viewer.style';
