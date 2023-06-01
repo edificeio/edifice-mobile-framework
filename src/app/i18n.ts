@@ -6,7 +6,7 @@
  */
 import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
-import i18n from 'i18next';
+import i18n, { InitOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
@@ -60,25 +60,6 @@ export namespace I18n {
       en: { translation: finalTranslations.en },
       es: { translation: finalTranslations.es },
     };
-
-    const phrase = new Phrase(
-      phraseSecrets.distributionId,
-      phraseSecrets.environmentId,
-      require('../../package.json').version,
-      'i18next',
-    );
-    const backendPhrase = resourcesToBackend((language, namespace, callback) => {
-      phrase
-        .requestTranslation(language)
-        .then(remoteResources => {
-          callback(null, remoteResources);
-        })
-        .catch(error => {
-          callback(error, null);
-        });
-    });
-    const backendFallback = resourcesToBackend(resources);
-
     // Note: isRTL is unused since all supported languages are LTR
     const fallbackLng = 'en';
     const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(finalTranslations)) as {
@@ -86,23 +67,40 @@ export namespace I18n {
       isRTL: boolean;
     };
     const languageTag = bestAvailableLanguage?.languageTag;
+    const initInfos = {
+      resources,
+      fallbackLng,
+      lng: languageTag,
+      compatibilityJSON: 'v3',
+      interpolation: {
+        escapeValue: false,
+      },
+    } as InitOptions;
+
+    if (phraseSecrets && phraseSecrets.distributionId && phraseSecrets.environmentId) {
+      const phrase = new Phrase(
+        phraseSecrets.distributionId,
+        phraseSecrets.environmentId,
+        require('../../package.json').version,
+        'i18next',
+      );
+      const backendPhrase = resourcesToBackend((language, namespace, callback) => {
+        phrase
+          .requestTranslation(language)
+          .then(remoteResources => {
+            callback(null, remoteResources);
+          })
+          .catch(error => {
+            callback(error, null);
+          });
+      });
+      const backendFallback = resourcesToBackend(resources);
+      initInfos.backend = { backends: [backendPhrase, backendFallback] };
+      i18n.use(ChainedBackend);
+    }
 
     moment.locale(languageTag?.split('-')[0]);
-    i18n
-      .use(ChainedBackend)
-      .use(initReactI18next)
-      .init({
-        resources,
-        fallbackLng,
-        lng: languageTag,
-        compatibilityJSON: 'v3',
-        interpolation: {
-          escapeValue: false,
-        },
-        backend: {
-          backends: [backendPhrase, backendFallback],
-        },
-      });
+    i18n.use(initReactI18next).init(initInfos);
     return languageTag ?? fallbackLng;
   };
 
