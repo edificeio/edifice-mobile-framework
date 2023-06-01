@@ -1,8 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-
-import { UI_SIZES } from '../constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 const TOAST_MIN_HEIGHT = 60; // 2 lines of text + padding + border
 const TOAST_PROOGRESS_THICKNESS = 2;

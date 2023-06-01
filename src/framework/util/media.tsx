@@ -3,10 +3,9 @@ import { ImageProps, ImageURISource, Image as RNImage, StyleSheet, View } from '
 import { FastImageProps, default as RNFastImage } from 'react-native-fast-image';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import { NamedSVG } from '~/framework/components/picture';
 import { urlSigner } from '~/infra/oauth';
-
-import { UI_SIZES } from '../components/constants';
-import { NamedSVG } from '../components/picture';
 
 interface IMediaCommonAttributes {
   src: string | ImageURISource;

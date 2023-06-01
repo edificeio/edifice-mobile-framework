@@ -2,26 +2,24 @@ import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import * as React from 'react';
 import {
   Animated,
-  Dimensions,
   I18nManager,
   Image,
-  PanResponder,
-  Platform,
   Text,
   TouchableHighlight,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  ViewStyle,
 } from 'react-native';
 import ImageZoom from 'react-native-image-pan-zoom';
 
-import { UI_SIZES } from '../../constants';
+import { UI_SIZES } from '~/framework/components/constants';
+
 import styles from './image-viewer.style';
 import { IImageInfo, IImageSize, Props, State } from './image-viewer.type';
 
 export default class ImageViewer extends React.Component<Props, State> {
   public static defaultProps = new Props();
+
   public state = new State();
 
   // 背景透明度渐变动画
@@ -32,9 +30,11 @@ export default class ImageViewer extends React.Component<Props, State> {
 
   // 整体位移，用来切换图片用
   private positionXNumber = 0;
+
   private positionX = new Animated.Value(0);
 
   private width = 0;
+
   private height = 0;
 
   private styles = styles(0, 0, 'transparent');
@@ -117,12 +117,14 @@ export default class ImageViewer extends React.Component<Props, State> {
       },
     );
   }
+
   /**
    * reset Image scale and position
    */
   public resetImageByIndex = (index: number) => {
-    this.imageRefs[index] && this.imageRefs[index].reset();
+    if (this.imageRefs[index]) this.imageRefs[index].reset();
   };
+
   /**
    * 调到当前看图位置
    */
@@ -225,7 +227,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         imageStatus.height = data.height;
         imageStatus.status = 'success';
         saveImageSize();
-      } catch (newError) {
+      } catch {
         // Give up..
         imageStatus.status = 'fail';
         saveImageSize();
@@ -247,6 +249,7 @@ export default class ImageViewer extends React.Component<Props, State> {
       this.loadImage(index + 1);
     }
   };
+
   /**
    * 触发溢出水平滚动
    */
@@ -303,11 +306,9 @@ export default class ImageViewer extends React.Component<Props, State> {
     } else if (isRightMove) {
       // 下一张
       this.goNext.call(this);
-      return;
     } else {
       // 回到之前的位置
       this.resetPosition.call(this);
-      return;
     }
   };
 
@@ -329,7 +330,8 @@ export default class ImageViewer extends React.Component<Props, State> {
       useNativeDriver: !!this.props.useNativeDriver,
     }).start();
 
-    const nextIndex = (this.state.currentShowIndex || 0) - 1;
+    const { currentShowIndex } = this.state;
+    const nextIndex = (currentShowIndex || 0) - 1;
 
     this.setState(
       {
@@ -361,7 +363,8 @@ export default class ImageViewer extends React.Component<Props, State> {
       useNativeDriver: !!this.props.useNativeDriver,
     }).start();
 
-    const nextIndex = (this.state.currentShowIndex || 0) + 1;
+    const { currentShowIndex } = this.state;
+    const nextIndex = (currentShowIndex || 0) + 1;
 
     this.setState(
       {
