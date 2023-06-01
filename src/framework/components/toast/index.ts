@@ -1,4 +1,3 @@
-import I18n from 'i18n-js';
 import ToastMessage, { ToastShowParams } from 'react-native-toast-message';
 
 import Feedback from '~/framework/util/feedback/feedback';
