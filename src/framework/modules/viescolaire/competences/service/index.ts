@@ -161,6 +161,7 @@ const devoirAdapter = (data: IBackendDevoir): IDevoir => {
 const domaineAdapter = (data: IBackendDomaine): IDomaine => {
   return {
     codification: data.codification,
+    cycleId: data.id_cycle,
     degree: data.niveau,
     id: data.id,
     name: data.nom,

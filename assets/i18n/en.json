@@ -291,6 +291,7 @@
   "common.sommeNumeriqueAlert_temp": "The \"Somme Numérique\" platform will not be available starting September 2021. You will have to use the \"ENT Hauts-de-France\" access in the educational social networks list.",
   "common.space": " ",
   "common.to": "To:",
+  "competences-levellegendmodal-title": "Legend",
   "connector-connectFailed": "Impossible to open the link!",
   "conversation-chatPlaceholder": "Write a message...",
   "conversation-datePrefix": "Date:",

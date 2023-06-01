@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { SmallText } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ICompetence, IDomaine, ILevel } from '~/framework/modules/viescolaire/competences/model';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginVertical: UI_SIZES.spacing.minor,
   },
   levelColorContainer: {
     marginLeft: UI_SIZES.spacing.small,
@@ -29,7 +30,7 @@ interface IDomaineListItemProps {
 
 export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> {
   getLevelColor(evaluation: number) {
-    const levels = this.props.levels.filter(level => level.cycle === 'Cycle 3');
+    const { levels } = this.props;
 
     if (evaluation >= 0 && evaluation < levels.length) {
       return levels[evaluation].couleur ?? levels[evaluation].default;
@@ -43,7 +44,6 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
 
     return (
       <>
-        {domaine.degree > 1 && competences.length ? <SmallText>{nameText}</SmallText> : null}
         <FlatList
           data={competences}
           keyExtractor={item => item.id.toString()}
@@ -53,6 +53,7 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
               <View style={[styles.levelColorContainer, { backgroundColor: this.getLevelColor(item.evaluation) }]} />
             </View>
           )}
+          ListHeaderComponent={domaine.degree > 1 && competences.length ? <SmallBoldText>{nameText}</SmallBoldText> : null}
         />
         {domaine.domaines?.map(d => this.renderDomaineCompetences(d))}
       </>
@@ -65,7 +66,7 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
 
     return (
       <ArticleContainer>
-        <SmallText>{nameText}</SmallText>
+        <BodyBoldText>{nameText}</BodyBoldText>
         {this.renderDomaineCompetences(domaine)}
       </ArticleContainer>
     );

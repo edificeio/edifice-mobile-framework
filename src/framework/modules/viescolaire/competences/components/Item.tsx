@@ -16,8 +16,6 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: theme.palette.grey.white,
     borderRadius: 25,
-  },
-  shadow: {
     shadowColor: theme.ui.shadowColor,
     shadowOffset: {
       height: 2,
@@ -30,12 +28,13 @@ const styles = StyleSheet.create({
   denseDevoirListContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   denseDevoirListMatiereContainer: {
     flexDirection: 'row',
-    width: '75%',
-    padding: UI_SIZES.spacing.minor,
     justifyContent: 'space-between',
+    width: '70%',
+    padding: UI_SIZES.spacing.minor,
   },
   denseDevoirListMatiereText: {
     maxWidth: '65%',
@@ -44,16 +43,12 @@ const styles = StyleSheet.create({
   denseDevoirListNoteText: {
     flexGrow: 1,
     textAlign: 'right',
-    alignSelf: 'center',
-  },
-  denseDevoirListDiviseurText: {
-    paddingTop: UI_SIZES.spacing.minor,
   },
 });
 
 export const CompetenceRound = ({ onPress }: { onPress: () => void }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.competenceRound, styles.shadow]}>
+    <TouchableOpacity onPress={onPress} style={styles.competenceRound}>
       <HeadingSText>C</HeadingSText>
     </TouchableOpacity>
   );
@@ -81,7 +76,7 @@ export const DashboardAssessmentCard = ({
     ) : (
       <>
         <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</BodyBoldText>
-        <SmallText style={styles.denseDevoirListDiviseurText}>/{devoir.diviseur}</SmallText>
+        <SmallText>/{devoir.diviseur}</SmallText>
       </>
     )}
   </LeftColoredItem>

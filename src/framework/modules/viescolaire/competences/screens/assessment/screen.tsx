@@ -1,13 +1,16 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
+import { ModalBoxHandle } from '~/framework/components/ModalBox';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
@@ -17,6 +20,7 @@ import {
   fetchCompetencesLevelsAction,
 } from '~/framework/modules/viescolaire/competences/actions';
 import { DomaineListItem } from '~/framework/modules/viescolaire/competences/components/DomaineListItem';
+import LevelLegendModal from '~/framework/modules/viescolaire/competences/components/LevelLegendModal';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
@@ -38,6 +42,7 @@ export const computeNavBar = ({
 });
 
 const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivateProps) => {
+  const legendModalRef = React.useRef<ModalBoxHandle>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -79,6 +84,17 @@ const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivatePr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
+  React.useEffect(() => {
+    const { levels, navigation } = props;
+
+    if (loadingState !== AsyncPagedLoadingState.DONE || !levels.length) return;
+    navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => <NavBarAction icon="ui-infoCircle" onPress={() => legendModalRef.current?.doShowModal()} />,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingState]);
+
   const renderError = () => {
     return (
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
@@ -93,11 +109,15 @@ const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivatePr
     const competences = props.competences.filter(competence => competence.devoirId === assessment.id);
 
     return (
-      <FlatList
-        data={domaines}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => <DomaineListItem competences={competences} domaine={item} levels={levels} />}
-      />
+      <>
+        <FlatList
+          data={domaines}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => <DomaineListItem competences={competences} domaine={item} levels={levels} />}
+          ListHeaderComponent={<View style={{ height: UI_SIZES.spacing.medium }} />}
+        />
+        <LevelLegendModal ref={legendModalRef} levels={levels} />
+      </>
     );
   };
 
@@ -123,15 +143,16 @@ export default connect(
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
+    const domaines = competencesState.domaines.data;
 
     return {
       competences: competencesState.competences.data,
-      domaines: competencesState.domaines.data,
+      domaines,
       initialLoadingState:
         competencesState.competences.isPristine || competencesState.domaines.isPristine
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
-      levels: competencesState.levels.data,
+      levels: competencesState.levels.data.filter(level => level.id_cycle === domaines[0]?.cycleId),
       structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
       studentId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
     };
