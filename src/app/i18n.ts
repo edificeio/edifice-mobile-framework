@@ -16,6 +16,7 @@ import 'moment/locale/fr';
 // eslint-disable-next-line import/order
 import phraseSecrets from 'phrase.json';
 import { initReactI18next } from 'react-i18next';
+import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 
@@ -79,12 +80,7 @@ export namespace I18n {
     } as InitOptions;
 
     if (phraseSecrets && phraseSecrets.distributionId && phraseSecrets.environmentId) {
-      const phrase = new Phrase(
-        phraseSecrets.distributionId,
-        phraseSecrets.environmentId,
-        require('../../package.json').version,
-        'i18next',
-      );
+      const phrase = new Phrase(phraseSecrets.distributionId, phraseSecrets.environmentId, DeviceInfo.getVersion(), 'i18next');
       const backendPhrase = resourcesToBackend((language, namespace, callback) => {
         phrase
           .requestTranslation(language)
