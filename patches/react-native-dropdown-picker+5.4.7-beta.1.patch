@@ -1,3 +1,17 @@
+diff --git a/node_modules/react-native-dropdown-picker/package.json b/node_modules/react-native-dropdown-picker/package.json
+index a3f8cba..e85d698 100644
+--- a/node_modules/react-native-dropdown-picker/package.json
++++ b/node_modules/react-native-dropdown-picker/package.json
+@@ -43,9 +43,6 @@
+   "author": "Hossein Zare",
+   "main": "index.js",
+   "types": "index.d.ts",
+-  "dependencies": {
+-    "react-native-gesture-handler": "*"
+-  },
+   "peerDependencies": {
+     "react": "*",
+     "react-native": "*"
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
 index 08c6a68..cc301c7 100644
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
