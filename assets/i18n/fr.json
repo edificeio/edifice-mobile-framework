@@ -49,7 +49,7 @@
   "auth-change-mobile-verify-message": "En tant qu'administrateur de votre établissement, vous avez accès à des informations sensibles. Pour améliorer la sécurité de votre compte vous devez saisir votre numéro de téléphone portable.",
   "auth-change-mobile-verify-title": "Indiquez votre numéro de téléphone portable",
   "auth-disconnectConfirm": "Êtes-vous sûr de vouloir vous déconnecter ?",
-  "auth-error-bad_credentials": "L'identifiant ou le mot de passe est incorrect.",
+  "auth-error-bad_credentials": "L'identifiant ou le mot de passe est incorrect",
   "auth-error-bad_response": "Un problème est survenu. Veuillez réessayer. (Code 5)",
   "auth-error-bad_saml": "Votre compte n’existe pas sur le réseau éducatif. Veuillez contacter votre administrateur.",
   "auth-error-blocked_type": "Nous restreignons temporairement l'accès au réseau social éducatif à certains profils d'utilisateurs. Merci de réessayer ultérieurement.",
