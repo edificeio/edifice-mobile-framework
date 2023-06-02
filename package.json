@@ -220,7 +220,8 @@
   },
   "resolutions": {
     "set-value": "4.1.0",
-    "tsconfig-paths": "^4.0.0"
+    "tsconfig-paths": "^4.0.0",
+    "react-native-gesture-handler": "2.10.1"
   },
   "eslintIgnore": [
     "__tests__",
