@@ -4,7 +4,7 @@ import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-na
 
 import { ActionButton } from '~/framework/components/buttons/action';
 import { Image } from '~/framework/util/media';
-import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
+import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
 
 import { Card, InfoCard } from './card/base';
@@ -149,7 +149,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
     const isRegular = infoBubbleType === 'regular';
     const isFloating = infoBubbleType === 'floating';
     try {
-      acknowledge ? await setItemJson(asyncStorageKey, true) : await removeItemJson(asyncStorageKey);
+      acknowledge ? await setItemJson(asyncStorageKey, true) : await removeItem(asyncStorageKey);
       isFloating ? this.setState({ isAcknowledged: true }) : isRegular ? this.setState({ acknowledgeToggle: acknowledge }) : null;
     } catch (e) {
       // ToDo: Error handling
