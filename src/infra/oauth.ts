@@ -11,7 +11,7 @@ import { Source } from 'react-native-fast-image';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
-import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
+import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 export const AllModulesBackup = {
@@ -543,7 +543,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   public async deleteQueryParamToken() {
-    await removeItemJson<IOAuthQueryParamToken>(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY);
+    await removeItem(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY);
   }
 }
 

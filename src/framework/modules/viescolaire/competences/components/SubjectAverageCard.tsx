@@ -33,12 +33,21 @@ interface ISubjectAverageCardProps {
   name: string;
 }
 
+const calculateAverage = (assessments: IDevoir[]): number => {
+  let sum = 0;
+  const weight = assessments.map(d => Number(d.coefficient)).reduce((prev, coefficient) => prev + coefficient);
+
+  for (const assessment of assessments) {
+    const grade = assessment.diviseur === 20 ? Number(assessment.note) : (Number(assessment.note) * 20) / assessment.diviseur;
+    sum += grade * Number(assessment.coefficient);
+  }
+  const average = sum / weight;
+  return Number(average.toFixed(1));
+};
+
 export class SubjectAverageCard extends React.PureComponent<ISubjectAverageCardProps> {
   public render() {
     const { devoirs, name } = this.props;
-    const sum = devoirs.map(d => Number(d.note)).reduce((prev, next) => prev + next);
-    const weight = devoirs.map(d => Number(d.coefficient)).reduce((prev, next) => prev + next);
-    const average = sum / weight;
 
     return (
       <ArticleContainer>
@@ -48,7 +57,7 @@ export class SubjectAverageCard extends React.PureComponent<ISubjectAverageCardP
               <SmallBoldText numberOfLines={1}>{name}</SmallBoldText>
               <SmallText numberOfLines={1}>{devoirs[0].teacher}</SmallText>
             </View>
-            <HeadingSText style={styles.averageText}>{Number(average.toFixed(1))}</HeadingSText>
+            <HeadingSText style={styles.averageText}>{calculateAverage(devoirs)}</HeadingSText>
           </View>
           {devoirs.map(devoir => (
             <View style={styles.devoirContainer} key={devoir.id}>
