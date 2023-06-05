@@ -197,6 +197,7 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
       slots.push({
         startHour: startTime.clone().add(index, 'hour'),
         endHour: startTime.clone().add(index + 1, 'hour'),
+        id: index.toString(),
         name: index.toString(),
       });
     }
@@ -204,7 +205,6 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
   };
 
   renderElement = (course: ITimetableCourse, renderCourse: (course: ITimetableCourse) => React.JSX.Element, side?: string) => {
-    const { mainColor } = this.props;
     const { slots } = this.state;
     let displayedStart = course.startDate.clone();
     let displayedEnd = course.endDate.clone();
@@ -267,11 +267,8 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
       width: side ? COURSE_WIDTH / 2 : COURSE_WIDTH,
       height: bottom - top,
     };
-    const isActive = moment().isBetween(displayedStart, displayedEnd);
-    const activeStyle = { borderWidth: 2, borderColor: mainColor };
 
-    return <View style={[styles.courseContainer, positionStyle, isActive && activeStyle]}>{renderCourse(course)}</View>;
-    //return this.renderElementContainer(top, height - 5, borderWidth, borderColor, () => renderElement(course), side);
+    return <View style={[styles.courseContainer, positionStyle]}>{renderCourse(course)}</View>;
   };
 
   renderScrollView = () => {

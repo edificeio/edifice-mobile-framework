@@ -1,23 +1,19 @@
-import { ICourseTag } from './course-tag';
-
 export interface IEdtCourse {
-  id: string;
-  startDate: moment.Moment;
-  endDate: moment.Moment;
-  subjectId: string;
-  roomLabels: string[];
-  teacherIds: string[];
   classes: string[];
+  endDate: moment.Moment;
   groups: string[];
-  exceptionnal: string;
+  id: string;
+  roomLabels: string[];
+  startDate: moment.Moment;
   subject: {
-    code: string;
-    externalId: string;
     id: string;
     name: string;
     rank: number;
   };
-  color: string;
-  tags: ICourseTag[];
-  tagIds: number[];
+  tags: {
+    id: number;
+    label: string;
+    abbreviation: string;
+  }[];
+  teacherIds: string[];
 }

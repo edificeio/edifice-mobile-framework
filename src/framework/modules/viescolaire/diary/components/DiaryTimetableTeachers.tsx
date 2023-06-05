@@ -66,6 +66,10 @@ const styles = StyleSheet.create({
   homeworkMargin: {
     marginRight: UI_SIZES.spacing.tiny,
   },
+  activeCourseBorder: {
+    borderColor: viescoTheme.palette.diary,
+    borderWidth: 2,
+  },
 });
 
 type ISessionModifiedList = IDiarySession & {
@@ -192,9 +196,10 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
 
   renderCourse = (course, isHalfCourse: boolean = false) => {
     const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
+    const isActive = moment().isBetween(course.startDate, course.endDate);
 
     return (
-      <View style={styles.courseView}>
+      <View style={[styles.courseView, isActive && styles.activeCourseBorder]}>
         <View style={[styles.subjectView, !isHalfCourse && styles.subjectPadding]}>
           <HeadingXSText numberOfLines={1}>{className}</HeadingXSText>
           <SmallText numberOfLines={1}>{course.subject?.name || course.exceptionnal}</SmallText>

@@ -1,53 +1,82 @@
 import moment from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { IClass, ICourseTag, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
+import { IClass, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 type IBackendClass = {
-  color: string;
+  notEmptyClass: boolean;
+  name: string;
   externalId: string;
   id: string;
-  name: string;
-  notEmptyClass: boolean;
+  source: string;
   type_groupe: number;
+  color: string;
 };
 
 type IBackendCourse = {
   _id: string;
-  classes: string[];
-  groups: string[];
-  teacherIds: string[];
-  roomLabels: string[];
-  startCourse: string;
-  endCourse: string;
-  exceptionnal: string;
+  structureId: string;
   subjectId: string;
+  teacherIds: string[];
+  tagIds: number[];
+  classes: string[];
+  classesExternalIds: string[];
+  groups: string[];
+  groupsExternalIds: string[];
+  roomLabels: string[];
+  dayOfWeek: number;
+  manual: boolean;
+  theoretical: boolean;
+  updated: string;
+  lastUser: string;
+  recurrence: string;
+  idStartSlot: string;
+  idEndSlot: string;
+  startDate: string;
+  endDate: string;
   subject: {
+    id: string;
     code: string;
     externalId: string;
-    id: string;
     name: string;
     rank: number;
   };
   color: string;
-  tags: ICourseTag[];
-  tagIds: number[];
+  is_periodic: boolean;
+  startCourse: string;
+  endCourse: string;
+  tags: {
+    id: number;
+    structureId: string;
+    label: string;
+    abbreviation: string;
+    isPrimary: boolean;
+    allowRegister: boolean;
+    isHidden: boolean;
+    isUsed: boolean;
+    createdAt: string;
+  }[];
 };
 
 type IBackendSlot = {
+  name: string;
   startHour: string;
   endHour: string;
-  name: string;
+  id: string;
 };
 
 type IBackendUserChild = {
-  classes: string[];
-  displayName: string;
+  id: string;
   firstName: string;
   lastName: string;
-  id: string;
-  idClasses: string;
+  displayName: string;
+  classes: string[];
+  idClasses: string[];
+  structures: {
+    id: string;
+    name: string;
+  }[];
 };
 
 type IBackendClassList = IBackendClass[];
@@ -58,37 +87,33 @@ type IBackendUserChildren = IBackendUserChild[];
 const classAdapter = (data: IBackendClass): IClass => {
   return {
     color: data.color,
-    externalId: data.externalId,
+    groupType: data.type_groupe,
     id: data.id,
     name: data.name,
     notEmptyClass: data.notEmptyClass,
-    groupType: data.type_groupe,
   } as IClass;
 };
 
 const courseAdapter = (data: IBackendCourse): IEdtCourse => {
   return {
-    id: data._id,
-    teacherIds: data.teacherIds,
-    roomLabels: data.roomLabels,
-    exceptionnal: data.exceptionnal,
-    subjectId: data.subjectId,
-    subject: data.subject,
     classes: data.classes,
+    endDate: moment(data.endDate),
     groups: data.groups,
-    startDate: moment(data.startCourse),
-    endDate: moment(data.endCourse),
-    color: data.color,
+    id: data._id,
+    roomLabels: data.roomLabels,
+    startDate: moment(data.startDate),
+    subject: data.subject,
     tags: data.tags,
-    tagIds: data.tagIds,
+    teacherIds: data.teacherIds,
   } as IEdtCourse;
 };
 
 const slotAdapter = (data: IBackendSlot): ISlot => {
   return {
-    startHour: moment('2000-01-01 ' + data.startHour + ':00'),
     endHour: moment('2000-01-01 ' + data.endHour + ':00'),
+    id: data.id,
     name: data.name,
+    startHour: moment('2000-01-01 ' + data.startHour + ':00'),
   } as ISlot;
 };
 
@@ -97,9 +122,9 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
     classes: data.classes,
     displayName: data.displayName,
     firstName: data.firstName,
-    lastName: data.lastName,
     id: data.id,
     idClasses: data.idClasses,
+    lastName: data.lastName,
   } as IUserChild;
 };
 

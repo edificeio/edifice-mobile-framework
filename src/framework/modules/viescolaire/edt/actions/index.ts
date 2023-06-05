@@ -36,7 +36,7 @@ export const fetchEdtClassesAction =
  */
 export const edtClassGroupsActionsCreators = createAsyncActionCreators(actionTypes.classGroups);
 export const fetchEdtClassGroupsAction =
-  (classes: string, studentId?: string): ThunkAction<Promise<IClassGroups[]>, any, any, any> =>
+  (classes: string[], studentId?: string): ThunkAction<Promise<IClassGroups[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();

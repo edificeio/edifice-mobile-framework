@@ -23,7 +23,7 @@ export interface EdtHomeScreenProps {
     endDate: moment.Moment,
     classGroups: IClassGroups[],
   ) => Promise<IEdtCourse[]>;
-  fetchClassGroups: (classes: string, studentId?: string) => Promise<IClassGroups[]>;
+  fetchClassGroups: (classes: string[], studentId?: string) => Promise<IClassGroups[]>;
   fetchSlots: (structureId: string) => Promise<ISlot[]>;
   fetchTeacherCourses: (
     structureId: string,

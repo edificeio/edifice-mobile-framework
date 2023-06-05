@@ -1,5 +1,6 @@
 export interface ISlot {
-  startHour: moment.Moment;
   endHour: moment.Moment;
+  id: string;
   name: string;
+  startHour: moment.Moment;
 }

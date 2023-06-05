@@ -65,12 +65,12 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
       if (userType === UserType.Teacher) {
         await props.fetchTeacherCourses(structureId, startDate, endDate, userId);
       } else {
-        let childClasses = classes?.[0];
+        let childClasses = classes;
         if (userType === UserType.Relative) {
           const children = await props.fetchUserChildren();
           childClasses = children.find(c => c.id === childId)?.idClasses;
         }
-        const classGroups = await props.fetchClassGroups(childClasses ?? '', childId);
+        const classGroups = await props.fetchClassGroups(childClasses ?? [], childId);
         await props.fetchChildCourses(structureId, startDate, endDate, classGroups);
       }
       await props.fetchTeachers(structureId);

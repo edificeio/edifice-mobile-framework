@@ -81,8 +81,8 @@ const userAdapter = (data: IBackendUser): IUser => {
 
 export const viescoService = {
   classGroups: {
-    get: async (session: ISession, classes: string, studentId?: string) => {
-      let api = `/viescolaire/group/from/class?classes=${classes}`;
+    get: async (session: ISession, classes: string[], studentId?: string) => {
+      let api = `/viescolaire/group/from/class?classes=${classes.join('&classes=')}`;
       if (studentId) api += `&student=${studentId}`;
       const classGroups = (await fetchJSONWithCache(api)) as IBackendClassGroupsList;
       return classGroups.map(c => classGroupsAdapter(c)) as IClassGroups[];

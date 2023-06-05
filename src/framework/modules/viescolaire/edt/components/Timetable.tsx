@@ -11,6 +11,7 @@ import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/compo
 import { UserType } from '~/framework/modules/auth/service';
 import Timetable from '~/framework/modules/viescolaire/common/components/Timetable';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { IEdtCourse } from '~/framework/modules/viescolaire/edt/model';
 import { EdtHomeScreenProps } from '~/framework/modules/viescolaire/edt/screens/home';
 import DateTimePicker from '~/ui/DateTimePicker';
 
@@ -45,6 +46,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
     height: '100%',
     justifyContent: 'center',
+    backgroundColor: theme.palette.grey.white,
     borderRadius: UI_SIZES.radius.medium,
   },
   halfSplitLineView: {
@@ -57,20 +59,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  greyishBackground: {
-    backgroundColor: theme.palette.grey.fog,
+  taggedCourseBackground: {
+    backgroundColor: theme.palette.grey.cloudy,
   },
-  whiteBackground: {
-    backgroundColor: theme.palette.grey.white,
+  activeCourseBorder: {
+    borderColor: viescoTheme.palette.edt,
+    borderWidth: 2,
   },
 });
-
-const adaptCourses = (courses, teachers) => {
-  return courses.map(c => ({
-    ...c,
-    teacher: c.teacherIds ? teachers.find(t => t.id === c.teacherIds[0])?.displayName : undefined,
-  }));
-};
 
 type TimetableComponentProps = EdtHomeScreenProps & {
   date: Moment;
@@ -80,57 +76,55 @@ type TimetableComponentProps = EdtHomeScreenProps & {
 };
 
 export default class EdtTimetable extends React.PureComponent<TimetableComponentProps> {
-  renderCourse = course => {
-    const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
-    const isCourseWithTags = !!(
-      course.tags &&
-      course.tags !== undefined &&
-      course.tags.length > 0 &&
-      course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS'
-    );
+  getTeacherName = (teacherIds: string[]): string => {
+    return this.props.teachers.find(teacher => teacher.id === teacherIds[0])?.displayName ?? '';
+  };
+
+  renderCourse = (course: IEdtCourse) => {
     const isTeacher = this.props.userType === UserType.Teacher;
-    const firstText = isTeacher ? className : course.subject?.name || course.exceptionnal;
-    const secondText = isTeacher ? course.subject?.name || course.exceptionnal : course.teacher;
+    const className = course.classes.length ? course.classes[0] : course.groups[0];
+    const firstText = isTeacher ? className : course.subject.name;
+    const secondText = isTeacher ? course.subject.name : this.getTeacherName(course.teacherIds);
+    const hasTag = course.tags.length > 0 && course.tags[0].label.toLocaleUpperCase() !== 'ULIS';
+    const isActive = moment().isBetween(course.startDate, course.endDate);
 
     return (
-      <View style={[styles.courseView, isCourseWithTags ? styles.greyishBackground : styles.whiteBackground]}>
+      <View style={[styles.courseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
         <View style={styles.subjectView}>
           <HeadingXSText numberOfLines={1}>{firstText}</HeadingXSText>
           <SmallText numberOfLines={1}>{secondText}</SmallText>
         </View>
         <View>
-          {course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0 ? (
+          {course.roomLabels[0]?.length ? (
             <View style={styles.roomView}>
               <Icon name="pin_drop" size={16} />
-              <SmallText numberOfLines={1}>
-                &nbsp;{I18n.get('viesco-room')}&nbsp;{course.roomLabels && course.roomLabels[0]}
-              </SmallText>
+              <SmallText numberOfLines={1}>&nbsp;{`${I18n.get('viesco-room')} ${course.roomLabels[0]}`}</SmallText>
             </View>
           ) : null}
-          {course.tags && course.tags !== undefined && course.tags.length > 0 ? (
-            <SmallBoldItalicText numberOfLines={1}>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText>
-          ) : null}
+          {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
         </View>
       </View>
     );
   };
 
-  renderHalfCourse = (course, firstText: string, secondText: string) => {
-    const isCourseWithTags = !!(course.tags && course.tags !== undefined && course.tags.length > 0);
-    const isCourseTagNotUlis = !!(course.tags[0]?.label.toLocaleUpperCase() !== 'ULIS');
-    const isCourseWithRoomLabel = !!(course.roomLabels && course.roomLabels.length > 0 && course.roomLabels[0].length > 0);
+  renderHalfCourse = (course: IEdtCourse) => {
+    const isTeacher = this.props.userType === UserType.Teacher;
+    const className = course.classes.length ? course.classes[0] : course.groups[0];
+    const firstText = isTeacher ? className : course.subject.name;
+    const secondText = isTeacher ? course.subject.name : this.getTeacherName(course.teacherIds);
+    const hasTag = course.tags.length > 0 && course.tags[0].label.toLocaleUpperCase() !== 'ULIS';
+    const isActive = moment().isBetween(course.startDate, course.endDate);
 
     return (
-      <View
-        style={[styles.halfCourseView, isCourseWithTags && isCourseTagNotUlis ? styles.greyishBackground : styles.whiteBackground]}>
+      <View style={[styles.halfCourseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
         <View style={styles.halfSplitLineView}>
           <HeadingXSText style={styles.halfTextStyle} numberOfLines={1}>
             {firstText}
           </HeadingXSText>
-          {isCourseWithRoomLabel ? (
+          {course.roomLabels[0]?.length ? (
             <View style={styles.halfRoomLabelContainer}>
               <Icon name="pin_drop" size={16} />
-              <SmallText numberOfLines={1}>{course.roomLabels && course.roomLabels[0]}</SmallText>
+              <SmallText numberOfLines={1}>{course.roomLabels[0]}</SmallText>
             </View>
           ) : null}
         </View>
@@ -138,24 +132,14 @@ export default class EdtTimetable extends React.PureComponent<TimetableComponent
           <SmallText style={styles.halfTextStyle} numberOfLines={1}>
             {secondText}
           </SmallText>
-          {isCourseWithTags ? (
-            <SmallBoldItalicText numberOfLines={1}>{course.tags[0]?.label.toLocaleUpperCase()}</SmallBoldItalicText>
-          ) : null}
+          {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
         </View>
       </View>
     );
   };
 
-  renderHalf = course => {
-    if (this.props.userType === UserType.Teacher) {
-      const mainText = course.classes.length > 0 ? course.classes[0] : course.groups[0];
-      return this.renderHalfCourse(course, mainText, course.subject?.name || course.exceptionnal);
-    }
-    return this.renderHalfCourse(course, course.subject?.name || course.exceptionnal, course.teacher);
-  };
-
   public render() {
-    const { startDate, date, isRefreshing, courses, teachers, slots, updateSelectedDate } = this.props;
+    const { courses, date, isRefreshing, slots, startDate, updateSelectedDate } = this.props;
 
     return (
       <>
@@ -167,13 +151,13 @@ export default class EdtTimetable extends React.PureComponent<TimetableComponent
           <LoadingIndicator />
         ) : (
           <Timetable
-            courses={adaptCourses(courses, teachers)}
+            courses={courses}
             mainColor={viescoTheme.palette.edt}
             slots={slots}
             startDate={startDate}
             initialSelectedDate={date}
             renderCourse={this.renderCourse}
-            renderCourseHalf={this.renderHalf}
+            renderCourseHalf={this.renderHalfCourse}
           />
         )}
       </>
