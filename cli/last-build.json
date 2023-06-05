@@ -1,6 +1,6 @@
 {
-  "last": "2023-05-26 13:17:20",
-  "notes": "fix(crash): MB-1637, patch react-native-haptic-feedback\nfix(conversation): MB-1652, Remove timeouts to generate onChange events on Subject && Body\nfeat(dropdown): MB-1639 MB-1640, fix it with negative zIndex && position relative to dropdown container\nfix(dropdown): AMV2-447 set negative zIndex to views rendered above dropdown picker\nfix: MB-1646 fix permissions android for download\nrelease: 1.9.6-rc.2(1090608)",
-  "version": "1.9.6-rc.3(1090609)",
+  "last": "2023-06-05 11:31:31",
+  "notes": "chore(build): Fix cocoapods && ryby versions\nbuild: Fix used gesture handler version\nfix(timeline): MB-1670 migrate filters data from timelinev2\n(build): Fix gesture-handler cocoapods version conflict\nrelease: 1.9.7(1090700)\nfix(competences): AVMS-360 correct subject average calculation\nrelease: 1.9.6-rc.3(1090609)",
+  "version": "1.9.7-rc.1(1090701)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
