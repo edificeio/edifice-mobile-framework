@@ -1,5 +1,5 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
@@ -147,11 +147,10 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
  * @param session
  * @returns the React Element of the menus
  */
-function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
+function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], focusedRef: React.MutableRefObject<boolean>) {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
-  const isFocused = useIsFocused();
 
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
@@ -201,14 +200,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
           (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
           routeName = authRouteNames.mfaModal;
         }
-        if (isFocused) navigation.navigate(routeName, routeParams);
+        if (focusedRef.current) navigation.navigate(routeName, routeParams);
       } catch {
         Toast.showError(I18n.get('common.error.text'));
       } finally {
         setCurrentLoadingMenu(undefined);
       }
     },
-    [fetchAuthContext, fetchMFAValidationInfos, isFocused, navigation, session?.platform, session?.user?.login],
+    [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
 
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
@@ -380,10 +379,22 @@ useVersionFeature.versionOverride = RNConfigReader.BundleVersionOverride as stri
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const { handleLogout, session } = props;
 
+  // Manages focus to send to others features in this screen.
+  // We must store it in a Ref because of async operations
+  const focusedRef = React.useRef(useIsFocused());
+  useFocusEffect(
+    React.useCallback(() => {
+      focusedRef.current = true;
+      return () => {
+        focusedRef.current = false;
+      };
+    }, []),
+  );
+
   const navBarDecoration = useCurvedNavBarFeature();
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
-  const accountMenu = useAccountMenuFeature(session);
+  const accountMenu = useAccountMenuFeature(session, focusedRef);
   const logoutButton = useLogoutFeature(handleLogout);
   const versionButton = useVersionFeature(session);
 
