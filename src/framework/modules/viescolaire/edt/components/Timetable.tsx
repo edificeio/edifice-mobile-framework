@@ -9,24 +9,17 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
 import { UserType } from '~/framework/modules/auth/service';
-import Calendar from '~/framework/modules/viescolaire/common/components/Calendar';
+import Timetable from '~/framework/modules/viescolaire/common/components/Timetable';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { EdtHomeScreenProps } from '~/framework/modules/viescolaire/edt/screens/home';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
-  container: {
-    height: '100%',
-  },
-  calendarContainer: {
-    height: 1,
-    flexGrow: 1,
-  },
   weekPickerView: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.minor,
+    marginTop: UI_SIZES.spacing.medium,
   },
   weekText: {
     marginRight: UI_SIZES.spacing.minor,
@@ -38,6 +31,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: theme.palette.grey.white,
+    borderRadius: UI_SIZES.radius.medium,
   },
   subjectView: {
     maxWidth: '56%',
@@ -51,6 +45,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
     height: '100%',
     justifyContent: 'center',
+    borderRadius: UI_SIZES.radius.medium,
   },
   halfSplitLineView: {
     flexDirection: 'row',
@@ -84,7 +79,7 @@ type TimetableComponentProps = EdtHomeScreenProps & {
   updateSelectedDate: (newDate: moment.Moment) => void;
 };
 
-export default class Timetable extends React.PureComponent<TimetableComponentProps> {
+export default class EdtTimetable extends React.PureComponent<TimetableComponentProps> {
   renderCourse = course => {
     const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
     const isCourseWithTags = !!(
@@ -163,7 +158,7 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
     const { startDate, date, isRefreshing, courses, teachers, slots, updateSelectedDate } = this.props;
 
     return (
-      <View style={styles.container}>
+      <>
         <View style={styles.weekPickerView}>
           <SmallText style={styles.weekText}>{I18n.get('viesco-edt-week-of')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />
@@ -171,22 +166,17 @@ export default class Timetable extends React.PureComponent<TimetableComponentPro
         {isRefreshing ? (
           <LoadingIndicator />
         ) : (
-          <View style={styles.calendarContainer}>
-            <Calendar
-              startDate={startDate}
-              data={adaptCourses(courses, teachers)}
-              renderElement={this.renderCourse}
-              renderHalf={this.renderHalf}
-              numberOfDays={6}
-              slotHeight={70}
-              mainColor={viescoTheme.palette.edt}
-              slots={slots}
-              initialSelectedDate={date}
-              hideSlots
-            />
-          </View>
+          <Timetable
+            courses={adaptCourses(courses, teachers)}
+            mainColor={viescoTheme.palette.edt}
+            slots={slots}
+            startDate={startDate}
+            initialSelectedDate={date}
+            renderCourse={this.renderCourse}
+            renderCourseHalf={this.renderHalf}
+          />
         )}
-      </View>
+      </>
     );
   }
 }
