@@ -57,7 +57,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const signature = flashMessage && flashMessage.signature;
     const signatureColor = flashMessage && flashMessage.signatureColor;
     const contents = flashMessage && flashMessage.contents;
-    const appLanguage = I18n.language;
+    const appLanguage = I18n.getLanguage();
     const contentsHasAppLanguage = contents && Object.prototype.hasOwnProperty.call(contents, appLanguage);
     const contentsLanguages = contents && Object.keys(contents);
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];

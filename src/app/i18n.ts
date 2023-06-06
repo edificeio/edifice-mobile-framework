@@ -21,6 +21,8 @@ const phraseSecrets = require('ROOT/phrase.json');
 
 export namespace I18n {
   export type SupportedLocales = 'fr' | 'en' | 'es';
+  // Get the current detected or set language
+  export const getLanguage = () => i18n.language as SupportedLocales;
 
   // Built-in translations
   const builtInTranslations = unflatten({
@@ -99,9 +101,6 @@ export namespace I18n {
     i18n.use(initReactI18next).init(initInfos);
     return languageTag ?? fallbackLng;
   };
-
-  // Get the current detected or set language
-  export const language = i18n.language;
 
   // Get wording based on key (in the correct language)
   // Note: the "returnDetails" option is set to false, as we always want to return a string (not a details object)

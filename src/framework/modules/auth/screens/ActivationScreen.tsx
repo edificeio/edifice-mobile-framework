@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
   },
-  alertCard: { width: '100%', marginTop: UI_SIZES.spacing.medium },
+  alertCard: { marginTop: UI_SIZES.spacing.medium },
 });
 
 const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
@@ -186,8 +186,8 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                       <PFLogo pf={this.props.route.params.platform} />
                     </LogoWrapper>
                     {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
-                    {authContext.passwordRegexI18n?.[I18n.language] ? (
-                      <AlertCard type="info" text={authContext.passwordRegexI18n[I18n.language]} style={styles.alertCard} />
+                    {authContext.passwordRegexI18n?.[I18n.getLanguage()] ? (
+                      <AlertCard type="info" text={authContext.passwordRegexI18n[I18n.getLanguage()]} style={styles.alertCard} />
                     ) : null}
                     <InputPassword password={password} form={formModel} onChange={this.onFieldChange('password')} />
                     <InputPasswordConfirm

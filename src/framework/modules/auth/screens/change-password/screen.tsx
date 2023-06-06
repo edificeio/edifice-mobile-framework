@@ -191,8 +191,8 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 </View>
               ) : null}
 
-              {authContext.passwordRegexI18n?.[I18n.language] ? (
-                <AlertCard type="info" text={authContext.passwordRegexI18n?.[I18n.language]} />
+              {authContext.passwordRegexI18n?.[I18n.getLanguage()] ? (
+                <AlertCard type="info" text={authContext.passwordRegexI18n?.[I18n.getLanguage()]} />
               ) : null}
             </View>
             <View style={styles.noFlexShrink}>

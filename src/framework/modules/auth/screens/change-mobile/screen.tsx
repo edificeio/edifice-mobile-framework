@@ -305,7 +305,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
                 placeholder: I18n.get('auth-change-mobile-country-placeholder'),
                 autoFocus: true,
               },
-              language: countryListLanguages[I18n.language] ?? countryListLanguages.DEFAULT,
+              language: countryListLanguages[I18n.getLanguage()] ?? countryListLanguages.DEFAULT,
             }}
             textInputProps={{
               hitSlop: {

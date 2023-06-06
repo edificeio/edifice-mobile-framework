@@ -77,7 +77,7 @@ function getLegalUrlsAction(platform: Platform) {
         personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.personalDataProtection'), platform),
         cookies: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.cookies'), platform),
       };
-      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.language as I18n.SupportedLocales);
+      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.getLanguage());
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
           authTranslationKeys['auth.charter'] || I18n.get('user.legalUrl.userCharter'),
