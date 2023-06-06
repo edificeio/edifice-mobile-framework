@@ -1,11 +1,20 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ITerm } from '~/framework/modules/viescolaire/common/model';
-import { ICompetence, IDevoir, IDomaine, ILevel, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
+import {
+  IAverage,
+  ICompetence,
+  IDevoir,
+  IDomaine,
+  ILevel,
+  ISubject,
+  IUserChild,
+} from '~/framework/modules/viescolaire/competences/model';
 import type { CompetencesNavigationParams } from '~/framework/modules/viescolaire/competences/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface CompetencesHomeScreenProps {
+  averages: IAverage[];
   competences: ICompetence[];
   devoirs: IDevoir[];
   domaines: IDomaine[];
@@ -22,6 +31,7 @@ export interface CompetencesHomeScreenProps {
   userChildren?: IUserChild[];
   userType?: string;
   userId?: string;
+  fetchAverages: (structureId: string, studentId: string, termId?: string) => Promise<IAverage[]>;
   fetchCompetences: (studentId: string, classId: string) => Promise<ICompetence[]>;
   fetchDevoirs: (structureId: string, studentId: string) => Promise<IDevoir[]>;
   fetchDomaines: (classId: string) => Promise<IDomaine[]>;

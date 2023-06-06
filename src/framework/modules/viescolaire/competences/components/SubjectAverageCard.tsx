@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
+import { IAverage, IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
@@ -29,35 +29,23 @@ const styles = StyleSheet.create({
 });
 
 interface ISubjectAverageCardProps {
+  average: IAverage;
   devoirs: IDevoir[];
-  name: string;
 }
-
-const calculateAverage = (assessments: IDevoir[]): number => {
-  let sum = 0;
-  const weight = assessments.map(d => Number(d.coefficient)).reduce((prev, coefficient) => prev + coefficient);
-
-  for (const assessment of assessments) {
-    const grade = assessment.diviseur === 20 ? Number(assessment.note) : (Number(assessment.note) * 20) / assessment.diviseur;
-    sum += grade * Number(assessment.coefficient);
-  }
-  const average = sum / weight;
-  return Number(average.toFixed(1));
-};
 
 export class SubjectAverageCard extends React.PureComponent<ISubjectAverageCardProps> {
   public render() {
-    const { devoirs, name } = this.props;
+    const { average, devoirs } = this.props;
 
     return (
       <ArticleContainer>
         <LeftColoredItem shadow color={theme.palette.complementary.blue.regular}>
           <View style={styles.subjectInformationContainer}>
             <View>
-              <SmallBoldText numberOfLines={1}>{name}</SmallBoldText>
-              <SmallText numberOfLines={1}>{devoirs[0].teacher}</SmallText>
+              <SmallBoldText numberOfLines={1}>{average.subject}</SmallBoldText>
+              <SmallText numberOfLines={1}>{average.teacher}</SmallText>
             </View>
-            <HeadingSText style={styles.averageText}>{calculateAverage(devoirs)}</HeadingSText>
+            <HeadingSText style={styles.averageText}>{average.average}</HeadingSText>
           </View>
           {devoirs.map(devoir => (
             <View style={styles.devoirContainer} key={devoir.id}>
