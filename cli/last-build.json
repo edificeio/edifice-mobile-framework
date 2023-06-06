@@ -1,6 +1,6 @@
 {
-  "last": "2023-06-05 12:56:10",
-  "notes": "release: 1.9.7-rc.1(1090701)",
-  "version": "1.9.7-rc.2(1090702)",
+  "last": "2023-06-06 21:38:11",
+  "notes": "feat(element): AMV2-579 change module display name and icon\nfix(competences): AMVS-360 get subject averages from backend\nrelease: 1.9.7-rc.2(1090702)",
+  "version": "1.9.7-rc.3(1090703)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
