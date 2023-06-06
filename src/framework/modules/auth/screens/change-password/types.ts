@@ -45,4 +45,7 @@ export interface ChangePasswordScreenState extends IChangePasswordModel {
   typing: boolean;
   submitState: 'IDLE' | 'RUNNING' | 'DONE';
   error?: string;
+  oldPassword: string;
+  newPassword: string;
+  confirm: string;
 }
