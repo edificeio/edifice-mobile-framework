@@ -6,10 +6,37 @@ import { ThunkAction } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IClassGroups, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
-import { ICompetence, IDevoir, IDomaine, ILevel, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
+import {
+  IAverage,
+  ICompetence,
+  IDevoir,
+  IDomaine,
+  ILevel,
+  ISubject,
+  IUserChild,
+} from '~/framework/modules/viescolaire/competences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/competences/reducer';
 import { competencesService } from '~/framework/modules/viescolaire/competences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+
+/**
+ * Fetch the averages.
+ */
+export const competencesAveragesActionsCreators = createAsyncActionCreators(actionTypes.averages);
+export const fetchCompetencesAveragesAction =
+  (structureId: string, studentId: string, termId?: string): ThunkAction<Promise<IAverage[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(competencesAveragesActionsCreators.request());
+      const averages = await competencesService.averages.get(session, structureId, studentId, termId);
+      dispatch(competencesAveragesActionsCreators.receipt(averages));
+      return averages;
+    } catch (e) {
+      dispatch(competencesAveragesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Fetch the class groups.

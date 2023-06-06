@@ -1,8 +1,26 @@
 import moment from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { ICompetence, IDevoir, IDomaine, ILevel, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
+import {
+  IAverage,
+  ICompetence,
+  IDevoir,
+  IDomaine,
+  ILevel,
+  ISubject,
+  IUserChild,
+} from '~/framework/modules/viescolaire/competences/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+
+type IBackendAverage = {
+  devoirs: IBackendDevoir[];
+  id_groupe: string;
+  matiere: string;
+  matiere_coeff: number;
+  matiere_rank: number;
+  moyenne: string;
+  teacher: string;
+};
 
 type IBackendCompetence = {
   id_devoir: number;
@@ -124,12 +142,26 @@ type IBackendUserChild = {
   lastName: string;
 };
 
+type IBackendAverageList = { [key: string]: IBackendAverage };
 type IBackendCompetenceList = IBackendCompetence[];
 type IBackendDevoirList = IBackendDevoir[];
 type IBackendDomaineList = IBackendDomaine[];
 type IBackendLevelList = IBackendLevel[];
 type IBackendSubjectList = IBackendSubject[];
 type IBackendUserChildren = IBackendUserChild[];
+
+const averageAdapter = (list: IBackendAverageList): IAverage[] => {
+  return Object.entries(list).map(([subjectId, data]) => {
+    return {
+      average: data.moyenne,
+      subject: data.matiere,
+      subjectCoefficient: data.matiere_coeff,
+      subjectId,
+      subjectRank: data.matiere_rank,
+      teacher: data.teacher,
+    };
+  }) as IAverage[];
+};
 
 const competenceAdapter = (data: IBackendCompetence): ICompetence => {
   return {
@@ -214,6 +246,16 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
 };
 
 export const competencesService = {
+  averages: {
+    get: async (session: ISession, structureId: string, studentId: string, termId?: string) => {
+      let api = `/competences/devoirs/notes?idEtablissement=${structureId}&idEleve=${studentId}`;
+      if (termId) {
+        api += `&idPeriode=${termId}`;
+      }
+      const averages = (await fetchJSONWithCache(api)) as IBackendAverageList;
+      return averageAdapter(averages) as IAverage[];
+    },
+  },
   competences: {
     get: async (session: ISession, studentId: string, classId: string) => {
       const api = `/viescolaire/competences/eleve?idEleve=${studentId}&idClasse=${classId}`;

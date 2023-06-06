@@ -5,11 +5,20 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { IClassGroups, ITerm } from '~/framework/modules/viescolaire/common/model';
-import { ICompetence, IDevoir, IDomaine, ILevel, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
+import {
+  IAverage,
+  ICompetence,
+  IDevoir,
+  IDomaine,
+  ILevel,
+  ISubject,
+  IUserChild,
+} from '~/framework/modules/viescolaire/competences/model';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 interface ICompetencesReduxStateData {
+  averages: IAverage[];
   classGroups: IClassGroups[];
   competences: ICompetence[];
   devoirs: IDevoir[];
@@ -21,6 +30,7 @@ interface ICompetencesReduxStateData {
 }
 
 export interface ICompetencesReduxState {
+  averages: AsyncState<IAverage[]>;
   classGroups: AsyncState<IClassGroups[]>;
   competences: AsyncState<ICompetence[]>;
   devoirs: AsyncState<IDevoir[]>;
@@ -32,6 +42,7 @@ export interface ICompetencesReduxState {
 }
 
 const initialState: ICompetencesReduxStateData = {
+  averages: [],
   classGroups: [],
   competences: [],
   devoirs: [],
@@ -43,6 +54,7 @@ const initialState: ICompetencesReduxStateData = {
 };
 
 export const actionTypes = {
+  averages: createAsyncActionTypes(moduleConfig.namespaceActionType('AVERAGES')),
   classGroups: createAsyncActionTypes(moduleConfig.namespaceActionType('CLASS_GROUPS')),
   competences: createAsyncActionTypes(moduleConfig.namespaceActionType('COMPETENCES')),
   devoirs: createAsyncActionTypes(moduleConfig.namespaceActionType('DEVOIRS')),
@@ -54,6 +66,7 @@ export const actionTypes = {
 };
 
 const reducer = combineReducers({
+  averages: createSessionAsyncReducer(initialState.averages, actionTypes.averages),
   classGroups: createSessionAsyncReducer(initialState.classGroups, actionTypes.classGroups),
   competences: createSessionAsyncReducer(initialState.competences, actionTypes.competences),
   devoirs: createSessionAsyncReducer(initialState.devoirs, actionTypes.devoirs),
