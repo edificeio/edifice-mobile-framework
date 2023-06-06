@@ -160,7 +160,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
             textStyle={styles.dropdownText}
           />
           <View style={{ zIndex: -2 }}>
-            <SmallText style={styles.textMargin}>{i18n.get('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
+            <SmallText style={styles.textMargin}>{I18n.get('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
             <TextInput
               placeholder="+33 (0)6..."
               value={phoneNumber}
@@ -169,7 +169,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               style={styles.phoneNumberInput}
             />
             <View style={styles.rowContainer}>
-              <SmallText>{i18n.get('homeworkAssistance.dateOfCall')}</SmallText>
+              <SmallText>{I18n.get('homeworkAssistance.dateOfCall')}</SmallText>
               <DateTimePicker
                 mode="date"
                 value={date}
@@ -179,7 +179,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               />
             </View>
             <View style={styles.rowContainer}>
-              <SmallText>{i18n.get('homeworkAssistance.time')}</SmallText>
+              <SmallText>{I18n.get('homeworkAssistance.time')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={time}
@@ -189,9 +189,9 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
                 color={theme.palette.secondary.regular}
               />
             </View>
-            <SmallText style={styles.textMargin}>{i18n.get('homeworkAssistance.additionalInformation')}</SmallText>
+            <SmallText style={styles.textMargin}>{I18n.get('homeworkAssistance.additionalInformation')}</SmallText>
             <TextInput
-              placeholder={i18n.get('homeworkAssistance.detailsAbout')}
+              placeholder={I18n.get('homeworkAssistance.detailsAbout')}
               value={information}
               onChangeText={text => setInformation(text)}
               multiline

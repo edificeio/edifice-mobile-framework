@@ -70,7 +70,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
       props.navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.get('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
+      Toast.showSuccess(I18n.get('support.supportCreateTicketScreen.successCreationId', ticketId));
     } catch {
       setSending(false);
       Toast.showError(I18n.get('support.supportCreateTicketScreen.failure'));
@@ -125,12 +125,12 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
           ) : null}
           <View style={{ zIndex: -2 }}>
             <SmallBoldText style={styles.inputLabelText}>
-              {i18n.get('support.supportCreateTicketScreen.subject')}
+              {I18n.get('support.supportCreateTicketScreen.subject')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
             <SmallBoldText style={styles.inputLabelText}>
-              {i18n.get('support.supportCreateTicketScreen.description')}
+              {I18n.get('support.supportCreateTicketScreen.description')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput
@@ -142,14 +142,14 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             />
             <View style={styles.attachmentsContainer}>
               <BottomMenu
-                title={i18n.get('common.addFiles')}
+                title={I18n.get('common.addFiles')}
                 actions={[
                   cameraAction({ callback: addAttachment }),
                   galleryAction({ callback: addAttachment, multiple: true }),
                   documentAction({ callback: addAttachment }),
                 ]}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-                  <SmallActionText style={styles.actionText}>{i18n.get('common.addFiles')}</SmallActionText>
+                  <SmallActionText style={styles.actionText}>{I18n.get('common.addFiles')}</SmallActionText>
                   <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
                 </View>
               </BottomMenu>
