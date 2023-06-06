@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<'support', ReturnType<typeof reducer>>(
   entcoreScope: ['support'],
   matchEntcoreApp: '/support',
 
-  displayI18n: 'support.tabName',
+  displayI18n: 'support-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'support', fill: theme.palette.complementary.green.regular },
 });

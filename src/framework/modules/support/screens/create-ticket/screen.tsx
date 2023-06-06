@@ -38,7 +38,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('support.tabName'),
+    title: I18n.get('support-createticketscreen-title'),
   }),
 });
 
@@ -70,10 +70,10 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
       props.navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.get('support.supportCreateTicketScreen.successCreationId', ticketId));
+      Toast.showSuccess(I18n.get('support-createticketscreen-successmessage', { id: ticketId }));
     } catch {
       setSending(false);
-      Toast.showError(I18n.get('support.supportCreateTicketScreen.failure'));
+      Toast.showError(I18n.get('support-createticketscreen-errormessage'));
     }
   };
 
@@ -94,8 +94,8 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     return hasTicketCreationRights ? (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
-          <BodyBoldText style={styles.titleText}>{I18n.get('support.supportCreateTicketScreen.reportIncident')}</BodyBoldText>
-          <SmallText style={styles.informationText}>{I18n.get('support.supportCreateTicketScreen.mobileOnly')}</SmallText>
+          <BodyBoldText style={styles.titleText}>{I18n.get('support-createticketscreen-reportincident')}</BodyBoldText>
+          <SmallText style={styles.informationText}>{I18n.get('support-createticketscreen-mobileonly')}</SmallText>
           <DropDownPicker
             open={isCategoryDropdownOpen}
             value={category}
@@ -125,12 +125,12 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
           ) : null}
           <View style={{ zIndex: -2 }}>
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.get('support.supportCreateTicketScreen.subject')}
+              {I18n.get('support-createticketscreen-subject')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.get('support.supportCreateTicketScreen.description')}
+              {I18n.get('support-createticketscreen-description')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput
@@ -142,14 +142,14 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             />
             <View style={styles.attachmentsContainer}>
               <BottomMenu
-                title={I18n.get('common.addFiles')}
+                title={I18n.get('support-createticketscreen-addfiles')}
                 actions={[
                   cameraAction({ callback: addAttachment }),
                   galleryAction({ callback: addAttachment, multiple: true }),
                   documentAction({ callback: addAttachment }),
                 ]}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-                  <SmallActionText style={styles.actionText}>{I18n.get('common.addFiles')}</SmallActionText>
+                  <SmallActionText style={styles.actionText}>{I18n.get('support-createticketscreen-addfiles')}</SmallActionText>
                   <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
                 </View>
               </BottomMenu>
@@ -164,10 +164,15 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             </View>
           </View>
         </View>
-        <ActionButton text={I18n.get('common.send')} action={sendTicket} disabled={isActionDisabled} loading={isSending} />
+        <ActionButton
+          text={I18n.get('support-createticketscreen-sendaction')}
+          action={sendTicket}
+          disabled={isActionDisabled}
+          loading={isSending}
+        />
       </ScrollView>
     ) : (
-      <EmptyScreen svgImage="empty-support" title={I18n.get('support.supportCreateTicketScreen.emptyScreen.title')} />
+      <EmptyScreen svgImage="empty-support" title={I18n.get('support-createticketscreen-emptyscreen-title')} />
     );
   };
 
@@ -196,38 +201,31 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
 };
 
 export default connect(
-  (gs: IGlobalState) => {
-    const apps = [] as any[];
-    for (const app of gs.auth.session.apps) {
-      if (app.address && app.name && app.address.length > 0 && app.name.length > 0) {
-        const translation = I18n.get('modules-names.' + app.displayName.toLowerCase());
-        if (translation.substring(0, 9) !== '[missing ') {
-          apps.push({ ...app, name: translation });
-        } else if (/^[A-Z]/.test(app.displayName)) {
-          apps.push({ ...app, name: app.displayName });
-        }
-      }
-    }
+  (state: IGlobalState) => {
+    const session = getSession();
+    const apps =
+      session?.apps
+        ?.filter(app => app.address && app.name)
+        .map(app => {
+          const translation = I18n.get('support-createticketscreen-category-' + app.displayName.toLowerCase());
+          return {
+            label: translation.startsWith('support-') ? app.displayName : translation,
+            value: app.address,
+          };
+        }) ?? [];
     apps.push({
-      address: 'modules-names.other',
-      name: I18n.get('modules-names.other'),
+      label: I18n.get('support-createticketscreen-category-other'),
+      value: 'other',
     });
-    apps.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
     return {
-      apps: apps.map(app => {
-        return {
-          label: app.name,
-          value: app.address,
-        };
-      }),
-      structures: gs.auth.session.user.structures.map(school => {
-        return {
-          label: school.name,
-          value: school.id,
-        };
-      }),
-      session: getSession(),
+      apps: apps.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase())),
+      session,
+      structures:
+        session?.user.structures?.map(structure => ({
+          label: structure.name,
+          value: structure.id,
+        })) ?? [],
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
