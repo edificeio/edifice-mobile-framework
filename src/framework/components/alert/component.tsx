@@ -1,65 +1,120 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 
-import theme from '~/app/theme';
+import theme, { IShades } from '~/app/theme';
+import CloseButton from '~/framework/components/buttons/close';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { NamedSVG } from '~/framework/components/picture';
+import { Picture, PictureProps } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 
-import style from './style';
-import { AlertCardProps } from './type';
+import { toastConfigColor } from './model';
+import styles from './styles';
+import { AlertCardProps } from './types';
 
-const defaultIconNames: { [type in AlertCardProps['type']]: string } = {
+const toastDefaultPictureProps = {
+  success: 'ui-success_outline',
   info: 'ui-infoCircle',
-  success: 'ui-infoCircle',
-  warning: 'ui-infoCircle',
-  failure: 'ui-infoCircle',
+  warning: 'ui-alert-triangle',
+  error: 'ui-error',
 };
 
-export default function AlertCard(props: AlertCardProps) {
-  const externalViewStyle = React.useMemo(
-    () => ({ ...style.externalView, borderLeftColor: theme.palette.status[props.type].regular, ...props.style }),
-    [props.type, props.style],
+/**
+ * Populates the given picture props with the right color shade and size
+ * Works only for NamedSvg pictures for the moment
+ * @param picture
+ * @param shades
+ * @returns the picture props with new members
+ */
+function autoFillPicture(picture: PictureProps, shades: IShades) {
+  if (picture.type !== 'NamedSvg') return picture;
+  return {
+    ...picture,
+    fill: picture.fill ?? shades.regular,
+    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon,
+    height: picture.width !== undefined && picture.height !== undefined ? picture.height : UI_SIZES.elements.icon,
+  };
+}
+
+function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['icon']) {
+  const colorShades = theme.palette.status[toastConfigColor[type]] as IShades;
+  const cardBorderStyle = React.useMemo(() => [{ backgroundColor: colorShades.regular }, styles.cardBorder], [colorShades.regular]);
+  const cardContentStyle = React.useMemo(() => [{ borderColor: colorShades.pale }, styles.cardContent], [colorShades.pale]);
+  const cardShadowContainerStyle = React.useMemo(
+    () => [
+      {
+        backgroundColor: Platform.select({
+          ios: colorShades.pale, // On iOS we set the coloured background to make pixel-perfect rounded corners.
+          default: undefined, // Android sucks to render translucent views with subviews, we have to minimise backgrounded views.
+        }),
+      },
+      styles.cardShadowContainer,
+    ],
+    [colorShades.pale],
+  );
+  const pictureWithColor = React.useMemo(
+    () => ({
+      ...(picture
+        ? autoFillPicture(picture, colorShades)
+        : ({
+            type: 'NamedSvg',
+            name: toastDefaultPictureProps[type],
+            fill: colorShades.regular,
+            width: UI_SIZES.elements.icon,
+            height: UI_SIZES.elements.icon,
+          } as PictureProps)),
+    }),
+    [colorShades, picture, type],
   );
 
-  const internalViewStyle = React.useMemo(
-    () => ({ ...style.internalView, borderColor: theme.palette.status[props.type].pale }),
-    [props.type],
+  return { colorShades, cardBorderStyle, cardContentStyle, cardShadowContainerStyle, pictureWithColor };
+}
+
+const defaultRenderCloseButton: Required<AlertCardProps>['renderCloseButton'] = (shades, onClose) =>
+  onClose ? <CloseButton action={onClose} /> : null;
+
+export function AlertCard(props: AlertCardProps) {
+  const {
+    type,
+    icon,
+    text,
+    label,
+    onLabelPress,
+    onClose,
+    renderCloseButton = defaultRenderCloseButton,
+    shadow,
+    containerProps,
+    style,
+  } = props;
+  const { colorShades, cardBorderStyle, cardContentStyle, cardShadowContainerStyle, pictureWithColor } = useToastStyles(type, icon);
+
+  const closeButton = React.useMemo(() => renderCloseButton(colorShades, onClose), [colorShades, onClose, renderCloseButton]);
+
+  const cardContent = React.useMemo(
+    () => (
+      <>
+        <Picture {...pictureWithColor} />
+        <SmallText style={styles.cardText}>{text}</SmallText>
+        {label && onLabelPress ? <TertiaryButton text={label} action={onLabelPress} /> : null}
+        {closeButton}
+      </>
+    ),
+    [label, onLabelPress, pictureWithColor, closeButton, text],
   );
 
-  const icon = React.useMemo(
-    () =>
-      props.icon === false ? null : props.icon === true || props.icon === undefined ? (
-        <NamedSVG
-          name={defaultIconNames[props.type]}
-          fill={theme.palette.status[props.type].regular}
-          width={UI_SIZES.elements.icon}
-          height={UI_SIZES.elements.icon}
-          style={style.iconView}
-        />
-      ) : (
-        <View style={style.iconView}>{props.icon}</View>
-      ),
-    [props.type, props.icon],
-  );
-
-  const content = React.useMemo(
-    () =>
-      props.text ? (
-        <SmallText style={style.contentView}>{props.text}</SmallText>
-      ) : (
-        <View style={style.contentView}>{props.children}</View>
-      ),
-    [props.children, props.text],
-  );
-
-  return (
-    // Must use 2 <View> in order to cancel borderWidth + borderRadius natural smooth transition
-    <View style={externalViewStyle}>
-      <View style={internalViewStyle}>
-        {icon}
-        {content}
+  /* must decompose card and shadow because of overflow:hidden */
+  const cardContainer = React.useMemo(
+    () => (
+      <View style={[styles.card, style]} {...containerProps}>
+        <View style={cardBorderStyle} />
+        <View style={cardContentStyle}>{cardContent}</View>
       </View>
-    </View>
+    ),
+    [cardBorderStyle, cardContent, cardContentStyle, containerProps, style],
+  );
+
+  return React.useMemo(
+    () => (shadow ? <View style={[cardShadowContainerStyle, style]}>{cardContainer}</View> : cardContainer),
+    [cardContainer, cardShadowContainerStyle, shadow, style],
   );
 }

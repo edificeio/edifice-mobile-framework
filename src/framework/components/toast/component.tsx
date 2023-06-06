@@ -1,15 +1,14 @@
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
-import { Animated, Easing, LayoutChangeEvent, Platform, View } from 'react-native';
+import { Animated, Easing, LayoutChangeEvent } from 'react-native';
 import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 import theme, { IShades } from '~/app/theme';
 import CloseButton from '~/framework/components//buttons/close';
-import TertiaryButton from '~/framework/components/buttons/tertiary';
+import AlertCard, { AlertCardProps } from '~/framework/components/alert';
+import { toastConfigColor } from '~/framework/components/alert/model';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture, PictureProps } from '~/framework/components/picture';
-import { SmallText } from '~/framework/components/text';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 
 import styles from './styles';
@@ -29,73 +28,8 @@ export const DEFAULTS = {
   offset: TOAST_TOP_MARGIN,
 };
 
-//
-// Toast Component
-//
-
-const toastConfigColor = {
-  success: 'success',
-  info: 'info',
-  warning: 'warning',
-  error: 'failure',
-};
-
-const toastDefaultPictureProps = {
-  success: 'ui-success_outline',
-  info: 'ui-infoCircle',
-  warning: 'ui-alert-triangle',
-  error: 'ui-error',
-};
-
-/**
- * Populates the given picture props with the right color shade and size
- * Works only for NamedSvg pictures for the moment
- * @param picture
- * @param shades
- * @returns the picture props with new members
- */
-function autoFillPicture(picture: PictureProps, shades: IShades) {
-  if (picture.type !== 'NamedSvg') return picture;
-  return {
-    ...picture,
-    fill: picture.fill ?? shades.regular,
-    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon,
-    height: picture.width !== undefined && picture.height !== undefined ? picture.height : UI_SIZES.elements.icon,
-  };
-}
-
-function useToastStyles(type: ToastParams['type'], picture: ToastParams['props']['picture']) {
-  const colorShades = theme.palette.status[toastConfigColor[type]] as IShades;
-  const cardBorderStyle = React.useMemo(() => [{ backgroundColor: colorShades.regular }, styles.cardBorder], [colorShades.regular]);
-  const cardContentStyle = React.useMemo(() => [{ borderColor: colorShades.pale }, styles.cardContent], [colorShades.pale]);
-  const cardShadowContainerStyle = React.useMemo(
-    () => [
-      {
-        backgroundColor: Platform.select({
-          ios: colorShades.pale, // On iOS we set the coloured background to make pixel-perfect rounded corners.
-          default: undefined, // Android sucks to render translucent views with subviews, we have to minimise backgrounded views.
-        }),
-      },
-      styles.cardShadowContainer,
-    ],
-    [colorShades.pale],
-  );
-  const pictureWithColor = React.useMemo(
-    () => ({
-      ...(picture
-        ? autoFillPicture(picture, colorShades)
-        : ({
-            type: 'NamedSvg',
-            name: toastDefaultPictureProps[type],
-            fill: colorShades.regular,
-            width: UI_SIZES.elements.icon,
-            height: UI_SIZES.elements.icon,
-          } as PictureProps)),
-    }),
-    [colorShades, picture, type],
-  );
-
-  return { colorShades, cardBorderStyle, cardContentStyle, cardShadowContainerStyle, pictureWithColor };
+function useToastShades(type: ToastParams['type']) {
+  return theme.palette.status[toastConfigColor[type]] as IShades;
 }
 
 function useToastProgress(duration: ToastParams['props']['duration'], colorShades: IShades) {
@@ -159,56 +93,47 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
 }
 
 function ToastCard(params: ToastParams) {
-  const { colorShades, cardBorderStyle, cardContentStyle, cardShadowContainerStyle, pictureWithColor } = useToastStyles(
-    params.type,
-    params.props.picture,
-  );
-
-  const { onStart, onPause, onResume, measureProgressLayout, progressStyle } = useToastProgress(params.props.duration, colorShades);
-
-  // Refresh start effect when toastId is renewed (= when new toast is triggered)
-  React.useLayoutEffect(onStart, [onStart, params.props.toastId]);
+  const colorShades = useToastShades(params.type);
 
   const onClose = React.useCallback(() => {
     ToastMessage.hide();
   }, []);
 
-  const cardContent = React.useMemo(
-    () => (
-      <>
-        <Picture {...pictureWithColor} />
-        <SmallText style={styles.cardText}>{params.text1}</SmallText>
-        {params.text2 && params.props.onLabelPress ? (
-          <TertiaryButton text={params.text2} action={params.props.onLabelPress} />
-        ) : null}
-        {params.props.duration ? (
-          <Animated.View onLayout={measureProgressLayout} style={progressStyle} />
-        ) : (
-          <CloseButton action={onClose} />
-        )}
-      </>
-    ),
-    [
-      measureProgressLayout,
-      onClose,
-      params.props.duration,
-      params.props.onLabelPress,
-      params.text1,
-      params.text2,
-      pictureWithColor,
-      progressStyle,
-    ],
+  const { onStart, onPause, onResume, measureProgressLayout, progressStyle } = useToastProgress(params.props.duration, colorShades);
+  // Refresh start effect when toastId is renewed (= when new toast is triggered)
+  React.useLayoutEffect(onStart, [onStart, params.props.toastId]);
+
+  const innerToastComponent: AlertCardProps['renderCloseButton'] = React.useCallback(
+    (shades, closeCallback?: () => void) =>
+      params.props.duration ? (
+        <Animated.View onLayout={measureProgressLayout} style={progressStyle} />
+      ) : (
+        <CloseButton action={closeCallback!} />
+      ),
+    [measureProgressLayout, params.props.duration, progressStyle],
   );
 
-  // ToDo : this component can be extracted to a presentation component
+  const containerProps = React.useMemo(
+    () => ({
+      onTouchStart: onPause,
+      onTouchEnd: onResume,
+    }),
+    [onPause, onResume],
+  );
+
   return (
-    <View style={cardShadowContainerStyle} onTouchStart={onPause} onTouchEnd={onResume}>
-      {/* must decompose card and shadow because of overflow:hidden */}
-      <View style={styles.card}>
-        <View style={cardBorderStyle} />
-        <View style={cardContentStyle}>{cardContent}</View>
-      </View>
-    </View>
+    <AlertCard
+      type={params.type as AlertCardProps['type']}
+      text={params.text1}
+      label={params.text2}
+      onLabelPress={params.props.onLabelPress}
+      onClose={onClose}
+      renderCloseButton={innerToastComponent}
+      containerProps={containerProps}
+      shadow
+      style={styles.container}
+      icon={params.props.picture}
+    />
   );
 }
 
