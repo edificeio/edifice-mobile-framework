@@ -38,7 +38,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('support-createticketscreen-title'),
+    title: I18n.get('support-createticket-title'),
   }),
 });
 
@@ -70,10 +70,10 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
       props.navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.get('support-createticketscreen-successmessage', { id: ticketId }));
+      Toast.showSuccess(I18n.get('support-createticket-successmessage', { id: ticketId }));
     } catch {
       setSending(false);
-      Toast.showError(I18n.get('support-createticketscreen-errormessage'));
+      Toast.showError(I18n.get('support-createticket-errormessage'));
     }
   };
 
@@ -94,8 +94,8 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     return hasTicketCreationRights ? (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
-          <BodyBoldText style={styles.titleText}>{I18n.get('support-createticketscreen-reportincident')}</BodyBoldText>
-          <SmallText style={styles.informationText}>{I18n.get('support-createticketscreen-mobileonly')}</SmallText>
+          <BodyBoldText style={styles.titleText}>{I18n.get('support-createticket-reportincident')}</BodyBoldText>
+          <SmallText style={styles.informationText}>{I18n.get('support-createticket-mobileonly')}</SmallText>
           <DropDownPicker
             open={isCategoryDropdownOpen}
             value={category}
@@ -125,12 +125,12 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
           ) : null}
           <View style={{ zIndex: -2 }}>
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.get('support-createticketscreen-subject')}
+              {I18n.get('support-createticket-subject')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.get('support-createticketscreen-description')}
+              {I18n.get('support-createticket-description')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput
@@ -142,14 +142,14 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             />
             <View style={styles.attachmentsContainer}>
               <BottomMenu
-                title={I18n.get('support-createticketscreen-addfiles')}
+                title={I18n.get('support-createticket-addfiles')}
                 actions={[
                   cameraAction({ callback: addAttachment }),
                   galleryAction({ callback: addAttachment, multiple: true }),
                   documentAction({ callback: addAttachment }),
                 ]}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-                  <SmallActionText style={styles.actionText}>{I18n.get('support-createticketscreen-addfiles')}</SmallActionText>
+                  <SmallActionText style={styles.actionText}>{I18n.get('support-createticket-addfiles')}</SmallActionText>
                   <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
                 </View>
               </BottomMenu>
@@ -165,14 +165,14 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
           </View>
         </View>
         <ActionButton
-          text={I18n.get('support-createticketscreen-sendaction')}
+          text={I18n.get('support-createticket-sendaction')}
           action={sendTicket}
           disabled={isActionDisabled}
           loading={isSending}
         />
       </ScrollView>
     ) : (
-      <EmptyScreen svgImage="empty-support" title={I18n.get('support-createticketscreen-emptyscreen-title')} />
+      <EmptyScreen svgImage="empty-support" title={I18n.get('support-createticket-emptyscreen-title')} />
     );
   };
 
@@ -207,14 +207,14 @@ export default connect(
       session?.apps
         ?.filter(app => app.address && app.name)
         .map(app => {
-          const translation = I18n.get('support-createticketscreen-category-' + app.displayName.toLowerCase());
+          const translation = I18n.get('support-createticket-category-' + app.displayName.toLowerCase());
           return {
             label: translation.startsWith('support-') ? app.displayName : translation,
             value: app.address,
           };
         }) ?? [];
     apps.push({
-      label: I18n.get('support-createticketscreen-category-other'),
+      label: I18n.get('support-createticket-category-other'),
       value: 'other',
     });
 
