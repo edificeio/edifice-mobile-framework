@@ -103,7 +103,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('conversation.appName'),
+    title: I18n.get('conversation-maillist-appname'),
   }),
 });
 

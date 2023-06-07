@@ -127,7 +127,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     const isCurrentFolderSentOrDrafts = currentFolder === 'sendMessages' || currentFolder === 'drafts';
     const popupActionsMenu = [
       {
-        title: I18n.get('conversation.markUnread'),
+        title: I18n.get('conversation-mailcontent-markunread'),
         action: () => this.markAsRead(),
         icon: {
           ios: 'eye.slash',
@@ -135,7 +135,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         },
       },
       {
-        title: I18n.get(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`),
+        title: I18n.get(`conversation-mailcontent-${isCurrentFolderTrash ? 'restore' : 'move'}`),
         action: () => this.showModal(),
         icon: {
           ios: `${isCurrentFolderTrash ? 'arrow.uturn.backward.circle' : 'arrow.up.square'}`,
@@ -191,7 +191,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   mailMoved = () => {
     const { navigation } = this.props;
     navigation.dispatch(CommonActions.goBack());
-    Toast.showInfo(I18n.get('conversation.messageMoved'));
+    Toast.showInfo(I18n.get('conversation-maillist-messagemoved'));
   };
 
   markAsRead = async () => {
@@ -220,7 +220,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         await deleteMails([mailId]);
       } else await trashMails([mailId]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.get(`conversation.message${isTrashedOrDrafts ? 'Deleted' : 'Trashed'}`));
+      Toast.showSuccess(I18n.get(`conversation-mailcontent-message${isTrashedOrDrafts ? 'deleted' : 'trashed'}`));
     } catch {
       // TODO: Manage error
     }
@@ -282,7 +282,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
         <View style={styles.containerFooter}>
           <FooterButton
             icon="reply"
-            text={I18n.get('conversation.reply')}
+            text={I18n.get('conversation-mailcontent-reply')}
             onPress={() => {
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre');
@@ -296,7 +296,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
           />
           <FooterButton
             icon="reply_all"
-            text={I18n.get('conversation.replyAll')}
+            text={I18n.get('conversation-mailcontent-replyall')}
             onPress={() => {
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Répondre à tous');
@@ -310,7 +310,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
           />
           <FooterButton
             icon="forward"
-            text={I18n.get('conversation.forward')}
+            text={I18n.get('conversation-mailcontent-forward')}
             onPress={() => {
               if (route.params.currentFolder === 'sendMessages')
                 Trackers.trackEventOfModule(moduleConfig, 'Ecrire un mail', 'Outbox - Mail - Transférer');

@@ -160,7 +160,10 @@ const MailContactField = connect((state: IGlobalState) => ({
 
     const noUserFound = text => {
       if (text) {
-        Alert.alert(I18n.get('conversation-errorUser-title', { user: text }), I18n.get('conversation-errorUser-text'));
+        Alert.alert(
+          I18n.get('conversation-newmail-erroruser-title', { user: text }),
+          I18n.get('conversation-newmail-erroruser-text'),
+        );
       }
       onUserType('');
       inputRef.current?.focus();
@@ -308,7 +311,7 @@ const Body = ({ style, value, onChange, autofocus }) => {
     <View style={[styles.mailPart, styles.bodyAdditionalStyle, style]}>
       <TextInput
         ref={textInputRef}
-        placeholder={I18n.get('conversation.typeMessage')}
+        placeholder={I18n.get('conversation-newmail-typemessage')}
         textAlignVertical="top"
         multiline
         scrollEnabled={false}
@@ -368,7 +371,7 @@ const Fields = ({
   const commonFields = (
     <SafeAreaView style={styles.commonFieldsContainer}>
       <HeaderSubject
-        title={I18n.get('conversation.subject')}
+        title={I18n.get('conversation-newmail-subject')}
         value={headers.subject}
         onChange={subject => onHeaderChange({ ...headers, subject })}
         key="subject"
@@ -398,18 +401,18 @@ const Fields = ({
           </TouchableOpacity>
         )
       }
-      title={I18n.get('conversation.to')}
+      title={I18n.get('conversation-newmail-to')}
       key="to"
       onOpenSearch={v => setIsSearchingUsers({ to: v })}>
       {showExtraFields ? (
         <MailContactField
-          title={I18n.get('conversation.cc')}
+          title={I18n.get('conversation-newmail-cc')}
           value={headers.cc}
           onChange={cc => onHeaderChange({ ...headers, cc })}
           key="cc"
           onOpenSearch={v => setIsSearchingUsers({ cc: v })}>
           <MailContactField
-            title={I18n.get('conversation.bcc')}
+            title={I18n.get('conversation-newmail-bcc')}
             value={headers.cci}
             onChange={cci => onHeaderChange({ ...headers, cci })}
             key="cci"

@@ -93,7 +93,7 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
             items={getFolderItems()}
             setOpen={setDropdownOpen}
             setValue={setSelectedFolderId}
-            placeholder={I18n.get('conversation.selectDirectory')}
+            placeholder={I18n.get('conversation-movemail-selectdirectory')}
             style={styles.dropdown}
             dropDownContainerStyle={styles.dropdown}
             containerStyle={Platform.OS === 'android' && isDropdownOpen ? styles.androidAdditionalHeight : undefined}

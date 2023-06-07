@@ -103,12 +103,12 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
     <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
       {inInbox || (
         <View style={styles.usersContainer}>
-          <CaptionText style={styles.greyColor}>{I18n.get('conversation.fromPrefix')}</CaptionText>
+          <CaptionText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-fromprefix')}</CaptionText>
           <User userId={contacts.from[0]} userName={contacts.from[1]} />
         </View>
       )}
       <View style={styles.usersContainer}>
-        <SmallText style={styles.greyColor}>{I18n.get('conversation.toPrefix')}</SmallText>
+        <SmallText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-toprefix')}</SmallText>
         <View style={styles.users}>
           {contacts.to.map(person => (
             <User userId={person[0]} userName={person[1]} />
@@ -117,7 +117,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       </View>
       {contacts.cc && contacts.cc.length > 0 && (
         <View style={styles.usersContainer}>
-          <SmallText style={styles.greyColor}>{I18n.get('conversation.ccPrefix')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-ccprefix')}</SmallText>
           <View style={styles.users}>
             {contacts.cc.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -127,7 +127,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       )}
       {contacts.cci && contacts.cci.length > 0 && (
         <View style={styles.usersContainer}>
-          <SmallText style={styles.greyColor}>{I18n.get('conversation.bccPrefix')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-bccprefix')}</SmallText>
           <View style={styles.users}>
             {contacts.cci.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -145,7 +145,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const isFolderInbox = currentFolder === 'inbox';
   const mailContacts = getMailPeople(mailInfos);
-  if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.get('conversation.emptyTo'), false]];
+  if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.get('conversation-mailcontentitems-emptyto'), false]];
   const contactsToMore = mailContacts.to.length + mailContacts.cc.length + mailContacts.cci.length - 1;
 
   return (
@@ -177,10 +177,12 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
                 ) : (
                   <CaptionText style={styles.sendersCollapsed} numberOfLines={1}>
-                    <NestedText style={{ color: styles.greyColor.color }}>{I18n.get('conversation.toPrefix') + ' '}</NestedText>
+                    <NestedText style={{ color: styles.greyColor.color }}>
+                      {I18n.get('conversation-mailcontentitems-toprefix') + ' '}
+                    </NestedText>
                     <NestedText style={{ color: theme.palette.primary.regular }}>
                       {mailContacts.to[0][1]}
-                      {contactsToMore > 0 ? I18n.get('conversation.toMore', { count: contactsToMore }) : null}
+                      {contactsToMore > 0 ? I18n.get('conversation-mailcontentitems-tomore', { count: contactsToMore }) : null}
                     </NestedText>
                   </CaptionText>
                 )}

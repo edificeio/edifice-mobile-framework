@@ -57,7 +57,7 @@ export namespace I18n {
   );
 
   // Translation setup
-  export const init = () => {
+  export const init = async () => {
     const resources = {
       fr: { translation: finalTranslations.fr },
       en: { translation: finalTranslations.en },
@@ -70,35 +70,61 @@ export namespace I18n {
       isRTL: boolean;
     };
     const languageTag = bestAvailableLanguage?.languageTag;
-    const initInfos = {
-      resources,
-      fallbackLng,
-      lng: languageTag,
-      compatibilityJSON: 'v3',
-      interpolation: {
-        escapeValue: false,
-      },
-    } as InitOptions;
 
-    if (phraseSecrets && phraseSecrets.distributionId && phraseSecrets.environmentId) {
-      const phrase = new Phrase(phraseSecrets.distributionId, phraseSecrets.environmentId, DeviceInfo.getVersion(), 'i18next');
-      const backendPhrase = resourcesToBackend((language, namespace, callback) => {
-        phrase
-          .requestTranslation(language)
-          .then(remoteResources => {
-            callback(null, remoteResources);
-          })
-          .catch(error => {
-            callback(error, null);
-          });
-      });
-      const backendFallback = resourcesToBackend(resources);
-      initInfos.backend = { backends: [backendPhrase, backendFallback] };
-      i18n.use(ChainedBackend);
-    }
+    // if (phraseSecrets && phraseSecrets.distributionId && phraseSecrets.environmentId) {
+    const phrase = new Phrase(phraseSecrets.distributionId, phraseSecrets.environmentId, DeviceInfo.getVersion(), 'i18next');
+    const backendPhrase = resourcesToBackend((language, namespace, callback) => {
+      phrase
+        .requestTranslation(language)
+        .then(remoteResources => {
+          console.log('remoteResources', remoteResources);
+          callback(null, remoteResources);
+        })
+        .catch(error => {
+          console.log('error', error);
+          callback(error, null);
+        });
+    });
+    const backendFallback = resourcesToBackend(resources);
+    // initInfos.backend = { backends: [backendPhrase, backendFallback] };
+    // i18n.use(ChainedBackend);
+    // }
+
+    // const initInfos = {
+    //   backend: {
+    //     backends: [backendPhrase, backendFallback],
+    //   },
+    //   resources,
+    //   fallbackLng,
+    //   lng: languageTag,
+    //   compatibilityJSON: 'v3',
+    //   interpolation: {
+    //     escapeValue: false,
+    //   },
+    // } as InitOptions;
 
     moment.locale(languageTag?.split('-')[0]);
-    i18n.use(initReactI18next).init(initInfos);
+    try {
+      console.log('backendPhrase', backendPhrase);
+      console.log('backendFallback', backendFallback);
+      i18n
+        .use(ChainedBackend)
+        .use(initReactI18next)
+        .init({
+          backend: {
+            backends: [backendPhrase, backendFallback],
+          },
+          resources,
+          fallbackLng,
+          lng: languageTag,
+          compatibilityJSON: 'v3',
+          interpolation: {
+            escapeValue: false,
+          },
+        });
+    } catch (error) {
+      console.log('error', error);
+    }
     return languageTag ?? fallbackLng;
   };
 

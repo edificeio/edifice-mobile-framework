@@ -182,8 +182,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     const isFolderDrafts = navigationKey === 'drafts';
     const isFolderOutbox = navigationKey === 'sendMessages';
     const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox';
-    const text = I18n.get(`conversation.emptyScreen.${folder}.text`);
-    const title = I18n.get(`conversation.emptyScreen.${folder}.title`);
+    const text = I18n.get(`conversation-maillist-emptyscreen-${folder}text`);
+    const title = I18n.get(`conversation-maillist-emptyscreen-${folder}title`);
     return <EmptyScreen svgImage={isTrashed ? 'empty-trash' : 'empty-conversation'} text={text} title={title} />;
   }
 
@@ -212,7 +212,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     try {
       await this.refreshMailList();
       await fetchInit();
-      Toast.showInfo(I18n.get('conversation.messageMoved'));
+      Toast.showInfo(I18n.get('conversation-maillist-messagemoved'));
     } catch {
       // TODO: Manage error
     }
@@ -241,7 +241,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       } else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
-      Toast.showInfo(I18n.get(`conversation.message${isTrashedOrDraft ? 'Deleted' : 'Trashed'}`));
+      Toast.showInfo(I18n.get(`conversation-maillist-message${isTrashedOrDraft ? 'deleted' : 'trashed'}`));
     } catch {
       // TODO: Manage error
     }
@@ -301,7 +301,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       }
     const drawerMailboxes = [
       {
-        name: I18n.get('conversation.inbox').toUpperCase(),
+        name: I18n.get('conversation-maillist-inbox').toUpperCase(),
         value: 'inbox',
         iconName: 'messagerie-on',
         count: mailboxesCount.INBOX,
@@ -311,7 +311,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
         },
       },
       {
-        name: I18n.get('conversation.sendMessages').toUpperCase(),
+        name: I18n.get('conversation-maillist-sendmessages').toUpperCase(),
         value: 'sendMessages',
         iconName: 'send',
         labelStyle: {
@@ -320,7 +320,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
         },
       },
       {
-        name: I18n.get('conversation.drafts').toUpperCase(),
+        name: I18n.get('conversation-maillist-drafts').toUpperCase(),
         value: 'drafts',
         iconName: 'pencil',
         count: mailboxesCount.DRAFT,
@@ -330,7 +330,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
         },
       },
       {
-        name: I18n.get('conversation.trash').toUpperCase(),
+        name: I18n.get('conversation-maillist-trash').toUpperCase(),
         value: 'trash',
         iconName: 'delete',
         labelStyle: {
@@ -340,7 +340,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       },
     ];
     const createFolderItem = {
-      name: I18n.get('conversation.createDirectory'),
+      name: I18n.get('conversation-maillist-createdirectory'),
       value: 'createDirectory',
       iconName: 'create_new_folder',
       labelStyle: {
@@ -389,7 +389,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                     const mailContacts = getMailPeople(item);
                     const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
                     let contacts = !isFolderOutbox && !isFolderDrafts ? [mailContacts.from] : mailContacts.to;
-                    if (contacts.length === 0) contacts = [[undefined, I18n.get('conversation.emptyTo'), false]];
+                    if (contacts.length === 0) contacts = [[undefined, I18n.get('conversation-maillist-emptyto'), false]];
                     return (
                       <TouchableOpacity onPress={() => this.renderMailContent(item)}>
                         <ListItem
@@ -401,7 +401,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               <View style={styles.contactsAndDateContainer}>
                                 {isFolderOutbox || isFolderDrafts ? (
                                   <SmallText style={{ color: isMailUnread ? theme.ui.text.regular : theme.ui.text.light }}>
-                                    {I18n.get('conversation.toPrefix') + ' '}
+                                    {I18n.get('conversation-maillist-toprefix') + ' '}
                                   </SmallText>
                                 ) : null}
                                 <SmallBoldText
@@ -471,7 +471,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               row[item.key]?.closeRow();
                             },
                             backgroundColor: theme.palette.status.success.regular,
-                            actionText: I18n.get('conversation.restore'),
+                            actionText: I18n.get('conversation-maillist-restore'),
                             actionIcon: 'ui-unarchive',
                           },
                         ]
@@ -483,7 +483,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               row[item.key]?.closeRow();
                             },
                             backgroundColor: theme.palette.status.info.regular,
-                            actionText: I18n.get(`conversation.mark${item.unread ? 'Read' : 'Unread'}`),
+                            actionText: I18n.get(`conversation-maillist-mark${item.unread ? 'read' : 'unread'}`),
                             actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                           },
                         ]
@@ -495,7 +495,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                           row[item.key]?.closeRow();
                         },
                         backgroundColor: theme.palette.status.failure.regular,
-                        actionText: I18n.get('conversation.delete'),
+                        actionText: I18n.get('conversation-maillist-delete'),
                         actionIcon: 'ui-trash',
                       },
                     ],

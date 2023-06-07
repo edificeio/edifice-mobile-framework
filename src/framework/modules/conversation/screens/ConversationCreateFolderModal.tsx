@@ -47,11 +47,13 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
       await createFolder(name);
       fetchInit();
       onClose();
-      Toast.showInfo(I18n.get('conversation.createDirectoryConfirm'));
+      Toast.showInfo(I18n.get('conversation-createfolder-createdirectory-confirm'));
     } catch (error) {
       const folderAlreadyExists = (error as Error).message === 'conversation.error.duplicate.folder';
       onClose();
-      Toast.showError(I18n.get(folderAlreadyExists ? 'conversation.createDirectoryError.folderExists' : 'common.error.text'));
+      Toast.showError(
+        I18n.get(folderAlreadyExists ? 'conversation-createfolder-createdirectoryerror-folderexists' : 'common.error.text'),
+      );
     } finally {
       this.setState({ name: '' });
     }
@@ -74,21 +76,21 @@ class CreateFolderModal extends React.PureComponent<ConversationCreateFolderModa
       <ModalBox isVisible={show} backdropOpacity={0.5}>
         <ModalContent style={styles.modalContent}>
           <ModalContentBlock>
-            <SmallBoldText>{I18n.get('conversation.createDirectory')}</SmallBoldText>
+            <SmallBoldText>{I18n.get('conversation-createfolder-createdirectory')}</SmallBoldText>
           </ModalContentBlock>
           <View style={styles.inputContainer}>
             <TextInput
               autoFocus
               value={name}
               onChangeText={this.onNameChange}
-              placeholder={I18n.get('conversation.directoryName')}
+              placeholder={I18n.get('conversation-createfolder-directoryname')}
               underlineColorAndroid={theme.palette.grey.grey}
               style={textInputStyle}
             />
           </View>
           <ModalContentBlock style={styles.modalContentBlock}>
             <DialogButtonCancel onPress={onClose} />
-            <DialogButtonOk disabled={!name} label={I18n.get('conversation.create')} onPress={this.onConfirm} />
+            <DialogButtonOk disabled={!name} label={I18n.get('conversation-createfolder-create')} onPress={this.onConfirm} />
           </ModalContentBlock>
         </ModalContent>
       </ModalBox>

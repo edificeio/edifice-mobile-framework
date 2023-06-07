@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<'conversation', IConversationState>({
   matchEntcoreApp: '/conversation/conversation',
   trackingName: 'Messagerie',
 
-  displayI18n: 'conversation.tabName',
+  displayI18n: 'conversation-moduleconfig-tabname',
   displayAs: 'tabModule',
   displayOrder: 1,
   displayPicture: { type: 'Icon', name: 'messagerie-off' },

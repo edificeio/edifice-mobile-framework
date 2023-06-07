@@ -250,7 +250,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter === Filter.TRASH
           ? [
               {
-                title: I18n.get('conversation.restore'),
+                title: I18n.get('conversation-maillist-restore'),
                 action: restoreSelectedFiles,
                 icon: {
                   ios: 'arrow.uturn.backward.circle',
@@ -404,7 +404,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.success.regular,
-                      actionText: I18n.get('conversation.restore'),
+                      actionText: I18n.get('conversation-maillist-restore'),
                       actionIcon: 'ui-unarchive',
                     },
                   ]

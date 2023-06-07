@@ -200,7 +200,7 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
             // Update state => toggle will be called
             this.setState({ drawerOpen: !this.closeAfterSelecting });
           }}
-          placeholder={I18n.get('conversation.selectDirectory')}
+          placeholder={I18n.get('conversation-drawer-selectdirectory')}
           placeholderStyle={styles.placeholder}
           labelProps={{ numberOfLines: 1 }}
           itemLabelProps={{ numberOfLines: 1 }}
