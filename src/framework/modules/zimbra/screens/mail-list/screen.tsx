@@ -157,7 +157,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     const { navigation, quota } = props;
 
     if (quota.quota > 0 && quota.storage >= quota.quota) {
-      return Alert.alert(I18n.get('zimbra-quota-overflowTitle'), I18n.get('zimbra-quota-overflowText'));
+      return Alert.alert(I18n.get('zimbra-storagealert-title'), I18n.get('zimbra-storagealert-message'));
     }
     navigation.navigate(zimbraRouteNames.composer, {
       type: DraftType.NEW,
@@ -231,7 +231,9 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       await zimbraService.mails.trash(session, selectedMails);
       setSelectedMails([]);
       refresh();
-      Toast.showSuccess(I18n.get(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'));
+      Toast.showSuccess(
+        I18n.get(selectedMails.length > 1 ? 'zimbra-maillistscreen-mails-trashed' : 'zimbra-maillistscreen-mail-trashed'),
+      );
     } catch {
       Toast.showError(I18n.get('common.error.text'));
     }
@@ -245,14 +247,16 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       await zimbraService.mails.delete(session, selectedMails);
       setSelectedMails([]);
       refresh();
-      Toast.showSuccess(I18n.get(selectedMails.length > 1 ? 'zimbra-messages-deleted' : 'zimbra-message-deleted'));
+      Toast.showSuccess(
+        I18n.get(selectedMails.length > 1 ? 'zimbra-maillistscreen-mails-deleted' : 'zimbra-maillistscreen-mail-deleted'),
+      );
     } catch {
       Toast.showError(I18n.get('common.error.text'));
     }
   };
 
   const alertPermanentDeletion = () => {
-    Alert.alert(I18n.get('zimbra-message-deleted-confirm'), I18n.get('zimbra-message-deleted-confirm-text'), [
+    Alert.alert(I18n.get('zimbra-deletealert-title'), I18n.get('zimbra-deletealert-message'), [
       {
         text: I18n.get('common.cancel'),
         style: 'default',
@@ -274,7 +278,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   const getDropdownActions = () => {
     return [
       {
-        title: I18n.get('zimbra-move'),
+        title: I18n.get('zimbra-maillistscreen-menuactions-move'),
         action: () => moveModalRef.current?.doShowModal(),
         icon: {
           ios: 'arrow.up.square',
@@ -346,12 +350,16 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   const renderEmpty = () => {
     return isSearchActive ? (
-      <EmptyScreen svgImage="empty-search" title={I18n.get('mediacentre.empty-search')} customStyle={styles.emptyListContainer} />
+      <EmptyScreen
+        svgImage="empty-search"
+        title={I18n.get('zimbra-maillistscreen-emptyscreen-search')}
+        customStyle={styles.emptyListContainer}
+      />
     ) : (
       <EmptyScreen
         svgImage="empty-conversation"
-        title={I18n.get('zimbra-empty-mailbox-title')}
-        text={I18n.get('zimbra-empty-mailbox-text')}
+        title={I18n.get('zimbra-maillistscreen-emptyscreen-title')}
+        text={I18n.get('zimbra-maillistscreen-emptyscreen-text')}
         customStyle={styles.emptyListContainer}
       />
     );

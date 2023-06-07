@@ -71,7 +71,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.get('zimbra-signature')}</BodyText>
+          <BodyText>{I18n.get('zimbra-composerscreen-signaturemodal-title')}</BodyText>
           <TextInput
             value={text}
             onChangeText={value => setText(value)}
@@ -81,9 +81,13 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
           />
           <TouchableOpacity onPress={() => setGlobal(!isGlobal)} style={styles.isGlobalContainer}>
             <Checkbox checked={isGlobal} onPress={() => setGlobal(!isGlobal)} />
-            <SmallText style={styles.isGlobalText}>{I18n.get('zimbra-signature-use')}</SmallText>
+            <SmallText style={styles.isGlobalText}>{I18n.get('zimbra-composerscreen-signaturemodal-globaluse')}</SmallText>
           </TouchableOpacity>
-          <ActionButton text={I18n.get('zimbra-add')} action={updateSignature} loading={isUpdating} />
+          <ActionButton
+            text={I18n.get('zimbra-composerscreen-signaturemodal-action')}
+            action={updateSignature}
+            loading={isUpdating}
+          />
         </View>
       }
     />

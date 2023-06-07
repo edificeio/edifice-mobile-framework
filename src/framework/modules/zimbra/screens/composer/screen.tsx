@@ -55,7 +55,7 @@ function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; upda
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isDraftEdited || props.isUploading, ({ data }) => {
     if (props.isUploading) {
-      return Alert.alert(I18n.get('zimbra-send-attachment-progress'));
+      return Alert.alert(I18n.get('zimbra-composerscreen-uploadingerror'));
     }
     props.updateDraft();
     handleRemoveConfirmNavigationEvent(data.action, navigation);
@@ -148,7 +148,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Succès');
     } catch {
       this.setState({ tempAttachment: undefined });
-      Toast.showError(I18n.get('zimbra-attachment-error'));
+      Toast.showError(I18n.get('zimbra-composerscreen-attachmenterror'));
       this.props.handlePickFileError('conversation');
       Trackers.trackEventOfModule(moduleConfig, 'Ajouter une pièce jointe', 'Rédaction mail - Insérer - Pièce jointe - Échec');
     }
@@ -175,16 +175,16 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       const { draft, id, tempAttachment } = this.state;
 
       if (!draft.to.length && !draft.cc.length && !draft.bcc.length) {
-        return Toast.showError(I18n.get('zimbra-missing-receiver'));
+        return Toast.showError(I18n.get('zimbra-composerscreen-recipienterror'));
       } else if (tempAttachment) {
-        return Toast.showInfo(I18n.get('zimbra-send-attachment-progress'));
+        return Toast.showInfo(I18n.get('zimbra-composerscreen-uploadingerror'));
       }
       this.setState({ isSending: true });
       if (!session) throw new Error();
       await zimbraService.mail.send(session, this.getMailData(), id, draft.inReplyTo);
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-send-mail')), 250);
+        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composerscreen-mail-sent')), 250);
       });
     } catch {
       this.setState({ isSending: false });
@@ -198,7 +198,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
 
     if (isDeleted) return;
     await this.saveDraft();
-    Toast.showInfo(I18n.get(type === DraftType.DRAFT ? 'zimbra-draft-updated' : 'zimbra-draft-created'));
+    Toast.showInfo(
+      I18n.get(type === DraftType.DRAFT ? 'zimbra-composerscreen-draft-updated' : 'zimbra-composerscreen-draft-created'),
+    );
   };
 
   checkIsDraftBlank = (): boolean => {
@@ -248,7 +250,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-message-deleted')), 250);
+        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composerscreen-draft-trashed')), 250);
       });
     } catch {
       Toast.showError(I18n.get('common.error.text'));
@@ -266,7 +268,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-message-deleted')), 250);
+        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composerscreen-draft-deleted')), 250);
       });
     } catch {
       Toast.showError(I18n.get('common.error.text'));
@@ -274,7 +276,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   };
 
   alertPermanentDeletion = () => {
-    Alert.alert(I18n.get('zimbra-message-deleted-confirm'), I18n.get('zimbra-message-deleted-confirm-text'), [
+    Alert.alert(I18n.get('zimbra-deletealert-title'), I18n.get('zimbra-deletealert-message'), [
       {
         text: I18n.get('common.cancel'),
         style: 'default',
@@ -316,7 +318,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     const { isTrashed } = this.props.route.params;
     const menuActions = [
       {
-        title: I18n.get('zimbra-signature-add'),
+        title: I18n.get('zimbra-composerscreen-menuactions-addsignature'),
         action: () => this.state.signatureModalRef.current?.doShowModal(),
         icon: {
           ios: 'pencil',
@@ -393,7 +395,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
                 multiline
                 textAlignVertical="top"
                 scrollEnabled={false}
-                placeholder={I18n.get('zimbra-type-message')}
+                placeholder={I18n.get('zimbra-composerscreen-body-placeholder')}
                 placeholderTextColor={theme.ui.text.light}
                 style={styles.bodyInput}
               />

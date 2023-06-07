@@ -130,7 +130,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
 
     return (
       <View>
-        <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-storage')}</HeadingXSText>
+        <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-maillistscreen-drawercontent-storage')}</HeadingXSText>
         <View style={styles.storageBar}>
           <View style={[styles.storageBarUsed, { width: `${storagePercent}%` }]}>
             <CaptionBoldText style={styles.storageText}>
@@ -146,7 +146,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
     <>
       <DrawerContentScrollView {...props} contentContainerStyle={styles.contentContainer}>
         <View>
-          <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-messages')}</HeadingXSText>
+          <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-maillistscreen-drawercontent-messages')}</HeadingXSText>
           <FlatList
             data={defaultFolders}
             keyExtractor={(item, index) => index.toString()}
@@ -162,7 +162,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
             )}
           />
           <View style={styles.foldersHeaderContainer}>
-            <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-directories')}</HeadingXSText>
+            <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-maillistscreen-drawercontent-folders')}</HeadingXSText>
             <TouchableOpacity onPress={openFolderCreationModal} style={styles.createFolderContainer}>
               <Picture type="NamedSvg" name="ui-plus" width={24} height={24} fill={theme.palette.primary.regular} />
             </TouchableOpacity>

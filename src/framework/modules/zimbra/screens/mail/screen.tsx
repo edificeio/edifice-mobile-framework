@@ -114,7 +114,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.trash(session, [id]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.get('zimbra-message-deleted'));
+      Toast.showSuccess(I18n.get('zimbra-mailscreen-mail-trashed'));
     } catch {
       Toast.showError(I18n.get('common.error.text'));
     }
@@ -128,14 +128,14 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.delete(session, [id]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.get('zimbra-message-deleted'));
+      Toast.showSuccess(I18n.get('zimbra-mailscreen-mail-deleted'));
     } catch {
       Toast.showError(I18n.get('common.error.text'));
     }
   };
 
   const alertPermanentDeletion = () => {
-    Alert.alert(I18n.get('zimbra-message-deleted-confirm'), I18n.get('zimbra-message-deleted-confirm-text'), [
+    Alert.alert(I18n.get('zimbra-deletealert-title'), I18n.get('zimbra-deletealert-message'), [
       {
         text: I18n.get('common.cancel'),
         style: 'default',
@@ -160,7 +160,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     const { id } = props.route.params;
 
     if (quota.quota > 0 && quota.storage >= quota.quota) {
-      return Alert.alert(I18n.get('zimbra-quota-overflowTitle'), I18n.get('zimbra-quota-overflowText'));
+      return Alert.alert(I18n.get('zimbra-storagealert-title'), I18n.get('zimbra-storagealert-message'));
     }
     navigation.navigate(zimbraRouteNames.composer, {
       type,
@@ -175,7 +175,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       ...(folderPath.startsWith('/Inbox') || folderPath === '/Junk'
         ? [
             {
-              title: I18n.get('zimbra-mark-unread'),
+              title: I18n.get('zimbra-mailscreen-menuactions-markunread'),
               action: markAsUnread,
               icon: {
                 ios: 'eye.slash',
@@ -183,7 +183,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
               },
             },
             {
-              title: I18n.get('zimbra-move'),
+              title: I18n.get('zimbra-mailscreen-menuactions-move'),
               action: () => moveModalRef.current?.doShowModal(),
               icon: {
                 ios: 'arrow.up.square',
@@ -195,7 +195,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       ...(folderPath === '/Trash'
         ? [
             {
-              title: I18n.get('zimbra-restore'),
+              title: I18n.get('zimbra-mailscreen-menuactions-restore'),
               action: () => moveModalRef.current?.doShowModal(),
               icon: {
                 ios: 'arrow.uturn.backward.circle',
@@ -238,9 +238,13 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
     return folderPath !== '/Trash' ? (
       <View style={styles.containerFooter}>
-        <FooterButton icon="reply" text={I18n.get('zimbra-reply')} onPress={() => openComposer(DraftType.REPLY)} />
-        <FooterButton icon="reply_all" text={I18n.get('zimbra-replyAll')} onPress={() => openComposer(DraftType.REPLY_ALL)} />
-        <FooterButton icon="forward" text={I18n.get('zimbra-forward')} onPress={() => openComposer(DraftType.FORWARD)} />
+        <FooterButton icon="reply" text={I18n.get('zimbra-mailscreen-reply')} onPress={() => openComposer(DraftType.REPLY)} />
+        <FooterButton
+          icon="reply_all"
+          text={I18n.get('zimbra-mailscreen-replyall')}
+          onPress={() => openComposer(DraftType.REPLY_ALL)}
+        />
+        <FooterButton icon="forward" text={I18n.get('zimbra-mailscreen-forward')} onPress={() => openComposer(DraftType.FORWARD)} />
       </View>
     ) : null;
   };

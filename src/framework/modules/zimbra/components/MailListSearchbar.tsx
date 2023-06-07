@@ -60,7 +60,7 @@ export const MailListSearchbar = (props: MailListSearchbarProps) => {
     const { query } = props;
 
     if (query.length > 0 && query.length < 3) {
-      return Toast.showError(I18n.get('zimbra-search-length-error'));
+      return Toast.showError(I18n.get('zimbra-maillistscreen-searchbar-lengtherror'));
     }
     props.onSearch();
   };
@@ -75,7 +75,7 @@ export const MailListSearchbar = (props: MailListSearchbarProps) => {
         value={props.query}
         onChangeText={props.onChangeQuery}
         onSubmitEditing={searchMails}
-        placeholder={I18n.get('common.search')}
+        placeholder={I18n.get('zimbra-maillistscreen-searchbar-search')}
         placeholderTextColor={theme.ui.text.regular}
         autoCapitalize="none"
         autoCorrect={false}

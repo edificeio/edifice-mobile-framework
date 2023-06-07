@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   detailsDateText: {
     marginTop: UI_SIZES.spacing.tiny,
   },
-  sendersContainer: {
+  sContainer: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -154,12 +154,12 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
     <View>
       {inInbox || (
         <View style={styles.row}>
-          <SmallText style={styles.greyColor}>{I18n.get('zimbra-from-prefix')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('zimbra-mailscreen-headers-from')}</SmallText>
           <User userId={sender} userName={displayNames.find(item => item[0] === sender)[1]} />
         </View>
       )}
       <View style={styles.row}>
-        <SmallText style={styles.greyColor}>{I18n.get('zimbra-to-prefix')}</SmallText>
+        <SmallText style={styles.greyColor}>{I18n.get('zimbra-mailscreen-headers-to')}</SmallText>
         <View style={styles.sendersContainer}>
           {receivers.map(receiver => (
             <User userId={receiver} userName={displayNames.find(item => item[0] === receiver)[1]} />
@@ -168,7 +168,7 @@ const SendersDetails = ({ receivers, cc, displayNames, inInbox, sender }) => {
       </View>
       {cc && (
         <View style={styles.row}>
-          <SmallText style={styles.greyColor}>{I18n.get('zimbra-receiversCC')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('zimbra-mailscreen-headers-cc')}</SmallText>
           <View style={styles.sendersContainer}>
             {cc.map(person => (
               <User userId={person} userName={displayNames.find(item => item[0] === person)[1]} />
@@ -218,14 +218,14 @@ const HeaderMailInfos = ({
             ? findReceivers2(mailInfos.to, mailInfos.from, mailInfos.cc)
                 .map(r => {
                   const u = mailInfos.displayNames.find(dn => dn[0] === r);
-                  return u ? u[1] : I18n.get('unknown-user');
+                  return u ? u[1] : I18n.get('zimbra-mailscreen-unknownuser');
                 })
                 .join(', ')
             : mailInfos.displayNames.find(dn => dn[0] === mailInfos.from)[1]}
         </Author>
         <IconButton
           onPress={setDetailsVisibility}
-          text={I18n.get('zimbra-see_detail')}
+          text={I18n.get('zimbra-mailscreen-seedetails')}
           color={theme.palette.primary.regular}
           icon={!isDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up'}
         />
@@ -260,7 +260,7 @@ export const HeaderMailDetails = ({
         sender={mailInfos.from}
       />
       <View style={styles.row}>
-        <SmallText style={styles.greyColor}>{I18n.get('zimbra-subject')} : </SmallText>
+        <SmallText style={styles.greyColor}>{I18n.get('zimbra-mailscreen-headers-subject')}</SmallText>
         <SmallBoldText style={styles.fullView}>{mailInfos.subject}</SmallBoldText>
       </View>
     </View>
@@ -272,7 +272,7 @@ export const HeaderMail = ({ mailInfos, setDetailsVisibility }: { mailInfos: any
     <View style={styles.containerMail}>
       <HeaderMailInfos mailInfos={mailInfos} setDetailsVisibility={() => setDetailsVisibility(true)} isDetails={false} />
       <View style={styles.row}>
-        <SmallText style={styles.greyColor}>{I18n.get('zimbra-subject')} : </SmallText>
+        <SmallText style={styles.greyColor}>{I18n.get('zimbra-mailscreen-headers-subject')}</SmallText>
         <SmallBoldText style={styles.fullView}>{mailInfos.subject}</SmallBoldText>
       </View>
     </View>

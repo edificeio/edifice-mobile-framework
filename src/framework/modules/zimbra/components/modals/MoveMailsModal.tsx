@@ -51,7 +51,7 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
       props.successCallback();
       setMoving(false);
       setSelectedFolderId(null);
-      Toast.showSuccess(I18n.get(mailIds.length > 1 ? 'zimbra-messages-moved' : 'zimbra-message-moved'));
+      Toast.showSuccess(I18n.get(mailIds.length > 1 ? 'zimbra-movemailsmodal-mails-moved' : 'zimbra-movemailsmodal-mail-moved'));
     } catch {
       setMoving(false);
       Toast.showError(I18n.get('common.error.text'));
@@ -86,21 +86,21 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.get('zimbra-move-to')}</BodyText>
+          <BodyText>{I18n.get('zimbra-movemailsmodal-title')}</BodyText>
           <DropDownPicker
             open={isDropdownOpen}
             value={selectedFolderId}
             items={getFolderItems()}
             setOpen={setDropdownOpen}
             setValue={setSelectedFolderId}
-            placeholder={I18n.get('conversation-movemail-selectdirectory')}
+            placeholder={I18n.get('zimbra-movemailsmodal-selectfolder')}
             style={styles.dropdown}
             dropDownContainerStyle={styles.dropdown}
             containerStyle={Platform.OS === 'android' && isDropdownOpen ? styles.androidAdditionalHeight : undefined}
             textStyle={styles.dropdownText}
           />
           <ActionButton
-            text={I18n.get(props.folderPath === '/Trash' ? 'zimbra-restore' : 'zimbra-move')}
+            text={I18n.get(props.folderPath === '/Trash' ? 'zimbra-movemailsmodal-restore' : 'zimbra-movemailsmodal-move')}
             action={moveMails}
             disabled={!selectedFolderId}
             loading={isMoving}

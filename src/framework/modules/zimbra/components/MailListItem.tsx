@@ -65,11 +65,11 @@ interface IMailListItemProps {
 }
 
 export class MailListItem extends React.PureComponent<IMailListItemProps> {
-  getContactName = (id: string) => {
+  getContactName = (id: string): string => {
     const { mail } = this.props;
 
-    const displayName = mail.displayNames.find(item => item[0] === id);
-    return displayName?.[1] ?? I18n.get('zimbra-unknown');
+    const displayName = mail.displayNames.find(item => item[0] === id)?.[1];
+    return displayName ?? I18n.get('zimbra-mailscreen-unknownuser');
   };
 
   public render() {

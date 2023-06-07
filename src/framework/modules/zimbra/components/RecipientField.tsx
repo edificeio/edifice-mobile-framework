@@ -99,7 +99,7 @@ export const RecipientField = ({ hasZimbraSendExternalRight, selectedRecipients,
       if (hasZimbraSendExternalRight) {
         addRecipient({ id: value, displayName: value } as IRecipient);
       } else {
-        Toast.showError(I18n.get('zimbra-external-mail-right-error'));
+        Toast.showError(I18n.get('zimbra-composerscreen-recipientfield-externalrighterror'));
       }
     }
     if (value) setValue('');
