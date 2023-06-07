@@ -99,7 +99,9 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
 
   const renderListItem = (distribution: IDistribution, index: number) => {
     const { dateResponse } = distribution;
-    const text = `${index}. ${I18n.get('form.answeredOnDate', { date: dateResponse?.format('DD/MM/YYYY, HH:mm') })}`;
+    const text = `${index}. ${I18n.get('form-distributionlistscreen-formcard-answerdate', {
+      date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
+    })}`;
     return (
       <TouchableOpacity onPress={() => openSentDistribution(distribution.id)} style={styles.itemContainer}>
         <SmallText>{text}</SmallText>
@@ -120,7 +122,9 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
       ref={ref}
       content={
         <View>
-          <BodyText style={styles.titleMargin}>{`${I18n.get('form.myAnswers')} - ${props.form?.title}`}</BodyText>
+          <BodyText style={styles.titleMargin}>{`${I18n.get('form-distributionlistscreen-listmodal-myanswers')} - ${
+            props.form?.title
+          }`}</BodyText>
           <FlatList
             data={data}
             initialNumToRender={data.length}
@@ -129,7 +133,11 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
             persistentScrollbar
             style={styles.flatListContainer}
           />
-          <ActionButton text={I18n.get('form.answerAgain')} action={openNewDistribution} loading={isLoading} />
+          <ActionButton
+            text={I18n.get('form-distributionlistscreen-listmodal-action')}
+            action={openNewDistribution}
+            loading={isLoading}
+          />
         </View>
       }
     />

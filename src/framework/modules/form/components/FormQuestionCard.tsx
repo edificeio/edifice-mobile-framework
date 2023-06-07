@@ -51,12 +51,15 @@ export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps
             <View style={styles.childrenContainer}>{children}</View>
             {onClearAnswer ? (
               <View style={styles.actionContainer}>
-                <ButtonTextIcon title={I18n.get('form.clearAnswer')} onPress={() => onClearAnswer()} />
+                <ButtonTextIcon
+                  title={I18n.get('form-distributionscreen-questioncard-clearanswer')}
+                  onPress={() => onClearAnswer()}
+                />
               </View>
             ) : null}
             {onEditQuestion ? (
               <View style={styles.actionContainer}>
-                <ButtonTextIcon title={I18n.get('common.modify')} onPress={() => onEditQuestion()} />
+                <ButtonTextIcon title={I18n.get('form-distributionscreen-questioncard-edit')} onPress={() => onEditQuestion()} />
               </View>
             ) : null}
           </View>

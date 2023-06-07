@@ -101,14 +101,14 @@ export const FormFileCard = ({ isDisabled, question, responses, onChangeAnswer, 
       ) : (
         <View style={styles.container}>
           <BottomMenu
-            title={I18n.get('common.addFiles')}
+            title={I18n.get('form-distributionscreen-filecard-addfiles')}
             actions={[
               cameraAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
               galleryAction({ callback: file => addFile(filePickedToLocalFile(file)), multiple: true }),
               documentAction({ callback: file => addFile(filePickedToLocalFile(file)) }),
             ]}>
             <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-              <SmallActionText style={styles.actionText}>{I18n.get('common.addFiles')}</SmallActionText>
+              <SmallActionText style={styles.actionText}>{I18n.get('form-distributionscreen-filecard-addfiles')}</SmallActionText>
               <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
             </View>
           </BottomMenu>

@@ -8,5 +8,9 @@ interface IFormAnswerTextProps {
 }
 
 export const FormAnswerText = ({ answer = '' }: IFormAnswerTextProps) => {
-  return answer !== '' ? <SmallText>{answer}</SmallText> : <CaptionItalicText>{I18n.get('form.notAnswered')}</CaptionItalicText>;
+  return answer !== '' ? (
+    <SmallText>{answer}</SmallText>
+  ) : (
+    <CaptionItalicText>{I18n.get('form-distributionscreen-questioncard-notanswered')}</CaptionItalicText>
+  );
 };

@@ -33,7 +33,7 @@ const mapDropdownItems = (choices: IQuestionChoice[]): { id?: string; value: str
   return [
     {
       id: undefined,
-      value: I18n.get('form.selectAnOption'),
+      value: I18n.get('form-distributionscreen-singleanswercard-selectoption'),
     },
     ...choices.map(choice => {
       return {
@@ -102,7 +102,7 @@ export const FormSingleAnswerCard = ({
               value={customAnswer}
               onChangeText={onChangeCustomAnswer}
               editable={!isDisabled}
-              placeholder={I18n.get('form.enterYourAnswer')}
+              placeholder={I18n.get('form-distributionscreen-questioncard-enteryouranswer')}
               style={styles.customAnswerInput}
             />
           ) : null}

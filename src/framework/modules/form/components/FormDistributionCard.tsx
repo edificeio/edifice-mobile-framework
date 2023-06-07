@@ -34,11 +34,13 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
     const { formDistributions } = this.props;
 
     if (formDistributions.multiple) {
-      const nb = formDistributions.distributions.filter(distribution => distribution.status === DistributionStatus.FINISHED).length;
-      const color = nb ? theme.palette.status.success.regular : theme.palette.status.failure.regular;
+      const count = formDistributions.distributions.filter(
+        distribution => distribution.status === DistributionStatus.FINISHED,
+      ).length;
+      const color = count ? theme.palette.status.success.regular : theme.palette.status.failure.regular;
       return (
         <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
-          {I18n.get('form.answersNb', { nb })}
+          {I18n.get('form-distributionlistscreen-formcard-answercount', { count })}
         </SmallBoldText>
       );
     }
@@ -46,9 +48,14 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
     const color = status === DistributionStatus.TO_DO ? theme.palette.status.failure.regular : theme.palette.status.success.regular;
     return (
       <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
-        {I18n.get(status === DistributionStatus.TO_DO ? 'form.awaitingResponse' : 'form.answeredOnDate', {
-          date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
-        })}
+        {I18n.get(
+          status === DistributionStatus.TO_DO
+            ? 'form-distributionlistscreen-formcard-awaitingresponse'
+            : 'form-distributionlistscreen-formcard-answerdate',
+          {
+            date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
+          },
+        )}
       </SmallBoldText>
     );
   };
@@ -68,7 +75,9 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
                 <View>
                   <SmallText>{ownerName}</SmallText>
                   <SmallItalicText style={{ color: theme.ui.text.light }}>
-                    {I18n.get('common.sentOnDate', { date: dateSending?.format('DD/MM/YYYY, HH:mm') })}
+                    {I18n.get('form-distributionlistscreen-formcard-sendingdate', {
+                      date: dateSending?.format('DD/MM/YYYY, HH:mm'),
+                    })}
                   </SmallItalicText>
                 </View>
               }

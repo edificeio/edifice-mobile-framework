@@ -59,7 +59,7 @@ export const FormDateCard = ({ isDisabled, question, responses, onChangeAnswer, 
         <DateTimePicker mode="date" value={date} onChange={value => onChangeDate(value)} style={styles.datePicker} />
       ) : (
         <TouchableOpacity onPress={() => onChangeDate(moment())}>
-          <SmallActionText>{I18n.get('common.enterDate')}</SmallActionText>
+          <SmallActionText>{I18n.get('form-distributionscreen-datecard-enterdate')}</SmallActionText>
         </TouchableOpacity>
       )}
     </FormQuestionCard>

@@ -298,7 +298,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       }
       modalBoxRef.current?.doDismissModal();
       props.navigation.goBack();
-      Toast.showSuccess(I18n.get('form.answersSent'));
+      Toast.showSuccess(I18n.get('form-distributionscreen-submissionmodal-successmessage'));
     } catch {
       setSubmitting(false);
       Toast.showError(I18n.get('common.error.text'));
@@ -306,7 +306,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   };
 
   const renderEmpty = () => {
-    return <EmptyScreen svgImage="empty-form-access" title={I18n.get('form.formDistributionScreen.emptyScreen.title')} />;
+    return <EmptyScreen svgImage="empty-form-access" title={I18n.get('form-distributionscreen-emptyscreen-title')} />;
   };
 
   const renderError = () => {
@@ -318,7 +318,9 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   };
 
   const renderSummaryHeading = () => {
-    return isPositionAtSummary ? <HeadingSText style={styles.summaryText}>{I18n.get('form.summary')}</HeadingSText> : null;
+    return isPositionAtSummary ? (
+      <HeadingSText style={styles.summaryText}>{I18n.get('form-distributionscreen-summary')}</HeadingSText>
+    ) : null;
   };
 
   const renderElement = (item: IFormElement) => {
@@ -350,16 +352,21 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   const renderPositionActions = () => {
     if (isPositionAtSummary) {
       return status !== DistributionStatus.FINISHED || editable ? (
-        <ActionButton text={I18n.get('form.finishAndSend')} action={() => modalBoxRef.current?.doShowModal()} />
+        <ActionButton text={I18n.get('form-distributionscreen-submit')} action={() => modalBoxRef.current?.doShowModal()} />
       ) : null;
     }
     return (
       <View style={styles.actionsContainer}>
         {positionHistory.length ? (
-          <ActionButton text={I18n.get('previous')} type="secondary" action={goToPreviousPosition} loading={isLoadingPrevious} />
+          <ActionButton
+            text={I18n.get('form-distributionscreen-previous')}
+            type="secondary"
+            action={goToPreviousPosition}
+            loading={isLoadingPrevious}
+          />
         ) : null}
         <ActionButton
-          text={I18n.get('next')}
+          text={I18n.get('form-distributionscreen-next')}
           action={goToNextPosition}
           disabled={isMandatoryAnswerMissing}
           loading={isLoadingNext}
@@ -413,32 +420,28 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   UNSTABLE_usePreventRemove(
     status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE && !isSubmitting,
     ({ data }) => {
-      Alert.alert(
-        I18n.get('form.formDistributionScreen.leaveAlert.title'),
-        I18n.get('form.formDistributionScreen.leaveAlert.message'),
-        [
-          {
-            text: I18n.get('common.cancel'),
-            style: 'cancel',
-            onPress: () => {
-              clearConfirmNavigationEvent();
-            },
+      Alert.alert(I18n.get('form-distributionscreen-leavealert-title'), I18n.get('form-distributionscreen-leavealert-message'), [
+        {
+          text: I18n.get('common.cancel'),
+          style: 'cancel',
+          onPress: () => {
+            clearConfirmNavigationEvent();
           },
-          {
-            text: I18n.get('common.quit'),
-            onPress: async () => {
-              try {
-                await postResponsesChanges();
-                handleRemoveConfirmNavigationEvent(data.action, props.navigation);
-                Toast.showSuccess(I18n.get('form.answersWellSaved'));
-              } catch {
-                Toast.showError(I18n.get('common.error.text'));
-              }
-            },
-            style: 'destructive',
+        },
+        {
+          text: I18n.get('common.quit'),
+          onPress: async () => {
+            try {
+              await postResponsesChanges();
+              handleRemoveConfirmNavigationEvent(data.action, props.navigation);
+              Toast.showSuccess(I18n.get('form-distributionscreen-leavealert-successmessage'));
+            } catch {
+              Toast.showError(I18n.get('common.error.text'));
+            }
           },
-        ],
-      );
+          style: 'destructive',
+        },
+      ]);
     },
   );
 

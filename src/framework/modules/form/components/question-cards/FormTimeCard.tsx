@@ -59,7 +59,7 @@ export const FormTimeCard = ({ isDisabled, question, responses, onChangeAnswer, 
         <DateTimePicker mode="time" value={time} onChange={value => onChangeTime(value)} style={styles.timePicker} />
       ) : (
         <TouchableOpacity onPress={() => onChangeTime(moment())}>
-          <SmallActionText>{I18n.get('common.enterTime')}</SmallActionText>
+          <SmallActionText>{I18n.get('form-distributionscreen-timecard-entertime')}</SmallActionText>
         </TouchableOpacity>
       )}
     </FormQuestionCard>

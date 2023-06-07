@@ -11,7 +11,7 @@ export default new NavigableModuleConfig<'form', IFormReduxState>({
   matchEntcoreApp: '/formulaire',
   hasRight: () => !!getFormWorkflowInformation(getSession()).initResponse,
 
-  displayI18n: 'form.tabName',
+  displayI18n: 'form-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'form', fill: theme.palette.complementary.purple.regular },
 });
