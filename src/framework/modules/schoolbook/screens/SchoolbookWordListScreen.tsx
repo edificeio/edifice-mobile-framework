@@ -63,7 +63,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('schoolbook.appName'),
+    title: I18n.get('schoolbook-wordlist-appname"'),
   }),
   headerRight: undefined,
 });
@@ -260,7 +260,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
           <PopupMenu
             actions={[
               linkAction({
-                title: I18n.get('schoolbook.word.create'),
+                title: I18n.get('schoolbook-wordlist-wordcreate'),
                 action: () => {
                   //TODO: get session.platform from redux
                   if (!session?.platform) {
@@ -306,15 +306,11 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-schoolbook"
-        title={I18n.get(
-          `schoolbook.schoolbookWordListScreen.emptyScreen.title${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`,
-        )}
-        text={I18n.get(
-          `schoolbook.schoolbookWordListScreen.emptyScreen.text${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`,
-        )}
+        title={I18n.get(`schoolbook-wordlist-emptyscreen-title${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`)}
+        text={I18n.get(`schoolbook-wordlist-emptyscreen-text${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`)}
         {...(hasSchoolbookWordCreationRights
           ? {
-              buttonText: I18n.get('schoolbook.word.create'),
+              buttonText: I18n.get('schoolbook-wordlist-wordcreate'),
               buttonUrl: '/schoolbook#/list',
             }
           : {})}

@@ -53,7 +53,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('schoolbook.appName'),
+    title: I18n.get('schoolbook-worddetails-appname"'),
   }),
   headerRight: undefined,
 });
@@ -195,21 +195,17 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       }
     };
     const showDeleteSchoolbookWordAlert = () =>
-      Alert.alert(
-        I18n.get('schoolbook.schoolbookWordDetailsScreen.deleteAlert.title'),
-        I18n.get('schoolbook.schoolbookWordDetailsScreen.deleteAlert.text'),
-        [
-          {
-            text: I18n.get('common.cancel'),
-            style: 'default',
-          },
-          {
-            text: I18n.get('common.delete'),
-            style: 'destructive',
-            onPress: () => deleteSchoolbookWord(),
-          },
-        ],
-      );
+      Alert.alert(I18n.get('schoolbook-worddetails-deletealert-title'), I18n.get('schoolbook-worddetails-deletealert-text'), [
+        {
+          text: I18n.get('common.cancel'),
+          style: 'default',
+        },
+        {
+          text: I18n.get('common.delete'),
+          style: 'destructive',
+          onPress: () => deleteSchoolbookWord(),
+        },
+      ]);
     const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
     const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
     const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };

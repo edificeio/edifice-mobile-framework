@@ -31,16 +31,17 @@ import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.get(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
-const unacknowledgedString = (userType: UserType) => I18n.get(`schoolbook.acknowledgementNeeded${userType}`);
+  `${ackNumber}/${total} ${I18n.get(`schoolbook-worddetails-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+const unacknowledgedString = (userType: UserType) =>
+  I18n.get(`schoolbook-worddetails-acknowledgementneeded-${userType.toLowerCase()}`);
 const recipientsString = (report: IConcernedStudent[]) =>
   getHasSingleRecipientForTeacher(report)
     ? report[0].ownerName
-    : `${report.length} ${I18n.get('schoolbook.students').toLowerCase()}`;
+    : `${report.length} ${I18n.get('schoolbook-worddetails-students').toLowerCase()}`;
 const responsesString = (responses: number) =>
   responses === 1
-    ? `1 ${I18n.get('schoolbook.response').toLowerCase()}`
-    : `${responses} ${I18n.get('schoolbook.responses').toLowerCase()}`;
+    ? `1 ${I18n.get('schoolbook-worddetails-response').toLowerCase()}`
+    : `${responses} ${I18n.get('schoolbook-worddetails-responses').toLowerCase()}`;
 
 export interface ISchoolBookWordDetailsCardProps {
   action: () => void;
@@ -280,7 +281,7 @@ const SchoolbookWordDetailsCard = (
             }}>
             <ImageLabel
               cachedSVG
-              text={I18n.get(`schoolbook.categories.${word?.category}`)}
+              text={I18n.get(`schoolbook-worddetails-categories-${word?.category}`)}
               imageName={`schoolbook-${word?.category}`}
               imageType={ImageType.svg}
               color={theme.color.schoolbook.categories[word?.category]}
@@ -379,7 +380,7 @@ const SchoolbookWordDetailsCard = (
         !isWordAcknowledged ? (
           <BottomButtonSheet
             displayShadow={doesContentExceedView}
-            text={I18n.get('schoolbook.acknowledge')}
+            text={I18n.get('schoolbook-worddetails-acknowledge')}
             action={action}
             loading={isAcknowledgingWord}
           />
@@ -399,10 +400,10 @@ const SchoolbookWordDetailsCard = (
         content={
           <View style={styles.modalBoxContainer}>
             <HeadingSText style={{ marginBottom: UI_SIZES.spacing.tiny }}>
-              {I18n.get('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
+              {I18n.get('schoolbook-worddetails-recipientsmodal-title')}
             </HeadingSText>
             <SmallText style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
-              {I18n.get('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
+              {I18n.get('schoolbook-worddetails-recipientsmodal-text')}
             </SmallText>
             <UserList
               ref={flatListModalRef}

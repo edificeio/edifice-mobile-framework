@@ -22,13 +22,13 @@ import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.get(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+  `${ackNumber}/${total} ${I18n.get(`schoolbook-wordsummary-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
 const acknowledgedString = (isWordAcknowledged: boolean) =>
-  I18n.get(`schoolbook.${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
+  I18n.get(`schoolbook-wordsummary-${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
 const responsesString = (responses: number) =>
   responses === 1
-    ? `1 ${I18n.get('schoolbook.response').toLowerCase()}`
-    : `${responses} ${I18n.get('schoolbook.responses').toLowerCase()}`;
+    ? `1 ${I18n.get('schoolbook-wordsummary-response').toLowerCase()}`
+    : `${responses} ${I18n.get('schoolbook-wordsummary-responses').toLowerCase()}`;
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
@@ -126,7 +126,7 @@ export const SchoolbookWordSummaryCard = ({
             <ImageLabel
               cachedSVG
               imageType={ImageType.svg}
-              text={I18n.get(`schoolbook.categories.${category}`)}
+              text={I18n.get(`schoolbook-wordsummary-categories-${category}`)}
               imageName={`schoolbook-${category}`}
               color={theme.color.schoolbook.categories[category]}
             />
