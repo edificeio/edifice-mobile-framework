@@ -124,17 +124,17 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
           </View>
         </View>
         <HeadingSText numberOfLines={2} style={styles.newEULALabel}>
-          {I18n.get('user.revalidateTermsScreen.newEULA')}
+          {I18n.get('user-revalidateterms-neweula')}
         </HeadingSText>
         <SmallText numberOfLines={3} style={styles.mustAccept}>
-          {`${I18n.get('user.revalidateTermsScreen.mustAccept')} `}
+          {`${I18n.get('user-revalidateterms-mustaccept')} `}
           <SmallActionText onPress={() => doOpenCGU(eulaUrl)} style={styles.newEULALink}>
-            {I18n.get('user.revalidateTermsScreen.newEndUserLicenseAgreement')}
+            {I18n.get('user-revalidateterms-newenduserlicenseagreement')}
           </SmallActionText>
         </SmallText>
         <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.get('common.accept')} action={doRevalidateTerms} />
         <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={doRefuseTerms}>
-          <SmallBoldText style={styles.refuseButton}>{I18n.get('user.revalidateTermsScreen.refuseAndDisconnect')}</SmallBoldText>
+          <SmallBoldText style={styles.refuseButton}>{I18n.get('user-revalidateterms-refuseanddisconnect')}</SmallBoldText>
         </TouchableOpacity>
       </PageViewStyle>
     </PageView>

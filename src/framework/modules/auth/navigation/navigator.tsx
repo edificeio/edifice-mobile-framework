@@ -70,14 +70,14 @@ export default function () {
         name={authRouteNames.revalidateTerms}
         component={RevalidateTermsScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('user.revalidateTermsScreen.title')),
+          headerTitle: navBarTitle(I18n.get('user-revalidateterms-title')),
         }}
       />
       <Stack.Screen
         name={authRouteNames.changePassword}
         component={ChangePasswordScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('user.page.editPassword')),
+          headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
         }}
       />
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
@@ -85,7 +85,7 @@ export default function () {
           name={authRouteNames.changePasswordModal}
           component={ChangePasswordScreen}
           options={{
-            headerTitle: navBarTitle(I18n.get('user.page.editPassword')),
+            headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
           }}
         />
       </Stack.Group>

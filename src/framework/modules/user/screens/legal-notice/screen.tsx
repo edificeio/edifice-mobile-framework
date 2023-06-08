@@ -36,7 +36,7 @@ function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
   const openLegalItem = React.useCallback(
     (legalItem: string) => {
       if (!props.urls) return; // ToDo error popup here
-      const selectedLegalTitle = I18n.get(`user.legalNoticeScreen.${legalItem}`);
+      const selectedLegalTitle = I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`);
       const selectedLegalUrl = props.urls[legalItem];
       Trackers.trackEvent('Profile', 'READ NOTICE', legalItem);
       openPDFReader({ title: selectedLegalTitle, src: selectedLegalUrl });
@@ -48,7 +48,7 @@ function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
     (legalItem: string) => (
       <TouchableOpacity onPress={() => openLegalItem(legalItem)} key={legalItem}>
         <ListItem
-          leftElement={<SmallText>{I18n.get(`user.legalNoticeScreen.${legalItem}`)}</SmallText>}
+          leftElement={<SmallText>{I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`)}</SmallText>}
           rightElement={<Icon name="arrow_down" color={theme.palette.primary.regular} style={styles.itemIcon} />}
         />
       </TouchableOpacity>

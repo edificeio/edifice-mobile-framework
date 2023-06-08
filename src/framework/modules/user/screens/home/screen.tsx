@@ -129,7 +129,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         <BodyBoldText style={styles.userInfoName}>{session?.user.displayName}</BodyBoldText>
         <SmallText style={styles.userInfoType}>{I18n.get(`profileTypes.${session?.user.type}`)}</SmallText>
         <ActionButton
-          text={I18n.get('user.page.userFileButton')}
+          text={I18n.get('user-page-userfilebutton')}
           type="secondary"
           action={() => {
             navigation.navigate(userRouteNames.profile, {});
@@ -180,12 +180,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         let routeName = routeNames[modificationType];
         const params = {
           [ModificationType.EMAIL]: {
-            navBarTitle: I18n.get('user.page.editEmail'),
+            navBarTitle: I18n.get('user-page-editemail'),
             modificationType: ModificationType.EMAIL,
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeEmailScreenNavParams,
           [ModificationType.MOBILE]: {
-            navBarTitle: I18n.get('user.page.editMobile'),
+            navBarTitle: I18n.get('user-page-editmobile'),
             modificationType: ModificationType.MOBILE,
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeMobileScreenNavParams,
@@ -219,7 +219,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     () => (
       <>
         <View style={styles.section}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.get('user.page.configuration')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-configuration')}</HeadingSText>
           <ButtonLineGroup>
             <LineButton
               title="directory-notificationsTitle"
@@ -230,14 +230,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
             <LineButton
               loading={currentLoadingMenu === ModificationType.PASSWORD}
               disabled={!!currentLoadingMenu}
-              title="user.page.editPassword"
+              title="user-page-editpassword"
               onPress={() => editUserInformation(ModificationType.PASSWORD)}
             />
             {canEditPersonalInfo ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.EMAIL}
                 disabled={!!currentLoadingMenu}
-                title="user.page.editEmail"
+                title="user-page-editemail"
                 onPress={() => editUserInformation(ModificationType.EMAIL)}
               />
             ) : null}
@@ -245,7 +245,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               <LineButton
                 loading={currentLoadingMenu === ModificationType.MOBILE}
                 disabled={!!currentLoadingMenu}
-                title="user.page.editMobile"
+                title="user-page-editmobile"
                 onPress={() => editUserInformation(ModificationType.MOBILE)}
               />
             ) : null}
@@ -273,7 +273,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.get('user.page.others')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-others')}</HeadingSText>
           <ButtonLineGroup>
             {showWhoAreWe ? (
               <LineButton

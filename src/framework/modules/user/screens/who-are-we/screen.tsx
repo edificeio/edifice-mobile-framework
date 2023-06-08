@@ -37,10 +37,10 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
       </View>
       <ScrollView bottomInset>
         <View style={styles.textWrapper}>
-          <BodyText>{I18n.get('user.whoAreWeScreen.description')}</BodyText>
+          <BodyText>{I18n.get('user-whoarewe-description')}</BodyText>
           <ActionButton
             style={styles.button}
-            text={I18n.get('user.whoAreWeScreen.reviewApp')}
+            text={I18n.get('user-whoarewe-reviewapp')}
             emoji="⭐️"
             action={() => {
               const options = {

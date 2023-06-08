@@ -151,7 +151,7 @@ export const getAuthNavigationState = (selectedPlatform?: Platform, loginRedirec
 
   // 1. Pre-login screens
 
-  const onboardingTexts = I18n.get('user.onboardingScreen.onboarding');
+  const onboardingTexts = I18n.get('user-onboarding-onboarding');
   const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
   const hasMultiplePlatforms = appConf.platforms.length > 1;
 

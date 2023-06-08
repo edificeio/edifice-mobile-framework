@@ -226,7 +226,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
               </ButtonWrapper>
               {this.props.route.params.forceChange ? (
                 <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={this.doRefuseTerms}>
-                  <SmallBoldText style={styles.refuse}>{I18n.get('user.revalidateTermsScreen.refuseAndDisconnect')}</SmallBoldText>
+                  <SmallBoldText style={styles.refuse}>{I18n.get('user-revalidateterms-refuseanddisconnect')}</SmallBoldText>
                 </TouchableOpacity>
               ) : null}
               <MiniSpacer />

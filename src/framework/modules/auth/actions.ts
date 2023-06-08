@@ -73,14 +73,14 @@ function getLegalUrlsAction(platform: Platform) {
     // === 1: Load legal document urls
     try {
       const legalUrls: LegalUrls = {
-        cgu: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.cgu'), platform),
-        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.personalDataProtection'), platform),
-        cookies: urlSigner.getAbsoluteUrl(I18n.get('user.legalUrl.cookies'), platform),
+        cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
+        cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
       };
       const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.getLanguage());
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
-          authTranslationKeys['auth.charter'] || I18n.get('user.legalUrl.userCharter'),
+          authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),
           platform,
         );
       }
