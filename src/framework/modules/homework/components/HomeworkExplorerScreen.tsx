@@ -58,7 +58,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('homework.homeworkExplorerScreen.homeworks'),
+    title: I18n.get('homework-explorer-homeworks'),
   }),
 });
 
@@ -89,9 +89,9 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     return (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.get(`homework-diaries-emptyScreenTitle`)}
-        text={I18n.get('homework-diaries-emptyScreenText')}
-        buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-createDiary') : undefined}
+        title={I18n.get(`homework-explorer-emptyscreen-title`)}
+        text={I18n.get('homework-explorer-emptyscreen-text')}
+        buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-explorer-creatediary') : undefined}
         buttonUrl="/homeworks"
         buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
       />

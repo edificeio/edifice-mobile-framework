@@ -219,7 +219,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                       marginTop: UI_SIZES.spacing.big,
                       marginBottom: UI_SIZES.spacing.small,
                     }}>
-                    <Label color={theme.palette.grey.grey} text={I18n.get('homework.homeworkTaskListScreen.noFutureHomework')} />
+                    <Label color={theme.palette.grey.grey} text={I18n.get('homework-tasklist-nofuturehomework')} />
                   </View>
                 </>
               );
@@ -275,9 +275,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           // eslint-disable-next-line react/no-unstable-nested-components
           ListHeaderComponent={() => {
             const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
-            const labelText = I18n.get(
-              `homework.homeworkTaskListScreen.${noRemainingPastHomework ? 'noMorePastHomework' : 'displayPastDays'}`,
-            );
+            const labelText = I18n.get(`homework-tasklist-${noRemainingPastHomework ? 'nomorepasthomework' : 'displaypastdays'}`);
             return hasPastHomeWork ? (
               <TouchableOpacity
                 style={styles.buttonPastHomework}
@@ -304,22 +302,22 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               <EmptyScreen
                 svgImage="empty-hammock"
                 title={I18n.get(
-                  `homework-tasks-emptyScreenTitle${
-                    hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? '-NoTasks' : '-NoTasks-NoCreationRights'
+                  `homework-tasklist-emptyscreen-title-${
+                    hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? 'notasks' : 'notasks-nocreationrights'
                   }`,
                 )}
                 text={I18n.get(
-                  `homework-tasks-emptyScreenText${
+                  `homework-tasklist-emptyscreen-text-${
                     hasPastHomeWork
                       ? hasCreateHomeworkResourceRight
                         ? ''
-                        : '-NoCreationRights'
+                        : 'nocreationrights'
                       : hasCreateHomeworkResourceRight
-                      ? '-NoTasks'
-                      : '-NoTasks-NoCreationRights'
+                      ? 'notasks'
+                      : 'notasks-nocreationrights'
                   }`,
                 )}
-                buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-createActivity') : undefined}
+                buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-tasklist-createactivity') : undefined}
                 buttonUrl={`/homeworks#/view-homeworks/${diaryId}`}
                 buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
               />
@@ -339,7 +337,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
           </View>
           <View style={styles.footerText}>
             <SmallText style={{ color: theme.palette.grey.graphite }}>
-              {I18n.get('homework.homeworkTaskListScreen.noFutureHomeworkTryAgain')}
+              {I18n.get('homework-tasklist-nofuturehomework-tryagain')}
             </SmallText>
           </View>
         </View>
