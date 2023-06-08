@@ -304,7 +304,7 @@ export const RenderPJs = ({ attachments }: { attachments: IDistantFileWithId[] }
                 const sf = await fileTransferService.downloadFile(session, item, {});
                 await sf.open();
               } catch {
-                Toast.showError(I18n.get('download-error-generic'));
+                Toast.showError(I18n.get('zimbra-mail-download-error'));
               }
             }}>
             <View style={[styles.gridViewStyle, styles.attachmentGridView]}>
@@ -322,9 +322,9 @@ export const RenderPJs = ({ attachments }: { attachments: IDistantFileWithId[] }
                         if (!session) throw new Error();
                         const sf = await fileTransferService.downloadFile(session, item, {});
                         await sf.mirrorToDownloadFolder();
-                        Toast.showSuccess(I18n.get('download-success-name', { name: sf.filename }));
+                        Toast.showSuccess(I18n.get('zimbra-mail-download-success', { name: sf.filename }));
                       } catch {
-                        Toast.showError(I18n.get('download-error-generic'));
+                        Toast.showError(I18n.get('zimbra-mail-download-error'));
                       }
                     }}
                     style={styles.attachmentDownloadButton}>

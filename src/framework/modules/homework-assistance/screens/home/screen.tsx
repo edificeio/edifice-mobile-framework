@@ -39,7 +39,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('homeworkassistance-homescreen-title'),
+    title: I18n.get('homeworkassistance-home-title'),
   }),
 });
 
@@ -92,7 +92,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
         <SmallText style={styles.primaryText}>{body}</SmallText>
         <Picture type="NamedSvg" name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
         <View>
-          <SmallText>{I18n.get('homeworkassistance-homescreen-serviceavailable')}</SmallText>
+          <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
           <View style={styles.rowContainer}>
             <Picture type="NamedSvg" name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.secondaryText}>{days}</SmallText>
@@ -106,7 +106,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
             <SmallText style={styles.secondaryText}>{info}</SmallText>
           </View>
         </View>
-        <ActionButton text={I18n.get('homeworkassistance-homescreen-action')} action={goToRequest} style={styles.actionContainer} />
+        <ActionButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} style={styles.actionContainer} />
       </SafeAreaView>
     );
   };

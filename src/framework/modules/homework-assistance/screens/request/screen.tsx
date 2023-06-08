@@ -49,7 +49,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('homeworkassistance-requestscreen-title'),
+    title: I18n.get('homeworkassistance-request-title'),
   }),
 });
 
@@ -111,7 +111,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       await props.addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
       setSendingRequest(false);
       props.navigation.goBack();
-      Toast.showSuccess(I18n.get('homeworkassistance-requestscreen-successmessage'));
+      Toast.showSuccess(I18n.get('homeworkassistance-request-successmessage'));
     } catch {
       setSendingRequest(false);
       Toast.showError(I18n.get('common.error.text'));
@@ -153,14 +153,14 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
             items={props.services}
             setOpen={setServiceDropdownOpen}
             setValue={setService}
-            placeholder={I18n.get('homeworkassistance-requestscreen-subject-placeholder')}
+            placeholder={I18n.get('homeworkassistance-request-subject-placeholder')}
             style={styles.dropdownContainer}
             containerStyle={{ zIndex: -1 }}
             dropDownContainerStyle={styles.dropdownContainer}
             textStyle={styles.dropdownText}
           />
           <View style={{ zIndex: -2 }}>
-            <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-requestscreen-phonenumber')}</SmallText>
+            <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-request-phonenumber')}</SmallText>
             <TextInput
               placeholder="+33 (0)6..."
               value={phoneNumber}
@@ -169,7 +169,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               style={styles.phoneNumberInput}
             />
             <View style={styles.rowContainer}>
-              <SmallText>{I18n.get('homeworkassistance-requestscreen-date-label')}</SmallText>
+              <SmallText>{I18n.get('homeworkassistance-request-date-label')}</SmallText>
               <DateTimePicker
                 mode="date"
                 value={date}
@@ -179,7 +179,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               />
             </View>
             <View style={styles.rowContainer}>
-              <SmallText>{I18n.get('homeworkassistance-requestscreen-time')}</SmallText>
+              <SmallText>{I18n.get('homeworkassistance-request-time')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={time}
@@ -189,9 +189,9 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
                 color={theme.palette.secondary.regular}
               />
             </View>
-            <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-requestscreen-information-label')}</SmallText>
+            <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-request-information-label')}</SmallText>
             <TextInput
-              placeholder={I18n.get('homeworkassistance-requestscreen-information-placeholder')}
+              placeholder={I18n.get('homeworkassistance-request-information-placeholder')}
               value={information}
               onChangeText={text => setInformation(text)}
               multiline
@@ -202,10 +202,10 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
         </View>
         <View>
           {!isDateValid ? (
-            <AlertCard type="failure" text={I18n.get('homeworkassistance-requestscreen-date-error')} style={styles.errorAlert} />
+            <AlertCard type="failure" text={I18n.get('homeworkassistance-request-date-error')} style={styles.errorAlert} />
           ) : null}
           <ActionButton
-            text={I18n.get('homeworkassistance-requestscreen-action')}
+            text={I18n.get('homeworkassistance-request-action')}
             action={sendRequest}
             disabled={isActionDisabled}
             loading={isSendingRequest}
