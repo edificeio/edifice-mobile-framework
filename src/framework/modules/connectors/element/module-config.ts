@@ -7,5 +7,5 @@ export default new NavigableModuleConfig<'element', null>({
 
   displayI18n: 'element.tabName',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'Image', source: require('ASSETS/images/logo-riot.png') },
+  displayPicture: { type: 'NamedSvg', name: 'element' },
 });

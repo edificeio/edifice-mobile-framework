@@ -20,6 +20,7 @@ import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import {
   fetchCompetencesAction,
+  fetchCompetencesAveragesAction,
   fetchCompetencesDevoirsAction,
   fetchCompetencesDomainesAction,
   fetchCompetencesLevelsAction,
@@ -74,6 +75,9 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         if (value) setAverageColorsShown(true);
       });
       await props.fetchDevoirs(structureId, childId);
+      if (term !== 'default') {
+        await props.fetchAverages(structureId, childId, term);
+      }
       await props.fetchSubjects(structureId);
       let childClasses = classes?.[0];
       if (userType === UserType.Relative) {
@@ -103,6 +107,13 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    fetchAssessments()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
@@ -115,6 +126,11 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
     if (loadingState === AsyncPagedLoadingState.DONE) init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childId]);
+
+  React.useEffect(() => {
+    if (term !== 'default' && subject === 'default') refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [term, subject]);
 
   const onTermOpen = React.useCallback(() => {
     setSubjectDropdownOpen(false);
@@ -202,10 +218,10 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
   };
 
   const renderAssessments = () => {
-    const { competences, domaines, levels, subjects } = props;
+    const { averages, competences, domaines, levels, subjects } = props;
     const displaySubjectAverages = term !== 'default' && subject === 'default';
     const devoirs = props.devoirs.filter(devoir => {
-      if (term !== 'default' && term !== 'year' && devoir.termId !== Number(term)) return false;
+      if (term !== 'default' && devoir.termId !== Number(term)) return false;
       if (subject !== 'default' && devoir.subjectId !== subject) return false;
       return true;
     });
@@ -215,15 +231,14 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         {renderHeader()}
         {displaySubjectAverages ? (
           <FlatList
-            data={subjects
-              .map(s => ({
-                id: s.id,
-                name: s.name,
-                devoirs: devoirs.filter(d => d.isEvaluated && d.subjectId === s.id),
-              }))
-              .filter(i => i.devoirs.length)}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => <SubjectAverageCard devoirs={item.devoirs} name={item.name} />}
+            data={averages}
+            keyExtractor={item => item.subjectId}
+            renderItem={({ item }) => (
+              <SubjectAverageCard
+                average={item}
+                devoirs={devoirs.filter(d => d.isEvaluated && d.subjectId === item.subjectId).sort((a, b) => a.date.diff(b.date))}
+              />
+            )}
             ListEmptyComponent={renderEmpty(I18n.t('viesco-empty-subject-averages'))}
             style={styles.listContainer}
           />
@@ -256,9 +271,11 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         return renderAssessments();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
+      case AsyncPagedLoadingState.REFRESH:
         return <LoadingIndicator />;
       case AsyncPagedLoadingState.INIT_FAILED:
       case AsyncPagedLoadingState.RETRY:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
         return renderError();
     }
   };
@@ -279,6 +296,7 @@ export default connect(
     const userType = session?.user.type;
 
     return {
+      averages: competencesState.averages.data,
       classes: session?.user.classes,
       competences: competencesState.competences.data,
       childId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
@@ -291,7 +309,6 @@ export default connect(
             label: `${I18n.t('viesco-competences-period-' + term.type)} ${term.order}`,
             value: term.typeId.toString(),
           })),
-          { label: I18n.t('viesco-year'), value: 'year' },
         ],
         subjects: [
           { label: I18n.t('viesco-competences-subject'), value: 'default' },
@@ -318,6 +335,11 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
+        fetchAverages: tryActionLegacy(
+          fetchCompetencesAveragesAction,
+          undefined,
+          true,
+        ) as unknown as CompetencesHomeScreenPrivateProps['fetchAverages'],
         fetchCompetences: tryActionLegacy(
           fetchCompetencesAction,
           undefined,

@@ -15,9 +15,11 @@ import {
 } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
-import { getItemJson, removeItemJson, setItemJson } from '~/framework/util/storage';
+import { getItemJson, migrateItemJson, setItemJson } from '~/framework/util/storage';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
+
+const getAsyncStorageKey = (userId: string) => `${moduleConfig.name}.notifFilterSettings.${userId}`;
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -32,24 +34,25 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     state = moduleConfig.getState(getState());
 
     // 2 - Load notif settings from Async Storage
-    const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings.${userId}`;
+    const asyncStorageKey = getAsyncStorageKey(userId);
     let settings: INotifFilterSettings | undefined = await getItemJson(asyncStorageKey);
+
+    // 2 bis - No existing data ? Maybe we have old data to migrate
     if (!settings) {
-      // On first app launch, migrate old data (if exists) to new user-aware format
-      const oldAsyncStorageKey = `${moduleConfig.name}.notifFilterSettings`;
-      const settingsToMigrate: INotifFilterSettings | undefined = await getItemJson(oldAsyncStorageKey);
-      if (settingsToMigrate) {
-        await removeItemJson(oldAsyncStorageKey);
-        settings = settingsToMigrate;
-      } else settings = {};
+      settings = await migrateItemJson(`timelinev2.notifFilterSettings`, asyncStorageKey);
     }
+    if (!settings) {
+      settings = await migrateItemJson(`timelinev2.notifFilterSettings.${userId}`, asyncStorageKey);
+    }
+
+    // 3 - merge with defaults
     const defaults = {};
     for (const v of state.notifDefinitions.notifFilters.data) {
       defaults[v.type] = v.type !== 'MESSAGERIE'; // ToDo remove specific check here in favor in declarative in conversation module.
     }
     settings = { ...defaults, ...settings };
 
-    // 3 - Save loaded notif settings for persistency
+    // 4 - Save loaded notif settings for persistency
     await setItemJson(asyncStorageKey, settings);
     dispatch(notifFilterSettingsActions.receipt(settings));
   } catch (e) {
@@ -63,7 +66,7 @@ export const setFiltersAction =
     try {
       const session = assertSession();
       const userId = session.user.id;
-      const asyncStorageKey = `${moduleConfig.name}.notifFilterSettings.${userId}`;
+      const asyncStorageKey = getAsyncStorageKey(userId);
       dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
       await setItemJson(asyncStorageKey, selectedFilters);
       dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));

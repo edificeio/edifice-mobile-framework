@@ -442,7 +442,7 @@
   "download-success-all": "Files saved in Downloads",
   "download-success-name": "{{name}} saved in Downloads",
   "download-untitled": "Untitled attachment",
-  "element.tabName": "Riot - Element",
+  "element.tabName": "Element",
   "federatedAccount-instructions": "If your institution has instructed you to use your academic account or a schooling service account (EduConnect, SAPIA, ARENA or other), the login details for the mobile app can be found on the web version of your educational network",
   "federatedAccount-instructions-details": "• Login to your educational network from your web browser by clicking on the button below\n\n• Access the \"My Account\" page\n\n• Retrieve the username and generate a temporary password\n\n• Return to the mobile app and use your credentials on the login screen",
   "federatedAccount-link": "Login for academic accounts and educational services accounts (EduConnect, SAPIA, ARENA, ...)",
