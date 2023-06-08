@@ -90,11 +90,16 @@ const FavoriteAction: React.FunctionComponent<IFavoriteActionProps> = (props: IF
     <ActionButton
       icon="star"
       color={theme.palette.complementary.yellow.regular}
-      text={I18n.get('mediacentre.remove-favorite')}
+      text={I18n.get('mediacentre-home-resourcecard-removefavorite')}
       onPress={removeFavorite}
     />
   ) : (
-    <ActionButton icon="star" color={theme.palette.grey.grey} text={I18n.get('mediacentre.add-favorite')} onPress={addFavorite} />
+    <ActionButton
+      icon="star"
+      color={theme.palette.grey.grey}
+      text={I18n.get('mediacentre-home-resourcecard-addfavorite')}
+      onPress={addFavorite}
+    />
   );
 };
 
@@ -111,7 +116,7 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
 
   copyToClipboard = () => {
     Clipboard.setString(this.props.resource.link);
-    Toast.showInfo(I18n.get('mediacentre.link-copied'));
+    Toast.showInfo(I18n.get('mediacentre-home-linkcopied'));
   };
 
   public render() {
@@ -122,7 +127,7 @@ export class BigCard extends React.PureComponent<IBigCardProps> {
           <ResourceImage image={resource.image} style={styles.cardImage} resizeMode="contain" />
           <View style={styles.actionsContainer}>
             <FavoriteAction {...this.props} />
-            <ActionButton icon="link" text={I18n.get('mediacentre.copy-link')} onPress={this.copyToClipboard} />
+            <ActionButton icon="link" text={I18n.get('mediacentre-home-resourcecard-copylink')} onPress={this.copyToClipboard} />
           </View>
           {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={25} style={styles.sourceImage} /> : null}
         </View>

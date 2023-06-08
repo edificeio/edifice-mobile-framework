@@ -99,7 +99,7 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
 
   copyToClipboard = () => {
     Clipboard.setString(this.props.resource.link);
-    Toast.showInfo(I18n.get('mediacentre.link-copied'));
+    Toast.showInfo(I18n.get('mediacentre-home-linkcopied'));
   };
 
   public render() {

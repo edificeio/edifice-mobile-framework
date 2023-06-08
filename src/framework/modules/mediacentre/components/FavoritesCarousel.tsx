@@ -103,7 +103,7 @@ const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);
-    Toast.showInfo(I18n.get('mediacentre.link-copied'));
+    Toast.showInfo(I18n.get('mediacentre-home-linkcopied'));
   };
   return (
     <TouchCardWithoutPadding onPress={openUrlCallback} style={[styles.cardContainer, { backgroundColor: props.color }]}>
@@ -140,7 +140,7 @@ export const FavoritesCarousel: React.FunctionComponent<IFavoritesCarouselProps>
   }, [props.resources.length, cardColors]);
   return (
     <View style={styles.mainContainer}>
-      <SmallBoldText style={styles.titleText}>{I18n.get('mediacentre.favorites').toUpperCase()}</SmallBoldText>
+      <SmallBoldText style={styles.titleText}>{I18n.get('mediacentre-home-section-favorites').toUpperCase()}</SmallBoldText>
       {props.resources.length > 2 ? (
         <Carousel
           data={props.resources}

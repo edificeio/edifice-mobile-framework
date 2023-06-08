@@ -51,7 +51,7 @@ export class ResourceGrid extends React.PureComponent<IResourceGridProps> {
           <SmallBoldText style={styles.titleText}>{title.toLocaleUpperCase()}</SmallBoldText>
           {resources.length > size ? (
             <TouchableOpacity onPress={this.onShowAll}>
-              <SmallText style={styles.displayAllText}>{I18n.get('mediacentre.display-all')}</SmallText>
+              <SmallText style={styles.displayAllText}>{I18n.get('mediacentre-home-showall')}</SmallText>
             </TouchableOpacity>
           ) : null}
         </View>

@@ -72,7 +72,7 @@ export const SearchBar: React.FunctionComponent<ISearchBarProps> = forwardRef<IS
       <View style={styles.searchBarContainer}>
         <TextInput
           defaultValue={value}
-          placeholder={I18n.get('mediacentre.find-resources')}
+          placeholder={I18n.get('mediacentre-home-searchbar-placeholder')}
           returnKeyType="search"
           clearButtonMode="while-editing"
           onChangeText={text => setValue(text)}

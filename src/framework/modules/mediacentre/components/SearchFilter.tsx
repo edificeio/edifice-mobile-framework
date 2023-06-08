@@ -97,7 +97,7 @@ const getFilters = (resources: IResource[]) => {
     }
   }
   return [
-    { title: 'resource-type', items: types.sort(compareFilters) },
+    { title: 'resourcetype', items: types.sort(compareFilters) },
     { title: 'source', items: sources.sort(compareFilters) },
     { title: 'level', items: levels.sort(compareFilters) },
   ];
@@ -124,7 +124,7 @@ const FilterSection: React.FunctionComponent<IFilterSectionProps> = (props: IFil
   return (
     <View>
       <TouchableOpacity style={styles.sectionHeaderContainer} onPress={expandSection}>
-        <SmallText>{I18n.get(`mediacentre.${props.title}`)}</SmallText>
+        <SmallText>{I18n.get(`mediacentre-home-filter-${props.title}`)}</SmallText>
         <Picture type="NamedSvg" name={iconName} width={18} height={18} fill={theme.ui.text.regular} />
       </TouchableOpacity>
       {expanded ? props.items.map(item => <FilterItem {...props} item={item} sectionTitle={props.title} key={item.value} />) : null}
@@ -158,7 +158,7 @@ export const SearchFilter: React.FunctionComponent<ISearchFilterProps> = (props:
           fill={theme.ui.text.regular}
           style={styles.iconContainer}
         />
-        <SmallText>{I18n.get('mediacentre.filter').toUpperCase()}</SmallText>
+        <SmallText>{I18n.get('mediacentre-home-filter').toUpperCase()}</SmallText>
       </TouchableOpacity>
       {expanded ? (
         <FlatList

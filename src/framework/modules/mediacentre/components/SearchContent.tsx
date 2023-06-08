@@ -125,7 +125,7 @@ const getSources = (resources: IResource[]) => {
 const AdvancedSearchField: React.FunctionComponent<IAdvancedSearchFieldProps> = (props: IAdvancedSearchFieldProps) =>
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
-      <SmallBoldText>{I18n.get(`mediacentre.advancedSearch.${props.field.name}`)}</SmallBoldText>
+      <SmallBoldText>{I18n.get(`mediacentre-advancedsearch-${props.field.name}`)}</SmallBoldText>
       <SmallText style={styles.fieldValueText}>{props.field.value}</SmallText>
     </View>
   ) : null;
@@ -191,7 +191,7 @@ export const SearchContent: React.FunctionComponent<ISearchContentProps> = (prop
               <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
             ) : null
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-search" title={I18n.get('mediacentre.empty-search')} />}
+          ListEmptyComponent={<EmptyScreen svgImage="empty-search" title={I18n.get('mediacentre-home-emptyscreen-search')} />}
         />
       )}
     </View>

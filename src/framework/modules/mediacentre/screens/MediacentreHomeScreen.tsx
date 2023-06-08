@@ -91,7 +91,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('mediacentre.tabName'),
+    title: I18n.get('mediacentre-home-title'),
   }),
 });
 
@@ -106,10 +106,10 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
   const [searchFields, setSearchFields] = useState<IField[]>([]);
   const sections = [
-    { title: 'mediacentre.external-resources', resources: props.externals },
-    { title: 'mediacentre.my-textbooks', resources: props.textbooks },
-    { title: 'mediacentre.my-signets', resources: props.signets.shared },
-    { title: 'mediacentre.orientation-signets', resources: props.signets.orientation },
+    { title: 'externalresources', resources: props.externals },
+    { title: 'textbooks', resources: props.textbooks },
+    { title: 'signets', resources: props.signets.shared },
+    { title: 'orientationsignets', resources: props.signets.orientation },
   ].filter(section => section.resources.length > 0);
 
   // LOADER =======================================================================================
@@ -188,7 +188,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   const addFavorite = async (resourceId: string, resource: IResource) => {
     try {
       await props.addFavorite(resourceId, resource);
-      Toast.showSuccess(I18n.get('mediacentre.favorite-added'));
+      Toast.showSuccess(I18n.get('mediacentre-home-favorite-added'));
       props.fetchFavorites();
     } catch {
       Toast.showError(I18n.get('common.error.text'));
@@ -198,7 +198,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   const removeFavorite = async (resourceId: string, resource: Source) => {
     try {
       await props.removeFavorite(resourceId, resource);
-      Toast.showSuccess(I18n.get('mediacentre.favorite-removed'));
+      Toast.showSuccess(I18n.get('mediacentre-home-favorite-removed'));
       props.fetchFavorites();
     } catch {
       Toast.showError(I18n.get('common.error.text'));
@@ -211,7 +211,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
     if (isFetchingSources) {
       return <LoadingIndicator />;
     }
-    return <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre.empty-screen')} />;
+    return <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre-home-emptyscreen-default')} />;
   };
 
   // RENDER =======================================================================================
@@ -224,7 +224,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
         <View style={styles.mainContainer}>
           <View style={styles.searchContainer}>
             <SearchBar onSubmitEditing={onSearch} ref={searchBarRef} />
-            <IconButtonText icon="search" text={I18n.get('mediacentre.advanced-search')} onPress={showSearchModal} />
+            <IconButtonText icon="search" text={I18n.get('mediacentre-home-advancedsearch')} onPress={showSearchModal} />
           </View>
           {searchState !== SearchState.NONE ? (
             <SearchContent
@@ -243,7 +243,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
               renderItem={({ item }) => (
                 <ResourceGrid
                   {...props}
-                  title={I18n.get(item.title)}
+                  title={I18n.get(`mediacentre-home-section-${item.title}`)}
                   resources={item.resources}
                   size={sections.length > 1 ? 4 : 8}
                   onShowAll={showResources}
@@ -266,7 +266,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
                 props.isFetchingSections ? (
                   <LoadingIndicator customStyle={styles.loadingIndicator} />
                 ) : (
-                  <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre.empty-screen')} />
+                  <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre-home-emptyscreen-default')} />
                 )
               }
             />
