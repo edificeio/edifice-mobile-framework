@@ -47,11 +47,11 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.get('form-distributionscreen-submissionmodal-title')}</BodyText>
+          <BodyText>{I18n.get('form-distribution-submissionmodal-title')}</BodyText>
           <SmallText style={styles.topMargin}>
-            {I18n.get('form-distributionscreen-submissionmodal-uppertext')}
+            {I18n.get('form-distribution-submissionmodal-uppertext')}
             {props.structures.length > 1 ? (
-              <NestedText> {I18n.get('form-distributionscreen-submissionmodal-selectstructure')}</NestedText>
+              <NestedText> {I18n.get('form-distribution-submissionmodal-selectstructure')}</NestedText>
             ) : null}
           </SmallText>
           {props.structures.length > 1 ? (
@@ -70,14 +70,14 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
             <SmallText style={styles.topMargin}>
               {I18n.get(
                 props.status === DistributionStatus.ON_CHANGE
-                  ? 'form-distributionscreen-submissionmodal-lowertext-replace'
+                  ? 'form-distribution-submissionmodal-lowertext-replace'
                   : props.editable
-                  ? 'form-distributionscreen-submissionmodal-lowertext-editable'
-                  : 'form-distributionscreen-submissionmodal-lowertext-default',
+                  ? 'form-distribution-submissionmodal-lowertext-editable'
+                  : 'form-distribution-submissionmodal-lowertext-default',
               )}
             </SmallText>
             <ActionButton
-              text={I18n.get('form-distributionscreen-submissionmodal-action')}
+              text={I18n.get('form-distribution-submissionmodal-action')}
               action={() => props.onSubmit(structureId)}
               loading={props.loading}
               style={styles.topMargin}

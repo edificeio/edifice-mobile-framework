@@ -34,7 +34,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
       const form = await formService.form.get(session, formId);
       const hasResponderRight = await formService.form.hasResponderRight(session, formId);
       if (!form || form.archived || !hasResponderRight) {
-        Alert.alert(I18n.get('form-notif-errormessage'));
+        Alert.alert(I18n.get('form-notifhandler-errormessage'));
         return { managed: 0 };
       }
       const distributions = await formService.distributions.getFromForm(session, formId);

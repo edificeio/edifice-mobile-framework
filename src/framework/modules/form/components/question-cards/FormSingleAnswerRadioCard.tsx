@@ -116,7 +116,7 @@ export const FormSingleAnswerRadioCard = ({
                   value={customAnswer}
                   onChangeText={text => onChangeCustomAnswer(text, item)}
                   editable={!isDisabled}
-                  placeholder={I18n.get('form-distributionscreen-questioncard-enteryouranswer')}
+                  placeholder={I18n.get('form-distribution-questioncard-enteryouranswer')}
                   style={styles.customAnswerInput}
                 />
               ) : null}

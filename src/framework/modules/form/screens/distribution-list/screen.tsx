@@ -32,7 +32,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('form-distributionlistscreen-title'),
+    title: I18n.get('form-distributionlist-title'),
   }),
 });
 
@@ -133,8 +133,8 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
     return (
       <EmptyScreen
         svgImage="empty-form"
-        title={I18n.get('form-distributionlistscreen-emptyscreen-title')}
-        text={I18n.get('form-distributionlistscreen-emptyscreen-text')}
+        title={I18n.get('form-distributionlist-emptyscreen-title')}
+        text={I18n.get('form-distributionlist-emptyscreen-text')}
       />
     );
   };

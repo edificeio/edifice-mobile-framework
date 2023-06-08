@@ -40,7 +40,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
       const color = count ? theme.palette.status.success.regular : theme.palette.status.failure.regular;
       return (
         <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
-          {I18n.get('form-distributionlistscreen-formcard-answercount', { count })}
+          {I18n.get('form-distributionlist-formcard-answercount', { count })}
         </SmallBoldText>
       );
     }
@@ -50,8 +50,8 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
       <SmallBoldText numberOfLines={1} style={[styles.statusText, { color }]}>
         {I18n.get(
           status === DistributionStatus.TO_DO
-            ? 'form-distributionlistscreen-formcard-awaitingresponse'
-            : 'form-distributionlistscreen-formcard-answerdate',
+            ? 'form-distributionlist-formcard-awaitingresponse'
+            : 'form-distributionlist-formcard-answerdate',
           {
             date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
           },
@@ -75,7 +75,7 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
                 <View>
                   <SmallText>{ownerName}</SmallText>
                   <SmallItalicText style={{ color: theme.ui.text.light }}>
-                    {I18n.get('form-distributionlistscreen-formcard-sendingdate', {
+                    {I18n.get('form-distributionlist-formcard-sendingdate', {
                       date: dateSending?.format('DD/MM/YYYY, HH:mm'),
                     })}
                   </SmallItalicText>

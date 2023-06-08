@@ -11,6 +11,6 @@ export const FormAnswerText = ({ answer = '' }: IFormAnswerTextProps) => {
   return answer !== '' ? (
     <SmallText>{answer}</SmallText>
   ) : (
-    <CaptionItalicText>{I18n.get('form-distributionscreen-questioncard-notanswered')}</CaptionItalicText>
+    <CaptionItalicText>{I18n.get('form-distribution-questioncard-notanswered')}</CaptionItalicText>
   );
 };
