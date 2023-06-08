@@ -62,7 +62,7 @@ target 'appe' do
     :path => config[:reactNativePath],
     :hermes_enabled => flags[:hermes_enabled],
     :fabric_enabled => flags[:fabric_enabled],
-    :flipper_configuration => FlipperConfiguration.enabled(['Debug'], { 'Flipper' => '0.189.0'}),
+    :flipper_configuration => FlipperConfiguration.enabled(['Debug'], { 'Flipper' => '0.193.0'}),
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 

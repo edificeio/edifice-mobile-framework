@@ -12,10 +12,10 @@ index 3f76132..f34c6f0 100644
    }
  }
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-index 332f9b8..94e5672 100644
+index 698fcd3..c1e7975 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-@@ -237,7 +237,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
+@@ -238,7 +238,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
                      }
                    });
          }

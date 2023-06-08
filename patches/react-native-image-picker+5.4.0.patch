@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java b/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java
+index 89b69a8..324b3c5 100644
+--- a/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java
++++ b/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java
+@@ -177,7 +177,7 @@ public class ImagePickerModuleImpl implements ActivityEventListener {
+     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+ 
+         // onActivityResult is called even when ActivityNotFoundException occurs
+-        if (!isValidRequestCode(requestCode) || (this.callback == null)) {
++        if (!isValidRequestCode(requestCode) || (this.callback == null) || ((requestCode == REQUEST_LAUNCH_LIBRARY) && (data == null))) {
+             return;
+         }
+ 
