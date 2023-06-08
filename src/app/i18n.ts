@@ -17,10 +17,14 @@ import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 
+import { isEmpty } from '~/framework/util/object';
+
+// Read Phrase ID && Secrets
 const phraseSecrets = require('ROOT/phrase.json');
 
 export namespace I18n {
   export type SupportedLocales = 'fr' | 'en' | 'es';
+
   // Get the current detected or set language
   export const getLanguage = () => i18n.language as SupportedLocales;
 
@@ -63,50 +67,37 @@ export namespace I18n {
       en: { translation: finalTranslations.en },
       es: { translation: finalTranslations.es },
     };
+
     // Note: isRTL is unused since all supported languages are LTR
     const fallbackLng = 'en';
     const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(finalTranslations)) as {
       languageTag: string;
       isRTL: boolean;
     };
+
     const languageTag = bestAvailableLanguage?.languageTag;
 
-    // if (phraseSecrets && phraseSecrets.distributionId && phraseSecrets.environmentId) {
-    const phrase = new Phrase(phraseSecrets.distributionId, phraseSecrets.environmentId, DeviceInfo.getVersion(), 'i18next');
-    const backendPhrase = resourcesToBackend((language, namespace, callback) => {
-      phrase
-        .requestTranslation(language)
-        .then(remoteResources => {
-          console.log('remoteResources', remoteResources);
-          callback(null, remoteResources);
-        })
-        .catch(error => {
-          console.log('error', error);
-          callback(error, null);
-        });
-    });
-    const backendFallback = resourcesToBackend(resources);
-    // initInfos.backend = { backends: [backendPhrase, backendFallback] };
-    // i18n.use(ChainedBackend);
-    // }
+    const phraseId = phraseSecrets?.distributionId;
+    const phraseSecret = __DEV__ ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
-    // const initInfos = {
-    //   backend: {
-    //     backends: [backendPhrase, backendFallback],
-    //   },
-    //   resources,
-    //   fallbackLng,
-    //   lng: languageTag,
-    //   compatibilityJSON: 'v3',
-    //   interpolation: {
-    //     escapeValue: false,
-    //   },
-    // } as InitOptions;
+    if (!isEmpty(phraseId) && !isEmpty(phraseSecret)) {
+      const phrase = new Phrase(phraseSecrets.distributionId, phraseSecrets.prodSecret, DeviceInfo.getVersion(), 'i18next');
 
-    moment.locale(languageTag?.split('-')[0]);
-    try {
-      console.log('backendPhrase', backendPhrase);
-      console.log('backendFallback', backendFallback);
+      const backendPhrase = resourcesToBackend((language, namespace, callback) => {
+        phrase
+          .requestTranslation(language)
+          .then(remoteResources => {
+            callback(null, remoteResources);
+          })
+          .catch(error => {
+            callback(error, null);
+          });
+      });
+
+      const backendFallback = resourcesToBackend(resources);
+
+      moment.locale(languageTag?.split('-')[0]);
+
       i18n
         .use(ChainedBackend)
         .use(initReactI18next)
@@ -122,9 +113,8 @@ export namespace I18n {
             escapeValue: false,
           },
         });
-    } catch (error) {
-      console.log('error', error);
     }
+
     return languageTag ?? fallbackLng;
   };
 
