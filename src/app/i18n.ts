@@ -6,7 +6,7 @@
  */
 import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
-import i18n, { InitOptions } from 'i18next';
+import i18n from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
@@ -96,8 +96,6 @@ export namespace I18n {
 
       const backendFallback = resourcesToBackend(resources);
 
-      moment.locale(languageTag?.split('-')[0]);
-
       i18n
         .use(ChainedBackend)
         .use(initReactI18next)
@@ -113,9 +111,21 @@ export namespace I18n {
             escapeValue: false,
           },
         });
+    } else {
+      i18n.use(initReactI18next).init({
+        resources,
+        fallbackLng,
+        lng: languageTag,
+        compatibilityJSON: 'v3',
+        interpolation: {
+          escapeValue: false,
+        },
+      });
     }
 
-    return languageTag ?? fallbackLng;
+    const finalLanguage = languageTag ?? fallbackLng;
+    moment.locale(finalLanguage?.split('-')[0]);
+    return finalLanguage;
   };
 
   // Get wording based on key (in the correct language)
