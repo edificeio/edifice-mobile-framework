@@ -47,7 +47,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
   return (
     <>
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.get('zimbra-composerscreen-headers-to')}</SmallText>
+        <SmallText>{I18n.get('zimbra-composer-headers-to')}</SmallText>
         <RecipientField
           hasZimbraSendExternalRight={hasZimbraSendExternalRight}
           selectedRecipients={headers.to}
@@ -66,7 +66,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
       {isExpanded ? (
         <>
           <View style={styles.headerContainer}>
-            <SmallText>{I18n.get('zimbra-composerscreen-headers-cc')}</SmallText>
+            <SmallText>{I18n.get('zimbra-composer-headers-cc')}</SmallText>
             <RecipientField
               hasZimbraSendExternalRight={hasZimbraSendExternalRight}
               selectedRecipients={headers.cc}
@@ -74,7 +74,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
             />
           </View>
           <View style={styles.headerContainer}>
-            <SmallText>{I18n.get('zimbra-composerscreen-headers-bcc')}</SmallText>
+            <SmallText>{I18n.get('zimbra-composer-headers-bcc')}</SmallText>
             <RecipientField
               hasZimbraSendExternalRight={hasZimbraSendExternalRight}
               selectedRecipients={headers.bcc}
@@ -84,7 +84,7 @@ export const ComposerHeaders = ({ hasZimbraSendExternalRight, headers, onChange,
         </>
       ) : null}
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.get('zimbra-composerscreen-headers-subject')}</SmallText>
+        <SmallText>{I18n.get('zimbra-composer-headers-subject')}</SmallText>
         <TextInput
           defaultValue={headers.subject}
           onChangeText={text => onChange({ ...headers, subject: text })}

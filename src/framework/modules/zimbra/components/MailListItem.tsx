@@ -69,7 +69,7 @@ export class MailListItem extends React.PureComponent<IMailListItemProps> {
     const { mail } = this.props;
 
     const displayName = mail.displayNames.find(item => item[0] === id)?.[1];
-    return displayName ?? I18n.get('zimbra-mailscreen-unknownuser');
+    return displayName ?? I18n.get('zimbra-mail-unknownuser');
   };
 
   public render() {

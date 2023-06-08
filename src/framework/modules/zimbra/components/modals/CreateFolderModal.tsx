@@ -42,7 +42,7 @@ const CreateFolderModal = React.forwardRef<ModalBoxHandle, ICreateFolderModalPro
       props.creationCallback();
       setCreating(false);
       setName('');
-      Toast.showInfo(I18n.get('zimbra-maillistscreen-createfoldermodal-successmessage'));
+      Toast.showInfo(I18n.get('zimbra-maillist-createfoldermodal-successmessage'));
     } catch {
       setCreating(false);
       Toast.showError(I18n.get('common.error.text'));
@@ -54,10 +54,10 @@ const CreateFolderModal = React.forwardRef<ModalBoxHandle, ICreateFolderModalPro
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.get('zimbra-maillistscreen-createfoldermodal-title')}</BodyText>
+          <BodyText>{I18n.get('zimbra-maillist-createfoldermodal-title')}</BodyText>
           <TextInput value={name} onChangeText={value => setName(value)} autoFocus style={styles.textInput} />
           <ActionButton
-            text={I18n.get('zimbra-maillistscreen-createfoldermodal-action')}
+            text={I18n.get('zimbra-maillist-createfoldermodal-action')}
             action={createFolder}
             disabled={!name}
             loading={isCreating}
