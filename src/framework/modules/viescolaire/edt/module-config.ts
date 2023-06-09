@@ -14,7 +14,7 @@ export default new NavigableModuleConfig<'edt', IEdtReduxState>({
   entcoreScope: ['edt'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
 
-  displayI18n: 'viesco-timetable',
+  displayI18n: 'edt-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'edt' },
 });

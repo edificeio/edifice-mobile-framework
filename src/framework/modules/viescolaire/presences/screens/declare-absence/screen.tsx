@@ -35,7 +35,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viesco-absence-declaration'),
+    title: I18n.get('presences-declareabsence-title'),
   }),
 });
 
@@ -75,7 +75,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         await presencesService.absence.create(session, structureId, childId, startDate, endDate, comment);
       }
       navigation.goBack();
-      Toast.showSuccess(I18n.get('viesco-absence-declared'));
+      Toast.showSuccess(I18n.get('presences-declareabsence-successmessage'));
     } catch {
       setCreating(false);
       Toast.showError(I18n.get('common.error.text'));
@@ -86,7 +86,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
     const { childName, navigation } = props;
 
     navigation.setOptions({
-      headerTitle: navBarTitle(`${I18n.get('viesco-absence-declaration')} ${childName}`),
+      headerTitle: navBarTitle(`${I18n.get('presences-declareabsence-title')} ${childName}`),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childName]);
@@ -101,7 +101,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
             <TouchableOpacity
               style={[styles.switchPart, styles.leftSwitch, isSingleDay && styles.selected]}
               onPress={() => setSingleDay(true)}>
-              <SmallText>{I18n.get('viesco-single-day')}</SmallText>
+              <SmallText>{I18n.get('presences-declareabsence-singleday')}</SmallText>
               <SmallBoldText>{startDate.format('DD/MM')}</SmallBoldText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -109,14 +109,14 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               onPress={() => setSingleDay(false)}>
               {isSingleDay ? (
                 <View style={styles.rightSwitchSingle}>
-                  <SmallText>{I18n.get('viesco-several-days')}</SmallText>
+                  <SmallText>{I18n.get('presences-declareabsence-severaldays')}</SmallText>
                   <SmallBoldText style={styles.rightSwitchSingleText}>+</SmallBoldText>
                 </View>
               ) : (
                 <View>
-                  <SmallText>{I18n.get('viesco-several-days')}</SmallText>
+                  <SmallText>{I18n.get('presences-declareabsence-severaldays')}</SmallText>
                   <SmallBoldText>
-                    {I18n.get('viesco-from')} {startDate.format('DD/MM')} {I18n.get('viesco-to')} {endDate.format('DD/MM')}
+                    {I18n.get('presences-declareabsence-dates', { start: startDate.format('DD/MM'), end: endDate.format('DD/MM') })}
                   </SmallBoldText>
                 </View>
               )}
@@ -153,7 +153,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
           </View>
           <View style={styles.timePickerMainContainer}>
             <View style={styles.timePickerContainer}>
-              <SmallText style={styles.timePickerText}>{I18n.get('viesco-from-hour')}</SmallText>
+              <SmallText style={styles.timePickerText}>{I18n.get('presences-declareabsence-from')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={startDate}
@@ -162,7 +162,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               />
             </View>
             <View style={styles.timePickerContainer}>
-              <SmallText style={styles.timePickerText}>{I18n.get('viesco-to-hour')}</SmallText>
+              <SmallText style={styles.timePickerText}>{I18n.get('presences-declareabsence-to')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={endDate}
@@ -171,7 +171,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               />
             </View>
           </View>
-          <SmallText style={styles.commentLabelText}>{I18n.get('viesco-absence-motive')}</SmallText>
+          <SmallText style={styles.commentLabelText}>{I18n.get('presences-declareabsence-reason')}</SmallText>
           <TextInput
             value={comment}
             onChangeText={text => setComment(text)}
@@ -183,7 +183,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
             <Attachment name={attachment.filename} type={attachment.filetype} onRemove={() => setAttachment(undefined)} />
           ) : (
             <BottomMenu
-              title={I18n.get('viesco-attachment')}
+              title={I18n.get('presences-declareabsence-attachment')}
               actions={[
                 cameraAction({ callback: onPickAttachment }),
                 galleryAction({ callback: onPickAttachment }),
@@ -198,12 +198,17 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
                   fill={theme.palette.primary.regular}
                   style={styles.iconAttMarginRight}
                 />
-                <SmallActionText>{I18n.get('viesco-attachment')}</SmallActionText>
+                <SmallActionText>{I18n.get('presences-declareabsence-attachment')}</SmallActionText>
               </View>
             </BottomMenu>
           )}
         </View>
-        <ActionButton text={I18n.get('viesco-validate')} action={createAbsence} disabled={!areDatesValid} loading={isCreating} />
+        <ActionButton
+          text={I18n.get('presences-declareabsence-action')}
+          action={createAbsence}
+          disabled={!areDatesValid}
+          loading={isCreating}
+        />
       </ScrollView>
     );
   };

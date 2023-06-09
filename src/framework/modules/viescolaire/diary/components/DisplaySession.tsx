@@ -134,7 +134,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
 
             <ScrollView>
               <View style={styles.sessionPart}>
-                <SmallText style={styles.pageTitle}>{I18n.get('viesco-session')}</SmallText>
+                <SmallText style={styles.pageTitle}>{I18n.get('diary-session-session')}</SmallText>
                 {sessionList && sessionList[indexSelectedSession]?.title && (
                   <BodyBoldText>{sessionList[indexSelectedSession].title}</BodyBoldText>
                 )}

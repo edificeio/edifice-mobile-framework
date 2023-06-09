@@ -98,7 +98,7 @@ export default class EdtTimetable extends React.PureComponent<TimetableComponent
           {course.roomLabels[0]?.length ? (
             <View style={styles.roomView}>
               <Icon name="pin_drop" size={16} />
-              <SmallText numberOfLines={1}>&nbsp;{`${I18n.get('viesco-room')} ${course.roomLabels[0]}`}</SmallText>
+              <SmallText numberOfLines={1}>&nbsp;{`${I18n.get('edt-home-course-room')} ${course.roomLabels[0]}`}</SmallText>
             </View>
           ) : null}
           {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
@@ -144,7 +144,7 @@ export default class EdtTimetable extends React.PureComponent<TimetableComponent
     return (
       <>
         <View style={styles.weekPickerView}>
-          <SmallText style={styles.weekText}>{I18n.get('viesco-edt-week-of')}</SmallText>
+          <SmallText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />
         </View>
         {isRefreshing ? (

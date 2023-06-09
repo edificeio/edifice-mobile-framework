@@ -44,7 +44,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viesco-presences'),
+    title: I18n.get('presences-courselist-title'),
   }),
 });
 
@@ -145,10 +145,11 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
   };
 
   const renderCourseList = () => {
-    const dateText = `${I18n.get('viesco-register-date')} ${moment().format('DD MMMM YYYY')}`;
     return (
       <>
-        <SmallBoldText style={styles.dateText}>{dateText}</SmallBoldText>
+        <SmallBoldText style={styles.dateText}>
+          {I18n.get('presences-courselist-date', { date: moment().format('DD MMMM YYYY') })}
+        </SmallBoldText>
         <FlatList
           data={props.courses}
           renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
@@ -156,7 +157,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
           refreshControl={
             <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('viesco-no-register-today')} />}
+          ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('presences-courselist-emptyscreen-title')} />}
         />
       </>
     );

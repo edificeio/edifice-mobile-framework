@@ -64,12 +64,12 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
     <SmallText onPress={() => setExpanded(!expanded)} style={styles.itemMoretext}>
       {expanded ? (
         <>
-          {I18n.get('seeLess') + ' '}
+          {I18n.get('presences-history-categorycard-showless') + ' '}
           <SmallBoldText>-</SmallBoldText>
         </>
       ) : (
         <>
-          {I18n.get('seeMore') + ' '}
+          {I18n.get('presences-history-categorycard-showmore') + ' '}
           <SmallBoldText>+</SmallBoldText>
         </>
       )}
@@ -89,7 +89,7 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
             displayedElements.map(renderChild)
           ) : (
             <View style={styles.itemView}>
-              <SmallText style={styles.itemText}>{I18n.get('viesco-empty-card')}</SmallText>
+              <SmallText style={styles.itemText}>{I18n.get('presences-history-categorycard-empty')}</SmallText>
             </View>
           )}
           {numberChildren > 2 && renderMore()}
@@ -109,7 +109,7 @@ export const NoReasonCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.noReason}
-      title={I18n.get('viesco-history-noreason')}
+      title={I18n.get('presences-history-category-noreason')}
       renderItem={renderItem}
       elements={elements}
     />
@@ -126,7 +126,7 @@ export const UnregularizedCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.unregularized}
-      title={I18n.get('viesco-history-unregularized')}
+      title={I18n.get('presences-history-category-unregularized')}
       renderItem={renderItem}
       elements={elements}
     />
@@ -143,7 +143,7 @@ export const RegularizedCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.regularized}
-      title={I18n.get('viesco-history-regularized')}
+      title={I18n.get('presences-history-category-regularized')}
       renderItem={renderItem}
       elements={elements}
     />
@@ -161,7 +161,7 @@ export const LatenessCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.lateness}
-      title={I18n.get('viesco-history-latenesses')}
+      title={I18n.get('presences-history-category-latenesses')}
       renderItem={renderItem}
       elements={elements}
     />
@@ -179,7 +179,7 @@ export const DepartureCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.departure}
-      title={I18n.get('viesco-history-departures')}
+      title={I18n.get('presences-history-category-departures')}
       renderItem={renderItem}
       elements={elements}
     />
@@ -191,7 +191,7 @@ export const ForgotNotebookCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.forgotNotebook}
-      title={I18n.get('viesco-history-forgotten-notebooks')}
+      title={I18n.get('presences-history-category-forgottennotebooks')}
       renderItem={renderItem}
       elements={elements}
     />
@@ -210,7 +210,7 @@ export const IncidentCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.incident}
-      title={I18n.get('viesco-history-incidents')}
+      title={I18n.get('presences-history-category-incidents')}
       renderItem={renderItem}
       elements={elements}
     />
@@ -227,7 +227,7 @@ export const PunishmentCard = ({ elements }) => {
         if (punishment.delay_at) {
           dutyDate = punishment.delay_at.format('DD/MM/YY');
         }
-        return I18n.get('viesco-incidents-punishments-date.for-the') + dutyDate;
+        return I18n.get('presences-history-categorycard-for', { date: dutyDate });
       }
       case 2: {
         //DETENTION
@@ -240,13 +240,12 @@ export const PunishmentCard = ({ elements }) => {
           endDetentionDate = punishment.end_date.format('HH:mm');
         }
         return (
-          I18n.get('viesco-incidents-punishments-date.for-the') +
-          startDetentionDate +
-          (endDetentionDate !== '' ? ' - ' + endDetentionDate : null)
+          I18n.get('presences-history-categorycard-for', { date: startDetentionDate }) +
+          (endDetentionDate ? ` - ${endDetentionDate}` : null)
         );
       }
       case 3: //BLAME
-        return I18n.get('viesco-incidents-punishments-date.created-on') + createdDate;
+        return I18n.get('presences-history-categorycard-created', { date: createdDate });
       case 4: // EXCLUSION
         if (punishment.start_date && punishment.end_date) {
           const startExcludeDate: string = punishment.start_date.format('DD/MM/YY');
@@ -254,10 +253,7 @@ export const PunishmentCard = ({ elements }) => {
           if (startExcludeDate && endExcludeDate) {
             return startExcludeDate === endExcludeDate
               ? startExcludeDate
-              : I18n.get('viesco-incidents-punishments-date.from') +
-                  startExcludeDate +
-                  I18n.get('viesco-incidents-punishments-date.to') +
-                  endExcludeDate;
+              : I18n.get('presences-history-categorycard-dates', { start: startExcludeDate, end: endExcludeDate });
           } else {
             return ' ';
           }
@@ -278,7 +274,7 @@ export const PunishmentCard = ({ elements }) => {
   return (
     <PresenceCard
       color={viescoTheme.palette.presences}
-      title={I18n.get('viesco-history-punishments')}
+      title={I18n.get('presences-history-category-punishments')}
       renderItem={renderItem}
       elements={elements}
     />

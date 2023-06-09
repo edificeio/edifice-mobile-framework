@@ -14,7 +14,7 @@ export default new NavigableModuleConfig<'competences', ICompetencesReduxState>(
   entcoreScope: ['competences'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
 
-  displayI18n: 'viesco-tests',
+  displayI18n: 'competences-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'competences' },
 });

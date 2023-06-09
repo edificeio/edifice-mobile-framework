@@ -33,7 +33,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('Homework'),
+    title: I18n.get('diary-homework-title'),
   }),
 });
 

@@ -17,7 +17,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.diaryTitle ?? I18n.get('Homework'),
+    title: route.params.diaryTitle ?? I18n.get('diary-homeworklist-title'),
   }),
 });
 

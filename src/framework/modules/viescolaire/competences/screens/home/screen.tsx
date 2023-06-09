@@ -46,7 +46,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viesco-tests'),
+    title: I18n.get('competences-home-title'),
   }),
 });
 
@@ -163,7 +163,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
     return (
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.get('viesco-report-card')}</SmallText>
+        <SmallText>{I18n.get('competences-home-transcript')}</SmallText>
         <View style={styles.dropdownsContainer}>
           <DropDownPicker
             open={isTermDropdownOpen}
@@ -191,10 +191,12 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
           />
         </View>
         <View style={styles.headerRow}>
-          <SmallBoldText>{I18n.get(displaySubjectAverages ? 'viesco-average' : 'viesco-last-grades')}</SmallBoldText>
+          <SmallBoldText>
+            {I18n.get(displaySubjectAverages ? 'competences-home-average' : 'competences-home-lastgrades')}
+          </SmallBoldText>
           {showColorSwitch ? (
             <View style={styles.switchContainer}>
-              <SmallText style={styles.colorsText}>{I18n.get('viesco-colors')}</SmallText>
+              <SmallText style={styles.colorsText}>{I18n.get('competences-home-colors')}</SmallText>
               <Switch
                 value={areAverageColorsShown}
                 onValueChange={() => {
@@ -233,7 +235,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 devoirs={devoirs.filter(d => d.isEvaluated && d.subjectId === item.subjectId).sort((a, b) => a.date.diff(b.date))}
               />
             )}
-            ListEmptyComponent={renderEmpty(I18n.get('viesco-empty-subject-averages'))}
+            ListEmptyComponent={renderEmpty(I18n.get('competences-home-emptyscreen-averages'))}
             style={styles.listContainer}
           />
         ) : (
@@ -248,7 +250,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 onPress={() => openAssessment(item)}
               />
             )}
-            ListEmptyComponent={renderEmpty(I18n.get('viesco-eval-EmptyScreenText'))}
+            ListEmptyComponent={renderEmpty(I18n.get('competences-home-emptyscreen-default'))}
             style={styles.listContainer}
           />
         )}
@@ -293,14 +295,14 @@ export default connect(
       devoirs: competencesState.devoirs.data,
       dropdownItems: {
         terms: [
-          { label: I18n.get('viesco-competences-period'), value: 'default' },
+          { label: I18n.get('competences-home-term'), value: 'default' },
           ...competencesState.terms.data.map(term => ({
-            label: `${I18n.get('viesco-competences-period-' + term.type)} ${term.order}`,
+            label: `${I18n.get('competences-home-term-' + term.type)} ${term.order}`,
             value: term.typeId.toString(),
           })),
         ],
         subjects: [
-          { label: I18n.get('viesco-competences-subject'), value: 'default' },
+          { label: I18n.get('competences-home-subject'), value: 'default' },
           ...competencesState.subjects.data
             .filter(subject => competencesState.devoirs.data.some(devoir => devoir.subjectId === subject.id))
             .map(subject => ({

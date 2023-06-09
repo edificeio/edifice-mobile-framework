@@ -56,7 +56,6 @@ export class CallCard extends React.PureComponent<ICallCardProps> {
     const isCourseEditable = !moment(course.startDate).subtract(15, 'minutes').isAfter(moment());
     const opacity = isCourseNow ? 1 : 0.4;
     const hoursText = `${moment(course.startDate).format('LT')} - ${moment(course.endDate).format('LT')}`;
-    const roomText = `${I18n.get('viesco-room')} ${course.roomLabels}`;
     return (
       <ArticleContainer>
         <LeftColoredItem
@@ -83,7 +82,7 @@ export class CallCard extends React.PureComponent<ICallCardProps> {
                 {course.roomLabels[0] !== '' ? (
                   <View style={styles.roomContainer}>
                     <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
-                    <SmallText>{roomText}</SmallText>
+                    <SmallText>{I18n.get('presences-courselist-callcard-room', { name: course.roomLabels[0] })}</SmallText>
                   </View>
                 ) : null}
               </View>

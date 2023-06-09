@@ -16,7 +16,7 @@ export default new NavigableModuleConfig<'presences', IPresencesReduxState>({
   entcoreScope: ['presences'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
 
-  displayI18n: 'viesco-presences',
+  displayI18n: 'presences-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'presences' },
 });

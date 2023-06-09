@@ -16,7 +16,7 @@ export default new NavigableModuleConfig<'diary', IDiaryReduxState>({
   entcoreScope: ['diary'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
 
-  displayI18n: 'Homework',
+  displayI18n: 'diary-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'diary' },
 });

@@ -55,7 +55,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viesco'),
+    title: I18n.get('dashboard-relative-title'),
   }),
 });
 
@@ -108,7 +108,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
         {this.props.authorizedViescoApps.presences && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(presencesRouteNames.history)}
-            text={I18n.get('viesco-history')}
+            text={I18n.get('dashboard-relative-presences')}
             color={viescoTheme.palette.presences}
             icon="access_time"
             nbModules={nbModules}
@@ -117,7 +117,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
         {this.props.authorizedViescoApps.edt && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(edtRouteNames.home)}
-            text={I18n.get('viesco-timetable')}
+            text={I18n.get('dashboard-relative-edt')}
             color={viescoTheme.palette.edt}
             icon="calendar_today"
             nbModules={nbModules}
@@ -126,7 +126,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
         {this.props.authorizedViescoApps.diary && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(diaryRouteNames.homeworkList)}
-            text={I18n.get('Homework')}
+            text={I18n.get('dashboard-relative-diary')}
             color={viescoTheme.palette.diary}
             icon="checkbox-multiple-marked"
             nbModules={nbModules}
@@ -135,7 +135,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
         {this.props.authorizedViescoApps.competences && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(competencesRouteNames.home)}
-            text={I18n.get('viesco-tests')}
+            text={I18n.get('dashboard-relative-competences')}
             color={viescoTheme.palette.competences}
             icon="equalizer"
             nbModules={nbModules}
@@ -166,16 +166,16 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
 
     return (
       <View style={styles.dashboardPart}>
-        <BodyBoldText>{I18n.get('viesco-homework')}</BodyBoldText>
+        <BodyBoldText>{I18n.get('dashboard-relative-homework-recent')}</BodyBoldText>
         {!Object.keys(homeworksByDate).length ? (
-          <EmptyScreen svgImage="empty-homework" title={I18n.get('viesco-homework-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-homework" title={I18n.get('dashboard-relative-homework-emptyscreen-title')} />
         ) : null}
         {Object.keys(homeworksByDate).map(date => (
           <>
             <SmallText style={styles.subtitle}>
               {moment(date).isSame(tomorrowDate, 'day')
-                ? I18n.get('viesco-homework-fortomorrow')
-                : `${I18n.get('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
+                ? I18n.get('dashboard-relative-homework-duetomorrow')
+                : I18n.get('dashboard-relative-homework-duedate', { date: moment(date).format('DD/MM/YYYY') })}
             </SmallText>
             {homeworksByDate[date].map(homework => (
               <HomeworkItem
@@ -206,8 +206,10 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
             openAssessment={() => this.openAssessment(item)}
           />
         )}
-        ListHeaderComponent={<BodyBoldText>{I18n.get('viesco-lasteval')}</BodyBoldText>}
-        ListEmptyComponent={<EmptyScreen svgImage="empty-evaluations" title={I18n.get('viesco-eval-EmptyScreenText')} />}
+        ListHeaderComponent={<BodyBoldText>{I18n.get('dashboard-relative-assessments-recent')}</BodyBoldText>}
+        ListEmptyComponent={
+          <EmptyScreen svgImage="empty-evaluations" title={I18n.get('dashboard-relative-assessments-emptyscreen-title')} />
+        }
         scrollEnabled={false}
         style={styles.dashboardPart}
       />
@@ -226,7 +228,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
             <TouchableOpacity
               onPress={() => this.props.navigation.navigate(presencesRouteNames.declareAbsence)}
               style={styles.declareAbsenceButton}>
-              <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('viesco-declareAbsence')}</SmallBoldText>
+              <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('dashboard-relative-reportabsence')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
         </ChildPicker>

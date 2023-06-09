@@ -50,7 +50,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viesco-history'),
+    title: I18n.get('presences-history-title'),
   }),
 });
 
@@ -151,9 +151,9 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const renderHistory = () => {
     const { history, terms } = props;
     const dropdownTerms = [
-      { label: I18n.get('viesco-fullyear'), value: 'year' },
+      { label: I18n.get('presences-history-year'), value: 'year' },
       ...terms.map(term => ({
-        label: `${I18n.get('viesco-trimester')} ${term.order}`,
+        label: `${I18n.get('presences-history-trimester')} ${term.order}`,
         value: term.order.toString(),
       })),
     ];
@@ -210,7 +210,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             <TouchableOpacity
               onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
               style={styles.declareAbsenceButton}>
-              <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('viesco-declareAbsence')}</SmallBoldText>
+              <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('presences-history-reportabsence')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
         </ChildPicker>

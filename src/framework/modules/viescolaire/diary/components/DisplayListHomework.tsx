@@ -79,7 +79,7 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
           </View>
 
           <View style={styles.homeworkPart}>
-            <BodyBoldText>{I18n.get('viesco-homework-home')}</BodyBoldText>
+            <BodyBoldText>{I18n.get('diary-homework-homework')}</BodyBoldText>
             <FlatList
               data={homeworkList}
               renderItem={({ item }) => (

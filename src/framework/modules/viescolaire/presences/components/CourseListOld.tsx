@@ -96,7 +96,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
     return (
       <View>
         <SmallBoldText style={styles.dateText}>
-          {I18n.get('viesco-register-date')} {moment().format('DD MMMM YYYY')}
+          {I18n.get('presences-courselist-date', { date: moment().format('DD MMMM YYYY') })}
         </SmallBoldText>
         <View style={styles.renderContainer}>
           {isFetching ? (
@@ -122,7 +122,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
           ) : (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />
-              <BodyBoldText style={styles.noCallText}>{I18n.get('viesco-no-register-today')}</BodyBoldText>
+              <BodyBoldText style={styles.noCallText}>{I18n.get('presences-courselist-emptyscreen-title')}</BodyBoldText>
               <View style={[styles.noCallChip, styles.presentColor]} />
             </>
           )}

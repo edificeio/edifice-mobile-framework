@@ -28,7 +28,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viesco'),
+    title: I18n.get('dashboard-teacher-title'),
   }),
 });
 
@@ -47,7 +47,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
             {props.authorizedViescoApps.edt && (
               <ModuleButton
                 onPress={() => props.navigation.navigate(edtRouteNames.home)}
-                text={I18n.get('viesco-timetable')}
+                text={I18n.get('dashboard-teacher-edt')}
                 color={viescoTheme.palette.edt}
                 imageSrc={require('ASSETS/viesco/edt.png')}
               />
@@ -55,7 +55,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
             {props.authorizedViescoApps.diary && (
               <ModuleButton
                 onPress={() => props.navigation.navigate(diaryRouteNames.timetable)}
-                text={I18n.get('Homework')}
+                text={I18n.get('dashboard-teacher-diary')}
                 color={viescoTheme.palette.diary}
                 imageSrc={require('ASSETS/viesco/cdt.png')}
               />
@@ -65,8 +65,8 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
       ) : (
         <EmptyScreen
           svgImage="empty-viesco"
-          title={I18n.get('viesco-empty-screen-title')}
-          text={I18n.get('viesco-empty-screen-text')}
+          title={I18n.get('dashboard-teacher-emptyscreen-title')}
+          text={I18n.get('dashboard-teacher-emptyscreen-text')}
         />
       )}
     </PageView>

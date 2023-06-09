@@ -74,9 +74,7 @@ export default ({
         {item.roomLabels[0] !== '' && (
           <View style={styles.itemRowStyle}>
             <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
-            <SmallText>
-              {I18n.get('viesco-room')} {item.roomLabels}
-            </SmallText>
+            <SmallText>{I18n.get('presences-courselist-callcard-room', { name: item.roomLabels[0] })}</SmallText>
           </View>
         )}
       </View>

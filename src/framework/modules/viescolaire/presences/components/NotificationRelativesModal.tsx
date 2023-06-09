@@ -50,25 +50,25 @@ const renderChild = (key: string, previousKey: string, event) => {
   let duration = 0 as number;
   switch (key) {
     case 'DEPARTURE':
-      title = I18n.get('viesco-history-departures');
+      title = I18n.get('presences-history-category-departures');
       color = viescoTheme.palette.presencesEvents.departure;
       duration = Math.abs(moment(event.start_date).diff(moment(event.end_date), 'minutes'));
       break;
     case 'LATENESS':
-      title = I18n.get('viesco-history-latenesses');
+      title = I18n.get('presences-history-category-latenesses');
       color = viescoTheme.palette.presencesEvents.lateness;
       duration = moment(event.end_date).diff(moment(event.start_date), 'minutes');
       break;
     case 'NO_REASON':
-      title = I18n.get('viesco-history-noreason');
+      title = I18n.get('presences-history-category-noreason');
       color = viescoTheme.palette.presencesEvents.noReason;
       break;
     case 'UNREGULARIZED':
-      title = I18n.get('viesco-history-unregularized');
+      title = I18n.get('presences-history-category-unregularized');
       color = viescoTheme.palette.presencesEvents.unregularized;
       break;
     case 'REGULARIZED':
-      title = I18n.get('viesco-history-regularized');
+      title = I18n.get('presences-history-category-regularized');
       color = viescoTheme.palette.presencesEvents.regularized;
       break;
     default:
@@ -136,7 +136,7 @@ export const NotificationRelativesModal = ({
     <ModalBox backdropOpacity={0.5} isVisible={visible}>
       <View style={styles.modalContainerView}>
         <View style={styles.modalContentView}>
-          <BodyText style={styles.modalTitle}>{I18n.get('viesco-notifications')}</BodyText>
+          <BodyText style={styles.modalTitle}>{I18n.get('presences-eventnotificationmodal-title')}</BodyText>
           {childrenArray?.map(child =>
             childrenEvents.data &&
             childrenEvents?.data?.studentsEvents &&
@@ -151,7 +151,7 @@ export const NotificationRelativesModal = ({
               </View>
             ) : null,
           )}
-          <ActionButton text={I18n.get('common-ok')} action={onClose} />
+          <ActionButton text={I18n.get('presences-eventnotificationmodal-action')} action={onClose} />
         </View>
       </View>
     </ModalBox>

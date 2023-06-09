@@ -119,7 +119,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     return (
       <View style={styles.homeworksContainer}>
         <BodyBoldText>
-          {I18n.get('viesco-homework')}
+          {I18n.get('diary-timetable-todayshomework')}
           {homeworks.length > 1 && ' (' + homeworks.length + ')'}
         </BodyBoldText>
         <TouchableOpacity
@@ -221,7 +221,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
     return (
       <View style={UI_STYLES.flex1}>
         <View style={styles.weekPickerView}>
-          <SmallText style={styles.weekText}>{I18n.get('viesco-edt-week-of')}</SmallText>
+          <SmallText style={styles.weekText}>{I18n.get('diary-timetable-week')}</SmallText>
           <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.diary} />
         </View>
         {courses.isFetching || courses.isPristine ? (

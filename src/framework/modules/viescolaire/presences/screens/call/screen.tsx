@@ -39,7 +39,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viesco-register'),
+    title: I18n.get('presences-call-title'),
   }),
 });
 
@@ -143,7 +143,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       if (!session) throw new Error();
       await presencesService.classCall.updateStatus(session, id, 3);
       navigation.goBack();
-      Toast.showSuccess(I18n.get('viesco-register-validated'));
+      Toast.showSuccess(I18n.get('presences-call-successmessage'));
     } catch {
       setValidating(false);
       Toast.showError(I18n.get('common.error.text'));
@@ -239,7 +239,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
           })}
         />
         <ActionButton
-          text={I18n.get('viesco-validate')}
+          text={I18n.get('presences-call-action')}
           action={validateCall}
           loading={isValidating}
           style={styles.validateButton}
@@ -261,7 +261,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
           {classroom ? (
             <View style={styles.classroomContainer}>
               <Icon name="pin_drop" size={18} />
-              <SmallText style={styles.classroomText}>{I18n.get('viesco-room') + ' ' + classroom}</SmallText>
+              <SmallText style={styles.classroomText}>{I18n.get('presences-call-room', { name: classroom })}</SmallText>
             </View>
           ) : null}
           <SmallBoldText style={styles.nameText}>{name}</SmallBoldText>

@@ -31,7 +31,9 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
+    title: I18n.get(
+      route.params.type === EventType.LATENESS ? 'presences-declareevent-lateness-title' : 'presences-declareevent-departure-title',
+    ),
   }),
 });
 
@@ -98,8 +100,12 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { endDate, event, reasons, startDate, student, type } = props.route.params;
     const mainColor =
       type === EventType.LATENESS ? viescoTheme.palette.presencesEvents.lateness : viescoTheme.palette.presencesEvents.departure;
-    const mainText = I18n.get(type === EventType.LATENESS ? 'viesco-arrived' : 'viesco-left');
-    const inputLabel = I18n.get(type === EventType.LATENESS ? 'viesco-arrived-motive' : 'viesco-left-motive');
+    const mainText = I18n.get(
+      type === EventType.LATENESS ? 'presences-declareevent-lateness-arrived' : 'presences-declareevent-departure-left',
+    );
+    const inputLabel = I18n.get(
+      type === EventType.LATENESS ? 'presences-declareevent-lateness-reason' : 'presences-declareevent-departure-reason',
+    );
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -128,7 +134,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
               }
               setOpen={setDropdownOpen}
               setValue={setReason}
-              placeholder={I18n.get('viesco-no-reason')}
+              placeholder={I18n.get('presences-declareevent-lateness-noreason')}
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropdown}
               textStyle={styles.dropdownText}
@@ -146,7 +152,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
         <View style={styles.actionsContainer}>
           {event !== undefined ? (
             <ActionButton
-              text={I18n.get('delete')}
+              text={I18n.get('presences-declareevent-delete')}
               type="secondary"
               action={deleteEvent}
               loading={isDeleting}
@@ -154,7 +160,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             />
           ) : null}
           <ActionButton
-            text={I18n.get('viesco-confirm')}
+            text={I18n.get('presences-declareevent-action')}
             action={createEvent}
             disabled={!date.isBetween(startDate, endDate)}
             loading={isCreating}
