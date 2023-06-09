@@ -57,7 +57,6 @@ export const computeNavBar = ({
  */
 function useCurvedNavBarFeature() {
   const navBarHeight = useHeaderHeight() - UI_SIZES.screen.topInset;
-
   // SVG size management
   const svgDisplayWidth = UI_SIZES.screen.width;
   const svgDisplayHeight = Math.ceil(
@@ -67,7 +66,6 @@ function useCurvedNavBarFeature() {
     Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) -
     svgDisplayHeight +
     UI_SIZES.elements.statusbarHeight;
-
   // SVG size management
   return React.useMemo(() => {
     return (
@@ -81,6 +79,7 @@ function useCurvedNavBarFeature() {
     );
   }, [svgDisplayHeight, svgDisplayTopOffset, svgDisplayWidth]);
 }
+
 useCurvedNavBarFeature.svgOriginalWidth = 375;
 useCurvedNavBarFeature.svgOriginalHeight = 545;
 useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
@@ -103,7 +102,6 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
       } as ImageURISource)
     );
   }, [session?.platform, session?.user.photo]);
-
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
     return !userProfilePicture ? (
@@ -151,20 +149,17 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
-
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
     return authContextRef.current;
   }, [session]);
-
   const fetchMFAValidationInfos = React.useCallback(async () => {
     const requirements = await getUserRequirements(session?.platform!);
     const needMfa = requirements?.needMfa;
     if (needMfa) await getMFAValidationInfos();
     return needMfa;
   }, [session]);
-
   const editUserInformation = React.useCallback(
     async (modificationType: ModificationType) => {
       try {
@@ -209,12 +204,10 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     },
     [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
-
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
   const isStudent = session?.user.type === UserType.Student;
   const isRelative = session?.user.type === UserType.Relative;
   const showWhoAreWe = session?.platform.showWhoAreWe;
-
   return React.useMemo(
     () => (
       <>
@@ -320,7 +313,6 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
       },
     ]);
   }, [handleLogout]);
-
   /**
    * renders the logout button
    */
@@ -342,13 +334,10 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
    * When true, version number display more info about build / platform / override / etc
    */
   const [isVersionDetailsShown, setIsVersionDetailsShown] = React.useState<boolean>(false);
-
   const toggleVersionDetails = React.useCallback(() => {
     setIsVersionDetailsShown(oldState => !oldState);
   }, []);
-
   const currentPlatform = session?.platform.displayName;
-
   return React.useMemo(() => {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
@@ -365,6 +354,25 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
     );
   }, [currentPlatform, isVersionDetailsShown, toggleVersionDetails]);
 }
+
+/**
+ * Setup a version number feature that can secretly display detailed information when long pressed.
+ * @returns the React Element of the touchable toggle i18n keys
+ */
+function useToggleKeysFeature() {
+  if (!I18n.canShowKeys) return;
+  return (
+    <ActionButton
+      text="Toggle i18n Keys"
+      type="secondary"
+      action={() => {
+        I18n.toggleShowKeys();
+      }}
+      style={styles.userInfoButton}
+    />
+  );
+}
+
 // All these values are compile-time constants. So we decalre them as function statics.
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
 useVersionFeature.buildNumber = DeviceInfo.getBuildNumber();
@@ -396,6 +404,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
   const logoutButton = useLogoutFeature(handleLogout);
+  const toggleKeysButton = useToggleKeysFeature();
   const versionButton = useVersionFeature(session);
 
   return (
@@ -410,6 +419,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         <View style={styles.sectionBottom}>
           {logoutButton}
           {versionButton}
+          {toggleKeysButton}
         </View>
       </ScrollView>
     </PageView>

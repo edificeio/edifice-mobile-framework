@@ -4,6 +4,7 @@
  * Usage: import and use the init() function when local changes (setup is automatic on import)
  * Then, import and use the native i18next and moment modules.
  */
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
 import i18n from 'i18next';
@@ -13,6 +14,8 @@ import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
 import { initReactI18next } from 'react-i18next';
+import { NativeModules } from 'react-native';
+import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
@@ -23,9 +26,8 @@ import { isEmpty } from '~/framework/util/object';
 const phraseSecrets = require('ROOT/phrase.json');
 
 export namespace I18n {
+  // Get the current language
   export type SupportedLocales = 'fr' | 'en' | 'es';
-
-  // Get the current detected or set language
   export const getLanguage = () => i18n.language as SupportedLocales;
 
   // Built-in translations
@@ -60,8 +62,36 @@ export namespace I18n {
     ]),
   );
 
+  // Manage key toggling
+  const I18N_SHOW_KEYS_KEY = 'showKeys';
+  let showKeys = false;
+
+  export const canShowKeys = __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().indexOf('alpha') > 0;
+
+  export const toggleShowKeys = async () => {
+    if (canShowKeys) {
+      showKeys = !showKeys;
+      await AsyncStorage.setItem(I18N_SHOW_KEYS_KEY, JSON.stringify(showKeys));
+      NativeModules.DevSettings.reload();
+    }
+  };
+
+  // Avoid init reentrance
+  let initialized = false;
+
   // Translation setup
   export const init = async () => {
+    // Avoid reentrance
+    if (initialized) return getLanguage();
+    initialized = true;
+
+    // Initialize keys toggling
+    if (canShowKeys) {
+      const stored = await AsyncStorage.getItem(I18N_SHOW_KEYS_KEY);
+      if (stored) showKeys = JSON.parse(stored);
+    }
+
+    // Initialize i18n
     const resources = {
       fr: { translation: finalTranslations.fr },
       en: { translation: finalTranslations.en },
@@ -76,10 +106,10 @@ export namespace I18n {
     };
 
     const languageTag = bestAvailableLanguage?.languageTag;
-
     const phraseId = phraseSecrets?.distributionId;
     const phraseSecret = __DEV__ ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
+    //Initialize Phrase if possible
     if (!isEmpty(phraseId) && !isEmpty(phraseSecret)) {
       const phrase = new Phrase(phraseSecrets.distributionId, phraseSecrets.prodSecret, DeviceInfo.getVersion(), 'i18next');
 
@@ -123,6 +153,7 @@ export namespace I18n {
       });
     }
 
+    // Get final language and return it
     const finalLanguage = languageTag ?? fallbackLng;
     moment.locale(finalLanguage?.split('-')[0]);
     return finalLanguage;
@@ -131,6 +162,7 @@ export namespace I18n {
   // Get wording based on key (in the correct language)
   // Note: the "returnDetails" option is set to false, as we always want to return a string (not a details object)
   export const get = (key: Parameters<typeof i18n.t>[0], options?: Parameters<typeof i18n.t>[1]) => {
+    if (showKeys) return key;
     return i18n.t(key, { ...options, returnDetails: false });
   };
 }
