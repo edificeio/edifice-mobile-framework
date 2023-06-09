@@ -12,6 +12,7 @@
     "i18n-merge-fr": "node cli/i18n.js merge fr",
     "i18n-merge-en": "node cli/i18n.js merge en",
     "i18n-merge-es": "node cli/i18n.js merge es",
+    "i18n-unused": "node cli/i18n.js unused",
     "ios": "react-native run-ios",
     "lint-all": "eslint --ext .js,.jsx,.ts,.tsx ./src",
     "lint-fix-all": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src",
