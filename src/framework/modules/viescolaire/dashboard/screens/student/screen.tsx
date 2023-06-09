@@ -96,7 +96,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.presences && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(presencesRouteNames.history)}
-            text={I18n.get('dashboard-student-competences')}
+            text={I18n.get('dashboard-student-presences')}
             color={viescoTheme.palette.presences}
             icon="access_time"
             nbModules={nbModules}

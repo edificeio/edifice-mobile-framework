@@ -5,7 +5,7 @@ export default new NavigableModuleConfig<'moodle', null>({
   entcoreScope: ['cas'],
   matchEntcoreApp: '/moodle',
 
-  displayI18n: 'moodle.tabName',
+  displayI18n: 'moodle-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'moodle' },
 });

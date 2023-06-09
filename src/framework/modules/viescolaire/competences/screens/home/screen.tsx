@@ -192,7 +192,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         </View>
         <View style={styles.headerRow}>
           <SmallBoldText>
-            {I18n.get(displaySubjectAverages ? 'competences-home-average' : 'competences-home-lastgrades')}
+            {I18n.get(displaySubjectAverages ? 'competences-home-averages' : 'competences-home-lastgrades')}
           </SmallBoldText>
           {showColorSwitch ? (
             <View style={styles.switchContainer}>
