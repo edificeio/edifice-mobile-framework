@@ -1,145 +1,182 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import { IDiaryCourse, IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+
+type IBackendCourse = {
+  _id: string;
+  structureId: string;
+  subjectId: string;
+  teacherIds: string[];
+  tagIds: number[];
+  classes: string[];
+  classesExternalIds: string[];
+  groups: string[];
+  groupsExternalIds: string[];
+  roomLabels: string[];
+  dayOfWeek: number;
+  manual: boolean;
+  theoretical: boolean;
+  updated: string;
+  lastUser: string;
+  recurrence: string;
+  idStartSlot: string;
+  idEndSlot: string;
+  startDate: string;
+  endDate: string;
+  subject: {
+    id: string;
+    code: string;
+    externalId: string;
+    name: string;
+    rank: number;
+  };
+  color: string;
+  is_periodic: boolean;
+  startCourse: string;
+  endCourse: string;
+};
+
+type IBackendAudience = {
+  id: string;
+  externalId: string | null;
+  name: string;
+  labels: string[];
+};
 
 type IBackendSubject = {
   id: string;
   externalId: string;
   name: string;
-  rank?: number;
+  rank: number;
 };
 
-type IBackendAudience = {
-  externalId: string;
+type IBackendTeacher = {
   id: string;
-  labels: string[];
-  name: string;
+  firstName: string;
+  lastName: string;
+  displayName: string;
+  info: string | null;
 };
 
 type IBackendHomework = {
+  id: number;
+  subject_id: string;
+  structure_id: string;
+  teacher_id: string;
   audience_id: string;
-  audience: IBackendAudience;
   color: string;
-  created: string;
   description: string;
-  due_date: string;
-  estimatedtime: number;
-  id: string;
   is_published: boolean;
-  modified: string;
+  session_id: number;
+  due_date: string; // YYYY-MM-DD
+  type_id: number;
+  workload: number;
   owner_id: string;
-  progress?: {
-    created: string;
-    homework_id: number;
-    modified: string;
-    state_id: number;
-    state_label: string;
+  created: string;
+  modified: string;
+  estimatedtime: number;
+  publish_date: string; // YYYY-MM-DD
+  from_session_id: number | null;
+  exceptional_label: string | null;
+  archive_school_year: string | null;
+  type: {
+    id: number;
+    structure_id: string;
+    label: string;
+    rank: number;
+  };
+  progress: {
     user_id: string;
-  };
-  publish_date: string;
-  session_id: string;
-  structure_id: string;
-  exceptional_label: string;
-  subject_id: string;
+    homework_id: number;
+    state_id: number;
+    created: string;
+    modified: string;
+    state_label: string;
+  } | null;
   subject: IBackendSubject;
-  teacher_id: string;
-  type: {
-    id: number;
-    label: string;
-    rank: number;
-    structure_id: string;
-  };
-  type_id: number;
-  workload: number;
-};
-
-type IBackendSessionHomework = {
-  archive_school_year: string;
+  teacher: IBackendTeacher;
   audience: IBackendAudience;
-  audience_id: string;
-  color: string;
-  created: string;
-  description: string;
-  due_date: string; // format 'YYYY-MM-DD'
-  estimatedtime: number;
-  exceptional_label: string;
-  from_session_id: string;
-  id: string;
-  is_published: boolean;
-  modified: string;
-  owner_id: string;
-  publish_date: string; // format 'YYYY-MM-DD'
-  session_id: string;
-  structure_id: string;
-  subject: IBackendSubject;
-  subject_id: string;
-  teacher_id: string;
-  type: {
-    id: number;
-    label: string;
-    rank: number;
-    structure_id: string;
-  };
-  type_id: number;
-  workload: number;
 };
 
 type IBackendSession = {
-  annotation: string;
-  audience_id: string;
-  audience: IBackendAudience;
-  color: string;
-  course_id: string;
-  created: string;
-  date: string;
-  description: string;
-  end_time: string;
-  exceptional_label: string;
-  homeworks: IBackendSessionHomework[];
-  id: string;
-  is_empty: boolean;
-  is_published: boolean;
-  modified: string;
-  owner_id: string;
-  room: string;
-  start_time: string;
-  structure_id: string;
+  id: number;
   subject_id: string;
-  subject: IBackendSubject;
+  structure_id: string;
   teacher_id: string;
+  audience_id: string;
   title: string;
-  type_id: number;
+  room: string;
+  color: string;
+  date: string;
+  start_time: string;
+  end_time: string;
+  description: string;
+  annotation: string;
+  is_published: boolean;
+  course_id: string;
+  owner_id: string;
+  created: string;
+  modified: string;
+  type_id: number | null;
+  is_empty: boolean;
+  exceptional_label: string | null;
+  archive_school_year: string | null;
+  homeworks: IBackendHomework[];
+  subject: IBackendSubject;
+  teacher: IBackendTeacher;
+  audience: IBackendAudience;
 };
 
+type IBackendCourseList = IBackendCourse[];
 type IBackendHomeworkList = IBackendHomework[];
 type IBackendSessionList = IBackendSession[];
 
+const homeworkAdapter = (data: IBackendHomework): IHomework => {
+  return {
+    id: data.id.toString(),
+    is_published: data.is_published,
+    due_date: moment(data.due_date),
+    type: data.type,
+    subject_id: data.subject_id,
+    subject: data.subject,
+    exceptional_label: data.exceptional_label,
+    progress: data.progress,
+    description: data.description,
+    created_date: moment(data.created),
+    audience: data.audience,
+    session_id: data.session_id.toString(),
+  } as IHomework;
+};
+
+const courseAdapter = (data: IBackendCourse): IDiaryCourse => {
+  return {
+    classes: data.classes,
+    color: data.color,
+    endDate: moment(data.endDate),
+    groups: data.groups,
+    id: data._id,
+    roomLabels: data.roomLabels,
+    startDate: moment(data.startDate),
+    subject: data.subject,
+    subjectId: data.subjectId,
+    teacherIds: data.teacherIds,
+  } as IDiaryCourse;
+};
+
 const homeworksAdapter = (data: IBackendHomeworkList): IHomeworkMap => {
-  const result = {} as IHomeworkMap;
-  data.forEach(item => {
-    result[item.id] = {
-      id: item.id,
-      is_published: item.is_published,
-      due_date: moment(item.due_date),
-      type: item.type,
-      subject_id: item.subject_id,
-      subject: item.subject,
-      exceptional_label: item.exceptional_label,
-      progress: item.progress,
-      description: item.description,
-      created_date: moment(item.created),
-      audience: item.audience,
-      session_id: item.session_id,
-    } as IHomework;
-  });
-  return result;
+  const homeworks = {} as IHomeworkMap;
+
+  for (const homework of data) {
+    homeworks[homework.id] = homeworkAdapter(homework);
+  }
+  return homeworks;
 };
 
 const sessionAdapter = (data: IBackendSession): IDiarySession => {
   return {
-    id: data.id,
+    id: data.id.toString(),
     is_published: data.is_published,
     is_empty: data.is_empty,
     date: moment(data.date),
@@ -151,13 +188,22 @@ const sessionAdapter = (data: IBackendSession): IDiarySession => {
     teacher_id: data.teacher_id,
     description: data.description,
     title: data.title,
-    homeworks: data.homeworks,
+    homeworks: data.homeworks.map(homeworkAdapter),
     course_id: data.course_id,
     audience: data.audience,
   } as IDiarySession;
 };
 
 export const diaryService = {
+  courses: {
+    get: async (session: ISession, structureId: string, teacherId: string, startDate: Moment, endDate: Moment) => {
+      const start = startDate.format('YYYY-MM-DD');
+      const end = endDate.format('YYYY-MM-DD');
+      const api = `/viescolaire/common/courses/${structureId}/${start}/${end}?teacherId=${teacherId}&union=true`;
+      const courses = (await fetchJSONWithCache(api)) as IBackendCourseList;
+      return courses.map(course => courseAdapter(course)) as IDiaryCourse[];
+    },
+  },
   homeworks: {
     get: async (session: ISession, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/homeworks/own/${startDate}/${endDate}/${structureId}`;

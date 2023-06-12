@@ -12,10 +12,9 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import { fetchCourseListFromTeacherAction } from '~/framework/modules/viescolaire/dashboard/actions/courses';
-import { getCoursesListState } from '~/framework/modules/viescolaire/dashboard/state/courses';
 import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
 import {
+  fetchDiaryCoursesAction,
   fetchDiaryHomeworksAction,
   fetchDiarySessionsAction,
   fetchDiarySlotsAction,
@@ -55,8 +54,8 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 
   fetchCourses = () => {
     const { startDate } = this.state;
-    const { fetchTeacherCourses, fetchHomeworks, fetchSessions, structureId, userId } = this.props;
-    fetchTeacherCourses(structureId, startDate, startDate.clone().endOf('week'), userId);
+    const { fetchCourses, fetchHomeworks, fetchSessions, structureId, userId } = this.props;
+    fetchCourses(structureId, userId, startDate, startDate.clone().endOf('week'));
     fetchSessions(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
     fetchHomeworks(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
   };
@@ -111,7 +110,7 @@ export default connect(
     const session = getSession();
 
     return {
-      courses: getCoursesListState(state),
+      courses: diaryState.courses,
       homeworks: diaryState.homeworks,
       sessions: diaryState.sessions,
       slots: diaryState.slots,
@@ -122,6 +121,11 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
+        fetchCourses: tryActionLegacy(
+          fetchDiaryCoursesAction,
+          undefined,
+          true,
+        ) as unknown as DiaryTimetableScreenPrivateProps['fetchCourses'],
         fetchHomeworks: tryActionLegacy(
           fetchDiaryHomeworksAction,
           undefined,
@@ -137,11 +141,6 @@ export default connect(
           undefined,
           true,
         ) as unknown as DiaryTimetableScreenPrivateProps['fetchSlots'],
-        fetchTeacherCourses: tryActionLegacy(
-          fetchCourseListFromTeacherAction,
-          undefined,
-          true,
-        ) as unknown as DiaryTimetableScreenPrivateProps['fetchTeacherCourses'],
       },
       dispatch,
     ),

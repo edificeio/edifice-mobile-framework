@@ -146,10 +146,9 @@ export default class DisplayHomework extends React.PureComponent<IDisplayHomewor
                 <BodyBoldText>{I18n.get('diary-homework-homework')}</BodyBoldText>
                 {homeworkList && homeworkList[indexSelectedHomework]?.due_date && (
                   <SmallText style={styles.subtitle}>
-                    {
-                      (I18n.get('diary-homework-duedate'),
-                      { date: moment(homeworkList[indexSelectedHomework].due_date).format('Do MMMM YYYY') })
-                    }
+                    {I18n.get('diary-homework-duedate', {
+                      date: moment(homeworkList[indexSelectedHomework].due_date).format('Do MMMM YYYY'),
+                    })}
                   </SmallText>
                 )}
                 {!isRemovedDescription && homeworkList && homeworkList[indexSelectedHomework]?.description && (

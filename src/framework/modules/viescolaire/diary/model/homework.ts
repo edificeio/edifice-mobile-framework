@@ -5,15 +5,15 @@ export interface IHomework {
   due_date: moment.Moment;
   id: string;
   is_published: boolean;
-  progress?: {
+  progress: {
     created: string;
     homework_id: number;
     modified: string;
     state_id: number;
     state_label: string;
     user_id: string;
-  };
-  exceptional_label: string;
+  } | null;
+  exceptional_label: string | null;
   subject_id: string;
   subject: ISubject;
   type: {

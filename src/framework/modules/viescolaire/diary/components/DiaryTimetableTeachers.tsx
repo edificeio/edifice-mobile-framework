@@ -14,8 +14,7 @@ import {
   homeworkListDetailsTeacherAdapter,
   sessionListDetailsTeacherAdapter,
 } from '~/framework/modules/viescolaire/common/utils/diary';
-import { ICourse } from '~/framework/modules/viescolaire/dashboard/state/courses';
-import { IDiarySession, IHomework } from '~/framework/modules/viescolaire/diary/model';
+import { IDiaryCourse, IDiarySession, IHomework } from '~/framework/modules/viescolaire/diary/model';
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { DiaryTimetableScreenProps } from '~/framework/modules/viescolaire/diary/screens/timetable';
 import { TimetableState } from '~/framework/modules/viescolaire/diary/screens/timetable/screen';
@@ -79,7 +78,7 @@ type ISessionModifiedList = IDiarySession & {
   calendarType?: string;
 };
 
-const adaptCourses = (courses: ICourse[], sessions: ISessionModifiedList[]) => {
+const adaptCourses = (courses: IDiaryCourse[], sessions: ISessionModifiedList[]) => {
   const calendarList = [...courses] as any;
 
   courses.sort((a, b) => moment(a.startDate).diff(moment(b.startDate)));
