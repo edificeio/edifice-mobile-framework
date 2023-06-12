@@ -110,16 +110,19 @@ export namespace I18n {
     const phraseSecret = __DEV__ ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
     //Initialize Phrase if possible
+    debugger;
     if (!isEmpty(phraseId) && !isEmpty(phraseSecret)) {
-      const phrase = new Phrase(phraseSecrets.distributionId, phraseSecrets.prodSecret, DeviceInfo.getVersion(), 'i18next');
+      const phrase = new Phrase(phraseSecrets.distributionId, phraseSecret, DeviceInfo.getVersion(), 'i18next');
 
       const backendPhrase = resourcesToBackend((language, namespace, callback) => {
         phrase
           .requestTranslation(language)
           .then(remoteResources => {
+            alert('toto');
             callback(null, remoteResources);
           })
           .catch(error => {
+            alert(error.message);
             callback(error, null);
           });
       });
@@ -133,23 +136,27 @@ export namespace I18n {
           backend: {
             backends: [backendPhrase, backendFallback],
           },
-          resources,
-          fallbackLng,
-          lng: languageTag,
           compatibilityJSON: 'v3',
+          debug: __DEV__,
+          fallbackLng,
           interpolation: {
             escapeValue: false,
           },
+          lng: languageTag,
+          resources,
+          returnObjects: true,
         });
     } else {
       i18n.use(initReactI18next).init({
-        resources,
-        fallbackLng,
-        lng: languageTag,
         compatibilityJSON: 'v3',
+        debug: __DEV__,
+        fallbackLng,
         interpolation: {
           escapeValue: false,
         },
+        lng: languageTag,
+        resources,
+        returnObjects: true,
       });
     }
 
