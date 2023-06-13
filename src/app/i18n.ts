@@ -38,7 +38,7 @@ export namespace I18n {
     es: require('ASSETS/i18n/override/es.json'),
   }) as { [locale in SupportedLocales]: object };
 
-  // Final translations
+  // Merge Built-in && Override translations
   const arrayMerge = (a: [], b: []) => {
     const destination = a.slice();
     for (const i in b) {
@@ -47,7 +47,7 @@ export namespace I18n {
     return destination;
   };
 
-  const finalTranslations = Object.fromEntries(
+  const mergedTranslations = Object.fromEntries(
     Object.keys(builtInTranslations).map(k => [
       k,
       deepmerge<object>(builtInTranslations[k], overrideTranslations[k], {
@@ -56,16 +56,15 @@ export namespace I18n {
     ]),
   );
 
-  // Local translatons
+  // Final translations
   const localResources = {
-    fr: { translation: finalTranslations.fr },
-    en: { translation: finalTranslations.en },
-    es: { translation: finalTranslations.es },
+    fr: { translation: mergedTranslations.fr },
+    en: { translation: mergedTranslations.en },
+    es: { translation: mergedTranslations.es },
   };
 
   // App language management
   const fallbackLng = 'en';
-  let currentLanguage = fallbackLng;
 
   // Keys toggling management
   const I18N_SHOW_KEYS_KEY = 'showKeys';
@@ -103,18 +102,17 @@ export namespace I18n {
   }
 
   export function getLanguage() {
-    return currentLanguage;
+    return i18n.language;
   }
 
   export function updateLanguage() {
-    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(finalTranslations)) as {
+    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(mergedTranslations)) as {
       languageTag: string;
       isRTL: boolean;
     };
-    currentLanguage = bestAvailableLanguage?.languageTag ?? fallbackLng;
-    i18n.language = currentLanguage;
-    moment.locale(currentLanguage?.split('-')[0]);
-    return currentLanguage;
+    i18n.language = bestAvailableLanguage?.languageTag ?? fallbackLng;
+    moment.locale(i18n.language?.split('-')[0]);
+    return i18n.language;
   }
 
   export const toggleShowKeys = async () => {
@@ -133,6 +131,7 @@ export namespace I18n {
       const stored = await AsyncStorage.getItem(I18N_SHOW_KEYS_KEY);
       if (stored) showKeys = JSON.parse(stored);
     }
+    // Initialize i18next
     i18n
       .use(ChainedBackend)
       .use(initReactI18next)
@@ -146,8 +145,7 @@ export namespace I18n {
         interpolation: {
           escapeValue: false,
         },
-        lng: currentLanguage,
-        // resources: localResources,
+        lng: i18n.language,
         returnObjects: true,
       });
   }
