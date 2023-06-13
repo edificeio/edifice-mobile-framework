@@ -110,7 +110,6 @@ export namespace I18n {
     const phraseSecret = __DEV__ ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
     //Initialize Phrase if possible
-    debugger;
     if (!isEmpty(phraseId) && !isEmpty(phraseSecret)) {
       const phrase = new Phrase(phraseSecrets.distributionId, phraseSecret, DeviceInfo.getVersion(), 'i18next');
 
