@@ -5,14 +5,13 @@
 import * as React from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-// import needed for side-effects https://docs.swmansion.com/react-native-gesture-handler/docs/installation#ios
-import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 
 import AppModules from '~/app/modules';
+import { UI_STYLES } from '~/framework/components/constants';
 import Navigation from '~/framework/navigation/RootNavigator';
 import { useNavigationDevPlugins } from '~/framework/navigation/helper';
 import { isEmpty } from '~/framework/util/object';
@@ -29,7 +28,7 @@ const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage />
  * Code that listens to App State changes
  */
 function useAppState() {
-  const [currentLocale, setCurrentLocale] = React.useState<ReturnType<typeof I18n.init>>(I18n.init());
+  const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
@@ -39,9 +38,7 @@ function useAppState() {
         // Change locale if needed
         const locales = RNLocalize.getLocales();
         const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
-        if (newLocale !== currentLocale) {
-          setCurrentLocale(I18n.init());
-        }
+        if (newLocale !== currentLocale) setCurrentLocale(I18n.updateLanguage());
       } else if (nextAppState === 'background') {
         // Track background state
         console.debug('[App State] now in background mode');
@@ -58,6 +55,12 @@ function useAppState() {
   return currentLocale;
 }
 
+function useI18n() {
+  React.useEffect(() => {
+    I18n.init();
+  }, []);
+}
+
 function useTrackers() {
   React.useEffect(() => {
     Trackers.init().then(() => {
@@ -68,12 +71,14 @@ function useTrackers() {
 }
 
 interface AppProps extends IStoreProp {}
+
 function App(props: AppProps) {
   useAppState();
   useTrackers();
   useNavigationDevPlugins();
+  useI18n();
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={props.store}>
           <Navigation />
