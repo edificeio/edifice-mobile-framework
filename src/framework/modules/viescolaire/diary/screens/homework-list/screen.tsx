@@ -9,7 +9,8 @@ import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchDiaryHomeworksAction,
   fetchDiaryHomeworksFromChildAction,
@@ -76,16 +77,18 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
 export default connect(
   (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userType = session?.user.type;
 
     return {
-      childId: getSelectedChild(state)?.id,
+      childId: dashboardState.selectedChildId,
       homeworks: diaryState.homeworks.data,
       isFetchingHomework: diaryState.homeworks.isFetching || diaryState.teachers.isFetching,
       isFetchingSession: diaryState.sessions.isFetching || diaryState.teachers.isFetching,
       sessions: diaryState.sessions.data,
-      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
+      structureId:
+        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
       teachers: diaryState.teachers.data,
       userType,
     };

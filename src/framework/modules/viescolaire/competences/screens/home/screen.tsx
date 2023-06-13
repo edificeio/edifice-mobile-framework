@@ -18,6 +18,7 @@ import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
   fetchCompetencesAveragesAction,
   fetchCompetencesDevoirsAction,
@@ -30,7 +31,7 @@ import { SubjectAverageCard } from '~/framework/modules/viescolaire/competences/
 import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -284,6 +285,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const competencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
@@ -291,7 +293,7 @@ export default connect(
     return {
       averages: competencesState.averages.data,
       classes: session?.user.classes,
-      childId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
+      childId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
       devoirs: competencesState.devoirs.data,
       dropdownItems: {
         terms: [
@@ -315,7 +317,8 @@ export default connect(
         competencesState.devoirs.isPristine || competencesState.subjects.isPristine
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
-      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
+      structureId:
+        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,
       userChildren: competencesState.userChildren.data,
       userId,

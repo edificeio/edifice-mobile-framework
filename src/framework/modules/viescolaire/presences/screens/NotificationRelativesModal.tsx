@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
-import { UserChildrenFlattened } from '~/framework/modules/auth/model';
-import {
-  getChildrenList,
-  getSelectedChild,
-  getSelectedChildStructure,
-} from '~/framework/modules/viescolaire/dashboard/state/children';
+import { UserChildrenFlattened, getFlattenedChildren } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { fetchPresencesChildrenEventsAction } from '~/framework/modules/viescolaire/presences/actions';
 import { NotificationRelativesModal } from '~/framework/modules/viescolaire/presences/components/NotificationRelativesModal';
 import { IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
@@ -82,10 +80,10 @@ class NotificationRelativesModalContainer extends React.PureComponent<
 
 const mapStateToProps = (state: IGlobalState) => {
   const presencesState = moduleConfig.getState(state);
-  const childId = getSelectedChild(state)?.id;
-  const children = getChildrenList(state);
+  const dashboardState = dashboardConfig.getState(state);
+  const session = getSession();
+  const children = getFlattenedChildren(session?.user.children);
   const childrenEvents = presencesState.childrenEvents;
-  const structureId = getSelectedChildStructure(state)?.id;
   let isClosingNoEvents = false as boolean;
   let isCheckOpenModalDone = false as boolean;
 
@@ -120,11 +118,11 @@ const mapStateToProps = (state: IGlobalState) => {
 
   return {
     children,
-    childId,
+    childId: dashboardState.selectedChildId,
     childrenEvents,
     isCheckOpenModalDone,
     isClosingNoEvents,
-    structureId,
+    structureId: getChildStructureId(dashboardState.selectedChildId),
   };
 };
 

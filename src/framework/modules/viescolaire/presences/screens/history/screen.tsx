@@ -17,7 +17,8 @@ import { SmallBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesHistoryAction,
   fetchPresencesSchoolYearAction,
@@ -223,6 +224,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
@@ -235,8 +237,9 @@ export default connect(
       history: presencesState.history.data,
       initialLoadingState: presencesState.history.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       schoolYear: presencesState.schoolYear.data,
-      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
-      studentId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
+      structureId:
+        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
+      studentId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
       terms: presencesState.terms.data,
       userId,
       userType,

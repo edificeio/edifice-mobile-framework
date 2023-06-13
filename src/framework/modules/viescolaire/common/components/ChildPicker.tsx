@@ -3,16 +3,15 @@ import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { selectChildAction } from '~/framework/modules/viescolaire/dashboard/actions/children';
-import viescoConfig from '~/framework/modules/viescolaire/dashboard/module-config';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { loadStoredChildAction, selectChildAction } from '~/framework/modules/viescolaire/dashboard/actions';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 const styles = StyleSheet.create({
@@ -39,33 +38,44 @@ const styles = StyleSheet.create({
   },
 });
 
-interface IChildPickerProps {
-  children?: React.ReactNode;
-  selectedChildId?: string;
-  userChildren?: { label: string; value: string; icon: () => React.JSX.Element }[];
-  selectChild: (childId: string) => void;
+interface IChildPickerDispatchProps {
+  handleSelectChild: (childId: string, userId?: string) => void;
+  tryLoadStoredChild: () => Promise<string | undefined>;
 }
 
-const ChildPicker = ({ children, selectedChildId, userChildren = [], selectChild }: IChildPickerProps) => {
+type IChildPickerProps = {
+  selectedChildId: string;
+  userChildren: { label: string; value: string; icon: () => React.JSX.Element }[];
+  children?: React.ReactNode;
+  userId?: string;
+} & IChildPickerDispatchProps;
+
+const ChildPicker = (props: IChildPickerProps) => {
   const [isOpen, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(selectedChildId);
+  const [value, setValue] = React.useState(props.selectedChildId);
 
   React.useEffect(() => {
-    if (value && value !== selectedChildId) selectChild(value);
+    props.tryLoadStoredChild();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    const { selectedChildId, userId } = props;
+    if (value && value !== selectedChildId) props.handleSelectChild(value, userId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   React.useEffect(() => {
-    if (selectedChildId !== value) setValue(selectedChildId);
+    if (props.selectedChildId !== value) setValue(props.selectedChildId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChildId]);
+  }, [props.selectedChildId]);
 
   return value ? (
     <View style={styles.container}>
       <DropDownPicker
         open={isOpen}
         value={value}
-        items={userChildren}
+        items={props.userChildren}
         setOpen={setOpen}
         setValue={setValue}
         style={styles.dropdown}
@@ -73,31 +83,34 @@ const ChildPicker = ({ children, selectedChildId, userChildren = [], selectChild
         textStyle={styles.dropdownText}
         containerStyle={UI_STYLES.flex1}
       />
-      {children}
+      {props.children}
     </View>
   ) : null;
 };
 
 export default connect(
   (state: IGlobalState) => {
-    const viescoState = viescoConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
-      selectedChildId: viescoState.children.selectedChild,
-      userChildren: getFlattenedChildren(session?.user.children)
-        ?.filter(child => child.classesNames.length > 0)
-        .map(child => ({
-          label: `${child.firstName} ${child.lastName}`,
-          value: child.id,
-          icon: () => <SingleAvatar userId={child.id} size={24} />,
-        })),
+      selectedChildId: dashboardState.selectedChildId,
+      userChildren:
+        getFlattenedChildren(session?.user.children)
+          ?.filter(child => child.classesNames.length > 0)
+          .map(child => ({
+            label: `${child.firstName} ${child.lastName}`,
+            value: child.id,
+            icon: () => <SingleAvatar userId={child.id} size={24} />,
+          })) ?? [],
+      userId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<IChildPickerDispatchProps>(
       {
-        selectChild: tryActionLegacy(selectChildAction, undefined, true),
+        handleSelectChild: handleAction(selectChildAction),
+        tryLoadStoredChild: tryAction(loadStoredChildAction),
       },
       dispatch,
     ),

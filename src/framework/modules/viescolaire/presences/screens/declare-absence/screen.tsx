@@ -15,9 +15,11 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
@@ -219,13 +221,14 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
 };
 
 export default connect((state: IGlobalState) => {
+  const dashboardState = dashboardConfig.getState(state);
   const session = getSession();
-  const child = getSelectedChild(state);
+  const childId = dashboardState.selectedChildId;
 
   return {
-    childId: child?.id,
-    childName: child?.firstName,
+    childId,
+    childName: getFlattenedChildren(session?.user.children)?.find(child => child.id === childId)?.firstName,
     session,
-    structureId: getSelectedChildStructure(state)?.id,
+    structureId: getChildStructureId(childId),
   };
 })(PresencesDeclareAbsenceScreen);

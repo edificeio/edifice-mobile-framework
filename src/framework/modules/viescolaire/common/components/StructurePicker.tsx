@@ -3,15 +3,14 @@ import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { selectStructureAction } from '~/framework/modules/viescolaire/dashboard/actions/structure';
-import viescoConfig from '~/framework/modules/viescolaire/dashboard/module-config';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { loadStoredStructureAction, selectStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,32 +34,43 @@ const styles = StyleSheet.create({
   },
 });
 
-interface IStructurePickerProps {
-  selectedStructureId?: string;
-  structures?: { label: string; value: string }[];
-  selectStructure: (id: string) => void;
+interface IStructurePickerDispatchProps {
+  handleSelectStructure: (id: string, userId?: string) => void;
+  tryLoadStoredStructure: () => Promise<string | undefined>;
 }
 
-const StructurePicker = ({ selectedStructureId, structures = [], selectStructure }: IStructurePickerProps) => {
+type IStructurePickerProps = {
+  selectedStructureId: string;
+  structures: { label: string; value: string }[];
+  userId?: string;
+} & IStructurePickerDispatchProps;
+
+const StructurePicker = (props: IStructurePickerProps) => {
   const [isOpen, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState(selectedStructureId);
+  const [value, setValue] = React.useState(props.selectedStructureId);
 
   React.useEffect(() => {
-    if (value && value !== selectedStructureId) selectStructure(value);
+    props.tryLoadStoredStructure();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    const { selectedStructureId, userId } = props;
+    if (value && value !== selectedStructureId) props.handleSelectStructure(value, userId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   React.useEffect(() => {
-    if (selectedStructureId !== value) setValue(selectedStructureId);
+    if (props.selectedStructureId !== value) setValue(props.selectedStructureId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStructureId]);
+  }, [props.selectedStructureId]);
 
-  return value && structures.length > 1 ? (
+  return value && props.structures.length > 1 ? (
     <View style={styles.container}>
       <DropDownPicker
         open={isOpen}
         value={value}
-        items={structures}
+        items={props.structures}
         setOpen={setOpen}
         setValue={setValue}
         style={styles.dropdown}
@@ -73,21 +83,24 @@ const StructurePicker = ({ selectedStructureId, structures = [], selectStructure
 
 export default connect(
   (state: IGlobalState) => {
-    const viescoState = viescoConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
-      selectedStructureId: viescoState.structure.selectedStructure,
-      structures: session?.user.structures?.map(structure => ({
-        label: structure.name,
-        value: structure.id,
-      })),
+      selectedStructureId: dashboardState.selectedStructureId,
+      structures:
+        session?.user.structures?.map(structure => ({
+          label: structure.name,
+          value: structure.id,
+        })) ?? [],
+      userId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<IStructurePickerDispatchProps>(
       {
-        selectStructure: tryActionLegacy(selectStructureAction, undefined, true),
+        handleSelectStructure: handleAction(selectStructureAction),
+        tryLoadStoredStructure: tryAction(loadStoredStructureAction),
       },
       dispatch,
     ),

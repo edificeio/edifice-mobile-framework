@@ -18,8 +18,8 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
-import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchEdtClassGroupsAction,
   fetchEdtCoursesAction,
@@ -184,12 +184,13 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const edtState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
 
     return {
-      childId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
+      childId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
       classes: session?.user.classes,
       courses: edtState.courses.data,
       initialLoadingState: edtState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
@@ -198,8 +199,8 @@ export default connect(
         userType === UserType.Student
           ? session?.user.structures?.[0]?.id
           : userType === UserType.Relative
-          ? getSelectedChildStructure(state)?.id
-          : getSelectedStructure(state),
+          ? getChildStructureId(dashboardState.selectedChildId)
+          : dashboardState.selectedStructureId,
       teachers: edtState.teachers.data,
       userId,
       userType,

@@ -12,7 +12,7 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchDiaryCoursesAction,
   fetchDiaryHomeworksAction,
@@ -107,6 +107,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 export default connect(
   (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
@@ -114,7 +115,7 @@ export default connect(
       homeworks: diaryState.homeworks,
       sessions: diaryState.sessions,
       slots: diaryState.slots,
-      structureId: getSelectedStructure(state),
+      structureId: dashboardState.selectedStructureId,
       userId: session?.user.id,
     };
   },

@@ -17,6 +17,7 @@ import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/t
 import { getSession } from '~/framework/modules/auth/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
 import {
   fetchCompetencesDevoirsAction,
@@ -28,8 +29,8 @@ import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
 import { fetchDiaryHomeworksFromChildAction, fetchDiaryTeachersAction } from '~/framework/modules/viescolaire/diary/actions';
 import { HomeworkItem } from '~/framework/modules/viescolaire/diary/components/Items';
 import { IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
@@ -245,6 +246,7 @@ class DashboardRelativeScreen extends React.PureComponent<DashboardRelativeScree
 export default connect(
   (state: IGlobalState) => {
     const competencesState = competencesConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const diaryState = diaryConfig.getState(state);
     const session = getSession();
 
@@ -255,12 +257,12 @@ export default connect(
         edt: session?.apps.some(app => app.address === '/edt'),
         presences: session?.apps.some(app => app.address === '/presences'),
       },
-      childId: getSelectedChild(state)?.id,
+      childId: dashboardState.selectedChildId,
       devoirs: competencesState.devoirs,
       hasRightToCreateAbsence:
         session?.authorizedActions.some(action => action.displayName === 'presences.absence.statements.create') ?? false,
       homeworks: diaryState.homeworks,
-      structureId: getSelectedChildStructure(state)?.id,
+      structureId: getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,
       userChildren: competencesState.userChildren.data,
       userId: session?.user.id,

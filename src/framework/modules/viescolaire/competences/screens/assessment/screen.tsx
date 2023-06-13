@@ -14,6 +14,7 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
   fetchCompetencesAction,
   fetchCompetencesDomainesAction,
@@ -23,7 +24,7 @@ import { DomaineListItem } from '~/framework/modules/viescolaire/competences/com
 import LevelLegendModal from '~/framework/modules/viescolaire/competences/components/LevelLegendModal';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -140,6 +141,7 @@ const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivatePr
 export default connect(
   (state: IGlobalState) => {
     const competencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
@@ -153,8 +155,9 @@ export default connect(
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
       levels: competencesState.levels.data.filter(level => level.id_cycle === domaines[0]?.cycleId),
-      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
-      studentId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
+      structureId:
+        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
+      studentId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>

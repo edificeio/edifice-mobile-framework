@@ -18,7 +18,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesCoursesAction,
   fetchPresencesEventReasonsAction,
@@ -190,6 +190,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
@@ -198,7 +199,7 @@ export default connect(
       initialLoadingState: presencesState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       registerPreference: presencesState.registerPreference.data,
       session,
-      structureId: getSelectedStructure(state),
+      structureId: dashboardState.selectedStructureId,
       teacherId: session?.user.id,
     };
   },
