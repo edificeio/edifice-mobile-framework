@@ -10,7 +10,7 @@ export default new NavigableModuleConfig<'newsv2', NewsState>({
   name: 'newsv2',
   entcoreScope: ['actualites'],
   matchEntcoreApp: '/actualites',
-  displayI18n: 'news.tabName',
+  displayI18n: 'news-tabName',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'newsFeed', fill: fillApp },
 });

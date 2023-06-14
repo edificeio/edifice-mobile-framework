@@ -42,7 +42,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('news.appName'),
+    title: I18n.get('news-appName'),
   }),
 });
 

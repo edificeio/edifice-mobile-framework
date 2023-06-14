@@ -47,7 +47,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('news.appName'),
+    title: I18n.get('news-appName'),
   }),
 });
 
@@ -105,7 +105,9 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
             <CardTopContent
               image={<ThumbnailThread icon={thread.icon} square />}
               text={thread.title}
-              {...(news.headline ? { statusIcon: 'ui-starFilled', statusColor: theme.palette.complementary.orange.regular } : null)}
+              {...(news.headline
+                ? { statusIcon: 'ui-star-filled', statusColor: theme.palette.complementary.orange.regular }
+                : null)}
               style={styles.detailsHeaderTopContent}
             />
           }

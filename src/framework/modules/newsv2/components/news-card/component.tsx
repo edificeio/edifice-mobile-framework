@@ -27,7 +27,7 @@ export default function NewsCard(props: NewsCardProps) {
           <CardTopContent
             image={<ThumbnailThread icon={thread.icon} square />}
             text={thread.title}
-            {...(news.headline ? { statusIcon: 'ui-starFilled', statusColor: theme.palette.complementary.orange.regular } : null)}
+            {...(news.headline ? { statusIcon: 'ui-star-filled', statusColor: theme.palette.complementary.orange.regular } : null)}
           />
         ) : null}
         <CaptionItalicText style={styles.date}>{displayDate(news.created)}</CaptionItalicText>

@@ -94,7 +94,7 @@ const imports = {
     android: import('ASSETS/icons/uiIcons/shareAOS.svg'),
   }),
   'ui-skills': import('ASSETS/icons/uiIcons/skills.svg'),
-  'ui-starFilled': import('ASSETS/icons/uiIcons/starFilled.svg'),
+  'ui-star-filled': import('ASSETS/icons/uiIcons/star-filled.svg'),
   'ui-success_fill': import('ASSETS/icons/uiIcons/success_fill.svg'),
   'ui-success_outline': import('ASSETS/icons/uiIcons/success_outline.svg'),
   'ui-success': import('ASSETS/icons/uiIcons/success.svg'),

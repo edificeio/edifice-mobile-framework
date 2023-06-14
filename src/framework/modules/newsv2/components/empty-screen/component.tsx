@@ -9,10 +9,10 @@ export const NoNewsScreen = (props: { createNews?: boolean; createThreads?: bool
     return (
       <EmptyScreen
         svgImage="empty-news"
-        title={I18n.get('news.home.noContent.title')}
-        text={I18n.get('news.home.noContentCreateNews.text')}
+        title={I18n.get('news-home-noContent-title')}
+        text={I18n.get('news-home-noContentCreateNews-text')}
         textColor={theme.palette.grey.black}
-        buttonText={I18n.get('news.home.createNewsButton')}
+        buttonText={I18n.get('news-home-createNewsButton')}
         buttonUrl="/actualites#/default"
       />
     );
@@ -20,18 +20,18 @@ export const NoNewsScreen = (props: { createNews?: boolean; createThreads?: bool
     return (
       <EmptyScreen
         svgImage="empty-news"
-        title={I18n.get('news.home.noContent.title')}
-        text={I18n.get('news.home.noContentCreateThread.text')}
+        title={I18n.get('news-home-noContent-title')}
+        text={I18n.get('news-home-noContentCreateThread-text')}
         textColor={theme.palette.grey.black}
-        buttonText={I18n.get('news.home.createThreadButton')}
+        buttonText={I18n.get('news-home-createThreadButton')}
         buttonUrl="/actualites#/admin"
       />
     );
   return (
     <EmptyScreen
       svgImage="empty-news"
-      title={I18n.get('news.home.noContent.title')}
-      text={I18n.get('news.home.noContent.text')}
+      title={I18n.get('news-home-noContent-title')}
+      text={I18n.get('news-home-noContent-text')}
       textColor={theme.palette.grey.black}
     />
   );
