@@ -20,6 +20,7 @@ import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
+  clearCompetencesAction,
   fetchCompetencesAveragesAction,
   fetchCompetencesDevoirsAction,
   fetchCompetencesSubjectsAction,
@@ -83,6 +84,18 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         childClasses = children.find(c => c.id === childId)?.idClasse;
       }
       await props.fetchTerms(structureId, childClasses ?? '');
+      props.clearCompetences();
+    } catch {
+      throw new Error();
+    }
+  };
+
+  const fetchSubjectAverages = async () => {
+    try {
+      const { childId, structureId } = props;
+
+      if (!childId || !structureId) throw new Error();
+      await props.fetchAverages(structureId, childId, term);
     } catch {
       throw new Error();
     }
@@ -104,7 +117,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   const refresh = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH);
-    fetchAssessments()
+    fetchSubjectAverages()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
@@ -328,6 +341,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators(
       {
+        clearCompetences: clearCompetencesAction,
         fetchAverages: tryActionLegacy(
           fetchCompetencesAveragesAction,
           undefined,

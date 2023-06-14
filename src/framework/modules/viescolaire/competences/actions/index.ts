@@ -1,6 +1,7 @@
 /**
  * Competences actions
  */
+import { Dispatch } from 'redux';
 import { ThunkAction } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -65,7 +66,6 @@ export const fetchCompetencesAction =
   (studentId: string, classId: string): ThunkAction<Promise<ICompetence[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      dispatch(competencesCompetencesActionsCreators.clear());
       const session = assertSession();
       dispatch(competencesCompetencesActionsCreators.request());
       const competences = await competencesService.competences.get(session, studentId, classId);
@@ -77,6 +77,12 @@ export const fetchCompetencesAction =
     }
   };
 
+export const clearCompetencesAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(competencesCompetencesActionsCreators.clear());
+  };
+};
+
 /**
  * Fetch the assessments.
  */
@@ -85,7 +91,6 @@ export const fetchCompetencesDevoirsAction =
   (structureId: string, studentId: string): ThunkAction<Promise<IDevoir[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      dispatch(competencesDevoirsActionsCreators.clear());
       const session = assertSession();
       dispatch(competencesDevoirsActionsCreators.request());
       const devoirs = await competencesService.devoirs.get(session, structureId, studentId);
@@ -105,7 +110,6 @@ export const fetchCompetencesDomainesAction =
   (classId: string): ThunkAction<Promise<IDomaine[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      dispatch(competencesDomainesActionsCreators.clear());
       const session = assertSession();
       dispatch(competencesDomainesActionsCreators.request());
       const domaines = await competencesService.domaines.get(session, classId);
@@ -125,7 +129,6 @@ export const fetchCompetencesLevelsAction =
   (structureId: string): ThunkAction<Promise<ILevel[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      dispatch(competencesLevelsActionsCreators.clear());
       const session = assertSession();
       dispatch(competencesLevelsActionsCreators.request());
       const levels = await competencesService.levels.get(session, structureId);
@@ -145,7 +148,6 @@ export const fetchCompetencesSubjectsAction =
   (structureId: string): ThunkAction<Promise<ISubject[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      dispatch(competencesSubjectsActionsCreators.clear());
       const session = assertSession();
       dispatch(competencesSubjectsActionsCreators.request());
       const subjects = await competencesService.subjects.get(session, structureId);

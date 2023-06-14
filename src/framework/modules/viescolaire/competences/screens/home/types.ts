@@ -20,6 +20,7 @@ export interface CompetencesHomeScreenProps {
   userChildren?: IUserChild[];
   userType?: string;
   userId?: string;
+  clearCompetences: () => void;
   fetchAverages: (structureId: string, studentId: string, termId?: string) => Promise<IAverage[]>;
   fetchDevoirs: (structureId: string, studentId: string) => Promise<IDevoir[]>;
   fetchSubjects: (structureId: string) => Promise<ISubject[]>;
