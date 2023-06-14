@@ -6,7 +6,7 @@
 import * as React from 'react';
 import { FlatListProps, ListRenderItemInfo, StyleProp, View, ViewStyle } from 'react-native';
 
-import FlatList from './flatList';
+import FlatList from './list/flat-list';
 
 export interface GridListProps<ItemT> extends FlatListProps<ItemT> {
   gap?: number | [number, number]; // distance BETWEEN each item

@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
+import FlatList from '~/framework/components/list/flat-list';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IUser } from '~/framework/modules/auth/model';
 import { UserType } from '~/framework/modules/auth/service';

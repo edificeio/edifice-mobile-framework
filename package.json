@@ -112,7 +112,7 @@
     "react-native-file-viewer": "2.1.5",
     "react-native-flipper": "0.195.0",
     "react-native-fs": "2.20.0",
-    "react-native-gesture-handler": "2.11.0",
+    "react-native-gesture-handler": "2.10.2",
     "react-native-global-props": "1.1.5",
     "react-native-haptic-feedback": "2.0.3",
     "react-native-image-pan-zoom": "2.1.12",
@@ -155,6 +155,7 @@
     "redux-flipper": "2.0.2",
     "redux-thunk": "2.4.2",
     "rn-material-ui-textfield": "1.0.9",
+    "rn-placeholder": "3.0.3",
     "sax": "1.2.4",
     "saxophone": "0.8.0",
     "stream": "0.0.2",
@@ -223,7 +224,7 @@
   "resolutions": {
     "set-value": "4.1.0",
     "tsconfig-paths": "^4.0.0",
-    "react-native-gesture-handler": "2.11.0"
+    "react-native-gesture-handler": "2.10.2"
   },
   "eslintIgnore": [
     "__tests__",

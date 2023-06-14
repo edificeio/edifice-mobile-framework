@@ -8,7 +8,7 @@ import { ListRenderItemInfo, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList, { FlatListProps } from '~/framework/components/flatList';
+import FlatList, { FlatListProps } from '~/framework/components/list/flat-list';
 import { BadgeAvatarProps, TextAvatar } from '~/framework/components/textAvatar';
 import { Status } from '~/ui/avatars/Avatar';
 

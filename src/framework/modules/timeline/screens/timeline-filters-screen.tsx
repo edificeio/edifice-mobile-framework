@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
-import FlatList from '~/framework/components/flatList';
+import FlatList from '~/framework/components/list/flat-list';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';

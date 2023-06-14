@@ -11,8 +11,7 @@ import UserList from '~/framework/components/UserList';
 import { ContentCardHeader, ResourceView } from '~/framework/components/card';
 import CommentField from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList from '~/framework/components/flatList';
-import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
+import FlatList from '~/framework/components/list/flat-list';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { UserType } from '~/framework/modules/auth/service';
@@ -30,18 +29,19 @@ import {
 import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
+import CardTopContentCategory from './cardtopcontent-category';
+
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.get(`schoolbook-worddetails-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
-const unacknowledgedString = (userType: UserType) =>
-  I18n.get(`schoolbook-worddetails-acknowledgementneeded-${userType.toLowerCase()}`);
+  `${ackNumber}/${total} ${I18n.get(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+const unacknowledgedString = (userType: UserType) => I18n.get(`schoolbook.acknowledgementNeeded${userType}`);
 const recipientsString = (report: IConcernedStudent[]) =>
   getHasSingleRecipientForTeacher(report)
     ? report[0].ownerName
-    : `${report.length} ${I18n.get('schoolbook-worddetails-students').toLowerCase()}`;
+    : `${report.length} ${I18n.get('schoolbook.students').toLowerCase()}`;
 const responsesString = (responses: number) =>
   responses === 1
-    ? `1 ${I18n.get('schoolbook-worddetails-response').toLowerCase()}`
-    : `${responses} ${I18n.get('schoolbook-worddetails-responses').toLowerCase()}`;
+    ? `1 ${I18n.get('schoolbook.response').toLowerCase()}`
+    : `${responses} ${I18n.get('schoolbook.responses').toLowerCase()}`;
 
 export interface ISchoolBookWordDetailsCardProps {
   action: () => void;
@@ -275,18 +275,10 @@ const SchoolbookWordDetailsCard = (
           <SmallBoldText style={styles.unacknowledged}>{unacknowledgedString(userType)}</SmallBoldText>
         ) : null}
         {word?.category ? (
-          <View
-            style={{
-              marginTop: isAuthorOtherTeacher ? UI_SIZES.spacing.medium : UI_SIZES.spacing.large,
-            }}>
-            <ImageLabel
-              cachedSVG
-              text={I18n.get(`schoolbook-worddetails-categories-${word?.category}`)}
-              imageName={`schoolbook-${word?.category}`}
-              imageType={ImageType.svg}
-              color={theme.color.schoolbook.categories[word?.category]}
-            />
-          </View>
+          <CardTopContentCategory
+            style={{ marginTop: isAuthorOtherTeacher ? UI_SIZES.spacing.medium : UI_SIZES.spacing.large }}
+            category={word?.category}
+          />
         ) : null}
         {word?.title ? <HeadingSText style={{ marginTop: UI_SIZES.spacing.small }}>{word?.title}</HeadingSText> : null}
         {word?.text ? (
@@ -380,7 +372,7 @@ const SchoolbookWordDetailsCard = (
         !isWordAcknowledged ? (
           <BottomButtonSheet
             displayShadow={doesContentExceedView}
-            text={I18n.get('schoolbook-worddetails-acknowledge')}
+            text={I18n.get('schoolbook.acknowledge')}
             action={action}
             loading={isAcknowledgingWord}
           />
@@ -400,10 +392,10 @@ const SchoolbookWordDetailsCard = (
         content={
           <View style={styles.modalBoxContainer}>
             <HeadingSText style={{ marginBottom: UI_SIZES.spacing.tiny }}>
-              {I18n.get('schoolbook-worddetails-recipientsmodal-title')}
+              {I18n.get('schoolbook.schoolbookWordDetailsScreen.recipientsModal.title')}
             </HeadingSText>
             <SmallText style={{ marginBottom: UI_SIZES.spacing.medium, color: theme.palette.grey.graphite }}>
-              {I18n.get('schoolbook-worddetails-recipientsmodal-text')}
+              {I18n.get('schoolbook.schoolbookWordDetailsScreen.recipientsModal.text')}
             </SmallText>
             <UserList
               ref={flatListModalRef}
