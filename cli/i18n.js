@@ -100,7 +100,6 @@ const getTranslationActions = () => {
     localEsContent = JSON.parse(fs.readFileSync(getLocalFile('es'), 'utf-8'));
   } catch (error) {
     console.error('!!! Unable to read fr.json, en.json or es.json !!!');
-    console.log(error);
     process.exit(2);
   }
 

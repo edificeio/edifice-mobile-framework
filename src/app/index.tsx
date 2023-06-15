@@ -55,12 +55,6 @@ function useAppState() {
   return currentLocale;
 }
 
-function useI18n() {
-  React.useEffect(() => {
-    I18n.init();
-  }, []);
-}
-
 function useTrackers() {
   React.useEffect(() => {
     Trackers.init().then(() => {
@@ -70,13 +64,14 @@ function useTrackers() {
   }, []);
 }
 
+
+
 interface AppProps extends IStoreProp {}
 
 function App(props: AppProps) {
   useAppState();
   useTrackers();
   useNavigationDevPlugins();
-  useI18n();
   return (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>

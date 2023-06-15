@@ -151,12 +151,10 @@ export const getAuthNavigationState = (selectedPlatform?: Platform, loginRedirec
 
   // 1. Pre-login screens
 
-  const onboardingTexts = I18n.get('user-onboarding-onboarding');
-  const hasOnboardingTexts = onboardingTexts && onboardingTexts.length;
-  const hasMultiplePlatforms = appConf.platforms.length > 1;
+  routes.push({ name: authRouteNames.onboarding });
 
-  if (hasOnboardingTexts) routes.push({ name: authRouteNames.onboarding });
-  if (hasMultiplePlatforms && (selectedPlatform || !routes.length)) routes.push({ name: authRouteNames.platforms });
+  if (appConf.platforms.length > 1 && (selectedPlatform || !routes.length)) routes.push({ name: authRouteNames.platforms });
+
   if (selectedPlatform || !routes.length)
     routes.push({
       name: getLoginRouteName(selectedPlatform),
@@ -174,6 +172,7 @@ export const getAuthNavigationState = (selectedPlatform?: Platform, loginRedirec
   // We create a dummy StackRouter to perform this, then returns the resulting navState.
   const navAction = getRedirectLoginNavAction(loginRedirect, selectedPlatform);
   if (!navAction) return { routes };
+
   const router = StackRouter({});
   const routeNames = Object.values(authRouteNames);
   const rehydratedState = router.getRehydratedState({ routes }, { routeNames, routeParamList: {}, routeGetIdList: {} });

@@ -9,10 +9,11 @@ import SplashScreen from 'react-native-splash-screen';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { RootToastHandler, ToastHandler } from '~/framework/components/toast';
+import { RootToastHandler } from '~/framework/components/toast';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
@@ -76,6 +77,12 @@ function RootNavigator(props: RootNavigatorProps) {
     return isFullyLogged ? mainNavigation : authNavigation;
   }, [authNavigation, isFullyLogged, mainNavigation]);
 
+  // === Initialize i18n ===
+  const [i18nInitialized, setIsInitialized] = React.useState(false);
+  React.useEffect(() => {
+    I18n.init().then(() => setIsInitialized(true));
+  }, []);
+
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 
   // === Render navigation container with initialState ===
@@ -83,10 +90,11 @@ function RootNavigator(props: RootNavigatorProps) {
   const trackNavState = useNavigationTracker();
 
   const ret = React.useMemo(() => {
+    const canStart = isReady && i18nInitialized;
     return (
       <>
         <SplashScreenComponent key={isReady} />
-        {isReady ? (
+        {canStart ? (
           <>
             <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
               <AppPushNotificationHandlerComponent>
@@ -101,7 +109,7 @@ function RootNavigator(props: RootNavigatorProps) {
         ) : null}
       </>
     );
-  }, [isReady, initialNavState, trackNavState, routes]);
+  }, [isReady, i18nInitialized, initialNavState, trackNavState, routes]);
 
   return ret;
 }

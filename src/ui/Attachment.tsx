@@ -304,8 +304,8 @@ class Attachment extends React.PureComponent<
       if ((fileType && fileType.startsWith('image')) || fileType === 'picture') {
         try {
           if (file) await openDocument(file, navigation);
-        } catch (error) {
-          console.log(error);
+        } catch {
+          // TODO: handle error
         }
       } else {
         onOpenFile(notifierId, file, navigation);

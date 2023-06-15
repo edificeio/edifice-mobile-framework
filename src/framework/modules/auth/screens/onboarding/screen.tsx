@@ -38,7 +38,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
   render() {
     const { navigation } = this.props;
     const { buttonsWidth } = this.state;
-
+    const texts = I18n.getArray('user-onboarding-text');
     return (
       <PageView style={styles.page} statusBar="light">
         <View style={styles.mainContainer}>
@@ -46,14 +46,12 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
             {this.showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
           </HeadingLText>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiper} activeDotStyle={[styles.swiper, styles.swiperActive]}>
-            {(I18n.get('user-onboarding-onboarding', { returnObjects: true }) as unknown as string[]).map(
-              (onboardingText, index) => (
-                <View key={index} style={styles.swiperItem}>
-                  <NamedSVG name={`onboarding-${index}`} style={styles.swiperItemImage} />
-                  <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>
-                </View>
-              ),
-            )}
+            {texts.map((onboardingText, index) => (
+              <View key={index} style={styles.swiperItem}>
+                <NamedSVG name={`onboarding-${index}`} style={styles.swiperItemImage} />
+                <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>
+              </View>
+            ))}
           </Swiper>
         </View>
         <View style={styles.buttons}>

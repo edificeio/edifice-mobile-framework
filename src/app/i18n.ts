@@ -70,7 +70,7 @@ export namespace I18n {
   const I18N_SHOW_KEYS_KEY = 'showKeys';
   let showKeys = false;
 
-  export const canShowKeys = __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().indexOf('alpha') > 0;
+  export const canShowKeys = __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
 
   // Phrase stuff
   const phraseId = phraseSecrets?.distributionId;
@@ -96,9 +96,18 @@ export namespace I18n {
 
   // Get wording based on key (in the correct language)
   // Note: the "returnDetails" option is set to false, as we always want to return a string (not a details object)
-  export function get(key: Parameters<typeof i18n.t>[0], options?: Parameters<typeof i18n.t>[1]) {
+  export function get(key: string, options?: Parameters<typeof i18n.t>[1]) {
     if (showKeys) return key;
     return i18n.t(key, { ...options, returnDetails: false });
+  }
+
+  // Get wordings array based on given key
+  export function getArray(key: string, options?: Parameters<typeof i18n.t>[1]) {
+    const values = i18n.t(key, { ...options, returnObjects: true });
+    if (typeof values === 'string') return [];
+    if (!showKeys) return values;
+    for (let i = 0; i < (values as string[]).length; i++) values[i] = `${key}.${i}`;
+    return values;
   }
 
   export function getLanguage() {
@@ -132,7 +141,7 @@ export namespace I18n {
       if (stored) showKeys = JSON.parse(stored);
     }
     // Initialize i18next
-    i18n
+    await i18n
       .use(ChainedBackend)
       .use(initReactI18next)
       .init({
