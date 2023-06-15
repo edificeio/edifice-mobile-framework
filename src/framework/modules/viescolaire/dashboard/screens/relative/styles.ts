@@ -5,9 +5,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 
 export default StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
   declareAbscenceText: {
     color: theme.palette.grey.white,
   },
@@ -22,7 +19,6 @@ export default StyleSheet.create({
   gridModulesLine: {
     width: '100%',
   },
-
   subtitle: {
     color: theme.palette.grey.stone,
   },

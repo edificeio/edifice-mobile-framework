@@ -5,10 +5,12 @@ import { IDevoir, ISubject, IUserChild } from '~/framework/modules/viescolaire/c
 import { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
 import type { DashboardNavigationParams } from '~/framework/modules/viescolaire/dashboard/navigation';
 import { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import { IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
 import { AsyncState } from '~/framework/util/redux/async';
 
 export interface DashboardRelativeScreenProps {
   authorizedViescoApps: IAuthorizedViescoApps;
+  childrenEvents: IChildrenEvents;
   devoirs: AsyncState<IDevoir[]>;
   homeworks: AsyncState<IHomeworkMap>;
   hasRightToCreateAbsence: boolean;
@@ -17,6 +19,8 @@ export interface DashboardRelativeScreenProps {
   childId?: string;
   structureId?: string;
   userId?: string;
+  clearCompetences: () => void;
+  fetchChildrenEvents: (structureId: string, studentsIds: string[]) => Promise<IChildrenEvents>;
   fetchDevoirs: (structureId: string, childId: string) => Promise<IDevoir[]>;
   fetchHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
   fetchSubjects: (structureId: string) => Promise<ISubject[]>;

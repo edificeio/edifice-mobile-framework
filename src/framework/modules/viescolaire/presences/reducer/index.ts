@@ -18,7 +18,7 @@ import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~
 
 interface IPresencesReduxStateData {
   allowMultipleSlots: boolean;
-  childrenEvents?: IChildrenEvents;
+  childrenEvents: IChildrenEvents;
   classCall?: IClassCall;
   courses: ICourse[];
   eventReasons: IEventReason[];
@@ -31,7 +31,7 @@ interface IPresencesReduxStateData {
 
 export interface IPresencesReduxState {
   allowMultipleSlots: AsyncState<boolean>;
-  childrenEvents: AsyncState<IChildrenEvents | undefined>;
+  childrenEvents: AsyncState<IChildrenEvents>;
   classCall: AsyncState<IClassCall | undefined>;
   courses: AsyncState<ICourse[]>;
   eventReasons: AsyncState<IEventReason[]>;
@@ -44,6 +44,7 @@ export interface IPresencesReduxState {
 
 const initialState: IPresencesReduxStateData = {
   allowMultipleSlots: true,
+  childrenEvents: {},
   courses: [],
   eventReasons: [],
   history: {

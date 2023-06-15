@@ -16,25 +16,11 @@ import {
   IMemento,
   IPunishment,
   IRelative,
-  IStudentsEvents,
   IUserChild,
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
-
-type IBackendChildrenEvents = {
-  students_events: any;
-  limit?: number;
-  offset?: number;
-  recovery_methods: string; // {HALF_DAY / HOUR / DAY}
-  totals: {
-    JUSTIFIED: number;
-    UNJUSTIFIED: number;
-    LATENESS: number;
-    DEPARTURE: number;
-  };
-};
 
 type IBackendClassCall = {
   personnel_id: string;
@@ -191,17 +177,28 @@ type IBackendMemento = {
   relatives: IRelative[];
 };
 
-type IBackendStudentsEvents = {
-  students_events: any;
-  limit?: number;
-  offset?: number;
-  recovery_methods: string; // {HALF_DAY / HOUR / DAY}
-  totals: {
-    JUSTIFIED: number;
-    UNJUSTIFIED: number;
-    LATENESS: number;
-    DEPARTURE: number;
+type IBackendStudentEvents = {
+  all: {
+    DEPARTURE: IBackendEvent[];
+    LATENESS: IBackendEvent[];
+    NO_REASON: IBackendEvent[];
+    REGULARIZED: IBackendEvent[];
+    UNREGULARIZED: IBackendEvent[];
   };
+  totals: {
+    DEPARTURE: number;
+    LATENESS: number;
+    NO_REASON: number;
+    REGULARIZED: number;
+    UNREGULARIZED: number;
+  };
+};
+
+type IBackendStudentsEvents = {
+  limit: number | null;
+  offset: number | null;
+  recovery_method: string | null; // {HALF_DAY / HOUR / DAY}
+  students_events: { [studentId: string]: IBackendStudentEvents };
 };
 
 type IBackendUserChild = {
@@ -225,16 +222,6 @@ type IBackendCourseList = IBackendCourse[];
 type IBackendEventReasonList = IBackendEventReason[];
 type IBackendHistoryEventList = IBackendHistoryEvent[];
 type IBackendUserChildren = IBackendUserChild[];
-
-const childrenEventsAdapter = (data: IBackendChildrenEvents): IChildrenEvents => {
-  return {
-    studentsEvents: data.students_events,
-    limit: data.limit,
-    offset: data.offset,
-    recoveryMethods: data.recovery_methods,
-    totals: data.totals,
-  } as IChildrenEvents;
-};
 
 const classCallAdapter = (data: IBackendClassCall): IClassCall => {
   return {
@@ -358,14 +345,31 @@ const mementoAdapter = (data: IBackendMemento): IMemento => {
   } as IMemento;
 };
 
-const studentsEventsAdapter = (data: IBackendStudentsEvents): IStudentsEvents => {
-  return {
-    studentsEvents: data.students_events,
-    limit: data.limit,
-    offset: data.offset,
-    recoveryMethods: data.recovery_methods,
-    totals: data.totals,
-  } as IStudentsEvents;
+const areEventsListed = (events: IBackendStudentEvents): boolean => {
+  return (
+    events.all.DEPARTURE.length > 0 ||
+    events.all.LATENESS.length > 0 ||
+    events.all.NO_REASON.length > 0 ||
+    events.all.REGULARIZED.length > 0 ||
+    events.all.UNREGULARIZED.length > 0
+  );
+};
+
+const studentsEventsAdapter = (data: IBackendStudentsEvents): IChildrenEvents => {
+  return Object.fromEntries(
+    Object.entries(data.students_events)
+      .filter(([id, events]) => areEventsListed(events))
+      .map(([studentId, value]) => [
+        studentId,
+        {
+          DEPARTURE: value.all.DEPARTURE.map(eventAdapter),
+          LATENESS: value.all.LATENESS.map(eventAdapter),
+          NO_REASON: value.all.NO_REASON.map(eventAdapter),
+          REGULARIZED: value.all.REGULARIZED.map(eventAdapter),
+          UNREGULARIZED: value.all.UNREGULARIZED.map(eventAdapter),
+        },
+      ]),
+  ) as IChildrenEvents;
 };
 
 const userChildAdapter = (data: IBackendUserChild): IUserChild => {
@@ -429,22 +433,6 @@ export const presencesService = {
           return res.id;
         },
       );
-    },
-  },
-  childrenEvents: {
-    get: async (session: ISession, structureId: string, studentIds: string[]) => {
-      const api = `/presences/structures/${structureId}/students/events`;
-      const body = JSON.stringify({
-        student_ids: studentIds,
-        types: ['NO_REASON', 'UNREGULARIZED', 'REGULARIZED', 'LATENESS', 'DEPARTURE'],
-        start_at: moment().format('YYYY-MM-DD'),
-        end_at: moment().format('YYYY-MM-DD'),
-      });
-      const childrenEvents = (await fetchJSONWithCache(api, {
-        method: 'POST',
-        body,
-      })) as IBackendChildrenEvents;
-      return childrenEventsAdapter(childrenEvents) as IChildrenEvents;
     },
   },
   classCall: {
@@ -619,19 +607,19 @@ export const presencesService = {
     },
   },
   studentsEvents: {
-    get: async (session: ISession, structureId: string, studentIds: string[], startDate: moment.Moment, endDate: moment.Moment) => {
+    get: async (session: ISession, structureId: string, studentIds: string[]) => {
       const api = `/presences/structures/${structureId}/students/events`;
       const body = JSON.stringify({
         student_ids: studentIds,
-        start_at: startDate.format('YYYY-MM-DD'),
-        end_at: endDate.format('YYYY-MM-DD'),
         types: ['NO_REASON', 'UNREGULARIZED', 'REGULARIZED', 'LATENESS', 'DEPARTURE'],
+        start_at: moment().format('YYYY-MM-DD'),
+        end_at: moment().format('YYYY-MM-DD'),
       });
       const events = (await fetchJSONWithCache(api, {
         method: 'POST',
         body,
       })) as IBackendStudentsEvents;
-      return studentsEventsAdapter(events);
+      return studentsEventsAdapter(events) as IChildrenEvents;
     },
   },
   userChildren: {

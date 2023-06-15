@@ -28,9 +28,9 @@ export const fetchPresencesChildrenEventsAction =
     try {
       const session = assertSession();
       dispatch(presencesChildrenEventsActionsCreators.request());
-      const childrenEvents = await presencesService.childrenEvents.get(session, structureId, studentIds);
-      dispatch(presencesChildrenEventsActionsCreators.receipt(childrenEvents));
-      return childrenEvents;
+      const events = await presencesService.studentsEvents.get(session, structureId, studentIds);
+      dispatch(presencesChildrenEventsActionsCreators.receipt(events));
+      return events;
     } catch (e) {
       dispatch(presencesChildrenEventsActionsCreators.error(e as Error));
       throw e;
