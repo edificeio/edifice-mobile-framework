@@ -26,7 +26,7 @@ export interface BackendNewsItem {
   numberOfComments: number;
   title: string;
   headline: boolean;
-  rights: string[];
+  sharedRights: string[];
 }
 
 export interface BackendNewsItemDetails extends Omit<BackendNewsItem, 'threadId'> {
@@ -34,7 +34,8 @@ export interface BackendNewsItemDetails extends Omit<BackendNewsItem, 'threadId'
     id: number;
     title: string;
     icon: string;
-    rights: string[];
+    owner: NewsOwner;
+    sharedRights: string[];
   };
 }
 
@@ -45,7 +46,7 @@ export interface BackendNewsThreadItem {
   created: string;
   modified: string;
   owner: NewsOwner;
-  rights: string[];
+  sharedRights: string[];
 }
 
 export interface BackendNewsCommentItem {
@@ -76,35 +77,38 @@ export const newsItemAdapter = (n: BackendNewsItem) => {
     numberOfComments: n.numberOfComments,
     title: n.title,
     headline: n.headline,
-    rights: n.rights as NewsItemRights[],
+    sharedRights: n.sharedRights as NewsItemRights[],
   };
   return ret as NewsItem;
 };
 
 export const newsItemDetailsAdapter = (n: BackendNewsItemDetails) => {
   const ret = {
-    id: n.id,
+    news: {
+      id: n.id,
+      threadId: n.thread.id,
+      content: n.content,
+      status: n.status as NewsItemStatus,
+      owner: {
+        id: n.owner.id,
+        displayName: n.owner.displayName,
+        deleted: n.owner.deleted,
+      },
+      created: moment(n.created),
+      modified: moment(n.modified),
+      publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
+      expirationDate: n.expirationDate ? moment(n.expirationDate) : null,
+      numberOfComments: n.numberOfComments,
+      title: n.title,
+      headline: n.headline,
+      sharedRights: n.sharedRights as NewsItemRights[],
+    },
     thread: {
-      id: n.thread.id,
       title: n.thread.title,
       icon: n.thread.icon,
-      rights: n.thread.rights as NewsThreadItemRights[],
+      sharedRights: n.thread.sharedRights as NewsThreadItemRights[],
+      ownerId: n.thread.owner.id,
     },
-    content: n.content,
-    status: n.status as NewsItemStatus,
-    owner: {
-      id: n.owner.id,
-      displayName: n.owner.displayName,
-      deleted: n.owner.deleted,
-    },
-    created: moment(n.created),
-    modified: moment(n.modified),
-    publicationDate: n.publicationDate ? moment(n.publicationDate) : null,
-    expirationDate: n.expirationDate ? moment(n.expirationDate) : null,
-    numberOfComments: n.numberOfComments,
-    title: n.title,
-    headline: n.headline,
-    rights: n.rights as NewsItemRights[],
   };
   return ret as NewsItemDetails;
 };
@@ -121,7 +125,7 @@ export const newsThreadItemAdapter = (n: BackendNewsThreadItem) => {
       displayName: n.owner.displayName,
       deleted: n.owner.deleted,
     },
-    rights: n.rights as NewsThreadItemRights[],
+    sharedRights: n.sharedRights as NewsThreadItemRights[],
   };
   return ret as NewsThreadItem;
 };
@@ -192,15 +196,16 @@ export const newsService = {
     post: async (infoId: number, comment: string) => {
       const api = `/actualites/info/${infoId}/comment`;
 
-      const body = JSON.stringify({ comment });
+      const body = JSON.stringify({ info_id: infoId, comment });
       return signedFetchJson2(`${api}`, {
         method: 'PUT',
         body,
       });
     },
-    update: async (infoId: number, commentId: number, comment: string) => {
+    update: async (infoId: number, comment: string, commentId: number) => {
       const api = `/actualites/info/${infoId}/comment/${commentId}`;
-      const body = JSON.stringify({ comment });
+
+      const body = JSON.stringify({ info_id: infoId, comment });
       return signedFetchJson2(`${api}`, {
         method: 'PUT',
         body,
@@ -214,4 +219,9 @@ export const newsService = {
       });
     },
   },
+};
+
+export const newsUriCaptureFunction = url => {
+  const newsInfoRegex = /^\/actualites.+\/info\/(\d+)/;
+  return url.match(newsInfoRegex)?.[1];
 };

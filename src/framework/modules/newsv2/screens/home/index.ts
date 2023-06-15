@@ -1,6 +1,6 @@
 import NewsHomeScreen, { computeNavBar } from './screen';
-import { NewsHomeScreenNavParams } from './types';
+import { NewsHomeScreenNavParams, NewsThreadItemReduce } from './types';
 
 export { computeNavBar };
-export type { NewsHomeScreenNavParams };
+export type { NewsHomeScreenNavParams, NewsThreadItemReduce };
 export default NewsHomeScreen;

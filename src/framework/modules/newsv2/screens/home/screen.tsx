@@ -1,3 +1,4 @@
+import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl } from 'react-native';
@@ -9,6 +10,7 @@ import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
+import ScrollView from '~/framework/components/scrollView';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getNewsItemsAction, getNewsItemsForSelectedThreadAction, getNewsThreadsAction } from '~/framework/modules/newsv2/actions';
 import NoNewsScreen from '~/framework/modules/newsv2/components/empty-screen';
@@ -30,7 +32,7 @@ const convertArrayToObject = (array: NewsThreadItem[], key) => {
   return array.reduce((obj, item) => {
     return {
       ...obj,
-      [item[key]]: { title: item.title, icon: item.icon, rights: item.rights },
+      [item[key]]: { title: item.title, icon: item.icon, sharedRights: item.sharedRights, ownerId: item.owner.id },
     };
   }, initialValue);
 };
@@ -53,15 +55,15 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [idThreadSelected, setIdThreadSelected] = useState<number | null>(null);
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
-  const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.INIT);
+  const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
 
   const threadsInfosReduce = useMemo(() => convertArrayToObject(threads, 'id'), [threads]);
   const wf = useMemo(() => getNewsRights(session!), [session]);
   const canCreateNewsForSelectedThread: boolean = React.useMemo(
-    () => (idThreadSelected ? !isEmpty(threadsInfosReduce[idThreadSelected].rights) : false),
+    () => (idThreadSelected ? !isEmpty(threadsInfosReduce[idThreadSelected].sharedRights) : false),
     [idThreadSelected, threadsInfosReduce],
   );
-  const canCreateNewsForOneThread: boolean = React.useMemo(() => threads?.some(thread => !isEmpty(thread.rights)), [threads]);
+  const canCreateNewsForOneThread: boolean = React.useMemo(() => threads?.some(thread => !isEmpty(thread.sharedRights)), [threads]);
 
   const onOpenNewsItem = useCallback(
     (item: NewsItem, thread: NewsThreadItemReduce) => {
@@ -73,10 +75,6 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     [navigation],
   );
 
-  const renderError = () => {
-    return <EmptyContentScreen />;
-  };
-
   const onFilter = useCallback(async (idThread: number | null) => {
     try {
       setIdThreadSelected(idThread);
@@ -86,39 +84,52 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
       else data = await props.handleGetNewsItemsForSelectedThread(idThread);
 
       setNews(data);
-    } catch (e) {
-      // TODO ERROR
-      console.log(e);
+    } catch {
+      setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const init = async () => {
     try {
-      const data = await Promise.all([props.handleGetNewsThreads(), props.handleGetNewsItems()]);
+      const data = await Promise.all([
+        props.handleGetNewsThreads(),
+        idThreadSelected === null ? props.handleGetNewsItems() : props.handleGetNewsItemsForSelectedThread(idThreadSelected),
+      ]);
 
       setThreads(data[0]);
       setNews(data[1]);
       setShowPlaceholder(false);
       setLoadingState(AsyncPagedLoadingState.DONE);
-    } catch (e) {
+    } catch {
       setShowPlaceholder(false);
-      renderError();
-      //TODO ERROR
-      console.log(e);
+      setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
     }
   };
 
   useEffect(() => {
-    init();
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      if (loadingState === AsyncPagedLoadingState.PRISTINE) init();
+    });
+    return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [props.navigation]);
+
+  const renderError = () => {
+    return (
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => init()} />}>
+        <EmptyContentScreen />
+      </ScrollView>
+    );
+  };
 
   const renderPage = useCallback(() => {
+    if (loadingState === (AsyncPagedLoadingState.INIT_FAILED || AsyncPagedLoadingState.REFRESH_FAILED)) return renderError();
     // empty screen with create threads button when no threads, news && can create threads
     if (isEmpty(threads) && isEmpty(news) && wf.threads.create) return <NoNewsScreen createThreads />;
     // empty screen with create news button when only one thread && no news && can create news on this thread
-    if (threads.length === 1 && isEmpty(news) && !isEmpty(threads[0].rights)) return <NoNewsScreen createNews />;
+    if (threads.length === 1 && isEmpty(news) && !isEmpty(threads[0].sharedRights)) return <NoNewsScreen createNews />;
     // empty screen with no button when only one thread && no news or no threads && no news
     if ((threads.length === 1 && isEmpty(news)) || (isEmpty(threads) && isEmpty(news))) return <NoNewsScreen />;
 
@@ -149,6 +160,7 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     threads,
     threadsInfosReduce,
     wf.threads.create,
+    loadingState,
   ]);
 
   return <PageView>{showPlaceholder ? <NewsPlaceholderHome /> : renderPage()}</PageView>;

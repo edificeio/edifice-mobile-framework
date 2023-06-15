@@ -23,5 +23,6 @@ export type NewsHomeScreenProps = NewsHomeScreenDataProps &
 export interface NewsThreadItemReduce {
   icon: ImageSourcePropType | null;
   title: string;
-  rights: NewsThreadItemRights[];
+  sharedRights: NewsThreadItemRights[];
+  ownerId: string;
 }

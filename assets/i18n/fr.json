@@ -609,6 +609,8 @@
   "myapp-infoBubbleText": "Avec {{appName}}, vous recevez toutes vos notifications dans l'onglet Nouveautés. En cliquant sur certaines activités, vous serez redirigé vers la version en ligne de votre réseau social éducatif.\n\nPour consulter et modifier certains contenus, vous serez redirigé vers le navigateur de votre téléphone.",
   "myapp-infoBubbleTitle": "Où sont les autres applications ?",
   "news-appName": "Actualités",
+  "news-details-deletionNewsText": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer l'actualité ?",
+  "news-details-deletionNewsTitle": "Confirmez-vous la suppression ?",
   "news-home-createNewsButton": "Créer une actualité",
   "news-home-createThreadButton": "Créer un fil d'actualités",
   "news-home-noContent-text": "Il n’y a pas d’actualités pour le moment. Revenez plus tard.",

@@ -99,6 +99,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         changed: false,
         value: '',
       });
+    setIsEditing(false);
   };
   const editComment = () => {
     setIsEditing(true);

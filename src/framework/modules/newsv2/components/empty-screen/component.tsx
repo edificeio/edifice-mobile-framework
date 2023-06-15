@@ -28,11 +28,6 @@ export const NoNewsScreen = (props: { createNews?: boolean; createThreads?: bool
       />
     );
   return (
-    <EmptyScreen
-      svgImage="empty-news"
-      title={I18n.get('news-home-noContent-title')}
-      text={I18n.get('news-home-noContent-text')}
-      textColor={theme.palette.grey.black}
-    />
+    <EmptyScreen svgImage="empty-news" title={I18n.get('news-home-noContent-title')} text={I18n.get('news-home-noContent-text')} />
   );
 };

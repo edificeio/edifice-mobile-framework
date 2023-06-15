@@ -47,7 +47,7 @@ export default () =>
   registerNotifHandlers([
     {
       type: 'NEWS',
-      'event-type': ['INFO-SHARED', 'NEWS-PUBLISHED'], // Replace this with the backend notification event-type
+      'event-type': [], // Replace this with the backend notification event-type
       notifHandlerAction: handleSomeNotificationAction,
     },
   ]);

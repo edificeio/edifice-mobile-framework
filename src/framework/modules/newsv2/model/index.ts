@@ -1,6 +1,8 @@
 import { Moment } from 'moment';
 import { ImageSourcePropType } from 'react-native';
 
+import { NewsThreadItemReduce } from '~/framework/modules/newsv2/screens/home';
+
 export interface NewsOwner {
   id: string;
   displayName: string;
@@ -20,7 +22,7 @@ export interface NewsThreadItem {
   created: Moment;
   modified: Moment;
   owner: NewsOwner;
-  rights: NewsThreadItemRights[];
+  sharedRights: NewsThreadItemRights[];
 }
 
 export enum NewsItemRights {
@@ -48,16 +50,12 @@ export interface NewsItem {
   numberOfComments: number;
   title: string;
   headline: boolean;
-  rights: NewsItemRights[];
+  sharedRights: NewsItemRights[];
 }
 
-export interface NewsItemDetails extends Omit<NewsItem, 'threadId'> {
-  thread: {
-    id: number;
-    title: string;
-    icon: string;
-    rights: NewsThreadItemRights[];
-  };
+export interface NewsItemDetails {
+  news: NewsItem;
+  thread: NewsThreadItemReduce;
 }
 
 export interface NewsCommentItem {

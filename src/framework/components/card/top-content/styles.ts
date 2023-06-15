@@ -9,6 +9,7 @@ export default StyleSheet.create({
   },
   label: {
     marginLeft: UI_SIZES.spacing.minor,
+    maxWidth: UI_SIZES.screen.width - 6 * UI_SIZES.spacing.medium - 2 * UI_SIZES.spacing.minor,
   },
   topContent: {
     flexDirection: 'row',
