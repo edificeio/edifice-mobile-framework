@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
 import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
+import { SmallBoldText, SmallItalicText, TextFontStyle } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -96,6 +96,11 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                   },
                   boldTextStyle: {
                     color: theme.ui.text.inverse,
+                  },
+                  linkTextStyle: {
+                    ...TextFontStyle.Bold,
+                    color: theme.ui.text.inverse,
+                    textDecorationLine: 'underline',
                   },
                   textColor: false,
                   images: false,

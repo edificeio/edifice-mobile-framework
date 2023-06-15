@@ -235,21 +235,16 @@ function renderParseText(
         </UnderlineTextComp>
       );
     case HtmlParserJsxTextVariant.Link:
-      const LinkTextComp = (nugget as ILinkTextNugget).url
-        ? nested
-          ? NestedActionText
-          : SmallActionText
-        : nested
-        ? NestedText
-        : SmallText;
+      const url = (nugget as ILinkTextNugget).url;
+      const LinkTextComp = url ? (nested ? NestedActionText : SmallActionText) : nested ? NestedText : SmallText;
       return (
         <LinkTextComp
           key={key}
           selectable={selectable}
-          {...((nugget as ILinkTextNugget).url
+          {...(url
             ? {
                 onPress: () => {
-                  (nugget as ILinkTextNugget).url && openUrl((nugget as ILinkTextNugget).url);
+                  openUrl(url);
                 },
               }
             : {})}
