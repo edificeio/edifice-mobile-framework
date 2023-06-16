@@ -63,7 +63,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('schoolbook-wordlist-appname"'),
+    title: I18n.get('schoolbook-wordlist-appname'),
   }),
   headerRight: undefined,
 });
@@ -306,8 +306,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-schoolbook"
-        title={I18n.get(`schoolbook-wordlist-emptyscreen-title${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`)}
-        text={I18n.get(`schoolbook-wordlist-emptyscreen-text${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`)}
+        title={I18n.get(`schoolbook-wordlist-emptyscreen-title${hasSchoolbookWordCreationRights ? '' : '-nocreationrights'}`)}
+        text={I18n.get(`schoolbook-wordlist-emptyscreen-text${hasSchoolbookWordCreationRights ? '' : '-nocreationrights'}`)}
         {...(hasSchoolbookWordCreationRights
           ? {
               buttonText: I18n.get('schoolbook-wordlist-wordcreate'),

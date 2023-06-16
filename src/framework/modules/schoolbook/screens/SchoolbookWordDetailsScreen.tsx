@@ -53,7 +53,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('schoolbook-worddetails-appname"'),
+    title: I18n.get('schoolbook-worddetails-appname'),
   }),
   headerRight: undefined,
 });

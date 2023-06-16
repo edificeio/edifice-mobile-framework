@@ -24,13 +24,13 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.get(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+  `${ackNumber}/${total} ${I18n.get(`schoolbook-wordlist-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
 const acknowledgedString = (isWordAcknowledged: boolean) =>
-  I18n.get(`schoolbook.${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
+  I18n.get(`schoolbook-wordlist-${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
 const responsesString = (responses: number) =>
   responses === 1
-    ? `1 ${I18n.get('schoolbook.response').toLowerCase()}`
-    : `${responses} ${I18n.get('schoolbook.responses').toLowerCase()}`;
+    ? `1 ${I18n.get('schoolbook-wordlist-response').toLowerCase()}`
+    : `${responses} ${I18n.get('schoolbook-wordlist-responses').toLowerCase()}`;
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;

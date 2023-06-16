@@ -25,7 +25,7 @@ export const CardTopContentCategory = (props: CardTopContentCategoryProps) => {
           />
         </View>
       }
-      text={I18n.get(`schoolbook.categories.${category}`)}
+      text={I18n.get(`schoolbook-cardtopcontentcategory-categories-${category}`)}
       textColor={theme.color.schoolbook.categories[category]}
       bold
       {...props}
