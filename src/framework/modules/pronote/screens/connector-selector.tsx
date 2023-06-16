@@ -49,14 +49,14 @@ class ConnectorSelectorScreen extends React.PureComponent<IConnectorSelectorScre
     return (
       <PageView>
         <DropdownSelector
-          message={I18n.get('pronote.selector.title')}
+          message={I18n.get('pronote-connectorselector-title')}
           dropDownPickerProps={{
             items,
             showTickIcon: false,
-            placeholder: I18n.get('pronote.selector.placeholder'),
+            placeholder: I18n.get('pronote-connectorselector-placeholder'),
           }}
           button={{
-            text: I18n.get('pronote.selector.action'),
+            text: I18n.get('pronote-connectorselector-action'),
             action: v => {
               if (v && this.props.session) redirect(this.props.session, v as string);
             },

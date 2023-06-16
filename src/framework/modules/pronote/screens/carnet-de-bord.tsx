@@ -151,14 +151,14 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
               {is50xError ? (
                 <EmptyScreen
                   svgImage="empty-pronote-uri"
-                  title={I18n.get('pronote.carnetDeBord.initFailed.title')}
-                  text={I18n.get('pronote.carnetDeBord.initFailed.text')}
+                  title={I18n.get('pronote-carnetdebord-initfailed-title')}
+                  text={I18n.get('pronote-carnetdebord-initfailed-text')}
                 />
               ) : (
                 <EmptyScreen
                   svgImage="empty-light"
-                  title={I18n.get('pronote.carnetDeBord.noData.title')}
-                  text={I18n.get('pronote.carnetDeBord.noData.text')}
+                  title={I18n.get('pronote-carnetdebord-nodata-title')}
+                  text={I18n.get('pronote-carnetdebord-nodata-text')}
                 />
               )}
             </ScrollView>
@@ -201,7 +201,7 @@ CarnetDeBordScreen.getRenderContent =
         {data && data.idPronote && data.address && data.structureId ? (
           <>
             <CarnetDeBordScreen.SectionContent
-              title={I18n.get('pronote.carnetDeBord.cahierDeTextes.title')}
+              title={I18n.get('pronote-carnetdebord-cahierdetextes-title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-calendar',
@@ -214,22 +214,22 @@ CarnetDeBordScreen.getRenderContent =
                 );
                 return taf
                   ? {
-                      textLabel: taf.Matiere ?? I18n.get('pronote.carnetDeBord.noInfo'),
+                      textLabel: taf.Matiere ?? I18n.get('pronote-carnetdebord-noinfo'),
                       valueLabel: taf.PourLe
-                        ? I18n.get('pronote.carnetDeBord.cahierDeTextes.pourDate', {
+                        ? I18n.get('pronote-carnetdebord-cahierdetextes-pourdate', {
                             date: displayDate(taf.PourLe, 'short'),
-                          })
-                        : I18n.get('pronote.carnetDeBord.noInfo'),
+                          }).toLowerCase()
+                        : I18n.get('pronote-carnetdebord-noinfo'),
                     }
                   : {};
               })()}
-              emptyLabel={I18n.get('pronote.carnetDeBord.cahierDeTextes.empty')}
+              emptyLabel={I18n.get('pronote-carnetdebord-cahierdetextes-empty')}
               navigation={navigation}
               type={CarnetDeBordSection.CAHIER_DE_TEXTES}
               data={data}
             />
             <CarnetDeBordScreen.SectionContent
-              title={I18n.get('pronote.carnetDeBord.releveDeNotes.title')}
+              title={I18n.get('pronote-carnetdebord-relevedenotes-title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-success',
@@ -239,20 +239,20 @@ CarnetDeBordScreen.getRenderContent =
                 const note = getSummaryItem(data.PageReleveDeNotes?.DevoirsPast, data.PageReleveDeNotes?.DevoirsFuture);
                 return (
                   note && {
-                    textLabel: note?.Matiere || I18n.get('pronote.carnetDeBord.noInfo'),
+                    textLabel: note?.Matiere || I18n.get('pronote-carnetdebord-noinfo'),
                     valueLabel: note?.Note
                       ? formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note.Note, note.Bareme)
-                      : I18n.get('pronote.carnetDeBord.noInfo'),
+                      : I18n.get('pronote-carnetdebord-noinfo'),
                   }
                 );
               })()}
-              emptyLabel={I18n.get('pronote.carnetDeBord.releveDeNotes.empty')}
+              emptyLabel={I18n.get('pronote-carnetdebord-relevedenotes-empty')}
               navigation={navigation}
               type={CarnetDeBordSection.NOTES}
               data={data}
             />
             <CarnetDeBordScreen.SectionContent
-              title={I18n.get('pronote.carnetDeBord.competences.title')}
+              title={I18n.get('pronote-carnetdebord-competences-title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-skills',
@@ -262,18 +262,18 @@ CarnetDeBordScreen.getRenderContent =
                 const comp = getSummaryItem(data.PageCompetences?.CompetencesPast, data.PageCompetences?.CompetencesFuture);
                 return (
                   comp && {
-                    textLabel: comp?.Matiere || I18n.get('pronote.carnetDeBord.noInfo'),
+                    textLabel: comp?.Matiere || I18n.get('pronote-carnetdebord-noinfo'),
                     valueLabel: formatCarnetDeBordCompetencesValue(comp.NiveauDAcquisition?.Genre),
                   }
                 );
               })()}
-              emptyLabel={I18n.get('pronote.carnetDeBord.competences.empty')}
+              emptyLabel={I18n.get('pronote-carnetdebord-competences-empty')}
               navigation={navigation}
               type={CarnetDeBordSection.COMPETENCES}
               data={data}
             />
             <CarnetDeBordScreen.SectionContent
-              title={I18n.get('pronote.carnetDeBord.vieScolaire.title')}
+              title={I18n.get('pronote-carnetdebord-viescolaire-title')}
               picture={{
                 type: 'NamedSvg',
                 name: 'ui-flag',
@@ -292,24 +292,24 @@ CarnetDeBordScreen.getRenderContent =
                               ? displayDate(vsco.DateDebut, 'short')
                               : displayDate(vsco.DateDebut, 'short') +
                                 I18n.get('common.space') +
-                                I18n.get('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                                I18n.get('pronote-carnetdebord-viescolaire-datefromto', {
                                   start: vsco.DateDebut.format('LT'),
                                   end: vsco.DateFin.format('LT'),
                                 })
-                            : I18n.get('pronote.carnetDeBord.vieScolaire.dateFromTo', {
+                            : I18n.get('pronote-carnetdebord-viescolaire-datefromto', {
                                 start: displayDate(vsco.DateDebut, 'short'),
                                 end: displayDate(vsco.DateFin, 'short'),
                               })
-                          : I18n.get('pronote.carnetDeBord.noInfo')
+                          : I18n.get('pronote-carnetdebord-noinfo')
                         : vsco.Date
                         ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
                           ? displayDate(vsco.Date, 'short') + I18n.get('common.space') + vsco.Date.format('LT')
                           : displayDate(vsco.Date, 'short')
-                        : I18n.get('pronote.carnetDeBord.noInfo'),
+                        : I18n.get('pronote-carnetdebord-noinfo'),
                   }
                 );
               })()}
-              emptyLabel={I18n.get('pronote.carnetDeBord.vieScolaire.empty')}
+              emptyLabel={I18n.get('pronote-carnetdebord-viescolaire-empty')}
               navigation={navigation}
               type={CarnetDeBordSection.VIE_SCOLAIRE}
               data={data}
@@ -321,14 +321,14 @@ CarnetDeBordScreen.getRenderContent =
                 if (session) redirect(session, data.address!);
               }}
               iconName="pictos-external-link"
-              text={I18n.get('pronote.carnetDeBord.openInPronote')}
+              text={I18n.get('pronote-carnetdebord-openinpronote')}
             />
           </>
         ) : (
           <EmptyScreen
             svgImage="empty-timeline"
-            title={I18n.get('pronote.carnetDeBord.noDataChild.title')}
-            text={I18n.get('pronote.carnetDeBord.noDataChild.text')}
+            title={I18n.get('pronote-carnetdebord-nodatachild-title')}
+            text={I18n.get('pronote-carnetdebord-nodatachild-text')}
           />
         )}
       </ScrollView>
@@ -357,9 +357,9 @@ CarnetDeBordScreen.SectionContent = function (props: {
       {isNotEmpty ? (
         <View style={styles.textRow}>
           <SmallBoldText numberOfLines={1} style={styles.textLabel}>
-            {props.textLabel || I18n.get('pronote.carnetDeBord.noInfo')}
+            {props.textLabel || I18n.get('pronote-carnetdebord-noinfo')}
           </SmallBoldText>
-          <SmallText numberOfLines={1}>{props.valueLabel || I18n.get('pronote.carnetDeBord.noInfo')}</SmallText>
+          <SmallText numberOfLines={1}>{props.valueLabel || I18n.get('pronote-carnetdebord-noinfo')}</SmallText>
         </View>
       ) : (
         <View style={styles.emptyRow}>
