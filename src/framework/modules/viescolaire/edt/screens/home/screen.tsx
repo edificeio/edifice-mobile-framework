@@ -1,11 +1,10 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -13,11 +12,14 @@ import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
+import { Icon } from '~/framework/components/picture/Icon';
+import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
+import Timetable from '~/framework/modules/viescolaire/common/components/Timetable';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
@@ -28,14 +30,16 @@ import {
   fetchEdtTeachersAction,
   fetchEdtUserChildrenAction,
 } from '~/framework/modules/viescolaire/edt/actions';
-import Timetable from '~/framework/modules/viescolaire/edt/components/Timetable';
+import { IEdtCourse } from '~/framework/modules/viescolaire/edt/model';
 import moduleConfig from '~/framework/modules/viescolaire/edt/module-config';
 import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import DateTimePicker from '~/ui/DateTimePicker';
 
-import { EdtHomeScreenPrivateProps } from './types';
+import styles from './styles';
+import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -63,18 +67,18 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
       if (!structureId || !userId || !userType) throw new Error();
       if (userType === UserType.Teacher) {
-        await props.fetchTeacherCourses(structureId, startDate, endDate, userId);
+        await props.tryFetchTeacherCourses(structureId, startDate, endDate, userId);
       } else {
         let childClasses = classes;
         if (userType === UserType.Relative) {
-          const children = await props.fetchUserChildren();
+          const children = await props.tryFetchUserChildren();
           childClasses = children.find(c => c.id === childId)?.idClasses;
         }
-        const classGroups = await props.fetchClassGroups(childClasses ?? [], childId);
-        await props.fetchChildCourses(structureId, startDate, endDate, classGroups);
+        const classGroups = await props.tryFetchClassGroups(childClasses ?? [], childId);
+        await props.tryFetchCourses(structureId, startDate, endDate, classGroups);
       }
-      await props.fetchTeachers(structureId);
-      await props.fetchSlots(structureId);
+      await props.tryFetchTeachers(structureId);
+      await props.tryFetchSlots(structureId);
     } catch {
       throw new Error();
     }
@@ -135,22 +139,95 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
   };
 
+  const getTeacherName = (teacherIds: string[]): string => {
+    return props.teachers.find(teacher => teacher.id === teacherIds[0])?.displayName ?? '';
+  };
+
+  const renderCourse = (course: IEdtCourse) => {
+    const isTeacher = props.userType === UserType.Teacher;
+    const className = course.classes.length ? course.classes[0] : course.groups[0];
+    const firstText = isTeacher ? className : course.subject.name;
+    const secondText = isTeacher ? course.subject.name : getTeacherName(course.teacherIds);
+    const hasTag = course.tags.length > 0 && course.tags[0].label.toLocaleUpperCase() !== 'ULIS';
+    const isActive = moment().isBetween(course.startDate, course.endDate);
+
+    return (
+      <View style={[styles.courseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
+        <View style={styles.subjectView}>
+          <HeadingXSText numberOfLines={1}>{firstText}</HeadingXSText>
+          <SmallText numberOfLines={1}>{secondText}</SmallText>
+        </View>
+        <View>
+          {course.roomLabels[0]?.length ? (
+            <View style={styles.roomView}>
+              <Icon name="pin_drop" size={16} />
+              <SmallText numberOfLines={1}>&nbsp;{`${I18n.get('edt-home-course-room')} ${course.roomLabels[0]}`}</SmallText>
+            </View>
+          ) : null}
+          {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
+        </View>
+      </View>
+    );
+  };
+
+  const renderHalfCourse = (course: IEdtCourse) => {
+    const isTeacher = props.userType === UserType.Teacher;
+    const className = course.classes.length ? course.classes[0] : course.groups[0];
+    const firstText = isTeacher ? className : course.subject.name;
+    const secondText = isTeacher ? course.subject.name : getTeacherName(course.teacherIds);
+    const hasTag = course.tags.length > 0 && course.tags[0].label.toLocaleUpperCase() !== 'ULIS';
+    const isActive = moment().isBetween(course.startDate, course.endDate);
+
+    return (
+      <View style={[styles.halfCourseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
+        <View style={styles.halfSplitLineView}>
+          <HeadingXSText style={styles.halfTextStyle} numberOfLines={1}>
+            {firstText}
+          </HeadingXSText>
+          {course.roomLabels[0]?.length ? (
+            <View style={styles.halfRoomLabelContainer}>
+              <Icon name="pin_drop" size={16} />
+              <SmallText numberOfLines={1}>{course.roomLabels[0]}</SmallText>
+            </View>
+          ) : null}
+        </View>
+        <View style={styles.halfSplitLineView}>
+          <SmallText style={styles.halfTextStyle} numberOfLines={1}>
+            {secondText}
+          </SmallText>
+          {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
+        </View>
+      </View>
+    );
+  };
+
   const renderTimetable = () => {
     return (
-      <Timetable
-        {...props}
-        startDate={startDate}
-        date={date}
-        isRefreshing={loadingRef.current === AsyncPagedLoadingState.REFRESH}
-        updateSelectedDate={updateSelectedDate}
-      />
+      <>
+        <View style={styles.weekPickerView}>
+          <SmallText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallText>
+          <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />
+        </View>
+        {loadingState === AsyncPagedLoadingState.REFRESH ? (
+          <LoadingIndicator />
+        ) : (
+          <Timetable
+            courses={props.courses}
+            mainColor={viescoTheme.palette.edt}
+            slots={props.slots}
+            startDate={startDate}
+            initialSelectedDate={date}
+            renderCourse={renderCourse}
+            renderCourseHalf={renderHalfCourse}
+          />
+        )}
+      </>
     );
   };
 
@@ -206,35 +283,15 @@ export default connect(
       userType,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<EdtHomeScreenDispatchProps>(
       {
-        fetchChildCourses: tryActionLegacy(
-          fetchEdtCoursesAction,
-          undefined,
-          true,
-        ) as unknown as EdtHomeScreenPrivateProps['fetchChildCourses'],
-        fetchClassGroups: tryActionLegacy(
-          fetchEdtClassGroupsAction,
-          undefined,
-          true,
-        ) as unknown as EdtHomeScreenPrivateProps['fetchClassGroups'],
-        fetchSlots: tryActionLegacy(fetchEdtSlotsAction, undefined, true) as unknown as EdtHomeScreenPrivateProps['fetchSlots'],
-        fetchTeacherCourses: tryActionLegacy(
-          fetchEdtTeacherCoursesAction,
-          undefined,
-          true,
-        ) as unknown as EdtHomeScreenPrivateProps['fetchTeacherCourses'],
-        fetchTeachers: tryActionLegacy(
-          fetchEdtTeachersAction,
-          undefined,
-          true,
-        ) as unknown as EdtHomeScreenPrivateProps['fetchTeachers'],
-        fetchUserChildren: tryActionLegacy(
-          fetchEdtUserChildrenAction,
-          undefined,
-          true,
-        ) as unknown as EdtHomeScreenPrivateProps['fetchUserChildren'],
+        tryFetchClassGroups: tryAction(fetchEdtClassGroupsAction),
+        tryFetchCourses: tryAction(fetchEdtCoursesAction),
+        tryFetchSlots: tryAction(fetchEdtSlotsAction),
+        tryFetchTeacherCourses: tryAction(fetchEdtTeacherCoursesAction),
+        tryFetchTeachers: tryAction(fetchEdtTeachersAction),
+        tryFetchUserChildren: tryAction(fetchEdtUserChildrenAction),
       },
       dispatch,
     ),

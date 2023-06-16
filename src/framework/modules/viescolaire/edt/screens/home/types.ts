@@ -1,16 +1,28 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { Moment } from 'moment';
 
-import { IUser } from '~/framework/modules/auth/model';
-import { UserType } from '~/framework/modules/auth/service';
-import { IClassGroups } from '~/framework/modules/viescolaire/common/model';
-import { IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
-import type { EdtNavigationParams } from '~/framework/modules/viescolaire/edt/navigation';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import type { IUser } from '~/framework/modules/auth/model';
+import type { UserType } from '~/framework/modules/auth/service';
+import type { IClassGroups } from '~/framework/modules/viescolaire/common/model';
+import type {
+  fetchEdtClassGroupsAction,
+  fetchEdtCoursesAction,
+  fetchEdtSlotsAction,
+  fetchEdtTeacherCoursesAction,
+  fetchEdtTeachersAction,
+  fetchEdtUserChildrenAction,
+} from '~/framework/modules/viescolaire/edt/actions';
+import type { IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
+import type { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
+import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface EdtHomeScreenProps {
-  courses: IEdtCourse[];
   initialLoadingState: AsyncPagedLoadingState;
+}
+
+export interface EdtHomeScreenNavParams {}
+
+export interface EdtHomeScreenStoreProps {
+  courses: IEdtCourse[];
   slots: ISlot[];
   teachers: IUser[];
   childId?: string;
@@ -18,21 +30,18 @@ export interface EdtHomeScreenProps {
   structureId?: string;
   userId?: string;
   userType?: UserType;
-  fetchChildCourses: (
-    structureId: string,
-    startDate: Moment,
-    endDate: Moment,
-    classGroups: IClassGroups[],
-  ) => Promise<IEdtCourse[]>;
-  fetchClassGroups: (classes: string[], studentId?: string) => Promise<IClassGroups[]>;
-  fetchSlots: (structureId: string) => Promise<ISlot[]>;
-  fetchTeacherCourses: (structureId: string, startDate: Moment, endDate: Moment, teacherId: string) => Promise<IEdtCourse[]>;
-  fetchTeachers: (structureId: string) => Promise<IUser[]>;
-  fetchUserChildren: () => Promise<IUserChild[]>;
 }
 
-export interface EdtHomeScreenNavParams {}
-
-export interface EdtHomeScreenPrivateProps extends NativeStackScreenProps<EdtNavigationParams, 'home'>, EdtHomeScreenProps {
-  // @scaffolder add HOC props here
+export interface EdtHomeScreenDispatchProps {
+  tryFetchClassGroups: (...args: Parameters<typeof fetchEdtClassGroupsAction>) => Promise<IClassGroups[]>;
+  tryFetchCourses: (...args: Parameters<typeof fetchEdtCoursesAction>) => Promise<IEdtCourse[]>;
+  tryFetchSlots: (...args: Parameters<typeof fetchEdtSlotsAction>) => Promise<ISlot[]>;
+  tryFetchTeacherCourses: (...args: Parameters<typeof fetchEdtTeacherCoursesAction>) => Promise<IEdtCourse[]>;
+  tryFetchTeachers: (...args: Parameters<typeof fetchEdtTeachersAction>) => Promise<IUser[]>;
+  tryFetchUserChildren: (...args: Parameters<typeof fetchEdtUserChildrenAction>) => Promise<IUserChild[]>;
 }
+
+export type EdtHomeScreenPrivateProps = EdtHomeScreenProps &
+  EdtHomeScreenStoreProps &
+  EdtHomeScreenDispatchProps &
+  NativeStackScreenProps<EdtNavigationParams, typeof edtRouteNames.home>;
