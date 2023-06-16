@@ -1,4 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { Moment } from 'moment';
 
 import { IUser } from '~/framework/modules/auth/model';
 import { UserType } from '~/framework/modules/auth/service';
@@ -19,18 +20,13 @@ export interface EdtHomeScreenProps {
   userType?: UserType;
   fetchChildCourses: (
     structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: Moment,
+    endDate: Moment,
     classGroups: IClassGroups[],
   ) => Promise<IEdtCourse[]>;
   fetchClassGroups: (classes: string[], studentId?: string) => Promise<IClassGroups[]>;
   fetchSlots: (structureId: string) => Promise<ISlot[]>;
-  fetchTeacherCourses: (
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    teacherId: string,
-  ) => Promise<IEdtCourse[]>;
+  fetchTeacherCourses: (structureId: string, startDate: Moment, endDate: Moment, teacherId: string) => Promise<IEdtCourse[]>;
   fetchTeachers: (structureId: string) => Promise<IUser[]>;
   fetchUserChildren: () => Promise<IUserChild[]>;
 }

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
 import { IClass, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
@@ -140,8 +140,8 @@ export const edtService = {
     get: async (
       session: ISession,
       structureId: string,
-      startDate: moment.Moment,
-      endDate: moment.Moment,
+      startDate: Moment,
+      endDate: Moment,
       groupIds: string[],
       groupNames: string[],
     ) => {
@@ -161,13 +161,7 @@ export const edtService = {
       })) as IBackendCourseList;
       return courses.map(course => courseAdapter(course)) as IEdtCourse[];
     },
-    getFromTeacher: async (
-      session: ISession,
-      structureId: string,
-      startDate: moment.Moment,
-      endDate: moment.Moment,
-      teacherId: string,
-    ) => {
+    getFromTeacher: async (session: ISession, structureId: string, startDate: Moment, endDate: Moment, teacherId: string) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');
       const api = `/edt/structures/${structureId}/common/courses/${startDateString}/${endDateString}`;

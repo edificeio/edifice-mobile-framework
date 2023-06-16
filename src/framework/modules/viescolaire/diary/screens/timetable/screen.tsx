@@ -1,5 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
@@ -28,8 +28,8 @@ import { tryActionLegacy } from '~/framework/util/redux/actions';
 import type { DiaryTimetableScreenPrivateProps } from './types';
 
 export type TimetableState = {
-  startDate: moment.Moment;
-  selectedDate: moment.Moment;
+  startDate: Moment;
+  selectedDate: Moment;
 };
 
 export const computeNavBar = ({
@@ -80,7 +80,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
     if (structureId !== prevProps.structureId) fetchSlots(structureId);
   }
 
-  updateSelectedDate = (newDate: moment.Moment) => {
+  updateSelectedDate = (newDate: Moment) => {
     this.setState({
       selectedDate: newDate,
       startDate: newDate.clone().startOf('week'),

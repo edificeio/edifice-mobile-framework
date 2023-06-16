@@ -72,7 +72,7 @@ type TimetableComponentProps = EdtHomeScreenProps & {
   date: Moment;
   isRefreshing: boolean;
   startDate: Moment;
-  updateSelectedDate: (newDate: moment.Moment) => void;
+  updateSelectedDate: (newDate: Moment) => void;
 };
 
 export default class EdtTimetable extends React.PureComponent<TimetableComponentProps> {

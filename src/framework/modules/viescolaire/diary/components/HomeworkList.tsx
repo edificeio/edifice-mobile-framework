@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
 
@@ -147,8 +147,8 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
 
 export default (props: HomeworkListProps) => {
   const [switchValue, toggleSwitch] = React.useState<SwitchState>(SwitchState.HOMEWORK);
-  const [startDate, setStartDate] = React.useState<moment.Moment>(moment());
-  const [endDate, setEndDate] = React.useState<moment.Moment>(moment().add(3, 'week'));
+  const [startDate, setStartDate] = React.useState<Moment>(moment());
+  const [endDate, setEndDate] = React.useState<Moment>(moment().add(3, 'week'));
 
   const notFirstRender = React.useRef(false);
 

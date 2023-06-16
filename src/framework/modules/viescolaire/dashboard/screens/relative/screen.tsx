@@ -1,5 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
@@ -188,7 +188,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       homeworksByDate[key].push(hm);
     });
 
-    const tomorrowDate = moment().add(1, 'day') as moment.Moment;
+    const tomorrowDate = moment().add(1, 'day') as Moment;
 
     homeworksByDate = Object.keys(homeworksByDate)
       .filter(date => moment(date).isAfter(moment()))

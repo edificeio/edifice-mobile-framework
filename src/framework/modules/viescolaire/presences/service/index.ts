@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import querystring from 'querystring';
 
 import { ISession } from '~/framework/modules/auth/model';
@@ -416,8 +416,8 @@ export const presencesService = {
       session: ISession,
       structureId: string,
       studentId: string,
-      startDate: moment.Moment,
-      endDate: moment.Moment,
+      startDate: Moment,
+      endDate: Moment,
       description: string,
     ) => {
       const api = '/presences/statements/absences';
@@ -436,8 +436,8 @@ export const presencesService = {
       session: ISession,
       structureId: string,
       studentId: string,
-      startDate: moment.Moment,
-      endDate: moment.Moment,
+      startDate: Moment,
+      endDate: Moment,
       description: string,
       file: LocalFile,
     ) => {
@@ -525,8 +525,8 @@ export const presencesService = {
       studentId: string,
       callId: string,
       type: EventType,
-      startDate: moment.Moment,
-      endDate: moment.Moment,
+      startDate: Moment,
+      endDate: Moment,
       reasonId: number | null,
       comment?: string,
     ) => {
@@ -558,8 +558,8 @@ export const presencesService = {
       studentId: string,
       callId: string,
       type: EventType,
-      startDate: moment.Moment,
-      endDate: moment.Moment,
+      startDate: Moment,
+      endDate: Moment,
       reasonId: number | null,
       comment?: string,
     ) => {

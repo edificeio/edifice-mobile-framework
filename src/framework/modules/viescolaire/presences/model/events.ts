@@ -1,3 +1,5 @@
+import type { Moment } from 'moment';
+
 export enum EventType {
   ABSENCE = 1,
   LATENESS = 2,
@@ -8,24 +10,24 @@ export interface IEvent {
   id: number;
   comment: string;
   typeId: EventType;
-  endDate: moment.Moment;
+  endDate: Moment;
   reasonId: number | null;
-  startDate: moment.Moment;
+  startDate: Moment;
 }
 
 export interface IHistoryEvent {
-  endDate: moment.Moment;
+  endDate: Moment;
   period: string;
-  startDate: moment.Moment;
+  startDate: Moment;
   typeId: number;
 }
 
 export interface IForgottenNotebook {
-  date: moment.Moment;
+  date: Moment;
 }
 
 export interface IIncident {
-  date: moment.Moment;
+  date: Moment;
   protagonist: {
     label: string;
   };
@@ -33,10 +35,10 @@ export interface IIncident {
 }
 
 export interface IPunishment {
-  createdAt: moment.Moment;
-  delayAt: moment.Moment;
-  endDate: moment.Moment;
+  createdAt: Moment;
+  delayAt: Moment;
+  endDate: Moment;
   label: string;
   punishmentCategoryId: number;
-  startDate: moment.Moment;
+  startDate: Moment;
 }

@@ -1,6 +1,8 @@
+import type { Moment } from 'moment';
+
 export interface ISlot {
-  endHour: moment.Moment;
+  endHour: Moment;
   id: string;
   name: string;
-  startHour: moment.Moment;
+  startHour: Moment;
 }

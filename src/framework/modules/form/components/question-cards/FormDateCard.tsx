@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -29,7 +29,7 @@ export const FormDateCard = ({ isDisabled, question, responses, onChangeAnswer, 
   const [date, setDate] = React.useState(responses[0]?.answer ? moment(responses[0].answer, backendFormat) : moment());
   const { title, mandatory } = question;
 
-  const onChangeDate = (value: moment.Moment) => {
+  const onChangeDate = (value: Moment) => {
     setDate(value);
     if (responses.length) {
       responses[0].answer = value.format(backendFormat);

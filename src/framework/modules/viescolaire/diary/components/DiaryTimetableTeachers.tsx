@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
 });
 
 type ISessionModifiedList = IDiarySession & {
-  startDate?: moment.Moment;
-  endDate?: moment.Moment;
+  startDate?: Moment;
+  endDate?: Moment;
   classes?: string[];
   calendarType?: string;
 };
@@ -104,8 +104,7 @@ const adaptCourses = (courses: IDiaryCourse[], sessions: ISessionModifiedList[])
   return calendarList;
 };
 
-type TimetableComponentProps = DiaryTimetableScreenProps &
-  TimetableState & { updateSelectedDate: (newDate: moment.Moment) => void };
+type TimetableComponentProps = DiaryTimetableScreenProps & TimetableState & { updateSelectedDate: (newDate: Moment) => void };
 
 export default class DiaryTeacherTimetable extends React.PureComponent<TimetableComponentProps> {
   // Display homeworks to do for the day

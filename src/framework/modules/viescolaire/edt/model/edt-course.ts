@@ -1,10 +1,12 @@
+import type { Moment } from 'moment';
+
 export interface IEdtCourse {
   classes: string[];
-  endDate: moment.Moment;
+  endDate: Moment;
   groups: string[];
   id: string;
   roomLabels: string[];
-  startDate: moment.Moment;
+  startDate: Moment;
   subject: {
     id: string;
     name: string;

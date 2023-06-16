@@ -1,3 +1,5 @@
+import type { Moment } from 'moment';
+
 import { IAudience } from './audience';
 import { IHomework } from './homework';
 import { ISubject } from './subject';
@@ -6,7 +8,7 @@ export interface IDiarySession {
   id: string;
   is_published: boolean;
   is_empty: boolean;
-  date: moment.Moment;
+  date: Moment;
   subject_id: string;
   subject: ISubject;
   exceptional_label: string | null;
