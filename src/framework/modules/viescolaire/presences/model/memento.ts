@@ -1,22 +1,19 @@
-export interface IRelative {
-  id: string;
-  title: string;
-  name: string;
-  mobile: string;
-  phone: string;
-  address: string;
-  email: string;
-  activated: boolean;
-  primary: boolean;
-}
+import type { Moment } from 'moment';
 
 export interface IMemento {
-  id: string;
-  name: string;
-  birth_date: string;
+  accommodation: string | null;
+  birthDate: Moment | null;
   classes: string[];
   groups: string[];
-  comment: string;
-  accommodation: string;
-  relatives: IRelative[];
+  id: string;
+  name: string;
+  relatives: {
+    address: string | null;
+    email: string;
+    id: string;
+    mobile: string;
+    name: string;
+    phone: string;
+    title: string | null;
+  }[];
 }

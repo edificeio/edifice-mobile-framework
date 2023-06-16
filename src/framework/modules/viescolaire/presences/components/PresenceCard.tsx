@@ -102,8 +102,8 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
 export const NoReasonCard = ({ elements }) => {
   const renderItem = event => (
     <SmallText>
-      <NestedBoldText>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedBoldText>
-      {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
+      <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
+      {event.startDate.format('HH:mm') + ' - ' + event.endDate.format('HH:mm')}
     </SmallText>
   );
   return (
@@ -119,8 +119,8 @@ export const NoReasonCard = ({ elements }) => {
 export const UnregularizedCard = ({ elements }) => {
   const renderItem = event => (
     <SmallText>
-      <NestedBoldText>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedBoldText>
-      {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
+      <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
+      {event.startDate.format('HH:mm') + ' - ' + event.endDate.format('HH:mm')}
     </SmallText>
   );
   return (
@@ -136,8 +136,8 @@ export const UnregularizedCard = ({ elements }) => {
 export const RegularizedCard = ({ elements }) => {
   const renderItem = event => (
     <SmallText>
-      <NestedBoldText>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedBoldText>
-      {event.start_date.format('HH:mm') + ' - ' + event.end_date.format('HH:mm')}
+      <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
+      {event.startDate.format('HH:mm') + ' - ' + event.endDate.format('HH:mm')}
     </SmallText>
   );
   return (
@@ -153,9 +153,9 @@ export const RegularizedCard = ({ elements }) => {
 export const LatenessCard = ({ elements }) => {
   const renderItem = event => (
     <SmallText>
-      <NestedBoldText>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedBoldText>
-      {event.end_date.format('HH:mm')}
-      <NestedBoldText>{' - ' + event.end_date.diff(event.start_date, 'minutes') + 'mn'}</NestedBoldText>
+      <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
+      {event.endDate.format('HH:mm')}
+      <NestedBoldText>{' - ' + event.endDate.diff(event.startDate, 'minutes') + 'mn'}</NestedBoldText>
     </SmallText>
   );
   return (
@@ -171,9 +171,9 @@ export const LatenessCard = ({ elements }) => {
 export const DepartureCard = ({ elements }) => {
   const renderItem = event => (
     <SmallText>
-      <NestedBoldText>{' ' + event.start_date.format('DD/MM/YY') + ' - '}</NestedBoldText>
-      {event.start_date.format('HH:mm')}
-      <NestedBoldText>{' - ' + Math.abs(event.start_date.diff(event.end_date, 'minutes')) + 'mn'}</NestedBoldText>
+      <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
+      {event.startDate.format('HH:mm')}
+      <NestedBoldText>{' - ' + Math.abs(event.startDate.diff(event.endDate, 'minutes')) + 'mn'}</NestedBoldText>
     </SmallText>
   );
   return (
@@ -219,13 +219,13 @@ export const IncidentCard = ({ elements }) => {
 
 export const PunishmentCard = ({ elements }) => {
   const getPunishmentDate = (punishment: IPunishment) => {
-    const createdDate: string = punishment?.created_at.format('DD/MM/YY');
-    switch (punishment.punishment_category_id) {
+    const createdDate: string = punishment?.createdAt.format('DD/MM/YY');
+    switch (punishment.punishmentCategoryId) {
       case 1: {
         //DUTY
         let dutyDate: string = createdDate;
-        if (punishment.delay_at) {
-          dutyDate = punishment.delay_at.format('DD/MM/YY');
+        if (punishment.delayAt) {
+          dutyDate = punishment.delayAt.format('DD/MM/YY');
         }
         return I18n.get('presences-history-categorycard-for', { date: dutyDate });
       }
@@ -233,11 +233,11 @@ export const PunishmentCard = ({ elements }) => {
         //DETENTION
         let startDetentionDate: string = createdDate;
         let endDetentionDate: string = '';
-        if (punishment.start_date) {
-          startDetentionDate = punishment.start_date.format('DD/MM/YY - HH:mm');
+        if (punishment.startDate) {
+          startDetentionDate = punishment.startDate.format('DD/MM/YY - HH:mm');
         }
-        if (punishment.end_date) {
-          endDetentionDate = punishment.end_date.format('HH:mm');
+        if (punishment.endDate) {
+          endDetentionDate = punishment.endDate.format('HH:mm');
         }
         return (
           I18n.get('presences-history-categorycard-for', { date: startDetentionDate }) +
@@ -247,9 +247,9 @@ export const PunishmentCard = ({ elements }) => {
       case 3: //BLAME
         return I18n.get('presences-history-categorycard-created', { date: createdDate });
       case 4: // EXCLUSION
-        if (punishment.start_date && punishment.end_date) {
-          const startExcludeDate: string = punishment.start_date.format('DD/MM/YY');
-          const endExcludeDate: string = punishment.end_date.format('DD/MM/YY');
+        if (punishment.startDate && punishment.endDate) {
+          const startExcludeDate: string = punishment.startDate.format('DD/MM/YY');
+          const endExcludeDate: string = punishment.endDate.format('DD/MM/YY');
           if (startExcludeDate && endExcludeDate) {
             return startExcludeDate === endExcludeDate
               ? startExcludeDate

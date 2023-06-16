@@ -119,17 +119,16 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
 
   const openCall = async (course: ICourse) => {
     try {
-      let { registerId } = course;
+      let { callId } = course;
 
-      if (!registerId) {
+      if (!callId) {
         const { allowMultipleSlots, session, teacherId } = props;
         if (!session || !teacherId) throw new Error();
-        const courseRegister = await presencesService.courseRegister.create(session, course, teacherId, allowMultipleSlots);
-        registerId = courseRegister.id;
+        callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
       }
       props.navigation.navigate(presencesRouteNames.call, {
         classroom: course.roomLabels[0],
-        id: registerId,
+        id: callId,
         name: course.classes[0] ?? course.groups[0],
       });
     } catch {

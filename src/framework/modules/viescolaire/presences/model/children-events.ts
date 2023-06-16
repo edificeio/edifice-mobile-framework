@@ -1,11 +1,11 @@
-import { ICallEvent } from './events';
+import { IEvent } from './events';
 
 export type IChildEvents = {
-  DEPARTURE: ICallEvent[];
-  LATENESS: ICallEvent[];
-  NO_REASON: ICallEvent[];
-  REGULARIZED: ICallEvent[];
-  UNREGULARIZED: ICallEvent[];
+  DEPARTURE: IEvent[];
+  LATENESS: IEvent[];
+  NO_REASON: IEvent[];
+  REGULARIZED: IEvent[];
+  UNREGULARIZED: IEvent[];
 };
 
 export type IChildrenEvents = {

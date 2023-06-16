@@ -21,7 +21,7 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
 import StudentRow from '~/framework/modules/viescolaire/presences/components/StudentRow';
-import { EventType, IStudent } from '~/framework/modules/viescolaire/presences/model';
+import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -104,15 +104,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       const { id } = props.route.params;
 
       if (!classCall || !session) throw new Error();
-      await presencesService.event.create(
-        session,
-        studentId,
-        id,
-        EventType.ABSENCE,
-        classCall.start_date,
-        classCall.end_date,
-        null,
-      );
+      await presencesService.event.create(session, studentId, id, EventType.ABSENCE, classCall.startDate, classCall.endDate, null);
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
@@ -161,14 +153,18 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   const renderStudentsList = () => {
     const { classCall, eventReasons, navigation } = props;
     const { id } = props.route.params;
-    const students = classCall!.students.sort((a, b) => a.name.localeCompare(b.name));
-    students.forEach(student => (student.key = student.id));
+    const students = classCall!.students
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(student => ({
+        key: student.id,
+        ...student,
+      }));
 
     return classCall && students.length > 0 ? (
       <>
-        <SwipeableList<IStudent & { key: string }>
+        <SwipeableList<IClassCallStudent & { key: string }>
           data={students}
-          keyExtractor={(item: IStudent) => item.id}
+          keyExtractor={(item: IClassCallStudent) => item.id}
           renderItem={({ item }) => (
             <StudentRow
               student={item}
@@ -180,9 +176,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                   type: EventType.LATENESS,
                   callId: id,
                   student: item,
-                  startDate: classCall.start_date,
-                  endDate: classCall.end_date,
-                  event: item.events.find(e => e.type_id === 2),
+                  startDate: classCall.startDate,
+                  endDate: classCall.endDate,
+                  event: item.events.find(event => event.typeId === EventType.LATENESS),
                 });
               }}
               openDeparture={() => {
@@ -190,9 +186,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                   type: EventType.DEPARTURE,
                   callId: id,
                   student: item,
-                  startDate: classCall.start_date,
-                  endDate: classCall.end_date,
-                  event: item.events.find(e => e.type_id === 3),
+                  startDate: classCall.startDate,
+                  endDate: classCall.endDate,
+                  event: item.events.find(event => event.typeId === EventType.DEPARTURE),
                 });
               }}
             />
@@ -208,9 +204,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                     type: EventType.DEPARTURE,
                     callId: id,
                     student: item,
-                    startDate: classCall.start_date,
-                    endDate: classCall.end_date,
-                    event: item.events.find(e => e.type_id === 3),
+                    startDate: classCall.startDate,
+                    endDate: classCall.endDate,
+                    event: item.events.find(e => e.typeId === EventType.DEPARTURE),
                   });
                   row[item.key]?.closeRow();
                 },
@@ -224,9 +220,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                     type: EventType.LATENESS,
                     callId: id,
                     student: item,
-                    startDate: classCall.start_date,
-                    endDate: classCall.end_date,
-                    event: item.events.find(e => e.type_id === 2),
+                    startDate: classCall.startDate,
+                    endDate: classCall.endDate,
+                    event: item.events.find(e => e.typeId === EventType.LATENESS),
                     reasons: eventReasons.filter(reason => reason.reasonTypeId === 2),
                   });
                   row[item.key]?.closeRow();
@@ -256,7 +252,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       <>
         <LeftColoredItem shadow style={styles.headerCard} color={viescoTheme.palette.presences}>
           <SmallText>
-            {moment(classCall.start_date).format('LT')} - {moment(classCall.end_date).format('LT')}
+            {moment(classCall.startDate).format('LT')} - {moment(classCall.endDate).format('LT')}
           </SmallText>
           {classroom ? (
             <View style={styles.classroomContainer}>

@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
@@ -86,18 +85,18 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
     return memento ? (
       <ScrollView>
         <View style={styles.studentInfos}>
-          {memento.name ? <BodyBoldText style={styles.studentName}>{memento.name}</BodyBoldText> : null}
+          <BodyBoldText style={styles.studentName}>{memento.name}</BodyBoldText>
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="cake-variant" />
             <SmallText>
-              {memento.birth_date ? I18n.get('presences-memento-birthdate', { date: moment(memento.birth_date).format('L') }) : '-'}
+              {memento.birthDate ? I18n.get('presences-memento-birthdate', { date: memento.birthDate.format('L') }) : '-'}
             </SmallText>
           </View>
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="school" />
-            <SmallText>{memento.classes?.length ? memento.classes.join(', ') : '-'}</SmallText>
+            <SmallText>{memento.classes.length ? memento.classes.join(', ') : '-'}</SmallText>
           </View>
-          {memento.groups.length > 0 && <SmallText style={styles.studentGroups}>{memento.groups.join(', ')}</SmallText>}
+          {memento.groups.length ? <SmallText style={styles.studentGroups}>{memento.groups.join(', ')}</SmallText> : null}
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="silverware" />
             <SmallText>{memento.accommodation ? memento.accommodation.toLocaleLowerCase() : '-'}</SmallText>
@@ -108,26 +107,24 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
             <SmallText style={styles.relativesTitleText}>{I18n.get('presences-memento-relatives')}</SmallText>
             {memento.relatives.map(relative => (
               <View style={styles.relativesContainer}>
-                {relative.name ? (
-                  <SmallBoldText style={styles.relativesIdentity}>
-                    {relative.title ? relative.title + ' ' + relative.name : relative.name}
-                  </SmallBoldText>
-                ) : null}
+                <SmallBoldText style={styles.relativesIdentity}>
+                  {relative.title ? relative.title + ' ' + relative.name : relative.name}
+                </SmallBoldText>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="email" />
-                  <SmallText>{relative.email || '-'}</SmallText>
+                  <SmallText>{relative.email ?? '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="cellphone" />
-                  <SmallText>{relative.mobile || '-'}</SmallText>
+                  <SmallText>{relative.mobile ?? '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="phone" />
-                  <SmallText>{relative.phone || '-'}</SmallText>
+                  <SmallText>{relative.phone ?? '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="home" />
-                  <SmallText>{relative.address || '-'}</SmallText>
+                  <SmallText>{relative.address ?? '-'}</SmallText>
                 </View>
               </View>
             ))}

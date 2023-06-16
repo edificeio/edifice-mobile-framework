@@ -1,4 +1,3 @@
-import moment from 'moment';
 import * as React from 'react';
 import { ColorValue, FlatList, SectionList, StyleSheet, View } from 'react-native';
 
@@ -9,7 +8,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IUserChild } from '~/framework/modules/viescolaire/competences/model';
-import { ICallEvent, IChildEvents, IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
+import { IChildEvents, IChildrenEvents, IEvent } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
   eventNestedText: {
@@ -25,9 +24,9 @@ const styles = StyleSheet.create({
 
 const getSectionTitle = (key: string): string => {
   switch (key) {
-    case 'DEPARTURES':
+    case 'DEPARTURE':
       return I18n.get('presences-history-category-departures');
-    case 'LATENESSES':
+    case 'LATENESS':
       return I18n.get('presences-history-category-latenesses');
     case 'NO_REASON':
       return I18n.get('presences-history-category-noreason');
@@ -40,18 +39,18 @@ const getSectionTitle = (key: string): string => {
   }
 };
 
-const renderEvent = (key: string, event: ICallEvent) => {
+const renderEvent = (key: string, event: IEvent) => {
   let color: ColorValue | undefined;
   let duration: number | undefined;
 
   switch (key) {
-    case 'DEPARTURES':
+    case 'DEPARTURE':
       color = viescoTheme.palette.presencesEvents.departure;
-      duration = Math.abs(moment(event.start_date).diff(moment(event.end_date), 'minutes'));
+      duration = Math.abs(event.startDate.diff(event.startDate, 'minutes'));
       break;
-    case 'LATENESSES':
+    case 'LATENESS':
       color = viescoTheme.palette.presencesEvents.lateness;
-      duration = moment(event.end_date).diff(moment(event.start_date), 'minutes');
+      duration = event.endDate.diff(event.endDate, 'minutes');
       break;
     case 'NO_REASON':
       color = viescoTheme.palette.presencesEvents.noReason;
@@ -68,10 +67,8 @@ const renderEvent = (key: string, event: ICallEvent) => {
   return (
     <SmallText>
       <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
-      <SmallBoldText style={{ color }}>{moment(event.start_date).format('DD/MM/YY')}</SmallBoldText>
-      <SmallText style={{ color }}>{` - ${moment(event.start_date).format('HH:mm')}  - ${moment(event.end_date).format(
-        'HH:mm',
-      )}`}</SmallText>
+      <SmallBoldText style={{ color }}>{event.startDate.format('DD/MM/YY')}</SmallBoldText>
+      <SmallText style={{ color }}>{` - ${event.endDate.format('HH:mm')}  - ${event.endDate.format('HH:mm')}`}</SmallText>
       {duration ? <NestedBoldText style={{ color }}>{` - ${duration}mn`}</NestedBoldText> : null}
     </SmallText>
   );

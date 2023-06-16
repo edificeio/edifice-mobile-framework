@@ -6,6 +6,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { EventType, IClassCallStudent, IEvent } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
   studentsList: {
@@ -41,28 +42,14 @@ const styles = StyleSheet.create({
   purple: { backgroundColor: theme.palette.complementary.purple.regular },
 });
 
-type Student = {
-  birth_date: string;
-  day_history: any[];
-  events: any[];
-  exempted: boolean;
-  exemption_attendance: boolean;
-  forgotten_notebook: boolean;
-  group: string;
-  group_name: string;
-  id: string;
-  last_course_absent: boolean;
-  name: string;
-};
-
 type StudentRowState = {
-  absentEvent: any;
-  lateEvent: any;
-  leavingEvent: any;
+  absentEvent?: IEvent;
+  lateEvent?: IEvent;
+  leavingEvent?: IEvent;
 };
 
 type StudentRowProps = {
-  student: Student;
+  student: IClassCallStudent;
   checkAbsent: () => void;
   openDeparture: () => void;
   openLateness: () => void;
@@ -71,36 +58,32 @@ type StudentRowProps = {
 };
 
 export default class StudentRow extends React.PureComponent<StudentRowProps, StudentRowState> {
-  constructor(props) {
+  constructor(props: StudentRowProps) {
     super(props);
     this.state = {
-      absentEvent: props.student.events.find(e => e.type_id === 1),
-      lateEvent: props.student.events.find(e => e.type_id === 2),
-      leavingEvent: props.student.events.find(e => e.type_id === 3),
+      absentEvent: props.student.events.find(event => event.typeId === EventType.ABSENCE),
+      lateEvent: props.student.events.find(event => event.typeId === EventType.LATENESS),
+      leavingEvent: props.student.events.find(event => event.typeId === EventType.DEPARTURE),
     };
   }
 
   componentDidUpdate() {
     const { events } = this.props.student;
     this.setState({
-      absentEvent: events.find(e => e.type_id === 1),
-      lateEvent: events.find(e => e.type_id === 2),
-      leavingEvent: events.find(e => e.type_id === 3),
+      absentEvent: events.find(e => e.typeId === EventType.ABSENCE),
+      lateEvent: events.find(e => e.typeId === EventType.LATENESS),
+      leavingEvent: events.find(e => e.typeId === EventType.DEPARTURE),
     });
   }
 
   getCheckColor = () => {
-    return this.props.student.exempted && !this.props.student.exemption_attendance
-      ? styles.grey
-      : this.state.absentEvent !== undefined
-      ? styles.red
-      : styles.lightGrey;
+    return this.props.student.exempted ? styles.grey : this.state.absentEvent ? styles.red : styles.lightGrey;
   };
 
   handleCheck = () => {
     const { checkAbsent, uncheckAbsent } = this.props;
     const { absentEvent } = this.state;
-    if (this.props.student.exempted && !this.props.student.exemption_attendance) return;
+    if (this.props.student.exempted) return;
     if (absentEvent === undefined) {
       checkAbsent();
     } else {
@@ -120,7 +103,7 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
           <SmallText style={styles.studentName}>{student.name}</SmallText>
         </TouchableOpacity>
         <View style={styles.iconsView}>
-          {student.last_course_absent ? (
+          {student.lastCourseAbsent ? (
             <Icon
               style={{ transform: [{ rotateY: '180deg' }] }}
               color={theme.palette.complementary.red.regular}
@@ -128,7 +111,7 @@ export default class StudentRow extends React.PureComponent<StudentRowProps, Stu
               name="refresh"
             />
           ) : null}
-          {student.forgotten_notebook ? (
+          {student.forgottenNotebook ? (
             <Icon color={viescoTheme.palette.presencesEvents.forgotNotebook} size={20} name="bookmark-remove" />
           ) : null}
         </View>

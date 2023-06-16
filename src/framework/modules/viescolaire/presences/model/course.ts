@@ -1,13 +1,14 @@
+import type { Moment } from 'moment';
+
 export interface ICourse {
-  id: string;
   allowRegister: boolean;
-  subjectId: string;
+  callId: number;
   classes: string[];
-  structureId: string;
-  startDate: moment.Moment;
-  endDate: moment.Moment;
-  roomLabels: string[];
+  endDate: Moment;
   groups: string[];
-  registerId: string;
-  splitSlot: boolean;
+  id: string;
+  roomLabels: string[];
+  startDate: Moment;
+  structureId: string;
+  subjectId: string;
 }

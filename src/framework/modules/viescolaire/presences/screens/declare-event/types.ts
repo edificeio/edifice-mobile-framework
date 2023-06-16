@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Moment } from 'moment';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { EventType, ICallEvent, IEventReason, IStudent } from '~/framework/modules/viescolaire/presences/model';
+import { EventType, IClassCallStudent, IEvent, IEventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams } from '~/framework/modules/viescolaire/presences/navigation';
 
 export interface PresencesDeclareEventScreenProps {
@@ -13,9 +13,9 @@ export interface PresencesDeclareEventScreenNavParams {
   callId: string;
   endDate: Moment;
   startDate: Moment;
-  student: IStudent;
+  student: IClassCallStudent;
   type: EventType;
-  event?: ICallEvent;
+  event?: IEvent;
   reasons?: IEventReason[];
 }
 

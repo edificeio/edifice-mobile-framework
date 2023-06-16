@@ -1,44 +1,23 @@
-interface IEvents {
-  id: number;
-  comment: string;
-  counsellor_input: boolean;
-  register_id: string;
-  type_id: number;
-}
+import type { Moment } from 'moment';
 
-export interface IDayHistory {
-  name: string;
-  type_id: number;
-  events: IEvents[];
-}
+import type { IEvent } from './events';
 
-export interface IStudent {
-  id: string;
-  name: string;
-  group: string;
-  group_name: string;
-  last_course_absent: boolean;
+export interface IClassCallStudent {
+  events: IEvent[];
   exempted: boolean;
-  exemption_attendance: boolean;
-  forgotten_notebook: boolean;
-  day_history: IDayHistory[];
-}
-
-interface ITeacher {
+  forgottenNotebook: boolean;
+  group: string;
+  groupName: string;
   id: string;
-  displayName: string;
-  functions: string;
+  lastCourseAbsent: boolean;
+  name: string;
 }
 
 export interface IClassCall {
-  personnel_id: string;
-  roof_id: string;
-  state_id: number;
-  course_id: string;
-  subject_id: string;
-  start_date: moment.Moment;
-  end_date: moment.Moment;
-  counsellor_input: boolean;
-  teachers: ITeacher[];
-  students: IStudent[];
+  courseId: string;
+  endDate: Moment;
+  startDate: Moment;
+  stateId: number;
+  students: IClassCallStudent[];
+  subjectId: string;
 }

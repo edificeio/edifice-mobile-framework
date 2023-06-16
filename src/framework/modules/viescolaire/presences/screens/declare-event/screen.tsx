@@ -40,7 +40,7 @@ export const computeNavBar = ({
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
   const [date, setDate] = React.useState<Moment>(moment());
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
-  const [reason, setReason] = React.useState<number | null>(props.route.params.event?.reason_id ?? null);
+  const [reason, setReason] = React.useState<number | null>(props.route.params.event?.reasonId ?? null);
   const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
   const [isCreating, setCreating] = React.useState<boolean>(false);
   const [isDeleting, setDeleting] = React.useState<boolean>(false);
@@ -49,7 +49,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { event, type } = props.route.params;
 
     if (event) {
-      setDate(moment(type === EventType.LATENESS ? event.end_date : event.start_date));
+      setDate(type === EventType.LATENESS ? event.endDate : event.startDate);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -63,7 +63,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
 
       setCreating(true);
       if (!session) throw new Error();
-      const absence = student.events.find(i => i.type_id === 1);
+      const absence = student.events.find(e => e.typeId === EventType.ABSENCE);
       if (type === EventType.LATENESS && absence) {
         await presencesService.event.delete(session, absence.id);
       }
