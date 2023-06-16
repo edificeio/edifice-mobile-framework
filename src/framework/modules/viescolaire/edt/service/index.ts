@@ -91,7 +91,7 @@ const classAdapter = (data: IBackendClass): IClass => {
     id: data.id,
     name: data.name,
     notEmptyClass: data.notEmptyClass,
-  } as IClass;
+  };
 };
 
 const courseAdapter = (data: IBackendCourse): IEdtCourse => {
@@ -105,7 +105,7 @@ const courseAdapter = (data: IBackendCourse): IEdtCourse => {
     subject: data.subject,
     tags: data.tags,
     teacherIds: data.teacherIds,
-  } as IEdtCourse;
+  };
 };
 
 const slotAdapter = (data: IBackendSlot): ISlot => {
@@ -114,7 +114,7 @@ const slotAdapter = (data: IBackendSlot): ISlot => {
     id: data.id,
     name: data.name,
     startHour: moment('2000-01-01 ' + data.startHour + ':00'),
-  } as ISlot;
+  };
 };
 
 const userChildAdapter = (data: IBackendUserChild): IUserChild => {
@@ -125,7 +125,7 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
     id: data.id,
     idClasses: data.idClasses,
     lastName: data.lastName,
-  } as IUserChild;
+  };
 };
 
 export const edtService = {
@@ -133,7 +133,7 @@ export const edtService = {
     get: async (session: ISession, structureId: string) => {
       const api = `/viescolaire/classes?idEtablissement=${structureId}&isEdt=true`;
       const classes = (await fetchJSONWithCache(api)) as IBackendClassList;
-      return classes.map(c => classAdapter(c)) as IClass[];
+      return classes.map(classAdapter);
     },
   },
   courses: {
@@ -159,7 +159,7 @@ export const edtService = {
         method: 'POST',
         body,
       })) as IBackendCourseList;
-      return courses.map(course => courseAdapter(course)) as IEdtCourse[];
+      return courses.map(courseAdapter);
     },
     getFromTeacher: async (session: ISession, structureId: string, startDate: Moment, endDate: Moment, teacherId: string) => {
       const startDateString = startDate.format('YYYY-MM-DD');
@@ -176,21 +176,21 @@ export const edtService = {
         method: 'POST',
         body,
       })) as IBackendCourseList;
-      return courses.map(course => courseAdapter(course)) as IEdtCourse[];
+      return courses.map(courseAdapter);
     },
   },
   slots: {
     get: async (session: ISession, structureId: string) => {
       const api = `/edt/time-slots?structureId=${structureId}`;
       const slots = (await fetchJSONWithCache(api)) as IBackendSlotList;
-      return slots.map(slot => slotAdapter(slot)) as ISlot[];
+      return slots.map(slotAdapter);
     },
   },
   userChildren: {
     get: async (session: ISession) => {
       const api = '/edt/user/children';
       const userChildren = (await fetchJSONWithCache(api)) as IBackendUserChildren;
-      return userChildren.map(child => userChildAdapter(child)) as IUserChild[];
+      return userChildren.map(userChildAdapter);
     },
   },
 };

@@ -33,7 +33,7 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
     const { levels } = this.props;
 
     if (evaluation >= 0 && evaluation < levels.length) {
-      return levels[evaluation].couleur ?? levels[evaluation].default;
+      return levels[evaluation].color ?? levels[evaluation].defaultColor;
     }
     return theme.palette.grey.cloudy;
   }

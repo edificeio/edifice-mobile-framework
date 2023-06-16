@@ -134,12 +134,13 @@ type IBackendSubject = {
 };
 
 type IBackendUserChild = {
+  id: string;
   displayName: string;
   firstName: string;
-  id: string;
+  lastName: string;
   idClasse: string;
   idStructure: string;
-  lastName: string;
+  id_cycle: number;
 };
 
 type IBackendAverageList = { [key: string]: IBackendAverage };
@@ -160,7 +161,7 @@ const averageAdapter = (list: IBackendAverageList): IAverage[] => {
       subjectRank: data.matiere_rank,
       teacher: data.teacher,
     };
-  }) as IAverage[];
+  });
 };
 
 const competenceAdapter = (data: IBackendCompetence): ICompetence => {
@@ -169,7 +170,7 @@ const competenceAdapter = (data: IBackendCompetence): ICompetence => {
     domaineId: data.id_domaine,
     evaluation: data.evaluation,
     id: data.id_competence,
-  } as ICompetence;
+  };
 };
 
 const devoirAdapter = (data: IBackendDevoir): IDevoir => {
@@ -187,7 +188,7 @@ const devoirAdapter = (data: IBackendDevoir): IDevoir => {
     subjectId: data.id_matiere,
     teacher: data.teacher,
     termId: data.id_periode,
-  } as IDevoir;
+  };
 };
 
 const domaineAdapter = (data: IBackendDomaine): IDomaine => {
@@ -203,7 +204,7 @@ const domaineAdapter = (data: IBackendDomaine): IDomaine => {
       hidden: c.masque,
     })),
     domaines: data.domaines?.map(domaineAdapter),
-  } as IDomaine;
+  };
 };
 
 const compareDevoirs = (a: IDevoir, b: IDevoir): number => {
@@ -212,18 +213,13 @@ const compareDevoirs = (a: IDevoir, b: IDevoir): number => {
 
 const levelAdapter = (data: IBackendLevel): ILevel => {
   return {
-    couleur: data.couleur,
-    cycle: data.cycle,
-    default: data.default,
-    default_lib: data.default_lib,
+    color: data.couleur,
+    cycleId: data.id_cycle,
+    defaultColor: data.default,
     id: data.id,
-    id_cycle: data.id_cycle,
-    id_etablissement: data.id_etablissement,
-    id_niveau: data.id_niveau,
-    lettre: data.lettre,
-    libelle: data.libelle,
-    ordre: data.ordre,
-  } as ILevel;
+    label: data.libelle,
+    order: data.ordre,
+  };
 };
 
 const subjectAdapter = (data: IBackendSubject): ISubject => {
@@ -231,18 +227,19 @@ const subjectAdapter = (data: IBackendSubject): ISubject => {
     id: data.id,
     name: data.name,
     rank: data.rank,
-  } as ISubject;
+  };
 };
 
 const userChildAdapter = (data: IBackendUserChild): IUserChild => {
   return {
+    classId: data.idClasse,
+    cycleId: data.id_cycle,
     displayName: data.displayName,
     firstName: data.firstName,
     id: data.id,
-    idClasse: data.idClasse,
-    idStructure: data.idStructure,
     lastName: data.lastName,
-  } as IUserChild;
+    structureId: data.idStructure,
+  };
 };
 
 export const competencesService = {
@@ -253,49 +250,49 @@ export const competencesService = {
         api += `&idPeriode=${termId}`;
       }
       const averages = (await fetchJSONWithCache(api)) as IBackendAverageList;
-      return averageAdapter(averages) as IAverage[];
+      return averageAdapter(averages);
     },
   },
   competences: {
     get: async (session: ISession, studentId: string, classId: string) => {
       const api = `/viescolaire/competences/eleve?idEleve=${studentId}&idClasse=${classId}`;
       const competences = (await fetchJSONWithCache(api)) as IBackendCompetenceList;
-      return competences.map(competence => competenceAdapter(competence)) as ICompetence[];
+      return competences.map(competenceAdapter);
     },
   },
   devoirs: {
     get: async (session: ISession, structureId: string, studentId: string) => {
       const api = `/competences/devoirs?idEtablissement=${structureId}&idEleve=${studentId}`;
       const devoirs = (await fetchJSONWithCache(api)) as IBackendDevoirList;
-      return devoirs.map(devoir => devoirAdapter(devoir)).sort(compareDevoirs) as IDevoir[];
+      return devoirs.map(devoirAdapter).sort(compareDevoirs);
     },
   },
   domaines: {
     get: async (session: ISession, classId: string) => {
       const api = `/competences/domaines?idClasse=${classId}`;
       const domaines = (await fetchJSONWithCache(api)) as IBackendDomaineList;
-      return domaines.map(domaine => domaineAdapter(domaine)) as IDomaine[];
+      return domaines.map(domaineAdapter);
     },
   },
   levels: {
     get: async (session: ISession, structureId: string) => {
       const api = `/competences/maitrise/level/${structureId}`;
       const levels = (await fetchJSONWithCache(api)) as IBackendLevelList;
-      return levels.map(level => levelAdapter(level)) as ILevel[];
+      return levels.map(levelAdapter);
     },
   },
   subjects: {
     get: async (session: ISession, structureId: string) => {
       const api = `/viescolaire/matieres/services-filter?idEtablissement=${structureId}`;
       const subjects = (await fetchJSONWithCache(api)) as IBackendSubjectList;
-      return subjects.map(subject => subjectAdapter(subject)) as ISubject[];
+      return subjects.map(subjectAdapter);
     },
   },
   userChildren: {
     get: async (session: ISession, structureId: string, relativeId: string) => {
       const api = `/competences/enfants?idEtablissement=${structureId}&userId=${relativeId}`;
       const userChildren = (await fetchJSONWithCache(api)) as IBackendUserChildren;
-      return userChildren.map(child => userChildAdapter(child)) as IUserChild[];
+      return userChildren.map(userChildAdapter);
     },
   },
 };

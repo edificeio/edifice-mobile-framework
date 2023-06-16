@@ -81,7 +81,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       let childClasses = classes?.[0];
       if (userType === UserType.Relative) {
         const children = await props.fetchUserChildren(structureId, userId);
-        childClasses = children.find(c => c.id === childId)?.idClasse;
+        childClasses = children.find(c => c.id === childId)?.classId;
       }
       await props.fetchTerms(structureId, childClasses ?? '');
       props.clearCompetences();
@@ -150,7 +150,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   const openAssessment = (assessment: IDevoir) => {
     const { childId, classes, navigation, userChildren, userType } = props;
-    const studentClass = userType === UserType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.idClasse;
+    const studentClass = userType === UserType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.classId;
 
     navigation.navigate(competencesRouteNames.assessment, {
       assessment,

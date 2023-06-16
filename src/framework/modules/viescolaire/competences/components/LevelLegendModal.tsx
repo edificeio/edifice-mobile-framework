@@ -31,12 +31,12 @@ const LevelLegendModal = React.forwardRef<ModalBoxHandle, ILevelLegendModalProps
       ref={ref}
       content={
         <FlatList
-          data={props.levels.slice().sort((a, b) => b.ordre - a.ordre)}
+          data={props.levels.slice().sort((a, b) => b.order - a.order)}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.levelContainer}>
-              <View style={[styles.levelColorContainer, { backgroundColor: item.couleur }]} />
-              <SmallText>{item.libelle}</SmallText>
+              <View style={[styles.levelColorContainer, { backgroundColor: item.color }]} />
+              <SmallText>{item.label}</SmallText>
             </View>
           )}
           ListHeaderComponent={<BodyText>{I18n.get('competences-assessment-levellegendmodal-title')}</BodyText>}

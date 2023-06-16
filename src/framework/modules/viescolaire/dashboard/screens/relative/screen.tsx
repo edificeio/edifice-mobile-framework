@@ -129,7 +129,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
     navigation.navigate(competencesRouteNames.assessment, {
       assessment,
-      studentClass: userChildren.find(child => child.id === childId)?.idClasse ?? '',
+      studentClass: userChildren.find(child => child.id === childId)?.classId ?? '',
     });
   };
 

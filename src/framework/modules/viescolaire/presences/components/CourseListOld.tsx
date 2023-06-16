@@ -113,8 +113,8 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
                 <CourseComponent
                   key={item.id}
                   item={item}
-                  isCourseEditable={!moment(item.startDate).subtract(15, 'minutes').isAfter(moment())}
-                  isCourseNow={moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate))}
+                  isCourseEditable={!item.startDate.clone().subtract(15, 'minutes').isAfter(moment())}
+                  isCourseNow={moment().isBetween(item.startDate.clone().subtract(15, 'minutes'), item.endDate)}
                   onPress={() => this.props.onCoursePress(item)}
                 />
               ))}

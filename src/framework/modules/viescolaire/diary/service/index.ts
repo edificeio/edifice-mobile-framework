@@ -147,7 +147,7 @@ const homeworkAdapter = (data: IBackendHomework): IHomework => {
     created_date: moment(data.created),
     audience: data.audience,
     session_id: data.session_id.toString(),
-  } as IHomework;
+  };
 };
 
 const courseAdapter = (data: IBackendCourse): IDiaryCourse => {
@@ -162,7 +162,7 @@ const courseAdapter = (data: IBackendCourse): IDiaryCourse => {
     subject: data.subject,
     subjectId: data.subjectId,
     teacherIds: data.teacherIds,
-  } as IDiaryCourse;
+  };
 };
 
 const homeworksAdapter = (data: IBackendHomeworkList): IHomeworkMap => {
@@ -191,7 +191,7 @@ const sessionAdapter = (data: IBackendSession): IDiarySession => {
     homeworks: data.homeworks.map(homeworkAdapter),
     course_id: data.course_id,
     audience: data.audience,
-  } as IDiarySession;
+  };
 };
 
 export const diaryService = {
@@ -201,7 +201,7 @@ export const diaryService = {
       const end = endDate.format('YYYY-MM-DD');
       const api = `/viescolaire/common/courses/${structureId}/${start}/${end}?teacherId=${teacherId}&union=true`;
       const courses = (await fetchJSONWithCache(api)) as IBackendCourseList;
-      return courses.map(course => courseAdapter(course)) as IDiaryCourse[];
+      return courses.map(courseAdapter);
     },
   },
   homeworks: {
@@ -230,12 +230,12 @@ export const diaryService = {
     get: async (session: ISession, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/sessions/own/${startDate}/${endDate}/${structureId}`;
       const sessions = (await fetchJSONWithCache(api)) as IBackendSessionList;
-      return sessions.map(s => sessionAdapter(s)) as IDiarySession[];
+      return sessions.map(sessionAdapter);
     },
     getFromChild: async (session: ISession, childId: string, startDate: string, endDate: string) => {
       const api = `/diary/sessions/child/${startDate}/${endDate}/${childId}`;
       const sessions = (await fetchJSONWithCache(api)) as IBackendSessionList;
-      return sessions.map(s => sessionAdapter(s)) as IDiarySession[];
+      return sessions.map(sessionAdapter);
     },
   },
 };

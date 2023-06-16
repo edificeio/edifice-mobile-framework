@@ -252,7 +252,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       <>
         <LeftColoredItem shadow style={styles.headerCard} color={viescoTheme.palette.presences}>
           <SmallText>
-            {moment(classCall.startDate).format('LT')} - {moment(classCall.endDate).format('LT')}
+            {classCall.startDate.format('LT')} - {classCall.endDate.format('LT')}
           </SmallText>
           {classroom ? (
             <View style={styles.classroomContainer}>

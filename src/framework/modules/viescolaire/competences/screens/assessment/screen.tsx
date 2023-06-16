@@ -154,7 +154,7 @@ export default connect(
         competencesState.competences.isPristine || competencesState.domaines.isPristine
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
-      levels: competencesState.levels.data.filter(level => level.id_cycle === domaines[0]?.cycleId),
+      levels: competencesState.levels.data.filter(level => level.cycleId === domaines[0]?.cycleId),
       structureId:
         userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
       studentId: userType === UserType.Student ? userId : dashboardState.selectedChildId,

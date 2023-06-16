@@ -52,10 +52,10 @@ interface ICallCardProps {
 export class CallCard extends React.PureComponent<ICallCardProps> {
   public render() {
     const { course, onPress } = this.props;
-    const isCourseNow = moment().isBetween(moment(course.startDate).subtract(15, 'minutes'), moment(course.endDate));
-    const isCourseEditable = !moment(course.startDate).subtract(15, 'minutes').isAfter(moment());
+    const isCourseNow = moment().isBetween(course.startDate.clone().subtract(15, 'minutes'), course.endDate);
+    const isCourseEditable = !course.startDate.clone().subtract(15, 'minutes').isAfter(moment());
     const opacity = isCourseNow ? 1 : 0.4;
-    const hoursText = `${moment(course.startDate).format('LT')} - ${moment(course.endDate).format('LT')}`;
+    const hoursText = `${course.startDate.format('LT')} - ${course.endDate.format('LT')}`;
     return (
       <ArticleContainer>
         <LeftColoredItem

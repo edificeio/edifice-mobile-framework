@@ -66,7 +66,7 @@ export default ({
             style={styles.iconMarginRight}
           />
           <SmallText>
-            {moment(item.startDate).format('LT')} - {moment(item.endDate).format('LT')}
+            {item.startDate.format('LT')} - {item.endDate.format('LT')}
           </SmallText>
         </View>
         <HeadingSText>{item.classes[0] !== undefined ? item.classes : item.groups}</HeadingSText>

@@ -1,8 +1,9 @@
 export interface IUserChild {
+  classId: string;
+  cycleId: number;
   displayName: string;
   firstName: string;
   id: string;
-  idClasse: string;
-  idStructure: string;
   lastName: string;
+  structureId: string;
 }
