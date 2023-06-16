@@ -14,6 +14,7 @@
     "i18n-merge-en": "node cli/i18n.js merge en",
     "i18n-merge-es": "node cli/i18n.js merge es",
     "i18n-push": "phrase push --use-local-branch-name",
+    "i18n-pull": "phrase pull --use-local-branch-name",
     "i18n-unused": "node cli/i18n.js unused",
     "ios": "react-native run-ios",
     "lint-all": "eslint --ext .js,.jsx,.ts,.tsx ./src",
