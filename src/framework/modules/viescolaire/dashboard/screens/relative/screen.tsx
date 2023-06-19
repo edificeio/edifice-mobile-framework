@@ -4,7 +4,6 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -44,11 +43,11 @@ import ChildrenEventsModal from '~/framework/modules/viescolaire/presences/compo
 import presencesConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import type { DashboardRelativeScreenPrivateProps } from './types';
+import type { DashboardRelativeScreenDispatchProps, DashboardRelativeScreenPrivateProps } from './types';
 
 type IHomeworkByDateList = {
   [key: string]: IHomework[];
@@ -78,18 +77,18 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       const { childId, structureId, userChildren, userId } = props;
 
       if (!childId || !structureId || !userId) throw new Error();
-      await props.fetchHomeworks(
+      await props.tryFetchHomeworks(
         childId,
         structureId,
         moment().add(1, 'day').format('YYYY-MM-DD'),
         moment().add(1, 'month').format('YYYY-MM-DD'),
       );
-      await props.fetchTeachers(structureId);
-      await props.fetchDevoirs(structureId, childId);
-      await props.fetchSubjects(structureId);
+      await props.tryFetchTeachers(structureId);
+      await props.tryFetchDevoirs(structureId, childId);
+      await props.tryFetchSubjects(structureId);
       if (!userChildren.length) {
-        const children = await props.fetchUserChildren(structureId, userId);
-        await props.fetchChildrenEvents(
+        const children = await props.tryFetchUserChildren(structureId, userId);
+        await props.tryFetchChildrenEvents(
           structureId,
           children.map(child => child.id),
         );
@@ -116,7 +115,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   React.useEffect(() => {
     if (loadingState === AsyncPagedLoadingState.DONE) init();
-    props.clearCompetences();
+    props.handleClearCompetences();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childId]);
 
@@ -311,40 +310,16 @@ export default connect(
       userId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<DashboardRelativeScreenDispatchProps>(
       {
-        clearCompetences: clearCompetencesAction,
-        fetchChildrenEvents: tryActionLegacy(
-          fetchPresencesChildrenEventsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardRelativeScreenPrivateProps['fetchChildrenEvents'],
-        fetchDevoirs: tryActionLegacy(
-          fetchCompetencesDevoirsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardRelativeScreenPrivateProps['fetchDevoirs'],
-        fetchHomeworks: tryActionLegacy(
-          fetchDiaryHomeworksFromChildAction,
-          undefined,
-          true,
-        ) as unknown as DashboardRelativeScreenPrivateProps['fetchHomeworks'],
-        fetchSubjects: tryActionLegacy(
-          fetchCompetencesSubjectsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardRelativeScreenPrivateProps['fetchSubjects'],
-        fetchTeachers: tryActionLegacy(
-          fetchDiaryTeachersAction,
-          undefined,
-          true,
-        ) as unknown as DashboardRelativeScreenPrivateProps['fetchTeachers'],
-        fetchUserChildren: tryActionLegacy(
-          fetchCompetencesUserChildrenAction,
-          undefined,
-          true,
-        ) as unknown as DashboardRelativeScreenPrivateProps['fetchUserChildren'],
+        handleClearCompetences: handleAction(clearCompetencesAction),
+        tryFetchChildrenEvents: tryAction(fetchPresencesChildrenEventsAction),
+        tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
+        tryFetchHomeworks: tryAction(fetchDiaryHomeworksFromChildAction),
+        tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),
+        tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
+        tryFetchUserChildren: tryAction(fetchCompetencesUserChildrenAction),
       },
       dispatch,
     ),

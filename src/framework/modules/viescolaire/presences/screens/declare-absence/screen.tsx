@@ -28,7 +28,7 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
-import { PresencesDeclareAbsenceScreenPrivateProps } from './types';
+import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

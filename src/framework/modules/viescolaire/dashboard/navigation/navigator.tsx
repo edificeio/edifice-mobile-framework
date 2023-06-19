@@ -24,15 +24,34 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     const userType = session?.user.type;
 
     if (userType === UserType.Student) {
-      screens.push(<Stack.Screen name={dashboardRouteNames.student} component={DashboardStudentScreen} options={studentNavBar} />);
+      screens.push(
+        <Stack.Screen
+          name={dashboardRouteNames.student}
+          component={DashboardStudentScreen}
+          options={studentNavBar}
+          initialParams={{}}
+        />,
+      );
       moduleConfig.routeName = dashboardRouteNames.student;
     } else if (userType === UserType.Relative) {
       screens.push(
-        <Stack.Screen name={dashboardRouteNames.relative} component={DashboardRelativeScreen} options={relativeNavBar} />,
+        <Stack.Screen
+          name={dashboardRouteNames.relative}
+          component={DashboardRelativeScreen}
+          options={relativeNavBar}
+          initialParams={{}}
+        />,
       );
       moduleConfig.routeName = dashboardRouteNames.relative;
     } else {
-      screens.push(<Stack.Screen name={dashboardRouteNames.teacher} component={DashboardTeacherScreen} options={teacherNavBar} />);
+      screens.push(
+        <Stack.Screen
+          name={dashboardRouteNames.teacher}
+          component={DashboardTeacherScreen}
+          options={teacherNavBar}
+          initialParams={{}}
+        />,
+      );
       moduleConfig.routeName = dashboardRouteNames.teacher;
     }
     return <>{screens}</>;

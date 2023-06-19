@@ -1,19 +1,16 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ICompetence, IDevoir, IDomaine, ILevel } from '~/framework/modules/viescolaire/competences/model';
-import type { CompetencesNavigationParams } from '~/framework/modules/viescolaire/competences/navigation';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import type {
+  fetchCompetencesAction,
+  fetchCompetencesDomainesAction,
+  fetchCompetencesLevelsAction,
+} from '~/framework/modules/viescolaire/competences/actions';
+import type { ICompetence, IDevoir, IDomaine, ILevel } from '~/framework/modules/viescolaire/competences/model';
+import type { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
+import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface CompetencesAssessmentScreenProps {
-  competences: ICompetence[];
-  domaines: IDomaine[];
   initialLoadingState: AsyncPagedLoadingState;
-  levels: ILevel[];
-  studentId?: string;
-  structureId?: string;
-  fetchCompetences: (studentId: string, classId: string) => Promise<ICompetence[]>;
-  fetchDomaines: (classId: string) => Promise<IDomaine[]>;
-  fetchLevels: (structureId: string) => Promise<ILevel[]>;
 }
 
 export interface CompetencesAssessmentScreenNavParams {
@@ -21,8 +18,21 @@ export interface CompetencesAssessmentScreenNavParams {
   studentClass: string;
 }
 
-export interface CompetencesAssessmentScreenPrivateProps
-  extends NativeStackScreenProps<CompetencesNavigationParams, 'assessment'>,
-    CompetencesAssessmentScreenProps {
-  // @scaffolder add HOC props here
+export interface CompetencesAssessmentScreenStoreProps {
+  competences: ICompetence[];
+  domaines: IDomaine[];
+  levels: ILevel[];
+  studentId?: string;
+  structureId?: string;
 }
+
+export interface CompetencesAssessmentScreenDispatchProps {
+  tryFetchCompetences: (...args: Parameters<typeof fetchCompetencesAction>) => Promise<ICompetence[]>;
+  tryFetchDomaines: (...args: Parameters<typeof fetchCompetencesDomainesAction>) => Promise<IDomaine[]>;
+  tryFetchLevels: (...args: Parameters<typeof fetchCompetencesLevelsAction>) => Promise<ILevel[]>;
+}
+
+export type CompetencesAssessmentScreenPrivateProps = CompetencesAssessmentScreenProps &
+  CompetencesAssessmentScreenStoreProps &
+  CompetencesAssessmentScreenDispatchProps &
+  NativeStackScreenProps<CompetencesNavigationParams, typeof competencesRouteNames.assessment>;

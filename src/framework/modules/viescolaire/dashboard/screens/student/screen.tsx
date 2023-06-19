@@ -4,7 +4,6 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -36,10 +35,10 @@ import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigatio
 import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import type { DashboardStudentScreenPrivateProps } from './types';
+import type { DashboardStudentScreenDispatchProps, DashboardStudentScreenPrivateProps } from './types';
 
 type IHomeworkByDateList = {
   [key: string]: IHomework[];
@@ -63,20 +62,20 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
     this.state = {
       // fetching next month homeworks only, when screen is focused
       focusListener: this.props.navigation.addListener('focus', () => {
-        this.props.fetchHomeworks(
+        this.props.tryFetchHomeworks(
           structureId,
           moment().add(1, 'days').format('YYYY-MM-DD'),
           moment().add(1, 'month').format('YYYY-MM-DD'),
         );
-        this.props.fetchDevoirs(structureId, userId);
-        this.props.fetchSubjects(structureId);
+        this.props.tryFetchDevoirs(structureId, userId);
+        this.props.tryFetchSubjects(structureId);
       }),
     };
   }
 
   public componentDidMount() {
     const { structureId } = this.props;
-    this.props.fetchTeachers(structureId);
+    this.props.tryFetchTeachers(structureId);
   }
 
   private openAssessment(assessment: IDevoir) {
@@ -172,7 +171,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
                 title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
                 subtitle={homework.type}
                 onChange={() => {
-                  this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
+                  this.props.tryUpdateHomeworkProgress(homework.id, !isHomeworkDone(homework));
                 }}
                 onPress={() =>
                   this.props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsAdapter(homework, homeworks))
@@ -245,34 +244,14 @@ export default connect(
       userId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<DashboardStudentScreenDispatchProps>(
       {
-        fetchDevoirs: tryActionLegacy(
-          fetchCompetencesDevoirsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchDevoirs'],
-        fetchHomeworks: tryActionLegacy(
-          fetchDiaryHomeworksAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchHomeworks'],
-        fetchSubjects: tryActionLegacy(
-          fetchCompetencesSubjectsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchSubjects'],
-        fetchTeachers: tryActionLegacy(
-          fetchDiaryTeachersAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchTeachers'],
-        updateHomeworkProgress: tryActionLegacy(
-          updateDiaryHomeworkProgressAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['updateHomeworkProgress'],
+        tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
+        tryFetchHomeworks: tryAction(fetchDiaryHomeworksAction),
+        tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),
+        tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
+        tryUpdateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction),
       },
       dispatch,
     ),

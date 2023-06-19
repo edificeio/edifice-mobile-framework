@@ -1,10 +1,22 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IUser } from '~/framework/modules/auth/model';
-import { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import type { DiaryNavigationParams } from '~/framework/modules/viescolaire/diary/navigation';
+import type { IUser } from '~/framework/modules/auth/model';
+import type {
+  fetchDiaryHomeworksAction,
+  fetchDiaryHomeworksFromChildAction,
+  fetchDiarySessionsAction,
+  fetchDiarySessionsFromChildAction,
+  fetchDiaryTeachersAction,
+  updateDiaryHomeworkProgressAction,
+} from '~/framework/modules/viescolaire/diary/actions';
+import type { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import type { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 
-export interface DiaryHomeworkListScreenProps {
+export interface DiaryHomeworkListScreenProps {}
+
+export interface DiaryHomeworkListScreenNavParams {}
+
+export interface DiaryHomeworkListScreenStoreProps {
   homeworks: IHomeworkMap;
   isFetchingHomework: boolean;
   isFetchingSession: boolean;
@@ -13,18 +25,18 @@ export interface DiaryHomeworkListScreenProps {
   childId?: string;
   structureId?: string;
   userType?: string;
-  fetchChildHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
-  fetchChildSessions: (childId: string, startDate: string, endDate: string) => Promise<IDiarySession[]>;
-  fetchHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
-  fetchSessions: (structureId: string, startDate: string, endDate: string) => Promise<IDiarySession[]>;
-  fetchTeachers: (structureId: string) => Promise<IUser[]>;
-  updateHomeworkProgress: (homeworkId: number, isDone: boolean) => Promise<void>;
 }
 
-export interface DiaryHomeworkListScreenNavParams {}
-
-export interface DiaryHomeworkListScreenPrivateProps
-  extends NativeStackScreenProps<DiaryNavigationParams, 'homeworkList'>,
-    DiaryHomeworkListScreenProps {
-  // @scaffolder add HOC props here
+export interface DiaryHomeworkListScreenDispatchProps {
+  tryFetchChildHomeworks: (...args: Parameters<typeof fetchDiaryHomeworksFromChildAction>) => Promise<IHomeworkMap>;
+  tryFetchChildSessions: (...args: Parameters<typeof fetchDiarySessionsFromChildAction>) => Promise<IDiarySession[]>;
+  tryFetchHomeworks: (...args: Parameters<typeof fetchDiaryHomeworksAction>) => Promise<IHomeworkMap>;
+  tryFetchSessions: (...args: Parameters<typeof fetchDiarySessionsAction>) => Promise<IDiarySession[]>;
+  tryFetchTeachers: (...args: Parameters<typeof fetchDiaryTeachersAction>) => Promise<IUser[]>;
+  updateHomeworkProgress: (...args: Parameters<typeof updateDiaryHomeworkProgressAction>) => Promise<void>;
 }
+
+export type DiaryHomeworkListScreenPrivateProps = DiaryHomeworkListScreenProps &
+  DiaryHomeworkListScreenStoreProps &
+  DiaryHomeworkListScreenDispatchProps &
+  NativeStackScreenProps<DiaryNavigationParams, typeof diaryRouteNames.homeworkList>;

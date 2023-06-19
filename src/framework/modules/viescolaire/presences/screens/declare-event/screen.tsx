@@ -22,7 +22,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
-import { PresencesDeclareEventScreenPrivateProps } from './types';
+import type { PresencesDeclareEventScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

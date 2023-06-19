@@ -3,7 +3,6 @@ import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
@@ -26,10 +25,10 @@ import moduleConfig from '~/framework/modules/viescolaire/competences/module-con
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import type { CompetencesAssessmentScreenPrivateProps } from './types';
+import type { CompetencesAssessmentScreenDispatchProps, CompetencesAssessmentScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -55,9 +54,9 @@ const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivatePr
       const { studentClass } = props.route.params;
 
       if (!structureId || !studentId) throw new Error();
-      await props.fetchCompetences(studentId, studentClass);
-      await props.fetchDomaines(studentClass);
-      await props.fetchLevels(structureId);
+      await props.tryFetchCompetences(studentId, studentClass);
+      await props.tryFetchDomaines(studentClass);
+      await props.tryFetchLevels(structureId);
     } catch {
       throw new Error();
     }
@@ -160,24 +159,12 @@ export default connect(
       studentId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<CompetencesAssessmentScreenDispatchProps>(
       {
-        fetchCompetences: tryActionLegacy(
-          fetchCompetencesAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesAssessmentScreenPrivateProps['fetchCompetences'],
-        fetchDomaines: tryActionLegacy(
-          fetchCompetencesDomainesAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesAssessmentScreenPrivateProps['fetchDomaines'],
-        fetchLevels: tryActionLegacy(
-          fetchCompetencesLevelsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesAssessmentScreenPrivateProps['fetchLevels'],
+        tryFetchCompetences: tryAction(fetchCompetencesAction),
+        tryFetchDomaines: tryAction(fetchCompetencesDomainesAction),
+        tryFetchLevels: tryAction(fetchCompetencesLevelsAction),
       },
       dispatch,
     ),

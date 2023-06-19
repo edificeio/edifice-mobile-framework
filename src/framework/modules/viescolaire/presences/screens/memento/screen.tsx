@@ -18,7 +18,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesMementoScreenPrivateProps } from './types';
+import type { PresencesMementoScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,

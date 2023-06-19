@@ -4,7 +4,6 @@ import { FlatList, Platform, RefreshControl, ScrollView, Switch, View } from 're
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -34,12 +33,12 @@ import moduleConfig from '~/framework/modules/viescolaire/competences/module-con
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 import styles from './styles';
-import type { CompetencesHomeScreenPrivateProps } from './types';
+import type { CompetencesHomeScreenDispatchProps, CompetencesHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -73,18 +72,18 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       getItemJson<boolean>(STORAGE_KEY).then(value => {
         if (value) setAverageColorsShown(true);
       });
-      await props.fetchDevoirs(structureId, childId);
+      await props.tryFetchDevoirs(structureId, childId);
       if (term !== 'default') {
-        await props.fetchAverages(structureId, childId, term);
+        await props.tryFetchAverages(structureId, childId, term);
       }
-      await props.fetchSubjects(structureId);
+      await props.tryFetchSubjects(structureId);
       let childClasses = classes?.[0];
       if (userType === UserType.Relative) {
-        const children = await props.fetchUserChildren(structureId, userId);
+        const children = await props.tryFetchUserChildren(structureId, userId);
         childClasses = children.find(c => c.id === childId)?.classId;
       }
-      await props.fetchTerms(structureId, childClasses ?? '');
-      props.clearCompetences();
+      await props.tryFetchTerms(structureId, childClasses ?? '');
+      props.handleClearCompetences();
     } catch {
       throw new Error();
     }
@@ -95,7 +94,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       const { childId, structureId } = props;
 
       if (!childId || !structureId) throw new Error();
-      await props.fetchAverages(structureId, childId, term);
+      await props.tryFetchAverages(structureId, childId, term);
     } catch {
       throw new Error();
     }
@@ -338,35 +337,15 @@ export default connect(
       userType,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<CompetencesHomeScreenDispatchProps>(
       {
-        clearCompetences: clearCompetencesAction,
-        fetchAverages: tryActionLegacy(
-          fetchCompetencesAveragesAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchAverages'],
-        fetchDevoirs: tryActionLegacy(
-          fetchCompetencesDevoirsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchDevoirs'],
-        fetchSubjects: tryActionLegacy(
-          fetchCompetencesSubjectsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchSubjects'],
-        fetchTerms: tryActionLegacy(
-          fetchCompetencesTermsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchTerms'],
-        fetchUserChildren: tryActionLegacy(
-          fetchCompetencesUserChildrenAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchUserChildren'],
+        handleClearCompetences: handleAction(clearCompetencesAction),
+        tryFetchAverages: tryAction(fetchCompetencesAveragesAction),
+        tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
+        tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),
+        tryFetchTerms: tryAction(fetchCompetencesTermsAction),
+        tryFetchUserChildren: tryAction(fetchCompetencesUserChildrenAction),
       },
       dispatch,
     ),

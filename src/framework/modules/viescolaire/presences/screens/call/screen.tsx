@@ -3,7 +3,6 @@ import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -25,11 +24,11 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesCallScreenPrivateProps } from './types';
+import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -54,7 +53,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       const { id } = props.route.params;
 
       if (!id) throw new Error();
-      await props.fetchClassCall(id);
+      await props.tryFetchClassCall(id);
     } catch {
       throw new Error();
     }
@@ -297,14 +296,10 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<PresencesCallScreenDispatchProps>(
       {
-        fetchClassCall: tryActionLegacy(
-          fetchPresencesClassCallAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCallScreenPrivateProps['fetchClassCall'],
+        tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
       },
       dispatch,
     ),

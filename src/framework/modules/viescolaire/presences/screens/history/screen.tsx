@@ -5,7 +5,6 @@ import { RefreshControl, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -38,11 +37,11 @@ import {
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesHistoryScreenPrivateProps } from './types';
+import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -73,17 +72,17 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       let groupId = classes?.[0];
       if (userType === UserType.Relative) {
-        const children = await props.fetchUserChildren(userId);
+        const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
       if (selectedTerm !== 'year') setSelectedTerm('year');
-      await props.fetchTerms(structureId, groupId ?? '');
-      const schoolYear = await props.fetchSchoolYear(structureId);
+      await props.tryFetchTerms(structureId, groupId ?? '');
+      const schoolYear = await props.tryFetchSchoolYear(structureId);
       setStartDate(schoolYear.startDate);
       setEndDate(schoolYear.endDate);
       const start = schoolYear.startDate.format('YYYY-MM-DD');
       const end = schoolYear.endDate.format('YYYY-MM-DD');
-      await props.fetchHistory(studentId, structureId, start, end);
+      await props.tryFetchHistory(studentId, structureId, start, end);
     } catch {
       throw new Error();
     }
@@ -245,29 +244,13 @@ export default connect(
       userType,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<PresencesHistoryScreenDispatchProps>(
       {
-        fetchHistory: tryActionLegacy(
-          fetchPresencesHistoryAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchHistory'],
-        fetchSchoolYear: tryActionLegacy(
-          fetchPresencesSchoolYearAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchSchoolYear'],
-        fetchTerms: tryActionLegacy(
-          fetchPresencesTermsAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchTerms'],
-        fetchUserChildren: tryActionLegacy(
-          fetchPresencesUserChildrenAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchUserChildren'],
+        tryFetchHistory: tryAction(fetchPresencesHistoryAction),
+        tryFetchSchoolYear: tryAction(fetchPresencesSchoolYearAction),
+        tryFetchTerms: tryAction(fetchPresencesTermsAction),
+        tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
       dispatch,
     ),

@@ -36,24 +36,28 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={presencesRouteNames.courseList}
           component={PresencesCourseListScreen}
           options={courseListNavBar}
+          initialParams={{}}
         />,
         <Stack.Screen
           key={presencesRouteNames.call}
           name={presencesRouteNames.call}
           component={PresencesCallScreen}
           options={callNavBar}
+          initialParams={{}}
         />,
         <Stack.Screen
           key={presencesRouteNames.declareEvent}
           name={presencesRouteNames.declareEvent}
           component={PresencesDeclareEventScreen}
           options={declareEventNavBar}
+          initialParams={{}}
         />,
         <Stack.Screen
           key={presencesRouteNames.memento}
           name={presencesRouteNames.memento}
           component={PresencesMementoScreen}
           options={mementoNavBar}
+          initialParams={{}}
         />,
       );
       moduleConfig.routeName = presencesRouteNames.courseList;
@@ -64,6 +68,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={presencesRouteNames.history}
           component={PresencesHistoryScreen}
           options={historyNavBar}
+          initialParams={{}}
         />,
       );
       if (session?.user.type === UserType.Relative) {
@@ -73,6 +78,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             name={presencesRouteNames.declareAbsence}
             component={PresencesDeclareAbsenceScreen}
             options={declareAbsenceNavBar}
+            initialParams={{}}
           />,
         );
       }

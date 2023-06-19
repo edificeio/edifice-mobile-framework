@@ -4,7 +4,6 @@ import * as React from 'react';
 import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -31,11 +30,11 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesCourseListScreenPrivateProps } from './types';
+import type { PresencesCourseListScreenDispatchProps, PresencesCourseListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -59,15 +58,15 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       const { structureId, teacherId } = props;
 
       if (!structureId || !teacherId) throw new Error();
-      const allowMultipleSlots = await props.fetchMultipleSlotsSetting(structureId);
-      const registerPreference = await props.fetchRegisterPreference();
-      await props.fetchEventReasons(structureId);
+      const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
+      const registerPreference = await props.tryFetchRegisterPreference();
+      await props.tryFetchEventReasons(structureId);
       const today = moment().format('YYYY-MM-DD');
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }
-      await props.fetchCourses(teacherId, structureId, today, today, multipleSlot);
+      await props.tryFetchCourses(teacherId, structureId, today, today, multipleSlot);
     } catch {
       throw new Error();
     }
@@ -202,29 +201,13 @@ export default connect(
       teacherId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<PresencesCourseListScreenDispatchProps>(
       {
-        fetchCourses: tryActionLegacy(
-          fetchPresencesCoursesAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchCourses'],
-        fetchEventReasons: tryActionLegacy(
-          fetchPresencesEventReasonsAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchEventReasons'],
-        fetchMultipleSlotsSetting: tryActionLegacy(
-          fetchPresencesMultipleSlotSettingAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchMultipleSlotsSetting'],
-        fetchRegisterPreference: tryActionLegacy(
-          fetchPresencesRegisterPreferenceAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchRegisterPreference'],
+        tryFetchCourses: tryAction(fetchPresencesCoursesAction),
+        tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
+        tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
+        tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),
       },
       dispatch,
     ),

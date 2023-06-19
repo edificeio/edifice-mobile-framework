@@ -2,7 +2,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -23,9 +22,9 @@ import HomeworkList from '~/framework/modules/viescolaire/diary/components/Homew
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 
-import type { DiaryHomeworkListScreenPrivateProps } from './types';
+import type { DiaryHomeworkListScreenDispatchProps, DiaryHomeworkListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -40,18 +39,18 @@ export const computeNavBar = ({
 
 class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScreenPrivateProps> {
   componentDidMount() {
-    this.props.fetchTeachers(this.props.structureId);
+    this.props.tryFetchTeachers(this.props.structureId);
   }
 
   private fetchHomeworks = (startDate, endDate) =>
     this.props.userType === UserType.Student
-      ? this.props.fetchHomeworks(this.props.structureId, startDate, endDate)
-      : this.props.fetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
+      ? this.props.tryFetchHomeworks(this.props.structureId, startDate, endDate)
+      : this.props.tryFetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
 
   private fetchSessions = (startDate, endDate) =>
     this.props.userType === UserType.Student
-      ? this.props.fetchSessions(this.props.structureId, startDate, endDate)
-      : this.props.fetchChildSessions(this.props.childId, startDate, endDate);
+      ? this.props.tryFetchSessions(this.props.structureId, startDate, endDate)
+      : this.props.tryFetchChildSessions(this.props.childId, startDate, endDate);
 
   public render() {
     return (
@@ -93,39 +92,15 @@ export default connect(
       userType,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<DiaryHomeworkListScreenDispatchProps>(
       {
-        fetchChildHomeworks: tryActionLegacy(
-          fetchDiaryHomeworksFromChildAction,
-          undefined,
-          true,
-        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchChildHomeworks'],
-        fetchChildSessions: tryActionLegacy(
-          fetchDiarySessionsFromChildAction,
-          undefined,
-          true,
-        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchChildSessions'],
-        fetchHomeworks: tryActionLegacy(
-          fetchDiaryHomeworksAction,
-          undefined,
-          true,
-        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchHomeworks'],
-        fetchSessions: tryActionLegacy(
-          fetchDiarySessionsAction,
-          undefined,
-          true,
-        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchSessions'],
-        fetchTeachers: tryActionLegacy(
-          fetchDiaryTeachersAction,
-          undefined,
-          true,
-        ) as unknown as DiaryHomeworkListScreenPrivateProps['fetchTeachers'],
-        updateHomeworkProgress: tryActionLegacy(
-          updateDiaryHomeworkProgressAction,
-          undefined,
-          true,
-        ) as unknown as DiaryHomeworkListScreenPrivateProps['updateHomeworkProgress'],
+        tryFetchChildHomeworks: tryAction(fetchDiaryHomeworksFromChildAction),
+        tryFetchChildSessions: tryAction(fetchDiarySessionsFromChildAction),
+        tryFetchHomeworks: tryAction(fetchDiaryHomeworksAction),
+        tryFetchSessions: tryAction(fetchDiarySessionsAction),
+        tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
+        updateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction),
       },
       dispatch,
     ),
