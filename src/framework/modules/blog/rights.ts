@@ -65,7 +65,7 @@ export default () =>
     const wk = getBlogWorkflowInformation(session);
     return (
       wk.blog.create && {
-        title: I18n.get('blog.resourceName'),
+        title: I18n.get('blog-resourcename'),
         action: () => {
           navigate(blogRouteNames.home);
         },

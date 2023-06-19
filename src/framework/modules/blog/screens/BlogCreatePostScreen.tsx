@@ -138,7 +138,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('blog.blogCreatePostScreen.title'),
+    title: I18n.get('blog-createpost-title'),
     titleStyle: { width: undefined },
   }),
 });
@@ -146,26 +146,22 @@ export const computeNavBar = ({
 function PreventBack(props: { isEditing: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
-    Alert.alert(
-      I18n.get('common.confirmationUnsavedPublication'),
-      I18n.get('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
-      [
-        {
-          text: I18n.get('common.quit'),
-          onPress: () => {
-            handleRemoveConfirmNavigationEvent(data.action, navigation);
-          },
-          style: 'destructive',
+    Alert.alert(I18n.get('common.confirmationUnsavedPublication'), I18n.get('blog-createpost-unsavedpublication'), [
+      {
+        text: I18n.get('common.quit'),
+        onPress: () => {
+          handleRemoveConfirmNavigationEvent(data.action, navigation);
         },
-        {
-          text: I18n.get('common.continue'),
-          style: 'default',
-          onPress: () => {
-            clearConfirmNavigationEvent();
-          },
+        style: 'destructive',
+      },
+      {
+        text: I18n.get('common.continue'),
+        style: 'default',
+        onPress: () => {
+          clearConfirmNavigationEvent();
         },
-      ],
-    );
+      },
+    ]);
   });
   return null;
 }
@@ -220,7 +216,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
           if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
             Alert.alert('', I18n.get('fullStorage'));
           } else {
-            Alert.alert('', I18n.get('blog-post-upload-attachments-error-text'));
+            Alert.alert('', I18n.get('blog-createpost-uploadattachments-error-text'));
           }
           throw new Error('handled');
         }
@@ -242,9 +238,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       const eventName = `Rédaction blog - ${event}`;
       const eventCategory = route.params.referrer ? 'Blog' : 'Timeline';
       const toastSuccessText = {
-        [createBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.createSuccess'),
-        [submitBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.submitSuccess'),
-        [publishBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.publishSuccess'),
+        [createBlogPostResourceRight]: I18n.get('blog-createpost-create-success'),
+        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit-success'),
+        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish-success'),
       }[blogPostDisplayRight];
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
@@ -261,7 +257,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         Toast.showError(I18n.get('fullStorage'));
       }
       if ((e as Error).message && (e as Error).message !== 'handled') {
-        Toast.showError(I18n.get('blog-post-publish-error-text'));
+        Toast.showError(I18n.get('blog-createpost-publish-error-text'));
       }
     }
   }
@@ -273,9 +269,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     const actionText =
       blogPostDisplayRight &&
       {
-        [createBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.createAction'),
-        [submitBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.submitAction'),
-        [publishBlogPostResourceRight]: I18n.get('blog.blogCreatePostScreen.publishAction'),
+        [createBlogPostResourceRight]: I18n.get('blog-createpost-create'),
+        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit'),
+        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish'),
       }[blogPostDisplayRight];
     this.props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
@@ -334,20 +330,16 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     const { title, content } = this.state;
     return (
       <>
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>
-          {I18n.get('blog.blogCreatePostScreen.postTitle')}
-        </SmallBoldText>
+        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-post-title')}</SmallBoldText>
         <TextInput
-          placeholder={I18n.get('blog.blogCreatePostScreen.postTitlePlaceholder')}
+          placeholder={I18n.get('blog-createpost-post-title-placeholder')}
           value={title}
           onChangeText={text => this.setState({ title: text })}
           style={styles.input}
         />
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>
-          {I18n.get('blog.blogCreatePostScreen.postContent')}
-        </SmallBoldText>
+        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-postcontent')}</SmallBoldText>
         <TextInput
-          placeholder={I18n.get('blog.blogCreatePostScreen.postContentPlaceholder')}
+          placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
           value={content}
           onChangeText={text => this.setState({ content: text })}
           style={[styles.input, styles.inputArea]}
@@ -379,7 +371,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
             // onPress={() => this.attachmentPickerRef.onPickAttachment()}
           >
             <SmallActionText style={imagesAdded ? styles.addMediaButtonAdded : styles.addMediaButtonEmpty}>
-              {I18n.get('createPost-create-mediaField')}
+              {I18n.get('blog-createpost-create-mediafield')}
             </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>

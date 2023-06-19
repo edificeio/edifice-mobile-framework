@@ -317,7 +317,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             menuItemOpenBrowser,
             deleteAction({
               action: () => {
-                Alert.alert(I18n.get('common.deletionPostBlogTitle'), I18n.get('common.deletionPostBlogText'), [
+                Alert.alert(I18n.get('blog-postdetails-deletion-title'), I18n.get('blog-postdetails-deletion-text'), [
                   {
                     text: I18n.get('common.cancel'),
                     style: 'default',
@@ -494,7 +494,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : blogPostData?.state === 'SUBMITTED' ? (
       hasPublishBlogPostRight ? (
         <BottomButtonSheet
-          text={I18n.get('blog.post.publishAction')}
+          text={I18n.get('blog-postdetails-publish')}
           action={async () => {
             try {
               await this.props.handlePublishBlogPost({ blogId: blogInfos!.id, postId: blogPostData._id });
@@ -508,7 +508,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                   blogPost: newBlogPostData,
                 });
               }
-              Toast.showSuccess(I18n.get('blog-post-details-publish-success'));
+              Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
             } catch {
               Toast.showError(I18n.get('common.error.text'));
             }
@@ -516,7 +516,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         />
       ) : (
         <BottomSheet
-          content={<SmallBoldText style={styles.footerWaitingValidation}>{I18n.get('blog.post.waitingValidation')}</SmallBoldText>}
+          content={
+            <SmallBoldText style={styles.footerWaitingValidation}>{I18n.get('blog-postdetails-waitingvalidation')}</SmallBoldText>
+          }
         />
       )
     ) : null;
@@ -542,7 +544,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               />
             }>
             {blogPostData?.state === 'SUBMITTED' ? (
-              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog.post.needValidation')}</SmallBoldText>
+              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>

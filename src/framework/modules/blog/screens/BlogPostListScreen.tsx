@@ -55,7 +55,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('blog.appName'),
+    title: I18n.get('blog-appname'),
   }),
 });
 
@@ -187,7 +187,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
       !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
 
     props.navigation.setOptions({
-      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog.appName')),
+      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog-appname')),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasBlogPostCreationRights && !hasError ? (
@@ -206,11 +206,11 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-blog"
-        title={I18n.get(`blog.blogPostListScreen.emptyScreen.title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
-        text={I18n.get(`blog.blogPostListScreen.emptyScreen.text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
+        title={I18n.get(`blog-postlist-emptyscreen-title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
+        text={I18n.get(`blog-postlist-emptyscreen-text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
         {...(hasBlogPostCreationRights
           ? {
-              buttonText: I18n.get('blog.blogPostListScreen.emptyScreen.button'),
+              buttonText: I18n.get('blog-postlist-emptyscreen-button'),
               buttonAction: onGoToPostCreationScreen,
             }
           : {})}

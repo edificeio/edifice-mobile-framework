@@ -63,7 +63,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('blog.appName'),
+    title: I18n.get('blog-appname'),
   }),
 });
 
@@ -133,7 +133,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     const currentFolderId = props.route.params.folderId;
     const currentFolder = props.tree ? props.tree.folders.find(f => f.id === currentFolderId) : null;
     props.navigation.setOptions({
-      headerTitle: navBarTitle(currentFolder ? currentFolder.name : I18n.get('blog.appName')),
+      headerTitle: navBarTitle(currentFolder ? currentFolder.name : I18n.get('blog-appname')),
     });
   }, [props.navigation, props.route.params.folderId, props.tree]);
 
@@ -141,9 +141,9 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.get('blog.blogsEmptyScreen.title')}
-        text={I18n.get(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        buttonText={hasBlogCreationRights ? I18n.get('blog.blogsEmptyScreen.button') : undefined}
+        title={I18n.get('blog-explorer-emptyscreen-title')}
+        text={I18n.get(`blog-explorer-emptyscreen-text${hasBlogCreationRights ? '' : '-nocreationrights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.get('blog-explorer-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
     );

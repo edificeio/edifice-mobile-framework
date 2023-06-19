@@ -71,7 +71,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('blog.blogSelectScreen.title'),
+    title: I18n.get('blog-select-title'),
   }),
 });
 
@@ -153,9 +153,9 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
     return (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.get('blog.blogsEmptyScreen.title')}
-        text={I18n.get(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        buttonText={hasBlogCreationRights ? I18n.get('blog.blogsEmptyScreen.button') : undefined}
+        title={I18n.get('blog-select-emptyscreen-title')}
+        text={I18n.get(`blog-select-emptyscreen-text${hasBlogCreationRights ? '' : '-nocreationrights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.get('blog-select-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
     );
@@ -176,7 +176,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
               <View style={styles.blogItemTexts}>
                 <SmallBoldText numberOfLines={1}>{blog.title}</SmallBoldText>
                 <CaptionText style={{ marginTop: UI_SIZES.spacing.minor }}>
-                  {I18n.get(`blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? '' : 's'}`, {
+                  {I18n.get(`blog-select-sharedtonbperson${blogShareNumber === 1 ? '' : 's'}`, {
                     nb: blogShareNumber || 0,
                   })}
                 </CaptionText>
