@@ -46,10 +46,10 @@ export type CarnetDeBordDetailsScreenProps = CarnetDeBordDetailsScreenDataProps 
   NativeStackScreenProps<PronoteNavigationParams, typeof pronoteRouteNames.carnetDeBordDetails>;
 
 const PAGE_TITLE_I18N = {
-  [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'pronote-carnetdebord-cahierdetextes-title',
-  [CarnetDeBordSection.NOTES]: 'pronote-carnetdebord-relevedenotes-title',
-  [CarnetDeBordSection.COMPETENCES]: 'pronote-carnetdebord-competences-title',
-  [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote-carnetdebord-viescolaire-title',
+  [CarnetDeBordSection.CAHIER_DE_TEXTES]: 'pronote-cahierdetextes-title',
+  [CarnetDeBordSection.NOTES]: 'pronote-transcript-title',
+  [CarnetDeBordSection.COMPETENCES]: 'pronote-skills-title',
+  [CarnetDeBordSection.VIE_SCOLAIRE]: 'pronote-viescolaire-title',
 };
 
 export const computeNavBar = ({
@@ -162,7 +162,7 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
             if (data.address && props.session) redirect(props.session, data.address, pageId);
           }}
           iconName="pictos-external-link"
-          text={I18n.get('pronote-carnetdebord-openinpronote')}
+          text={I18n.get('pronote-openinpronote')}
         />
       </ScrollView>
     </PageView>
@@ -173,28 +173,28 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
     case CarnetDeBordSection.CAHIER_DE_TEXTES: {
       return [...(data.PageCahierDeTextes?.TravailAFairePast ?? []), ...(data.PageCahierDeTextes?.TravailAFaireFuture ?? [])].map(
         taf => ({
-          date: I18n.get('pronote-carnetdebord-cahierdetextes-pourdate', {
-            date: taf.PourLe ? displayDate(taf.PourLe) : I18n.get('pronote-carnetdebord-noinfo'),
+          date: I18n.get('pronote-cahierdetextes-pourdate', {
+            date: taf.PourLe ? displayDate(taf.PourLe) : I18n.get('pronote-noinfo'),
           }),
-          label: taf.Matiere || I18n.get('pronote-carnetdebord-noinfo'),
-          description: taf.Descriptif || `<p>${I18n.get('pronote-carnetdebord-noinfo')}</p>`,
+          label: taf.Matiere || I18n.get('pronote-noinfo'),
+          description: taf.Descriptif || `<p>${I18n.get('pronote-noinfo')}</p>`,
         }),
       );
     }
     case CarnetDeBordSection.NOTES: {
       return [...(data.PageReleveDeNotes?.DevoirsPast ?? []), ...(data.PageReleveDeNotes?.DevoirsFuture ?? [])].map(item => ({
-        label: item.Matiere || I18n.get('pronote-carnetdebord-noinfo'),
-        date: item.Date ? displayDate(item.Date) : I18n.get('pronote-carnetdebord-noinfo'),
+        label: item.Matiere || I18n.get('pronote-noinfo'),
+        date: item.Date ? displayDate(item.Date) : I18n.get('pronote-noinfo'),
         value: formatCarnetDeBordReleveDeNotesDevoirNoteBareme(item.Note, item.Bareme),
       }));
     }
     case CarnetDeBordSection.COMPETENCES: {
       return [...(data.PageCompetences?.CompetencesPast ?? []), ...(data.PageCompetences?.CompetencesFuture ?? [])].map(item => ({
-        label: item.Matiere || I18n.get('pronote-carnetdebord-noinfo'),
-        date: item.Date ? displayDate(item.Date) : I18n.get('pronote-carnetdebord-noinfo'),
+        label: item.Matiere || I18n.get('pronote-noinfo'),
+        date: item.Date ? displayDate(item.Date) : I18n.get('pronote-noinfo'),
         value: item.NiveauDAcquisition?.Genre
           ? splitWords(formatCarnetDeBordCompetencesValue(item.NiveauDAcquisition.Genre), 2)
-          : I18n.get('pronote-carnetdebord-noinfo'),
+          : I18n.get('pronote-noinfo'),
       }));
     }
     case CarnetDeBordSection.VIE_SCOLAIRE: {
@@ -208,28 +208,28 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
                   ? displayDate(item.DateDebut) + I18n.get('common.space') + item.DateDebut.format('LT')
                   : displayDate(item.DateDebut) +
                     I18n.get('common.space') +
-                    I18n.get('pronote-carnetdebord-viescolaire-datefromto', {
+                    I18n.get('pronote-viescolaire-datefromto', {
                       start: item.DateDebut.format('LT'),
                       end: item.DateFin.format('LT'),
                     })
-                : I18n.get('pronote-carnetdebord-viescolaire-datefromto', {
+                : I18n.get('pronote-viescolaire-datefromto', {
                     start: displayDate(item.DateDebut),
                     end: displayDate(item.DateFin),
                   })
-              : I18n.get('pronote-carnetdebord-noinfo')
+              : I18n.get('pronote-noinfo')
             : item.Date
             ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
               ? displayDate(item.Date) + I18n.get('common.space') + item.Date.format('LT')
               : displayDate(item.Date)
-            : I18n.get('pronote-carnetdebord-noinfo'),
+            : I18n.get('pronote-noinfo'),
         description:
           item.type === 'Absence' || item.type === 'Retard'
-            ? item.Motif || I18n.get('pronote-carnetdebord-noinfo')
+            ? item.Motif || I18n.get('pronote-noinfo')
             : item.type === 'Punition' || item.type === 'Sanction'
-            ? item.Nature || I18n.get('pronote-carnetdebord-noinfo')
+            ? item.Nature || I18n.get('pronote-noinfo')
             : item.type === 'Observation'
-            ? item.Observation || I18n.get('pronote-carnetdebord-noinfo')
-            : I18n.get('pronote-carnetdebord-noinfo'),
+            ? item.Observation || I18n.get('pronote-noinfo')
+            : I18n.get('pronote-noinfo'),
       }));
     }
   }
