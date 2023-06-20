@@ -1,4 +1,3 @@
-import { useFocusEffect } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl } from 'react-native';
@@ -7,12 +6,12 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { getNewsItemsAction, getNewsItemsForSelectedThreadAction, getNewsThreadsAction } from '~/framework/modules/newsv2/actions';
+import { getNewsItemsAction, getNewsThreadsAction } from '~/framework/modules/newsv2/actions';
 import NoNewsScreen from '~/framework/modules/newsv2/components/empty-screen';
 import NewsCard from '~/framework/modules/newsv2/components/news-card';
 import NewsPlaceholderHome from '~/framework/modules/newsv2/components/placeholder/home';
@@ -49,13 +48,14 @@ export const computeNavBar = ({
 });
 
 const NewsHomeScreen = (props: NewsHomeScreenProps) => {
-  const { navigation, session } = props;
+  const { navigation, session, handleGetNewsItems, handleGetNewsThreads } = props;
 
   const [threads, setThreads] = useState<NewsThreadItem[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
-  const [idThreadSelected, setIdThreadSelected] = useState<number | null>(null);
+  const [idThreadSelected, setIdThreadSelected] = useState<number | undefined>(undefined);
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
+  const [page, setPage] = useState<number>(0);
 
   const threadsInfosReduce = useMemo(() => convertArrayToObject(threads, 'id'), [threads]);
   const wf = useMemo(() => getNewsRights(session!), [session]);
@@ -75,28 +75,25 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     [navigation],
   );
 
-  const onFilter = useCallback(async (idThread: number | null) => {
+  const onFilter = useCallback(
+    async (idThread: number | undefined) => {
+      try {
+        setPage(0);
+        setIdThreadSelected(idThread);
+
+        const data = await handleGetNewsItems(0, idThread);
+        setNews(data);
+      } catch {
+        setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
+        throw new Error();
+      }
+    },
+    [handleGetNewsItems],
+  );
+
+  const init = useCallback(async () => {
     try {
-      setIdThreadSelected(idThread);
-
-      let data;
-      if (idThread === null) data = await props.handleGetNewsItems();
-      else data = await props.handleGetNewsItemsForSelectedThread(idThread);
-
-      setNews(data);
-    } catch {
-      setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const init = async () => {
-    try {
-      const data = await Promise.all([
-        props.handleGetNewsThreads(),
-        idThreadSelected === null ? props.handleGetNewsItems() : props.handleGetNewsItemsForSelectedThread(idThreadSelected),
-      ]);
-
+      const data = await Promise.all([handleGetNewsThreads(), handleGetNewsItems(0, idThreadSelected)]);
       setThreads(data[0]);
       setNews(data[1]);
       setShowPlaceholder(false);
@@ -105,24 +102,37 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
       setShowPlaceholder(false);
       setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
     }
-  };
+  }, [handleGetNewsItems, handleGetNewsThreads, idThreadSelected]);
 
   useEffect(() => {
-    const unsubscribe = props.navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       if (loadingState === AsyncPagedLoadingState.PRISTINE) init();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [init, loadingState, navigation]);
 
-  const renderError = () => {
+  const renderError = useCallback(() => {
     return (
       <ScrollView
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => init()} />}>
-        <EmptyContentScreen />
+        <EmptyConnectionScreen />
       </ScrollView>
     );
-  };
+  }, [init, loadingState]);
+
+  const fetchNextPage = useCallback(
+    async (threadIdSelected: number | undefined) => {
+      try {
+        const data = await handleGetNewsItems(page + 1, threadIdSelected);
+        if (!isEmpty(data)) setPage(page + 1);
+        setNews(news.concat(data));
+      } catch {
+        setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
+        throw new Error();
+      }
+    },
+    [handleGetNewsItems, news, page],
+  );
 
   const renderPage = useCallback(() => {
     if (loadingState === (AsyncPagedLoadingState.INIT_FAILED || AsyncPagedLoadingState.REFRESH_FAILED)) return renderError();
@@ -146,21 +156,33 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
         ListEmptyComponent={
           <NoNewsScreen createNews={idThreadSelected ? canCreateNewsForSelectedThread : canCreateNewsForOneThread} />
         }
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => init()} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={loadingState === AsyncPagedLoadingState.REFRESH}
+            onRefresh={() => {
+              setPage(0);
+              init();
+            }}
+          />
+        }
+        onEndReached={() => fetchNextPage(idThreadSelected)}
+        onEndReachedThreshold={0.5}
       />
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    canCreateNewsForOneThread,
-    canCreateNewsForSelectedThread,
-    idThreadSelected,
-    news,
-    onFilter,
-    onOpenNewsItem,
-    threads,
-    threadsInfosReduce,
-    wf.threads.create,
     loadingState,
+    renderError,
+    threads,
+    news,
+    wf,
+    idThreadSelected,
+    canCreateNewsForSelectedThread,
+    canCreateNewsForOneThread,
+    threadsInfosReduce,
+    onOpenNewsItem,
+    onFilter,
+    init,
+    fetchNextPage,
   ]);
 
   return <PageView>{showPlaceholder ? <NewsPlaceholderHome /> : renderPage()}</PageView>;
@@ -177,11 +199,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   handleGetNewsThreads: async () => {
     return (await dispatch(getNewsThreadsAction())) as NewsThreadItem[];
   },
-  handleGetNewsItems: async () => {
-    return (await dispatch(getNewsItemsAction())) as NewsItem[];
-  },
-  handleGetNewsItemsForSelectedThread: async (threadId: number) => {
-    return (await dispatch(getNewsItemsForSelectedThreadAction(threadId))) as NewsItem[];
+  handleGetNewsItems: async (page: number, threadId?: number) => {
+    return (await dispatch(getNewsItemsAction(page, threadId))) as NewsItem[];
   },
 });
 

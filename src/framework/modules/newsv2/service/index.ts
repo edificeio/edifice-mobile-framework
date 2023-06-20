@@ -154,15 +154,8 @@ export const newsService = {
     },
   },
   infos: {
-    get: async () => {
-      const api = `/actualites/list?page=0&pageSize=20`;
-      const backendNews = (await fetchJSONWithCache(api)) as BackendNewsItem[];
-
-      const news = backendNews.map(newsItem => newsItemAdapter(newsItem));
-      return news as NewsItem[];
-    },
-    getById: async threadId => {
-      const api = `/actualites/list?page=0&pageSize=20&threadId=${threadId}`;
+    get: async (page, threadId?) => {
+      const api = `/actualites/list?page=${page}&pageSize=4${threadId ? '&threadId=' + threadId : ''}`;
       const backendNews = (await fetchJSONWithCache(api)) as BackendNewsItem[];
 
       const news = backendNews.map(newsItem => newsItemAdapter(newsItem));

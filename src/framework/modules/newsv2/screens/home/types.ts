@@ -10,8 +10,7 @@ export interface NewsHomeScreenDataProps {
 }
 export interface NewsHomeScreenEventProps {
   handleGetNewsThreads(): Promise<NewsThreadItem[]>;
-  handleGetNewsItems(): Promise<NewsItem[]>;
-  handleGetNewsItemsForSelectedThread(threadId: number): Promise<NewsItem[]>;
+  handleGetNewsItems(page: number, threadId?: number): Promise<NewsItem[]>;
 }
 
 export interface NewsHomeScreenNavParams {}
