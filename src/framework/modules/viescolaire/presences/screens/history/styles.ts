@@ -17,6 +17,7 @@ export default StyleSheet.create({
     color: theme.ui.text.inverse,
   },
   container: {
+    flexGrow: 1,
     padding: UI_SIZES.spacing.medium,
   },
   dropdown: {

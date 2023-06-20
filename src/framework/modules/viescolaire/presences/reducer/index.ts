@@ -48,14 +48,38 @@ const initialState: IPresencesReduxStateData = {
   courses: [],
   eventReasons: [],
   history: {
-    latenesses: [],
-    departures: [],
-    regularized: [],
-    unregularized: [],
-    noReason: [],
-    forgottenNotebooks: [],
-    incidents: [],
-    punishments: [],
+    DEPARTURE: {
+      events: [],
+      total: 0,
+    },
+    FORGOTTEN_NOTEBOOK: {
+      events: [],
+      total: 0,
+    },
+    INCIDENT: {
+      events: [],
+      total: 0,
+    },
+    LATENESS: {
+      events: [],
+      total: 0,
+    },
+    NO_REASON: {
+      events: [],
+      total: 0,
+    },
+    PUNISHMENT: {
+      events: [],
+      total: 0,
+    },
+    REGULARIZED: {
+      events: [],
+      total: 0,
+    },
+    UNREGULARIZED: {
+      events: [],
+      total: 0,
+    },
   },
   registerPreference: '',
   terms: [],

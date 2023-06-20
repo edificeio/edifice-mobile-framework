@@ -19,9 +19,10 @@ import { IPunishment } from '~/framework/modules/viescolaire/presences/model';
 
 interface PresenceCardProps {
   color: string;
-  title: string;
-  subNumber?: string;
   elements: any[];
+  title: string;
+  total: number;
+  subNumber?: string;
   renderItem: (item: any) => React.ReactElement;
 }
 
@@ -45,10 +46,15 @@ const styles = StyleSheet.create({
   itemMoretext: { alignSelf: 'flex-end' },
 });
 
-const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title, elements = [], subNumber, renderItem }) => {
+const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({
+  color,
+  elements = [],
+  title,
+  total,
+  subNumber,
+  renderItem,
+}) => {
   const [expanded, setExpanded] = useState(false);
-
-  const numberChildren = elements.length;
   const displayedElements = expanded ? elements : elements.slice(0, 2);
 
   const renderChild = item => {
@@ -81,25 +87,25 @@ const PresenceCard: React.FunctionComponent<PresenceCardProps> = ({ color, title
       <BodyText style={styles.title}>{title}</BodyText>
       <View style={styles.row}>
         <View style={styles.leftColumn}>
-          <HeadingXLText>{numberChildren}</HeadingXLText>
+          <HeadingXLText>{total}</HeadingXLText>
           {subNumber && <SmallText>{subNumber}</SmallText>}
         </View>
         <View style={styles.itemContainer}>
-          {numberChildren !== 0 ? (
+          {elements.length ? (
             displayedElements.map(renderChild)
           ) : (
             <View style={styles.itemView}>
               <SmallText style={styles.itemText}>{I18n.get('presences-history-categorycard-empty')}</SmallText>
             </View>
           )}
-          {numberChildren > 2 && renderMore()}
+          {elements.length > 2 ? renderMore() : null}
         </View>
       </View>
     </BottomColoredItem>
   );
 };
 
-export const NoReasonCard = ({ elements }) => {
+export const NoReasonCard = (props: { elements; total }) => {
   const renderItem = event => (
     <SmallText>
       <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
@@ -111,12 +117,12 @@ export const NoReasonCard = ({ elements }) => {
       color={viescoTheme.palette.presencesEvents.noReason}
       title={I18n.get('presences-history-category-noreason')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };
 
-export const UnregularizedCard = ({ elements }) => {
+export const UnregularizedCard = (props: { elements; total }) => {
   const renderItem = event => (
     <SmallText>
       <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
@@ -128,12 +134,12 @@ export const UnregularizedCard = ({ elements }) => {
       color={viescoTheme.palette.presencesEvents.unregularized}
       title={I18n.get('presences-history-category-unregularized')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };
 
-export const RegularizedCard = ({ elements }) => {
+export const RegularizedCard = (props: { elements; total }) => {
   const renderItem = event => (
     <SmallText>
       <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
@@ -145,12 +151,12 @@ export const RegularizedCard = ({ elements }) => {
       color={viescoTheme.palette.presencesEvents.regularized}
       title={I18n.get('presences-history-category-regularized')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };
 
-export const LatenessCard = ({ elements }) => {
+export const LatenessCard = (props: { elements; total }) => {
   const renderItem = event => (
     <SmallText>
       <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
@@ -163,12 +169,12 @@ export const LatenessCard = ({ elements }) => {
       color={viescoTheme.palette.presencesEvents.lateness}
       title={I18n.get('presences-history-category-latenesses')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };
 
-export const DepartureCard = ({ elements }) => {
+export const DepartureCard = (props: { elements; total }) => {
   const renderItem = event => (
     <SmallText>
       <NestedBoldText>{' ' + event.startDate.format('DD/MM/YY') + ' - '}</NestedBoldText>
@@ -181,24 +187,24 @@ export const DepartureCard = ({ elements }) => {
       color={viescoTheme.palette.presencesEvents.departure}
       title={I18n.get('presences-history-category-departures')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };
 
-export const ForgotNotebookCard = ({ elements }) => {
+export const ForgotNotebookCard = (props: { elements; total }) => {
   const renderItem = event => <SmallBoldText>{' ' + event.date.format('DD/MM/YY')}</SmallBoldText>;
   return (
     <PresenceCard
       color={viescoTheme.palette.presencesEvents.forgotNotebook}
       title={I18n.get('presences-history-category-forgottennotebooks')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };
 
-export const IncidentCard = ({ elements }) => {
+export const IncidentCard = (props: { elements; total }) => {
   const renderItem = event => (
     <SmallText>
       <NestedText>{' ' + event.label}</NestedText>
@@ -212,12 +218,12 @@ export const IncidentCard = ({ elements }) => {
       color={viescoTheme.palette.presencesEvents.incident}
       title={I18n.get('presences-history-category-incidents')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };
 
-export const PunishmentCard = ({ elements }) => {
+export const PunishmentCard = (props: { elements; total }) => {
   const getPunishmentDate = (punishment: IPunishment) => {
     const createdDate: string = punishment?.createdAt.format('DD/MM/YY');
     switch (punishment.punishmentCategoryId) {
@@ -276,7 +282,7 @@ export const PunishmentCard = ({ elements }) => {
       color={viescoTheme.palette.presences}
       title={I18n.get('presences-history-category-punishments')}
       renderItem={renderItem}
-      elements={elements}
+      {...props}
     />
   );
 };

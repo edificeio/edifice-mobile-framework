@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl } from 'react-native';
+import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -9,10 +9,8 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -135,8 +133,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -152,9 +149,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
           data={props.courses}
           renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
           keyExtractor={item => item.id + item.startDate}
-          refreshControl={
-            <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />
-          }
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('presences-courselist-emptyscreen-title')} />}
         />
       </>

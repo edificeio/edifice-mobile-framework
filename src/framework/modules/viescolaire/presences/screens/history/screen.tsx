@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,7 +11,6 @@ import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
@@ -57,8 +56,6 @@ export const computeNavBar = ({
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
-  const [startDate, setStartDate] = React.useState<Moment>(moment());
-  const [endDate, setEndDate] = React.useState<Moment>(moment());
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -75,14 +72,27 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
-      if (selectedTerm !== 'year') setSelectedTerm('year');
-      await props.tryFetchTerms(structureId, groupId ?? '');
+      const terms = await props.tryFetchTerms(structureId, groupId ?? '');
+      const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
+      if (currentTerm && selectedTerm === 'year') setSelectedTerm(currentTerm.order.toString());
       const schoolYear = await props.tryFetchSchoolYear(structureId);
-      setStartDate(schoolYear.startDate);
-      setEndDate(schoolYear.endDate);
-      const start = schoolYear.startDate.format('YYYY-MM-DD');
-      const end = schoolYear.endDate.format('YYYY-MM-DD');
-      await props.tryFetchHistory(studentId, structureId, start, end);
+      const startDate = currentTerm?.startDate ?? schoolYear.startDate;
+      const endDate = currentTerm?.endDate ?? schoolYear.endDate;
+      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
+    } catch {
+      throw new Error();
+    }
+  };
+
+  const refreshEvents = async () => {
+    try {
+      const { schoolYear, structureId, studentId, terms } = props;
+
+      if (!schoolYear || !structureId || !studentId) throw new Error();
+      const term = selectedTerm !== 'year' ? terms.find(t => t.order.toString() === selectedTerm) : undefined;
+      const startDate = term?.startDate ?? schoolYear.startDate;
+      const endDate = term?.endDate ?? schoolYear.endDate;
+      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
     } catch {
       throw new Error();
     }
@@ -100,6 +110,13 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     fetchEvents()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    refreshEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
   const refreshSilent = () => {
@@ -124,25 +141,13 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   }, [props.studentId]);
 
   React.useEffect(() => {
-    const { schoolYear } = props;
-
-    if (selectedTerm === 'year' && schoolYear) {
-      setStartDate(schoolYear.startDate);
-      setEndDate(schoolYear.endDate);
-    } else {
-      const term = props.terms.find(t => t.order.toString() === selectedTerm);
-      if (term) {
-        setStartDate(term.startDate);
-        setEndDate(term.endDate);
-      }
-    }
+    if (loadingState === AsyncPagedLoadingState.DONE) refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTerm]);
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -172,16 +177,20 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             textStyle={styles.dropdownText}
           />
         ) : null}
-        <View style={{ zIndex: -1 }}>
-          <NoReasonCard elements={history.noReason.filter(e => e.startDate.isBetween(startDate, endDate))} />
-          <UnregularizedCard elements={history.unregularized.filter(e => e.startDate.isBetween(startDate, endDate))} />
-          <RegularizedCard elements={history.regularized.filter(e => e.startDate.isBetween(startDate, endDate))} />
-          <LatenessCard elements={history.latenesses.filter(e => e.startDate.isBetween(startDate, endDate))} />
-          <IncidentCard elements={history.incidents.filter(e => e.date.isBetween(startDate, endDate))} />
-          <PunishmentCard elements={history.punishments.filter(e => e.startDate.isBetween(startDate, endDate))} />
-          <ForgotNotebookCard elements={history.forgottenNotebooks.filter(e => e.date.isBetween(startDate, endDate))} />
-          <DepartureCard elements={history.departures.filter(e => e.startDate.isBetween(startDate, endDate))} />
-        </View>
+        {loadingState === AsyncPagedLoadingState.REFRESH ? (
+          <LoadingIndicator />
+        ) : (
+          <View style={{ zIndex: -1 }}>
+            <NoReasonCard elements={history.NO_REASON.events} total={history.NO_REASON.total} />
+            <UnregularizedCard elements={history.UNREGULARIZED.events} total={history.UNREGULARIZED.total} />
+            <RegularizedCard elements={history.REGULARIZED.events} total={history.REGULARIZED.total} />
+            <LatenessCard elements={history.LATENESS.events} total={history.LATENESS.total} />
+            <IncidentCard elements={history.INCIDENT.events} total={history.INCIDENT.total} />
+            <PunishmentCard elements={history.PUNISHMENT.events} total={history.PUNISHMENT.total} />
+            <ForgotNotebookCard elements={history.FORGOTTEN_NOTEBOOK.events} total={history.FORGOTTEN_NOTEBOOK.total} />
+            <DepartureCard elements={history.DEPARTURE.events} total={history.DEPARTURE.total} />
+          </View>
+        )}
       </ScrollView>
     );
   };
@@ -234,7 +243,7 @@ export default connect(
         action => action.displayName === 'presences.absence.statements.create',
       ),
       history: presencesState.history.data,
-      initialLoadingState: presencesState.history.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
+      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
       structureId:
         userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),

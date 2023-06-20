@@ -9,11 +9,8 @@ import {
   ICourse,
   IEvent,
   IEventReason,
-  IForgottenNotebook,
   IHistoryEvent,
-  IIncident,
   IMemento,
-  IPunishment,
   IUserChild,
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -154,11 +151,18 @@ type IBackendHistoryEvent = {
 
 type IBackendHistoryEvents = {
   all: {
-    DEPARTURE: IBackendHistoryEventList;
-    NO_REASON: IBackendHistoryEventList;
-    REGULARIZED: IBackendHistoryEventList;
-    LATENESS: IBackendHistoryEventList;
-    UNREGULARIZED: IBackendHistoryEventList;
+    DEPARTURE: IBackendHistoryEvent[];
+    NO_REASON: IBackendHistoryEvent[];
+    REGULARIZED: IBackendHistoryEvent[];
+    LATENESS: IBackendHistoryEvent[];
+    UNREGULARIZED: IBackendHistoryEvent[];
+  };
+  totals: {
+    DEPARTURE: number;
+    NO_REASON: number;
+    REGULARIZED: number;
+    LATENESS: number;
+    UNREGULARIZED: number;
   };
 };
 
@@ -166,6 +170,7 @@ type IBackendHistoryForgottenNotebooks = {
   all: {
     date: string;
   }[];
+  totals: number;
 };
 
 type IBackendHistoryIncidents = {
@@ -191,6 +196,10 @@ type IBackendHistoryIncidents = {
         punishment_category_id: number;
       };
     }[];
+  };
+  totals: {
+    INCIDENT: number;
+    PUNISHMENT: number;
   };
 };
 
@@ -260,7 +269,6 @@ type IBackendUserChild = {
 
 type IBackendCourseList = IBackendCourse[];
 type IBackendEventReasonList = IBackendEventReason[];
-type IBackendHistoryEventList = IBackendHistoryEvent[];
 type IBackendUserChildren = IBackendUserChild[];
 
 const eventAdapter = (data: IBackendEvent): IEvent => {
@@ -328,35 +336,59 @@ const historyEventAdapter = (data: IBackendHistoryEvent): IHistoryEvent => {
 
 const historyEventsAdapter = (data: IBackendHistoryEvents) => {
   return {
-    latenesses: data.all.LATENESS.map(e => historyEventAdapter(e)),
-    departures: data.all.DEPARTURE.map(e => historyEventAdapter(e)),
-    regularized: data.all.REGULARIZED.map(e => historyEventAdapter(e)),
-    unregularized: data.all.UNREGULARIZED.map(e => historyEventAdapter(e)),
-    noReason: data.all.NO_REASON.map(e => historyEventAdapter(e)),
+    DEPARTURE: {
+      events: data.all.DEPARTURE.map(historyEventAdapter),
+      total: data.totals.DEPARTURE,
+    },
+    LATENESS: {
+      events: data.all.LATENESS.map(historyEventAdapter),
+      total: data.totals.LATENESS,
+    },
+    NO_REASON: {
+      events: data.all.NO_REASON.map(historyEventAdapter),
+      total: data.totals.NO_REASON,
+    },
+    REGULARIZED: {
+      events: data.all.REGULARIZED.map(historyEventAdapter),
+      total: data.totals.REGULARIZED,
+    },
+    UNREGULARIZED: {
+      events: data.all.UNREGULARIZED.map(historyEventAdapter),
+      total: data.totals.UNREGULARIZED,
+    },
   };
 };
 
-const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks): IForgottenNotebook[] => {
-  return data.all.map(event => ({
-    date: moment(event.date),
-  }));
+const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks) => {
+  return {
+    events: data.all.map(event => ({
+      date: moment(event.date),
+    })),
+    total: data.totals,
+  };
 };
 
-const historyIncidentsAdapter = (data: IBackendHistoryIncidents): { incidents: IIncident[]; punishments: IPunishment[] } => {
+const historyIncidentsAdapter = (data: IBackendHistoryIncidents) => {
   return {
-    incidents: data.all.INCIDENT.map(i => ({
-      date: moment(i.date),
-      protagonist: i.protagonist,
-      label: i.type.label,
-    })),
-    punishments: data.all.PUNISHMENT.map(p => ({
-      createdAt: moment(p.created_at),
-      delayAt: moment(p.fields.delay_at),
-      endDate: moment(p.fields.end_at),
-      label: p.type.label,
-      punishmentCategoryId: p.type.punishment_category_id,
-      startDate: moment(p.fields.start_at),
-    })),
+    INCIDENT: {
+      events: data.all.INCIDENT.map(i => ({
+        date: moment(i.date),
+        protagonist: i.protagonist,
+        label: i.type.label,
+      })),
+      total: data.totals.INCIDENT,
+    },
+    PUNISHMENT: {
+      events: data.all.PUNISHMENT.map(p => ({
+        createdAt: moment(p.created_at),
+        delayAt: moment(p.fields.delay_at),
+        endDate: moment(p.fields.end_at),
+        label: p.type.label,
+        punishmentCategoryId: p.type.punishment_category_id,
+        startDate: moment(p.fields.start_at),
+      })),
+      total: data.totals.PUNISHMENT,
+    },
   };
 };
 

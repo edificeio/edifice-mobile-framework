@@ -118,7 +118,7 @@ export const fetchPresencesHistoryAction =
         startDate,
         endDate,
       );
-      const { incidents, punishments } = await presencesService.history.getIncidents(
+      const { INCIDENT, PUNISHMENT } = await presencesService.history.getIncidents(
         session,
         studentId,
         structureId,
@@ -127,9 +127,9 @@ export const fetchPresencesHistoryAction =
       );
       const history: IHistory = {
         ...events,
-        forgottenNotebooks,
-        incidents,
-        punishments,
+        FORGOTTEN_NOTEBOOK: forgottenNotebooks,
+        INCIDENT,
+        PUNISHMENT,
       };
       dispatch(presencesHistoryActionsCreators.receipt(history));
       return history;

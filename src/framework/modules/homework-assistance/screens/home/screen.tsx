@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { RefreshControl, SafeAreaView, View } from 'react-native';
+import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -13,7 +13,6 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
