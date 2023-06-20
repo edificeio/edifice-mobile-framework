@@ -301,7 +301,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
    * Caution: Alert callbacks eats any exception thrown silently.
    */
   const doLogout = React.useCallback(() => {
-    Alert.alert('', I18n.get('auth-disconnectConfirm'), [
+    Alert.alert('', I18n.get('auth-disconnect-confirm'), [
       {
         text: I18n.get('common.cancel'),
         style: 'default',

@@ -203,7 +203,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
             </View>
             <SmallText style={styles.textError}>
               {error
-                ? I18n.get('auth-error-' + error, {
+                ? I18n.get('auth-error-' + error.replaceAll('_', ''), {
                     version: DeviceInfo.getVersion(),
                     errorcode: error,
                     currentplatform: platform.url,

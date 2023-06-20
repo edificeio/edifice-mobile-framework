@@ -155,7 +155,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={STYLES.errorMsg}>
             {this.error
-              ? I18n.get('auth-error-' + this.error, {
+              ? I18n.get('auth-error-' + this.error.replaceAll('_', ''), {
                   version: DeviceInfo.getVersion(),
                   errorcode: this.error,
                   currentplatform: this.props.route.params.platform.url,

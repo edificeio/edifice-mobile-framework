@@ -112,7 +112,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
             <SmallText style={styles.textCenter}>{I18n.get('login-wayf-main-text')}</SmallText>
             <SmallText style={styles.textError}>
               {error
-                ? I18n.get('auth-error-' + error, {
+                ? I18n.get('auth-error-' + error.replaceAll('_', ''), {
                     version: DeviceInfo.getVersion(),
                     errorcode: error,
                     currentplatform: platform.url,
