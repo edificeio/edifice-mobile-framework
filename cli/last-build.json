@@ -1,6 +1,6 @@
 {
-  "last": "2023-06-20 19:10:51",
-  "notes": "Squashed commit of the following:\nchore(phrase): reformat auth keys\nfeat(i18n): AMVS-364 change competences-home-subject value\nfeat(presences): AMVS-363 fetch history events counts from back, set default term to current one\nchore(phrase): MB-1001, reformat blog keys\nrelease: 1.10.0-alpha.4(1100004)",
-  "version": "1.10.0-alpha.5(1100005)",
+  "last": "2023-06-20 19:37:28",
+  "notes": "release: 1.10.0-alpha.5(1100005)",
+  "version": "1.10.0-alpha.6(1100006)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
