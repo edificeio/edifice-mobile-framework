@@ -73,7 +73,10 @@ const styles = StyleSheet.create({
 });
 
 const translateMainItem = (item: [string, IPushNotifsSettings]) => {
-  return I18n.get([`timeline.PushNotifsSettingsScreen.appType-override.${item[0]}`, `timeline.appType.${item[0]}`]);
+  return I18n.get([
+    `timeline-apptype-override-${item[0]}`.toLowerCase(),
+    `timeline-apptype-${item[0]}`.toLowerCase().replaceAll('_', '-'),
+  ]);
 };
 
 export const computeNavBar = ({

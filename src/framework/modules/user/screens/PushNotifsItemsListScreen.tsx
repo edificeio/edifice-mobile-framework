@@ -77,6 +77,8 @@ export const computeNavBar = ({
   }),
 });
 
+const formatI18nNotifType = (notifType: string) => notifType.replaceAll('_', '').replaceAll('.', '-');
+
 function PreventBack(props: { hasChanged: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.hasChanged, ({ data }) => {
@@ -180,7 +182,9 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
     const subListData =
       Object.entries(items) && Object.entries(items).length > 0
         ? Object.entries(items).sort((a, b) =>
-            I18n.get(`timeline.notifType.${a[0]}`).localeCompare(I18n.get(`timeline.notifType.${b[0]}`)),
+            I18n.get(formatI18nNotifType(`timeline-notiftype-${a[0]}`)).localeCompare(
+              I18n.get(formatI18nNotifType(`timeline-notiftype-${b[0]}`)),
+            ),
           )
         : [];
     const hasEmptySubListData = subListData.length === 0;
@@ -211,7 +215,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
     return (
       <CheckboxButton
         onPress={() => this.doTogglePushNotifSetting([item[0], !item[1]])}
-        title={`timeline.notifType.${item[0]}`}
+        title={formatI18nNotifType(`timeline-notiftype-${item[0]}`)}
         isChecked={item[1]}
       />
     );

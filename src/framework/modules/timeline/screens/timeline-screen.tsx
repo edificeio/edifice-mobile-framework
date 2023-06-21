@@ -119,7 +119,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('timeline.appName'),
+    title: I18n.get('timeline-appname'),
   }),
   headerLeft: () => (
     <NavBarAction
@@ -213,7 +213,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                   } // Do nothing, just to prevent error
                 },
                 actionColor: theme.palette.status.warning.regular,
-                actionText: I18n.get('timeline.reportAction.button'),
+                actionText: I18n.get('timeline-reportaction-button'),
                 actionIcon: 'ui-warning',
               },
             ]
@@ -285,8 +285,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     return (
       <EmptyScreen
         svgImage="empty-timeline"
-        title={I18n.get('timeline.emptyScreenTitle')}
-        text={I18n.get('timeline.emptyScreenText')}
+        title={I18n.get('timeline-emptyscreen-title')}
+        text={I18n.get('timeline-emptyscreen-text')}
       />
     );
   }
@@ -386,14 +386,14 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   doReportConfirm(notif: ITimelineNotification) {
     return new Promise<boolean>((resolve, reject) => {
       if (!this.rights.notification.report) reject(this.rights.notification.report);
-      Alert.alert(I18n.get('timeline.reportAction.title'), I18n.get('timeline.reportAction.description'), [
+      Alert.alert(I18n.get('timeline-reportaction-title'), I18n.get('timeline-reportaction-description'), [
         {
-          text: I18n.get('timeline.reportAction.submit'),
+          text: I18n.get('timeline-reportaction-submit'),
           onPress: async () => {
             try {
               await notificationsService.report(this.props.session, notif.id);
               resolve(true);
-              Toast.showSuccess(I18n.get('timeline.reportAction.success'));
+              Toast.showSuccess(I18n.get('timeline-reportaction-success'));
             } catch (e) {
               Alert.alert(I18n.get('common.error.text'));
               reject(e);
@@ -441,7 +441,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     try {
       await dispatch(dismissFlashMessageAction(flashMessageId));
     } catch {
-      Toast.showError(I18n.get('timeline-flash-message-dismiss-error-text'));
+      Toast.showError(I18n.get('timeline-flashmessage-dismisserror-text'));
     }
   },
   handleOpenNotification: async (

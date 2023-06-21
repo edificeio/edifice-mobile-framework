@@ -157,7 +157,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
   ): void {
     if (prevState.newsData?.title !== this.state.newsData?.title) {
       this.props.navigation.setParams({
-        title: this.state.newsData?.title ?? I18n.get('timeline.newsDetailsScreen.title'),
+        title: this.state.newsData?.title ?? I18n.get('timeline-newsdetails-title'),
       });
     }
   }

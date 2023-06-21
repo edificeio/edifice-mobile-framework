@@ -43,7 +43,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('timeline.filtersScreen.title'),
+    title: I18n.get('timeline-filtersscreen-title'),
   }),
 });
 

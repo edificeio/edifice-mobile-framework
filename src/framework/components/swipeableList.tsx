@@ -26,7 +26,7 @@
  *           row[item.key]?.closeRow(); // recenter after action tapped
  *         },
  *         actionColor: theme.palette.status.warning.regular,
- *         actionText: I18n.get('timeline.reportAction.button'),
+ *         actionText: I18n.get('timeline-reportaction-button'),
  *         actionIcon: 'ui-answer',
  *       }],
  *     })}
