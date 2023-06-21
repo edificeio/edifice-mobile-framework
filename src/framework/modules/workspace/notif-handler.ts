@@ -62,7 +62,7 @@ const handleWorkspaceShareNotificationAction: NotifHandlerThunkAction =
       const parentId = index > 0 ? folderUri.substring(index + 7) : 'shared';
       const title =
         notification.backupData.params.resourceFolderName === 'Documents personnels'
-          ? I18n.get('shared')
+          ? I18n.get('workspace-notifhandler-shared')
           : notification.backupData.params.resourceFolderName;
 
       // 2. actual navigation action

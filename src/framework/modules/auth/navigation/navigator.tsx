@@ -49,21 +49,23 @@ export default function () {
         name={authRouteNames.wayf}
         component={WayfScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('login-wayf-main-title')),
+          headerTitle: navBarTitle(I18n.get('auth-wayf-main-title')),
         }}
       />
       <Stack.Screen
         name={authRouteNames.activation}
         component={ActivationScreen}
         options={{
-          headerTitle: navBarTitle(I18n.get('activation-title')),
+          headerTitle: navBarTitle(I18n.get('auth-navigation-activation-title')),
         }}
       />
       <Stack.Screen
         name={authRouteNames.forgot}
         component={ForgotScreen}
         options={({ route }) => ({
-          headerTitle: navBarTitle(route.params.mode === 'id' ? I18n.get('forgot-id') : I18n.get('forgot-password')),
+          headerTitle: navBarTitle(
+            route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+          ),
         })}
       />
       <Stack.Screen

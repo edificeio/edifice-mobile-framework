@@ -36,9 +36,9 @@ export function computeNavBar({
 }
 
 const ERRORS_I18N = {
-  connection: ['common.error.connection.title', 'common.error.connection.text'],
-  AVFoundationErrorDomain: ['common.error.mediaNotSupported.title', 'common.error.mediaNotSupported.text'],
-  default: ['common.error.content.title', 'common.error.content.text'],
+  connection: ['common-error-connection-title', 'common-error-connection-text'],
+  AVFoundationErrorDomain: ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
+  default: ['common-error-content-title', 'common-error-content-text'],
 };
 const DELAY_STATUS_HIDE = Platform.select({ ios: 250, default: 0 });
 

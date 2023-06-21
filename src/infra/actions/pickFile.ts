@@ -22,21 +22,21 @@ type PhotoCaptions = {
 };
 
 const captions: Captions = {
-  image: 'common-picker-image',
-  document: 'common-picker-document',
+  image: 'pickfile-image',
+  document: 'pickfile-document',
   cancel: 'Cancel',
-  title: 'common-picker-title',
+  title: 'pickfile-title',
 };
 
 const photoCaptions: PhotoCaptions = {
-  title: 'common-photoPicker-title',
+  title: 'pickfile-photo-title',
   cancelButtonTitle: 'Cancel',
-  takePhotoButtonTitle: 'common-photoPicker-take',
-  chooseFromLibraryButtonTitle: 'common-photoPicker-pick',
+  takePhotoButtonTitle: 'pickfile-take',
+  chooseFromLibraryButtonTitle: 'pickfile-pick',
   permissionDenied: {
-    title: 'common-ErrorStorageAccessAlertTitle',
-    text: 'common-ErrorStorageAccessAlertText',
-    reTryTitle: 'common-ErrorStorageAccessAlertRetry',
+    title: 'pickfile-error-storageaccess-alert-title',
+    text: 'pickfile-error-storageaccess-alert-text',
+    reTryTitle: 'pickfile-error-storageaccess-alert-retry',
     okTitle: 'common-ok',
   },
 };
@@ -90,7 +90,7 @@ export const pickFileError = (notifierId: string) => {
     dispatch(
       notifierShowAction({
         id: notifierId,
-        text: I18n.get('common-ErrorStorageAccess'),
+        text: I18n.get('pickfile-error-storageaccess'),
         icon: 'close',
         type: 'error',
       }),

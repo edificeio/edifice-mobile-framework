@@ -100,7 +100,7 @@ export const SchoolbookWordSummaryCard = ({
               icon={<SingleAvatar status={undefined} size={36} userId={owner} />}
               text={
                 <CaptionText numberOfLines={usersTextMaxLines}>
-                  {`${I18n.get('common.from')} `}
+                  {`${I18n.get('schoolbook-wordlist-from')} `}
                   <CaptionBoldText>{ownerName}</CaptionBoldText>
                 </CaptionText>
               }

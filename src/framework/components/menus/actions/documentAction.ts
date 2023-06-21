@@ -42,7 +42,7 @@ export default function documentAction(props: MenuPickerActionProps & { synchron
   };
 
   return {
-    title: I18n.get('common-picker-document'),
+    title: I18n.get('documentaction-document'),
     icon: {
       ios: 'doc.badge.plus',
       android: 'ic_upload_file',

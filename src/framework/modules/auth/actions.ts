@@ -241,7 +241,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
       });
       // === 3 - Check whether the activation was successfull
       if (!res.ok) {
-        throw createActivationError('activation', I18n.get('activation-errorSubmit'));
+        throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'));
       }
       // a json response can contains an error field
       if (res.headers.get('content-type')?.indexOf('application/json') !== -1) {
@@ -272,7 +272,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
       return redirect;
     } catch (e) {
       if ((e as IActivationError).name === 'EACTIVATION') throw e;
-      else throw createActivationError('activation', I18n.get('activation-errorSubmit'), '', e as object);
+      else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '', e as object);
     }
   };
 }
@@ -401,7 +401,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       });
       // === 3 - Check whether the password change was successfull
       if (!res.ok) {
-        throw createChangePasswordError('change password', I18n.get('changePassword-errorSubmit'));
+        throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
       // a json response can contains an error field
       if (res.headers.get('content-type') && res.headers.get('content-type')!.indexOf('application/json') !== -1) {
@@ -411,9 +411,9 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
           const pwdRegex = getState().user.changePassword?.context?.passwordRegex;
           const regexp = new RegExp(pwdRegex);
           if (pwdRegex && !regexp.test(p.newPassword)) {
-            throw createChangePasswordError('change password', I18n.get('changePassword-errorRegex'));
+            throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-regex'));
           } else {
-            throw createChangePasswordError('change password', I18n.get('changePassword-errorFields'));
+            throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-fields'));
           }
         }
       }
@@ -422,7 +422,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
     } catch (e) {
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
-      else throw createChangePasswordError('change password', I18n.get('changePassword-errorSubmit'));
+      else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
     }
   };
 }

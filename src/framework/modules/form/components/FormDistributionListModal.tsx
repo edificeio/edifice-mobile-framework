@@ -54,7 +54,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
     if (form) {
       props.openDistribution(id, status, form);
     } else {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -71,7 +71,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
         }
         openDistributionCallback(distribution.id, distribution.status);
       } catch {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       }
     } else {
       openDistributionCallback(id, DistributionStatus.FINISHED);
@@ -93,7 +93,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
       openDistributionCallback(distribution.id, distribution.status);
     } catch {
       setLoading(false);
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 

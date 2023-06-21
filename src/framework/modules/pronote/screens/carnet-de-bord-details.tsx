@@ -205,9 +205,9 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
             ? item.DateDebut && item.DateFin
               ? item.DateDebut.isSame(item.DateFin, 'day')
                 ? item.DateDebut.isSame(item.DateFin, 'minute')
-                  ? displayDate(item.DateDebut) + I18n.get('common.space') + item.DateDebut.format('LT')
+                  ? displayDate(item.DateDebut) + I18n.get('common-space') + item.DateDebut.format('LT')
                   : displayDate(item.DateDebut) +
-                    I18n.get('common.space') +
+                    I18n.get('common-space') +
                     I18n.get('pronote-viescolaire-datefromto', {
                       start: item.DateDebut.format('LT'),
                       end: item.DateFin.format('LT'),
@@ -219,7 +219,7 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
               : I18n.get('pronote-noinfo')
             : item.Date
             ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
-              ? displayDate(item.Date) + I18n.get('common.space') + item.Date.format('LT')
+              ? displayDate(item.Date) + I18n.get('common-space') + item.Date.format('LT')
               : displayDate(item.Date)
             : I18n.get('pronote-noinfo'),
         description:

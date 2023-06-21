@@ -146,16 +146,16 @@ export const computeNavBar = ({
 function PreventBack(props: { isEditing: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
-    Alert.alert(I18n.get('common.confirmationUnsavedPublication'), I18n.get('blog-createpost-unsavedpublication'), [
+    Alert.alert(I18n.get('blog-createpost-confirmation-unsavedpublication'), I18n.get('blog-createpost-unsavedpublication'), [
       {
-        text: I18n.get('common.quit'),
+        text: I18n.get('common-quit'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, navigation);
         },
         style: 'destructive',
       },
       {
-        text: I18n.get('common.continue'),
+        text: I18n.get('common-continue'),
         style: 'default',
         onPress: () => {
           clearConfirmNavigationEvent();
@@ -214,7 +214,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
           // Full storage management
           // statusCode = 400 on iOS and code = 'ENOENT' on Android
           if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
-            Alert.alert('', I18n.get('fullStorage'));
+            Alert.alert('', I18n.get('common-fullstorage'));
           } else {
             Alert.alert('', I18n.get('blog-createpost-uploadattachments-error-text'));
           }
@@ -254,7 +254,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {
-        Toast.showError(I18n.get('fullStorage'));
+        Toast.showError(I18n.get('common-fullstorage'));
       }
       if ((e as Error).message && (e as Error).message !== 'handled') {
         Toast.showError(I18n.get('blog-createpost-publish-error-text'));
@@ -356,7 +356,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     return (
       <View style={styles.addMedia}>
         <BottomMenu
-          title={I18n.get('bottom-menu-add-media')}
+          title={I18n.get('blog-createpost-bottommenu-addmedia')}
           actions={[
             cameraAction({
               callback: this.imageCallback,

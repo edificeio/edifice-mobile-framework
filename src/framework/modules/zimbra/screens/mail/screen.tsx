@@ -102,7 +102,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       await zimbraService.mails.toggleUnread(session, [id], true);
       navigation.dispatch(CommonActions.goBack());
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -116,7 +116,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.get('zimbra-mail-mail-trashed'));
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -130,18 +130,18 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.get('zimbra-mail-mail-deleted'));
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
   const alertPermanentDeletion = () => {
     Alert.alert(I18n.get('zimbra-mail-deletealert-title'), I18n.get('zimbra-mail-deletealert-message'), [
       {
-        text: I18n.get('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'default',
       },
       {
-        text: I18n.get('common.delete'),
+        text: I18n.get('common-delete'),
         onPress: deleteMail,
         style: 'destructive',
       },

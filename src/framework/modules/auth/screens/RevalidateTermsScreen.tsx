@@ -100,7 +100,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
   const doOpenCGU = React.useCallback((url?: string) => {
     openPDFReader({
       src: url,
-      title: I18n.get('activation-cgu'),
+      title: I18n.get('auth-revalidateterms-cgu'),
     });
   }, []);
 
@@ -132,7 +132,11 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
             {I18n.get('user-revalidateterms-newenduserlicenseagreement')}
           </SmallActionText>
         </SmallText>
-        <ActionButton style={{ marginTop: UI_SIZES.spacing.large }} text={I18n.get('common.accept')} action={doRevalidateTerms} />
+        <ActionButton
+          style={{ marginTop: UI_SIZES.spacing.large }}
+          text={I18n.get('auth-revalidateterms-accept')}
+          action={doRevalidateTerms}
+        />
         <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={doRefuseTerms}>
           <SmallBoldText style={styles.refuseButton}>{I18n.get('user-revalidateterms-refuseanddisconnect')}</SmallBoldText>
         </TouchableOpacity>

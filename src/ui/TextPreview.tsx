@@ -31,7 +31,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   };
 
   static defaultProps = {
-    expandMessage: I18n.get('common.readMore'),
+    expandMessage: I18n.get('textpreview-readmore'),
     numberOfLines: 5,
     expansionTextStyle: { color: theme.palette.complementary.blue.regular },
     textStyle: { marginTop: UI_SIZES.spacing.tiny },
@@ -65,8 +65,8 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
       expansionTextStyle,
     } = this.props;
     const { isExpanded } = this.state;
-    const expand = expandMessage || I18n.get('seeMore');
-    const collapse = collapseMessage || I18n.get('seeLess');
+    const expand = expandMessage || I18n.get('textpreview-seemore');
+    const collapse = collapseMessage || I18n.get('textpreview-seeless');
     return (
       this.showExpansionLabels() && (
         <CaptionText

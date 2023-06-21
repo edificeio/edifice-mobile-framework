@@ -59,7 +59,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('CarnetDeBord'),
+    title: I18n.get('carnetdebord'),
   }),
 });
 
@@ -291,7 +291,7 @@ CarnetDeBordScreen.getRenderContent =
                             ? vsco.DateDebut.isSame(vsco.DateFin, 'minute')
                               ? displayDate(vsco.DateDebut, 'short')
                               : displayDate(vsco.DateDebut, 'short') +
-                                I18n.get('common.space') +
+                                I18n.get('common-space') +
                                 I18n.get('pronote-viescolaire-datefromto', {
                                   start: vsco.DateDebut.format('LT'),
                                   end: vsco.DateFin.format('LT'),
@@ -303,7 +303,7 @@ CarnetDeBordScreen.getRenderContent =
                           : I18n.get('pronote-noinfo')
                         : vsco.Date
                         ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
-                          ? displayDate(vsco.Date, 'short') + I18n.get('common.space') + vsco.Date.format('LT')
+                          ? displayDate(vsco.Date, 'short') + I18n.get('common-space') + vsco.Date.format('LT')
                           : displayDate(vsco.Date, 'short')
                         : I18n.get('pronote-noinfo'),
                   }

@@ -58,7 +58,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('news-appName'),
+    title: I18n.get('news-details-appname'),
   }),
 });
 
@@ -155,18 +155,18 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, [getComments, notif, onRefresh, route.params.news, route.params.thread]);
 
   const showAlertError = useCallback(() => {
-    Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
+    Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
   }, []);
 
   const doDeleteNews = useCallback(() => {
     try {
-      Alert.alert(I18n.get('news-details-deletionNewsTitle'), I18n.get('news-details-deletionNewsText'), [
+      Alert.alert(I18n.get('news-details-deletion-title'), I18n.get('news-details-deletion-text'), [
         {
-          text: I18n.get('common.cancel'),
+          text: I18n.get('common-cancel'),
           style: 'default',
         },
         {
-          text: I18n.get('common.delete'),
+          text: I18n.get('common-delete'),
           style: 'destructive',
           onPress: () => handleDeleteInfo(news?.threadId, news?.id).then(() => navigation.goBack()),
         },
@@ -178,13 +178,13 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   const doDeleteComment = useCallback(
     async commentId => {
-      Alert.alert(I18n.get('common.deletion'), I18n.get('common.comment.confirmationDelete'), [
+      Alert.alert(I18n.get('news-details-deletion'), I18n.get('news-details-deleteconfirmation'), [
         {
-          text: I18n.get('common.cancel'),
+          text: I18n.get('common-cancel'),
           style: 'default',
         },
         {
-          text: I18n.get('common.delete'),
+          text: I18n.get('common-delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -382,18 +382,18 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
-      I18n.get(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
-          text: I18n.get('common.quit'),
+          text: I18n.get('common-quit'),
           style: 'destructive',
           onPress: () => {
             handleRemoveConfirmNavigationEvent(data.action, navigation);
           },
         },
         {
-          text: I18n.get('common.continue'),
+          text: I18n.get('common-continue'),
           style: 'default',
           onPress: () => {
             clearConfirmNavigationEvent();

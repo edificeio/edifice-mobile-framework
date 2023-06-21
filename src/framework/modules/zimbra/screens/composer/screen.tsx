@@ -165,7 +165,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }));
       await zimbraService.draft.deleteAttachment(session, id, attachmentId);
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -188,7 +188,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       });
     } catch {
       this.setState({ isSending: false });
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -251,7 +251,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composer-draft-trashed')), 250);
       });
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -269,18 +269,18 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composer-draft-deleted')), 250);
       });
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
   alertPermanentDeletion = () => {
     Alert.alert(I18n.get('zimbra-composer-deletealert-title'), I18n.get('zimbra-composer-deletealert-message'), [
       {
-        text: I18n.get('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'default',
       },
       {
-        text: I18n.get('common.delete'),
+        text: I18n.get('common-delete'),
         onPress: this.deleteDraft,
         style: 'destructive',
       },

@@ -36,7 +36,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     if (isSenderMe)
       formattedMessage = formattedMessage.replace(
         sender && sender.displayName,
-        `${sender.displayName} ${I18n.get('me-indicator')} `,
+        `${sender.displayName} ${I18n.get('timeline-meindicator')} `,
       );
   }
 

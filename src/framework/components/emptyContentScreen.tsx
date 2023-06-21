@@ -8,8 +8,8 @@ export const EmptyContentScreen = () => {
   return (
     <EmptyScreen
       svgImage="empty-content"
-      title={I18n.get('common.error.content.title')}
-      text={I18n.get('common.error.content.text')}
+      title={I18n.get('common-error-content-title')}
+      text={I18n.get('common-error-content-text')}
     />
   );
 };

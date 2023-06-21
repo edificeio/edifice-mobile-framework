@@ -63,8 +63,8 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
           keyExtractor={item => item.url}
           ListHeaderComponent={
             <>
-              <HeadingSText style={styles.heading}>{I18n.get('welcome')}</HeadingSText>
-              <SmallText style={styles.lightP}>{I18n.get('select-platform')}</SmallText>
+              <HeadingSText style={styles.heading}>{I18n.get('auth-platformselect-welcome')}</HeadingSText>
+              <SmallText style={styles.lightP}>{I18n.get('auth-platformselect-select')}</SmallText>
             </>
           }
           alwaysBounceVertical={false}

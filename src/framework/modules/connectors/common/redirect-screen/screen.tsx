@@ -29,8 +29,8 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
         const isAppInstalled = await Linking.canOpenURL(appUrl);
         if (isAppInstalled) {
           openUrl(appUrl, {
-            title: I18n.get('common.redirect.app.title'),
-            message: I18n.get('common.redirect.app.message'),
+            title: I18n.get('linking-redirectapp-title'),
+            message: I18n.get('linking-redirectapp-message'),
           });
           return;
         }
@@ -42,7 +42,7 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
     if (url) {
       openUrl(`/auth/redirect?url=${url}`);
     } else {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 

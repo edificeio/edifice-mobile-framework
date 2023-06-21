@@ -17,29 +17,29 @@ export const errorScreens = {
   server_unreachable: () => (
     <EmptyScreen
       svgImage="empty-light"
-      title={I18n.get('common.error.connection.title')}
-      text={I18n.get('common.error.connection.text')}
+      title={I18n.get('common-error-connection-title')}
+      text={I18n.get('common-error-connection-text')}
     />
   ),
   http_error: () => (
     <EmptyScreen
       svgImage="empty-content"
-      title={I18n.get('common.error.content.title')}
-      text={I18n.get('common.error.content.text')}
+      title={I18n.get('common-error-content-title')}
+      text={I18n.get('common-error-content-text')}
     />
   ),
   data_error: () => (
     <EmptyScreen
       svgImage="empty-content"
-      title={I18n.get('common.error.content.title')}
-      text={I18n.get('common.error.content.text')}
+      title={I18n.get('common-error-content-title')}
+      text={I18n.get('common-error-content-text')}
     />
   ),
   runtime_error: () => (
     <EmptyScreen
       svgImage="empty-light"
-      title={I18n.get('common.error.connection.title')}
-      text={I18n.get('common.error.connection.text')}
+      title={I18n.get('common-error-connection-title')}
+      text={I18n.get('common-error-connection-text')}
     />
   ),
 };

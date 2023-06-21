@@ -117,7 +117,7 @@ export default class MoveToFolderModal extends React.Component<
           {!openDropdown ? (
             <View style={styles.buttonsContainer}>
               <ActionButton
-                text={I18n.get('Cancel')}
+                text={I18n.get('common-cancel')}
                 type="secondary"
                 action={() => {
                   selectFolder('');

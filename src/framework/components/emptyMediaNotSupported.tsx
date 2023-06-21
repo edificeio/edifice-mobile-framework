@@ -8,8 +8,8 @@ export const EmptyMediaNotSupportedScreen = () => {
   return (
     <EmptyScreen
       svgImage="empty-search"
-      title={I18n.get('common.error.mediaNotSupported.title')}
-      text={I18n.get('common.error.mediaNotSupported.text')}
+      title={I18n.get('mediaplayer-error-notsupported-title')}
+      text={I18n.get('mediaplayer-error-notsupported-text')}
     />
   );
 };

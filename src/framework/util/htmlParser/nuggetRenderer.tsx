@@ -337,7 +337,7 @@ function renderParseAudio(nugget: IAudioNugget, key: string, style: ViewStyle = 
   if (!nugget.src) {
     return (
       <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
-        {I18n.get(`audioNotAvailable`)}
+        {I18n.get('htmlparser-audio-notavailable')}
       </BodyItalicText>
     );
   }
@@ -358,7 +358,7 @@ function renderParseVideo(nugget: IVideoNugget, key: string, style: ViewStyle = 
   if (!nugget.src) {
     return (
       <BodyItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
-        {I18n.get(`videoNotAvailable`)}
+        {I18n.get('htmlparser-video-notavailable')}
       </BodyItalicText>
     );
   }

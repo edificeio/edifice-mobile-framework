@@ -139,7 +139,7 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
         {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
         {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
-      <ActionButton text={I18n.get('common.cancel')} type="secondary" action={props.onCancelSearch} />
+      <ActionButton text={I18n.get('common-cancel')} type="secondary" action={props.onCancelSearch} />
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>

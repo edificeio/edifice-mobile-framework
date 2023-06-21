@@ -87,7 +87,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       await schoolbookService.word.resend(session, schoolbookWordId);
       Toast.showInfo(I18n.get('schoolbook-wordreport-remindertoast-text'));
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -285,9 +285,9 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
               <BodyText style={styles.modalBoxText}>{I18n.get('schoolbook-wordreport-remindermodal-text')}</BodyText>
               <View style={styles.modalBoxButtons}>
                 <TouchableOpacity onPress={() => modalBoxRef?.current?.doDismissModal()}>
-                  <SmallBoldText style={styles.modalBoxCancel}>{I18n.get('common.cancel')}</SmallBoldText>
+                  <SmallBoldText style={styles.modalBoxCancel}>{I18n.get('common-cancel')}</SmallBoldText>
                 </TouchableOpacity>
-                <ActionButton text={I18n.get('common.send')} iconName="pictos-send" action={() => sendSchoolbookWordReminder()} />
+                <ActionButton text={I18n.get('common-send')} iconName="pictos-send" action={() => sendSchoolbookWordReminder()} />
               </View>
             </>
           }

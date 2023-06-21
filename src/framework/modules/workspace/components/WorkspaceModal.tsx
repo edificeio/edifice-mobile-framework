@@ -59,19 +59,43 @@ interface IWorkspaceModalProps {
 const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => {
   switch (type) {
     case WorkspaceModalType.CREATE_FOLDER:
-      return { buttonText: I18n.get('create'), title: I18n.get('create-folder'), hasInput: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-create'),
+        title: I18n.get('workspace-filelist-createfolder'),
+        hasInput: true,
+      };
     case WorkspaceModalType.DELETE:
-      return { buttonText: I18n.get('delete'), title: I18n.get('delete-confirm'), hasFileList: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-delete'),
+        title: I18n.get('workspace-filelist-deleteconfirm'),
+        hasFileList: true,
+      };
     case WorkspaceModalType.DOWNLOAD:
-      return { buttonText: I18n.get('download'), title: I18n.get('download-documents'), hasFileList: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-download'),
+        title: I18n.get('workspace-filelist-downloaddocuments'),
+        hasFileList: true,
+      };
     case WorkspaceModalType.DUPLICATE:
-      return { buttonText: I18n.get('copy'), title: I18n.get('copy-documents'), hasDestinationSelector: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-copy'),
+        title: I18n.get('workspace-filelist-copydocuments'),
+        hasDestinationSelector: true,
+      };
     case WorkspaceModalType.EDIT:
-      return { buttonText: I18n.get('modify'), title: I18n.get('rename'), hasInput: true };
+      return { buttonText: I18n.get('workspace-filelist-modify'), title: I18n.get('workspace-filelist-rename'), hasInput: true };
     case WorkspaceModalType.MOVE:
-      return { buttonText: I18n.get('move'), title: I18n.get('move-documents'), hasDestinationSelector: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-move'),
+        title: I18n.get('workspace-filelist-movedocuments'),
+        hasDestinationSelector: true,
+      };
     case WorkspaceModalType.TRASH:
-      return { buttonText: I18n.get('delete'), title: I18n.get('trash-confirm'), hasFileList: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-delete'),
+        title: I18n.get('workspace-filelist-trash-confirm'),
+        hasFileList: true,
+      };
     case WorkspaceModalType.NONE:
     default:
       return { buttonText: '', title: '' };

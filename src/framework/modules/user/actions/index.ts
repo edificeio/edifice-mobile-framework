@@ -19,12 +19,14 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
     const isUpdatingPhoto = newValues.photo !== undefined;
     const notifierId = `profile${isUpdatingPhoto ? 'One' : 'Two'}`;
-    const notifierSuccessText = I18n.get(`ProfileChange${isUpdatingPhoto ? 'Avatar' : ''}Success`);
+    const notifierSuccessText = I18n.get(`user-profilechange${isUpdatingPhoto ? '-avatar' : ''}-success`);
     const getNotifierErrorText = () => {
       if (isUpdatingPhoto) {
-        return !newValues.photo ? I18n.get('ProfileDeleteAvatarError') : I18n.get('ProfileChangeAvatarErrorAssign');
+        return !newValues.photo
+          ? I18n.get('user-profilechange-avatar-error-delete')
+          : I18n.get('user-profilechange-avatar-error-assign');
       } else {
-        return I18n.get('ProfileChangeError');
+        return I18n.get('user-profilechange-error');
       }
     };
 
@@ -72,12 +74,12 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
         dispatch(
           notifierShowAction({
             id: notifierId,
-            text: I18n.get('ProfileChangeLoginError'),
+            text: I18n.get('user-profilechange-login-error'),
             icon: 'close',
             type: 'error',
           }),
         );
-        Trackers.trackEvent('Profile', 'UPDATE ERROR', 'ProfileChangeLoginError');
+        Trackers.trackEvent('Profile', 'UPDATE ERROR', 'user-profilechange-login-error');
       } else {
         dispatch(
           notifierShowAction({

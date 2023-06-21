@@ -111,8 +111,6 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    // No title until data is loaded
-    // title: I18n.get('Homework'),
   }),
 });
 

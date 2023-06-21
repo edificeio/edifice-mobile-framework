@@ -176,7 +176,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
             {this.renderLogo()}
             <TextInputLine
               inputRef={this.setInputLoginRef}
-              placeholder={I18n.get('Login')}
+              placeholder={I18n.get('common-login')}
               onChangeText={this.onLoginChanged.bind(this)}
               value={login}
               hasError={!!error}
@@ -188,13 +188,13 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
             <TextInputLine
               isPasswordField
               inputRef={this.setInputPasswordRef}
-              placeholder={I18n.get('Password')}
+              placeholder={I18n.get('auth-login-password')}
               onChangeText={this.onPasswordChanged.bind(this)}
               value={password}
               hasError={!!error}
             />
             <View style={styles.inputCheckbox}>
-              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.get('AutoLogin')}</CaptionText>
+              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.get('auth-login-autologin')}</CaptionText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
@@ -235,7 +235,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                 <ActionButton
                   action={() => this.doLogin()}
                   disabled={this.isSubmitDisabled}
-                  text={I18n.get('Connect')}
+                  text={I18n.get('auth-login-connect')}
                   loading={this.state.loginState === 'RUNNING' || this.state.loginState === 'DONE'}
                 />
               )}
@@ -246,14 +246,14 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                   onPress={() => {
                     navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' });
                   }}>
-                  {I18n.get('forgot-password')}
+                  {I18n.get('auth-login-forgot-password')}
                 </SmallText>
                 <SmallText
                   style={styles.textForgotId}
                   onPress={() => {
                     navigation.navigate(authRouteNames.forgot, { platform, mode: 'id' });
                   }}>
-                  {I18n.get('forgot-id')}
+                  {I18n.get('auth-login-forgot-id')}
                 </SmallText>
               </View>
             </View>

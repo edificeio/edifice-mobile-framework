@@ -233,7 +233,7 @@ const SchoolbookWordDetailsCard = (
               }
               text={
                 <CaptionText numberOfLines={usersTextMaxLines}>
-                  {`${I18n.get(`common.${isTeacher ? 'forRecipients' : 'from'}`)} `}
+                  {`${I18n.get(`schoolbook-worddetails-${isTeacher ? 'for' : 'from'}`)} `}
                   <CaptionBoldText
                     style={{
                       color: !isTeacher || hasSingleRecipientForTeacher ? theme.ui.text.regular : theme.palette.primary.regular,
@@ -268,7 +268,7 @@ const SchoolbookWordDetailsCard = (
           <View style={styles.fromContainer}>
             <SingleAvatar status={undefined} size={36} userId={word?.ownerId} />
             <SmallText style={styles.from} numberOfLines={usersTextMaxLines}>
-              {`${I18n.get('common.from')} `}
+              {`${I18n.get('schoolbook-worddetails-from')} `}
               <SmallBoldText>{word?.ownerName}</SmallBoldText>
             </SmallText>
           </View>

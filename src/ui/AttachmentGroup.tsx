@@ -78,7 +78,9 @@ export class AttachmentGroup extends React.PureComponent<
                   this.setState({ downloadAll: true });
                   onDownloadAll && onDownloadAll();
                 }}>
-                <CaptionText style={{ color: theme.palette.complementary.blue.regular }}>{I18n.get('download-all')}</CaptionText>
+                <CaptionText style={{ color: theme.palette.complementary.blue.regular }}>
+                  {I18n.get('attachment-download-all')}
+                </CaptionText>
               </RNGHTouchableOpacity>
             ) : null}
           </BubbleStyle>

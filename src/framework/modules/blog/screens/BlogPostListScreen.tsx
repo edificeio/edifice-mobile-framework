@@ -206,8 +206,8 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-blog"
-        title={I18n.get(`blog-postlist-emptyscreen-title${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
-        text={I18n.get(`blog-postlist-emptyscreen-text${hasBlogPostCreationRights ? '' : 'NoCreationRights'}`)}
+        title={I18n.get(`blog-postlist-emptyscreen-title${hasBlogPostCreationRights ? '' : '-nocreationrights'}`)}
+        text={I18n.get(`blog-postlist-emptyscreen-text${hasBlogPostCreationRights ? '' : '-nocreationrights'}`)}
         {...(hasBlogPostCreationRights
           ? {
               buttonText: I18n.get('blog-postlist-emptyscreen-button'),

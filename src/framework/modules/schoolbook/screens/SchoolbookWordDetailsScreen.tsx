@@ -136,7 +136,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       refreshSilent();
     } catch {
       setIsAcknowledgingWord(false);
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -157,7 +157,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
       }
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     } finally {
       setIsPublishingReply(false);
     }
@@ -191,17 +191,17 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         await schoolbookService.word.delete(session, schoolbookWordId);
         props.navigation.goBack();
       } catch {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       }
     };
     const showDeleteSchoolbookWordAlert = () =>
       Alert.alert(I18n.get('schoolbook-worddetails-deletealert-title'), I18n.get('schoolbook-worddetails-deletealert-text'), [
         {
-          text: I18n.get('common.cancel'),
+          text: I18n.get('common-cancel'),
           style: 'default',
         },
         {
-          text: I18n.get('common.delete'),
+          text: I18n.get('common-delete'),
           style: 'destructive',
           onPress: () => deleteSchoolbookWord(),
         },
@@ -233,18 +233,18 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
-      I18n.get(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
-          text: I18n.get('common.quit'),
+          text: I18n.get('common-quit'),
           style: 'destructive',
           onPress: () => {
             handleRemoveConfirmNavigationEvent(data.action, props.navigation);
           },
         },
         {
-          text: I18n.get('common.continue'),
+          text: I18n.get('common-continue'),
           style: 'default',
           onPress: () => {
             clearConfirmNavigationEvent();

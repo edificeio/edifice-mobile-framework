@@ -95,7 +95,7 @@ const openFile = (notifierId: string, file: SyncedFile | undefined) => {
       try {
         file.open();
       } catch {
-        Toast.showError(I18n.get('download-error-generic'));
+        Toast.showError(I18n.get('attachment-download-error'));
       }
     }
   };
@@ -107,9 +107,9 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
       try {
         file.mirrorToDownloadFolder();
         //Toast.hide(lastToast);
-        lastToast = Toast.showSuccess(toastMessage ?? I18n.get('download-success-name', { name: file.filename }));
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.get('common-download-success-name', { name: file.filename }));
       } catch {
-        Toast.showError(I18n.get('download-error-generic'));
+        Toast.showError(I18n.get('attachment-download-error'));
       }
     }
   };
@@ -159,7 +159,7 @@ class Attachment extends React.PureComponent<
       if (canDownload) {
         await this.startDownload(this.props.attachment as IRemoteAttachment, lf => {
           requestAnimationFrame(() => {
-            if (this.props.onDownloadFile) this.props.onDownloadFile(notifierId, lf, I18n.get('download-success-all'));
+            if (this.props.onDownloadFile) this.props.onDownloadFile(notifierId, lf, I18n.get('attachment-downloadsuccess-all'));
           });
         }).catch(() => {
           // TODO: Manage error
@@ -235,14 +235,14 @@ class Attachment extends React.PureComponent<
                   {(editMode && (att as ILocalAttachment).name) ||
                     (att as IRemoteAttachment).filename ||
                     (att as IRemoteAttachment).displayName ||
-                    I18n.get('download-untitled')}
-                  {!this.attId && I18n.get('download-invalidUrl')}
+                    I18n.get('attachment-download-untitled')}
+                  {!this.attId && I18n.get('attachment-download-invalidurl')}
                 </SmallText>
                 <SmallText style={{ color: theme.ui.text.light, flex: 0 }}>
                   {downloadState === DownloadState.Success
-                    ? ' ' + I18n.get('download-open')
+                    ? ' ' + I18n.get('attachment-download-open')
                     : downloadState === DownloadState.Error
-                    ? ' ' + I18n.get('tryagain')
+                    ? ' ' + I18n.get('attachment-tryagain')
                     : (this.props.attachment as IRemoteAttachment).size
                     ? `${filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
                     : ''}

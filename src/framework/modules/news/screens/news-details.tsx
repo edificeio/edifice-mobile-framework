@@ -208,7 +208,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
           {resourceUri ? (
             <View style={{ marginTop: UI_SIZES.spacing.small }}>
               <ActionButton
-                text={I18n.get('common.openInBrowser')}
+                text={I18n.get('common-openinbrowser')}
                 url={resourceUri}
                 action={() => Trackers.trackEvent('News', 'GO TO', 'View in Browser')}
                 type="secondary"
@@ -225,7 +225,7 @@ export class NewsDetailsScreen extends React.PureComponent<INewsDetailsScreenPro
             }
             rightElement={
               <SmallText>
-                {newsComments!.length} {I18n.get(`common.comment.comment${newsComments!.length > 1 ? 's' : ''}`)}
+                {newsComments!.length} {I18n.get(`news-details-comment${newsComments!.length > 1 ? 's' : ''}`)}
               </SmallText>
             }
           />

@@ -31,15 +31,15 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
       });
     } catch {
       Alert.alert(
-        I18n.get('galery.read.permission.blocked.title'),
-        I18n.get('galery.read.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('gallery-readpermissionblocked-title'),
+        I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
       );
       return undefined;
     }
   };
 
   return {
-    title: I18n.get('common-photoPicker-pick'),
+    title: I18n.get('galleryaction-pick'),
     icon: {
       ios: 'photo.on.rectangle.angled',
       android: 'ic_gallery',

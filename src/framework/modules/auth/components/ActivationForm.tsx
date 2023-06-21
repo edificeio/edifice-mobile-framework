@@ -100,7 +100,7 @@ export function InputLogin(props: { login: string; form: ActivationFormModel; on
   return (
     <TextInputLine
       inputRef={ref => (props.form.inputLogin = ref)}
-      placeholder={I18n.get('Login')}
+      placeholder={I18n.get('common-login')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.login}
       hasError={props.form.showLoginError(props.login)}
@@ -115,7 +115,7 @@ export function InputPassword(props: { password: string; form: ActivationFormMod
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputPassword = ref)}
-      placeholder={I18n.get('Password')}
+      placeholder={I18n.get('auth-activation-password')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.password}
       hasError={props.form.showPasswordError(props.password)}
@@ -128,7 +128,7 @@ export function InputPasswordConfirm(props: { confirm: string; form: ActivationF
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputConfirm = ref)}
-      placeholder={I18n.get('PasswordConfirm')}
+      placeholder={I18n.get('auth-activation-password-confirm')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.confirm}
       hasError={props.form.showConfirmError(props.confirm)}
@@ -140,7 +140,7 @@ export function InputEmail(props: { email: string; form: ActivationFormModel; on
   return (
     <TextInputLine
       inputRef={ref => (props.form.inputEmail = ref)}
-      placeholder={I18n.get('Email')}
+      placeholder={I18n.get('auth-activation-email')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.email}
       hasError={props.form.showEmailError(props.email)}

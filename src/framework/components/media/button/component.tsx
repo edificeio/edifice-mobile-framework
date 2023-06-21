@@ -45,7 +45,7 @@ class MediaButton extends React.Component<IPlayerProps> {
 
     const getPreviewVideo = () => {
       return !source || !type ? (
-        <SmallItalicText>{I18n.get(`${type || 'media'}NotAvailable`)}</SmallItalicText>
+        <SmallItalicText>{I18n.get(`mediabutton-${type || 'media'}-notavailable`)}</SmallItalicText>
       ) : (
         <TouchableOpacity onPress={() => this.showMediaPlayer()} style={[styles.previewVideo, style]}>
           <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" />

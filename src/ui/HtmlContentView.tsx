@@ -143,7 +143,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
     if (error) {
       return (
         <View {...this.props}>
-          <SmallItalicText>{I18n.get('common-ErrorLoadingResource')}</SmallItalicText>
+          <SmallItalicText>{I18n.get('htmlcontentview-errorloadingresource')}</SmallItalicText>
         </View>
       );
     } else if (!loading && !hasContent) {
@@ -152,7 +152,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
           <SmallItalicText>{emptyMessage}</SmallItalicText>
         </View>
       ) : (
-        emptyMessage || <SmallItalicText>{I18n.get('noContent')}</SmallItalicText>
+        emptyMessage || <SmallItalicText>{I18n.get('htmlcontentview-nocontent')}</SmallItalicText>
       );
     } else {
       return (

@@ -45,7 +45,7 @@ const CreateFolderModal = React.forwardRef<ModalBoxHandle, ICreateFolderModalPro
       Toast.showInfo(I18n.get('zimbra-maillist-createfoldermodal-successmessage'));
     } catch {
       setCreating(false);
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 

@@ -188,7 +188,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
     () => (
       <TextInput
         ref={inputRef}
-        placeholder={I18n.get(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
+        placeholder={I18n.get(`comment-add-${props.isResponse ? 'response' : 'comment'}`)}
         placeholderTextColor={theme.palette.grey.graphite}
         multiline
         scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
@@ -242,13 +242,13 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('common.modify')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('commentfield-modify')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
               <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.get('common.delete')}
+                {I18n.get('common-delete')}
               </SmallBoldText>
             </TouchableOpacity>
           ) : null}
@@ -258,7 +258,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
               <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.get('common.delete')}
+                {I18n.get('common-delete')}
               </SmallBoldText>
             </TouchableOpacity>
           ) : null}

@@ -79,18 +79,18 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
-      I18n.get(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
-          text: I18n.get('common.quit'),
+          text: I18n.get('common-quit'),
           style: 'destructive',
           onPress: () => {
             handleRemoveConfirmNavigationEvent(data.action, navigation);
           },
         },
         {
-          text: I18n.get('common.continue'),
+          text: I18n.get('common-continue'),
           style: 'default',
           onPress: () => {
             clearConfirmNavigationEvent();
@@ -219,7 +219,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       } else await handlePublishBlogPostComment(ids, comment);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
+      Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
     }
   }
 
@@ -234,7 +234,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       await handleDeleteBlogPostComment(ids);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
+      Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
     }
   }
 
@@ -249,7 +249,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
       await handleDeleteBlogPost(ids);
     } catch {
-      Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
+      Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
     }
   }
 
@@ -302,7 +302,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     }
 
     const menuItemOpenBrowser = linkAction({
-      title: I18n.get('common.openInBrowser'),
+      title: I18n.get('common-openinbrowser'),
       action: () => {
         if (!session) return;
         const url = `${session.platform!.url}${resourceUri}`;
@@ -319,11 +319,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               action: () => {
                 Alert.alert(I18n.get('blog-postdetails-deletion-title'), I18n.get('blog-postdetails-deletion-text'), [
                   {
-                    text: I18n.get('common.cancel'),
+                    text: I18n.get('common-cancel'),
                     style: 'default',
                   },
                   {
-                    text: I18n.get('common.delete'),
+                    text: I18n.get('common-delete'),
                     style: 'destructive',
                     onPress: () => {
                       this.doDeleteBlogPost(blogPostData!._id).then(() => {
@@ -510,7 +510,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
               Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
             } catch {
-              Toast.showError(I18n.get('common.error.text'));
+              Toast.showError(I18n.get('common-error-text'));
             }
           }}
         />
@@ -537,7 +537,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                 icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
                 text={
                   blogPostData?.author.username ? (
-                    <SmallBoldText numberOfLines={1}>{`${I18n.get('common.by')} ${blogPostData?.author.username}`}</SmallBoldText>
+                    <SmallBoldText numberOfLines={1}>{`${I18n.get('common-by')} ${blogPostData?.author.username}`}</SmallBoldText>
                   ) : undefined
                 }
                 date={blogPostData?.modified}
@@ -588,13 +588,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         onDeleteComment={
           hasDeleteCommentBlogPostRight || (session && hasPermissionManager(blogInfos!, session))
             ? () => {
-                Alert.alert(I18n.get('common.deletion'), I18n.get('common.comment.confirmationDelete'), [
+                Alert.alert(I18n.get('blog-postdetails-deletion'), I18n.get('blog-postdetails-deleteconfirmation'), [
                   {
-                    text: I18n.get('common.cancel'),
+                    text: I18n.get('common-cancel'),
                     style: 'default',
                   },
                   {
-                    text: I18n.get('common.delete'),
+                    text: I18n.get('common-delete'),
                     style: 'destructive',
                     onPress: () => this.doDeleteComment(blogPostComment.id),
                   },

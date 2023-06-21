@@ -109,7 +109,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.safeAreaInner}>
             <PFLogo pf={route.params.platform} />
-            <SmallText style={styles.textCenter}>{I18n.get('login-wayf-main-text')}</SmallText>
+            <SmallText style={styles.textCenter}>{I18n.get('auth-wayf-main-text')}</SmallText>
             <SmallText style={styles.textError}>
               {error
                 ? I18n.get('auth-error-' + error.replaceAll('_', ''), {
@@ -125,7 +125,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
                 : ''}
             </SmallText>
             <ActionButton
-              text={I18n.get('login-wayf-main-button')}
+              text={I18n.get('auth-wayf-main-button')}
               action={() => {
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
                 navigation.navigate(authRouteNames.wayf, { platform: route.params.platform });

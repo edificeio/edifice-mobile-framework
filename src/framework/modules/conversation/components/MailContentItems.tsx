@@ -240,7 +240,7 @@ export const RenderPJs = ({
               try {
                 await sf.open();
               } catch {
-                Toast.showError(I18n.get('download-error-generic'));
+                Toast.showError(I18n.get('conversation-mailcontent-download-error'));
               }
             }}>
             <View style={styles.attachmentSubContainer}>
@@ -264,9 +264,9 @@ export const RenderPJs = ({
                     try {
                       const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                       await sf.mirrorToDownloadFolder();
-                      Toast.showSuccess(I18n.get('download-success-name', { name: sf.filename }));
+                      Toast.showSuccess(I18n.get('common-download-success-name', { name: sf.filename }));
                     } catch {
-                      Toast.showError(I18n.get('download-error-generic'));
+                      Toast.showError(I18n.get('conversation-mailcontent-download-error'));
                     }
                   }}
                   style={{ paddingHorizontal: UI_SIZES.spacing.small }}>

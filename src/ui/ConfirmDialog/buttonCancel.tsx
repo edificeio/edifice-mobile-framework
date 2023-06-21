@@ -29,6 +29,6 @@ interface IDialogButtonCancelProps {
 
 export const DialogButtonCancel = ({ style, textStyle, onPress }: IDialogButtonCancelProps) => (
   <TouchableOpacity style={[styles.buttonContainer, style]} onPress={onPress}>
-    <SmallText style={[styles.text, textStyle]}>{I18n.get('Cancel')}</SmallText>
+    <SmallText style={[styles.text, textStyle]}>{I18n.get('common-cancel')}</SmallText>
   </TouchableOpacity>
 );

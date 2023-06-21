@@ -229,7 +229,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                   } // Do nothing, just to prevent error
                 },
                 actionColor: theme.palette.status.failure.regular,
-                actionText: I18n.get('common.close'),
+                actionText: I18n.get('timeline-close'),
                 actionIcon: 'ui-close',
               },
             ]
@@ -395,14 +395,14 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               resolve(true);
               Toast.showSuccess(I18n.get('timeline-reportaction-success'));
             } catch (e) {
-              Alert.alert(I18n.get('common.error.text'));
+              Alert.alert(I18n.get('common-error-text'));
               reject(e);
             }
           },
           style: 'destructive',
         },
         {
-          text: I18n.get('common.cancel'),
+          text: I18n.get('common-cancel'),
           onPress: () => {
             resolve(false);
           },

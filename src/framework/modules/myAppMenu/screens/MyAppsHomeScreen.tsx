@@ -77,10 +77,10 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
   private renderFooter() {
     return (
       <>
-        <ActionButton text={I18n.get('myapp-accessWeb')} url="/welcome" type="secondary" />
+        <ActionButton text={I18n.get('myapp-accessweb')} url="/welcome" type="secondary" />
         <InfoBubble
-          infoText={I18n.get('myapp-infoBubbleText', { appName: DeviceInfo.getApplicationName() })}
-          infoTitle={I18n.get('myapp-infoBubbleTitle')}
+          infoText={I18n.get('myapp-infobubble-text', { appName: DeviceInfo.getApplicationName() })}
+          infoTitle={I18n.get('myapp-infobubble-title')}
           infoImage={require('ASSETS/images/my-apps-infobubble.png')}
           infoBubbleType="floating"
           infoBubbleId="myAppsScreen.redirect"

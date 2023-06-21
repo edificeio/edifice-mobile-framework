@@ -27,7 +27,7 @@ export const ButtonsOkCancel = ({ onCancel, onValid, title, cancelText }: Button
   <ButtonStyled>
     {/* FIXME: Should fire events instead of translating them down or use onPress={onValid} and onPress={onCancel}. */}
     <ButtonTextIcon onPress={() => onValid()} title={title} />
-    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.get('Cancel')} />
+    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.get('common-cancel')} />
   </ButtonStyled>
 );
 export const ButtonsOkOnly = ({ onValid, title }: ButtonsOkProps) => (
@@ -39,7 +39,7 @@ export const ButtonsOkOnly = ({ onValid, title }: ButtonsOkProps) => (
 export const ButtonsOkCancelReverse = ({ onCancel, onValid, title, cancelText }: ButtonsOkCancelProps) => (
   <ButtonStyled>
     {/* FIXME: Should fire events instead of translating them down or use onPress={onValid} and onPress={onCancel}. */}
-    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.get('Cancel')} />
+    <ButtonTextIcon onPress={() => onCancel()} title={cancelText || I18n.get('common-cancel')} />
     <ButtonTextIcon onPress={() => onValid()} title={title} />
   </ButtonStyled>
 );

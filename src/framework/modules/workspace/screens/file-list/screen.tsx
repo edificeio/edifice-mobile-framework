@@ -58,7 +58,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('workspace-file-list-module-name'),
+    title: I18n.get('workspace-filelist-module-name'),
   }),
 });
 
@@ -331,7 +331,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-file-list-module-name')),
+      headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-filelist-module-name')),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);
@@ -342,8 +342,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     return (
       <EmptyScreen
         svgImage={image}
-        title={I18n.get(`workspace-file-list-empty-screen-${screen}-title`)}
-        text={I18n.get(`workspace-file-list-empty-screen-${screen}-text`)}
+        title={I18n.get(`workspace-filelist-emptyscreen-${screen}-title`)}
+        text={I18n.get(`workspace-filelist-emptyscreen-${screen}-text`)}
       />
     );
   };

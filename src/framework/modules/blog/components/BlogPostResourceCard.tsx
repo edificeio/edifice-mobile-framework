@@ -30,9 +30,9 @@ export interface BlogPostResourceCardProps {
 export const commentsString = (comments: number) =>
   comments
     ? comments === 1
-      ? `1 ${I18n.get('common.comment.comment').toLowerCase()}`
-      : `${comments} ${I18n.get('common.comment.comments').toLowerCase()}`
-    : I18n.get('common.comment.noComments');
+      ? `1 ${I18n.get('blog-postlist-comment').toLowerCase()}`
+      : `${comments} ${I18n.get('blog-postlist-comments').toLowerCase()}`
+    : I18n.get('blog-postlist-comment-nocomments');
 
 export const BlogPostResourceCard = ({
   action,
@@ -60,7 +60,7 @@ export const BlogPostResourceCard = ({
             icon={<ContentCardIcon userIds={[authorId || require('ASSETS/images/system-avatar.png')]} />}
             text={
               authorName ? (
-                <SmallBoldText numberOfLines={authorTextMaxLines}>{`${I18n.get('common.by')} ${authorName}`}</SmallBoldText>
+                <SmallBoldText numberOfLines={authorTextMaxLines}>{`${I18n.get('common-by')} ${authorName}`}</SmallBoldText>
               ) : undefined
             }
             date={date}

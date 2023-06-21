@@ -76,7 +76,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       navigation.goBack();
     } catch {
       setCreating(false);
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 
@@ -92,7 +92,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       navigation.goBack();
     } catch {
       setDeleting(false);
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 

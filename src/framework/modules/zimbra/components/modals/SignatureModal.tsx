@@ -62,7 +62,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
       setUpdating(false);
     } catch {
       setUpdating(false);
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   };
 

@@ -98,7 +98,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           navBarTitle: getNavBarTitle(route),
         });
       } catch {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -124,21 +124,21 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   }, [navigation, platform, tryLogout]);
 
   UNSTABLE_usePreventRemove(!isEmailEmpty && isScreenFocused, ({ data }) => {
     Alert.alert(I18n.get('auth-change-email-edit-alert-title'), I18n.get('auth-change-email-edit-alert-message'), [
       {
-        text: I18n.get('common.discard'),
+        text: I18n.get('auth-change-email-discard'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
         style: 'destructive',
       },
       {
-        text: I18n.get('common.continue'),
+        text: I18n.get('common-continue'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
@@ -187,7 +187,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         </View>
         <CaptionItalicText style={styles.errorText}>
           {isEmailStatePristine
-            ? I18n.get('common.space')
+            ? I18n.get('common-space')
             : emailState === EmailState.EMAIL_ALREADY_VERIFIED
             ? I18n.get('auth-change-email-error-same')
             : I18n.get('auth-change-email-error-invalid')}

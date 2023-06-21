@@ -66,7 +66,7 @@ const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => 
           </ButtonIconText>
         ) : null}
         <ButtonIconText name="share-variant" onPress={share}>
-          {I18n.get('share')}
+          {I18n.get('workspace-filepreview-share')}
         </ButtonIconText>
       </View>
     </PageView>

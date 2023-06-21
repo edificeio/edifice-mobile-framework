@@ -30,14 +30,14 @@ export default function cameraAction(props: MenuPickerActionProps & { useFrontCa
       });
     } catch {
       Alert.alert(
-        I18n.get('camera.permission.blocked.title'),
-        I18n.get('camera.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+        I18n.get('camera-permissionblocked-title'),
+        I18n.get('camera-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
       );
     }
   };
 
   return {
-    title: I18n.get('common-photoPicker-take'),
+    title: I18n.get('cameraaction-take'),
     icon: {
       ios: 'camera',
       android: 'ic_camera',

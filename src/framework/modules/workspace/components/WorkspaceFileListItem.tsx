@@ -53,7 +53,7 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
     const { item, isDisabled, isSelected } = this.props;
     const { id, isFolder, name, date, ownerName, contentType, parentId } = item;
     const borderBottomWidth = isDisabled ? 0 : 1;
-    const longOwnerName = `${I18n.get('common.by').toLowerCase()} ${ownerName}`;
+    const longOwnerName = `${I18n.get('common-by').toLowerCase()} ${ownerName}`;
     return (
       <TouchableOpacity onPress={this.onPressCallback} onLongPress={this.onLongPressCallback} disabled={isDisabled}>
         <ListItem

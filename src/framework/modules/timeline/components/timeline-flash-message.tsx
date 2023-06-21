@@ -120,7 +120,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
           }>
           {longText && !isExtended ? (
             <View style={styles.seeMore}>
-              <SmallBoldText style={{ color: theme.ui.text.inverse }}>{I18n.get('seeMore')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.ui.text.inverse }}>{I18n.get('timeline-seemore')}</SmallBoldText>
               <Icon
                 name="arrow_down"
                 color={theme.ui.text.inverse}

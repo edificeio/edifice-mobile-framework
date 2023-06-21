@@ -45,7 +45,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('MyAccount'),
+    title: I18n.get('user-profile-myaccount'),
   }),
   headerShadowVisible: false,
 });
@@ -125,7 +125,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     () => (
       <>
         <BodyBoldText style={styles.userInfoName}>{session?.user.displayName}</BodyBoldText>
-        <SmallText style={styles.userInfoType}>{I18n.get(`profileTypes.${session?.user.type}`)}</SmallText>
+        <SmallText style={styles.userInfoType}>{I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}</SmallText>
         <ActionButton
           text={I18n.get('user-page-userfilebutton')}
           type="secondary"
@@ -197,7 +197,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         }
         if (focusedRef.current) navigation.navigate(routeName, routeParams);
       } catch {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       } finally {
         setCurrentLoadingMenu(undefined);
       }
@@ -303,7 +303,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
   const doLogout = React.useCallback(() => {
     Alert.alert('', I18n.get('auth-disconnect-confirm'), [
       {
-        text: I18n.get('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'default',
       },
       {
@@ -342,7 +342,7 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
         <SmallBoldText style={styles.versionButton}>
-          {I18n.get('version-number')} {useVersionFeature.versionNumber}
+          {I18n.get('user-page-versionnumber')} {useVersionFeature.versionNumber}
           {isVersionDetailsShown ? ` ${useVersionFeature.versionType} (${useVersionFeature.buildNumber})` : null}
         </SmallBoldText>
         {isVersionDetailsShown ? (

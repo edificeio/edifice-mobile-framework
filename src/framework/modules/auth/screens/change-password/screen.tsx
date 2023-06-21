@@ -36,7 +36,7 @@ function OldPasswordField(props: { oldPassword: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputOldPassword = ref)}
-      placeholder={I18n.get('PasswordOld')}
+      placeholder={I18n.get('auth-changepassword-password-old')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.oldPassword}
       hasError={props.form.showOldPasswordError(props.oldPassword)}
@@ -49,7 +49,7 @@ function NewPasswordField(props: { newPassword: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputNewPassword = ref)}
-      placeholder={I18n.get('PasswordNew')}
+      placeholder={I18n.get('auth-changepassword-password-new')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.newPassword}
       hasError={props.form.showNewPasswordError(props.newPassword)}
@@ -62,7 +62,7 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputPasswordConfirm = ref)}
-      placeholder={I18n.get('PasswordNewConfirm')}
+      placeholder={I18n.get('auth-changepassword-password-new-confirm')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.confirm}
       hasError={props.form.showPasswordConfirmError(props.confirm)}
@@ -102,7 +102,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     try {
       this.setState({ typing: false, submitState: 'RUNNING', error: undefined });
       if (!this.props.route.params.credentials) {
-        throw createChangePasswordError('change password', I18n.get('changePassword-errorSubmit'));
+        throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
       const payload = {
         ...this.state,
@@ -185,7 +185,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             <View style={styles.viewInfoForm}>
               {this.props.route.params.forceChange ? (
                 <View style={styles.viewWarning}>
-                  <BodyText style={styles.textWarning}>{I18n.get('PasswordChangeWarning')}</BodyText>
+                  <BodyText style={styles.textWarning}>{I18n.get('auth-changepassword-warning')}</BodyText>
                   <MiniSpacer />
                   <MiniSpacer />
                 </View>
@@ -209,7 +209,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             </View>
             <View style={styles.noFlexShrink}>
               <SmallText style={styles.textError}>
-                {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
+                {showError && hasErrorKey && (errorKey !== 'auth-changepassword-error-confirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}
               </SmallText>
@@ -220,7 +220,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 <ActionButton
                   action={() => this.doSubmit()}
                   disabled={isNotValid}
-                  text={I18n.get('Save')}
+                  text={I18n.get('common-save')}
                   loading={isSubmitLoading}
                 />
               </ButtonWrapper>

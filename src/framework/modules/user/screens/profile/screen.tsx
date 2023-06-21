@@ -122,7 +122,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 onDeleteAvatar={this.onDeleteAvatar.bind(this)}
               />
               {this.renderItem({
-                title: I18n.get('Login'),
+                title: I18n.get('common-login'),
                 getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || session?.user.login),
                 editable: true,
                 setter: loginAlias => this.setState({ loginAlias }),
@@ -130,25 +130,25 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 placeholder: session?.user.login,
               })}
               {this.renderItem({
-                title: I18n.get('Firstname'),
+                title: I18n.get('user-profile-firstname'),
                 getter: () => session?.user.firstName,
               })}
               {this.renderItem({
-                title: I18n.get('Lastname'),
+                title: I18n.get('user-profile-lastname'),
                 getter: () => session?.user.lastName,
               })}
               {this.renderItem({
-                title: I18n.get('DisplayName'),
+                title: I18n.get('user-profile-displayname'),
                 getter: () => this.state.displayName,
                 editable: session?.user.type !== 'Relative',
                 setter: displayName => this.setState({ displayName }),
               })}
               {this.renderItem({
-                title: I18n.get('EmailAddress'),
+                title: I18n.get('user-profile-emailaddress'),
                 getter: () => session?.user.email,
               })}
               {this.renderItem({
-                title: I18n.get('Phone'),
+                title: I18n.get('user-profile-phone'),
                 getter: () => this.state.homePhone,
                 editable: true,
                 setter: homePhone => this.setState({ homePhone }),
@@ -156,14 +156,14 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 validator: { key: 'homePhoneValid', regex: ValidatorBuilder.PHONE_REGEX },
               })}
               {this.renderItem({
-                title: I18n.get('CellPhone'),
+                title: I18n.get('user-profile-cellphone'),
                 getter: () => session?.user.mobile,
               })}
               {this.renderItem({
-                title: I18n.get('Birthdate'),
+                title: I18n.get('user-profile-birthdate'),
                 getter: () =>
                   session?.user.birthDate?.format('L') === 'Invalid date'
-                    ? I18n.get('common-InvalidDate')
+                    ? I18n.get('user-profile-invaliddate')
                     : session?.user.birthDate?.format('L'),
               })}
             </SafeAreaView>
@@ -287,7 +287,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
         // eslint-disable-next-line react/no-unstable-nested-components
         headerLeft: () => (
           <NavBarAction
-            title={I18n.get('Cancel')}
+            title={I18n.get('common-cancel')}
             onPress={() => {
               navigation.setParams({ edit: false });
               navigation.setParams({ updatedProfileValues: undefined });
@@ -299,7 +299,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
         // Since this page will be soon rewritten, this better to just comment instead of clean the code.
         // headerRight: () => (
         //   <NavBarAction
-        //     title={I18n.get('Save')}
+        //     title={I18n.get('common-save')}
         //     onPress={() => {
         //       const values = route.params.updatedProfileValues as IProfilePageState;
         //       if (!isEmpty(values)) {
@@ -309,7 +309,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
         //             route.params.onSave(route.params.updatedProfileValues);
         //           }
         //         } else {
-        //           Alert.alert(I18n.get('common-ErrorUnknown2'), I18n.get('ProfileInvalidInformation'));
+        //           Alert.alert(I18n.get('user-profile-error-unknown'), I18n.get('user-profile-invalidinformation'));
         //         }
         //       } else {
         //         navigation.setParams({ edit: false });
@@ -344,7 +344,7 @@ const uploadAvatarError = () => {
     dispatch(
       notifierShowAction({
         id: 'profileOne',
-        text: I18n.get('ProfileChangeAvatarErrorUpload'),
+        text: I18n.get('user-profile-changeavatar-error-upload'),
         icon: 'close',
         type: 'error',
       }),

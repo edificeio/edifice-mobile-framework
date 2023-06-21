@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<'user', UserState>({
   matchEntcoreApp: () => false, // There is no corresponding backend app
   hasRight: () => true, // By the way, this module must always be available
 
-  displayI18n: 'MyAccount',
+  displayI18n: 'user-moduleconfig-myaccount',
   displayAs: 'tabModule',
   displayOrder: 5,
   displayPicture: { type: 'Icon', name: 'profile-off' },

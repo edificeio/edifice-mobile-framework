@@ -7,7 +7,7 @@ import { MenuProps } from '~/framework/components/menus/types/types';
 
 const BottomMenu = (props: React.PropsWithChildren<MenuProps & { title: string }>) => {
   //add cancel action to actions
-  props.actions.push({ title: I18n.get('Cancel'), action: () => {} });
+  props.actions.push({ title: I18n.get('common-cancel'), action: () => {} });
 
   const showBottomMenu = () => {
     BottomSheet.showBottomSheetWithOptions(

@@ -82,16 +82,16 @@ const formatI18nNotifType = (notifType: string) => notifType.replaceAll('_', '')
 function PreventBack(props: { hasChanged: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.hasChanged, ({ data }) => {
-    Alert.alert(I18n.get('common.confirmationLeaveAlert.title'), I18n.get('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('common-leavealert-title'), I18n.get('common-leavealert-text'), [
       {
-        text: I18n.get('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.get('common.quit'),
+        text: I18n.get('common-quit'),
         style: 'destructive',
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, navigation);
@@ -201,7 +201,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
           hasEmptySubListData ? null : (
             <CheckboxButton
               onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
-              title="common.all"
+              title="user-pushnotifssettings-all"
               isChecked={areAllChecked}
               isAllButton
             />

@@ -14,7 +14,7 @@ export const listWorkspaceFoldersAction = () => async (dispatch, getState) => {
     const folders: IFolder[] = [
       {
         id: 'owner',
-        name: I18n.get('owner'),
+        name: I18n.get('workspace-filelist-owner'),
         parentId: '0',
         sortNo: 'owner',
         children: [],
@@ -41,7 +41,7 @@ export const createWorkspaceFolderAction = (name: string, parentId: string) => a
     const session = assertSession();
     const folder = await workspaceService.folder.create(session, name, parentId);
     dispatch(workspaceCreateFolderActionsCreators.receipt(folder));
-    Toast.showSuccess(I18n.get('workspace-folder-folder-created'));
+    Toast.showSuccess(I18n.get('workspace-filelist-folder-foldercreated'));
     return folder;
   } catch (e) {
     dispatch(workspaceCreateFolderActionsCreators.error(e as Error));

@@ -177,16 +177,16 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
   };
 
   UNSTABLE_usePreventRemove(!!(subject || description) && !isSending, ({ data }) => {
-    Alert.alert(I18n.get('common.confirmationLeaveAlert.title'), I18n.get('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('common-leavealert-title'), I18n.get('common-leavealert-text'), [
       {
-        text: I18n.get('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.get('common.quit'),
+        text: I18n.get('common-quit'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },

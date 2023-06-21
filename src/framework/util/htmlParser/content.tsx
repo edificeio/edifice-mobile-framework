@@ -129,7 +129,7 @@ const renderAudioVideoPreview = (media: IMedia) => {
   if (!media.src) {
     return (
       <SmallItalicText style={{ backgroundColor: theme.palette.grey.cloudy, width: '100%', padding: UI_SIZES.spacing.small }}>
-        {I18n.get(`${media.type || 'media'}NotAvailable`)}
+        {I18n.get(`htmlparser-${media.type || 'media'}-notavailable`)}
       </SmallItalicText>
     );
   }

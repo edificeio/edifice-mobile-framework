@@ -86,9 +86,9 @@ async function assertPermissions(permissions: Permission[]) {
 
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   const showPrivacyAlert = action => {
-    Alert.alert(I18n.get('carousel.privacy.title'), I18n.get('carousel.privacy.text'), [
+    Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
       {
-        text: I18n.get('carousel.privacy.button'),
+        text: I18n.get('carousel-privacy-button'),
         onPress: action,
       },
     ]);
@@ -105,7 +105,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
         <PopupMenu
           actions={[
             {
-              title: I18n.get('share'),
+              title: I18n.get('carousel-share'),
               action: () => showPrivacyAlert(() => imageViewerRef.current?.share?.()),
               icon: {
                 ios: 'square.and.arrow.up',
@@ -130,7 +130,7 @@ export function computeNavBar({
       route,
       title:
         route.params.data.length !== 1
-          ? I18n.get('carousel.counter', { current: route.params.startIndex ?? 1, total: route.params.data.length })
+          ? I18n.get('carousel-counter', { current: route.params.startIndex ?? 1, total: route.params.data.length })
           : '',
       titleStyle: styles.title,
     }),
@@ -216,8 +216,8 @@ export function Carousel(props: ICarouselProps) {
         } catch (e) {
           if (e instanceof PermissionError) {
             Alert.alert(
-              I18n.get('save.to.camera.roll.permission.blocked.title'),
-              I18n.get('save.to.camera.roll.permission.blocked.text', { appName: DeviceInfo.getApplicationName() }),
+              I18n.get('carousel-savetocameraroll-permissionblocked-title'),
+              I18n.get('carousel-savetocameraroll-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
             );
             return undefined;
           } else {
@@ -233,9 +233,9 @@ export function Carousel(props: ICarouselProps) {
         } else {
           await CameraRoll.save(realFilePath);
         }
-        Toast.showSuccess(I18n.get('save.to.camera.roll.success'));
+        Toast.showSuccess(I18n.get('carousel-savetocameraroll-success'));
       } catch {
-        Toast.showError(I18n.get('save.to.camera.roll.error'));
+        Toast.showError(I18n.get('carousel-savetocameraroll-error'));
       }
     },
     [getSyncedFile],
@@ -255,12 +255,12 @@ export function Carousel(props: ICarouselProps) {
       } catch (e) {
         if (e instanceof PermissionError) {
           Alert.alert(
-            I18n.get('share-permission-blocked-title'),
-            I18n.get('share-permission-blocked-text', { appName: DeviceInfo.getApplicationName() }),
+            I18n.get('carousel-share-permissionblocked-title'),
+            I18n.get('carousel-share-permissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
           );
           return undefined;
         } else {
-          Toast.showError(I18n.get('share-error'));
+          Toast.showError(I18n.get('carousel-share-error'));
         }
       }
     },
@@ -278,7 +278,7 @@ export function Carousel(props: ICarouselProps) {
         customStyle={styles.errorScreen}
         svgImage="image-not-found"
         title=""
-        text={I18n.get('carousel.image.not.found')}
+        text={I18n.get('carousel-imagenotfound')}
         svgFillColor={theme.palette.grey.fog}
         textColor={theme.palette.grey.fog}
       />
@@ -291,7 +291,7 @@ export function Carousel(props: ICarouselProps) {
         ...computeNavBar({ navigation, route }),
         headerTitle: navBarTitle(
           route.params.data.length !== 1
-            ? I18n.get('carousel.counter', { current: indexDisplay, total: route.params.data.length })
+            ? I18n.get('carousel-counter', { current: indexDisplay, total: route.params.data.length })
             : '',
           styles.title,
         ),

@@ -220,7 +220,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     setResendTimer();
     const resendResponse = await resendVerificationCode();
     if (resendResponse === ResendResponse.FAIL) {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     } else if (resendResponse === ResendResponse.SUCCESS) {
       Toast.showSuccess(texts.resendToast);
       if (codeState === CodeState.CODE_EXPIRED) startAnimation(CodeState.CODE_RESENT);
@@ -241,14 +241,14 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         navigation.navigate(userRouteNames.home);
         Toast.showSuccess(I18n.get(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'));
       } catch {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       }
     } else {
       try {
         const redirect = await tryLogin(platform, undefined, rememberMe);
         redirectLoginNavAction(redirect, platform, navigation);
       } catch {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       }
     }
   }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryLogin, platform, rememberMe]);
@@ -258,7 +258,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   useEffect(() => {
     if (!isVerifyingActive) {
       if (isCodeStateUnknown) {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       } else if (isCodeCorrect && isEmailOrMobileMFA) {
         setTimeout(() => redirectEmailOrMobileMFA(), CODE_REDIRECTION_DELAY);
       }

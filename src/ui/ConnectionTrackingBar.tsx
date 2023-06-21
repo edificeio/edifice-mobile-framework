@@ -97,12 +97,12 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 
   get text(): string {
     if (this.props.loading) {
-      return 'common-connecting';
+      return 'connectiontrackingbar-connecting';
     }
     if (this.props.connected) {
-      return 'common-connected';
+      return 'connectiontrackingbar-connected';
     }
-    return 'common-disconnected';
+    return 'connectiontrackingbar-disconnected';
   }
 
   get barColor(): string {

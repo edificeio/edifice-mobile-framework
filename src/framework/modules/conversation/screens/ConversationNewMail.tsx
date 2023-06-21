@@ -233,14 +233,14 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             I18n.get('conversation-newmail-warning-webdraft-text'),
             [
               {
-                text: I18n.get('common.quit'),
+                text: I18n.get('common-quit'),
                 onPress: async () => {
                   this.props.navigation.goBack();
                 },
                 style: 'cancel',
               },
               {
-                text: I18n.get('common.continue'),
+                text: I18n.get('common-continue'),
                 onPress: async () => {},
                 style: 'default',
               },
@@ -285,11 +285,11 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           I18n.get(`conversation-newmail-missing${!mail.body ? 'body' : 'subject'}-message`),
           [
             {
-              text: I18n.get('common.send'),
+              text: I18n.get('common-send'),
               onPress: () => this.sendDraft(),
             },
             {
-              text: I18n.get('common.cancel'),
+              text: I18n.get('common-cancel'),
               style: 'cancel',
             },
           ],
@@ -338,7 +338,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           ...(isSavedDraft
             ? [
                 {
-                  text: isSavedDraft ? I18n.get('conversation-newmail-deletedraft') : I18n.get('common.delete'),
+                  text: isSavedDraft ? I18n.get('conversation-newmail-deletedraft') : I18n.get('common-delete'),
                   onPress: async () => {
                     try {
                       if (id) {
@@ -364,7 +364,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
               ]
             : []),
           {
-            text: isSavedDraft ? I18n.get('conversation-newmail-cancelmodifications') : I18n.get('common.delete'),
+            text: isSavedDraft ? I18n.get('conversation-newmail-cancelmodifications') : I18n.get('common-delete'),
             onPress: async () => {
               try {
                 if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
@@ -392,7 +392,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             style: isSavedDraft ? 'default' : 'destructive',
           },
           {
-            text: isSavedDraft ? I18n.get('conversation-newmail-savemodifications') : I18n.get('common.save'),
+            text: isSavedDraft ? I18n.get('conversation-newmail-savemodifications') : I18n.get('common-save'),
             onPress: async () => {
               try {
                 await this.saveDraft();
@@ -626,7 +626,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       // Full storage management
       // statusCode = 400 on iOS and code = 'ENOENT' on Android
       if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
-        Toast.showError(I18n.get('fullStorage'));
+        Toast.showError(I18n.get('common-fullstorage'));
       } else {
         Toast.showError(I18n.get('conversation-newmail-attachmenterror'));
       }

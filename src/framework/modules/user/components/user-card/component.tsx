@@ -26,7 +26,7 @@ export const UserCard = ({
   const renderUserType = (userType: 'Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest') => (
     <View style={styles.textType}>
       <View style={styles.roundColorType} key={userType} />
-      <SmallText style={{ color: theme.ui.text.light }}>{I18n.get(`profileTypes.${userType}`)}</SmallText>
+      <SmallText style={{ color: theme.ui.text.light }}>{I18n.get(`user-profiletypes-${userType}`.toLowerCase())}</SmallText>
     </View>
   );
 
@@ -35,7 +35,7 @@ export const UserCard = ({
       {avatar ? (
         <>
           <BottomMenu
-            title={I18n.get('bottom-menu-change-avatar')}
+            title={I18n.get('user-usercard-bottommenu-changeavatar')}
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
@@ -56,7 +56,7 @@ export const UserCard = ({
         <>
           <View style={styles.viewNoAvatar} />
           <BottomMenu
-            title={I18n.get('bottom-menu-change-avatar')}
+            title={I18n.get('user-usercard-bottommenu-changeavatar')}
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),

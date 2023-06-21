@@ -58,7 +58,7 @@ function UserStructuresScreen(props: UserStructuresScreenPrivateProps) {
             {classe}
           </SmallText>
         )}
-        ListHeaderComponent={<SmallText style={styles.listHeader}>{I18n.get('structuresTitle')}</SmallText>}
+        ListHeaderComponent={<SmallText style={styles.listHeader}>{I18n.get('user-structures-title')}</SmallText>}
         stickySectionHeadersEnabled={false}
         alwaysBounceVertical={false}
         overScrollMode="never"

@@ -43,23 +43,23 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('timeline-filtersscreen-title'),
+    title: I18n.get('timeline-filters-title'),
   }),
 });
 
 function PreventBack(props: { onPreventBack: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.onPreventBack, ({ data }) => {
-    Alert.alert(I18n.get('common.confirmationLeaveAlert.title'), I18n.get('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('common-leavealert-title'), I18n.get('common-leavealert-text'), [
       {
-        text: I18n.get('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.get('common.quit'),
+        text: I18n.get('common-quit'),
         style: 'destructive',
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, navigation);
@@ -100,7 +100,12 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
         initialNumToRender={15} // Items are thin, 15 renders ok on iPhone 13
         ListHeaderComponent={
           notifFilters.length < 2 ? null : (
-            <CheckboxButton onPress={() => this.doToggleAllFilters()} title="common.all" isChecked={!someNotSet} isAllButton />
+            <CheckboxButton
+              onPress={() => this.doToggleAllFilters()}
+              title="timeline-filters-all"
+              isChecked={!someNotSet}
+              isAllButton
+            />
           )
         }
         renderItem={({ item }) => this.renderFilterItem(item)}

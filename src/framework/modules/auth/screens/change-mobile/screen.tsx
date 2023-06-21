@@ -187,7 +187,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           });
         }
       } catch {
-        Toast.showError(I18n.get('common.error.text'));
+        Toast.showError(I18n.get('common-error-text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -224,21 +224,21 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.showError(I18n.get('common.error.text'));
+      Toast.showError(I18n.get('common-error-text'));
     }
   }, [navigation, tryLogout, platform]);
 
   UNSTABLE_usePreventRemove(!isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused, ({ data }) => {
     Alert.alert(I18n.get('auth-change-mobile-edit-alert-title'), I18n.get('auth-change-mobile-edit-alert-message'), [
       {
-        text: I18n.get('common.discard'),
+        text: I18n.get('auth-change-mobile-discard'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
         style: 'destructive',
       },
       {
-        text: I18n.get('common.continue'),
+        text: I18n.get('common-continue'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
@@ -320,7 +320,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           />
           <CaptionItalicText style={styles.errorText}>
             {isMobileStateClean
-              ? I18n.get('common.space')
+              ? I18n.get('common-space')
               : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
               ? I18n.get('auth-change-mobile-error-same')
               : I18n.get('auth-change-mobile-error-invalid')}

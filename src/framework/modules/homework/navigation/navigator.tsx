@@ -27,7 +27,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       <Stack.Screen
         name={homeworkRouteNames.homeworkTaskDetails}
         component={HomeworkTaskDetailsScreen}
-        options={{ headerTitle: navBarTitle(I18n.get('Homework')) }}
+        options={{ headerTitle: navBarTitle(I18n.get('homework')) }}
         initialParams={{}}
       />
       <Stack.Screen

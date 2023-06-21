@@ -89,7 +89,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     return (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.get(`homework-explorer-emptyscreen-title`)}
+        title={I18n.get('homework-explorer-emptyscreen-title')}
         text={I18n.get('homework-explorer-emptyscreen-text')}
         buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-explorer-creatediary') : undefined}
         buttonUrl="/homeworks"

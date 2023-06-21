@@ -155,7 +155,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   };
 
   private doOpenCGU = (url?: string) => {
-    openPDFReader({ src: url, title: I18n.get('activation-cgu') });
+    openPDFReader({ src: url, title: I18n.get('auth-activation-cgu') });
   };
 
   public render() {
@@ -204,20 +204,20 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
                       />
                       <View style={styles.cguText}>
-                        <SmallText>{I18n.get('activation-cgu-accept')}</SmallText>
+                        <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
                         <TouchableOpacity onPress={() => this.doOpenCGU(cguUrl)}>
-                          <SmallActionText>{I18n.get('activation-cgu')}</SmallActionText>
+                          <SmallActionText>{I18n.get('auth-activation-cgu')}</SmallActionText>
                         </TouchableOpacity>
                       </View>
                     </View>
                     <SmallText style={styles.errorMsg}>
-                      {(hasErrorKey || errorText) && !typing ? I18n.get('activation-errorSubmit') : ''}
+                      {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
                     </SmallText>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
                       <ActionButton
                         action={() => this.doActivation()}
                         disabled={isNotValid}
-                        text={I18n.get('Activate')}
+                        text={I18n.get('auth-activation-activate')}
                         loading={isSubmitLoading}
                       />
                     </ButtonWrapper>

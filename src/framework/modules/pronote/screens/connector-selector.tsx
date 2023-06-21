@@ -36,7 +36,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('Pronote'),
+    title: I18n.get('pronote'),
   }),
 });
 

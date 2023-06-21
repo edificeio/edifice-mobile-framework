@@ -149,7 +149,7 @@ export const WorkspaceFolderSelector = ({ data, defaultValue, excludeData, onCha
       <TextInput
         style={styles.searchBarInput}
         value={searchValue}
-        placeholder={I18n.get('Search')}
+        placeholder={I18n.get('workspace-filelist-search')}
         returnKeyType="search"
         clearButtonMode="while-editing"
         autoCorrect={false}
