@@ -50,7 +50,7 @@ const renderEvent = (key: string, event: IEvent) => {
       break;
     case 'LATENESS':
       color = viescoTheme.palette.presencesEvents.lateness;
-      duration = event.endDate.diff(event.endDate, 'minutes');
+      duration = event.endDate.diff(event.startDate, 'minutes');
       break;
     case 'NO_REASON':
       color = viescoTheme.palette.presencesEvents.noReason;
@@ -68,7 +68,7 @@ const renderEvent = (key: string, event: IEvent) => {
     <SmallText>
       <NestedText style={[styles.eventNestedText, { color }]}>{'\u25A0 '}</NestedText>
       <SmallBoldText style={{ color }}>{event.startDate.format('DD/MM/YY')}</SmallBoldText>
-      <SmallText style={{ color }}>{` - ${event.endDate.format('HH:mm')}  - ${event.endDate.format('HH:mm')}`}</SmallText>
+      <SmallText style={{ color }}>{` - ${event.startDate.format('HH:mm')}  - ${event.endDate.format('HH:mm')}`}</SmallText>
       {duration ? <NestedBoldText style={{ color }}>{` - ${duration}mn`}</NestedBoldText> : null}
     </SmallText>
   );
