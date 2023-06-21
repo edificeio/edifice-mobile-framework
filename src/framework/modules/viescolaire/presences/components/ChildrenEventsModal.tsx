@@ -5,17 +5,25 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
-import { BodyText, NestedBoldText, NestedText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import {
+  BodyBoldText,
+  BodyText,
+  NestedBoldText,
+  NestedText,
+  SmallBoldText,
+  SmallText,
+  TextSizeStyle,
+} from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IUserChild } from '~/framework/modules/viescolaire/competences/model';
 import { IChildEvents, IChildrenEvents, IEvent } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
+  childContainer: {
+    marginTop: UI_SIZES.spacing.small,
+  },
   eventNestedText: {
     ...TextSizeStyle.Small,
-  },
-  modalTitle: {
-    marginBottom: UI_SIZES.spacing.minor,
   },
   sectionTitleText: {
     color: theme.ui.text.light,
@@ -46,7 +54,7 @@ const renderEvent = (key: string, event: IEvent) => {
   switch (key) {
     case 'DEPARTURE':
       color = viescoTheme.palette.presencesEvents.departure;
-      duration = Math.abs(event.startDate.diff(event.startDate, 'minutes'));
+      duration = Math.abs(event.startDate.diff(event.endDate, 'minutes'));
       break;
     case 'LATENESS':
       color = viescoTheme.palette.presencesEvents.lateness;
@@ -99,7 +107,8 @@ const ChildEvents = (props: IChildEventsProps) => {
       renderSectionHeader={({ section: { title } }) => (
         <SmallText style={styles.sectionTitleText}>{getSectionTitle(title).toUpperCase()}</SmallText>
       )}
-      ListHeaderComponent={<SmallBoldText>{props.childName}</SmallBoldText>}
+      ListHeaderComponent={<BodyBoldText>{props.childName}</BodyBoldText>}
+      style={styles.childContainer}
     />
   );
 };
@@ -110,7 +119,7 @@ const ChildrenEventsModal = React.forwardRef<ModalBoxHandle, IChildrenEventsModa
       ref={ref}
       content={
         <View>
-          <BodyText style={styles.modalTitle}>{I18n.get('presences-eventnotificationmodal-title')}</BodyText>
+          <BodyText>{I18n.get('presences-childreneventsmodal-title')}</BodyText>
           <FlatList
             data={Object.entries(props.childrenEvents)}
             keyExtractor={([childId]) => childId}
