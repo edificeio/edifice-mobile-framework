@@ -42,6 +42,7 @@ import { fetchPresencesChildrenEventsAction } from '~/framework/modules/viescola
 import ChildrenEventsModal from '~/framework/modules/viescolaire/presences/components/ChildrenEventsModal';
 import presencesConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -270,7 +271,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
   return (
     <PageView>
       <ChildPicker>
-        {props.hasRightToCreateAbsence ? (
+        {props.hasPresencesCreateAbsenceRight ? (
           <TouchableOpacity
             onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
             style={styles.declareAbsenceButton}>
@@ -301,8 +302,7 @@ export default connect(
       childId: dashboardState.selectedChildId,
       childrenEvents: presencesState.childrenEvents.data,
       devoirs: competencesState.devoirs,
-      hasRightToCreateAbsence:
-        session?.authorizedActions.some(action => action.displayName === 'presences.absence.statements.create') ?? false,
+      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       homeworks: diaryState.homeworks,
       structureId: getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,

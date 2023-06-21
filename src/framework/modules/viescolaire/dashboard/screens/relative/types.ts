@@ -24,10 +24,10 @@ export interface DashboardRelativeScreenStoreProps {
   childrenEvents: IChildrenEvents;
   devoirs: AsyncState<IDevoir[]>;
   homeworks: AsyncState<IHomeworkMap>;
-  hasRightToCreateAbsence: boolean;
   subjects: ISubject[];
   userChildren: IUserChild[];
   childId?: string;
+  hasPresencesCreateAbsenceRight?: boolean;
   structureId?: string;
   userId?: string;
 }

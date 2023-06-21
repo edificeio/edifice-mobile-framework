@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ColorValue, FlatList, SectionList, StyleSheet, View } from 'react-native';
+import { ColorValue, FlatList, SectionList, StyleSheet } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -118,17 +118,15 @@ const ChildrenEventsModal = React.forwardRef<ModalBoxHandle, IChildrenEventsModa
     <ModalBox
       ref={ref}
       content={
-        <View>
-          <BodyText>{I18n.get('presences-childreneventsmodal-title')}</BodyText>
-          <FlatList
-            data={Object.entries(props.childrenEvents)}
-            keyExtractor={([childId]) => childId}
-            renderItem={({ item: [childId, events] }) => (
-              <ChildEvents childName={props.userChildren.find(child => child.id === childId)?.firstName} events={events} />
-            )}
-            scrollEnabled={false}
-          />
-        </View>
+        <FlatList
+          data={Object.entries(props.childrenEvents)}
+          keyExtractor={([childId]) => childId}
+          renderItem={({ item: [childId, events] }) => (
+            <ChildEvents childName={props.userChildren.find(child => child.id === childId)?.firstName} events={events} />
+          )}
+          ListHeaderComponent={<BodyText>{I18n.get('presences-childreneventsmodal-title')}</BodyText>}
+          scrollEnabled={false}
+        />
       }
     />
   );

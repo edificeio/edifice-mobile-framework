@@ -22,7 +22,7 @@ export interface PresencesHistoryScreenStoreProps {
   schoolYear: ISchoolYear | undefined;
   terms: ITerm[];
   classes?: string[];
-  hasRightToCreateAbsence?: boolean;
+  hasPresencesCreateAbsenceRight?: boolean;
   structureId?: string;
   studentId?: string;
   userId?: string;

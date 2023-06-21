@@ -34,6 +34,7 @@ import {
 } from '~/framework/modules/viescolaire/presences/components/HistoryCategoryCard';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -261,7 +262,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     <PageView>
       {props.userType === UserType.Relative ? (
         <ChildPicker>
-          {props.hasRightToCreateAbsence ? (
+          {props.hasPresencesCreateAbsenceRight ? (
             <TouchableOpacity
               onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
               style={styles.declareAbsenceButton}>
@@ -285,9 +286,7 @@ export default connect(
 
     return {
       classes: session?.user.classes,
-      hasRightToCreateAbsence: session?.authorizedActions.some(
-        action => action.displayName === 'presences.absence.statements.create',
-      ),
+      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       history: presencesState.history.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
