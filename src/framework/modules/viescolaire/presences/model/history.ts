@@ -33,4 +33,5 @@ export interface IHistory {
     events: IHistoryEvent[];
     total: number;
   };
+  recoveryMethod: 'DAY' | 'HALF_DAY' | 'HOUR' | null;
 }

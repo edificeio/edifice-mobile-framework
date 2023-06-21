@@ -164,6 +164,7 @@ type IBackendHistoryEvents = {
     LATENESS: number;
     UNREGULARIZED: number;
   };
+  recovery_method: 'DAY' | 'HALF_DAY' | 'HOUR' | null;
 };
 
 type IBackendHistoryForgottenNotebooks = {
@@ -246,7 +247,7 @@ type IBackendStudentEvents = {
 type IBackendStudentsEvents = {
   limit: number | null;
   offset: number | null;
-  recovery_method: string | null; // {HALF_DAY / HOUR / DAY}
+  recovery_method: 'DAY' | 'HALF_DAY' | 'HOUR' | null;
   students_events: { [studentId: string]: IBackendStudentEvents };
 };
 
@@ -356,6 +357,7 @@ const historyEventsAdapter = (data: IBackendHistoryEvents) => {
       events: data.all.UNREGULARIZED.map(historyEventAdapter),
       total: data.totals.UNREGULARIZED,
     },
+    recoveryMethod: data.recovery_method,
   };
 };
 

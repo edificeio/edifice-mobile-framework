@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,6 +15,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
@@ -24,15 +25,13 @@ import {
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
 import {
-  DepartureCard,
-  ForgotNotebookCard,
-  IncidentCard,
-  LatenessCard,
-  NoReasonCard,
-  PunishmentCard,
-  RegularizedCard,
-  UnregularizedCard,
-} from '~/framework/modules/viescolaire/presences/components/PresenceCard';
+  HistoryCategoryCard,
+  renderDeparture,
+  renderForgottenNotebook,
+  renderIncident,
+  renderLateness,
+  renderPunishment,
+} from '~/framework/modules/viescolaire/presences/components/HistoryCategoryCard';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -162,36 +161,83 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         value: term.order.toString(),
       })),
     ];
+    const categories =
+      loadingState !== AsyncPagedLoadingState.REFRESH
+        ? [
+            {
+              title: I18n.get('presences-history-category-noreason'),
+              color: viescoTheme.palette.presencesEvents.noReason,
+              ...history.NO_REASON,
+              recoveryMethod: history.recoveryMethod,
+            },
+            {
+              title: I18n.get('presences-history-category-unregularized'),
+              color: viescoTheme.palette.presencesEvents.unregularized,
+              ...history.UNREGULARIZED,
+              recoveryMethod: history.recoveryMethod,
+            },
+            {
+              title: I18n.get('presences-history-category-regularized'),
+              color: viescoTheme.palette.presencesEvents.regularized,
+              ...history.REGULARIZED,
+              recoveryMethod: history.recoveryMethod,
+            },
+            {
+              title: I18n.get('presences-history-category-latenesses'),
+              color: viescoTheme.palette.presencesEvents.lateness,
+              ...history.LATENESS,
+              renderEvent: renderLateness,
+            },
+            {
+              title: I18n.get('presences-history-category-departures'),
+              color: viescoTheme.palette.presencesEvents.departure,
+              ...history.DEPARTURE,
+              renderEvent: renderDeparture,
+            },
+            {
+              title: I18n.get('presences-history-category-forgottennotebooks'),
+              color: viescoTheme.palette.presencesEvents.forgotNotebook,
+              ...history.FORGOTTEN_NOTEBOOK,
+              renderEvent: renderForgottenNotebook,
+            },
+            {
+              title: I18n.get('presences-history-category-incidents'),
+              color: viescoTheme.palette.presencesEvents.incident,
+              ...history.INCIDENT,
+              renderEvent: renderIncident,
+            },
+            {
+              title: I18n.get('presences-history-category-punishments'),
+              color: viescoTheme.palette.presences,
+              ...history.PUNISHMENT,
+              renderEvent: renderPunishment,
+            },
+          ]
+        : [];
 
     return (
-      <ScrollView contentContainerStyle={styles.container}>
-        {dropdownTerms.length > 1 ? (
-          <DropDownPicker
-            open={isDropdownOpen}
-            value={selectedTerm}
-            items={dropdownTerms}
-            setOpen={setDropdownOpen}
-            setValue={setSelectedTerm}
-            style={[styles.dropdown, styles.dropdownMargin]}
-            dropDownContainerStyle={styles.dropdown}
-            textStyle={styles.dropdownText}
-          />
-        ) : null}
-        {loadingState === AsyncPagedLoadingState.REFRESH ? (
-          <LoadingIndicator />
-        ) : (
-          <View style={{ zIndex: -1 }}>
-            <NoReasonCard elements={history.NO_REASON.events} total={history.NO_REASON.total} />
-            <UnregularizedCard elements={history.UNREGULARIZED.events} total={history.UNREGULARIZED.total} />
-            <RegularizedCard elements={history.REGULARIZED.events} total={history.REGULARIZED.total} />
-            <LatenessCard elements={history.LATENESS.events} total={history.LATENESS.total} />
-            <IncidentCard elements={history.INCIDENT.events} total={history.INCIDENT.total} />
-            <PunishmentCard elements={history.PUNISHMENT.events} total={history.PUNISHMENT.total} />
-            <ForgotNotebookCard elements={history.FORGOTTEN_NOTEBOOK.events} total={history.FORGOTTEN_NOTEBOOK.total} />
-            <DepartureCard elements={history.DEPARTURE.events} total={history.DEPARTURE.total} />
-          </View>
-        )}
-      </ScrollView>
+      <FlatList
+        data={categories}
+        keyExtractor={item => item.title}
+        renderItem={({ item }) => <HistoryCategoryCard {...item} />}
+        ListHeaderComponent={
+          dropdownTerms.length > 1 ? (
+            <DropDownPicker
+              open={isDropdownOpen}
+              value={selectedTerm}
+              items={dropdownTerms}
+              setOpen={setDropdownOpen}
+              setValue={setSelectedTerm}
+              style={[styles.dropdown, styles.dropdownMargin]}
+              dropDownContainerStyle={styles.dropdown}
+              textStyle={styles.dropdownText}
+            />
+          ) : null
+        }
+        ListEmptyComponent={<LoadingIndicator />}
+        ListHeaderComponentStyle={styles.listHeaderContainer}
+        contentContainerStyle={styles.listContentContainer}
+      />
     );
   };
 
