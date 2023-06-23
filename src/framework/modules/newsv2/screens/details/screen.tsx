@@ -1,7 +1,7 @@
+import { HeaderBackButton } from '@react-navigation/elements';
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Viewport } from '@skele/components';
-import React, { createRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
@@ -44,6 +44,7 @@ import { newsUriCaptureFunction } from '~/framework/modules/newsv2/service';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
+import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import HtmlContentView from '~/ui/HtmlContentView';
 
@@ -73,6 +74,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     handleGetNewsItem,
     handleGetNewsItemComments,
   } = props;
+  const notif = route.params.notification;
 
   const [news, setNews] = useState<NewsItem>();
   const [thread, setThread] = useState<NewsThreadItemReduce>();
@@ -80,7 +82,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
   const [infoComment, setInfoComment] = useState<InfoCommentField>({ type: '', isPublication: false, changed: false, value: '' });
-  const [isEditingComment, setIsEditingComment] = useState<boolean>(false);
+  const [indexEditingComment, setIndexEditingComment] = useState<number | undefined>(undefined);
 
   const isThreadManager = useMemo(
     () => thread?.sharedRights.includes(NewsThreadItemRights.MANAGER) || session!.user.id === thread?.ownerId,
@@ -92,16 +94,20 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const hasPermissionComment = useMemo(() => {
     return news?.sharedRights.includes(NewsItemRights.COMMENT) || session!.user.id === news?.owner.id;
   }, [news, session]);
-  const notif = route.params.notification;
 
-  const bottomEditorSheetRef: { current: any } = useRef();
+  const ListComponent = useMemo(() => {
+    return Platform.select<React.ComponentType<any>>({
+      ios: FlatList,
+      android: KeyboardAvoidingFlatList,
+    })!;
+  }, []);
+  const PageComponent = useMemo(() => {
+    return Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  }, []);
+
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
-
-  const ListComponent = Platform.select<React.ComponentType<any>>({
-    ios: FlatList,
-    android: KeyboardAvoidingFlatList,
-  })!;
-  const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const commentFieldRefs: any[] = [];
 
   const getComments = useCallback(
     async (newsInfo: NewsItem) => {
@@ -148,9 +154,9 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     }
   }, [getComments, notif, onRefresh, route.params.news, route.params.thread]);
 
-  const showAlertError = () => {
+  const showAlertError = useCallback(() => {
     Alert.alert(I18n.get('common.error.title'), I18n.get('common.error.text'));
-  };
+  }, []);
 
   const doDeleteNews = useCallback(() => {
     try {
@@ -168,7 +174,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     } catch {
       showAlertError();
     }
-  }, [handleDeleteInfo, navigation, news]);
+  }, [handleDeleteInfo, navigation, news, showAlertError]);
 
   const doDeleteComment = useCallback(
     async commentId => {
@@ -183,7 +189,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           onPress: async () => {
             try {
               if (news) {
-                if (isEditingComment) setIsEditingComment(false);
+                if (indexEditingComment) setIndexEditingComment(undefined);
                 await handleDeleteComment(news?.id, commentId);
                 await getComments(news);
               }
@@ -194,7 +200,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         },
       ]);
     },
-    [getComments, handleDeleteComment, isEditingComment, news],
+    [getComments, handleDeleteComment, indexEditingComment, news, showAlertError],
   );
 
   const doPublishComment = useCallback(
@@ -202,11 +208,14 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
       try {
         await handlePublishComment(newsItem?.id, comment);
         await getComments(newsItem);
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd();
+        }, 50);
       } catch {
         showAlertError();
       }
     },
-    [getComments, handlePublishComment],
+    [getComments, handlePublishComment, showAlertError],
   );
 
   const doEditComment = useCallback(
@@ -214,12 +223,12 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
       try {
         await handleEditComment(newsItem?.id, comment, commentId);
         await getComments(newsItem);
-        setIsEditingComment(false);
+        setIndexEditingComment(undefined);
       } catch {
         showAlertError();
       }
     },
-    [getComments, handleEditComment],
+    [getComments, handleEditComment, showAlertError],
   );
 
   const renderError = useCallback(() => {
@@ -232,9 +241,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, [init, loadingState]);
 
   const renderFooter = useCallback(() => {
-    return hasPermissionComment && !isEditingComment ? (
+    return hasPermissionComment && isEmpty(indexEditingComment) ? (
       <BottomEditorSheet
-        ref={bottomEditorSheetRef}
         onPublishComment={() => doPublishComment(news, infoComment.value)}
         isPublishingComment={false}
         onChangeText={data => setInfoComment(() => ({ ...data }))}
@@ -242,7 +250,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     ) : (
       <View />
     );
-  }, [hasPermissionComment, isEditingComment, doPublishComment, news, infoComment.value]);
+  }, [doPublishComment, hasPermissionComment, indexEditingComment, infoComment, news]);
 
   const renderNewsDetails = useCallback(() => {
     if (news && thread) {
@@ -274,35 +282,25 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         </ResourceView>
       );
     }
-  }, [news, thread, comments]);
+  }, [comments?.length, news, thread]);
 
   const renderComment = useCallback(
     (comment: NewsCommentItem) => {
       return (
         <CommentField
+          ref={element => (commentFieldRefs[comment.id] = element)}
           index={comment.id}
           isPublishingComment={false}
           onPublishComment={() => doEditComment(news, infoComment.value, comment.id)}
           onDeleteComment={() => doDeleteComment(comment.id)}
           onChangeText={data => setInfoComment(() => ({ ...data }))}
           editCommentCallback={() => {
-            setIsEditingComment(true);
-            setTimeout(() => {
-              const commentIndex = comments?.findIndex(c => c.id === comment.id);
-              if (commentIndex !== undefined && commentIndex > -1) {
-                if (Platform.OS === 'ios') {
-                  console.log('test scroll');
-                  console.log(flatListRef, 'current');
-                  //flatListRef.current?.scrollToEnd();
-                } else {
-                  // flatListRef.current?.scrollToIndex({
-                  //   index: commentIndex,
-                  //   viewPosition: 0,
-                  //   viewOffset: UI_SIZES.screen.height - UI_SIZES.elements.navbarHeight,
-                  // });
-                }
-              }
-            }, 50);
+            const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
+            otherComments?.forEach(otherBlogPostComment => {
+              commentFieldRefs[otherBlogPostComment.id]?.setIsEditingFalse();
+            });
+            const commentIndex = comments?.findIndex(c => c.id === comment.id);
+            setIndexEditingComment(commentIndex);
           }}
           comment={comment.comment}
           commentId={comment.id}
@@ -313,30 +311,28 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         />
       );
     },
-    [isThreadManager, doEditComment, news, infoComment, doDeleteComment, comments],
+    [commentFieldRefs, comments, doDeleteComment, doEditComment, infoComment.value, isThreadManager, news],
   );
 
   const renderPage = useCallback(() => {
     if (loadingState === (AsyncPagedLoadingState.INIT_FAILED || AsyncPagedLoadingState.REFRESH_FAILED)) return renderError();
     return (
       <>
-        <Viewport.Tracker>
-          <ListComponent
-            ref={flatListRef}
-            initialNumToRender={comments?.length}
-            keyboardShouldPersistTaps="handled"
-            data={comments}
-            keyExtractor={(item: NewsCommentItem) => item.id.toString()}
-            ListHeaderComponent={renderNewsDetails}
-            removeClippedSubviews={false}
-            renderItem={({ item, index }) => renderComment(item)}
-            refreshControl={
-              <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => onRefresh(news?.id)} />
-            }
-            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-            {...Platform.select({ ios: {}, android: { stickyFooter: renderFooter() } })}
-          />
-        </Viewport.Tracker>
+        <ListComponent
+          ref={flatListRef}
+          initialNumToRender={comments?.length}
+          keyboardShouldPersistTaps="handled"
+          keyExtractor={(item: NewsCommentItem) => item.id.toString()}
+          data={comments}
+          ListHeaderComponent={renderNewsDetails}
+          removeClippedSubviews={false}
+          renderItem={({ item, index }) => renderComment(item)}
+          refreshControl={
+            <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => onRefresh(news?.id)} />
+          }
+          scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
+          {...Platform.select({ ios: {}, android: { stickyFooter: renderFooter() } })}
+        />
         {Platform.select({ ios: renderFooter(), android: null })}
       </>
     );
@@ -357,8 +353,32 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   useEffect(() => {
     init();
+    if (route.params.page) {
+      navigation.setOptions({
+        // eslint-disable-next-line react/no-unstable-nested-components
+        headerLeft: () => (
+          <HeaderBackButton
+            tintColor={theme.palette.grey.white}
+            onPress={() => navigation.navigate(newsRouteNames.home, { page: route.params.page })}
+          />
+        ),
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    Keyboard.addListener(Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!, event => {
+      setTimeout(() => {
+        if (indexEditingComment !== undefined && indexEditingComment > -1) {
+          flatListRef.current?.scrollToIndex({
+            index: indexEditingComment,
+            viewPosition: 1,
+          });
+        }
+      }, 50);
+    });
+  }, [indexEditingComment]);
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(

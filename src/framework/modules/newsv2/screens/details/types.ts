@@ -22,6 +22,7 @@ export interface NewsDetailsScreenEventProps {
 export interface NewsDetailsScreenNavParams {
   news?: NewsItem;
   thread?: NewsThreadItemReduce;
+  page?: number;
   notification?: INewsNotification;
 }
 

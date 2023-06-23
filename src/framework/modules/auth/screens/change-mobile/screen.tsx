@@ -27,7 +27,7 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
-import { getMobileValidationInfos, getUserRequirements, sendMobileVerificationCode } from '~/framework/modules/auth/service';
+import { getMobileValidationInfos, getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
@@ -149,7 +149,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     [region],
   );
 
-  const doSendMobileVerificationCode = useCallback(
+  const doRequestMobileVerificationCode = useCallback(
     async (toVerify: string) => {
       try {
         // First, we clean the number by trimming - and . characters (generally used as separators)
@@ -168,7 +168,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
               return MobileState.MOBILE_ALREADY_VERIFIED;
             }
           }
-          await sendMobileVerificationCode(platform, mobileNumberFormatted);
+          await requestMobileVerificationCode(platform, mobileNumberFormatted);
           navigation.navigate(authRouteNames.mfa, {
             platform,
             rememberMe,
@@ -207,9 +207,9 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   );
 
   const sendSMS = useCallback(async () => {
-    const sendResponse = await doSendMobileVerificationCode(mobile);
+    const sendResponse = await doRequestMobileVerificationCode(mobile);
     if (sendResponse) setMobileState(sendResponse);
-  }, [doSendMobileVerificationCode, mobile]);
+  }, [doRequestMobileVerificationCode, mobile]);
 
   const changeMobile = useCallback(
     (number: string) => {

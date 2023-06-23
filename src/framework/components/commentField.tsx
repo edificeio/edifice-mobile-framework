@@ -122,7 +122,10 @@ const CommentField = (props: CommentFieldProps, ref) => {
       });
     setComment(value);
   };
-  const setIsEditingFalse = () => setIsEditing(false);
+  const setIsEditingFalse = () => {
+    if (props.comment) setComment(props.comment);
+    setIsEditing(false);
+  };
   const isCommentUnchanged = () => comment === props.comment;
   const isCommentFieldFocused = () => inputRef.current?.isFocused();
   React.useImperativeHandle(ref, () => ({

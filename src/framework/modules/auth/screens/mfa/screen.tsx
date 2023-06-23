@@ -24,8 +24,8 @@ import {
   IEntcoreMFAValidationState,
   IEntcoreMobileValidationState,
   getMFAValidationInfos,
-  sendEmailVerificationCode,
-  sendMobileVerificationCode,
+  requestEmailVerificationCode,
+  requestMobileVerificationCode,
   verifyEmailCode,
   verifyMFACode,
   verifyMobileCode,
@@ -204,9 +204,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
     try {
       setIsResendingVerificationCode(true);
       if (isEmailMFA) {
-        await sendEmailVerificationCode(platform, email!);
+        await requestEmailVerificationCode(platform, email!);
       } else if (isMobileMFA) {
-        await sendMobileVerificationCode(platform, mobile!);
+        await requestMobileVerificationCode(platform, mobile!);
       } else await getMFAValidationInfos();
       return ResendResponse.SUCCESS;
     } catch {

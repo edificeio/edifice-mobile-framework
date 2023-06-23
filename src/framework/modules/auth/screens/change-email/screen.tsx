@@ -17,7 +17,7 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
-import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
+import { getEmailValidationInfos, requestEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -73,7 +73,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isEmailEmpty = isEmpty(email);
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
 
-  const doSendEmailVerificationCode = useCallback(
+  const doRequestEmailVerificationCode = useCallback(
     async (toVerify: string) => {
       // Exit if email is not valid
       if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
@@ -88,7 +88,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             return EmailState.EMAIL_ALREADY_VERIFIED;
           }
         }
-        await sendEmailVerificationCode(platform, toVerify);
+        await requestEmailVerificationCode(platform, toVerify);
         navigation.navigate(authRouteNames.mfa, {
           platform,
           rememberMe,
@@ -107,9 +107,9 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   );
 
   const sendEmail = useCallback(async () => {
-    const sendResponse = await doSendEmailVerificationCode(email);
+    const sendResponse = await doRequestEmailVerificationCode(email);
     if (sendResponse) setEmailState(sendResponse);
-  }, [doSendEmailVerificationCode, email]);
+  }, [doRequestEmailVerificationCode, email]);
 
   const changeEmail = useCallback(
     (text: string) => {

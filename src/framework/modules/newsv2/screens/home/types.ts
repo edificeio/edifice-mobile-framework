@@ -10,10 +10,12 @@ export interface NewsHomeScreenDataProps {
 }
 export interface NewsHomeScreenEventProps {
   handleGetNewsThreads(): Promise<NewsThreadItem[]>;
-  handleGetNewsItems(page: number, threadId?: number): Promise<NewsItem[]>;
+  handleGetNewsItems(page: number, threadId?: number, isRefresh?: boolean): Promise<NewsItem[]>;
 }
 
-export interface NewsHomeScreenNavParams {}
+export interface NewsHomeScreenNavParams {
+  page?: number;
+}
 
 export type NewsHomeScreenProps = NewsHomeScreenDataProps &
   NewsHomeScreenEventProps &

@@ -515,7 +515,7 @@ export async function getMobileValidationInfos() {
   }
 }
 
-export async function sendMobileVerificationCode(platform: Platform, mobile: string) {
+export async function requestMobileVerificationCode(platform: Platform, mobile: string) {
   await signedFetch(platform.url + '/directory/user/mobilestate', {
     method: 'PUT',
     body: JSON.stringify({ mobile }),
@@ -543,7 +543,7 @@ export async function getEmailValidationInfos() {
   }
 }
 
-export async function sendEmailVerificationCode(platform: Platform, email: string) {
+export async function requestEmailVerificationCode(platform: Platform, email: string) {
   await signedFetch(platform.url + '/directory/user/mailstate', {
     method: 'PUT',
     body: JSON.stringify({ email }),

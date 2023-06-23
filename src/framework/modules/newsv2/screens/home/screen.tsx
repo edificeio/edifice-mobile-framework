@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { RefreshControl } from 'react-native';
@@ -48,7 +49,7 @@ export const computeNavBar = ({
 });
 
 const NewsHomeScreen = (props: NewsHomeScreenProps) => {
-  const { navigation, session, handleGetNewsItems, handleGetNewsThreads } = props;
+  const { navigation, route, session, handleGetNewsItems, handleGetNewsThreads } = props;
 
   const [threads, setThreads] = useState<NewsThreadItem[]>([]);
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -65,14 +66,17 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
   );
   const canCreateNewsForOneThread: boolean = React.useMemo(() => threads?.some(thread => !isEmpty(thread.sharedRights)), [threads]);
 
+  const isFocused = useIsFocused();
+
   const onOpenNewsItem = useCallback(
     (item: NewsItem, thread: NewsThreadItemReduce) => {
       navigation.navigate(newsRouteNames.details, {
         news: item,
         thread,
+        page,
       });
     },
-    [navigation],
+    [navigation, page],
   );
 
   const onFilter = useCallback(
@@ -93,23 +97,26 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
 
   const init = useCallback(async () => {
     try {
-      const data = await Promise.all([handleGetNewsThreads(), handleGetNewsItems(0, idThreadSelected)]);
-      setThreads(data[0]);
-      setNews(data[1]);
+      const data = await Promise.all([
+        handleGetNewsThreads(),
+        route.params.page ? handleGetNewsItems(page, idThreadSelected, true) : handleGetNewsItems(0, idThreadSelected),
+      ]);
+      if (threads !== data[0]) setThreads(data[0]);
+      if (news !== data[1]) setNews(data[1]);
       setShowPlaceholder(false);
       setLoadingState(AsyncPagedLoadingState.DONE);
     } catch {
       setShowPlaceholder(false);
       setLoadingState(AsyncPagedLoadingState.INIT_FAILED);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleGetNewsItems, handleGetNewsThreads, idThreadSelected]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      if (loadingState === AsyncPagedLoadingState.PRISTINE) init();
-    });
-    return unsubscribe;
-  }, [init, loadingState, navigation]);
+    if (isFocused) {
+      init();
+    }
+  }, [init, isFocused]);
 
   const renderError = useCallback(() => {
     return (
@@ -199,8 +206,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   handleGetNewsThreads: async () => {
     return (await dispatch(getNewsThreadsAction())) as NewsThreadItem[];
   },
-  handleGetNewsItems: async (page: number, threadId?: number) => {
-    return (await dispatch(getNewsItemsAction(page, threadId))) as NewsItem[];
+  handleGetNewsItems: async (page: number, threadId?: number, isRefresh?: boolean) => {
+    return (await dispatch(getNewsItemsAction(page, threadId, isRefresh))) as NewsItem[];
   },
 });
 

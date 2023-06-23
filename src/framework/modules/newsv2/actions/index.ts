@@ -14,8 +14,8 @@ export const getNewsThreadsAction = () => async (dispatch: ThunkDispatch<any, an
  * Get all infos
  */
 export const getNewsItemsAction =
-  (page: number, threadId?: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const newsItems = await newsService.infos.get(page, threadId);
+  (page: number, threadId?: number, isRefresh?: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const newsItems = await newsService.infos.get(page, threadId, isRefresh);
     return newsItems;
   };
 
