@@ -913,6 +913,8 @@
   "timeline-notiftype-news-thread-shared": "Compartir un suministro de noticias",
   "timeline-notiftype-pages-shared": "Página compartida",
   "timeline-notiftype-poll-share": "Sondeo compartido ",
+  "timeline-notiftype-presences-event-creation": "Creación de un evento",
+  "timeline-notiftype-presences-event-update": "Actualización de un evento",
   "timeline-notiftype-rack-rack-post": "Documento depositado en un casillero",
   "timeline-notiftype-rack-storage": "Espacio de almacenamiento casi lleno",
   "timeline-notiftype-rbs-booking-created": "Creación de una reserva",

@@ -920,6 +920,8 @@
   "timeline-notiftype-news-thread-shared": "Partage d'un fil d'actualités",
   "timeline-notiftype-pages-shared": "Partage d'une Page",
   "timeline-notiftype-poll-share": "Partage d'un sondage",
+  "timeline-notiftype-presences-event-creation": "Création d'événement",
+  "timeline-notiftype-presences-event-update": "Modification d'événement",
   "timeline-notiftype-rack-rack-post": "Dépôt de document dans un casier",
   "timeline-notiftype-rack-storage": "Espace de stockage bientôt plein",
   "timeline-notiftype-rbs-booking-created": "Création d'une réservation",
