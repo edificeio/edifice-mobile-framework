@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import { FlatList, Platform, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -230,8 +230,9 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
               setOpen={setDropdownOpen}
               setValue={setSelectedTerm}
               style={[styles.dropdown, styles.dropdownMargin]}
-              dropDownContainerStyle={styles.dropdown}
+              dropDownContainerStyle={[styles.dropdown, Platform.OS === 'android' && { position: 'relative', top: -16 }]}
               textStyle={styles.dropdownText}
+              listMode="SCROLLVIEW"
             />
           ) : null
         }
