@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexGrow: 1,
     width: '70%',
     padding: UI_SIZES.spacing.small,
   },
@@ -37,6 +38,7 @@ const styles = StyleSheet.create({
 
 interface IAssessmentCardProps {
   assessment: IDevoir;
+  hasCompetences: boolean;
   subject?: ISubject;
   showAverageColor?: boolean;
   onPress: () => void;
@@ -53,17 +55,16 @@ export class AssessmentCard extends React.PureComponent<IAssessmentCardProps> {
   };
 
   public render() {
-    const { assessment, subject, showAverageColor } = this.props;
-    const color = showAverageColor
-      ? this.getScoreColor(
-          parseFloat(assessment.note.replace(/\./g, ',').replace(',', '.')),
-          parseFloat(assessment.moyenne.replace(/\./g, ',').replace(',', '.')),
-          assessment.diviseur,
-        )
-      : theme.palette.complementary.blue.regular;
-    const dividerStr = ` / ${assessment.diviseur}`;
-    const coefStr = `coeff : ${assessment.coefficient}`;
-    const averageStr = `moy : ${assessment.moyenne}`;
+    const { assessment, hasCompetences, subject, showAverageColor } = this.props;
+    const isAssessmentGraded = 'note' in assessment;
+    const color =
+      showAverageColor && isAssessmentGraded
+        ? this.getScoreColor(
+            parseFloat(assessment.note.replace(/\./g, ',').replace(',', '.')),
+            parseFloat(assessment.moyenne.replace(/\./g, ',').replace(',', '.')),
+            assessment.diviseur,
+          )
+        : theme.palette.complementary.blue.regular;
 
     return (
       <ArticleContainer>
@@ -75,20 +76,22 @@ export class AssessmentCard extends React.PureComponent<IAssessmentCardProps> {
               <SmallText numberOfLines={1}>{assessment.name}</SmallText>
               <SmallText>{assessment.date.format('L')}</SmallText>
             </View>
-            {assessment.competencesCount ? <CompetenceRound onPress={this.props.onPress} /> : null}
+            {hasCompetences ? <CompetenceRound onPress={this.props.onPress} /> : null}
           </View>
-          <View style={[styles.rightContainer, { backgroundColor: color }]}>
-            {isNaN(Number(assessment.note)) ? (
-              <HeadingSText style={styles.gradeText}>{assessment.note}</HeadingSText>
-            ) : (
-              <SmallText style={styles.gradeText}>
-                <HeadingSText style={styles.gradeText}>{+parseFloat(Number(assessment.note).toFixed(2))}</HeadingSText>
-                <NestedText>{dividerStr}</NestedText>
-              </SmallText>
-            )}
-            {assessment.coefficient ? <SmallInverseText>{coefStr}</SmallInverseText> : null}
-            {assessment.moyenne ? <SmallInverseText>{averageStr}</SmallInverseText> : null}
-          </View>
+          {isAssessmentGraded ? (
+            <View style={[styles.rightContainer, { backgroundColor: color }]}>
+              {isNaN(Number(assessment.note)) ? (
+                <HeadingSText style={styles.gradeText}>{assessment.note}</HeadingSText>
+              ) : (
+                <SmallText style={styles.gradeText}>
+                  <HeadingSText style={styles.gradeText}>{+parseFloat(Number(assessment.note).toFixed(2))}</HeadingSText>
+                  <NestedText>{` / ${assessment.diviseur}`}</NestedText>
+                </SmallText>
+              )}
+              {assessment.coefficient ? <SmallInverseText>{`coeff : ${assessment.coefficient}`}</SmallInverseText> : null}
+              {assessment.moyenne ? <SmallInverseText>{`moy : ${assessment.moyenne}`}</SmallInverseText> : null}
+            </View>
+          ) : null}
         </CardWithoutPadding>
       </ArticleContainer>
     );

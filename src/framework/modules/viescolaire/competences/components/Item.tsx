@@ -56,10 +56,12 @@ export const CompetenceRound = ({ onPress }: { onPress: () => void }) => {
 
 export const DashboardAssessmentCard = ({
   devoir,
+  hasCompetences,
   subject,
   openAssessment,
 }: {
   devoir: IDevoir;
+  hasCompetences: boolean;
   subject?: ISubject;
   openAssessment: () => void;
 }) => (
@@ -70,7 +72,7 @@ export const DashboardAssessmentCard = ({
       </SmallBoldText>
       <SmallText>{devoir.date.format('L')}</SmallText>
     </View>
-    {devoir.competencesCount ? <CompetenceRound onPress={openAssessment} /> : null}
+    {hasCompetences ? <CompetenceRound onPress={openAssessment} /> : null}
     {isNaN(Number(devoir.note)) ? (
       <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note}</BodyBoldText>
     ) : (

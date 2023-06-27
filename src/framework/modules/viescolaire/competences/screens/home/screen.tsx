@@ -19,7 +19,8 @@ import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
-  clearCompetencesAction,
+  clearCompetencesLevelsAction,
+  fetchCompetencesAction,
   fetchCompetencesAveragesAction,
   fetchCompetencesDevoirsAction,
   fetchCompetencesSubjectsAction,
@@ -31,6 +32,7 @@ import { SubjectAverageCard } from '~/framework/modules/viescolaire/competences/
 import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
+import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
@@ -82,8 +84,9 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         const children = await props.tryFetchUserChildren(structureId, userId);
         childClasses = children.find(c => c.id === childId)?.classId;
       }
+      await props.tryFetchCompetences(childId, childClasses ?? '');
       await props.tryFetchTerms(structureId, childClasses ?? '');
-      props.handleClearCompetences();
+      props.handleClearLevels();
     } catch {
       throw new Error();
     }
@@ -258,6 +261,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
             renderItem={({ item }) => (
               <AssessmentCard
                 assessment={item}
+                hasCompetences={props.competences.some(c => c.devoirId === item.id)}
                 subject={subjects.find(s => s.id === item.subjectId)}
                 showAverageColor={areAverageColorsShown}
                 onPress={() => openAssessment(item)}
@@ -306,7 +310,8 @@ export default connect(
       averages: competencesState.averages.data,
       classes: session?.user.classes,
       childId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
-      devoirs: competencesState.devoirs.data,
+      competences: competencesState.competences.data,
+      devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       dropdownItems: {
         terms: [
           { label: I18n.get('competences-home-term'), value: 'default' },
@@ -340,8 +345,9 @@ export default connect(
   dispatch =>
     bindActionCreators<CompetencesHomeScreenDispatchProps>(
       {
-        handleClearCompetences: handleAction(clearCompetencesAction),
+        handleClearLevels: handleAction(clearCompetencesLevelsAction),
         tryFetchAverages: tryAction(fetchCompetencesAveragesAction),
+        tryFetchCompetences: tryAction(fetchCompetencesAction),
         tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
         tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),
         tryFetchTerms: tryAction(fetchCompetencesTermsAction),

@@ -150,7 +150,7 @@ export default connect(
       competences: competencesState.competences.data,
       domaines,
       initialLoadingState:
-        competencesState.competences.isPristine || competencesState.domaines.isPristine
+        competencesState.competences.isPristine || competencesState.levels.isPristine
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
       levels: competencesState.levels.data.filter(level => level.cycleId === domaines[0]?.cycleId),

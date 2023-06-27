@@ -20,7 +20,8 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
 import {
-  clearCompetencesAction,
+  clearCompetencesLevelsAction,
+  fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
   fetchCompetencesSubjectsAction,
   fetchCompetencesUserChildrenAction,
@@ -29,6 +30,7 @@ import { DashboardAssessmentCard } from '~/framework/modules/viescolaire/compete
 import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
+import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
@@ -93,6 +95,8 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
           structureId,
           children.map(child => child.id),
         );
+        const childClasses = children.find(c => c.id === childId)?.classId;
+        await props.tryFetchCompetences(childId, childClasses ?? '');
       }
     } catch {
       throw new Error();
@@ -116,7 +120,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   React.useEffect(() => {
     if (loadingState === AsyncPagedLoadingState.DONE) init();
-    props.handleClearCompetences();
+    props.handleClearLevels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childId]);
 
@@ -230,17 +234,18 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
   };
 
   const renderAssessments = () => {
-    const { devoirs, subjects } = props;
+    const { devoirs, isFetchingDevoirs, subjects } = props;
 
-    return devoirs.isFetching ? (
+    return isFetchingDevoirs ? (
       <LoadingIndicator />
     ) : (
       <FlatList
-        data={devoirs.data.slice(0, 5)}
+        data={devoirs.slice(0, 5)}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <DashboardAssessmentCard
             devoir={item}
+            hasCompetences={props.competences.some(c => c.devoirId === item.id)}
             subject={subjects.find(s => s.id === item.subjectId)}
             openAssessment={() => openAssessment(item)}
           />
@@ -301,9 +306,11 @@ export default connect(
       },
       childId: dashboardState.selectedChildId,
       childrenEvents: presencesState.childrenEvents.data,
-      devoirs: competencesState.devoirs,
+      competences: competencesState.competences.data,
+      devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       homeworks: diaryState.homeworks,
+      isFetchingDevoirs: competencesState.devoirs.isFetching,
       structureId: getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,
       userChildren: competencesState.userChildren.data,
@@ -313,8 +320,9 @@ export default connect(
   dispatch =>
     bindActionCreators<DashboardRelativeScreenDispatchProps>(
       {
-        handleClearCompetences: handleAction(clearCompetencesAction),
+        handleClearLevels: handleAction(clearCompetencesLevelsAction),
         tryFetchChildrenEvents: tryAction(fetchPresencesChildrenEventsAction),
+        tryFetchCompetences: tryAction(fetchCompetencesAction),
         tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
         tryFetchHomeworks: tryAction(fetchDiaryHomeworksFromChildAction),
         tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),

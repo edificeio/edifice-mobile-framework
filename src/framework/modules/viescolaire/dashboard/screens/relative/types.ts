@@ -2,11 +2,12 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { IUser } from '~/framework/modules/auth/model';
 import type {
+  fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
   fetchCompetencesSubjectsAction,
   fetchCompetencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/competences/actions';
-import type { IDevoir, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
+import type { ICompetence, IDevoir, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
 import type { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
 import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import type { fetchDiaryHomeworksFromChildAction, fetchDiaryTeachersAction } from '~/framework/modules/viescolaire/diary/actions';
@@ -22,8 +23,10 @@ export interface DashboardRelativeScreenNavParams {}
 export interface DashboardRelativeScreenStoreProps {
   authorizedViescoApps: IAuthorizedViescoApps;
   childrenEvents: IChildrenEvents;
-  devoirs: AsyncState<IDevoir[]>;
+  competences: ICompetence[];
+  devoirs: IDevoir[];
   homeworks: AsyncState<IHomeworkMap>;
+  isFetchingDevoirs: boolean;
   subjects: ISubject[];
   userChildren: IUserChild[];
   childId?: string;
@@ -33,8 +36,9 @@ export interface DashboardRelativeScreenStoreProps {
 }
 
 export interface DashboardRelativeScreenDispatchProps {
-  handleClearCompetences: () => void;
+  handleClearLevels: () => void;
   tryFetchChildrenEvents: (...args: Parameters<typeof fetchPresencesChildrenEventsAction>) => Promise<IChildrenEvents>;
+  tryFetchCompetences: (...args: Parameters<typeof fetchCompetencesAction>) => Promise<ICompetence[]>;
   tryFetchDevoirs: (...args: Parameters<typeof fetchCompetencesDevoirsAction>) => Promise<IDevoir[]>;
   tryFetchHomeworks: (...args: Parameters<typeof fetchDiaryHomeworksFromChildAction>) => Promise<IHomeworkMap>;
   tryFetchSubjects: (...args: Parameters<typeof fetchCompetencesSubjectsAction>) => Promise<ISubject[]>;

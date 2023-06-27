@@ -16,11 +16,16 @@ import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
-import { fetchCompetencesDevoirsAction, fetchCompetencesSubjectsAction } from '~/framework/modules/viescolaire/competences/actions';
+import {
+  fetchCompetencesAction,
+  fetchCompetencesDevoirsAction,
+  fetchCompetencesSubjectsAction,
+} from '~/framework/modules/viescolaire/competences/actions';
 import { DashboardAssessmentCard } from '~/framework/modules/viescolaire/competences/components/Item';
 import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
+import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import {
@@ -58,7 +63,7 @@ export const computeNavBar = ({
 class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenPrivateProps> {
   constructor(props) {
     super(props);
-    const { structureId, userId } = props;
+    const { classes, structureId, userId } = props;
     this.state = {
       // fetching next month homeworks only, when screen is focused
       focusListener: this.props.navigation.addListener('focus', () => {
@@ -67,6 +72,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
           moment().add(1, 'days').format('YYYY-MM-DD'),
           moment().add(1, 'month').format('YYYY-MM-DD'),
         );
+        this.props.tryFetchCompetences(userId, classes[0]);
         this.props.tryFetchDevoirs(structureId, userId);
         this.props.tryFetchSubjects(structureId);
       }),
@@ -187,11 +193,12 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
   private renderLastAssessments() {
     return (
       <FlatList
-        data={this.props.devoirs.data.slice(0, 5)}
+        data={this.props.devoirs.slice(0, 5)}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <DashboardAssessmentCard
             devoir={item}
+            hasCompetences={this.props.competences.some(c => c.devoirId === item.id)}
             subject={this.props.subjects.find(s => s.id === item.subjectId)}
             openAssessment={() => this.openAssessment(item)}
           />
@@ -209,14 +216,14 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
   scrollRef = React.createRef<typeof ScrollView>();
 
   public render() {
-    const { authorizedViescoApps, devoirs, homeworks } = this.props;
+    const { authorizedViescoApps, homeworks, isFetchingDevoirs } = this.props;
 
     return (
       <PageView>
         {this.renderNavigationGrid()}
         <ScrollView ref={this.scrollRef}>
           {authorizedViescoApps.diary ? this.renderHomework(homeworks.data) : null}
-          {authorizedViescoApps.competences ? devoirs.isFetching ? <LoadingIndicator /> : this.renderLastAssessments() : null}
+          {authorizedViescoApps.competences ? isFetchingDevoirs ? <LoadingIndicator /> : this.renderLastAssessments() : null}
         </ScrollView>
       </PageView>
     );
@@ -237,8 +244,10 @@ export default connect(
         presences: session?.apps.some(app => app.address === '/presences'),
       },
       classes: session?.user.classes,
-      devoirs: competencesState.devoirs,
+      competences: competencesState.competences.data,
+      devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       homeworks: diaryState.homeworks,
+      isFetchingDevoirs: competencesState.devoirs.isFetching,
       structureId: session?.user.structures?.[0]?.id,
       subjects: competencesState.subjects.data,
       userId: session?.user.id,
@@ -247,6 +256,7 @@ export default connect(
   dispatch =>
     bindActionCreators<DashboardStudentScreenDispatchProps>(
       {
+        tryFetchCompetences: tryAction(fetchCompetencesAction),
         tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
         tryFetchHomeworks: tryAction(fetchDiaryHomeworksAction),
         tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),

@@ -2,7 +2,6 @@ import { Moment } from 'moment';
 
 export interface IDevoir {
   coefficient: string;
-  competencesCount: number;
   date: Moment;
   diviseur: number;
   id: number;

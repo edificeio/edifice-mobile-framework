@@ -166,29 +166,57 @@ const averageAdapter = (list: IBackendAverageList): IAverage[] => {
 
 const competenceAdapter = (data: IBackendCompetence): ICompetence => {
   return {
+    date: moment(data.date),
     devoirId: data.id_devoir,
     domaineId: data.id_domaine,
     evaluation: data.evaluation,
     id: data.id_competence,
+    name: data.name,
+    ownerName: data.owner_name,
+    subjectId: data.id_matiere,
   };
 };
 
 const devoirAdapter = (data: IBackendDevoir): IDevoir => {
   return {
     coefficient: data.coefficient,
-    competencesCount: data.nbcompetences,
     date: moment(data.date),
     diviseur: data.diviseur,
     id: data.id,
     isEvaluated: data.is_evaluated,
     libelle: data.libelle ?? undefined,
-    moyenne: String(Number(data.sum_notes) / data.nbr_eleves),
+    moyenne: String(Number((Number(data.sum_notes) / data.nbr_eleves).toFixed(1))),
     name: data.name,
     note: data.note,
     subjectId: data.id_matiere,
     teacher: data.teacher,
     termId: data.id_periode,
   };
+};
+
+const compareDevoirs = (a: IDevoir, b: IDevoir): number => {
+  return b.date.diff(a.date);
+};
+
+// Append assessments with no grade to given assessment array
+export const concatDevoirs = (devoirs: IDevoir[], competences: ICompetence[]): IDevoir[] => {
+  return devoirs
+    .concat(
+      competences
+        .filter(c => !devoirs.map(d => d.id).includes(c.devoirId))
+        .map(
+          c =>
+            ({
+              date: c.date,
+              id: c.devoirId,
+              name: c.name,
+              subjectId: c.subjectId,
+              teacher: c.ownerName,
+            } as IDevoir),
+        )
+        .filter((devoir, index, array) => array.findIndex(d => d.id === devoir.id) === index),
+    )
+    .sort(compareDevoirs);
 };
 
 const domaineAdapter = (data: IBackendDomaine): IDomaine => {
@@ -205,10 +233,6 @@ const domaineAdapter = (data: IBackendDomaine): IDomaine => {
     })),
     domaines: data.domaines?.map(domaineAdapter),
   };
-};
-
-const compareDevoirs = (a: IDevoir, b: IDevoir): number => {
-  return b.date.diff(a.date);
 };
 
 const levelAdapter = (data: IBackendLevel): ILevel => {
@@ -264,7 +288,7 @@ export const competencesService = {
     get: async (session: ISession, structureId: string, studentId: string) => {
       const api = `/competences/devoirs?idEtablissement=${structureId}&idEleve=${studentId}`;
       const devoirs = (await fetchJSONWithCache(api)) as IBackendDevoirList;
-      return devoirs.map(devoirAdapter).sort(compareDevoirs);
+      return devoirs.map(devoirAdapter);
     },
   },
   domaines: {

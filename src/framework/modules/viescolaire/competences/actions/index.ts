@@ -77,12 +77,6 @@ export const fetchCompetencesAction =
     }
   };
 
-export const clearCompetencesAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch(competencesCompetencesActionsCreators.clear());
-  };
-};
-
 /**
  * Fetch the assessments.
  */
@@ -139,6 +133,12 @@ export const fetchCompetencesLevelsAction =
       throw e;
     }
   };
+
+export const clearCompetencesLevelsAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(competencesLevelsActionsCreators.clear());
+  };
+};
 
 /**
  * Fetch the subjects.
