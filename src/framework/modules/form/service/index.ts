@@ -86,6 +86,7 @@ interface IBackendQuestionChoice {
   position: number;
   next_section_id: number | null;
   is_custom: boolean;
+  image: string | null;
 }
 
 interface IBackendQuestionResponse {
@@ -184,7 +185,7 @@ const compareMatrixChildren: (a: IBackendQuestion, b: IBackendQuestion) => numbe
   return a.matrix_position - b.matrix_position;
 };
 
-const questionChoiceAdapter: (data: IBackendQuestionChoice) => IQuestionChoice = data => {
+const questionChoiceAdapter = (data: IBackendQuestionChoice, platformUrl: string): IQuestionChoice => {
   return {
     id: data.id,
     questionId: data.question_id,
@@ -192,7 +193,8 @@ const questionChoiceAdapter: (data: IBackendQuestionChoice) => IQuestionChoice =
     type: data.type,
     nextSectionId: data.next_section_id,
     isCustom: data.is_custom,
-  } as IQuestionChoice;
+    image: data.image?.startsWith('/') ? platformUrl + data.image : data.image,
+  };
 };
 
 const compareChoices: (a: IBackendQuestionChoice, b: IBackendQuestionChoice) => number = (a, b) => {
@@ -330,7 +332,7 @@ export const formService = {
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const choices = (await fetchJSONWithCache(api)) as IBackendQuestionChoiceList;
       choices.sort(compareChoices);
-      return choices.map(choice => questionChoiceAdapter(choice)) as IQuestionChoice[];
+      return choices.map(choice => questionChoiceAdapter(choice, session.platform.url)) as IQuestionChoice[];
     },
     getChildren: async (session: ISession, questionIds: number[]) => {
       let api = `/formulaire/questions/children?`;
@@ -370,7 +372,7 @@ export const formService = {
       const api = `/formulaire/questions/${questionId}/choices`;
       const choices = (await fetchJSONWithCache(api)) as IBackendQuestionChoiceList;
       choices.sort(compareChoices);
-      return choices.map(choice => questionChoiceAdapter(choice)) as IQuestionChoice[];
+      return choices.map(choice => questionChoiceAdapter(choice, session.platform.url)) as IQuestionChoice[];
     },
     getDistributionResponses: async (session: ISession, questionId: number, distributionId: number) => {
       const api = `/formulaire/questions/${questionId}/distributions/${distributionId}/responses`;
