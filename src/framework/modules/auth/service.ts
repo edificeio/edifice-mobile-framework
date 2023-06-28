@@ -16,6 +16,7 @@ import {
   ISession,
   PartialSessionScenario,
   RuntimeAuthErrorCode,
+  SessionType,
   StructureNode,
   UserChild,
   UserChildren,
@@ -203,11 +204,23 @@ export async function saveSession() {
   }
 }
 
+export async function forgetPreviousSession() {
+  try {
+    if (!OAuth2RessourceOwnerPasswordClient.connection) {
+      throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
+    }
+    await OAuth2RessourceOwnerPasswordClient.connection.forgetToken();
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Failed to forget previous token', err as Error);
+  }
+}
+
 export function formatSession(
   platform: Platform,
   userinfo: IUserInfoBackend,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
+  rememberMe?: boolean,
 ): ISession {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
@@ -272,6 +285,7 @@ export function formatSession(
     apps: userinfo.apps,
     widgets: userinfo.widgets,
     authorizedActions: userinfo.authorizedActions,
+    type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
     // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
     user,
   };

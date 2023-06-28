@@ -99,6 +99,11 @@ export type UserChildrenFlattened = (UserChild & {
   structureName: string;
 })[];
 
+export enum SessionType {
+  PERMANENT,
+  TEMPORARY,
+}
+
 /**
  * Current session information including authentification, rights & user info.
  */
@@ -109,6 +114,7 @@ export interface ISession {
   widgets: IEntcoreWidget[];
   authorizedActions: IAuthorizedAction[];
   user: ILoggedUser;
+  type: SessionType; // Is Session remembering set on ?
 }
 
 /** Error codes as an enum, values can be string that backend returns */

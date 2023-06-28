@@ -22,10 +22,11 @@ import {
   LegalUrls,
   PartialSessionScenario,
   RuntimeAuthErrorCode,
+  SessionType,
   createActivationError,
   createChangePasswordError,
 } from './model';
-import { assertSession, actions as authActions } from './reducer';
+import { assertSession, actions as authActions, getSession } from './reducer';
 import {
   createSession,
   ensureCredentialsMatchActivationCode,
@@ -33,6 +34,7 @@ import {
   fetchUserInfo,
   fetchUserPublicInfo,
   fetchUserRequirements,
+  forgetPreviousSession,
   formatSession,
   getAuthContext,
   getAuthTranslationKeys,
@@ -156,7 +158,9 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 7. Save session info if needed
       await savePlatform(platform);
-      if (!credentials || rememberMe || platform.wayf) await saveSession();
+      const mustSaveSession = !credentials || rememberMe || platform.wayf;
+      await forgetPreviousSession();
+      if (mustSaveSession) await saveSession();
 
       // 8. Do tracking
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN', partialSessionScenario);
@@ -166,7 +170,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       await CookieManager.clearAll();
 
       // 9. Validate session + return redirect scenario
-      const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo);
+      const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo, !!mustSaveSession);
       if (partialSessionScenario) {
         const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario);
         const context = await getAuthContext(platform);
@@ -346,7 +350,6 @@ function sessionDestroyAction(platform: Platform) {
 export function sessionInvalidateAction(platform: Platform, error?: AuthError) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     // Unregister the device token from the backend
-    console.debug('call removeFirebaseToken');
     await removeFirebaseToken(platform);
     // Validate log out
     dispatch(authActions.sessionError(error?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
@@ -376,7 +379,7 @@ export interface IChangePasswordSubmitPayload {
 export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      // === 1 - prepare payload
+      // === 2 - prepare chg pwd payload
       const payload: IChangePasswordSubmitPayload = {
         oldPassword: p.oldPassword,
         password: p.newPassword,
@@ -389,7 +392,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       for (const key in payload) {
         formdata.append(key, payload[key as keyof IChangePasswordSubmitPayload]);
       }
-      // === 2 - Send change password information
+      // === 3 - Send change password information
       const res = await fetch(`${platform.url}/auth/reset`, {
         body: formdata,
         headers: {
@@ -424,5 +427,14 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
       else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
     }
+
+    // 4 === Login back to get renewed token
+    const credentials: IAuthCredentials = {
+      username: p.login,
+      password: p.newPassword,
+    };
+    const rememberMe = getSession()?.type === SessionType.PERMANENT;
+    const redirect = await dispatch(loginAction(platform, credentials, rememberMe));
+    return redirect;
   };
 }
