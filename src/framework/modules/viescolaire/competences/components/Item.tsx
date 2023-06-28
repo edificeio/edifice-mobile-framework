@@ -73,13 +73,15 @@ export const DashboardAssessmentCard = ({
       <SmallText>{devoir.date.format('L')}</SmallText>
     </View>
     {hasCompetences ? <CompetenceRound onPress={openAssessment} /> : null}
-    {isNaN(Number(devoir.note)) ? (
-      <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note}</BodyBoldText>
-    ) : (
-      <>
-        <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</BodyBoldText>
-        <SmallText>/{devoir.diviseur}</SmallText>
-      </>
-    )}
+    {devoir.note ? (
+      isNaN(Number(devoir.note)) ? (
+        <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note}</BodyBoldText>
+      ) : (
+        <>
+          <BodyBoldText style={styles.denseDevoirListNoteText}>{devoir.note.replace(/\./g, ',')}</BodyBoldText>
+          <SmallText>/{devoir.diviseur}</SmallText>
+        </>
+      )
+    ) : null}
   </LeftColoredItem>
 );
