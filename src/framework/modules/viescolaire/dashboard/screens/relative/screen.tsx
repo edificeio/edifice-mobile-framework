@@ -77,7 +77,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   const fetchContent = async () => {
     try {
-      const { childId, structureId, userChildren, userId } = props;
+      const { childId, structureId, userId } = props;
 
       if (!childId || !structureId || !userId) throw new Error();
       await props.tryFetchHomeworks(
@@ -89,15 +89,13 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       await props.tryFetchTeachers(structureId);
       await props.tryFetchDevoirs(structureId, childId);
       await props.tryFetchSubjects(structureId);
-      if (!userChildren.length) {
-        const children = await props.tryFetchUserChildren(structureId, userId);
-        await props.tryFetchChildrenEvents(
-          structureId,
-          children.map(child => child.id),
-        );
-        const childClasses = children.find(c => c.id === childId)?.classId;
-        await props.tryFetchCompetences(childId, childClasses ?? '');
-      }
+      const children = await props.tryFetchUserChildren(structureId, userId);
+      await props.tryFetchChildrenEvents(
+        structureId,
+        children.map(child => child.id),
+      );
+      const childClasses = children.find(c => c.id === childId)?.classId;
+      await props.tryFetchCompetences(childId, childClasses ?? '');
     } catch {
       throw new Error();
     }
@@ -119,7 +117,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
   }, [props.navigation]);
 
   React.useEffect(() => {
-    if (loadingState === AsyncPagedLoadingState.DONE) init();
+    init();
     props.handleClearLevels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childId]);

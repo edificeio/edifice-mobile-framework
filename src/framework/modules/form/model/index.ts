@@ -59,6 +59,7 @@ export interface IQuestionChoice {
   type: string;
   nextSectionId: number | null;
   isCustom: boolean;
+  image: string | null;
 }
 
 export interface IQuestionResponse {
