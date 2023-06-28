@@ -34,6 +34,7 @@ import {
   fetchUserInfo,
   fetchUserPublicInfo,
   fetchUserRequirements,
+  forgetPreviousSession,
   formatSession,
   getAuthContext,
   getAuthTranslationKeys,
@@ -158,6 +159,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       // 7. Save session info if needed
       await savePlatform(platform);
       const mustSaveSession = !credentials || rememberMe || platform.wayf;
+      await forgetPreviousSession();
       if (mustSaveSession) await saveSession();
 
       // 8. Do tracking

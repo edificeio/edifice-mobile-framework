@@ -204,6 +204,17 @@ export async function saveSession() {
   }
 }
 
+export async function forgetPreviousSession() {
+  try {
+    if (!OAuth2RessourceOwnerPasswordClient.connection) {
+      throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
+    }
+    await OAuth2RessourceOwnerPasswordClient.connection.forgetToken();
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Failed to forget previous token', err as Error);
+  }
+}
+
 export function formatSession(
   platform: Platform,
   userinfo: IUserInfoBackend,

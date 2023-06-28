@@ -33,7 +33,7 @@ import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
-import { NAVIGATE_CLOSE_DELAY, consumeModalCloseAction, setConfirmQuitAction } from './nextTabJump';
+import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
@@ -143,9 +143,15 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
 }
 
 export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+  // Simple Hack : session can be recreated with same values.
+  // By using JSON-stringified version for useMemo() deps, we ensure that the navigation will be re-rendered only if necessary.
   const appsJson = JSON.stringify(apps);
+
   const tabModulesCache = tabModules.get();
-  const moduleTabStackCache = React.useMemo(() => tabModulesCache.map(module => <TabStack module={module} />), [tabModulesCache]);
+  const moduleTabStackCache = React.useMemo(
+    () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
+    [tabModulesCache],
+  );
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
     () =>
@@ -153,6 +159,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
         .get()
         .filterAvailables(apps ?? [])
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [appsJson],
   );
   const tabRoutes = React.useMemo(() => {

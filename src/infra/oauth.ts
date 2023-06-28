@@ -396,11 +396,14 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Saves given token information in local storage.
    */
   public async saveToken() {
-    try {
-      await AsyncStorage.setItem('token', JSON.stringify(this.token));
-    } catch (err) {
-      throw err;
-    }
+    await AsyncStorage.setItem('token', JSON.stringify(this.token));
+  }
+
+  /**
+   * Remove given token information in local storage.
+   */
+  public async forgetToken() {
+    await AsyncStorage.removeItem('token');
   }
 
   /**
