@@ -143,6 +143,7 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
 }
 
 export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+  const appsJson = JSON.stringify(apps);
   const tabModulesCache = tabModules.get();
   const moduleTabStackCache = React.useMemo(() => tabModulesCache.map(module => <TabStack module={module} />), [tabModulesCache]);
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
@@ -152,7 +153,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
         .get()
         .filterAvailables(apps ?? [])
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
-    [apps],
+    [appsJson],
   );
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {
@@ -171,7 +172,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
     });
     // We effectively want to have this deps to minimise re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apps]);
+  }, [appsJson]);
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(({ route, navigation }) => {
       return {

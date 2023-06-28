@@ -1,5 +1,5 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
@@ -188,6 +188,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
             platform: session?.platform,
             context: authContextRef?.current,
             credentials: { username: session?.user.login },
+            navCallback: CommonActions.goBack(),
           } as ChangePasswordScreenNavParams,
         };
         const routeParams = params[modificationType];

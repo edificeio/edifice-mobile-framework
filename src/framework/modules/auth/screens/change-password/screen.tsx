@@ -12,6 +12,7 @@ import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { changePasswordAction, loginAction, logoutAction } from '~/framework/modules/auth/actions';
 import { IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
 import { getAuthNavigationState, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
@@ -108,21 +109,18 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
         ...this.state,
         login: this.props.route.params.credentials.username,
       };
-      await this.props.trySubmit(this.props.route.params.platform, payload, this.props.route.params.rememberMe);
-
-      const platform = this.props.route.params.platform;
-      const credentials = {
-        ...this.props.route.params.credentials,
-        password: payload.newPassword,
-      };
-      const rememberMe = this.props.route.params.rememberMe;
+      const { platform, forceChange, rememberMe } = this.props.route.params;
+      const redirect = await this.props.trySubmit(platform, payload, forceChange, rememberMe);
       try {
-        const redirect = await this.props.tryLogin(platform, credentials, rememberMe);
         redirectLoginNavAction(redirect, platform, this.props.navigation);
         setTimeout(() => {
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
           if (this.mounted) this.setState({ typing: false, submitState: 'IDLE', error: undefined });
+          Toast.showSuccess(I18n.get('PasswordChangeSuccess'));
         }, 500);
+        if (this.props.route.params.navCallback) {
+          this.props.navigation.dispatch(this.props.route.params.navCallback);
+        }
       } catch {
         // If error during the login phase, redirect to login screen
         this.props.tryLogout();
