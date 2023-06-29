@@ -184,7 +184,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       await zimbraService.mail.send(session, this.getMailData(), id, draft.inReplyTo);
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composer-mail-sent')), 250);
+        Toast.showSuccess(I18n.get('zimbra-composer-mail-sent'));
       });
     } catch {
       this.setState({ isSending: false });
@@ -248,7 +248,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composer-draft-trashed')), 250);
+        Toast.showSuccess(I18n.get('zimbra-composer-draft-trashed'));
       });
     } catch {
       Toast.showError(I18n.get('common-error-text'));
@@ -266,7 +266,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }
       this.setState({ isDeleted: true }, () => {
         navigation.dispatch(CommonActions.goBack());
-        setTimeout(() => Toast.showSuccess(I18n.get('zimbra-composer-draft-deleted')), 250);
+        Toast.showSuccess(I18n.get('zimbra-composer-draft-deleted'));
       });
     } catch {
       Toast.showError(I18n.get('common-error-text'));

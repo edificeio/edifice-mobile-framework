@@ -1040,6 +1040,8 @@
   "zimbra-maillist-folder-outbox": "Messages envoyés",
   "zimbra-maillist-folder-spams": "Pourriels",
   "zimbra-maillist-folder-trash": "Corbeille",
+  "zimbra-maillist-listitem-norecipient": "(Sans destinataire)",
+  "zimbra-maillist-listitem-toprefix": "À : ",
   "zimbra-maillist-mail-deleted": "Message supprimé",
   "zimbra-maillist-mail-trashed": "Message supprimé",
   "zimbra-maillist-mails-deleted": "Messages supprimés",
