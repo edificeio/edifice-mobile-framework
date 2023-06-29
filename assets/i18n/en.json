@@ -1032,6 +1032,8 @@
   "zimbra-maillist-folder-outbox": "Outbox",
   "zimbra-maillist-folder-spams": "Spams",
   "zimbra-maillist-folder-trash": "Trash",
+  "zimbra-maillist-listitem-norecipient": "(No recipient)",
+  "zimbra-maillist-listitem-toprefix": "To: ",
   "zimbra-maillist-mail-deleted": "Message deleted",
   "zimbra-maillist-mail-trashed": "Message deleted",
   "zimbra-maillist-mails-deleted": "Messages deleted",

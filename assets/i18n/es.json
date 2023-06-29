@@ -1032,6 +1032,8 @@
   "zimbra-maillist-folder-outbox": "Mensajes enviados",
   "zimbra-maillist-folder-spams": "Correo no deseado",
   "zimbra-maillist-folder-trash": "Papelera",
+  "zimbra-maillist-listitem-norecipient": "(Sin destinatario)",
+  "zimbra-maillist-listitem-toprefix": "A: ",
   "zimbra-maillist-mail-deleted": "Mensaje eliminado",
   "zimbra-maillist-mail-trashed": "Mensaje eliminado",
   "zimbra-maillist-mails-deleted": "Mensajes eliminados",
