@@ -262,7 +262,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   return (
     <PageView>
       {props.userType === UserType.Relative ? (
-        <ChildPicker>
+        <ChildPicker redirectedChildName={props.route.params.notification?.backupData.params.studentName}>
           {props.hasPresencesCreateAbsenceRight ? (
             <TouchableOpacity
               onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
