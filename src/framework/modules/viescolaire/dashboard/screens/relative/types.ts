@@ -25,6 +25,7 @@ export interface DashboardRelativeScreenStoreProps {
   childrenEvents: IChildrenEvents;
   competences: ICompetence[];
   devoirs: IDevoir[];
+  eventCount: number;
   homeworks: AsyncState<IHomeworkMap>;
   isFetchingDevoirs: boolean;
   subjects: ISubject[];
