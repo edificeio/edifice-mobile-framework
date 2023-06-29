@@ -12,11 +12,12 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
+import PopupMenu from '~/framework/components/menus/popup';
+import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
-import config from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
@@ -127,9 +128,35 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     } else return null;
   }
 
+  canCreateHomework() {
+    const { session } = this.props;
+    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
+    const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
+    return hasCreateHomeworkResourceRight;
+  }
+
   updateNavBarTitle() {
-    this.props.navigation.setOptions({
-      headerTitle: navBarTitle(this.props.diaryInformation?.title),
+    const { diaryInformation, navigation } = this.props;
+    const popupActionsMenu = [
+      {
+        title: I18n.get('homework-tasklist-addhomework'),
+        action: () => navigation.navigate(homeworkRouteNames.homeworkCreate, { diary: '' }),
+        icon: {
+          ios: 'plus',
+          android: '',
+        },
+      },
+    ];
+    navigation.setOptions({
+      headerTitle: navBarTitle(diaryInformation?.title),
+      // React Navigation 6 uses this syntax to setup nav options
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () =>
+        this.canCreateHomework() ? (
+          <PopupMenu actions={popupActionsMenu}>
+            <NavBarAction icon="ui-options" />
+          </PopupMenu>
+        ) : undefined,
     });
   }
 
@@ -163,7 +190,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   }
 
   private renderList() {
-    const { diaryId, tasksByDay, navigation, onRefresh, session } = this.props;
+    const { diaryId, tasksByDay, navigation, onRefresh } = this.props;
     const { refreshing, pastDateLimit } = this.state;
     const dataInfo: DataType[] = tasksByDay
       ? tasksByDay.map(day => ({
@@ -186,8 +213,6 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     const isHomeworkDisplayed = displayedHomework.length > 0;
     const noRemainingPastHomework = remainingPastHomework.length === 0;
     const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), 'day');
-    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
-    const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
 
     const stylesContentSectionList = {
       padding: hasHomework ? UI_SIZES.spacing.medium : undefined,
@@ -300,22 +325,22 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               <EmptyScreen
                 svgImage="empty-hammock"
                 title={I18n.get(
-                  `homework-tasklist-emptyscreen-title-${
-                    hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? 'notasks' : 'notasks-nocreationrights'
+                  `homework-tasklist-emptyscreen-title${
+                    hasPastHomeWork ? '' : this.canCreateHomework() ? '-notasks' : '-notasks-nocreationrights'
                   }`,
                 )}
                 text={I18n.get(
-                  `homework-tasklist-emptyscreen-text-${
+                  `homework-tasklist-emptyscreen-text${
                     hasPastHomeWork
-                      ? hasCreateHomeworkResourceRight
+                      ? this.canCreateHomework()
                         ? ''
-                        : 'nocreationrights'
-                      : hasCreateHomeworkResourceRight
-                      ? 'notasks'
-                      : 'notasks-nocreationrights'
+                        : '-nocreationrights'
+                      : this.canCreateHomework()
+                      ? '-notasks'
+                      : '-notasks-nocreationrights'
                   }`,
                 )}
-                buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-tasklist-createactivity') : undefined}
+                buttonText={this.canCreateHomework() ? I18n.get('homework-tasklist-createactivity') : undefined}
                 buttonUrl={`/homeworks#/view-homeworks/${diaryId}`}
                 buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
               />

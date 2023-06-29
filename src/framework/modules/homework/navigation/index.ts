@@ -8,12 +8,14 @@ import { IHomeworkTaskDetailsScreenNavigationParams } from '~/framework/modules/
 
 export const homeworkRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',
+  homeworkCreate: `${moduleConfig.routeName}/create` as 'homeworkCreate',
   homeworkExplorer: `${moduleConfig.routeName}/explorer` as 'homeworkExplorer',
   homeworkTaskDetails: `${moduleConfig.routeName}/details` as 'homeworkTaskDetails',
   homeworkTaskList: `${moduleConfig.routeName}/tasks` as 'homeworkTaskList',
 };
 export interface HomeworkNavigationParams extends ParamListBase {
   home: HomeworkInitialScreenNavigationParams;
+  homeworkCreate: any;
   homeworkExplorer: HomeworkExplorerScreenNavigationParams;
   homeworkTaskDetails: IHomeworkTaskDetailsScreenNavigationParams;
   homeworkTaskList: HomeworkTaskListScreenNavigationParams;
