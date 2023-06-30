@@ -51,14 +51,13 @@ interface ZimbraComposerScreenState {
   tempAttachment?: LocalFile;
 }
 
-function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; updateDraft: () => void }) {
+function PreventBack(props: { isDraftEdited: boolean; isUploading: boolean; promptAction: (goBack: () => void) => void }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isDraftEdited || props.isUploading, ({ data }) => {
     if (props.isUploading) {
       return Alert.alert(I18n.get('zimbra-composer-uploadingerror'));
     }
-    props.updateDraft();
-    handleRemoveConfirmNavigationEvent(data.action, navigation);
+    props.promptAction(() => handleRemoveConfirmNavigationEvent(data.action, navigation));
   });
   return null;
 }
@@ -192,13 +191,46 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     }
   };
 
-  updateDraftOnBack = async () => {
-    const { isDeleted } = this.state;
+  promptUserAction = async (goBack: () => void) => {
+    const { session } = this.props;
+    const { id, isDeleted } = this.state;
     const { type } = this.props.route.params;
+    const isSaved = type === DraftType.DRAFT;
 
-    if (isDeleted) return;
-    await this.saveDraft();
-    Toast.showInfo(I18n.get(type === DraftType.DRAFT ? 'zimbra-composer-draft-updated' : 'zimbra-composer-draft-created'));
+    if (isDeleted) return goBack();
+    Alert.alert(
+      I18n.get('zimbra-composer-savealert-title'),
+      I18n.get(isSaved ? 'zimbra-composer-savealert-message-saved' : 'zimbra-composer-savealert-message-new'),
+      [
+        {
+          text: I18n.get('zimbra-composer-savealert-delete'),
+          onPress: async () => {
+            if (session && id) {
+              await zimbraService.mails.trash(session, [id]);
+            }
+            goBack();
+          },
+          style: 'destructive',
+        },
+        ...(isSaved
+          ? [
+              {
+                text: I18n.get('zimbra-composer-savealert-cancelchanges'),
+                onPress: goBack,
+              },
+            ]
+          : []),
+        {
+          text: I18n.get(isSaved ? 'zimbra-composer-savealert-savechanges' : 'zimbra-composer-savealert-save'),
+          onPress: async () => {
+            await this.saveDraft();
+            Toast.showInfo(I18n.get(isSaved ? 'zimbra-composer-draft-updated' : 'zimbra-composer-draft-created'));
+            goBack();
+          },
+          style: 'default',
+        },
+      ],
+    );
   };
 
   checkIsDraftBlank = (): boolean => {
@@ -364,7 +396,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         <PreventBack
           isDraftEdited={!this.checkIsDraftBlank()}
           isUploading={tempAttachment !== undefined}
-          updateDraft={this.updateDraftOnBack}
+          promptAction={this.promptUserAction}
         />
         <PageComponent>
           {isFetching || isPrefilling ? (
