@@ -4,7 +4,7 @@
   "private": true,
   "engines": {
     "yarn": "1.22.19"
-  }
+  },
   "scripts": {
     "add-dev": "yarn add --dev --exact",
     "add-dep": "run(){ yarn add --save --exact $@ && cd ios && pod install && cd .. ; }; run",
