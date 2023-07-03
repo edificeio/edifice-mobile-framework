@@ -75,10 +75,6 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
 
   const isFocused = useIsFocused();
 
-  const isFocused = useIsFocused();
-
-  const isFocused = useIsFocused();
-
   const onOpenNewsItem = useCallback(
     (item: NewsItem, thread: NewsThreadItemReduce) => {
       navigation.navigate(newsRouteNames.details, {
