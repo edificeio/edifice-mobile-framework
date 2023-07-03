@@ -9,13 +9,16 @@ import type {
 } from '~/framework/modules/viescolaire/presences/actions';
 import type { IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import type { IPresencesNotification } from '~/framework/modules/viescolaire/presences/notif-handler';
 import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface PresencesHistoryScreenProps {
   initialLoadingState: AsyncPagedLoadingState;
 }
 
-export interface PresencesHistoryScreenNavParams {}
+export interface PresencesHistoryScreenNavParams {
+  notification?: IPresencesNotification;
+}
 
 export interface PresencesHistoryScreenStoreProps {
   history: IHistory;

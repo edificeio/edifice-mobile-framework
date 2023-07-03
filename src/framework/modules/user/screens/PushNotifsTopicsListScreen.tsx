@@ -86,7 +86,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('directory-notificationsTitle'),
+    title: I18n.get('user-pushnotifssettings-title'),
   }),
 });
 
@@ -162,7 +162,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
           rightElement={
             <View style={styles.item}>
               <SmallActionText style={{ ...TextSizeStyle.Small }}>
-                {I18n.get(`user-pushnotifssettings-countoutoftotal-${isTotalOnSingle ? 'one' : 'other'}`, {
+                {I18n.get(`user-pushnotifssettings-countoutoftotal-${isTotalOnSingle ? 'single' : 'other'}`, {
                   count: totalOn,
                   total,
                 })}

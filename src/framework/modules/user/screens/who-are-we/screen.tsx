@@ -22,7 +22,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('directory-whoAreWeTitle'),
+    title: I18n.get('user-whoarewe-title'),
   }),
 });
 

@@ -27,6 +27,9 @@ const styles = StyleSheet.create({
   dateText: {
     color: theme.ui.text.light,
   },
+  draftRecipientsText: {
+    color: theme.palette.secondary.dark,
+  },
   lineContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -65,30 +68,41 @@ interface IMailListItemProps {
 }
 
 export class MailListItem extends React.PureComponent<IMailListItemProps> {
-  getContactName = (id: string): string => {
+  getSenderName = (id: string): string => {
     const { mail } = this.props;
 
     const displayName = mail.displayNames.find(item => item[0] === id)?.[1];
     return displayName ?? I18n.get('zimbra-mail-unknownuser');
   };
 
+  getRecipientsName = (ids: string[]): string => {
+    const { mail } = this.props;
+
+    if (!ids.length) return I18n.get('zimbra-maillist-listitem-norecipient');
+    return ids.map(id => mail.displayNames.find(item => item[0] === id)?.[1] ?? id).join(', ');
+  };
+
   public render() {
     const { isSelected, mail, onPress, selectMail } = this.props;
-    const contactIds = mail.systemFolder !== 'OUTBOX' && mail.systemFolder !== 'DRAFTS' ? [mail.from] : mail.to;
-    const contactName = this.getContactName(contactIds[0]);
+    const isReceived = mail.systemFolder !== 'OUTBOX' && mail.systemFolder !== 'DRAFT';
+    const contactIds = isReceived ? [mail.from] : mail.to;
+    const contactName = isReceived ? this.getSenderName(contactIds[0]) : this.getRecipientsName(contactIds);
     const ContactText = mail.unread ? SmallBoldText : SmallText;
     const SubjectText = mail.unread ? SmallBoldText : SmallText;
 
     return (
       <TouchableOpacity onPress={() => onPress(mail)} onLongPress={() => selectMail(mail)}>
         <ListItem
-          leftElement={<GridAvatars users={contactIds} />}
+          leftElement={<GridAvatars users={contactIds.length ? contactIds : ['']} />}
           rightElement={
             <View style={styles.rightContainer}>
               <View style={styles.lineContainer}>
                 <View style={styles.contactContainer}>
                   {mail.unread ? <View style={styles.unreadIndicator} /> : null}
-                  <ContactText numberOfLines={1} style={styles.contactText}>
+                  {!isReceived ? <SmallText>{I18n.get('zimbra-maillist-listitem-toprefix')}</SmallText> : null}
+                  <ContactText
+                    numberOfLines={1}
+                    style={[styles.contactText, mail.systemFolder === 'DRAFT' && styles.draftRecipientsText]}>
                     {contactName}
                   </ContactText>
                 </View>

@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
@@ -42,6 +43,7 @@ import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigatio
 import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { fetchPresencesChildrenEventsAction } from '~/framework/modules/viescolaire/presences/actions';
 import ChildrenEventsModal from '~/framework/modules/viescolaire/presences/components/ChildrenEventsModal';
+import { IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
 import presencesConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
@@ -56,6 +58,19 @@ type IHomeworkByDateList = {
   [key: string]: IHomework[];
 };
 
+const getStudentsEventsCount = (data: IChildrenEvents): number => {
+  let count = 0;
+
+  for (const childEvents of Object.values(data)) {
+    count +=
+      childEvents.DEPARTURE.length +
+      childEvents.LATENESS.length +
+      childEvents.NO_REASON.length +
+      childEvents.REGULARIZED.length +
+      childEvents.UNREGULARIZED.length;
+  }
+  return count;
+};
 export const computeNavBar = ({
   navigation,
   route,
@@ -70,6 +85,7 @@ export const computeNavBar = ({
 const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => {
   const scrollRef = React.useRef<typeof ScrollView>();
   const eventsModalRef = React.useRef<ModalBoxHandle>(null);
+  const isFocused = useIsFocused();
   const [loadingState, setLoadingState] = React.useState(AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -77,7 +93,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   const fetchContent = async () => {
     try {
-      const { childId, structureId, userChildren, userId } = props;
+      const { childId, structureId, userId } = props;
 
       if (!childId || !structureId || !userId) throw new Error();
       await props.tryFetchHomeworks(
@@ -89,15 +105,28 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       await props.tryFetchTeachers(structureId);
       await props.tryFetchDevoirs(structureId, childId);
       await props.tryFetchSubjects(structureId);
-      if (!userChildren.length) {
-        const children = await props.tryFetchUserChildren(structureId, userId);
-        await props.tryFetchChildrenEvents(
-          structureId,
-          children.map(child => child.id),
-        );
-        const childClasses = children.find(c => c.id === childId)?.classId;
-        await props.tryFetchCompetences(childId, childClasses ?? '');
-      }
+      const children = await props.tryFetchUserChildren(structureId, userId);
+      await props.tryFetchChildrenEvents(
+        structureId,
+        children.map(child => child.id),
+      );
+      const childClasses = children.find(c => c.id === childId)?.classId;
+      await props.tryFetchCompetences(childId, childClasses ?? '');
+    } catch {
+      throw new Error();
+    }
+  };
+
+  const fetchEvents = async () => {
+    try {
+      const { structureId, userId } = props;
+
+      if (!structureId || !userId) throw new Error();
+      const children = await props.tryFetchUserChildren(structureId, userId);
+      await props.tryFetchChildrenEvents(
+        structureId,
+        children.map(c => c.id),
+      );
     } catch {
       throw new Error();
     }
@@ -110,23 +139,32 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
+  const refreshEvents = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshEvents();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
   React.useEffect(() => {
-    if (loadingState === AsyncPagedLoadingState.DONE) init();
+    init();
     props.handleClearLevels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childId]);
 
   React.useEffect(() => {
-    if (Object.entries(props.childrenEvents).length) eventsModalRef.current?.doShowModal();
-  }, [props.childrenEvents]);
+    if (props.eventCount && isFocused) eventsModalRef.current?.doShowModal();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.eventCount]);
 
   const openAssessment = (assessment: IDevoir) => {
     const { childId, navigation, userChildren } = props;
@@ -308,6 +346,7 @@ export default connect(
       childrenEvents: presencesState.childrenEvents.data,
       competences: competencesState.competences.data,
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
+      eventCount: getStudentsEventsCount(presencesState.childrenEvents.data),
       hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       homeworks: diaryState.homeworks,
       isFetchingDevoirs: competencesState.devoirs.isFetching,

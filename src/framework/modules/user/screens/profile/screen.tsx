@@ -265,7 +265,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('MyProfile'),
+    title: I18n.get('user-profile-appname'),
   }),
 });
 

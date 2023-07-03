@@ -1,11 +1,10 @@
 /**
- * Internationalisation (i18n) loader and setup
+ * Internationalization (i18n) loader and setup
  *
  * Usage: import and use the init() function when local changes (setup is automatic on import)
  * Then, import and use the native i18next and moment modules.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import deepmerge from 'deepmerge';
 import { unflatten } from 'flat';
 import i18n from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
@@ -24,43 +23,37 @@ import Phrase from 'react-native-phrase-sdk';
 const phraseSecrets = require('ROOT/phrase.json');
 
 export namespace I18n {
-  // Built-in translations
+  // Local translations
   const builtInTranslations = unflatten({
     fr: require('ASSETS/i18n/fr.json'),
     en: require('ASSETS/i18n/en.json'),
     es: require('ASSETS/i18n/es.json'),
   }) as { [locale in SupportedLocales]: object };
 
-  // Override translations
-  const overrideTranslations = unflatten({
-    fr: require('ASSETS/i18n/override/fr.json'),
-    en: require('ASSETS/i18n/override/en.json'),
-    es: require('ASSETS/i18n/override/es.json'),
-  }) as { [locale in SupportedLocales]: object };
-
-  // Merge Built-in && Override translations
-  const arrayMerge = (a: [], b: []) => {
-    const destination = a.slice();
-    for (const i in b) {
-      destination[i] = b[i];
-    }
-    return destination;
+  // Transform local translations (in a given language) by applying the override keys
+  const getOverridenTranslations = (language: SupportedLocales) => {
+    const translations = builtInTranslations[language];
+    const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
+    const overrideKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
+    const overridenTranslations = translations;
+    overrideKeys.forEach(overrideKey => {
+      overridenTranslations[overrideKey.replace(`-${overrideName}`, '')] = overridenTranslations[overrideKey];
+    });
+    return overridenTranslations;
   };
 
-  const mergedTranslations = Object.fromEntries(
-    Object.keys(builtInTranslations).map(k => [
-      k,
-      deepmerge<object>(builtInTranslations[k], overrideTranslations[k], {
-        arrayMerge,
-      }),
-    ]),
-  );
+  // New local translations with overriden wordings
+  const overridenTranslations = {
+    fr: getOverridenTranslations('fr'),
+    en: getOverridenTranslations('en'),
+    es: getOverridenTranslations('es'),
+  };
 
   // Final translations
   const localResources = {
-    fr: { translation: mergedTranslations.fr },
-    en: { translation: mergedTranslations.en },
-    es: { translation: mergedTranslations.es },
+    fr: { translation: overridenTranslations.fr },
+    en: { translation: overridenTranslations.en },
+    es: { translation: overridenTranslations.es },
   };
 
   // App language management
@@ -115,7 +108,7 @@ export namespace I18n {
   }
 
   export function updateLanguage() {
-    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(mergedTranslations)) as {
+    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(overridenTranslations)) as {
       languageTag: string;
       isRTL: boolean;
     };

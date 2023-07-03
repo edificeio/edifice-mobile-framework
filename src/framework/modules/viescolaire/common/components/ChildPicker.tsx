@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { getFlattenedChildren } from '~/framework/modules/auth/model';
+import { UserChildrenFlattened, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadStoredChildAction, selectChildAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
@@ -45,8 +45,9 @@ interface IChildPickerDispatchProps {
 
 type IChildPickerProps = {
   selectedChildId: string;
-  userChildren: { label: string; value: string; icon: () => React.JSX.Element }[];
   children?: React.ReactNode;
+  redirectedChildName?: string;
+  userChildren?: UserChildrenFlattened;
   userId?: string;
 } & IChildPickerDispatchProps;
 
@@ -55,7 +56,14 @@ const ChildPicker = (props: IChildPickerProps) => {
   const [value, setValue] = React.useState(props.selectedChildId);
 
   React.useEffect(() => {
-    props.tryLoadStoredChild();
+    const { redirectedChildName, userChildren, userId } = props;
+
+    if (redirectedChildName && userChildren) {
+      const childId = userChildren.find(c => c.displayName === redirectedChildName)?.id;
+      if (childId) props.handleSelectChild(childId, userId);
+    } else {
+      props.tryLoadStoredChild();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -75,7 +83,13 @@ const ChildPicker = (props: IChildPickerProps) => {
       <DropDownPicker
         open={isOpen}
         value={value}
-        items={props.userChildren}
+        items={
+          props.userChildren?.map(child => ({
+            label: `${child.firstName} ${child.lastName}`,
+            value: child.id,
+            icon: () => <SingleAvatar userId={child.id} size={24} />,
+          })) ?? []
+        }
         setOpen={setOpen}
         setValue={setValue}
         style={styles.dropdown}
@@ -95,14 +109,7 @@ export default connect(
 
     return {
       selectedChildId: dashboardState.selectedChildId,
-      userChildren:
-        getFlattenedChildren(session?.user.children)
-          ?.filter(child => child.classesNames.length > 0)
-          .map(child => ({
-            label: `${child.firstName} ${child.lastName}`,
-            value: child.id,
-            icon: () => <SingleAvatar userId={child.id} size={24} />,
-          })) ?? [],
+      userChildren: getFlattenedChildren(session?.user.children)?.filter(c => c.classesNames.length > 0),
       userId: session?.user.id,
     };
   },
