@@ -22,7 +22,7 @@ export default StyleSheet.create({
     borderRadius: UI_SIZES.radius.small,
   },
   thumbnailItemSelected: {
-    borderWidth: 2,
+    borderWidth: 4,
     borderColor: theme.palette.primary.regular,
   },
   thumbnailNoIconDisabled: {

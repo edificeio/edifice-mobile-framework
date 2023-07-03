@@ -6,4 +6,7 @@ export default StyleSheet.create({
   date: {
     color: theme.palette.grey.graphite,
   },
+  text: {
+    color: theme.palette.grey.graphite,
+  },
 });

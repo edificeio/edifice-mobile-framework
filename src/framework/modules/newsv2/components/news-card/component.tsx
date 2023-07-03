@@ -32,7 +32,11 @@ export default function NewsCard(props: NewsCardProps) {
         ) : null}
         <CaptionItalicText style={styles.date}>{displayDate(news.created)}</CaptionItalicText>
         <BodyText numberOfLines={2}>{news.title}</BodyText>
-        <SmallText numberOfLines={2}>{newsText}</SmallText>
+        {newsText ? (
+          <SmallText numberOfLines={2} style={styles.text}>
+            {newsText}
+          </SmallText>
+        ) : null}
       </TouchableResourceCard>
     </ArticleContainer>
   );

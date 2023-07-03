@@ -61,10 +61,21 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
   const threadsInfosReduce = useMemo(() => convertArrayToObject(threads, 'id'), [threads]);
   const wf = useMemo(() => getNewsRights(session!), [session]);
   const canCreateNewsForSelectedThread: boolean = React.useMemo(
-    () => (idThreadSelected ? !isEmpty(threadsInfosReduce[idThreadSelected].sharedRights) : false),
-    [idThreadSelected, threadsInfosReduce],
+    () =>
+      idThreadSelected
+        ? !isEmpty(threadsInfosReduce[idThreadSelected].sharedRights) ||
+          threadsInfosReduce[idThreadSelected].ownerId === session?.user.id
+        : false,
+    [idThreadSelected, threadsInfosReduce, session],
   );
-  const canCreateNewsForOneThread: boolean = React.useMemo(() => threads?.some(thread => !isEmpty(thread.sharedRights)), [threads]);
+  const canCreateNewsForOneThread: boolean = React.useMemo(
+    () => threads?.some(thread => !isEmpty(thread.sharedRights) || thread.owner.id === session?.user.id),
+    [threads, session],
+  );
+
+  const isFocused = useIsFocused();
+
+  const isFocused = useIsFocused();
 
   const isFocused = useIsFocused();
 
@@ -146,7 +157,8 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     // empty screen with create threads button when no threads, news && can create threads
     if (isEmpty(threads) && isEmpty(news) && wf.threads.create) return <NoNewsScreen createThreads />;
     // empty screen with create news button when only one thread && no news && can create news on this thread
-    if (threads.length === 1 && isEmpty(news) && !isEmpty(threads[0].sharedRights)) return <NoNewsScreen createNews />;
+    if (threads.length === 1 && isEmpty(news) && (!isEmpty(threads[0].sharedRights) || threads[0].owner.id === session?.user.id))
+      return <NoNewsScreen createNews />;
     // empty screen with no button when only one thread && no news or no threads && no news
     if ((threads.length === 1 && isEmpty(news)) || (isEmpty(threads) && isEmpty(news))) return <NoNewsScreen />;
 
