@@ -143,7 +143,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
         action: () => navigation.navigate(homeworkRouteNames.homeworkCreate, { diary: '' }),
         icon: {
           ios: 'plus',
-          android: '',
+          android: 'ic_plus',
         },
       },
     ];
