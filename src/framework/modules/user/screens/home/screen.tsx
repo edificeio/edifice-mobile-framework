@@ -216,7 +216,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-configuration')}</HeadingSText>
           <ButtonLineGroup>
             <LineButton
-              title="directory-notificationsTitle"
+              title="user-pushnotifssettings-title"
               onPress={() => {
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
@@ -244,21 +244,21 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               />
             ) : null}
             <LineButton
-              title="directory-structuresTitle"
+              title="user-structures-title"
               onPress={() => {
                 navigation.navigate(userRouteNames.structures, {});
               }}
             />
             {isStudent ? (
               <LineButton
-                title="directory-relativesTitle"
+                title="user-relatives-title"
                 onPress={() => {
                   navigation.navigate(userRouteNames.family, { mode: 'relatives' });
                 }}
               />
             ) : isRelative ? (
               <LineButton
-                title="directory-childrenTitle"
+                title="user-children-title"
                 onPress={() => {
                   navigation.navigate(userRouteNames.family, { mode: 'children' });
                 }}
@@ -271,14 +271,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           <ButtonLineGroup>
             {showWhoAreWe ? (
               <LineButton
-                title="directory-whoAreWeTitle"
+                title="user-whoarewe-title"
                 onPress={() => {
                   navigation.navigate(userRouteNames.whoAreWe, {});
                 }}
               />
             ) : null}
             <LineButton
-              title="directory-legalNoticeTitle"
+              title="user-legalnotice-title"
               onPress={() => {
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}
@@ -308,7 +308,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
         style: 'default',
       },
       {
-        text: I18n.get('directory-disconnectButton'),
+        text: I18n.get('user-page-disconnect'),
         style: 'destructive',
         onPress: () => handleLogout(),
       },
@@ -320,7 +320,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
   return React.useMemo(() => {
     return (
       <TouchableOpacity onPress={doLogout}>
-        <SmallBoldText style={styles.logoutButton}>{I18n.get('directory-disconnectButton')}</SmallBoldText>
+        <SmallBoldText style={styles.logoutButton}>{I18n.get('user-page-disconnect')}</SmallBoldText>
       </TouchableOpacity>
     );
   }, [doLogout]);

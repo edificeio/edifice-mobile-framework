@@ -1,0 +1,16 @@
+import theme from '~/app/theme';
+import { {{moduleName | toCamelCase | capitalize}}State } from '~/framework/modules/{{moduleName}}/reducer';
+import { NavigableModuleConfig } from '~/framework/util/moduleTool';
+
+export default new NavigableModuleConfig<'{{moduleName | toCamelCase}}', {{moduleName | toCamelCase | capitalize}}State>({
+  name: '{{moduleName | toCamelCase}}',
+  entcoreScope: [
+    /* @scaffolder add there entcore scope list that be required for your module */
+  ],
+  matchEntcoreApp: entcoreApp => true, // @scaffolder Replace this with a function that returns boolean regarding of the given entcoreApp
+
+  displayI18n: '{{moduleName | toCamelCase}}.tabName',
+  displayAs: 'myAppsModule',
+  displayOrder: 0,
+  displayPicture: { type: 'NamedSvg', name: 'ui-tool', fill: theme.palette.complementary.orange.regular },
+});

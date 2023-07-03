@@ -91,7 +91,7 @@ export namespace I18n {
   // Note: the "returnDetails" option is set to false, as we always want to return a string (not a details object)
   export function get(key: string, options?: Parameters<typeof i18n.t>[1]) {
     if (showKeys) return key;
-    return i18n.t(key, { ...options, returnDetails: false });
+    return i18n.t(key, { ...options, returnDetails: false }) as string;
   }
 
   // Get wordings array based on given key
