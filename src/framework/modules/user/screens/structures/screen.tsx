@@ -22,7 +22,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('directory-structuresTitle'),
+    title: I18n.get('user-structures-title'),
   }),
 });
 
@@ -58,7 +58,7 @@ function UserStructuresScreen(props: UserStructuresScreenPrivateProps) {
             {classe}
           </SmallText>
         )}
-        ListHeaderComponent={<SmallText style={styles.listHeader}>{I18n.get('user-structures-title')}</SmallText>}
+        ListHeaderComponent={<SmallText style={styles.listHeader}>{I18n.get('user-structures-headertitle')}</SmallText>}
         stickySectionHeadersEnabled={false}
         alwaysBounceVertical={false}
         overScrollMode="never"

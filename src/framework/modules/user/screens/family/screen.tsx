@@ -23,7 +23,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.mode === 'children' ? I18n.get('directory-childrenTitle') : I18n.get('directory-relativesTitle'),
+    title: route.params.mode === 'children' ? I18n.get('user-children-title') : I18n.get('user-relatives-title'),
   }),
 });
 

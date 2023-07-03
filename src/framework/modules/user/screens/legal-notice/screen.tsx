@@ -26,7 +26,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('directory-legalNoticeTitle'),
+    title: I18n.get('user-legalnotice-title'),
   }),
 });
 

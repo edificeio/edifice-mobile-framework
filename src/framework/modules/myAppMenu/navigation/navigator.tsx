@@ -19,7 +19,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) => {
         name={myAppsRouteNames.Home}
         component={MyAppsContainer}
         options={{
-          headerTitle: navBarTitle(I18n.get('MyApplications')),
+          headerTitle: navBarTitle(I18n.get('myapp-appname')),
         }}
         initialParams={undefined}
       />
