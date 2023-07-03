@@ -119,30 +119,9 @@ const mailAdapter = (data: IBackendMail, platformUrl: string): IMail => {
     attachments: data.attachments.map(attachment => attachmentAdapter(attachment, platformUrl, data.id)),
     body: data.body,
     from: data.from,
+    key: data.id,
   } as IMail;
 };
-
-/*const mailBackendAdapter = (data: IMail): IBackendMail => {
-  return {
-    id: data.id,
-    date: data.date.unix(),
-    subject: data.subject,
-    parent_id: data.parentId,
-    thread_id: data.threadId,
-    state: data.state,
-    unread: data.unread,
-    response: data.response,
-    hasAttachment: data.hasAttachment,
-    systemFolder: data.systemFolder,
-    to: data.to,
-    cc: data.cc,
-    bcc: data.bcc,
-    displayNames: data.displayNames,
-    attachments: data.attachments,
-    body: data.body,
-    from: data.from,
-  } as IBackendMail;
-};*/
 
 const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>, platformUrl: string): Omit<IMail, 'body'> => {
   return {
@@ -162,6 +141,7 @@ const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>, platformUrl: stri
     displayNames: data.displayNames,
     attachments: data.attachments.map(attachment => attachmentAdapter(attachment, platformUrl, data.id)),
     from: data.from,
+    key: data.id,
   } as IMail;
 };
 

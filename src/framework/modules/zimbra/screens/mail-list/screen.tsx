@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unstable-nested-components */
 import { DrawerNavigationOptions, DrawerScreenProps } from '@react-navigation/drawer';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { UNSTABLE_usePreventRemove, useScrollToTop } from '@react-navigation/native';
+import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, RefreshControl, ScrollView, View } from 'react-native';
+import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -15,12 +16,12 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
+import SwipeableList from '~/framework/components/swipeableList';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -67,6 +68,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   const [isSearchActive, setSearchActive] = React.useState<boolean>(false);
   const queryRefreshTimeout = React.useRef<NodeJS.Timeout>();
   const [selectedMails, setSelectedMails] = React.useState<string[]>([]);
+  const listRef = React.useRef<SwipeListView<any>>(null);
   const moveModalRef = React.useRef<ModalBoxHandle>(null);
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
@@ -369,19 +371,11 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     );
   };
 
-  const listRef = React.useRef<FlatList>(null);
-  useScrollToTop(
-    React.useRef({
-      scrollToTop: () => {
-        listRef.current?.scrollToOffset({ offset: 0 });
-      },
-    }),
-  );
-
   const renderMailList = () => {
+    const { folderPath } = props.route.params;
     return (
       <>
-        <FlatList
+        <SwipeableList
           ref={listRef}
           data={mails}
           extraData={mails}
@@ -401,6 +395,77 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
           }
           ListEmptyComponent={renderEmpty()}
           contentContainerStyle={styles.listContentContainer}
+          swipeActionWidth={140}
+          itemSwipeActionProps={({ item }) => ({
+            left: folderPath.startsWith('/Inbox')
+              ? [
+                  {
+                    action: async row => {
+                      try {
+                        const { session } = props;
+
+                        row[item.key]?.closeRow();
+                        if (!session) throw new Error();
+                        await zimbraService.mails.toggleUnread(session, [item.id], !item.unread);
+                        refresh();
+                      } catch {
+                        Toast.showError(I18n.get('common-error-text'));
+                      }
+                    },
+                    actionColor: theme.palette.status.info.regular,
+                    actionText: I18n.get(item.unread ? 'zimbra-maillist-markread' : 'zimbra-maillist-markunread'),
+                    actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
+                  },
+                ]
+              : [],
+            right: [
+              {
+                action: async row => {
+                  if (folderPath === '/Trash') {
+                    Alert.alert(I18n.get('zimbra-maillist-deletealert-title'), I18n.get('zimbra-maillist-deletealert-message'), [
+                      {
+                        text: I18n.get('common-cancel'),
+                        onPress: () => row[item.key]?.closeRow(),
+                        style: 'default',
+                      },
+                      {
+                        text: I18n.get('common-delete'),
+                        onPress: async () => {
+                          try {
+                            const { session } = props;
+
+                            row[item.key]?.closeRow();
+                            if (!session) throw new Error();
+                            await zimbraService.mails.delete(session, [item.id]);
+                            refresh();
+                            Toast.showSuccess(I18n.get('zimbra-maillist-mail-deleted'));
+                          } catch {
+                            Toast.showError(I18n.get('common-error-text'));
+                          }
+                        },
+                        style: 'destructive',
+                      },
+                    ]);
+                  } else {
+                    try {
+                      const { session } = props;
+
+                      row[item.key]?.closeRow();
+                      if (!session) throw new Error();
+                      await zimbraService.mails.trash(session, [item.id]);
+                      refresh();
+                      Toast.showSuccess(I18n.get('zimbra-maillist-mail-trashed'));
+                    } catch {
+                      Toast.showError(I18n.get('common-error-text'));
+                    }
+                  }
+                },
+                actionColor: theme.palette.status.failure.regular,
+                actionText: I18n.get('zimbra-maillist-delete'),
+                actionIcon: 'ui-trash',
+              },
+            ],
+          })}
         />
         <MoveMailsModal
           ref={moveModalRef}
@@ -436,7 +501,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     setSelectedMails([]);
   });
 
-  return <PageView>{renderPage()}</PageView>;
+  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
 };
 
 export default connect(

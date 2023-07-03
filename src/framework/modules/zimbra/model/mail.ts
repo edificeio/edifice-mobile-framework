@@ -20,4 +20,5 @@ export interface IMail {
   attachments: IDistantFileWithId[];
   body: string;
   from: string;
+  key: string;
 }
