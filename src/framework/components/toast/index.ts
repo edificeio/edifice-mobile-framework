@@ -29,8 +29,12 @@ function showToast(type: string, text: string, options: ToastOptions = {}) {
   showToastGeneric(type, text, { ...options, visibilityTime: options.duration ?? DEFAULTS.visibilityTime, autoHide: true });
 }
 
+function showToastPermanent(type: string, text: string, options: ToastOptions = {}) {
+  showToastGeneric(type, text, { ...options, autoHide: false });
+}
+
 export const showError = (text: string = I18n.get('common-error-text'), options?: ToastOptions) => {
-  showToast('error', text, options);
+  showToastPermanent('error', text, options);
   Feedback.errorDisplayed();
 };
 
@@ -45,15 +49,6 @@ export const showSuccess = (text: string, options?: ToastOptions) => {
 export const showWarning = (text: string, options?: ToastOptions) => {
   showToast('warning', text, options);
   Feedback.warningDisplayed();
-};
-
-function showToastPermanent(type: string, text: string, options: ToastOptions = {}) {
-  showToastGeneric(type, text, { ...options, autoHide: false });
-}
-
-export const showErrorPermanent = (text: string = I18n.get('common-error-text'), options?: ToastOptions) => {
-  showToastPermanent('error', text, options);
-  Feedback.errorDisplayed();
 };
 
 export const showInfoPermanent = (text: string, options?: ToastOptions) => {
@@ -74,7 +69,6 @@ export default {
   showInfo,
   showSuccess,
   showWarning,
-  showErrorPermanent,
   showInfoPermanent,
   showSuccessPermanent,
   showWarningPermanent,
