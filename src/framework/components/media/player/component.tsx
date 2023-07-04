@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { BackHandler, Platform, StatusBar, TouchableOpacity, View } from 'react-native';
+import { BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
@@ -12,7 +12,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
@@ -114,6 +113,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const renderError = () => {
+    navigation.setOptions(computeNavBar({ navigation, route }));
     const i18nKeys = ERRORS_I18N[error ?? 'default'] ?? ERRORS_I18N.default;
     return (
       <EmptyScreen
@@ -171,30 +171,41 @@ function MediaPlayer(props: MediaPlayerProps) {
           />
         </>
       );
-    else
+    else {
+      // eslint-disable-next-line react/no-unstable-nested-components
+      navigation.setOptions({ headerLeft: () => <View /> });
       return (
-        <>
-          <VideoPlayer
-            alwaysShowControls={isAudio}
-            controlTimeoutDelay={videoPlayerControlTimeoutDelay}
-            disableFullscreen
-            disableVolume
-            disableBack
-            ignoreSilentSwitch="ignore"
-            onBack={handleBack}
-            onEnd={handleVideoPlayerEnd}
-            onError={onError}
-            onLoad={onLoad}
-            rewindTime={10}
-            showDuration
-            showOnStart
-            showOnEnd
-            source={realSource}
-            videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
-          />
-        </>
+        <VideoPlayer
+          alwaysShowControls={isAudio}
+          controlTimeoutDelay={videoPlayerControlTimeoutDelay}
+          disableFullscreen
+          disableVolume
+          ignoreSilentSwitch="ignore"
+          onBack={handleBack}
+          onEnd={handleVideoPlayerEnd}
+          onError={onError}
+          onLoad={onLoad}
+          rewindTime={10}
+          showDuration
+          showOnStart
+          showOnEnd
+          source={realSource}
+          videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+        />
       );
-  }, [type, isPortrait, handleBack, realSource, isAudio, videoPlayerControlTimeoutDelay, handleVideoPlayerEnd, onError, onLoad]);
+    }
+  }, [
+    type,
+    isPortrait,
+    realSource,
+    navigation,
+    isAudio,
+    videoPlayerControlTimeoutDelay,
+    handleBack,
+    handleVideoPlayerEnd,
+    onError,
+    onLoad,
+  ]);
 
   // Manage Android back button
   React.useEffect(() => {
