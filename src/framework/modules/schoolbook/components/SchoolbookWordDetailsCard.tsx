@@ -135,7 +135,7 @@ const SchoolbookWordDetailsCard = (
 
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-  UNSTABLE_usePreventRemove(!isWordAcknowledged, ({ data }) => {
+  UNSTABLE_usePreventRemove(isParent && !isWordAcknowledgedForParent, ({ data }) => {
     return Alert.alert(
       I18n.get('schoolbook-worddetails-alertAcknowledge-title'),
       I18n.get('schoolbook-worddetails-alertAcknowledge-text'),
