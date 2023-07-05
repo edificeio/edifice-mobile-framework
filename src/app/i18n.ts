@@ -6,7 +6,7 @@
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { unflatten } from 'flat';
-import i18n from 'i18next';
+import i18n, { TOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
@@ -23,16 +23,12 @@ import Phrase from 'react-native-phrase-sdk';
 const phraseSecrets = require('ROOT/phrase.json');
 
 export namespace I18n {
-  // Local translations
-  const builtInTranslations = unflatten({
-    fr: require('ASSETS/i18n/fr.json'),
-    en: require('ASSETS/i18n/en.json'),
-    es: require('ASSETS/i18n/es.json'),
-  }) as { [locale in SupportedLocales]: object };
+  // Supported locales
+  const supportedLanguages = ['fr', 'en', 'es'] as const;
+  export type SupportedLocales = (typeof supportedLanguages)[number];
 
   // Transform local translations (in a given language) by applying the override keys
-  const getOverridenTranslations = (language: SupportedLocales) => {
-    const translations = builtInTranslations[language];
+  const getOverridenTranslations = (translations: object) => {
     const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
     const overrideKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
     const overridenTranslations = translations;
@@ -42,18 +38,11 @@ export namespace I18n {
     return overridenTranslations;
   };
 
-  // New local translations with overriden wordings
-  const overridenTranslations = {
-    fr: getOverridenTranslations('fr'),
-    en: getOverridenTranslations('en'),
-    es: getOverridenTranslations('es'),
-  };
-
   // Final translations
   const localResources = {
-    fr: { translation: overridenTranslations.fr },
-    en: { translation: overridenTranslations.en },
-    es: { translation: overridenTranslations.es },
+    fr: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/fr.json'))) },
+    en: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/en.json'))) },
+    es: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/es.json'))) },
   };
 
   // App language management
@@ -75,6 +64,7 @@ export namespace I18n {
     phrase
       .requestTranslation(language)
       .then(remoteResources => {
+        // Todo Call getOverridenTranslations
         callback(null, remoteResources);
       })
       .catch(error => {
@@ -84,18 +74,15 @@ export namespace I18n {
 
   const backendFallback = resourcesToBackend(localResources);
 
-  // Supported locales
-  export type SupportedLocales = 'fr' | 'en' | 'es';
-
   // Get wording based on key (in the correct language)
   // Note: the "returnDetails" option is set to false, as we always want to return a string (not a details object)
-  export function get(key: string, options?: Parameters<typeof i18n.t>[1]) {
+  export function get(key: string, options?: TOptions) {
     if (showKeys) return key;
     return i18n.t(key, { ...options, returnDetails: false }) as string;
   }
 
   // Get wordings array based on given key
-  export function getArray(key: string, options?: Parameters<typeof i18n.t>[1]) {
+  export function getArray(key: string, options?: TOptions) {
     const values = i18n.t(key, { ...options, returnObjects: true });
     if (typeof values === 'string') return [];
     if (!showKeys) return values;
@@ -108,7 +95,7 @@ export namespace I18n {
   }
 
   export function updateLanguage() {
-    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(Object.keys(overridenTranslations)) as {
+    const bestAvailableLanguage = RNLocalize.findBestLanguageTag(supportedLanguages) as {
       languageTag: string;
       isRTL: boolean;
     };

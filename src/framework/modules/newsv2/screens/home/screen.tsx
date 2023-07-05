@@ -57,14 +57,22 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
   const [page, setPage] = useState<number>(0);
+  const [isFiltering, setIsFiltering] = useState<boolean>(false);
 
   const threadsInfosReduce = useMemo(() => convertArrayToObject(threads, 'id'), [threads]);
   const wf = useMemo(() => getNewsRights(session!), [session]);
   const canCreateNewsForSelectedThread: boolean = React.useMemo(
-    () => (idThreadSelected ? !isEmpty(threadsInfosReduce[idThreadSelected].sharedRights) : false),
-    [idThreadSelected, threadsInfosReduce],
+    () =>
+      idThreadSelected
+        ? !isEmpty(threadsInfosReduce[idThreadSelected].sharedRights) ||
+          threadsInfosReduce[idThreadSelected].ownerId === session?.user.id
+        : false,
+    [idThreadSelected, threadsInfosReduce, session],
   );
-  const canCreateNewsForOneThread: boolean = React.useMemo(() => threads?.some(thread => !isEmpty(thread.sharedRights)), [threads]);
+  const canCreateNewsForOneThread: boolean = React.useMemo(
+    () => threads?.some(thread => !isEmpty(thread.sharedRights) || thread.owner.id === session?.user.id),
+    [threads, session],
+  );
 
   const isFocused = useIsFocused();
 
@@ -81,7 +89,9 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
 
   const onFilter = useCallback(
     async (idThread: number | undefined) => {
+      if (isFiltering) return;
       try {
+        setIsFiltering(true);
         setPage(0);
         setIdThreadSelected(idThread);
 
@@ -90,9 +100,11 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
       } catch {
         setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
         throw new Error();
+      } finally {
+        setIsFiltering(false);
       }
     },
-    [handleGetNewsItems],
+    [handleGetNewsItems, isFiltering],
   );
 
   const init = useCallback(async () => {
@@ -146,7 +158,8 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     // empty screen with create threads button when no threads, news && can create threads
     if (isEmpty(threads) && isEmpty(news) && wf.threads.create) return <NoNewsScreen createThreads />;
     // empty screen with create news button when only one thread && no news && can create news on this thread
-    if (threads.length === 1 && isEmpty(news) && !isEmpty(threads[0].sharedRights)) return <NoNewsScreen createNews />;
+    if (threads.length === 1 && isEmpty(news) && (!isEmpty(threads[0].sharedRights) || threads[0].owner.id === session?.user.id))
+      return <NoNewsScreen createNews />;
     // empty screen with no button when only one thread && no news or no threads && no news
     if ((threads.length === 1 && isEmpty(news)) || (isEmpty(threads) && isEmpty(news))) return <NoNewsScreen />;
 
@@ -159,7 +172,11 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
           return <NewsCard news={item} thread={newsThread} onPress={() => onOpenNewsItem(item, newsThread)} />;
         }}
         keyExtractor={item => item.id.toString()}
-        ListHeaderComponent={threads.length > 1 ? <ThreadsSelector threads={threads} onSelect={id => onFilter(id)} /> : undefined}
+        ListHeaderComponent={
+          threads.length > 1 ? (
+            <ThreadsSelector threads={threads} isFiltering={isFiltering} onSelect={id => onFilter(id)} />
+          ) : undefined
+        }
         ListEmptyComponent={
           <NoNewsScreen createNews={idThreadSelected ? canCreateNewsForSelectedThread : canCreateNewsForOneThread} />
         }
@@ -181,7 +198,9 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     renderError,
     threads,
     news,
-    wf,
+    wf.threads.create,
+    session,
+    isFiltering,
     idThreadSelected,
     canCreateNewsForSelectedThread,
     canCreateNewsForOneThread,

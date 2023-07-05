@@ -17,13 +17,14 @@ import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framework/modules/zimbra/actions';
-import { FooterButton, HeaderMail, HeaderMailDetails, RenderPJs } from '~/framework/modules/zimbra/components/MailContentItems';
+import { FooterButton, RenderPJs } from '~/framework/modules/zimbra/components/MailContentItems';
+import { MailHeaders } from '~/framework/modules/zimbra/components/MailHeaders';
 import MoveMailsModal from '~/framework/modules/zimbra/components/modals/MoveMailsModal';
 import { DraftType } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -38,12 +39,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.subject,
+    title: '',
   }),
 });
 
 const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
-  const [areDetailsVisible, setDetailsVisible] = React.useState<boolean>(false);
   const moveModalRef = React.useRef<ModalBoxHandle>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -214,7 +214,6 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     if (loadingState !== AsyncPagedLoadingState.DONE || !mail) return;
     const actions = getMenuActions();
     navigation.setOptions({
-      headerTitle: navBarTitle(mail.subject),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <PopupMenu actions={actions}>
@@ -237,7 +236,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     const { folderPath } = props.route.params;
 
     return folderPath !== '/Trash' ? (
-      <View style={styles.containerFooter}>
+      <View style={styles.footerContainer}>
         <FooterButton icon="reply" text={I18n.get('zimbra-mail-reply')} onPress={() => openComposer(DraftType.REPLY)} />
         <FooterButton icon="reply_all" text={I18n.get('zimbra-mail-replyall')} onPress={() => openComposer(DraftType.REPLY_ALL)} />
         <FooterButton icon="forward" text={I18n.get('zimbra-mail-forward')} onPress={() => openComposer(DraftType.FORWARD)} />
@@ -248,26 +247,24 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
   const renderMail = () => {
     const { mail } = props;
 
-    return mail ? (
-      <View style={styles.fullContainer}>
-        <HeaderMail mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} />
-        {areDetailsVisible ? <HeaderMailDetails mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} /> : null}
-        {mail.hasAttachment ? <RenderPJs attachments={mail.attachments} /> : null}
-        <View style={styles.shadowContainer}>
-          <View style={styles.marginView} />
-          <View style={styles.scrollContainer}>
-            <ScrollView style={styles.scrollAlign} contentContainerStyle={styles.scrollContent}>
-              {mail.body ? (
-                <HtmlContentView
-                  html={mail.body}
-                  opts={{ selectable: true }}
-                  onHtmlError={() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED)}
-                />
-              ) : null}
-            </ScrollView>
+    if (!mail) return renderError();
+    return (
+      <>
+        <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.contentContainer}>
+          <View>
+            <MailHeaders mail={mail} />
+            {mail.hasAttachment ? <RenderPJs attachments={mail.attachments} /> : null}
+            {mail.body ? (
+              <HtmlContentView
+                html={mail.body}
+                opts={{ selectable: true }}
+                onHtmlError={() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED)}
+                style={styles.bodyContainer}
+              />
+            ) : null}
           </View>
-        </View>
-        {renderFooter()}
+          {renderFooter()}
+        </ScrollView>
         <MoveMailsModal
           ref={moveModalRef}
           folderPath={props.route.params.folderPath}
@@ -276,9 +273,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
           session={props.session}
           successCallback={moveMailCallback}
         />
-      </View>
-    ) : (
-      renderError()
+      </>
     );
   };
 
