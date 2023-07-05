@@ -19,6 +19,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 import { tryAction } from '~/framework/util/redux/actions';
 
+import { FolderButton } from './FolderButton';
 import CreateFolderModal from './modals/CreateFolderModal';
 
 const styles = StyleSheet.create({
@@ -91,12 +92,12 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const changeFolder = (name: string, path: string) => {
-    if (path !== selectedFolder) {
+  const changeFolder = (folder: IFolder) => {
+    if (folder.path !== selectedFolder) {
       const { navigation } = props;
 
-      setSelectedFolder(path);
-      navigation.setParams({ folderName: name, folderPath: path });
+      setSelectedFolder(folder.path);
+      navigation.setParams({ folderName: folder.name, folderPath: folder.path });
       navigation.closeDrawer();
     }
   };
@@ -153,7 +154,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
             renderItem={({ item }) => (
               <DrawerItem
                 label={getFolderName(item.name)}
-                onPress={() => changeFolder(item.name, item.path)}
+                onPress={() => changeFolder(item as IFolder)}
                 focused={item.path === selectedFolder}
                 activeTintColor={theme.palette.primary.regular.toString()}
                 activeBackgroundColor={theme.palette.primary.pale.toString()}
@@ -170,16 +171,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
           <FlatList
             data={props.folders}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-              <DrawerItem
-                label={item.name}
-                onPress={() => changeFolder(item.name, item.path)}
-                focused={item.path === selectedFolder}
-                activeTintColor={theme.palette.primary.regular.toString()}
-                activeBackgroundColor={theme.palette.primary.pale.toString()}
-                inactiveTintColor={theme.ui.text.regular.toString()}
-              />
-            )}
+            renderItem={({ item }) => <FolderButton folder={item} selectedFolderPath={selectedFolder} onPress={changeFolder} />}
           />
         </View>
         {renderStorage()}
