@@ -103,7 +103,7 @@ export const factoryRootFolder = (filter: Filter): IFile => {
     key: filter,
     date: 0,
     isFolder: true,
-    name: I18n.get(filter),
+    name: I18n.get(`workspace-filelist-${filter}`),
     owner: '',
     ownerName: '',
     parentId: 'root',
