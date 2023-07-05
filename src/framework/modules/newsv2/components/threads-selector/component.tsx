@@ -11,6 +11,7 @@ export default function ThreadsSelector(props: ThreadsSelectorProps) {
   const [selectedId, setSelectedId] = React.useState(null);
 
   const onSelect = id => {
+    if (props.isFiltering) return;
     if (id === selectedId) {
       props.onSelect(null);
       setSelectedId(null);

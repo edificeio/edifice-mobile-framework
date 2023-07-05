@@ -57,6 +57,7 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
   const [showPlaceholder, setShowPlaceholder] = useState<boolean>(true);
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
   const [page, setPage] = useState<number>(0);
+  const [isFiltering, setIsFiltering] = useState<boolean>(false);
 
   const threadsInfosReduce = useMemo(() => convertArrayToObject(threads, 'id'), [threads]);
   const wf = useMemo(() => getNewsRights(session!), [session]);
@@ -88,7 +89,9 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
 
   const onFilter = useCallback(
     async (idThread: number | undefined) => {
+      if (isFiltering) return;
       try {
+        setIsFiltering(true);
         setPage(0);
         setIdThreadSelected(idThread);
 
@@ -97,9 +100,11 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
       } catch {
         setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
         throw new Error();
+      } finally {
+        setIsFiltering(false);
       }
     },
-    [handleGetNewsItems],
+    [handleGetNewsItems, isFiltering],
   );
 
   const init = useCallback(async () => {
@@ -167,7 +172,11 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
           return <NewsCard news={item} thread={newsThread} onPress={() => onOpenNewsItem(item, newsThread)} />;
         }}
         keyExtractor={item => item.id.toString()}
-        ListHeaderComponent={threads.length > 1 ? <ThreadsSelector threads={threads} onSelect={id => onFilter(id)} /> : undefined}
+        ListHeaderComponent={
+          threads.length > 1 ? (
+            <ThreadsSelector threads={threads} isFiltering={isFiltering} onSelect={id => onFilter(id)} />
+          ) : undefined
+        }
         ListEmptyComponent={
           <NoNewsScreen createNews={idThreadSelected ? canCreateNewsForSelectedThread : canCreateNewsForOneThread} />
         }
@@ -189,7 +198,9 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     renderError,
     threads,
     news,
-    wf,
+    wf.threads.create,
+    session,
+    isFiltering,
     idThreadSelected,
     canCreateNewsForSelectedThread,
     canCreateNewsForOneThread,
