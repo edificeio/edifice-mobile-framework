@@ -400,9 +400,9 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                           <SmallText style={{ color: isMailUnread ? theme.ui.text.regular : theme.ui.text.light }}>
                             {I18n.get(prefix) + ' '}
                           </SmallText>
-                          <SmallText numberOfLines={1} style={styles.contacts}>
+                          <SmallText>
                             {data[0][1]}
-                            {data.length > 1 ? ', +' + (data.length - 1) : null}
+                            {data.length > 1 ? ', +' + (data.length - 1) + ' ' : ' '}
                           </SmallText>
                         </>
                       );
@@ -422,11 +422,11 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                                     {contacts[0][1]}
                                   </SmallText>
                                 ) : (
-                                  <>
+                                  <SmallText numberOfLines={1} style={styles.contacts}>
                                     {renderContacts('conversation-maillist-toprefix', mailContacts.to)}
                                     {renderContacts('conversation-mailcontentitems-ccprefix', mailContacts.cc)}
                                     {renderContacts('conversation-mailcontentitems-bccprefix', mailContacts.cci)}
-                                  </>
+                                  </SmallText>
                                 )}
 
                                 {/* Date */}
