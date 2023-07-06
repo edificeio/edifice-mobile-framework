@@ -32,7 +32,6 @@ export interface StructureNode {
   distributions: any[];
   externalId: string;
   feederName: string;
-  hasApp: boolean;
   id: string;
   joinKey: string[];
   levelsOfEducation: number[];
@@ -125,7 +124,6 @@ export enum RuntimeAuthErrorCode {
   USERPUBLICINFO_FAIL = 'userpublicinfo-fail',
   USERREQUIREMENTS_FAIL = 'userrequirements-fail',
   FIREBASE_ERROR = 'firebase_error',
-  NOT_PREMIUM = 'not_premium',
   PRE_DELETED = 'pre_deleted',
   PLATFORM_NOT_EXISTS = 'platform-not-exists',
   ACTIVATION_ERROR = 'activation-error',

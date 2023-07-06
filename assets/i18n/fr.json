@@ -70,7 +70,6 @@
   "auth-error-mustlogagain": "Merci de bien vouloir vous identifier à nouveau avec votre nouveau mot de passe.",
   "auth-error-networkerror": "Impossible de s'identifier, réessayez ou vérifiez votre connexion internet.",
   "auth-error-notinitilized": "Un problème est survenu. Veuillez réessayer. (Code 4)",
-  "auth-error-notpremium": "Vous ne pouvez pas vous connecter car votre établissement n'est pas abonné à l'application.",
   "auth-error-other": "Un problème est survenu. Veuillez réessayer. (Code 0)",
   "auth-error-parseerror": "Un problème est survenu. Veuillez réessayer. (Code 3)",
   "auth-error-platformunavailable": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",

@@ -106,7 +106,6 @@ export interface IUserInfoBackend {
   login?: string;
   type?: UserType;
   deletePending?: boolean;
-  hasApp?: boolean;
   forceChangePassword?: boolean;
   needRevalidateTerms?: boolean;
   apps?: IEntcoreApp[];
@@ -640,8 +639,6 @@ export async function fetchUserInfo(platform: Platform) {
 export function ensureUserValidity(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
     throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
-  } else if (!userinfo.hasApp) {
-    throw createAuthError(RuntimeAuthErrorCode.NOT_PREMIUM, '', 'Structure is not premium');
   }
   // else if (userinfo.forceChangePassword) {
   //   const error = createAuthError(RuntimeAuthErrorCode.MUST_CHANGE_PASSWORD, '', 'User must change his password');
