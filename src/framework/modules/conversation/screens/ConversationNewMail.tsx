@@ -39,6 +39,7 @@ import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helpe
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
@@ -270,7 +271,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     },
     getSendDraft: async () => {
       const { mail, tempAttachment } = this.state;
-      if (mail.to.length === 0) {
+      if (isEmpty(mail.to) && isEmpty(mail.cc) && isEmpty(mail.cci)) {
         Keyboard.dismiss();
         Toast.showError(I18n.get('conversation-newmail-missingreceiver'));
         return;

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { ColorValue, Platform, StyleSheet, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -12,7 +12,7 @@ import { CaptionText, NestedText, SmallBoldText, SmallText } from '~/framework/c
 import Toast from '~/framework/components/toast';
 import { getFileIcon } from '~/framework/modules/conversation/utils/fileIcon';
 import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
-import { getProfileColor, getUserColor } from '~/framework/modules/conversation/utils/userColor';
+import { getUserColor } from '~/framework/modules/conversation/utils/userColor';
 import { displayPastDate } from '~/framework/util/date';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 15,
-    marginTop: UI_SIZES.spacing.tiny,
     marginRight: UI_SIZES.spacing.tiny,
   },
   fileIcon: { flex: 0 },
@@ -81,13 +80,13 @@ const styles = StyleSheet.create({
   },
   sendersCollapsed: { marginTop: UI_SIZES.spacing.tiny, flex: 0 },
   sendersContainer: { flex: 1 },
-  userContainer: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'baseline' },
+  userContainer: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'center' },
   users: { flexDirection: 'row', flexWrap: 'wrap' },
-  usersContainer: { flexDirection: 'row' },
+  usersContainer: { flexDirection: 'row', alignItems: 'center' },
 });
 
 const User = ({ userId, userName }) => {
-  const [dotColor, setDotColor] = React.useState(getProfileColor('Guest'));
+  const [dotColor, setDotColor] = React.useState<undefined | ColorValue>();
   getUserColor(userId).then(setDotColor);
   return (
     <View style={styles.userContainer} key={userId}>
