@@ -203,21 +203,16 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   const updateQuery = (value: string) => setQuery(value);
 
-  const getSelectedMails = (): Omit<IMail, 'body'>[] => {
-    return mails.filter(mail => selectedMails.includes(mail.id));
-  };
-
   const getIsSelectedMailUnread = (): boolean => {
-    return getSelectedMails().some(mail => mail.unread === true);
+    return mails.some(mail => selectedMails.includes(mail.id) && mail.unread === true);
   };
 
-  const markSelectedMailsAsUnread = async () => {
+  const markMailsAsUnread = async (ids: string[], unread: boolean) => {
     try {
       const { session } = props;
 
       if (!session) throw new Error();
-      const isSelectedMailUnread = getIsSelectedMailUnread();
-      await zimbraService.mails.toggleUnread(session, selectedMails, !isSelectedMailUnread);
+      await zimbraService.mails.toggleUnread(session, ids, unread);
       setSelectedMails([]);
       refresh();
     } catch {
@@ -225,35 +220,35 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     }
   };
 
-  const trashSelectedMails = async () => {
+  const trashMails = async (ids: string[]) => {
     try {
       const { session } = props;
 
       if (!session) throw new Error();
-      await zimbraService.mails.trash(session, selectedMails);
+      await zimbraService.mails.trash(session, ids);
       setSelectedMails([]);
       refresh();
-      Toast.showSuccess(I18n.get(selectedMails.length > 1 ? 'zimbra-maillist-mails-trashed' : 'zimbra-maillist-mail-trashed'));
+      Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-trashed' : 'zimbra-maillist-mail-trashed'));
     } catch {
       Toast.showError(I18n.get('common-error-text'));
     }
   };
 
-  const deleteSelectedMails = async () => {
+  const deleteMails = async (ids: string[]) => {
     try {
       const { session } = props;
 
       if (!session) throw new Error();
-      await zimbraService.mails.delete(session, selectedMails);
+      await zimbraService.mails.delete(session, ids);
       setSelectedMails([]);
       refresh();
-      Toast.showSuccess(I18n.get(selectedMails.length > 1 ? 'zimbra-maillist-mails-deleted' : 'zimbra-maillist-mail-deleted'));
+      Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-deleted' : 'zimbra-maillist-mail-deleted'));
     } catch {
       Toast.showError(I18n.get('common-error-text'));
     }
   };
 
-  const alertPermanentDeletion = () => {
+  const alertPermanentDeletion = (ids: string[]) => {
     Alert.alert(I18n.get('zimbra-maillist-deletealert-title'), I18n.get('zimbra-maillist-deletealert-message'), [
       {
         text: I18n.get('common-cancel'),
@@ -261,7 +256,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       },
       {
         text: I18n.get('common-delete'),
-        onPress: deleteSelectedMails,
+        onPress: () => deleteMails(ids),
         style: 'destructive',
       },
     ]);
@@ -283,7 +278,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
           android: 'ic_move_to_inbox',
         },
       },
-      deleteAction({ action: trashSelectedMails }),
+      deleteAction({ action: () => trashMails(selectedMails) }),
     ];
   };
 
@@ -311,14 +306,17 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
                     <NavBarAction icon="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
                   </View>
                 ) : null}
-                <NavBarAction icon="ui-delete" onPress={folderPath === '/Trash' ? alertPermanentDeletion : trashSelectedMails} />
+                <NavBarAction
+                  icon="ui-delete"
+                  onPress={() => (folderPath === '/Trash' ? alertPermanentDeletion(selectedMails) : trashMails(selectedMails))}
+                />
               </>
             ) : (
               <>
                 <View style={styles.rightMargin}>
                   <NavBarAction
                     icon={getIsSelectedMailUnread() ? 'ui-mailRead' : 'ui-mailUnread'}
-                    onPress={markSelectedMailsAsUnread}
+                    onPress={() => markMailsAsUnread(selectedMails, !getIsSelectedMailUnread())}
                   />
                 </View>
                 <PopupMenu actions={getDropdownActions()}>
@@ -401,16 +399,8 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
               ? [
                   {
                     action: async row => {
-                      try {
-                        const { session } = props;
-
-                        row[item.key]?.closeRow();
-                        if (!session) throw new Error();
-                        await zimbraService.mails.toggleUnread(session, [item.id], !item.unread);
-                        refresh();
-                      } catch {
-                        Toast.showError(I18n.get('common-error-text'));
-                      }
+                      markMailsAsUnread([item.id], !item.unread);
+                      row[item.key]?.closeRow();
                     },
                     actionColor: theme.palette.status.info.regular,
                     actionText: I18n.get(item.unread ? 'zimbra-maillist-markread' : 'zimbra-maillist-markunread'),
@@ -422,43 +412,11 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
               {
                 action: async row => {
                   if (folderPath === '/Trash') {
-                    Alert.alert(I18n.get('zimbra-maillist-deletealert-title'), I18n.get('zimbra-maillist-deletealert-message'), [
-                      {
-                        text: I18n.get('common-cancel'),
-                        onPress: () => row[item.key]?.closeRow(),
-                        style: 'default',
-                      },
-                      {
-                        text: I18n.get('common-delete'),
-                        onPress: async () => {
-                          try {
-                            const { session } = props;
-
-                            row[item.key]?.closeRow();
-                            if (!session) throw new Error();
-                            await zimbraService.mails.delete(session, [item.id]);
-                            refresh();
-                            Toast.showSuccess(I18n.get('zimbra-maillist-mail-deleted'));
-                          } catch {
-                            Toast.showError(I18n.get('common-error-text'));
-                          }
-                        },
-                        style: 'destructive',
-                      },
-                    ]);
+                    alertPermanentDeletion([item.id]);
                   } else {
-                    try {
-                      const { session } = props;
-
-                      row[item.key]?.closeRow();
-                      if (!session) throw new Error();
-                      await zimbraService.mails.trash(session, [item.id]);
-                      refresh();
-                      Toast.showSuccess(I18n.get('zimbra-maillist-mail-trashed'));
-                    } catch {
-                      Toast.showError(I18n.get('common-error-text'));
-                    }
+                    trashMails([item.id]);
                   }
+                  row[item.key]?.closeRow();
                 },
                 actionColor: theme.palette.status.failure.regular,
                 actionText: I18n.get('zimbra-maillist-delete'),
