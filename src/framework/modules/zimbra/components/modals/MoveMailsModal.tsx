@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
 interface IMoveMailsModalProps {
   folderPath: string;
   folders: IFolder[];
+  mailFolders: string[];
   mailIds: string[];
   session?: ISession;
   successCallback: () => any;
@@ -52,14 +53,16 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
   };
 
   const getFolders = (): IFolder[] => {
-    const { folderPath } = props;
+    const { folderPath, mailFolders } = props;
     const systemFolders = folderPath !== '/Inbox' && folderPath !== '/Drafts' ? ['/Inbox', '/Trash', '/Junk'] : [];
 
+    if (mailFolders.includes('OUTBOX')) systemFolders.push('/Sent');
+    if (mailFolders.includes('DRAFT')) systemFolders.push('/Drafts');
     return props.folders
       .filter(f => systemFolders.includes(f.path))
       .map(f => ({ ...f, name: getFolderName(f.name), folders: [] } as IFolder))
       .concat(props.folders.find(f => f.path === '/Inbox')?.folders ?? [])
-      .filter(folder => folder.path !== folderPath);
+      .filter(f => f.path !== folderPath);
   };
 
   return (

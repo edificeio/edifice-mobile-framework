@@ -471,6 +471,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
           ref={moveModalRef}
           folderPath={props.route.params.folderPath}
           folders={props.rootFolders}
+          mailFolders={mails.filter(m => selectedMails.includes(m.id)).map(m => m.systemFolder)}
           mailIds={selectedMails}
           session={props.session}
           successCallback={moveMailsCallback}
