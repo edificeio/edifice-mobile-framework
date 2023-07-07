@@ -269,6 +269,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
           ref={moveModalRef}
           folderPath={props.route.params.folderPath}
           folders={props.rootFolders}
+          mailFolders={[mail.systemFolder]}
           mailIds={[mail.id]}
           session={props.session}
           successCallback={moveMailCallback}

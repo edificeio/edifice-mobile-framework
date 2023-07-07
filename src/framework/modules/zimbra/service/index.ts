@@ -86,7 +86,7 @@ const attachmentAdapter = (data: IBackendAttachment, platformUrl: string, mailId
     filename: data.filename,
     filetype: data.contentType,
     filesize: data.size,
-  } as IDistantFileWithId;
+  };
 };
 
 const folderAdapter = (data: IBackendFolder): IFolder => {
@@ -96,8 +96,8 @@ const folderAdapter = (data: IBackendFolder): IFolder => {
     path: data.path,
     unread: data.unread,
     count: data.count,
-    folders: data.folders.map(f => folderAdapter(f)),
-  } as IFolder;
+    folders: data.folders.map(folderAdapter),
+  };
 };
 
 const mailAdapter = (data: IBackendMail, platformUrl: string): IMail => {
@@ -120,7 +120,7 @@ const mailAdapter = (data: IBackendMail, platformUrl: string): IMail => {
     body: data.body,
     from: data.from,
     key: data.id,
-  } as IMail;
+  };
 };
 
 const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>, platformUrl: string): Omit<IMail, 'body'> => {
@@ -142,31 +142,29 @@ const mailFromListAdapter = (data: Omit<IBackendMail, 'body'>, platformUrl: stri
     attachments: data.attachments.map(attachment => attachmentAdapter(attachment, platformUrl, data.id)),
     from: data.from,
     key: data.id,
-  } as IMail;
+  };
 };
 
 const quotaAdapter = (data: IBackendQuota): IQuota => {
   return {
     storage: data.storage,
     quota: Number(data.quota),
-  } as IQuota;
+  };
 };
 
 const recipientAdapter = (data: IBackendRecipient): IRecipient => {
   return {
     id: data.id,
-    displayName: data.displayName ?? data.name,
+    displayName: data.displayName ?? data.name!,
     groupDisplayName: data.groupDisplayName ?? undefined,
     profile: data.profile ?? undefined,
     structureName: data.structureName ?? undefined,
-  } as IRecipient;
+  };
 };
 
 const recipientDirectoryAdapter = (data: IBackendRecipientDirectory, query: string): IRecipient[] => {
-  const groups = data.groups
-    .map(group => recipientAdapter(group))
-    .filter(group => group.displayName.toLowerCase().includes(query.toLowerCase()));
-  const users = data.users.map(user => recipientAdapter(user));
+  const groups = data.groups.map(recipientAdapter).filter(group => group.displayName.toLowerCase().includes(query.toLowerCase()));
+  const users = data.users.map(recipientAdapter);
   return groups.concat(users);
 };
 
@@ -179,7 +177,7 @@ const signatureAdapter = (data: IBackendSignature): ISignature => {
     },
     zimbraENTSignatureExists: data.zimbraENTSignatureExists,
     id: data.id,
-  } as ISignature;
+  };
 };
 
 export const zimbraService = {
@@ -255,7 +253,7 @@ export const zimbraService = {
       let api = `/zimbra/list?folder=${folder}&page=${page}&unread=false`;
       if (search) api += `&search=${search}`;
       const mails = (await fetchJSONWithCache(api)) as IBackendMailList;
-      return mails.map(mail => mailFromListAdapter(mail, session.platform.url)) as Omit<IMail, 'body'>[];
+      return mails.map(mail => mailFromListAdapter(mail, session.platform.url));
     },
     delete: async (session: ISession, ids: string[]) => {
       const api = '/zimbra/delete';
@@ -321,7 +319,7 @@ export const zimbraService = {
       const api = `/zimbra/message/${id}`;
       const mail = (await fetchJSONWithCache(api)) as IBackendMail;
       if (!('id' in mail)) throw new Error();
-      return mailAdapter(mail, session.platform.url) as IMail;
+      return mailAdapter(mail, session.platform.url);
     },
     send: async (session: ISession, mail: Partial<IMail>, draftId?: string, inReplyTo?: string) => {
       let api = '/zimbra/send';
@@ -339,7 +337,7 @@ export const zimbraService = {
     get: async (session: ISession) => {
       const api = '/zimbra/quota';
       const quota = (await fetchJSONWithCache(api)) as IBackendQuota;
-      return quotaAdapter(quota) as IQuota;
+      return quotaAdapter(quota);
     },
   },
   recipients: {
@@ -353,14 +351,14 @@ export const zimbraService = {
     get: async (session: ISession) => {
       const api = '/zimbra/root-folder';
       const folders = (await fetchJSONWithCache(api)) as IBackendFolderList;
-      return folders.map(folder => folderAdapter(folder)) as IFolder[];
+      return folders.map(folderAdapter);
     },
   },
   signature: {
     get: async (session: ISession) => {
       const api = '/zimbra/signature';
       const signature = (await fetchJSONWithCache(api)) as IBackendSignature;
-      return signatureAdapter(signature) as ISignature;
+      return signatureAdapter(signature);
     },
     update: async (session: ISession, signature: string, useSignature: boolean) => {
       const api = '/zimbra/signature';

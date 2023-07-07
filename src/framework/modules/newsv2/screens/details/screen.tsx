@@ -83,6 +83,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const [loadingState, setLoadingState] = useState<AsyncPagedLoadingState>(AsyncPagedLoadingState.PRISTINE);
   const [infoComment, setInfoComment] = useState<InfoCommentField>({ type: '', isPublication: false, changed: false, value: '' });
   const [indexEditingComment, setIndexEditingComment] = useState<number | undefined>(undefined);
+  const [listHeight, setListHeight] = useState<number>(0);
 
   const isThreadManager = useMemo(
     () => thread?.sharedRights.includes(NewsThreadItemRights.MANAGER) || session!.user.id === thread?.ownerId,
@@ -208,14 +209,17 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
       try {
         await handlePublishComment(newsItem?.id, comment);
         await getComments(newsItem);
+
         setTimeout(() => {
-          flatListRef.current?.scrollToEnd();
-        }, 50);
+          flatListRef.current?.scrollToOffset({
+            offset: listHeight,
+          });
+        }, 100);
       } catch {
         showAlertError();
       }
     },
-    [getComments, handlePublishComment, showAlertError],
+    [getComments, handlePublishComment, listHeight, showAlertError],
   );
 
   const doEditComment = useCallback(
@@ -300,6 +304,16 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
               commentFieldRefs[otherBlogPostComment.id]?.setIsEditingFalse();
             });
             const commentIndex = comments?.findIndex(c => c.id === comment.id);
+
+            if (Platform.OS !== 'ios') {
+              setTimeout(() => {
+                flatListRef.current?.scrollToIndex({
+                  index: commentIndex,
+                  viewPosition: 1,
+                });
+              }, 100);
+            }
+
             setIndexEditingComment(commentIndex);
           }}
           comment={comment.comment}
@@ -327,6 +341,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           ListHeaderComponent={renderNewsDetails}
           removeClippedSubviews={false}
           renderItem={({ item, index }) => renderComment(item)}
+          onContentSizeChange={(width, height) => setListHeight(height)}
           refreshControl={
             <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => onRefresh(news?.id)} />
           }
@@ -368,16 +383,19 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, []);
 
   useEffect(() => {
-    Keyboard.addListener(Platform.select({ ios: 'keyboardDidShow', android: 'keyboardDidShow' })!, event => {
-      setTimeout(() => {
-        if (indexEditingComment !== undefined && indexEditingComment > -1) {
-          flatListRef.current?.scrollToIndex({
-            index: indexEditingComment,
-            viewPosition: 1,
-          });
-        }
-      }, 50);
-    });
+    if (Platform.OS === 'ios') {
+      const keyboardSubscription = Keyboard.addListener('keyboardDidShow', event => {
+        setTimeout(() => {
+          if (indexEditingComment !== undefined && indexEditingComment > -1) {
+            flatListRef.current?.scrollToIndex({
+              index: indexEditingComment,
+              viewPosition: 1,
+            });
+          }
+        }, 50);
+      });
+      return () => keyboardSubscription.remove();
+    }
   }, [indexEditingComment]);
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {

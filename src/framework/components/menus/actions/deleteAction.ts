@@ -4,7 +4,7 @@ import { MenuActionProps } from './types';
 
 export default function deleteAction(props: MenuActionProps) {
   return {
-    title: I18n.get('delete'),
+    title: I18n.get('common-delete'),
     icon: {
       ios: 'trash',
       android: 'ic_delete_item',
