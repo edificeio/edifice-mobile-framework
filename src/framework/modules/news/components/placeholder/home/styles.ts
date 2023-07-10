@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { WIDTH_THUMBNAIL_THREAD_ITEM } from '~/framework/modules/newsv2/components/thread-item';
+import { WIDTH_THUMBNAIL_THREAD_ITEM } from '~/framework/modules/news/components/thread-item';
 
 export default StyleSheet.create({
   //GLOBAL

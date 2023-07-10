@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import HorizontalList from '~/framework/components/list/horizontal';
-import ThreadItem, { ThreadItemStatus } from '~/framework/modules/newsv2/components/thread-item';
-import { NewsThreadItem } from '~/framework/modules/newsv2/model';
+import ThreadItem, { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
+import { NewsThreadItem } from '~/framework/modules/news/model';
 
 import styles from './styles';
 import { ThreadsSelectorProps } from './types';

@@ -6,7 +6,7 @@ import CardFooter from '~/framework/components/card/footer';
 import CardTopContent from '~/framework/components/card/top-content';
 import { BodyText, CaptionItalicText, SmallText } from '~/framework/components/text';
 import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
-import ThumbnailThread from '~/framework/modules/newsv2/components/thumbnail-thread';
+import ThumbnailThread from '~/framework/modules/news/components/thumbnail-thread';
 import { displayDate } from '~/framework/util/date';
 import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { ArticleContainer } from '~/ui/ContainerContent';

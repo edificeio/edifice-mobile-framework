@@ -1,10 +1,10 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { NewsCommentItem, NewsItem, NewsItemDetails } from '~/framework/modules/newsv2/model';
-import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/newsv2/navigation';
-import { INewsNotification } from '~/framework/modules/newsv2/notif-handler';
-import { NewsThreadItemReduce } from '~/framework/modules/newsv2/screens/home/types';
+import { NewsCommentItem, NewsItem, NewsItemDetails } from '~/framework/modules/news/model';
+import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
+import { INewsNotification } from '~/framework/modules/news/notif-handler';
+import { NewsThreadItemReduce } from '~/framework/modules/news/screens/home/types';
 
 export interface NewsDetailsScreenDataProps {
   session?: ISession;

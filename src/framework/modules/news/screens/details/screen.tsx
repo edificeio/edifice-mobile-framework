@@ -34,13 +34,13 @@ import {
   getNewsItemAction,
   getNewsItemCommentsAction,
   publishCommentNewsItemAction,
-} from '~/framework/modules/newsv2/actions';
-import NewsPlaceholderDetails from '~/framework/modules/newsv2/components/placeholder/details';
-import ThumbnailThread from '~/framework/modules/newsv2/components/thumbnail-thread';
-import { NewsCommentItem, NewsItem, NewsItemDetails, NewsItemRights, NewsThreadItemRights } from '~/framework/modules/newsv2/model';
-import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/newsv2/navigation';
-import { NewsThreadItemReduce } from '~/framework/modules/newsv2/screens/home';
-import { newsUriCaptureFunction } from '~/framework/modules/newsv2/service';
+} from '~/framework/modules/news/actions';
+import NewsPlaceholderDetails from '~/framework/modules/news/components/placeholder/details';
+import ThumbnailThread from '~/framework/modules/news/components/thumbnail-thread';
+import { NewsCommentItem, NewsItem, NewsItemDetails, NewsItemRights, NewsThreadItemRights } from '~/framework/modules/news/model';
+import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
+import { NewsThreadItemReduce } from '~/framework/modules/news/screens/home';
+import { newsUriCaptureFunction } from '~/framework/modules/news/service';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';

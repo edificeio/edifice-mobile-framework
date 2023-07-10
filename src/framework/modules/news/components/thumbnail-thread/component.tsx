@@ -4,7 +4,7 @@ import { Grayscale } from 'react-native-color-matrix-image-filters';
 
 import theme from '~/app/theme';
 import { NamedSVG } from '~/framework/components/picture';
-import { ThreadItemStatus } from '~/framework/modules/newsv2/components/thread-item';
+import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
 import { Image } from '~/framework/util/media';
 
 import styles from './styles';

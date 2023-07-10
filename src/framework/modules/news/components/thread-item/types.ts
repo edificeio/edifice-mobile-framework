@@ -1,4 +1,4 @@
-import { NewsThreadItem } from '~/framework/modules/newsv2/model';
+import { NewsThreadItem } from '~/framework/modules/news/model';
 
 export interface ThreadItemProps {
   status: ThreadItemStatus;
