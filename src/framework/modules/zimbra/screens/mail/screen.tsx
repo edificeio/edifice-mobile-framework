@@ -1,7 +1,7 @@
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, RefreshControl, ScrollView, View } from 'react-native';
+import { Alert, Platform, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -25,6 +25,7 @@ import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import fileTransferService from '~/framework/util/fileHandler/service';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -106,6 +107,25 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     }
   };
 
+  const downloadAttachments = async () => {
+    try {
+      const { mail, session } = props;
+
+      if (!mail || !mail.attachments.length || !session) throw new Error();
+      for (const attachment of mail.attachments) {
+        const syncedFile = await fileTransferService.downloadFile(session, attachment, {});
+        await syncedFile.mirrorToDownloadFolder();
+      }
+      if (mail.attachments.length > 1) {
+        Toast.showInfo(I18n.get('zimbra-mail-download-success-count', { count: mail.attachments.length }));
+      } else {
+        Toast.showInfo(I18n.get('zimbra-mail-download-success-name', { name: mail.attachments[0]?.filename }));
+      }
+    } catch {
+      Toast.showError(I18n.get('zimbra-mail-download-error'));
+    }
+  };
+
   const trashMail = async () => {
     try {
       const { navigation, session } = props;
@@ -169,6 +189,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
   };
 
   const getMenuActions = () => {
+    const { mail } = props;
     const { folderPath } = props.route.params;
 
     return [
@@ -200,6 +221,18 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
               icon: {
                 ios: 'arrow.uturn.backward.circle',
                 android: 'ic_restore',
+              },
+            },
+          ]
+        : []),
+      ...(mail?.hasAttachment && Platform.OS === 'android'
+        ? [
+            {
+              title: I18n.get('zimbra-mail-menuactions-downloadattachments'),
+              action: downloadAttachments,
+              icon: {
+                ios: 'square.and.arrow.down',
+                android: 'ic_download',
               },
             },
           ]
