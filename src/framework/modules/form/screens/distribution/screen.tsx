@@ -265,13 +265,13 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
       if (conditionalQuestion) {
         const res = responses.find(r => r.questionId === conditionalQuestion.id);
-        const sectionId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextSectionId;
-        if (sectionId === null) {
+        const nextFormElementId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextFormElementId;
+        if (nextFormElementId === null) {
           return updatePosition(props.elementsCount);
         }
-        const sectionPosition = props.elements.find(e => getIsElementSection(e) && e.id === sectionId)?.position;
-        if (sectionPosition) {
-          return updatePosition(sectionPosition - 1);
+        const formElementPosition = props.elements.find(e => e.id === nextFormElementId)?.position;
+        if (formElementPosition) {
+          return updatePosition(formElementPosition - 1);
         }
       }
       updatePosition(position + 1);

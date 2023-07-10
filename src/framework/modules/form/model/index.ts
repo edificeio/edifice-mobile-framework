@@ -57,7 +57,9 @@ export interface IQuestionChoice {
   questionId: number;
   value: string;
   type: string;
-  nextSectionId: number | null;
+  nextFormElementId: number | null;
+  nextFormElementType: 'QUESTION' | 'SECTION' | null;
+  isNextFormElementDefault: boolean | null;
   isCustom: boolean;
   image: string | null;
 }
@@ -129,16 +131,16 @@ export const formatElement = (element: IFormElement): IFormElement[] => {
 
 const getVisitedPositions = (elements: IFormElement[], responses: IQuestionResponse[]): number[] => {
   const visitedPositions: number[] = [];
-  let nextSectionId;
+  let nextFormElementId;
 
   for (const element of elements) {
-    if (nextSectionId !== undefined && element.id !== nextSectionId) continue;
-    nextSectionId = undefined;
+    if (nextFormElementId !== undefined && element.id !== nextFormElementId) continue;
+    nextFormElementId = undefined;
     visitedPositions.push(element.position!);
     const conditionalQuestion = (!('type' in element) ? element.questions : [element]).find(q => q.conditional);
     if (conditionalQuestion) {
       const choiceId = responses.find(r => r.questionId === conditionalQuestion.id)?.choiceId;
-      nextSectionId = conditionalQuestion.choices.find(c => c.id === choiceId)?.nextSectionId;
+      nextFormElementId = conditionalQuestion.choices.find(c => c.id === choiceId)?.nextFormElementId;
     }
   }
   return visitedPositions;
