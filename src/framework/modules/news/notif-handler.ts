@@ -27,7 +27,7 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<INewsNotification> =
         name: computeTabRouteName(timelineModuleConfig.routeName),
         params: {
           initial: false,
-          screen: newsRouteNames.newsDetails,
+          screen: newsRouteNames.details,
           params: { notification },
         },
       });
@@ -47,7 +47,7 @@ export default () =>
   registerNotifHandlers([
     {
       type: 'NEWS',
-      'event-type': [], // Replace this with the backend notification event-type
+      'event-type': ['INFO-SHARED', 'NEWS-PUBLISHED', 'NEWS-COMMENT', 'NEWS-UPDATE'], // Replace this with the backend notification event-type
       notifHandlerAction: handleSomeNotificationAction,
     },
   ]);

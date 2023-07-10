@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { ImageSourcePropType } from 'react-native';
 
-import { NewsThreadItemReduce } from '~/framework/modules/newsv2/screens/home';
+import { NewsThreadItemReduce } from '~/framework/modules/news/screens/home';
 
 export interface NewsOwner {
   id: string;

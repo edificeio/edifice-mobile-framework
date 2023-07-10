@@ -69,7 +69,7 @@ export class AssessmentCard extends React.PureComponent<IAssessmentCardProps> {
     return (
       <ArticleContainer>
         <CardWithoutPadding style={styles.cardContainer}>
-          <View style={styles.leftContainer}>
+          <View style={[styles.leftContainer, !isAssessmentGraded && { marginRight: UI_SIZES.spacing.medium }]}>
             <View>
               <SmallBoldText numberOfLines={1}>{subject?.name}</SmallBoldText>
               <SmallText numberOfLines={1}>{assessment.teacher}</SmallText>
