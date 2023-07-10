@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: UI_SIZES.spacing.minor,
+    marginTop: UI_SIZES.spacing.small,
   },
   primaryInfoContainer: {
     flex: 1,
