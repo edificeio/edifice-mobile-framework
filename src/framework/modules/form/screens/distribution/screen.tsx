@@ -242,7 +242,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       setLoadingPrevious(true);
       await postResponsesChanges();
       setLoadingPrevious(false);
-      const history = positionHistory;
+      const history = positionHistory.slice(0);
       setPosition(history[history.length - 1]);
       history.pop();
       setPositionHistory(history);
