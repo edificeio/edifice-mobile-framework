@@ -60,9 +60,8 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
     if (mailFolders.includes('DRAFT')) systemFolders.push('/Drafts');
     return props.folders
       .filter(f => systemFolders.includes(f.path))
-      .map(f => ({ ...f, name: getFolderName(f.name), folders: [] } as IFolder))
-      .concat(props.folders.find(f => f.path === '/Inbox')?.folders ?? [])
-      .filter(f => f.path !== folderPath);
+      .map(f => ({ ...f, name: getFolderName(f.name), folders: [] }) as IFolder)
+      .concat(props.folders.find(f => f.path === '/Inbox')?.folders ?? []);
   };
 
   return (
@@ -74,7 +73,14 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
           <FlatList
             data={getFolders()}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => <FolderButton folder={item} selectedFolderId={selectedFolderId} onPress={selectFolder} />}
+            renderItem={({ item }) => (
+              <FolderButton
+                folder={item}
+                currentFolderPath={props.folderPath}
+                selectedFolderId={selectedFolderId}
+                onPress={selectFolder}
+              />
+            )}
             style={styles.listContainer}
           />
           <ActionButton
