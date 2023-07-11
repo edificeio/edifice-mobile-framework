@@ -117,9 +117,9 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
         await syncedFile.mirrorToDownloadFolder();
       }
       if (mail.attachments.length > 1) {
-        Toast.showInfo(I18n.get('zimbra-mail-download-success-count', { count: mail.attachments.length }));
+        Toast.showSuccess(I18n.get('zimbra-mail-download-success-count', { count: mail.attachments.length }));
       } else {
-        Toast.showInfo(I18n.get('zimbra-mail-download-success-name', { name: mail.attachments[0]?.filename }));
+        Toast.showSuccess(I18n.get('zimbra-mail-download-success-name', { name: mail.attachments[0]?.filename }));
       }
     } catch {
       Toast.showError(I18n.get('zimbra-mail-download-error'));

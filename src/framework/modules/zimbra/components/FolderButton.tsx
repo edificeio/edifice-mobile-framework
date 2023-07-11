@@ -1,6 +1,6 @@
 import { DrawerItem } from '@react-navigation/drawer';
 import * as React from 'react';
-import { FlatList, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
