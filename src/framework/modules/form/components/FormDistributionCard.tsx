@@ -8,7 +8,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { DistributionStatus } from '~/framework/modules/form/model';
 import { IFormDistributions } from '~/framework/modules/form/screens/distribution-list/types';
-import { ArticleContainer } from '~/ui/ContainerContent';
 
 import { FormPicture } from './FormPicture';
 
@@ -65,28 +64,26 @@ export class FormDistributionCard extends React.PureComponent<IFormDistributionC
     const { ownerName, picture, title } = formDistributions;
     const { dateSending } = formDistributions.distributions[0];
     return (
-      <ArticleContainer>
-        <TouchableResourceCard
-          title={title}
-          header={
-            <ContentCardHeader
-              icon={<FormPicture pictureUri={picture} />}
-              text={
-                <View>
-                  <SmallText>{ownerName}</SmallText>
-                  <SmallItalicText style={{ color: theme.ui.text.light }}>
-                    {I18n.get('form-distributionlist-formcard-sendingdate', {
-                      date: dateSending?.format('DD/MM/YYYY, HH:mm'),
-                    })}
-                  </SmallItalicText>
-                </View>
-              }
-            />
-          }
-          onPress={this.onPress}>
-          {this.renderStatusText()}
-        </TouchableResourceCard>
-      </ArticleContainer>
+      <TouchableResourceCard
+        title={title}
+        header={
+          <ContentCardHeader
+            icon={<FormPicture pictureUri={picture} />}
+            text={
+              <View>
+                <SmallText>{ownerName}</SmallText>
+                <SmallItalicText style={{ color: theme.ui.text.light }}>
+                  {I18n.get('form-distributionlist-formcard-sendingdate', {
+                    date: dateSending?.format('DD/MM/YYYY, HH:mm'),
+                  })}
+                </SmallItalicText>
+              </View>
+            }
+          />
+        }
+        onPress={this.onPress}>
+        {this.renderStatusText()}
+      </TouchableResourceCard>
     );
   }
 }

@@ -1,11 +1,19 @@
 import * as React from 'react';
+import { TextStyle, ViewStyle } from 'react-native';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
-import Toast from '~/framework/components/toast';
+
+export interface SearchBarProps {
+  query: string;
+  containerStyle?: ViewStyle;
+  inputStyle?: TextStyle;
+  placeholder?: string;
+  onChangeQuery: (value: string) => void;
+  onSearch?: () => void;
+}
 
 const styles = StyleSheet.create({
   clearAction: {
@@ -28,7 +36,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: UI_SIZES.dimensions.height.largePlus,
-    margin: UI_SIZES.spacing.small,
     backgroundColor: theme.palette.grey.pearl,
     borderRadius: UI_SIZES.radius.large,
   },
@@ -45,43 +52,28 @@ const styles = StyleSheet.create({
   },
 });
 
-interface MailListSearchbarProps {
-  query: string;
-  onChangeQuery: (value: string) => void;
-  onSearch: () => void;
-}
-
-export const MailListSearchbar = (props: MailListSearchbarProps) => {
+export const SearchBar = (props: SearchBarProps) => {
   const inputRef = React.useRef<TextInput>(null);
 
   const focusInput = () => inputRef.current?.focus();
 
-  const searchMails = () => {
-    const { query } = props;
-
-    if (query.length > 0 && query.length < 3) {
-      return Toast.showError(I18n.get('zimbra-maillist-searchbar-lengtherror'));
-    }
-    props.onSearch();
-  };
-
   const clearSearch = () => props.onChangeQuery('');
 
   return (
-    <TouchableOpacity onPress={focusInput} activeOpacity={1} style={styles.container}>
+    <TouchableOpacity onPress={focusInput} activeOpacity={1} style={[styles.container, props.containerStyle]}>
       <Picture type="NamedSvg" name="ui-search" width={18} height={18} fill={theme.ui.text.regular} style={styles.searchIcon} />
       <TextInput
         ref={inputRef}
         value={props.query}
         onChangeText={props.onChangeQuery}
-        onSubmitEditing={searchMails}
-        placeholder={I18n.get('zimbra-maillist-searchbar-search')}
+        onSubmitEditing={props.onSearch}
+        placeholder={props.placeholder}
         placeholderTextColor={theme.ui.text.regular}
         autoCapitalize="none"
         autoCorrect={false}
         inputMode="search"
         returnKeyType="search"
-        style={styles.textInput}
+        style={[styles.textInput, props.inputStyle]}
       />
       {props.query.length ? (
         <TouchableOpacity onPress={clearSearch} style={styles.clearContainer}>
