@@ -9,7 +9,7 @@
     "add-dev": "yarn add --dev --exact",
     "add-dep": "run(){ yarn add --save --exact $@ && cd ios && pod install && cd .. ; }; run",
     "android": "react-native run-android",
-    "clean": "rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js reset-cache",
+    "clean": "ccache --clear && rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && cd .. && node cli/override.js reset-cache",
     "depcheck": "npx depcheck",
     "i18n-diff": "node cli/i18n.js diff",
     "i18n-dynamic": "grep --recursive \"I18n.get(\\`\" ./src",

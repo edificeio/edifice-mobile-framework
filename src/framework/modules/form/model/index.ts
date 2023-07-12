@@ -205,3 +205,36 @@ export const getPositionHistory = (elements: IFormElement[], responses: IQuestio
     })
     .sort();
 };
+
+export const findLongestPathInFormElement = (elementId: number, formElements: IFormElement[]): number => {
+  const currentNode = formElements.find(node => node.id === elementId);
+
+  if (!currentNode) return 1;
+  if (getIsElementSection(currentNode)) {
+    const questions: IQuestion[] = (currentNode as ISection).questions;
+    const choices: IQuestionChoice[] = questions.filter(q => q.conditional).flatMap(q => q.choices);
+    return findLongestPathInQuestionChoices(choices, currentNode, formElements);
+  } else {
+    const question: IQuestion = currentNode as IQuestion;
+    const choices: IQuestionChoice[] = question.conditional ? question.choices : [];
+    return findLongestPathInQuestionChoices(choices, currentNode, formElements);
+  }
+};
+
+const findLongestPathInQuestionChoices = (
+  choices: IQuestionChoice[],
+  currentFormElement: IFormElement,
+  formElements: IFormElement[],
+): number => {
+  if (!choices.length) {
+    let nextElementId = formElements.find(node => node.position === currentFormElement.position! + 1)?.id;
+    if (!nextElementId) return 1;
+    return findLongestPathInFormElement(nextElementId, formElements) + 1;
+  } else {
+    let tab: number[] = choices.map(choice => {
+      if (!choice.nextFormElementId) return 1;
+      return findLongestPathInFormElement(choice.nextFormElementId, formElements);
+    });
+    return Math.max(...tab) + 1;
+  }
+};

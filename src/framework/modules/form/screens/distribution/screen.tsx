@@ -19,6 +19,7 @@ import { HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
+import { ProgressBar } from '~/framework/modules/form/components/DistributionProgressBar';
 import { FormSectionCard } from '~/framework/modules/form/components/FormSectionCard';
 import FormSubmissionModal from '~/framework/modules/form/components/FormSubmissionModal';
 import { getQuestionCard } from '~/framework/modules/form/components/question-cards';
@@ -28,6 +29,7 @@ import {
   IQuestion,
   IQuestionResponse,
   QuestionType,
+  findLongestPathInFormElement,
   formatElement,
   formatSummary,
   getIsElementSection,
@@ -242,7 +244,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       setLoadingPrevious(true);
       await postResponsesChanges();
       setLoadingPrevious(false);
-      const history = positionHistory;
+      const history = positionHistory.slice(0);
       setPosition(history[history.length - 1]);
       history.pop();
       setPositionHistory(history);
@@ -317,12 +319,6 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     );
   };
 
-  const renderSummaryHeading = () => {
-    return isPositionAtSummary ? (
-      <HeadingSText style={styles.summaryText}>{I18n.get('form-distribution-summary')}</HeadingSText>
-    ) : null;
-  };
-
   const renderElement = (item: IFormElement) => {
     if (!('type' in item)) {
       const { title, description } = item;
@@ -347,6 +343,16 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         onEditQuestion={onEditQuestion}
       />
     );
+  };
+
+  const renderHeader = () => {
+    if (isPositionAtSummary) return <HeadingSText style={styles.summaryText}>{I18n.get('form-distribution-summary')}</HeadingSText>;
+    return props.elements.length > 1 ? (
+      <ProgressBar
+        formElementCount={positionHistory.length + findLongestPathInFormElement(listElements[0].id, props.elements)}
+        position={positionHistory.length + 1}
+      />
+    ) : null;
   };
 
   const renderPositionActions = () => {
@@ -385,7 +391,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           data={listElements}
           keyExtractor={element => (getIsElementSection(element) ? 's' : 'q') + element.id.toString()}
           renderItem={({ item }) => renderElement(item)}
-          ListHeaderComponent={renderSummaryHeading()}
+          ListHeaderComponent={renderHeader()}
           ListFooterComponent={renderPositionActions()}
           ListFooterComponentStyle={styles.listFooterContainer}
           contentContainerStyle={styles.listContainer}

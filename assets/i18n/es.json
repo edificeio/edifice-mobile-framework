@@ -387,6 +387,7 @@
   "form-distribution-leavealert-title": "Salir del formulario",
   "form-distribution-next": "Siguiente",
   "form-distribution-previous": "Anterior",
+  "form-distribution-progressbar-progress": "pregunta {{current}} de {{total}}",
   "form-distribution-questioncard-clearanswer": "Despejar la respuesta",
   "form-distribution-questioncard-edit": "Modificar",
   "form-distribution-questioncard-enteryouranswer": "Introduzca su respuesta",

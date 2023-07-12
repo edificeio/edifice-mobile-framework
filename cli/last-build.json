@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-06 16:50:57",
-  "notes": "fix(news): MB-1713 fix scroll to comments in details screen\nfeat(zimbra): AMZ-113 display subfolders in drawer and move mails modal\nchore(stacj): Upgrade packages.\nfix(news): MB-1359 fix bug filtering news fastly\nMerge commit 'e705c16dea842deca41d37b13125a62e2f4c0d0d' into dev/1.10.0\nchore: fix build with babel msising mackpages\nfix(phrase): workspace root folder keys\nfeat(zimbra): AMZ-126 improve mail screen information layout\nfeat(toasts): MB-1718 permanent error toast\nfix(review): Revies I18Next init\nfix(media-player): MB-1626, fix close button on media player\nfix(schoolbook): MB-1489 fix alert when unread word\nrelease: 1.10.0-alpha.7(1100007)",
-  "version": "1.10.0-alpha.8(1100008)",
+  "last": "2023-07-10 18:27:56",
+  "notes": "feat(form): AMV2-568 allow conditional questions to redirect to questions using api version 1.9\nchore(stack): unwanted patch removal.\nfix(zimbra): AMZ-113 improve subfolder list style\nfeat(zimbra): AMZ-90 add android menu option to download all attachments\nSquashed commit of the following:\nfix(competences): AMVS-366 add margin to competences button on assessments not graded\nchore(stack): react-native-share bug fix\nchore(stack): Upgrade packages.\nfix(zimbra): AMZ-104 deselect mails on swipe action\nfix(zimbra): AMZ-129 allow moving mails back to drafts/outbox\nrelease: 1.10.0-alpha.8(1100008)",
+  "version": "1.10.0-alpha.9(1100009)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
