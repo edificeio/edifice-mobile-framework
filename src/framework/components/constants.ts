@@ -104,6 +104,7 @@ export const UI_SIZES = {
     small: 4,
     medium: 8,
     card: 8,
+    input: 12,
     explorer: 18,
     mediumPlus: 16,
     large: 21,
