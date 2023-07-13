@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_STYLES } from '~/framework/components/constants';
+import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
   saveActionContainer: {
@@ -13,7 +14,6 @@ export default StyleSheet.create({
   summaryText: {
     alignSelf: 'center',
     color: theme.palette.primary.regular,
-    marginBottom: UI_SIZES.spacing.small,
   },
   actionsContainer: {
     flexDirection: 'row',
@@ -28,6 +28,7 @@ export default StyleSheet.create({
   },
   listContainer: {
     flexGrow: 1,
-    paddingVertical: UI_SIZES.spacing.medium,
+    padding: pageGutterSize,
+    rowGap: pageGutterSize,
   },
 });

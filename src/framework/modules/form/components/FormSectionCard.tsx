@@ -5,7 +5,6 @@ import theme from '~/app/theme';
 import { CardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText } from '~/framework/components/text';
-import { ArticleContainer } from '~/ui/ContainerContent';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 const styles = StyleSheet.create({
@@ -38,14 +37,12 @@ export class FormSectionCard extends React.PureComponent<IFormSectionCardProps> 
   public render() {
     const { title, description } = this.props;
     return (
-      <ArticleContainer>
-        <CardWithoutPadding style={styles.container}>
-          <View style={styles.titleContainer}>
-            <BodyBoldText style={styles.titleText}>{title}</BodyBoldText>
-          </View>
-          {description ? <HtmlContentView html={description} style={styles.descriptionContainer} /> : null}
-        </CardWithoutPadding>
-      </ArticleContainer>
+      <CardWithoutPadding style={styles.container}>
+        <View style={styles.titleContainer}>
+          <BodyBoldText style={styles.titleText}>{title}</BodyBoldText>
+        </View>
+        {description ? <HtmlContentView html={description} style={styles.descriptionContainer} /> : null}
+      </CardWithoutPadding>
     );
   }
 }

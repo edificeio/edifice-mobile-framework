@@ -6,7 +6,6 @@ import theme from '~/app/theme';
 import { Card } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyBoldText, NestedBoldText, SmallActionText } from '~/framework/components/text';
-import { ArticleContainer } from '~/ui/ContainerContent';
 
 const styles = StyleSheet.create({
   actionContainer: {
@@ -36,25 +35,23 @@ export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps
     const { title, children, isMandatory, onClearAnswer, onEditQuestion } = this.props;
     const mandatoryText = ' *';
     return (
-      <ArticleContainer>
-        <Card>
-          <BodyBoldText>
-            {title}
-            {isMandatory ? <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText> : null}
-          </BodyBoldText>
-          <View style={styles.childrenContainer}>{children}</View>
-          {onClearAnswer ? (
-            <TouchableOpacity onPress={onClearAnswer} style={styles.actionContainer}>
-              <SmallActionText>{I18n.get('form-distribution-questioncard-clearanswer')}</SmallActionText>
-            </TouchableOpacity>
-          ) : null}
-          {onEditQuestion ? (
-            <TouchableOpacity onPress={onEditQuestion} style={styles.actionContainer}>
-              <SmallActionText>{I18n.get('form-distribution-questioncard-edit')}</SmallActionText>
-            </TouchableOpacity>
-          ) : null}
-        </Card>
-      </ArticleContainer>
+      <Card>
+        <BodyBoldText>
+          {title}
+          {isMandatory ? <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText> : null}
+        </BodyBoldText>
+        <View style={styles.childrenContainer}>{children}</View>
+        {onClearAnswer ? (
+          <TouchableOpacity onPress={onClearAnswer} style={styles.actionContainer}>
+            <SmallActionText>{I18n.get('form-distribution-questioncard-clearanswer')}</SmallActionText>
+          </TouchableOpacity>
+        ) : null}
+        {onEditQuestion ? (
+          <TouchableOpacity onPress={onEditQuestion} style={styles.actionContainer}>
+            <SmallActionText>{I18n.get('form-distribution-questioncard-edit')}</SmallActionText>
+          </TouchableOpacity>
+        ) : null}
+      </Card>
     );
   }
 }
