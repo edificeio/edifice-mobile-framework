@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-10 18:27:56",
-  "notes": "feat(form): AMV2-568 allow conditional questions to redirect to questions using api version 1.9\nchore(stack): unwanted patch removal.\nfix(zimbra): AMZ-113 improve subfolder list style\nfeat(zimbra): AMZ-90 add android menu option to download all attachments\nSquashed commit of the following:\nfix(competences): AMVS-366 add margin to competences button on assessments not graded\nchore(stack): react-native-share bug fix\nchore(stack): Upgrade packages.\nfix(zimbra): AMZ-104 deselect mails on swipe action\nfix(zimbra): AMZ-129 allow moving mails back to drafts/outbox\nrelease: 1.10.0-alpha.8(1100008)",
-  "version": "1.10.0-alpha.9(1100009)",
+  "last": "2023-07-17 21:06:59",
+  "notes": "chore: add hautes-alpes logo in named svg\nfeat: MB-1632, add syn 2d neo logo\nfeat: MB-1632, add syn logo\nfix(competences): AMVS-369 show assessments with annotations in assessment list\nfeat: MB-1784, add hautes-alpes logo\nfeat: MB-1633, add vienne condrieu logo\nfeat: MB-1783, add reims platform logo\nfeat(form): AMV2-584 add clear answer action to single answer matrix question\nchore: delete deprecated ui components\nfeat(form): AMV2-456 add searchbar to distribution list\nchore(build): Clear ccache for yar,n clean\nfix(zimbra): AMZ-113 show current folder in move mails modal\nfix(zimbra): AMZ-90 replace info toast with success, wrong i18n key on download\nfeat(form): AMV2-450 add progress bar to distribution screen\nfix(form): AMV2-586 set position history using duplicated array\nrelease: 1.10.0-alpha.9(1100009)",
+  "version": "1.10.0-alpha.10(1100010)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
