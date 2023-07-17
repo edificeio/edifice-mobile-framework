@@ -10,7 +10,7 @@ export interface IDevoir {
   name: string;
   note: string;
   subjectId: string;
-  teacher: string;
   termId: number;
   libelle?: string;
+  teacher?: string;
 }

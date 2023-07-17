@@ -74,7 +74,6 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       getItemJson<boolean>(STORAGE_KEY).then(value => {
         if (value) setAverageColorsShown(true);
       });
-      await props.tryFetchDevoirs(structureId, childId);
       if (term !== 'default') {
         await props.tryFetchAverages(structureId, childId, term);
       }
@@ -84,6 +83,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         const children = await props.tryFetchUserChildren(structureId, userId);
         childClasses = children.find(c => c.id === childId)?.classId;
       }
+      await props.tryFetchDevoirs(structureId, childId, childClasses);
       await props.tryFetchCompetences(childId, childClasses ?? '');
       await props.tryFetchTerms(structureId, childClasses ?? '');
       props.handleClearLevels();
