@@ -15,6 +15,7 @@ const imports = {
   'logo-moncollege': import('ASSETS/platforms/logo-moncollege.svg'),
   'logo-monecole': import('ASSETS/platforms/logo-monecole.svg'),
   'logo-porto-vecchio': import('ASSETS/platforms/logo-porto-vecchio.svg'),
+  'logo-syn': import('ASSETS/platforms/logo-syn.svg'),
   // UI Icons
   'ui-addUser': import('ASSETS/icons/uiIcons/addUser.svg'),
   'ui-alert-triangle': import('ASSETS/icons/uiIcons/alert-triangle.svg'),
