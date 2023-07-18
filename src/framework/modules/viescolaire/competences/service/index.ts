@@ -214,7 +214,6 @@ const competenceAdapter = (data: IBackendCompetence): ICompetence => {
     domaineId: data.id_domaine,
     evaluation: data.evaluation,
     id: data.id_competence,
-    name: data.name,
     ownerName: data.owner_name,
     subjectId: data.id_matiere,
   };
@@ -252,7 +251,6 @@ export const concatDevoirs = (devoirs: IDevoir[], competences: ICompetence[]): I
             ({
               date: c.date,
               id: c.devoirId,
-              name: c.name,
               subjectId: c.subjectId,
               teacher: c.ownerName,
             }) as IDevoir,

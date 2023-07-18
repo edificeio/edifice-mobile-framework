@@ -144,10 +144,17 @@ export default connect(
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
+    const competences = competencesState.competences.data;
     const domaines = competencesState.domaines.data;
 
+    for (const competence of competences) {
+      const domaine = domaines.find(d => d.id === competence.domaineId);
+      competence.name = domaine?.competences?.find(c => c.id === competence.id)?.name;
+    }
+    competences.sort((a, b) => (a.name && b.name && a.name > b.name ? 1 : -1));
+
     return {
-      competences: competencesState.competences.data,
+      competences,
       domaines,
       initialLoadingState:
         competencesState.competences.isPristine || competencesState.levels.isPristine

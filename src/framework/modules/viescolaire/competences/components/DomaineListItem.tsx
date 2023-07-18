@@ -48,7 +48,7 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.competenceContainer}>
-              <SmallText style={UI_STYLES.flexShrink1}>{domaine.competences?.find(c => c.id === item.id)?.name}</SmallText>
+              <SmallText style={UI_STYLES.flexShrink1}>{item.name}</SmallText>
               <View style={[styles.levelColorContainer, { backgroundColor: this.getLevelColor(item.evaluation) }]} />
             </View>
           )}
