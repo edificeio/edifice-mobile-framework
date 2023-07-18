@@ -252,7 +252,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
               />
             )}
             ListEmptyComponent={renderEmpty(I18n.get('viescolaire-competences-home-emptyscreen-averages'))}
-            style={styles.listContainer}
+            contentContainerStyle={styles.listContentContainer}
           />
         ) : (
           <FlatList
@@ -268,7 +268,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
               />
             )}
             ListEmptyComponent={renderEmpty(I18n.get('viescolaire-competences-home-emptyscreen-default'))}
-            style={styles.listContainer}
+            contentContainerStyle={styles.listContentContainer}
           />
         )}
       </>

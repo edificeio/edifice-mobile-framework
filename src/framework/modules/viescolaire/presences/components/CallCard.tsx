@@ -11,7 +11,6 @@ import { HeadingSText, SmallText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { ICourse } from '~/framework/modules/viescolaire/presences/model';
-import { ArticleContainer } from '~/ui/ContainerContent';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -57,40 +56,38 @@ export class CallCard extends React.PureComponent<ICallCardProps> {
     const opacity = isCourseNow ? 1 : 0.4;
     const hoursText = `${course.startDate.format('LT')} - ${course.endDate.format('LT')}`;
     return (
-      <ArticleContainer>
-        <LeftColoredItem
-          onPress={onPress}
-          disabled={!isCourseEditable}
-          color={isCourseEditable ? viescoTheme.palette.presences : theme.palette.grey.graphite}
-          style={[styles.mainContainer, { opacity }]}
-          shadow>
-          <ImageBackground
-            source={isCourseEditable ? require('ASSETS/viesco/presences.png') : require('ASSETS/viesco/presence_gris.png')}
-            style={styles.backgroundContainer}
-            imageStyle={styles.backgroundImage}>
-            <View style={styles.itemContent}>
-              <View style={styles.rowContainer}>
-                <Picture
-                  type="NamedSvg"
-                  name="ui-clock"
-                  width={20}
-                  height={20}
-                  fill={theme.ui.text.regular}
-                  style={styles.iconMarginRight}
-                />
-                <SmallText>{hoursText}</SmallText>
-                {course.roomLabels[0] !== '' ? (
-                  <View style={styles.roomContainer}>
-                    <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
-                    <SmallText>{I18n.get('presences-courselist-callcard-room', { name: course.roomLabels[0] })}</SmallText>
-                  </View>
-                ) : null}
-              </View>
-              <HeadingSText>{course.classes[0] !== undefined ? course.classes : course.groups}</HeadingSText>
+      <LeftColoredItem
+        onPress={onPress}
+        disabled={!isCourseEditable}
+        color={isCourseEditable ? viescoTheme.palette.presences : theme.palette.grey.graphite}
+        style={[styles.mainContainer, { opacity }]}
+        shadow>
+        <ImageBackground
+          source={isCourseEditable ? require('ASSETS/viesco/presences.png') : require('ASSETS/viesco/presence_gris.png')}
+          style={styles.backgroundContainer}
+          imageStyle={styles.backgroundImage}>
+          <View style={styles.itemContent}>
+            <View style={styles.rowContainer}>
+              <Picture
+                type="NamedSvg"
+                name="ui-clock"
+                width={20}
+                height={20}
+                fill={theme.ui.text.regular}
+                style={styles.iconMarginRight}
+              />
+              <SmallText>{hoursText}</SmallText>
+              {course.roomLabels[0] !== '' ? (
+                <View style={styles.roomContainer}>
+                  <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
+                  <SmallText>{I18n.get('presences-courselist-callcard-room', { name: course.roomLabels[0] })}</SmallText>
+                </View>
+              ) : null}
             </View>
-          </ImageBackground>
-        </LeftColoredItem>
-      </ArticleContainer>
+            <HeadingSText>{course.classes[0] !== undefined ? course.classes : course.groups}</HeadingSText>
+          </View>
+        </ImageBackground>
+      </LeftColoredItem>
     );
   }
 }

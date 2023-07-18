@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction } from '~/framework/components/navigation';
@@ -28,6 +27,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
+import styles from './styles';
 import type { CompetencesAssessmentScreenDispatchProps, CompetencesAssessmentScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -114,7 +114,7 @@ const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivatePr
           data={domaines}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => <DomaineListItem competences={competences} domaine={item} levels={levels} />}
-          ListHeaderComponent={<View style={{ height: UI_SIZES.spacing.medium }} />}
+          contentContainerStyle={styles.listContentContainer}
         />
         <LevelLegendModal ref={legendModalRef} levels={levels} />
       </>

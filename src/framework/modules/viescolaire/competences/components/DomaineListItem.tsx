@@ -5,7 +5,6 @@ import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ICompetence, IDomaine, ILevel } from '~/framework/modules/viescolaire/competences/model';
-import { ArticleContainer } from '~/ui/ContainerContent';
 
 const styles = StyleSheet.create({
   competenceContainer: {
@@ -65,10 +64,10 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
     const nameText = domaine.codification ? `${domaine.codification} - ${domaine.name}` : domaine.name;
 
     return (
-      <ArticleContainer>
+      <View>
         <BodyBoldText>{nameText}</BodyBoldText>
         {this.renderDomaineCompetences(domaine)}
-      </ArticleContainer>
+      </View>
     );
   }
 }
