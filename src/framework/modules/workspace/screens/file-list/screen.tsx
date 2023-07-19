@@ -58,7 +58,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('workspace-filelist-module-name'),
+    title: I18n.get('workspace-filelist-title'),
   }),
 });
 
@@ -183,6 +183,9 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     setSelectedFiles([]);
     modalBoxRef.current?.doDismissModal();
     switch (modalType) {
+      case WorkspaceModalType.COPY:
+        await props.duplicateFiles(parentId, ids, destinationId);
+        return fetchList(destinationId, true);
       case WorkspaceModalType.CREATE_FOLDER:
         await props.createFolder(value, parentId);
         return fetchList(parentId, true);
@@ -191,15 +194,12 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         return fetchList(parentId, true);
       case WorkspaceModalType.DOWNLOAD:
         return props.downloadFiles(files);
-      case WorkspaceModalType.DUPLICATE:
-        await props.duplicateFiles(parentId, ids, destinationId);
-        return fetchList(destinationId, true);
-      case WorkspaceModalType.EDIT:
-        await props.renameFile(files[0], value);
-        return fetchList(parentId, true);
       case WorkspaceModalType.MOVE:
         await props.moveFiles(parentId, ids, destinationId);
         fetchList(destinationId);
+        return fetchList(parentId, true);
+      case WorkspaceModalType.RENAME:
+        await props.renameFile(files[0], value);
         return fetchList(parentId, true);
       case WorkspaceModalType.TRASH:
         await props.trashFiles(parentId, ids);
@@ -214,8 +214,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(selectedFiles.length === 1 && filter === Filter.OWNER
           ? [
               {
-                title: I18n.get('rename'),
-                action: () => openModal(WorkspaceModalType.EDIT),
+                title: I18n.get('workspace-filelist-menuaction-rename'),
+                action: () => openModal(WorkspaceModalType.RENAME),
                 icon: {
                   ios: 'pencil',
                   android: 'ic_pencil',
@@ -226,8 +226,8 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter !== Filter.TRASH
           ? [
               {
-                title: I18n.get('copy'),
-                action: () => openModal(WorkspaceModalType.DUPLICATE),
+                title: I18n.get('workspace-filelist-menuaction-copy'),
+                action: () => openModal(WorkspaceModalType.COPY),
                 icon: {
                   ios: 'square.on.square',
                   android: 'ic_content_copy',
@@ -238,7 +238,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter === Filter.OWNER
           ? [
               {
-                title: I18n.get('move'),
+                title: I18n.get('workspace-filelist-menuaction-move'),
                 action: () => openModal(WorkspaceModalType.MOVE),
                 icon: {
                   ios: 'arrow.up.square',
@@ -250,7 +250,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter === Filter.TRASH
           ? [
               {
-                title: I18n.get('conversation-maillist-restore'),
+                title: I18n.get('workspace-filelist-menuaction-restore'),
                 action: restoreSelectedFiles,
                 icon: {
                   ios: 'arrow.uturn.backward.circle',
@@ -262,7 +262,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(Platform.OS !== 'ios' && !isFolderSelected
           ? [
               {
-                title: I18n.get('download'),
+                title: I18n.get('workspace-filelist-menuaction-download'),
                 action: () => openModal(WorkspaceModalType.DOWNLOAD),
                 icon: {
                   ios: 'square.and.arrow.down',
@@ -289,7 +289,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...(filter === Filter.OWNER
           ? [
               {
-                title: I18n.get('create-folder'),
+                title: I18n.get('workspace-filelist-menuaction-createfolder'),
                 action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
                 icon: {
                   ios: 'folder.badge.plus',
@@ -331,7 +331,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
-      headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-filelist-module-name')),
+      headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-filelist-title')),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);
@@ -404,7 +404,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.success.regular,
-                      actionText: I18n.get('conversation-maillist-restore'),
+                      actionText: I18n.get('workspace-filelist-swipeaction-restore'),
                       actionIcon: 'ui-unarchive',
                     },
                   ]
@@ -421,7 +421,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.get('common-delete'),
+                      actionText: I18n.get('workspace-filelist-swipeaction-delete'),
                       actionIcon: 'ui-trash',
                     },
                   ]
@@ -450,7 +450,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.get('common-delete'),
+                      actionText: I18n.get('workspace-filelist-swipeaction-delete'),
                       actionIcon: 'ui-trash',
                     },
                   ]

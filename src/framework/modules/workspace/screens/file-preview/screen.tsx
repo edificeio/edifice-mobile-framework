@@ -62,7 +62,7 @@ const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => 
       <View style={styles.actionsContainer}>
         {Platform.OS !== 'ios' ? (
           <ButtonIconText name="download" onPress={download}>
-            {I18n.get('download')}
+            {I18n.get('workspace-filepreview-download')}
           </ButtonIconText>
         ) : null}
         <ButtonIconText name="share-variant" onPress={share}>
