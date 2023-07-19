@@ -957,6 +957,8 @@
   "workspace-filelist-create": "Create",
   "workspace-filelist-createfolder": "Create folder",
   "workspace-filelist-delete": "Delete",
+  "workspace-filelist-deletealert-message": "Are you sure you want to permanently delete the file?",
+  "workspace-filelist-deletealert-title": "Delete file",
   "workspace-filelist-deleteconfirm": "Permanently delete:",
   "workspace-filelist-download": "Download",
   "workspace-filelist-downloaddocuments": "Download documents",

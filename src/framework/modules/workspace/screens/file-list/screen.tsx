@@ -2,7 +2,7 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Platform, RefreshControl, View } from 'react-native';
+import { Alert, Platform, RefreshControl, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -421,7 +421,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.get('delete'),
+                      actionText: I18n.get('common-delete'),
                       actionIcon: 'ui-trash',
                     },
                   ]
@@ -432,11 +432,25 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                         if (selectedFiles.includes(item.key)) {
                           selectFile(item);
                         }
-                        props.deleteFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
+                        Alert.alert(
+                          I18n.get('workspace-filelist-deletealert-title'),
+                          I18n.get('workspace-filelist-deletealert-message'),
+                          [
+                            {
+                              text: I18n.get('common-cancel'),
+                              style: 'default',
+                            },
+                            {
+                              text: I18n.get('common-delete'),
+                              onPress: () => props.deleteFiles(parentId, [item.key]).then(() => fetchList(parentId, true)),
+                              style: 'destructive',
+                            },
+                          ],
+                        );
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.get('delete'),
+                      actionText: I18n.get('common-delete'),
                       actionIcon: 'ui-trash',
                     },
                   ]
