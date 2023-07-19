@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-17 21:06:59",
-  "notes": "chore: add hautes-alpes logo in named svg\nfeat: MB-1632, add syn 2d neo logo\nfeat: MB-1632, add syn logo\nfix(competences): AMVS-369 show assessments with annotations in assessment list\nfeat: MB-1784, add hautes-alpes logo\nfeat: MB-1633, add vienne condrieu logo\nfeat: MB-1783, add reims platform logo\nfeat(form): AMV2-584 add clear answer action to single answer matrix question\nchore: delete deprecated ui components\nfeat(form): AMV2-456 add searchbar to distribution list\nchore(build): Clear ccache for yar,n clean\nfix(zimbra): AMZ-113 show current folder in move mails modal\nfix(zimbra): AMZ-90 replace info toast with success, wrong i18n key on download\nfeat(form): AMV2-450 add progress bar to distribution screen\nfix(form): AMV2-586 set position history using duplicated array\nrelease: 1.10.0-alpha.9(1100009)",
-  "version": "1.10.0-alpha.10(1100010)",
+  "last": "2023-07-19 17:59:09",
+  "notes": "chore: MB-1726, reformat common keys (part 3)\nchore: MB-1726, reformat common keys (part 2)\nchore: MB-1726, reformat common keys (part 1)\nfeat(i18n): AMV2-588 add missing workspace keys\nfeat: MB-1727, new whoarewe page\nfix(conversation): MB-1807, mark as unread typo\nfeat(workspace): AMV2-540 show alert on swipe action delete\nfeat(i18n): rename competences keys\nfeat(competences): AMVS-370 sort assessment competences by name\nchore: add edifice logos\nchore(viesco): remove ArticleContainer occurences and apply style to list content container\nrelease: 1.10.0-alpha.10(1100010)",
+  "version": "1.10.0-alpha.11(1100011)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
