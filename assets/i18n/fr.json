@@ -290,7 +290,7 @@
   "conversation-maillist-emptyto": "(Sans destinataire)",
   "conversation-maillist-inbox": "Boîte de réception",
   "conversation-maillist-markread": "Marquer comme lu",
-  "conversation-maillist-markunread": "Marquer comme lu",
+  "conversation-maillist-markunread": "Marquer comme non lu",
   "conversation-maillist-messagedeleted": "Message supprimé",
   "conversation-maillist-messagemoved": "Message déplacé",
   "conversation-maillist-messagetrashed": "Message mis à la corbeille",
