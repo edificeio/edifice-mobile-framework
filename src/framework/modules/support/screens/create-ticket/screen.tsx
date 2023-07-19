@@ -177,7 +177,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
   };
 
   UNSTABLE_usePreventRemove(!!(subject || description) && !isSending, ({ data }) => {
-    Alert.alert(I18n.get('common-leavealert-title'), I18n.get('common-leavealert-text'), [
+    Alert.alert(I18n.get('support-createticket-leavealert-title'), I18n.get('support-createticket-leavealert-text'), [
       {
         text: I18n.get('common-cancel'),
         style: 'cancel',

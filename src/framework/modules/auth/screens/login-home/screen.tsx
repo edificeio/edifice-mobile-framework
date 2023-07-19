@@ -176,7 +176,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
             {this.renderLogo()}
             <TextInputLine
               inputRef={this.setInputLoginRef}
-              placeholder={I18n.get('common-login')}
+              placeholder={I18n.get('auth-login-login')}
               onChangeText={this.onLoginChanged.bind(this)}
               value={login}
               hasError={!!error}

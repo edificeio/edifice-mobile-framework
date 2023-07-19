@@ -626,7 +626,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       // Full storage management
       // statusCode = 400 on iOS and code = 'ENOENT' on Android
       if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
-        Toast.showError(I18n.get('common-fullstorage'));
+        Toast.showError(I18n.get('conversation-newmail-fullstorage'));
       } else {
         Toast.showError(I18n.get('conversation-newmail-attachmenterror'));
       }

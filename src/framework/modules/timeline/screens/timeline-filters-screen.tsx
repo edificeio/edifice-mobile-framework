@@ -50,7 +50,7 @@ export const computeNavBar = ({
 function PreventBack(props: { onPreventBack: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.onPreventBack, ({ data }) => {
-    Alert.alert(I18n.get('common-leavealert-title'), I18n.get('common-leavealert-text'), [
+    Alert.alert(I18n.get('timeline-filters-leavealert-title'), I18n.get('timeline-filters-leavealert-text'), [
       {
         text: I18n.get('common-cancel'),
         style: 'cancel',

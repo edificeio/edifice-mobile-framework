@@ -82,7 +82,7 @@ const formatI18nNotifType = (notifType: string) => notifType.replaceAll('_', '')
 function PreventBack(props: { hasChanged: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.hasChanged, ({ data }) => {
-    Alert.alert(I18n.get('common-leavealert-title'), I18n.get('common-leavealert-text'), [
+    Alert.alert(I18n.get('user-pushnotifssettings-leavealert-title'), I18n.get('user-pushnotifssettings-leavealert-text'), [
       {
         text: I18n.get('common-cancel'),
         style: 'cancel',

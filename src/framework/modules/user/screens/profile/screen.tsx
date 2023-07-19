@@ -122,7 +122,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
                 onDeleteAvatar={this.onDeleteAvatar.bind(this)}
               />
               {this.renderItem({
-                title: I18n.get('common-login'),
+                title: I18n.get('user-profile-login'),
                 getter: () => (isEditMode ? this.state.loginAlias : this.state.loginAlias || session?.user.login),
                 editable: true,
                 setter: loginAlias => this.setState({ loginAlias }),

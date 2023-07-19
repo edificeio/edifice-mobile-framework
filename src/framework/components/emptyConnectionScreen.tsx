@@ -8,8 +8,8 @@ export const EmptyConnectionScreen = () => {
   return (
     <EmptyScreen
       svgImage="empty-light"
-      title={I18n.get('common-error-connection-title')}
-      text={I18n.get('common-error-connection-text')}
+      title={I18n.get('emptyconnection-error-connection-title')}
+      text={I18n.get('emptyconnection-error-connection-text')}
     />
   );
 };

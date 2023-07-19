@@ -184,7 +184,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                 {!isSuccess ? (
                   <TextInputLine
                     inputRef={this.setInputLoginRef}
-                    placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'common-login')}
+                    placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'auth-forgot-login')}
                     onChange={({ nativeEvent: { text } }) => {
                       this.setState({
                         login: text,
