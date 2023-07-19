@@ -400,8 +400,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`news-details-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
           text: I18n.get('common-quit'),

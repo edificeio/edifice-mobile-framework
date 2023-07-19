@@ -79,8 +79,8 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`blog-postdetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
           text: I18n.get('common-quit'),
