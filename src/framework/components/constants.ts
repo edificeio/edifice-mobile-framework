@@ -131,7 +131,7 @@ export const UI_SIZES = {
     small: getScaleWidth(12),
     medium: getScaleWidth(16),
     big: getScaleWidth(24),
-    large: getScaleWidth(36),
+    large: getScaleWidth(32),
     major: getScaleWidth(48),
     huge: getScaleWidth(64),
   },
