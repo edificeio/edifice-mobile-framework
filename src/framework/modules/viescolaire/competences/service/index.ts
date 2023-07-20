@@ -12,6 +12,32 @@ import {
 } from '~/framework/modules/viescolaire/competences/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
+type IBackendAnnotation = {
+  id_devoir: number;
+  id: number;
+  libelle: string;
+  libelle_court: string;
+  id_etablissement: string;
+  id_eleve: string;
+  owner: string;
+  id_matiere: string;
+  id_sousmatiere: number | null;
+  name: string;
+  is_evaluated: boolean;
+  id_periode: number;
+  id_type: number;
+  diviseur: string;
+  date_publication: string;
+  date: string;
+  apprec_visible: boolean;
+  coefficient: string;
+  _type_libelle: string;
+  formative: boolean;
+  sum_notes: string;
+  nbr_eleves: number;
+  id_groupe: string;
+};
+
 type IBackendAverage = {
   devoirs: IBackendDevoir[];
   id_groupe: string;
@@ -143,6 +169,7 @@ type IBackendUserChild = {
   id_cycle: number;
 };
 
+type IBackendAnnotationList = IBackendAnnotation[];
 type IBackendAverageList = { [key: string]: IBackendAverage };
 type IBackendCompetenceList = IBackendCompetence[];
 type IBackendDevoirList = IBackendDevoir[];
@@ -150,6 +177,22 @@ type IBackendDomaineList = IBackendDomaine[];
 type IBackendLevelList = IBackendLevel[];
 type IBackendSubjectList = IBackendSubject[];
 type IBackendUserChildren = IBackendUserChild[];
+
+const annotationAdapter = (data: IBackendAnnotation): IDevoir => {
+  return {
+    coefficient: data.coefficient,
+    date: moment(data.date),
+    diviseur: Number(data.diviseur),
+    id: data.id,
+    isEvaluated: data.is_evaluated,
+    libelle: data.libelle ?? undefined,
+    moyenne: String(Number((Number(data.sum_notes) / data.nbr_eleves).toFixed(1))),
+    name: data.name,
+    note: data.libelle_court,
+    subjectId: data.id_matiere,
+    termId: data.id_periode,
+  };
+};
 
 const averageAdapter = (list: IBackendAverageList): IAverage[] => {
   return Object.entries(list).map(([subjectId, data]) => {
@@ -171,7 +214,6 @@ const competenceAdapter = (data: IBackendCompetence): ICompetence => {
     domaineId: data.id_domaine,
     evaluation: data.evaluation,
     id: data.id_competence,
-    name: data.name,
     ownerName: data.owner_name,
     subjectId: data.id_matiere,
   };
@@ -209,10 +251,9 @@ export const concatDevoirs = (devoirs: IDevoir[], competences: ICompetence[]): I
             ({
               date: c.date,
               id: c.devoirId,
-              name: c.name,
               subjectId: c.subjectId,
               teacher: c.ownerName,
-            } as IDevoir),
+            }) as IDevoir,
         )
         .filter((devoir, index, array) => array.findIndex(d => d.id === devoir.id) === index),
     )
@@ -267,6 +308,13 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
 };
 
 export const competencesService = {
+  annotations: {
+    get: async (session: ISession, studentId: string, classId: string) => {
+      const api = `/viescolaire/annotations/eleve?idEleve=${studentId}&idClasse=${classId}`;
+      const annotations = (await fetchJSONWithCache(api)) as IBackendAnnotationList;
+      return annotations.map(annotationAdapter);
+    },
+  },
   averages: {
     get: async (session: ISession, structureId: string, studentId: string, termId?: string) => {
       let api = `/competences/devoirs/notes?idEtablissement=${structureId}&idEleve=${studentId}`;

@@ -106,7 +106,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
@@ -120,7 +120,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
@@ -136,7 +136,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       Toast.showSuccess(I18n.get('presences-call-successmessage'));
     } catch {
       setValidating(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 

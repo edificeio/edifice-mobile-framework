@@ -1,10 +1,10 @@
 import { StyleSheet } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
+import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
-  dateText: {
-    marginLeft: UI_SIZES.spacing.medium,
-    marginVertical: UI_SIZES.spacing.small,
+  listContentContainer: {
+    padding: pageGutterSize,
+    rowGap: pageGutterSize,
   },
 });

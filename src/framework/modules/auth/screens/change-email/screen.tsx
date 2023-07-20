@@ -98,7 +98,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           navBarTitle: getNavBarTitle(route),
         });
       } catch {
-        Toast.showError(I18n.get('common-error-text'));
+        Toast.showError(I18n.get('auth-change-email-error-text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -124,7 +124,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('auth-change-email-error-text'));
     }
   }, [navigation, platform, tryLogout]);
 

@@ -156,7 +156,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, [getComments, notif, onRefresh, route.params.news, route.params.thread]);
 
   const showAlertError = useCallback(() => {
-    Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
+    Alert.alert(I18n.get('news-details-error-title'), I18n.get('news-details-error-text'));
   }, []);
 
   const doDeleteNews = useCallback(() => {
@@ -400,8 +400,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`news-details-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
           text: I18n.get('common-quit'),

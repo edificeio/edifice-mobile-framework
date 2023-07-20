@@ -136,7 +136,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       refreshSilent();
     } catch {
       setIsAcknowledgingWord(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
     }
   };
 
@@ -157,7 +157,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
       }
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
     } finally {
       setIsPublishingReply(false);
     }
@@ -191,7 +191,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         await schoolbookService.word.delete(session, schoolbookWordId);
         props.navigation.goBack();
       } catch {
-        Toast.showError(I18n.get('common-error-text'));
+        Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
       }
     };
     const showDeleteSchoolbookWordAlert = () =>
@@ -233,8 +233,8 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`schoolbook-worddetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
           text: I18n.get('common-quit'),

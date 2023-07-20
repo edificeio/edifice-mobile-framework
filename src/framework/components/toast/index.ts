@@ -33,7 +33,7 @@ function showToastPermanent(type: string, text: string, options: ToastOptions = 
   showToastGeneric(type, text, { ...options, autoHide: false });
 }
 
-export const showError = (text: string = I18n.get('common-error-text'), options?: ToastOptions) => {
+export const showError = (text: string = I18n.get('toast-error-text'), options?: ToastOptions) => {
   showToastPermanent('error', text, options);
   Feedback.errorDisplayed();
 };

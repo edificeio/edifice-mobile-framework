@@ -87,7 +87,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
       await schoolbookService.word.resend(session, schoolbookWordId);
       Toast.showInfo(I18n.get('schoolbook-wordreport-remindertoast-text'));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('schoolbook-wordreport-error-text'));
     }
   };
 

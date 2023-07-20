@@ -107,7 +107,7 @@ const downloadFile = (notifierId: string, file?: SyncedFile, toastMessage?: stri
       try {
         file.mirrorToDownloadFolder();
         //Toast.hide(lastToast);
-        lastToast = Toast.showSuccess(toastMessage ?? I18n.get('common-download-success-name', { name: file.filename }));
+        lastToast = Toast.showSuccess(toastMessage ?? I18n.get('attachment-downloadsuccess-name', { name: file.filename }));
       } catch {
         Toast.showError(I18n.get('attachment-download-error'));
       }

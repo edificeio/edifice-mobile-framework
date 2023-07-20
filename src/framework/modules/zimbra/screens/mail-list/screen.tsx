@@ -21,13 +21,13 @@ import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
+import { SearchBar } from '~/framework/components/searchBar';
 import SwipeableList from '~/framework/components/swipeableList';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
 import { MailListItem } from '~/framework/modules/zimbra/components/MailListItem';
-import { MailListSearchbar } from '~/framework/modules/zimbra/components/MailListSearchbar';
 import MoveMailsModal from '~/framework/modules/zimbra/components/modals/MoveMailsModal';
 import { DraftType, IMail } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
@@ -58,7 +58,7 @@ export const computeNavBar = ({
     headerTintColor: theme.ui.text.inverse,
     headerShadowVisible: true,
     freezeOnBlur: true,
-  } as DrawerNavigationOptions);
+  }) as DrawerNavigationOptions;
 
 const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   const [mails, setMails] = React.useState<Omit<IMail, 'body'>[]>(props.mails);
@@ -203,6 +203,13 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   const updateQuery = (value: string) => setQuery(value);
 
+  const searchMails = () => {
+    if (query.length > 0 && query.length < 3) {
+      return Toast.showError(I18n.get('zimbra-maillist-searchbar-lengtherror'));
+    }
+    refresh();
+  };
+
   const getIsSelectedMailUnread = (): boolean => {
     return mails.some(mail => selectedMails.includes(mail.id) && mail.unread === true);
   };
@@ -216,7 +223,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       setSelectedMails([]);
       refresh();
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-maillist-error-text'));
     }
   };
 
@@ -230,7 +237,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       refresh();
       Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-trashed' : 'zimbra-maillist-mail-trashed'));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-maillist-error-text'));
     }
   };
 
@@ -244,7 +251,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       refresh();
       Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-deleted' : 'zimbra-maillist-mail-deleted'));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-maillist-error-text'));
     }
   };
 
@@ -348,13 +355,13 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     return isSearchActive ? (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.get('zimbra-maillist-emptyscreen-search')}
+        title={I18n.get('zimbra-maillist-emptyscreen-title-search')}
         customStyle={styles.emptyListContainer}
       />
     ) : (
       <EmptyScreen
         svgImage="empty-conversation"
-        title={I18n.get('zimbra-maillist-emptyscreen-title')}
+        title={I18n.get('zimbra-maillist-emptyscreen-title-default')}
         text={I18n.get('zimbra-maillist-emptyscreen-text')}
         customStyle={styles.emptyListContainer}
       />
@@ -385,7 +392,15 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
           onScrollBeginDrag={() => setFetchNextCallable(true)}
           onEndReached={fetchNextPage}
           onEndReachedThreshold={0.5}
-          ListHeaderComponent={<MailListSearchbar query={query} onChangeQuery={updateQuery} onSearch={refresh} />}
+          ListHeaderComponent={
+            <SearchBar
+              query={query}
+              containerStyle={styles.searchBarContainer}
+              placeholder={I18n.get('zimbra-maillist-searchbar-placeholder')}
+              onChangeQuery={updateQuery}
+              onSearch={searchMails}
+            />
+          }
           ListFooterComponent={
             loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (
               <LoadingIndicator customStyle={{ marginTop: UI_SIZES.spacing.big, marginBottom: pageGutterSize }} />

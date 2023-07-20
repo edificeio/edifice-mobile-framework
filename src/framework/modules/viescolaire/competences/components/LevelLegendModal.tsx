@@ -39,7 +39,7 @@ const LevelLegendModal = React.forwardRef<ModalBoxHandle, ILevelLegendModalProps
               <SmallText>{item.label}</SmallText>
             </View>
           )}
-          ListHeaderComponent={<BodyText>{I18n.get('viescolaire-competences-assessment-levellegendmodal-title')}</BodyText>}
+          ListHeaderComponent={<BodyText>{I18n.get('competences-assessment-levellegendmodal-title')}</BodyText>}
           scrollEnabled={false}
         />
       }

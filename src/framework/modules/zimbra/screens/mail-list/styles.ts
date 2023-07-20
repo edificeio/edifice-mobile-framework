@@ -33,4 +33,7 @@ export default StyleSheet.create({
   rightMargin: {
     marginRight: UI_SIZES.spacing.small,
   },
+  searchBarContainer: {
+    margin: UI_SIZES.spacing.small,
+  },
 });

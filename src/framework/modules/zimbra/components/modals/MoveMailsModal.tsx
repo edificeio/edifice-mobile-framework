@@ -48,7 +48,7 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
       Toast.showSuccess(I18n.get(mailIds.length > 1 ? 'zimbra-movemailsmodal-mails-moved' : 'zimbra-movemailsmodal-mail-moved'));
     } catch {
       setMoving(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-movemailsmodal-error-text'));
     }
   };
 

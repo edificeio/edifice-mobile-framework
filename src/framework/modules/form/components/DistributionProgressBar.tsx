@@ -21,8 +21,6 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center',
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginBottom: UI_SIZES.spacing.medium,
   },
 });
 

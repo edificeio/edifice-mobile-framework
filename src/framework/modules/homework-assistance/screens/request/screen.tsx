@@ -12,6 +12,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import ActionButton from '~/framework/components/buttons/action';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
@@ -34,7 +35,6 @@ import {
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
 import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
@@ -114,7 +114,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       Toast.showSuccess(I18n.get('homeworkassistance-request-successmessage'));
     } catch {
       setSendingRequest(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('homeworkassistance-request-error-text'));
     }
   };
 
@@ -173,9 +173,9 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               <DateTimePicker
                 mode="date"
                 value={date}
-                onChange={value => setDate(value)}
+                onChangeValue={value => setDate(value)}
                 minimumDate={moment().startOf('day')}
-                color={theme.palette.secondary.regular}
+                iconColor={theme.palette.secondary.regular}
               />
             </View>
             <View style={styles.rowContainer}>
@@ -183,10 +183,10 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               <DateTimePicker
                 mode="time"
                 value={time}
-                onChange={value => setTime(value)}
+                onChangeValue={value => setTime(value)}
                 minimumDate={openingTime.start}
                 maximumDate={openingTime.end}
-                color={theme.palette.secondary.regular}
+                iconColor={theme.palette.secondary.regular}
               />
             </View>
             <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-request-information-label')}</SmallText>

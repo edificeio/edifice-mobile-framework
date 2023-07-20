@@ -29,13 +29,13 @@ const styles = StyleSheet.create({
 });
 
 export enum WorkspaceModalType {
+  COPY,
   CREATE_FOLDER,
   DELETE,
   DOWNLOAD,
-  DUPLICATE,
-  EDIT,
   MOVE,
   NONE,
+  RENAME,
   TRASH,
 }
 
@@ -58,42 +58,46 @@ interface IWorkspaceModalProps {
 
 const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => {
   switch (type) {
+    case WorkspaceModalType.COPY:
+      return {
+        buttonText: I18n.get('workspace-filelist-modal-copy-action'),
+        title: I18n.get('workspace-filelist-modal-copy-title'),
+        hasDestinationSelector: true,
+      };
     case WorkspaceModalType.CREATE_FOLDER:
       return {
-        buttonText: I18n.get('workspace-filelist-create'),
-        title: I18n.get('workspace-filelist-createfolder'),
+        buttonText: I18n.get('workspace-filelist-modal-createfolder-action'),
+        title: I18n.get('workspace-filelist-modal-createfolder-title'),
         hasInput: true,
       };
     case WorkspaceModalType.DELETE:
       return {
-        buttonText: I18n.get('workspace-filelist-delete'),
-        title: I18n.get('workspace-filelist-deleteconfirm'),
+        buttonText: I18n.get('workspace-filelist-modal-delete-action'),
+        title: I18n.get('workspace-filelist-modal-delete-title'),
         hasFileList: true,
       };
     case WorkspaceModalType.DOWNLOAD:
       return {
-        buttonText: I18n.get('workspace-filelist-download'),
-        title: I18n.get('workspace-filelist-downloaddocuments'),
+        buttonText: I18n.get('workspace-filelist-modal-download-action'),
+        title: I18n.get('workspace-filelist-modal-download-title'),
         hasFileList: true,
       };
-    case WorkspaceModalType.DUPLICATE:
-      return {
-        buttonText: I18n.get('workspace-filelist-copy'),
-        title: I18n.get('workspace-filelist-copydocuments'),
-        hasDestinationSelector: true,
-      };
-    case WorkspaceModalType.EDIT:
-      return { buttonText: I18n.get('workspace-filelist-modify'), title: I18n.get('workspace-filelist-rename'), hasInput: true };
     case WorkspaceModalType.MOVE:
       return {
-        buttonText: I18n.get('workspace-filelist-move'),
-        title: I18n.get('workspace-filelist-movedocuments'),
+        buttonText: I18n.get('workspace-filelist-modal-move-action'),
+        title: I18n.get('workspace-filelist-modal-move-title'),
         hasDestinationSelector: true,
+      };
+    case WorkspaceModalType.RENAME:
+      return {
+        buttonText: I18n.get('workspace-filelist-modal-rename-action'),
+        title: I18n.get('workspace-filelist-modal-rename-title'),
+        hasInput: true,
       };
     case WorkspaceModalType.TRASH:
       return {
-        buttonText: I18n.get('workspace-filelist-delete'),
-        title: I18n.get('workspace-filelist-trash-confirm'),
+        buttonText: I18n.get('workspace-filelist-modal-trash-action'),
+        title: I18n.get('workspace-filelist-modal-trash-title'),
         hasFileList: true,
       };
     case WorkspaceModalType.NONE:
@@ -114,7 +118,7 @@ export const WorkspaceModal = React.forwardRef<ModalBoxHandle, IWorkspaceModalPr
     const action = () => onAction(selectedFiles, inputValue + fileExtension, destination);
 
     useEffect(() => {
-      if (type === WorkspaceModalType.EDIT && selectedFiles.length) {
+      if (type === WorkspaceModalType.RENAME && selectedFiles.length) {
         const name = selectedFiles[0].name;
         const index = name.lastIndexOf('.');
         setInputValue(index > 0 ? name.substring(0, index) : name);

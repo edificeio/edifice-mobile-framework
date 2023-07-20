@@ -214,7 +214,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
           // Full storage management
           // statusCode = 400 on iOS and code = 'ENOENT' on Android
           if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
-            Alert.alert('', I18n.get('common-fullstorage'));
+            Alert.alert('', I18n.get('blog-createpost-fullstorage'));
           } else {
             Alert.alert('', I18n.get('blog-createpost-uploadattachments-error-text'));
           }
@@ -254,7 +254,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {
-        Toast.showError(I18n.get('common-fullstorage'));
+        Toast.showError(I18n.get('blog-createpost-fullstorage'));
       }
       if ((e as Error).message && (e as Error).message !== 'handled') {
         Toast.showError(I18n.get('blog-createpost-publish-error-text'));

@@ -6,7 +6,7 @@ export interface ICompetence {
   domaineId: number;
   evaluation: number;
   id: number;
-  name: string;
   ownerName: string;
   subjectId: string;
+  name?: string;
 }

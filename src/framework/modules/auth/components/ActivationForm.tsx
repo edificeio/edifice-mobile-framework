@@ -100,7 +100,7 @@ export function InputLogin(props: { login: string; form: ActivationFormModel; on
   return (
     <TextInputLine
       inputRef={ref => (props.form.inputLogin = ref)}
-      placeholder={I18n.get('common-login')}
+      placeholder={I18n.get('auth-activation-login')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.login}
       hasError={props.form.showLoginError(props.login)}

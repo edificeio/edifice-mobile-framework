@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_STYLES } from '~/framework/components/constants';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -36,7 +37,6 @@ import { EdtNavigationParams, edtRouteNames } from '~/framework/modules/viescola
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
 import { EdtHomeScreenDispatchProps, EdtHomeScreenPrivateProps } from './types';
@@ -212,7 +212,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
       <>
         <View style={styles.weekPickerView}>
           <SmallText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallText>
-          <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.edt} />
+          <DateTimePicker mode="date" value={startDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.edt} />
         </View>
         {loadingState === AsyncPagedLoadingState.REFRESH ? (
           <LoadingIndicator />

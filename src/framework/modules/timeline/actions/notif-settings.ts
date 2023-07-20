@@ -111,7 +111,7 @@ export const updatePushNotifsSettingsAction =
         notifierShowAction({
           type: 'error',
           id: 'timeline/push-notifications',
-          text: I18n.get('common-error-text'),
+          text: I18n.get('timeline-notifsettings-error-text'),
         }),
       );
     }

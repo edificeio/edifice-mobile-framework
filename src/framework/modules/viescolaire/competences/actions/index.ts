@@ -82,12 +82,16 @@ export const fetchCompetencesAction =
  */
 export const competencesDevoirsActionsCreators = createAsyncActionCreators(actionTypes.devoirs);
 export const fetchCompetencesDevoirsAction =
-  (structureId: string, studentId: string): ThunkAction<Promise<IDevoir[]>, any, any, any> =>
+  (structureId: string, studentId: string, classId?: string): ThunkAction<Promise<IDevoir[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
       dispatch(competencesDevoirsActionsCreators.request());
       const devoirs = await competencesService.devoirs.get(session, structureId, studentId);
+      if (classId) {
+        const annotations = await competencesService.annotations.get(session, studentId, classId);
+        devoirs.push(...annotations);
+      }
       dispatch(competencesDevoirsActionsCreators.receipt(devoirs));
       return devoirs;
     } catch (e) {

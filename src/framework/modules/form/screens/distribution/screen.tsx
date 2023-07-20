@@ -250,7 +250,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       setPositionHistory(history);
     } catch {
       setLoadingPrevious(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('form-distribution-error-text'));
     }
   };
 
@@ -279,7 +279,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       updatePosition(position + 1);
     } catch {
       setLoadingNext(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('form-distribution-error-text'));
     }
   };
 
@@ -303,7 +303,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       Toast.showSuccess(I18n.get('form-distribution-submissionmodal-successmessage'));
     } catch {
       setSubmitting(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('form-distribution-error-text'));
     }
   };
 
@@ -442,7 +442,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
               handleRemoveConfirmNavigationEvent(data.action, props.navigation);
               Toast.showSuccess(I18n.get('form-distribution-leavealert-successmessage'));
             } catch {
-              Toast.showError(I18n.get('common-error-text'));
+              Toast.showError(I18n.get('form-distribution-error-text'));
             }
           },
           style: 'destructive',

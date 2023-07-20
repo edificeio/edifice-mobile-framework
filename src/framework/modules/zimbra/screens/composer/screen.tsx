@@ -164,7 +164,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       }));
       await zimbraService.draft.deleteAttachment(session, id, attachmentId);
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-composer-error-text'));
     }
   };
 
@@ -187,7 +187,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       });
     } catch {
       this.setState({ isSending: false });
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-composer-error-text'));
     }
   };
 
@@ -283,7 +283,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         Toast.showSuccess(I18n.get('zimbra-composer-draft-trashed'));
       });
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-composer-error-text'));
     }
   };
 
@@ -301,7 +301,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
         Toast.showSuccess(I18n.get('zimbra-composer-draft-deleted'));
       });
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-composer-error-text'));
     }
   };
 

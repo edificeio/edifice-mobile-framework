@@ -2,15 +2,19 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
   colorsText: {
     marginRight: UI_SIZES.spacing.minor,
   },
-  listContainer: {
-    zIndex: -5,
+  listContentContainer: {
+    padding: pageGutterSize,
+    paddingTop: 0,
+    rowGap: pageGutterSize,
   },
   headerContainer: {
+    zIndex: 5,
     margin: UI_SIZES.spacing.medium,
   },
   headerRow: {

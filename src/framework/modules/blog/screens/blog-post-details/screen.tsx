@@ -79,8 +79,8 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.get(`common-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`common-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`blog-postdetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
           text: I18n.get('common-quit'),
@@ -219,7 +219,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       } else await handlePublishBlogPostComment(ids, comment);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
+      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
     }
   }
 
@@ -234,7 +234,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       await handleDeleteBlogPostComment(ids);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
+      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
     }
   }
 
@@ -249,7 +249,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
       await handleDeleteBlogPost(ids);
     } catch {
-      Alert.alert(I18n.get('common-error-title'), I18n.get('common-error-text'));
+      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
     }
   }
 
@@ -302,7 +302,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     }
 
     const menuItemOpenBrowser = linkAction({
-      title: I18n.get('common-openinbrowser'),
+      title: I18n.get('blog-postdetails-openinbrowser'),
       action: () => {
         if (!session) return;
         const url = `${session.platform!.url}${resourceUri}`;
@@ -510,7 +510,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
               Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
             } catch {
-              Toast.showError(I18n.get('common-error-text'));
+              Toast.showError(I18n.get('blog-postdetails-error-text'));
             }
           }}
         />

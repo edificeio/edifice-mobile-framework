@@ -127,7 +127,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         name: course.classes[0] ?? course.groups[0],
       });
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('presences-courselist-error-text'));
     }
   };
 
@@ -141,18 +141,17 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 
   const renderCourseList = () => {
     return (
-      <>
-        <SmallBoldText style={styles.dateText}>
-          {I18n.get('presences-courselist-date', { date: moment().format('DD MMMM YYYY') })}
-        </SmallBoldText>
-        <FlatList
-          data={props.courses}
-          renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
-          keyExtractor={item => item.id + item.startDate}
-          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-          ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('presences-courselist-emptyscreen-title')} />}
-        />
-      </>
+      <FlatList
+        data={props.courses}
+        renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
+        keyExtractor={item => item.id + item.startDate}
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+        ListHeaderComponent={
+          <SmallBoldText>{I18n.get('presences-courselist-date', { date: moment().format('DD MMMM YYYY') })}</SmallBoldText>
+        }
+        ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('presences-courselist-emptyscreen-title')} />}
+        contentContainerStyle={styles.listContentContainer}
+      />
     );
   };
 

@@ -30,7 +30,7 @@ export const uploadWorkspaceFileAction = (parentId: string, lf: LocalFile) => as
     // Full storage management
     // statusCode = 400 on iOS and code = 'ENOENT' on Android
     if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
-      Toast.showError(I18n.get('common-fullstorage'));
+      Toast.showError(I18n.get('workspace-filetransfer-fullstorage'));
     }
     dispatch(workspaceUploadActionsCreators.error(e as Error));
   }
@@ -240,7 +240,7 @@ export const downloadWorkspaceFilesAction = (files: IFile[]) => async (dispatch,
     Toast.showSuccess(
       files.length > 1
         ? I18n.get('workspace-filetransfer-downloadsuccess-all')
-        : I18n.get('common-download-success-name', { name: files[0].name }),
+        : I18n.get('workspace-filetransfer-downloadsuccess-name', { name: files[0].name }),
     );
   } catch (e) {
     dispatch(workspaceDownloadActionsCreators.error(e as Error));

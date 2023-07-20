@@ -49,7 +49,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('viescolaire-competences-home-title'),
+    title: I18n.get('competences-home-title'),
   }),
 });
 
@@ -74,7 +74,6 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       getItemJson<boolean>(STORAGE_KEY).then(value => {
         if (value) setAverageColorsShown(true);
       });
-      await props.tryFetchDevoirs(structureId, childId);
       if (term !== 'default') {
         await props.tryFetchAverages(structureId, childId, term);
       }
@@ -84,6 +83,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         const children = await props.tryFetchUserChildren(structureId, userId);
         childClasses = children.find(c => c.id === childId)?.classId;
       }
+      await props.tryFetchDevoirs(structureId, childId, childClasses);
       await props.tryFetchCompetences(childId, childClasses ?? '');
       await props.tryFetchTerms(structureId, childClasses ?? '');
       props.handleClearLevels();
@@ -179,7 +179,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
     return (
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.get('viescolaire-competences-home-transcript')}</SmallText>
+        <SmallText>{I18n.get('competences-home-transcript')}</SmallText>
         <View style={styles.dropdownsContainer}>
           <DropDownPicker
             open={isTermDropdownOpen}
@@ -208,11 +208,11 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
         </View>
         <View style={styles.headerRow}>
           <SmallBoldText>
-            {I18n.get(displaySubjectAverages ? 'viescolaire-competences-home-averages' : 'viescolaire-competences-home-lastgrades')}
+            {I18n.get(displaySubjectAverages ? 'competences-home-averages' : 'competences-home-lastgrades')}
           </SmallBoldText>
           {showColorSwitch ? (
             <View style={styles.switchContainer}>
-              <SmallText style={styles.colorsText}>{I18n.get('viescolaire-competences-home-colors')}</SmallText>
+              <SmallText style={styles.colorsText}>{I18n.get('competences-home-colors')}</SmallText>
               <Switch
                 value={areAverageColorsShown}
                 onValueChange={() => {
@@ -251,8 +251,8 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 devoirs={devoirs.filter(d => d.isEvaluated && d.subjectId === item.subjectId).sort((a, b) => a.date.diff(b.date))}
               />
             )}
-            ListEmptyComponent={renderEmpty(I18n.get('viescolaire-competences-home-emptyscreen-averages'))}
-            style={styles.listContainer}
+            ListEmptyComponent={renderEmpty(I18n.get('competences-home-emptyscreen-averages'))}
+            contentContainerStyle={styles.listContentContainer}
           />
         ) : (
           <FlatList
@@ -267,8 +267,8 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 onPress={() => openAssessment(item)}
               />
             )}
-            ListEmptyComponent={renderEmpty(I18n.get('viescolaire-competences-home-emptyscreen-default'))}
-            style={styles.listContainer}
+            ListEmptyComponent={renderEmpty(I18n.get('competences-home-emptyscreen-default'))}
+            contentContainerStyle={styles.listContentContainer}
           />
         )}
       </>
@@ -314,14 +314,14 @@ export default connect(
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       dropdownItems: {
         terms: [
-          { label: I18n.get('viescolaire-competences-home-term'), value: 'default' },
+          { label: I18n.get('competences-home-term'), value: 'default' },
           ...competencesState.terms.data.map(term => ({
-            label: `${I18n.get('viescolaire-competences-home-term-' + term.type)} ${term.order}`,
+            label: `${I18n.get('competences-home-term-' + term.type)} ${term.order}`,
             value: term.typeId.toString(),
           })),
         ],
         subjects: [
-          { label: I18n.get('viescolaire-competences-home-subject'), value: 'default' },
+          { label: I18n.get('competences-home-subject'), value: 'default' },
           ...competencesState.subjects.data
             .filter(subject => competencesState.devoirs.data.some(devoir => devoir.subjectId === subject.id))
             .map(subject => ({
