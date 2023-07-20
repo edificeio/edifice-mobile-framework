@@ -76,17 +76,17 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  const fetchMails = async (page: number = 0, flushList?: boolean, ignoreQuery?: boolean) => {
+  const fetchMails = async (page: number = 0, ignoreQuery?: boolean) => {
     try {
       const { folderPath } = props.route.params;
 
       if (page !== currentPage) setCurrentPage(page);
       let newMails = await props.tryFetchMailsFromFolder(folderPath, page, ignoreQuery ? undefined : query);
       setSearchActive(query.length > 0 && !ignoreQuery);
-      if (flushList) {
-        setFetchNextCallable(true);
-      } else {
+      if (page > 0) {
         newMails = mails.concat(newMails).filter((mail, index, array) => array.findIndex(m => m.id === mail.id) === index);
+      } else {
+        setFetchNextCallable(true);
       }
       setMails(newMails);
     } catch {
@@ -96,21 +96,21 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
 
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
-    fetchMails(0, true, true)
+    fetchMails(0, true)
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
   const reload = () => {
     setLoadingState(AsyncPagedLoadingState.RETRY);
-    fetchMails(0, true)
+    fetchMails(0)
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
   const refresh = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH);
-    fetchMails(0, true)
+    fetchMails(0)
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
@@ -180,7 +180,10 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         folderPath,
         id: mail.id,
         subject: mail.subject,
-        refreshList: refresh,
+        refreshList: () => {
+          listRef.current?.scrollToTop();
+          refresh();
+        },
       });
     }
   };
@@ -221,7 +224,12 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.toggleUnread(session, ids, unread);
       setSelectedMails([]);
-      refresh();
+      setMails(
+        mails.map(mail => ({
+          ...mail,
+          unread: ids.includes(mail.id) ? unread : mail.unread,
+        })),
+      );
     } catch {
       Toast.showError(I18n.get('zimbra-maillist-error-text'));
     }
@@ -234,7 +242,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.trash(session, ids);
       setSelectedMails([]);
-      refresh();
+      setMails(mails.filter(mail => !ids.includes(mail.id)));
       Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-trashed' : 'zimbra-maillist-mail-trashed'));
     } catch {
       Toast.showError(I18n.get('zimbra-maillist-error-text'));
@@ -248,7 +256,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.delete(session, ids);
       setSelectedMails([]);
-      refresh();
+      setMails(mails.filter(mail => !ids.includes(mail.id)));
       Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-deleted' : 'zimbra-maillist-mail-deleted'));
     } catch {
       Toast.showError(I18n.get('zimbra-maillist-error-text'));
@@ -270,9 +278,9 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
   };
 
   const moveMailsCallback = () => {
-    setSelectedMails([]);
     moveModalRef.current?.doDismissModal();
-    refresh();
+    setMails(mails.filter(mail => !selectedMails.includes(mail.id)));
+    setSelectedMails([]);
   };
 
   const getDropdownActions = () => {
