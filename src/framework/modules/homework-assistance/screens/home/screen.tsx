@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { RefreshControl, SafeAreaView, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -86,7 +86,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
     if (!props.config) return renderError();
     const { header, body, days, time, info } = props.config.messages;
     return (
-      <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
         <SmallText style={styles.primaryText}>{body}</SmallText>
         <Picture type="NamedSvg" name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
@@ -106,7 +106,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
           </View>
         </View>
         <ActionButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} style={styles.actionContainer} />
-      </SafeAreaView>
+      </ScrollView>
     );
   };
 

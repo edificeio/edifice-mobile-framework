@@ -4,19 +4,24 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
-    margin: UI_SIZES.spacing.big,
-  },
-  primaryText: {
-    textAlign: 'center',
+  actionContainer: {
+    backgroundColor: theme.palette.secondary.regular,
+    borderColor: theme.palette.secondary.regular,
   },
   backgroundImage: {
     position: 'absolute',
     right: -UI_SIZES.spacing.major,
-    bottom: '12%',
+    bottom: 80,
     maxHeight: 300,
+  },
+  container: {
+    flexGrow: 1,
+    justifyContent: 'space-between',
+    padding: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.medium,
+  },
+  primaryText: {
+    textAlign: 'center',
   },
   rowContainer: {
     flexDirection: 'row',
@@ -25,9 +30,5 @@ export default StyleSheet.create({
   },
   secondaryText: {
     marginLeft: UI_SIZES.spacing.minor,
-  },
-  actionContainer: {
-    backgroundColor: theme.palette.secondary.regular,
-    borderColor: theme.palette.secondary.regular,
   },
 });
