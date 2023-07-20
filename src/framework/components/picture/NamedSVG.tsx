@@ -17,6 +17,7 @@ const imports = {
   'logo-porto-vecchio': import('ASSETS/platforms/logo-porto-vecchio.svg'),
   'logo-hautes-alpes': import('ASSETS/platforms/logo-hautes-alpes.svg'),
   'logo-syn': import('ASSETS/platforms/logo-syn.svg'),
+  'logo-syn-2d': import('ASSETS/platforms/logo-syn-2d.svg'),
   // UI Icons
   'ui-addUser': import('ASSETS/icons/uiIcons/addUser.svg'),
   'ui-alert-triangle': import('ASSETS/icons/uiIcons/alert-triangle.svg'),
