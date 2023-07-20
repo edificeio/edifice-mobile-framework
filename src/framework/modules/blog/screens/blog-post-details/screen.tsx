@@ -219,7 +219,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       } else await handlePublishBlogPostComment(ids, comment);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('common-error-text'));
+      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
     }
   }
 
@@ -234,7 +234,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       await handleDeleteBlogPostComment(ids);
     } catch {
       // ToDo: Error handling
-      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('common-error-text'));
+      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
     }
   }
 
@@ -249,7 +249,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
       await handleDeleteBlogPost(ids);
     } catch {
-      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('common-error-text'));
+      Alert.alert(I18n.get('blog-postdetails-error-title'), I18n.get('blog-postdetails-error-text'));
     }
   }
 
@@ -510,7 +510,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               }
               Toast.showSuccess(I18n.get('blog-postdetails-publish-success'));
             } catch {
-              Toast.showError(I18n.get('common-error-text'));
+              Toast.showError(I18n.get('blog-postdetails-error-text'));
             }
           }}
         />

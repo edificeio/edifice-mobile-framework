@@ -198,7 +198,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         }
         if (focusedRef.current) navigation.navigate(routeName, routeParams);
       } catch {
-        Toast.showError(I18n.get('common-error-text'));
+        Toast.showError(I18n.get('user-page-error-text'));
       } finally {
         setCurrentLoadingMenu(undefined);
       }

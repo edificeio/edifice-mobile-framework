@@ -80,7 +80,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
       Toast.showSuccess(I18n.get('presences-declareabsence-successmessage'));
     } catch {
       setCreating(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('presences-declareabsence-error-text'));
     }
   };
 

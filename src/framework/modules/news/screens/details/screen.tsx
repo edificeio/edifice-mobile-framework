@@ -156,7 +156,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, [getComments, notif, onRefresh, route.params.news, route.params.thread]);
 
   const showAlertError = useCallback(() => {
-    Alert.alert(I18n.get('news-details-error-title'), I18n.get('common-error-text'));
+    Alert.alert(I18n.get('news-details-error-title'), I18n.get('news-details-error-text'));
   }, []);
 
   const doDeleteNews = useCallback(() => {

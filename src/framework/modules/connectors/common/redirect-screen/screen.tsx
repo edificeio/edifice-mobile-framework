@@ -42,7 +42,7 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
     if (url) {
       openUrl(`/auth/redirect?url=${url}`);
     } else {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }
   };
 

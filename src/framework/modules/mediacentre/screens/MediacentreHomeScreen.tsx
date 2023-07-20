@@ -191,7 +191,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-added'));
       props.fetchFavorites();
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('mediacentre-home-error-text'));
     }
   };
 
@@ -201,7 +201,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-removed'));
       props.fetchFavorites();
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('mediacentre-home-error-text'));
     }
   };
 

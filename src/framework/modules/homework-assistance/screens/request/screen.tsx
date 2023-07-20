@@ -114,7 +114,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       Toast.showSuccess(I18n.get('homeworkassistance-request-successmessage'));
     } catch {
       setSendingRequest(false);
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('homeworkassistance-request-error-text'));
     }
   };
 

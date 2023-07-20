@@ -395,7 +395,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               resolve(true);
               Toast.showSuccess(I18n.get('timeline-reportaction-success'));
             } catch (e) {
-              Alert.alert(I18n.get('common-error-text'));
+              Alert.alert(I18n.get('timeline-error-text'));
               reject(e);
             }
           },

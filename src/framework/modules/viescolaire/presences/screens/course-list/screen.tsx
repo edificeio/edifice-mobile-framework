@@ -127,7 +127,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         name: course.classes[0] ?? course.groups[0],
       });
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('presences-courselist-error-text'));
     }
   };
 

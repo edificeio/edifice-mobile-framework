@@ -187,7 +187,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           });
         }
       } catch {
-        Toast.showError(I18n.get('common-error-text'));
+        Toast.showError(I18n.get('auth-change-mobile-error-text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -224,7 +224,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }
   }, [navigation, tryLogout, platform]);
 

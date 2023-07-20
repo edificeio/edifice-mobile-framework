@@ -223,7 +223,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       setSelectedMails([]);
       refresh();
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-maillist-error-text'));
     }
   };
 
@@ -237,7 +237,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       refresh();
       Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-trashed' : 'zimbra-maillist-mail-trashed'));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-maillist-error-text'));
     }
   };
 
@@ -251,7 +251,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       refresh();
       Toast.showSuccess(I18n.get(ids.length > 1 ? 'zimbra-maillist-mails-deleted' : 'zimbra-maillist-mail-deleted'));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-maillist-error-text'));
     }
   };
 

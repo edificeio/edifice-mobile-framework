@@ -103,7 +103,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       await zimbraService.mails.toggleUnread(session, [id], true);
       navigation.dispatch(CommonActions.goBack());
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-mail-error-text'));
     }
   };
 
@@ -136,7 +136,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.get('zimbra-mail-mail-trashed'));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-mail-error-text'));
     }
   };
 
@@ -150,7 +150,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       navigation.dispatch(CommonActions.goBack());
       Toast.showSuccess(I18n.get('zimbra-mail-mail-deleted'));
     } catch {
-      Toast.showError(I18n.get('common-error-text'));
+      Toast.showError(I18n.get('zimbra-mail-error-text'));
     }
   };
 
