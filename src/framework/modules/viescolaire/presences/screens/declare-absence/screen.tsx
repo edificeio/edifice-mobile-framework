@@ -9,6 +9,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
@@ -25,7 +26,6 @@ import { presencesService } from '~/framework/modules/viescolaire/presences/serv
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
 import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
@@ -129,26 +129,26 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="date"
                 value={startDate}
-                onChange={date => setSingleDayDate(date)}
+                onChangeValue={date => setSingleDayDate(date)}
                 minimumDate={moment().startOf('day')}
-                color={viescoTheme.palette.presences}
+                iconColor={viescoTheme.palette.presences}
               />
             ) : (
               <>
                 <DateTimePicker
                   mode="date"
                   value={startDate}
-                  onChange={date => setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                  onChangeValue={date => setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
                   minimumDate={moment().startOf('day')}
                   maximumDate={endDate}
-                  color={viescoTheme.palette.presences}
+                  iconColor={viescoTheme.palette.presences}
                 />
                 <DateTimePicker
                   mode="date"
                   value={endDate}
-                  onChange={date => setEndDate(endDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                  onChangeValue={date => setEndDate(endDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
                   minimumDate={startDate}
-                  color={viescoTheme.palette.presences}
+                  iconColor={viescoTheme.palette.presences}
                 />
               </>
             )}
@@ -159,8 +159,8 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="time"
                 value={startDate}
-                onChange={date => setStartDate(startDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
-                color={viescoTheme.palette.presences}
+                onChangeValue={date => setStartDate(startDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
+                iconColor={viescoTheme.palette.presences}
               />
             </View>
             <View style={styles.timePickerContainer}>
@@ -168,8 +168,8 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="time"
                 value={endDate}
-                onChange={date => setEndDate(endDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
-                color={viescoTheme.palette.presences}
+                onChangeValue={date => setEndDate(endDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
+                iconColor={viescoTheme.palette.presences}
               />
             </View>
           </View>

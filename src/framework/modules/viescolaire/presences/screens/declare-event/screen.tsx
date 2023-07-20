@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
@@ -19,7 +20,6 @@ import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
 import type { PresencesDeclareEventScreenPrivateProps } from './types';
@@ -119,7 +119,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
           </LeftColoredItem>
           <View style={styles.timePickerRowContainer}>
             <SmallText style={[styles.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
-            <DateTimePicker mode="time" value={date} onChange={value => setDate(value)} color={mainColor} />
+            <DateTimePicker mode="time" value={date} onChangeValue={value => setDate(value)} iconColor={mainColor} />
           </View>
           <SmallText style={styles.commentText}>{inputLabel}</SmallText>
           {type === EventType.LATENESS ? (

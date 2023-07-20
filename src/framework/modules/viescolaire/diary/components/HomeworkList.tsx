@@ -6,6 +6,7 @@ import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/list/flat-list';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
@@ -23,7 +24,6 @@ import {
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { PageContainer } from '~/ui/ContainerContent';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import { HomeworkItem, SessionItem } from './Items';
 
@@ -190,20 +190,20 @@ export default (props: HomeworkListProps) => {
           <SmallText>{I18n.get('diary-homeworklist-from')}</SmallText>
           <DateTimePicker
             mode="date"
-            style={styles.datePicker}
             value={startDate}
+            onChangeValue={setStartDate}
             maximumDate={endDate}
-            onChange={setStartDate}
-            color={viescoTheme.palette.diary}
+            iconColor={viescoTheme.palette.diary}
+            style={styles.datePicker}
           />
           <SmallText>{I18n.get('diary-homeworklist-to')}</SmallText>
           <DateTimePicker
             mode="date"
-            style={styles.datePicker}
             value={endDate}
+            onChangeValue={setEndDate}
             minimumDate={startDate}
-            onChange={setEndDate}
-            color={viescoTheme.palette.diary}
+            iconColor={viescoTheme.palette.diary}
+            style={styles.datePicker}
           />
         </View>
         <View style={styles.grid}>

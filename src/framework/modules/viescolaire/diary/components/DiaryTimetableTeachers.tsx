@@ -5,6 +5,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
@@ -18,7 +19,6 @@ import { IDiaryCourse, IDiarySession, IHomework } from '~/framework/modules/vies
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { DiaryTimetableScreenProps } from '~/framework/modules/viescolaire/diary/screens/timetable';
 import { TimetableState } from '~/framework/modules/viescolaire/diary/screens/timetable/screen';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
   weekPickerView: {
@@ -220,7 +220,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
       <View style={UI_STYLES.flex1}>
         <View style={styles.weekPickerView}>
           <SmallText style={styles.weekText}>{I18n.get('diary-timetable-week')}</SmallText>
-          <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.diary} />
+          <DateTimePicker mode="date" value={startDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.diary} />
         </View>
         {courses.isFetching || courses.isPristine ? (
           <LoadingIndicator />

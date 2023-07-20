@@ -3,10 +3,10 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/framework/modules/form/model';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import { FormAnswerText } from './FormAnswerText';
 
@@ -56,7 +56,7 @@ export const FormDateCard = ({ isDisabled, question, responses, onChangeAnswer, 
       {isDisabled ? (
         <FormAnswerText answer={responses[0]?.answer} />
       ) : responses[0]?.answer ? (
-        <DateTimePicker mode="date" value={date} onChange={value => onChangeDate(value)} style={styles.datePicker} />
+        <DateTimePicker mode="date" value={date} onChangeValue={value => onChangeDate(value)} style={styles.datePicker} />
       ) : (
         <TouchableOpacity onPress={() => onChangeDate(moment())}>
           <SmallActionText>{I18n.get('form-distribution-datecard-enterdate')}</SmallActionText>
