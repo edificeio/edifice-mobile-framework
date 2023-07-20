@@ -126,25 +126,6 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     }
   };
 
-  const downloadAttachments = async () => {
-    try {
-      const { mail, session } = props;
-
-      if (!mail || !mail.attachments.length || !session) throw new Error();
-      for (const attachment of mail.attachments) {
-        const syncedFile = await fileTransferService.downloadFile(session, attachment, {});
-        await syncedFile.mirrorToDownloadFolder();
-      }
-      if (mail.attachments.length > 1) {
-        Toast.showSuccess(I18n.get('zimbra-mail-download-success-count', { count: mail.attachments.length }));
-      } else {
-        Toast.showSuccess(I18n.get('zimbra-mail-download-success-name', { name: mail.attachments[0]?.filename }));
-      }
-    } catch {
-      Toast.showError(I18n.get('zimbra-mail-download-error'));
-    }
-  };
-
   const trashMail = async () => {
     try {
       const { navigation, session } = props;
