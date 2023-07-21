@@ -166,6 +166,26 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     });
   };
 
+  const refreshListItem = async (id: string) => {
+    try {
+      const { session } = props;
+      const index = mails.findIndex(m => m.id == id);
+
+      if (!session) throw new Error();
+      const mail = await zimbraService.mail.get(session, id);
+      if (index === -1 || !mail) return;
+      if (mail.parentId !== mails[index].parentId) {
+        setMails(mails.filter(m => m.id !== id));
+      } else {
+        const newMails = mails.slice();
+        newMails[index] = mail;
+        setMails(newMails);
+      }
+    } catch {
+      Toast.showError(I18n.get('zimbra-maillist-error-text'));
+    }
+  };
+
   const openMail = (mail: Omit<IMail, 'body'>) => {
     const { folderPath } = props.route.params;
 
@@ -180,10 +200,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
         folderPath,
         id: mail.id,
         subject: mail.subject,
-        refreshList: () => {
-          listRef.current?.scrollToTop();
-          refresh();
-        },
+        onNavigateBack: () => refreshListItem(mail.id),
       });
     }
   };

@@ -18,7 +18,7 @@ export interface ZimbraMailScreenNavParams {
   folderPath: string;
   id: string;
   subject: string;
-  refreshList?: () => void;
+  onNavigateBack?: () => void;
 }
 
 export interface ZimbraMailScreenStoreProps {

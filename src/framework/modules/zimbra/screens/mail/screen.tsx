@@ -88,7 +88,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('beforeRemove', () => {
-      props.route.params.refreshList?.();
+      props.route.params.onNavigateBack?.();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
