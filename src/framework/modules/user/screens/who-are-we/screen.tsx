@@ -34,7 +34,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
   return (
     <ScrollView bottomInset>
       <View style={styles.animationWrapper}>
-        <Lottie source={animationSource} autoPlay loop={false} speed={0.5} />
+        <Lottie source={animationSource} autoPlay loop={false} speed={0.8} />
       </View>
       <View style={styles.textWrapper}>
         <HeadingXSText>{I18n.get('user-whoarewe-quote-text')}</HeadingXSText>
