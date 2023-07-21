@@ -412,7 +412,7 @@
   "form-distribution-leavealert-title": "Leave the form",
   "form-distribution-next": "Next",
   "form-distribution-previous": "Previous",
-  "form-distribution-progressbar-progress": "question {{current}} out of {{total}}",
+  "form-distribution-progressbar-progress": "Page {{current}} out of {{total}}",
   "form-distribution-questioncard-clearanswer": "Clear the answer",
   "form-distribution-questioncard-edit": "Edit",
   "form-distribution-questioncard-enteryouranswer": "Enter your answer",
