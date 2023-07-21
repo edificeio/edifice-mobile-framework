@@ -99,14 +99,16 @@ export const UI_SIZES = {
   },
   border: {
     thin: 1,
+    small: 2,
   },
   radius: {
     small: 4,
     medium: 8,
     card: 8,
     input: 12,
-    explorer: 18,
+    selector: 12,
     mediumPlus: 16,
+    explorer: 18,
     large: 21,
     extraLarge: 24,
     huge: 48,
