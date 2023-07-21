@@ -13,9 +13,4 @@ export default StyleSheet.create({
     borderWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.grey.cloudy,
   },
-  selected: {
-    borderWidth: UI_SIZES.border.small,
-    borderColor: '#5AC235',
-    backgroundColor: '#E7F6E0',
-  },
 });

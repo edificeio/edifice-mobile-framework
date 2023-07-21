@@ -6,11 +6,26 @@ import { SmallBoldText } from '~/framework/components/text';
 
 import styles from './styles';
 import { DayCellProps } from './types';
+import { UI_SIZES } from '~/framework/components/constants';
+import theme from '~/app/theme';
 
-const DayCell = ({ day, isSelected, onPress }: DayCellProps) => {
+const DayCell = ({ dayOfTheWeek, isSelected, onPress }: DayCellProps) => {
+  const dayColor = {
+    borderColor: theme.color.homework.days[dayOfTheWeek]?.accent,
+    backgroundColor: theme.color.homework.days[dayOfTheWeek]?.background,
+  };
+
   return (
-    <TouchableOpacity onPress={onPress} style={[styles.container, isSelected && styles.selected]}>
-      <SmallBoldText>{I18n.get(`dayselector-${day}`)}</SmallBoldText>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.container,
+        isSelected && {
+          borderWidth: UI_SIZES.border.small,
+          ...dayColor,
+        },
+      ]}>
+      <SmallBoldText>{I18n.get(`dayselector-${dayOfTheWeek}`)}</SmallBoldText>
     </TouchableOpacity>
   );
 };

@@ -1,5 +1,5 @@
 export interface DayCellProps {
-  day: string;
+  dayOfTheWeek: string;
   isSelected: boolean;
   onPress: () => void;
 }
