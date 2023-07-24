@@ -89,14 +89,14 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
 
   const onFilter = useCallback(
     async (idThread: number | undefined) => {
-      if (isFiltering) return;
       try {
         setIsFiltering(true);
         setPage(0);
         setIdThreadSelected(idThread);
 
-        const data = await handleGetNewsItems(0, idThread);
-        setNews(data);
+        await handleGetNewsItems(0, idThread).then(data => {
+          setNews(data);
+        });
       } catch {
         setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED);
         throw new Error();
@@ -166,19 +166,19 @@ const NewsHomeScreen = (props: NewsHomeScreenProps) => {
     return (
       <FlatList
         style={[styles.flatlist, threads.length <= 1 ? styles.flatlistNoThreadSelector : null]}
-        data={news}
+        data={isFiltering ? [] : news}
         renderItem={({ item }: { item: NewsItem }) => {
           const newsThread: NewsThreadItemReduce = threadsInfosReduce[`${item.threadId}`];
           return <NewsCard news={item} thread={newsThread} onPress={() => onOpenNewsItem(item, newsThread)} />;
         }}
         keyExtractor={item => item.id.toString()}
-        ListHeaderComponent={
-          threads.length > 1 ? (
-            <ThreadsSelector threads={threads} isFiltering={isFiltering} onSelect={id => onFilter(id)} />
-          ) : undefined
-        }
+        ListHeaderComponent={threads.length > 1 ? <ThreadsSelector threads={threads} onSelect={id => onFilter(id)} /> : undefined}
         ListEmptyComponent={
-          <NoNewsScreen createNews={idThreadSelected ? canCreateNewsForSelectedThread : canCreateNewsForOneThread} />
+          isFiltering ? (
+            <NewsPlaceholderHome withoutThreads />
+          ) : (
+            <NoNewsScreen createNews={idThreadSelected ? canCreateNewsForSelectedThread : canCreateNewsForOneThread} />
+          )
         }
         refreshControl={
           <RefreshControl
