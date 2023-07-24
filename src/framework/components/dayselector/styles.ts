@@ -13,17 +13,14 @@ export default StyleSheet.create({
   },
   daysContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginTop: UI_SIZES.spacing.big,
   },
   week: {
+    flex: 1,
     textAlign: 'center',
-    marginLeft: UI_SIZES.spacing.large,
-    marginRight: UI_SIZES.spacing.large,
   },
   weekContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
