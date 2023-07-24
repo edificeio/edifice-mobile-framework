@@ -61,6 +61,7 @@
   "auth-changepassword-password-new": "Confirm new password",
   "auth-changepassword-password-new-confirm": "Password confirmed",
   "auth-changepassword-password-old": "Old password",
+  "auth-changepassword-success": "Password successfully updated.",
   "auth-changepassword-warning": "For security reasons, please change your password.",
   "auth-disconnect-confirm": "Are you sure you want to logout?",
   "auth-error-badcredentials": "Username or password is incorrect.",
