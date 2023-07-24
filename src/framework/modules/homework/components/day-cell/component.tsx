@@ -25,7 +25,7 @@ const DayCell = ({ dayOfTheWeek, isSelected, onPress }: DayCellProps) => {
           ...dayColor,
         },
       ]}>
-      <SmallBoldText>{I18n.get(`dayselector-${dayOfTheWeek}`)}</SmallBoldText>
+      <SmallBoldText>{I18n.get(`date-${dayOfTheWeek}`)}</SmallBoldText>
     </TouchableOpacity>
   );
 };

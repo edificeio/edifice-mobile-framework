@@ -16,12 +16,12 @@ export default StyleSheet.create({
     justifyContent: 'space-around',
     marginTop: UI_SIZES.spacing.big,
   },
-  weekContainer: {
-    alignItems: 'center',
+  week: {
+    textAlign: 'center',
     marginLeft: UI_SIZES.spacing.large,
     marginRight: UI_SIZES.spacing.large,
   },
-  weekSelectorContainer: {
+  weekContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

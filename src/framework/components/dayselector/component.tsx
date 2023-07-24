@@ -30,7 +30,7 @@ const DaySelector = (props: DaySelectorProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.weekSelectorContainer}>
+      <View style={styles.weekContainer}>
         <PictureButton
           iconName="ui-rafterLeft"
           disabled={isPastDisabled}
