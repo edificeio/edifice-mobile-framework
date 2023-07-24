@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-19 17:59:09",
-  "notes": "chore: MB-1726, reformat common keys (part 3)\nchore: MB-1726, reformat common keys (part 2)\nchore: MB-1726, reformat common keys (part 1)\nfeat(i18n): AMV2-588 add missing workspace keys\nfeat: MB-1727, new whoarewe page\nfix(conversation): MB-1807, mark as unread typo\nfeat(workspace): AMV2-540 show alert on swipe action delete\nfeat(i18n): rename competences keys\nfeat(competences): AMVS-370 sort assessment competences by name\nchore: add edifice logos\nchore(viesco): remove ArticleContainer occurences and apply style to list content container\nrelease: 1.10.0-alpha.10(1100010)",
-  "version": "1.10.0-alpha.11(1100011)",
+  "last": "2023-07-24 18:15:17",
+  "notes": "fix(toast): MB-1590, password change success wording\nfeat(schoolbook): MB-992, grow border to 4px in userlist on schoolbook\nfix(news): MB-1359, add skeleton on filter\nfix(competences): AMVS-373 find competence name from D1 domaine\nfix(alert): mismatch error alert type\nfeat(i18n): AMV2-450 edit form progress bar label\nfix(zimbra): AMZ-130 refresh opened mail instead of whole list when back from mail screen\nchore: MB-1815, update edifice animation\nfix(zimbra): AMZ-130 improve mail list update\nfeat(homework-assistance): AMV2-589 display home information inside inside scrollview\nchore: MB-1726, reformat common keys (part 4)\nchore: add syn 2d to namedsvg\nchore: move DateTimePicker from ui to framework components\nchore: add syn 2d platform logo\nrelease: 1.10.0-alpha.11(1100011)",
+  "version": "1.10.0-alpha.12(1100012)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
