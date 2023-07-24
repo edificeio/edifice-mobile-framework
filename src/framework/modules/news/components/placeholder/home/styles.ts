@@ -17,9 +17,10 @@ export default StyleSheet.create({
   },
   //DETAILS
   page: {
-    padding: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
   },
   threads: {
+    paddingTop: UI_SIZES.spacing.medium,
     marginBottom: UI_SIZES.spacing.big,
     flexDirection: 'row',
   },

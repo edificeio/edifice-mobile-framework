@@ -33,7 +33,7 @@ export enum Status {
 const SelectedView = styled(View)({
   position: 'absolute',
   borderColor: theme.palette.primary.regular,
-  borderWidth: 2,
+  borderWidth: 4,
 });
 
 const largeImageStyle = {

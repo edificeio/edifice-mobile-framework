@@ -116,7 +116,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
         setTimeout(() => {
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
           if (this.mounted) this.setState({ typing: false, submitState: 'IDLE', error: undefined });
-          Toast.showSuccess(I18n.get('PasswordChangeSuccess'));
+          Toast.showSuccess(I18n.get('auth-changepassword-success'));
         }, 500);
         if (this.props.route.params.navCallback) {
           this.props.navigation.dispatch(this.props.route.params.navCallback);

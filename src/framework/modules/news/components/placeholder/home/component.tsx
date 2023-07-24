@@ -25,15 +25,19 @@ const itemThread = (
   </View>
 );
 
-export default function NewsPlaceholderHome() {
+export default function NewsPlaceholderHome(props: { withoutThreads?: boolean }) {
   return (
     <Placeholder style={styles.page} Animation={Fade}>
-      <View style={styles.threads}>
-        {itemThread}
-        {itemThread}
-        {itemThread}
-        {itemThread}
-      </View>
+      {!props.withoutThreads ? (
+        <View style={styles.threads}>
+          {itemThread}
+          {itemThread}
+          {itemThread}
+          {itemThread}
+        </View>
+      ) : null}
+      {cardNews}
+      {cardNews}
       {cardNews}
       {cardNews}
       {cardNews}

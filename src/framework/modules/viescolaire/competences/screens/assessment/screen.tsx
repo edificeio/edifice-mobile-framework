@@ -138,17 +138,18 @@ const CompetencesAssessmentScreen = (props: CompetencesAssessmentScreenPrivatePr
 };
 
 export default connect(
-  (state: IGlobalState) => {
+  (state: IGlobalState, props: CompetencesAssessmentScreenPrivateProps) => {
     const competencesState = moduleConfig.getState(state);
     const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
-    const competences = competencesState.competences.data;
+    const competences = competencesState.competences.data.filter(c => c.devoirId === props.route.params.assessment.id);
     const domaines = competencesState.domaines.data;
 
     for (const competence of competences) {
-      const domaine = domaines.find(d => d.id === competence.domaineId);
+      const domaine =
+        domaines.find(d => d.id === competence.domaineId) ?? domaines[0]?.domaines?.find(d => d.id === competence.domaineId);
       competence.name = domaine?.competences?.find(c => c.id === competence.id)?.name;
     }
     competences.sort((a, b) => (a.name && b.name && a.name > b.name ? 1 : -1));

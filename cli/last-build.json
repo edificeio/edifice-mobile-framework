@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-10 18:27:56",
-  "notes": "feat(form): AMV2-568 allow conditional questions to redirect to questions using api version 1.9\nchore(stack): unwanted patch removal.\nfix(zimbra): AMZ-113 improve subfolder list style\nfeat(zimbra): AMZ-90 add android menu option to download all attachments\nSquashed commit of the following:\nfix(competences): AMVS-366 add margin to competences button on assessments not graded\nchore(stack): react-native-share bug fix\nchore(stack): Upgrade packages.\nfix(zimbra): AMZ-104 deselect mails on swipe action\nfix(zimbra): AMZ-129 allow moving mails back to drafts/outbox\nrelease: 1.10.0-alpha.8(1100008)",
-  "version": "1.10.0-alpha.9(1100009)",
+  "last": "2023-07-24 18:15:17",
+  "notes": "fix(toast): MB-1590, password change success wording\nfeat(schoolbook): MB-992, grow border to 4px in userlist on schoolbook\nfix(news): MB-1359, add skeleton on filter\nfix(competences): AMVS-373 find competence name from D1 domaine\nfix(alert): mismatch error alert type\nfeat(i18n): AMV2-450 edit form progress bar label\nfix(zimbra): AMZ-130 refresh opened mail instead of whole list when back from mail screen\nchore: MB-1815, update edifice animation\nfix(zimbra): AMZ-130 improve mail list update\nfeat(homework-assistance): AMV2-589 display home information inside inside scrollview\nchore: MB-1726, reformat common keys (part 4)\nchore: add syn 2d to namedsvg\nchore: move DateTimePicker from ui to framework components\nchore: add syn 2d platform logo\nrelease: 1.10.0-alpha.11(1100011)",
+  "version": "1.10.0-alpha.12(1100012)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

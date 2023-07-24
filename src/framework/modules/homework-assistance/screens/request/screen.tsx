@@ -202,7 +202,7 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
         </View>
         <View>
           {!isDateValid ? (
-            <AlertCard type="failure" text={I18n.get('homeworkassistance-request-date-error')} style={styles.errorAlert} />
+            <AlertCard type="error" text={I18n.get('homeworkassistance-request-date-error')} style={styles.errorAlert} />
           ) : null}
           <ActionButton
             text={I18n.get('homeworkassistance-request-action')}
