@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
-import { today } from '~/framework/util/date';
+import { addTime, displayWeekRange, isDateGivenWeekday, isDateWeekend, subtractTime, today } from '~/framework/util/date';
 import DayCell from '~/framework/modules/homework/components/day-cell';
 import { DaySelectorProps } from './types';
 
@@ -10,23 +9,20 @@ import { SmallText } from '../text';
 import styles from './styles';
 
 import PictureButton from '../buttons/picture/component';
-import { uppercaseFirstLetter } from '~/framework/util/string';
 
 const DaySelector = (props: DaySelectorProps) => {
-  const isTodayWeekend = today().day() === 0 || today().day() === 6;
-  const defaultSelectedDate = isTodayWeekend ? today().clone().add(1, 'weeks').day(1) : today().clone().add(1, 'day');
-  const defaultStartOfWeek = defaultSelectedDate.clone().startOf('week');
+  const isTodayWeekend = isDateWeekend(today());
+  const defaultSelectedDate = isTodayWeekend
+    ? addTime(today(), 1, 'week').startOf('week')
+    : addTime(today(), 1, 'day').startOf('day');
+  const defaultStartDate = defaultSelectedDate.clone().startOf('week');
 
   const [selectedDate, setSelectedDate] = React.useState(defaultSelectedDate);
-  const [startDate, setStartDate] = React.useState(defaultStartOfWeek);
+  const [startDate, setStartDate] = React.useState(defaultStartDate);
 
-  const isPastDisabled = startDate.isSame(defaultStartOfWeek.clone().subtract(8, 'week'));
-  const isFutureDisabled = startDate.isSame(defaultStartOfWeek.clone().add(8, 'week'));
-  const isCurrentWeek = startDate.isSame(defaultStartOfWeek);
-  const isNextWeek = startDate.isSame(defaultStartOfWeek.clone().add(1, 'week'));
-  const endDate = startDate.clone().add(6, 'days');
-  const isSelectedDateWithinSelectedWeek = selectedDate.isBetween(startDate, endDate, undefined, '[]');
-  const selectedWeekDay = selectedDate.day();
+  const isPastDisabled = startDate.isSame(subtractTime(defaultStartDate, 8, 'week'));
+  const isFutureDisabled = startDate.isSame(addTime(defaultStartDate, 8, 'week'));
+  const isWithinSelectedWeek = selectedDate.isBetween(startDate, addTime(startDate, 6, 'day'), undefined, '[]');
 
   return (
     <View style={styles.container}>
@@ -34,63 +30,45 @@ const DaySelector = (props: DaySelectorProps) => {
         <PictureButton
           iconName="ui-rafterLeft"
           disabled={isPastDisabled}
-          action={() => setStartDate(startDate.clone().subtract(1, 'weeks'))}
+          action={() => setStartDate(subtractTime(startDate, 1, 'week'))}
         />
-        <View style={styles.weekContainer}>
-          <SmallText>
-            {isCurrentWeek
-              ? I18n.get('dayselector-week-current')
-              : isNextWeek
-              ? I18n.get('dayselector-week-next')
-              : I18n.get('dayselector-week-of', {
-                  startDate: startDate.format('D'),
-                  endDate: endDate.format('D'),
-                })}
-          </SmallText>
-          {isCurrentWeek ? null : (
-            <SmallText>
-              {isNextWeek
-                ? I18n.get('dayselector-week-range', { startDate: startDate.format('D MMM'), endDate: endDate.format('D MMM') })
-                : uppercaseFirstLetter(endDate.format('MMMM Y'))}
-            </SmallText>
-          )}
-        </View>
+        <SmallText style={styles.week}>{displayWeekRange(startDate)}</SmallText>
         <PictureButton
           iconName="ui-rafterRight"
           disabled={isFutureDisabled}
-          action={() => setStartDate(startDate.clone().add(1, 'weeks'))}
+          action={() => setStartDate(addTime(startDate, 1, 'week'))}
         />
       </View>
       <View style={styles.daysContainer}>
         <DayCell
           dayOfTheWeek="monday"
           onPress={() => setSelectedDate(startDate)}
-          isSelected={isSelectedDateWithinSelectedWeek && selectedWeekDay === 1}
+          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 1)}
         />
         <DayCell
           dayOfTheWeek="tuesday"
-          onPress={() => setSelectedDate(startDate.clone().add(1, 'day'))}
-          isSelected={isSelectedDateWithinSelectedWeek && selectedWeekDay === 2}
+          onPress={() => setSelectedDate(addTime(startDate, 1, 'day'))}
+          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 2)}
         />
         <DayCell
           dayOfTheWeek="wednesday"
-          onPress={() => setSelectedDate(startDate.clone().add(2, 'day'))}
-          isSelected={isSelectedDateWithinSelectedWeek && selectedWeekDay === 3}
+          onPress={() => setSelectedDate(addTime(startDate, 2, 'day'))}
+          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 3)}
         />
         <DayCell
           dayOfTheWeek="thursday"
-          onPress={() => setSelectedDate(startDate.clone().add(3, 'day'))}
-          isSelected={isSelectedDateWithinSelectedWeek && selectedWeekDay === 4}
+          onPress={() => setSelectedDate(addTime(startDate, 3, 'day'))}
+          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 4)}
         />
         <DayCell
           dayOfTheWeek="friday"
-          onPress={() => setSelectedDate(startDate.clone().add(4, 'day'))}
-          isSelected={isSelectedDateWithinSelectedWeek && selectedWeekDay === 5}
+          onPress={() => setSelectedDate(addTime(startDate, 4, 'day'))}
+          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 5)}
         />
         <DayCell
           dayOfTheWeek="saturday"
-          onPress={() => setSelectedDate(startDate.clone().add(5, 'day'))}
-          isSelected={isSelectedDateWithinSelectedWeek && selectedWeekDay === 6}
+          onPress={() => setSelectedDate(addTime(startDate, 5, 'day'))}
+          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 6)}
         />
       </View>
     </View>
