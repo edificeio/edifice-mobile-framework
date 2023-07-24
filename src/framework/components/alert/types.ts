@@ -1,12 +1,11 @@
 import React from 'react';
 import { StyleProp, Text, ViewProps, ViewStyle } from 'react-native';
 
-import theme, { IShades } from '~/app/theme';
-
-import { PictureProps } from '../picture';
+import { IShades } from '~/app/theme';
+import { PictureProps } from '~/framework/components/picture';
 
 export interface AlertCardProps {
-  type: keyof typeof theme.palette.status;
+  type: 'error' | 'info' | 'success' | 'warning';
   text?: string | React.ReactElement<typeof Text>;
   icon?: PictureProps;
   label?: string;
