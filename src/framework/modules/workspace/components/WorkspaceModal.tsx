@@ -31,12 +31,10 @@ const styles = StyleSheet.create({
 export enum WorkspaceModalType {
   COPY,
   CREATE_FOLDER,
-  DELETE,
   DOWNLOAD,
   MOVE,
   NONE,
   RENAME,
-  TRASH,
 }
 
 interface IWorkspaceModalSettings {
@@ -70,12 +68,6 @@ const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => 
         title: I18n.get('workspace-filelist-modal-createfolder-title'),
         hasInput: true,
       };
-    case WorkspaceModalType.DELETE:
-      return {
-        buttonText: I18n.get('workspace-filelist-modal-delete-action'),
-        title: I18n.get('workspace-filelist-modal-delete-title'),
-        hasFileList: true,
-      };
     case WorkspaceModalType.DOWNLOAD:
       return {
         buttonText: I18n.get('workspace-filelist-modal-download-action'),
@@ -93,12 +85,6 @@ const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => 
         buttonText: I18n.get('workspace-filelist-modal-rename-action'),
         title: I18n.get('workspace-filelist-modal-rename-title'),
         hasInput: true,
-      };
-    case WorkspaceModalType.TRASH:
-      return {
-        buttonText: I18n.get('workspace-filelist-modal-trash-action'),
-        title: I18n.get('workspace-filelist-modal-trash-title'),
-        hasFileList: true,
       };
     case WorkspaceModalType.NONE:
     default:

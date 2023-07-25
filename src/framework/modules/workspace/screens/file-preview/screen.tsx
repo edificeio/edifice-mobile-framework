@@ -74,7 +74,7 @@ const WorkspaceFilePreviewScreen = (props: IWorkspaceFilePreviewScreenProps) => 
 };
 
 export default connect(
-  (gs: IGlobalState, props: any) => {
+  (state: IGlobalState, props: any) => {
     return {
       file: props.route.params.file,
       title: props.route.params.title,

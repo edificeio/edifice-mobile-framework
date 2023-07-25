@@ -63,8 +63,7 @@ export const computeNavBar = ({
 });
 
 const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
-  const filter = props.route.params.filter;
-  const parentId = props.route.params.parentId;
+  const { filter, parentId } = props.route.params;
   const [selectedFiles, setSelectedFiles] = React.useState<string[]>([]);
   const [isUploading, setUploading] = React.useState(false);
   const [modalType, setModalType] = React.useState<WorkspaceModalType>(WorkspaceModalType.NONE);
@@ -141,7 +140,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     //   })) as IMedia[];
     // const startIndex = data.findIndex(f => f.link === file.url);
     // openCarousel({ data, startIndex }, navigation)
-    openDocument(convertIFileToIDistantFile(file), navigation);
+    openDocument(convertIFileToIDistantFile(file));
   };
 
   const onPressFile = (file: IFile) => {
@@ -171,6 +170,32 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     fetchList();
   };
 
+  const trashFiles = async (ids: string[]) => {
+    await props.trashFiles(parentId, ids);
+    setSelectedFiles([]);
+    fetchList(parentId, true);
+  };
+
+  const deleteFiles = async (ids: string[]) => {
+    await props.deleteFiles(parentId, ids);
+    setSelectedFiles([]);
+    fetchList(parentId, true);
+  };
+
+  const alertPermanentDeletion = (ids: string[]) => {
+    Alert.alert(I18n.get('workspace-filelist-deletealert-title'), I18n.get('workspace-filelist-deletealert-message'), [
+      {
+        text: I18n.get('common-cancel'),
+        style: 'default',
+      },
+      {
+        text: I18n.get('common-delete'),
+        onPress: () => deleteFiles(ids),
+        style: 'destructive',
+      },
+    ]);
+  };
+
   const restoreSelectedFiles = async () => {
     const ids = selectedFiles;
     setSelectedFiles([]);
@@ -189,9 +214,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       case WorkspaceModalType.CREATE_FOLDER:
         await props.createFolder(value, parentId);
         return fetchList(parentId, true);
-      case WorkspaceModalType.DELETE:
-        await props.deleteFiles(parentId, ids);
-        return fetchList(parentId, true);
       case WorkspaceModalType.DOWNLOAD:
         return props.downloadFiles(files);
       case WorkspaceModalType.MOVE:
@@ -200,9 +222,6 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         return fetchList(parentId, true);
       case WorkspaceModalType.RENAME:
         await props.renameFile(files[0], value);
-        return fetchList(parentId, true);
-      case WorkspaceModalType.TRASH:
-        await props.trashFiles(parentId, ids);
         return fetchList(parentId, true);
     }
   };
@@ -274,7 +293,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         ...((selectedFiles.length >= 1 && filter === Filter.OWNER) || filter === Filter.TRASH
           ? [
               deleteAction({
-                action: () => openModal(filter === Filter.TRASH ? WorkspaceModalType.DELETE : WorkspaceModalType.TRASH),
+                action: () => (filter === Filter.TRASH ? alertPermanentDeletion(selectedFiles) : trashFiles(selectedFiles)),
               }),
             ]
           : []),
@@ -410,43 +429,15 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
                   ]
                 : [],
             right:
-              filter === Filter.OWNER
+              filter === Filter.OWNER || filter === Filter.TRASH
                 ? [
                     {
                       action: async row => {
-                        if (selectedFiles.includes(item.key)) {
-                          selectFile(item);
+                        if (filter === Filter.TRASH) {
+                          alertPermanentDeletion([item.key]);
+                        } else {
+                          trashFiles([item.key]);
                         }
-                        props.trashFiles(parentId, [item.key]).then(() => fetchList(parentId, true));
-                        row[item.key]?.closeRow();
-                      },
-                      backgroundColor: theme.palette.status.failure.regular,
-                      actionText: I18n.get('workspace-filelist-swipeaction-delete'),
-                      actionIcon: 'ui-trash',
-                    },
-                  ]
-                : filter === Filter.TRASH
-                ? [
-                    {
-                      action: async row => {
-                        if (selectedFiles.includes(item.key)) {
-                          selectFile(item);
-                        }
-                        Alert.alert(
-                          I18n.get('workspace-filelist-deletealert-title'),
-                          I18n.get('workspace-filelist-deletealert-message'),
-                          [
-                            {
-                              text: I18n.get('common-cancel'),
-                              style: 'default',
-                            },
-                            {
-                              text: I18n.get('common-delete'),
-                              onPress: () => props.deleteFiles(parentId, [item.key]).then(() => fetchList(parentId, true)),
-                              style: 'destructive',
-                            },
-                          ],
-                        );
                         row[item.key]?.closeRow();
                       },
                       backgroundColor: theme.palette.status.failure.regular,
@@ -489,14 +480,14 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
 };
 
 export default connect(
-  (gs: IGlobalState, props: any) => {
-    const state = moduleConfig.getState(gs);
-    const parentId = props.route.params.parentId;
+  (state: IGlobalState, props: any) => {
+    const workspaceState = moduleConfig.getState(state);
+    const { parentId } = props.route.params;
     return {
-      files: state.directories.data[parentId] ?? [],
-      folderTree: state.folderTree.data,
+      files: workspaceState.directories.data[parentId] ?? [],
+      folderTree: workspaceState.folderTree.data,
       initialLoadingState:
-        state.directories[parentId] === undefined ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
+        workspaceState.directories[parentId] === undefined ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       session: getSession(),
     };
   },
