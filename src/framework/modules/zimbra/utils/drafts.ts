@@ -103,6 +103,7 @@ export const initDraftFromMail = (mail: IMail, draftType: DraftType): Partial<ID
         body: deleteHtmlContent(mail.body),
         threadBody,
         attachments: mail.attachments,
+        id: mail.id,
       };
     }
     default:
