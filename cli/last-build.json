@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-24 18:15:17",
-  "notes": "fix(toast): MB-1590, password change success wording\nfeat(schoolbook): MB-992, grow border to 4px in userlist on schoolbook\nfix(news): MB-1359, add skeleton on filter\nfix(competences): AMVS-373 find competence name from D1 domaine\nfix(alert): mismatch error alert type\nfeat(i18n): AMV2-450 edit form progress bar label\nfix(zimbra): AMZ-130 refresh opened mail instead of whole list when back from mail screen\nchore: MB-1815, update edifice animation\nfix(zimbra): AMZ-130 improve mail list update\nfeat(homework-assistance): AMV2-589 display home information inside inside scrollview\nchore: MB-1726, reformat common keys (part 4)\nchore: add syn 2d to namedsvg\nchore: move DateTimePicker from ui to framework components\nchore: add syn 2d platform logo\nrelease: 1.10.0-alpha.11(1100011)",
-  "version": "1.10.0-alpha.12(1100012)",
+  "last": "2023-07-26 14:31:06",
+  "notes": "fix(schoolbook): MB-1722 , change style of selectedView in avatar to center border\nchore: add platform logos\nchore(auth): MB-1820, replace svg platform icons with png\nchore(auth): MB-1730, update edifice logos (2)\nfix(navigation): MB-1812 , downgrade react-native-screens version to fix navigation animation on google pixel 4A\nfeat(workspace): AMV2-540 replace delete modal with alert, remove trash modal\nchore(auth): MB-1730, update edifice logos\nrelease: 1.10.0-alpha.12(1100012)",
+  "version": "1.10.0-rc.1(1100013)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
