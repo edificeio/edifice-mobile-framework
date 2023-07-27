@@ -3,14 +3,14 @@ import { View } from 'react-native';
 
 import { addTime, displayWeekRange, isDateGivenWeekday, isDateWeekend, subtractTime, today } from '~/framework/util/date';
 import DayCell from '~/framework/modules/homework/components/day-cell';
-import { DaySelectorProps } from './types';
+import { DayPickerProps } from './types';
 
 import { SmallText } from '../text';
 import styles from './styles';
 
 import PictureButton from '../buttons/picture/component';
 
-const DaySelector = (props: DaySelectorProps) => {
+const DayPicker = (props: DayPickerProps) => {
   const isTodayWeekend = isDateWeekend(today());
   const defaultSelectedDate = isTodayWeekend
     ? addTime(today(), 1, 'week').startOf('week')
@@ -75,4 +75,4 @@ const DaySelector = (props: DaySelectorProps) => {
   );
 };
 
-export default DaySelector;
+export default DayPicker;
