@@ -2,6 +2,7 @@ import { ParamListBase } from '@react-navigation/native';
 
 import { HomeworkTaskListScreenNavigationParams } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
 import moduleConfig from '~/framework/modules/homework/module-config';
+import { IHomeworkCreateScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkCreateScreen';
 import { HomeworkExplorerScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkExplorerScreen';
 import { HomeworkInitialScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkInitialScreen';
 import { IHomeworkTaskDetailsScreenNavigationParams } from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';
@@ -15,7 +16,7 @@ export const homeworkRouteNames = {
 };
 export interface HomeworkNavigationParams extends ParamListBase {
   home: HomeworkInitialScreenNavigationParams;
-  homeworkCreate: any;
+  homeworkCreate: IHomeworkCreateScreenNavigationParams;
   homeworkExplorer: HomeworkExplorerScreenNavigationParams;
   homeworkTaskDetails: IHomeworkTaskDetailsScreenNavigationParams;
   homeworkTaskList: HomeworkTaskListScreenNavigationParams;
