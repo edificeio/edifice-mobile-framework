@@ -24,6 +24,7 @@ const imports = {
   'ui-attachment': import('ASSETS/icons/uiIcons/attachment.svg'),
   'ui-audio': import('ASSETS/icons/uiIcons/audio.svg'),
   'ui-block': import('ASSETS/icons/uiIcons/block.svg'),
+  'ui-book': import('ASSETS/icons/uiIcons/book.svg'),
   'ui-burgerMenu': import('ASSETS/icons/uiIcons/burgerMenu.svg'),
   'ui-calendar': import('ASSETS/icons/uiIcons/calendar.svg'),
   'ui-calendarLight': import('ASSETS/icons/uiIcons/calendarLight.svg'),
