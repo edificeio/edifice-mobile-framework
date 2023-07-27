@@ -5,7 +5,7 @@
 		<key>BundleVersionOverride</key>
 		<string>dev/default</string>
 		<key>BundleVersionType</key>
-		<string>rc.5</string>
+		<string></string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>fr_FR</string>
 		<key>CFBundleDisplayName</key>
@@ -21,11 +21,11 @@
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.10.0</string>
+		<string>1.10.1</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleVersion</key>
-		<string>1100017</string>
+		<string>1100100</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>
