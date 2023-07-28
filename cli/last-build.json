@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-28 15:55:48",
-  "notes": "chore(homework): integrate daypicker inside homeworkcreatescreen\nchore(homework): MB-186, homework create navigation route\nchore(homework): MB-186, photospicker wordings\nSquashed commit of the following:\nrelease: 1.11.0(1110000)\nchore(homework): MB-186, add svg and translations\nchore(homework): MB-186, rename dayselector into daypicker\nchore(zimbra): AMZ-133 convert composer screen to functional component\nMerge branch 'dev/1.10.0' into dev/1.10.1\nchore: add platform logos\nchore(auth): MB-1820, replace svg platform icons with png\nchore(auth): MB-1730, update edifice logos (2)\nfix(navigation): MB-1812 , downgrade react-native-screens version to fix navigation animation on google pixel 4A\nfeat(workspace): AMV2-540 replace delete modal with alert, remove trash modal\nchore(auth): MB-1730, update edifice logos\nMerge branch 'dev/1.10.0' into dev/1.10.1\nfeat(homework): MB-227, improve style\nrelease: 1.10.0-alpha.12(1100012)",
-  "version": "1.11.0-alpha.1(1110001)",
+  "last": "2023-07-28 16:52:22",
+  "notes": "release: 1.11.0-alpha.1(1110001)",
+  "version": "1.11.0-alpha.2(1110002)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
