@@ -46,6 +46,7 @@ export const TextAvatar = ({
           alignItems: 'center',
           flexDirection: isHorizontal ? 'row' : 'column',
           width: isHorizontal ? undefined : 48,
+          paddingTop: 2, // to fix border when avatar is selected
         },
         viewStyle,
       ]}>
