@@ -6,17 +6,16 @@ import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 
-export interface IProfilePageDataProps {
+export interface ProfilePageDataProps {
   session?: ISession;
 }
 
-export interface IProfilePageEventProps {
-  onSave: (updatedProfileValues: UpdatableProfileValues) => void;
+export interface ProfilePageEventProps {
   dispatch: Dispatch;
 }
 
-export type IProfilePageProps = IProfilePageDataProps &
-  IProfilePageEventProps &
+export type ProfilePageProps = ProfilePageDataProps &
+  ProfilePageEventProps &
   NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.profile> & {
     onUploadAvatar: (avatar: LocalFile) => Promise<SyncedFile>;
     onUpdateAvatar: (uploadedAvatarUrl: string) => Promise<void>;
@@ -24,15 +23,6 @@ export type IProfilePageProps = IProfilePageDataProps &
     onUploadAvatarError: () => void;
   };
 
-export type IProfilePageState = UpdatableProfileValues & {
-  homePhoneValid?: boolean;
-  loginAliasValid?: boolean;
-  updatingAvatar?: boolean;
-};
-
 export interface ProfileScreenNavigationParams {
-  updatedProfileValues?: UpdatableProfileValues;
-  edit?: boolean;
-  onCancel?: () => void;
-  onSave?: (updatedProfileValues: UpdatableProfileValues) => void;
+  userId?: string;
 }

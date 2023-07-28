@@ -12,7 +12,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
-import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line/component';
+import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
@@ -206,8 +206,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
-  const isStudent = session?.user.type === UserType.Student;
-  const isRelative = session?.user.type === UserType.Relative;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   return React.useMemo(
     () => (
@@ -243,27 +241,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 onPress={() => editUserInformation(ModificationType.MOBILE)}
               />
             ) : null}
-            <LineButton
-              title="user-structures-title"
-              onPress={() => {
-                navigation.navigate(userRouteNames.structures, {});
-              }}
-            />
-            {isStudent ? (
-              <LineButton
-                title="user-relatives-title"
-                onPress={() => {
-                  navigation.navigate(userRouteNames.family, { mode: 'relatives' });
-                }}
-              />
-            ) : isRelative ? (
-              <LineButton
-                title="user-children-title"
-                onPress={() => {
-                  navigation.navigate(userRouteNames.family, { mode: 'children' });
-                }}
-              />
-            ) : null}
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
@@ -287,7 +264,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         </View>
       </>
     ),
-    [currentLoadingMenu, canEditPersonalInfo, isStudent, isRelative, showWhoAreWe, navigation, editUserInformation],
+    [currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
   );
 }
 

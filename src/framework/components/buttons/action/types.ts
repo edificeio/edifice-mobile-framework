@@ -15,5 +15,6 @@ export interface ActionButtonProps {
   onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
   pictureSize?: number;
   pictureFill?: ColorValue;
+  pictureStyle?: StyleProp<ViewStyle>;
   textColor?: ColorValue;
 }

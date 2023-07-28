@@ -1,5 +1,6 @@
 import UserStructuresScreen from './screen';
+import { UserStructuresScreenNavParams } from './types';
 
 export default UserStructuresScreen;
-export { UserStructuresScreenNavParams, UserStructuresScreenProps } from './types';
+export type { UserStructuresScreenNavParams };
 export { computeNavBar } from './screen';

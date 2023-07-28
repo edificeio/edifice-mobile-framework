@@ -5,13 +5,23 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
-import { BodyBoldText, SmallText } from '~/framework/components/text';
+import { HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 import styles from './styles';
 import { IUserCardProps } from './types';
+import { UserType } from '~/framework/modules/auth/service';
+import InlineButton from '~/framework/components/buttons/inline';
+
+const colorType = {
+  [UserType.Student]: theme.palette.complementary.orange.regular,
+  [UserType.Relative]: theme.palette.complementary.blue.regular,
+  [UserType.Teacher]: theme.palette.complementary.green.regular,
+  [UserType.Guest]: theme.palette.complementary.yellow.regular,
+  [UserType.Personnel]: theme.palette.complementary.purple.regular,
+};
 
 export const UserCard = ({
   id,
@@ -20,16 +30,10 @@ export const UserCard = ({
   canEdit = false,
   hasAvatar,
   updatingAvatar,
+  onPressInlineButton,
   onChangeAvatar,
   onDeleteAvatar,
 }: IUserCardProps) => {
-  const renderUserType = (userType: 'Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest') => (
-    <View style={styles.textType}>
-      <View style={styles.roundColorType} key={userType} />
-      <SmallText style={{ color: theme.ui.text.light }}>{I18n.get(`user-profiletypes-${userType}`.toLowerCase())}</SmallText>
-    </View>
-  );
-
   const renderActions = (avatar: boolean, changeAvatar: (image) => void, deleteAvatar: () => void) => (
     <View style={styles.buttonsActionAvatar}>
       {avatar ? (
@@ -73,14 +77,19 @@ export const UserCard = ({
 
   return (
     <View style={styles.main}>
-      <View style={styles.boxAvatar}>
+      <View style={[styles.boxAvatar, { ...(canEdit ? styles.boxAvatarEdit : {}) }]}>
         <Avatar sourceOrId={id} size={Size.verylarge} id="" />
         {canEdit ? renderActions(hasAvatar, onChangeAvatar, onDeleteAvatar) : null}
         {updatingAvatar ? <Loading customColor={theme.palette.grey.white} customStyle={styles.loaderAvatar} /> : null}
       </View>
       <View style={styles.boxTexts}>
-        <BodyBoldText>{displayName}</BodyBoldText>
-        {Array.isArray(type) ? type.map(item => renderUserType(item)) : renderUserType(type)}
+        <HeadingXSText>{displayName}</HeadingXSText>
+        <SmallBoldText style={[{ color: colorType[type] }, styles.type]}>
+          {I18n.get(`user-profiletypes-${type.toLocaleLowerCase()}`)}
+        </SmallBoldText>
+        {!canEdit ? (
+          <InlineButton iconName="ui-mail" text={I18n.get('user-profile-sendMessage')} action={onPressInlineButton} />
+        ) : null}
       </View>
     </View>
   );

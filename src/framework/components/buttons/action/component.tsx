@@ -28,6 +28,7 @@ export const ActionButton = ({
   style,
   pictureSize,
   pictureFill,
+  pictureStyle,
   textColor,
 }: ActionButtonProps) => {
   const Component = disabled ? View : TouchableOpacity;
@@ -59,7 +60,7 @@ export const ActionButton = ({
     secondary: disabled ? theme.ui.text.light : theme.palette.primary.regular,
   };
 
-  const pictureStyle = {
+  const pictureStyleDefault = {
     marginLeft: isEmpty(text) ? 0 : UI_SIZES.spacing.minor,
   };
 
@@ -103,7 +104,7 @@ export const ActionButton = ({
               width={pictureSize ?? defaultPictureSize}
               height={pictureSize ?? defaultPictureSize}
               fill={pictureFill ?? defaultPictureFill[type ?? 'primary']}
-              style={pictureStyle}
+              style={[pictureStyleDefault, pictureStyle]}
             />
           ) : emoji ? (
             <SmallBoldText numberOfLines={1}>{' ' + emoji}</SmallBoldText>

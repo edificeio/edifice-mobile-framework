@@ -7,19 +7,16 @@ export default StyleSheet.create({
   main: {
     alignItems: 'center',
     backgroundColor: theme.ui.background.card,
-    flex: 0,
     flexDirection: 'row',
-    flexGrow: 0,
-    justifyContent: 'flex-start',
     padding: UI_SIZES.spacing.medium,
-    width: '100%',
-    borderBottomWidth: 1,
-    borderColor: theme.palette.grey.cloudy,
   },
   boxAvatar: {
-    padding: UI_SIZES.spacing.small,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  boxAvatarEdit: {
+    padding: UI_SIZES.spacing.small,
+    paddingTop: 0,
   },
   buttonsActionAvatar: {
     position: 'absolute',
@@ -39,19 +36,10 @@ export default StyleSheet.create({
     paddingLeft: UI_SIZES.spacing.tiny,
   },
   boxTexts: {
-    flexGrow: 0,
     flexShrink: 1,
-    marginRight: 'auto',
-    paddingLeft: UI_SIZES.spacing.medium,
+    marginLeft: UI_SIZES.spacing.big,
   },
-  textType: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  roundColorType: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    marginRight: UI_SIZES.spacing.tiny,
+  type: {
+    marginBottom: UI_SIZES.spacing.small,
   },
 });
