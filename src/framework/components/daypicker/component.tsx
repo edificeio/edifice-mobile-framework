@@ -22,7 +22,10 @@ const DayPicker = (props: DayPickerProps) => {
 
   const isPastDisabled = startDate.isSame(subtractTime(defaultStartDate, 8, 'week'));
   const isFutureDisabled = startDate.isSame(addTime(defaultStartDate, 8, 'week'));
-  const isWithinSelectedWeek = selectedDate.isBetween(startDate, addTime(startDate, 6, 'day'), undefined, '[]');
+  const isWeekdaySelected = (weekdayNumber: number) => {
+    const isWithinSelectedWeek = selectedDate.isBetween(startDate, addTime(startDate, 6, 'day'), undefined, '[]');
+    return isWithinSelectedWeek && isDateGivenWeekday(selectedDate, weekdayNumber);
+  };
 
   return (
     <View style={styles.container}>
@@ -40,35 +43,31 @@ const DayPicker = (props: DayPickerProps) => {
         />
       </View>
       <View style={styles.daysContainer}>
-        <DayCell
-          dayOfTheWeek="monday"
-          onPress={() => setSelectedDate(startDate)}
-          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 1)}
-        />
+        <DayCell dayOfTheWeek="monday" onPress={() => setSelectedDate(startDate)} isSelected={isWeekdaySelected(1)} />
         <DayCell
           dayOfTheWeek="tuesday"
           onPress={() => setSelectedDate(addTime(startDate, 1, 'day'))}
-          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 2)}
+          isSelected={isWeekdaySelected(2)}
         />
         <DayCell
           dayOfTheWeek="wednesday"
           onPress={() => setSelectedDate(addTime(startDate, 2, 'day'))}
-          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 3)}
+          isSelected={isWeekdaySelected(3)}
         />
         <DayCell
           dayOfTheWeek="thursday"
           onPress={() => setSelectedDate(addTime(startDate, 3, 'day'))}
-          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 4)}
+          isSelected={isWeekdaySelected(4)}
         />
         <DayCell
           dayOfTheWeek="friday"
           onPress={() => setSelectedDate(addTime(startDate, 4, 'day'))}
-          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 5)}
+          isSelected={isWeekdaySelected(5)}
         />
         <DayCell
           dayOfTheWeek="saturday"
           onPress={() => setSelectedDate(addTime(startDate, 5, 'day'))}
-          isSelected={isWithinSelectedWeek && isDateGivenWeekday(selectedDate, 6)}
+          isSelected={isWeekdaySelected(6)}
         />
       </View>
     </View>
