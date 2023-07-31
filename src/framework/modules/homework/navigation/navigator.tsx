@@ -14,6 +14,7 @@ import { navBarTitle } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { HomeworkNavigationParams, homeworkRouteNames } from '.';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<HomeworkNavigationParams>(moduleConfig.name, Stack => (
@@ -43,3 +44,5 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       </Stack.Group>
     </>
   ));
+
+setModalModeForRoutes([homeworkRouteNames.homeworkCreate]);
