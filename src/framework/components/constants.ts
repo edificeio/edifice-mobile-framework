@@ -59,6 +59,7 @@ export const UI_SIZES = {
     height: {
       tiny: 1,
       small: 2,
+      smallPlus: 16,
       medium: 18,
       mediumPlus: 20,
       large: 22,
@@ -71,6 +72,7 @@ export const UI_SIZES = {
     width: {
       tiny: 1,
       small: 2,
+      smallPlus: 16,
       medium: 18,
       mediumPlus: 20,
       large: 22,

@@ -7,7 +7,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import styles from './styles';
 import { CloseButtonProps } from './types';
 
-const CloseButton = ({ iconName, action, disabled, loading, pictureFill }: CloseButtonProps) => {
+const CloseButton = ({ iconName, action, disabled, loading, pictureFill, size, style }: CloseButtonProps) => {
   return (
     <ActionButton
       text=""
@@ -15,8 +15,8 @@ const CloseButton = ({ iconName, action, disabled, loading, pictureFill }: Close
       action={action}
       disabled={disabled || loading}
       loading={loading}
-      style={styles.closeButton}
-      pictureSize={UI_SIZES.dimensions.height.mediumPlus}
+      style={[styles.closeButton, style]}
+      pictureSize={size || UI_SIZES.dimensions.height.mediumPlus}
       pictureFill={pictureFill ?? theme.palette.grey.graphite}
     />
   );

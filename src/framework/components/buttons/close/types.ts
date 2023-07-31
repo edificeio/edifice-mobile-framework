@@ -1,4 +1,4 @@
-import { ColorValue } from 'react-native';
+import { ColorValue, ViewStyle } from 'react-native';
 
 export interface CloseButtonProps {
   iconName?: string;
@@ -6,4 +6,6 @@ export interface CloseButtonProps {
   disabled?: boolean;
   loading?: boolean;
   pictureFill?: ColorValue;
+  size?: number;
+  style?: ViewStyle;
 }
