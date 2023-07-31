@@ -247,7 +247,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const renderFooter = useCallback(() => {
     return hasPermissionComment && isEmpty(indexEditingComment) ? (
       <BottomEditorSheet
-        onPublishComment={() => doPublishComment(news, infoComment.value)}
+        onPublishComment={commentValue => doPublishComment(news, commentValue)}
         isPublishingComment={false}
         onChangeText={data => setInfoComment(() => ({ ...data }))}
       />
@@ -295,8 +295,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           ref={element => (commentFieldRefs[comment.id] = element)}
           index={comment.id}
           isPublishingComment={false}
-          onPublishComment={() => doEditComment(news, infoComment.value, comment.id)}
-          onDeleteComment={() => doDeleteComment(comment.id)}
+          onPublishComment={(commentValue, commentId) => doEditComment(news, commentValue, commentId)}
+          onDeleteComment={commentId => doDeleteComment(commentId)}
           onChangeText={data => setInfoComment(() => ({ ...data }))}
           editCommentCallback={() => {
             const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
@@ -401,7 +401,9 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
       I18n.get(`news-details-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(
+        `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+      ),
       [
         {
           text: I18n.get('common-quit'),
