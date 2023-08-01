@@ -36,17 +36,17 @@ const styles = StyleSheet.create({
     borderColor: theme.palette.primary.regular,
     borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.medium,
+    aspectRatio: UI_SIZES.aspectRatios.square,
     width: itemWidth,
-    aspectRatio: 1,
   },
   closeButton: {
     backgroundColor: theme.palette.primary.regular,
     width: UI_SIZES.dimensions.height.large,
     height: UI_SIZES.dimensions.height.large,
+    right: -UI_SIZES.spacing._LEGACY_small,
+    top: -UI_SIZES.spacing.minor,
     position: 'absolute',
     elevation: 10,
-    right: -6,
-    top: -8,
   },
   container: {
     borderColor: theme.ui.border.input,
@@ -57,9 +57,9 @@ const styles = StyleSheet.create({
   },
   itemSeperator: { paddingVertical: UI_SIZES.spacing.small },
   photo: {
-    width: itemWidth,
-    aspectRatio: 1,
+    aspectRatio: UI_SIZES.aspectRatios.square,
     borderRadius: UI_SIZES.radius.medium,
+    width: itemWidth,
   },
   photoContainer: { marginRight: UI_SIZES.spacing.big, borderRadius: UI_SIZES.radius.medium },
 });
