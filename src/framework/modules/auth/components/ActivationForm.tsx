@@ -157,7 +157,7 @@ export function InputPhone(props: { phone: string; form: ActivationFormModel; on
   return (
     <TextInputLine
       inputRef={ref => (props.form.inputPhone = ref)}
-      placeholder={I18n.get('CellPhone')}
+      placeholder={I18n.get('user-profile-cellphone')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.phone}
       hasError={props.form.showPhoneError(props.phone)}

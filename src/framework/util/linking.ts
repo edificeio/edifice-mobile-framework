@@ -18,10 +18,9 @@ export interface OpenUrlCustomLabels {
 }
 
 const verifyAndOpenUrl = async (finalUrl: string) => {
-  const isSupported = await Linking.canOpenURL(finalUrl);
-  if (isSupported === true) {
+  try {
     await Linking.openURL(finalUrl);
-  } else {
+  } catch {
     throw new Error('openUrl : url provided is not supported');
   }
 };
