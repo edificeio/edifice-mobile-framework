@@ -1,9 +1,9 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
-export const WIDTH_THUMBNAIL_THREAD_ITEM = 84;
+export const WIDTH_THUMBNAIL_THREAD_ITEM = getScaleWidth(84);
 
 export default StyleSheet.create({
   item: {
@@ -14,9 +14,6 @@ export default StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     marginTop: UI_SIZES.spacing.tiny,
-  },
-  textItemSelected: {
-    fontWeight: '700',
   },
   textItemNotSelected: {
     color: theme.palette.grey.stone,
