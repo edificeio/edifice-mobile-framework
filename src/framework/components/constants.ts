@@ -53,6 +53,7 @@ export const UI_ANIMATIONS = {
 
 export const UI_SIZES = {
   aspectRatios: {
+    square: 1,
     thumbnail: 7 / 5,
   },
   dimensions: {
