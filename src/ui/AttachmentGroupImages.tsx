@@ -16,6 +16,18 @@ import { BodyBoldText, TextSizeStyle } from '~/framework/components/text';
 import { I18n } from '~/app/i18n';
 import { isEmpty } from '~/framework/util/object';
 
+const itemWidth =
+  // The items' width is computed by substracting spacings from the screen's width
+  (UI_SIZES.screen.width -
+    // horizontal padding of page
+    2 * UI_SIZES.spacing.medium -
+    // horizontal padding of items' container
+    2 * UI_SIZES.spacing.big -
+    // space between items
+    2 * UI_SIZES.spacing.big -
+    // vertical border width of "attach photos" button
+    2 * UI_SIZES.border.thin) /
+  3;
 const styles = StyleSheet.create({
   attachPhotos: { color: theme.palette.primary.regular, marginTop: UI_SIZES.spacing.small, textAlign: 'center' },
   attachPhotosAdded: { ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.tiny },
@@ -24,7 +36,7 @@ const styles = StyleSheet.create({
     borderColor: theme.palette.primary.regular,
     borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.medium,
-    width: 82,
+    width: itemWidth,
     aspectRatio: 1,
   },
   closeButton: {
@@ -44,7 +56,11 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.medium,
   },
   itemSeperator: { paddingVertical: UI_SIZES.spacing.small },
-  photo: { width: 82, aspectRatio: 1, borderRadius: UI_SIZES.radius.medium },
+  photo: {
+    width: itemWidth,
+    aspectRatio: 1,
+    borderRadius: UI_SIZES.radius.medium,
+  },
   photoContainer: { marginRight: UI_SIZES.spacing.big, borderRadius: UI_SIZES.radius.medium },
 });
 
