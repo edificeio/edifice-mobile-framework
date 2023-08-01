@@ -6,15 +6,15 @@ import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Image, formatSource } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
-import { ContentUri } from '~/types/contentUri';
 
 import CloseButton from '~/framework/components/buttons/close';
 import BottomMenu from '~/framework/components/menus/bottom';
-import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
+import { ImagePicked, cameraAction, galleryAction } from '~/framework/components/menus/actions';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, TextSizeStyle } from '~/framework/components/text';
 import { I18n } from '~/app/i18n';
 import { isEmpty } from '~/framework/util/object';
+import { ILocalAttachment } from './Attachment';
 
 const itemWidth =
   // The items' width is computed by substracting spacings from the screen's width
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.big,
     paddingVertical: UI_SIZES.spacing.medium,
   },
+  contentContainer: { alignItems: 'center' },
   itemSeperator: { paddingVertical: UI_SIZES.spacing.small },
   photo: {
     aspectRatio: UI_SIZES.aspectRatios.square,
@@ -64,15 +65,16 @@ const styles = StyleSheet.create({
   photoContainer: { marginRight: UI_SIZES.spacing.big, borderRadius: UI_SIZES.radius.medium },
 });
 
-class AttachmentGroupImagesNoNav extends React.PureComponent<{
-  attachments: ContentUri[];
-  imageCallback: any;
+export class AttachmentGroupImages extends React.PureComponent<{
+  imageCallback: (image: ImagePicked) => void;
   onRemove: (index: number) => void;
+  images: ILocalAttachment[];
+  moduleName: string;
 }> {
   public render() {
-    const { attachments, onRemove, imageCallback } = this.props;
-    const carouselImages = attachments.map(att => ({ src: { uri: att.uri }, alt: 'image' }));
-    const imagesAdded = attachments.length > 0;
+    const { images, onRemove, imageCallback, moduleName } = this.props;
+    const carouselImages = images.map(image => ({ src: { uri: image.uri }, type: 'image' as 'image', alt: 'image' }));
+    const imagesAdded = images.length > 0;
     const numColumns = 3;
 
     const AddPhotosButton = () => {
@@ -95,12 +97,13 @@ class AttachmentGroupImagesNoNav extends React.PureComponent<{
       );
     };
 
-    return imagesAdded ? (
+    return (
       <FlatList
-        data={[...attachments, {}]}
+        data={[...images, {}]}
         numColumns={numColumns}
         scrollEnabled={false}
         style={styles.container}
+        contentContainerStyle={!imagesAdded && styles.contentContainer}
         ItemSeparatorComponent={() => <View style={styles.itemSeperator} />}
         renderItem={({ item, index }) => {
           if (isEmpty(item)) return <AddPhotosButton />;
@@ -108,17 +111,15 @@ class AttachmentGroupImagesNoNav extends React.PureComponent<{
             <View style={styles.photoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  openCarousel({
-                    data: carouselImages.map(img => ({
-                      type: 'image' as 'image',
-                      src: img.src,
-                      ...(img.alt ? { alt: img.alt } : undefined),
-                    })),
-                  });
-                  Trackers.trackEvent('Post creation', 'OPEN ATTACHMENT', 'Edit mode');
-                  //FIXME: ugly code here  (module name (1st argument) must be obtained dynamically)
+                  Trackers.trackEvent(moduleName, 'OPEN ATTACHMENT', 'Edit mode');
+                  openCarousel({ data: carouselImages });
                 }}>
-                <Image style={styles.photo} source={formatSource(item.uri)} resizeMode="cover" />
+                <Image
+                  style={styles.photo}
+                  resizeMode="cover"
+                  source={formatSource((item as ILocalAttachment).uri)}
+                  onError={() => onRemove(index)}
+                />
               </TouchableOpacity>
               <CloseButton
                 style={styles.closeButton}
@@ -130,11 +131,6 @@ class AttachmentGroupImagesNoNav extends React.PureComponent<{
           );
         }}
       />
-    ) : (
-      <View style={styles.container}>
-        <AddPhotosButton />
-      </View>
     );
   }
 }
-export const AttachmentGroupImages = AttachmentGroupImagesNoNav;

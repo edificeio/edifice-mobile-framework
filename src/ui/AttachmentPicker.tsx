@@ -3,59 +3,50 @@ import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 
 import { Trackers } from '~/framework/util/tracker';
-import pickFile, { pickFileError } from '~/infra/actions/pickFile';
+import { pickFileError } from '~/infra/actions/pickFile';
 import { ContentUri } from '~/types/contentUri';
 
 import { ILocalAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 import { AttachmentGroupImages } from './AttachmentGroupImages';
+import { ImagePicked } from '~/framework/components/menus/actions';
 
 class AttachmentPicker_Unconnected extends React.PureComponent<{
   attachments: ContentUri[] | ILocalAttachment[];
-  onAttachmentSelected: (selectedAtt) => void;
-  onAttachmentRemoved: (selectedAtt) => void;
-  onPickFileError: (notifierId: string) => void;
-  onlyImages?: boolean;
-  isContainerHalfScreen?: boolean;
   attachmentsHeightHalfScreen?: number;
+  imageCallback?: (image: ImagePicked) => void;
+  isContainerHalfScreen?: boolean;
   notifierId: string;
+  onAttachmentRemoved: (attachments: ContentUri[] | ILocalAttachment[]) => void;
+  onlyImages?: boolean;
+  onPickFileError: (notifierId: string) => void;
 }> {
-  public onPickAttachment() {
-    const { onlyImages, onAttachmentSelected, onPickFileError, notifierId } = this.props;
-    pickFile(onlyImages)
-      .then(selectedAtt => onAttachmentSelected(selectedAtt))
-      .catch(err => {
-        if (err.message === 'Error picking image' || err.message === 'Error picking document') {
-          onPickFileError(notifierId);
-        }
-      });
-  }
-
-  public onRemoveAttachment(index) {
+  public onRemoveAttachment(index: number) {
     const { attachments, onAttachmentRemoved } = this.props;
-    const attsToSend = [...attachments];
-    attsToSend.splice(index, 1);
-    onAttachmentRemoved(attsToSend);
+    const attachmentsToSend = [...attachments];
+    attachmentsToSend.splice(index, 1);
+    onAttachmentRemoved(attachmentsToSend);
   }
 
   public render() {
-    const { onlyImages, attachments, isContainerHalfScreen, attachmentsHeightHalfScreen } = this.props;
-    const attachmentsAdded = attachments.length > 0;
-
-    return attachmentsAdded ? (
-      onlyImages ? (
-        <AttachmentGroupImages attachments={attachments as ContentUri[]} onRemove={index => this.onRemoveAttachment(index)} />
-      ) : (
-        <AttachmentGroup
-          editMode
-          attachments={attachments as ILocalAttachment[]}
-          onRemove={index => this.onRemoveAttachment(index)}
-          onOpen={() => Trackers.trackEvent('Conversation', 'OPEN ATTACHMENT', 'Edit mode')}
-          isContainerHalfScreen={isContainerHalfScreen}
-          attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
-        />
-      )
-    ) : null;
+    const { onlyImages, attachments, isContainerHalfScreen, attachmentsHeightHalfScreen, imageCallback, notifierId } = this.props;
+    return onlyImages ? (
+      <AttachmentGroupImages
+        imageCallback={imageCallback}
+        onRemove={index => this.onRemoveAttachment(index)}
+        images={attachments as ILocalAttachment[]}
+        moduleName={notifierId}
+      />
+    ) : (
+      <AttachmentGroup
+        editMode
+        attachments={attachments as ILocalAttachment[]}
+        onRemove={index => this.onRemoveAttachment(index)}
+        onOpen={() => Trackers.trackEvent('Conversation', 'OPEN ATTACHMENT', 'Edit mode')}
+        isContainerHalfScreen={isContainerHalfScreen}
+        attachmentsHeightHalfScreen={attachmentsHeightHalfScreen}
+      />
+    );
   }
 }
 

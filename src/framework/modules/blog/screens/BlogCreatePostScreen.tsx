@@ -10,12 +10,10 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
-import BottomMenu from '~/framework/components/menus/bottom';
+import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -38,6 +36,8 @@ import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import moduleConfig from '~/framework/modules/blog/module-config';
+import { uppercaseFirstLetter } from '~/framework/util/string';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
@@ -63,40 +63,11 @@ export interface BlogCreatePostScreenState {
   sendLoadingState: boolean;
   title: string;
   content: string;
-  images: ImagePicked[];
+  images: ImagePicked[] | ILocalAttachment[];
   onPublish: boolean;
 }
 
 const styles = StyleSheet.create({
-  addMedia: {
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  addMediaButtonAdded: {
-    width: 300,
-    marginRight: UI_SIZES.spacing.minor,
-    textAlign: 'center',
-  },
-  addMediaButtonEmpty: {
-    width: 300,
-    marginRight: 0,
-    textAlign: 'center',
-  },
-  addMediaView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.big,
-  },
-  addMediaViewAdded: {
-    flexDirection: 'row',
-    marginBottom: UI_SIZES.spacing.small,
-  },
-  addMediaViewEmpty: {
-    flexDirection: 'column',
-    marginBottom: UI_SIZES.spacing.big,
-  },
   input: {
     marginBottom: UI_SIZES.spacing.big,
     padding: UI_SIZES.spacing.small,
@@ -173,12 +144,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     content: '',
     images: [],
     onPublish: false,
-  };
-
-  attachmentPickerRef: any;
-
-  imageCallback = image => {
-    this.setState(prevState => ({ images: [...prevState.images, image] }));
   };
 
   async doSend() {
@@ -352,44 +317,18 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   renderPostMedia() {
     const { images } = this.state;
-    const imagesAdded = images.length > 0;
     return (
-      <View style={styles.addMedia}>
-        <BottomMenu
-          title={I18n.get('blog-createpost-bottommenu-addmedia')}
-          actions={[
-            cameraAction({
-              callback: this.imageCallback,
-            }),
-            galleryAction({
-              callback: this.imageCallback,
-              multiple: true,
-            }),
-          ]}>
-          <View
-            style={[styles.addMediaView, imagesAdded ? styles.addMediaViewAdded : styles.addMediaViewEmpty]}
-            // onPress={() => this.attachmentPickerRef.onPickAttachment()}
-          >
-            <SmallActionText style={imagesAdded ? styles.addMediaButtonAdded : styles.addMediaButtonEmpty}>
-              {I18n.get('blog-createpost-create-mediafield')}
-            </SmallActionText>
-            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
-          </View>
-        </BottomMenu>
+      <View>
         <AttachmentPicker
-          ref={r => (this.attachmentPickerRef = r)}
           onlyImages
-          attachments={images.map(
-            img =>
-              ({
-                mime: img.type,
-                name: img.fileName,
-                uri: img.uri,
-              } as ILocalAttachment),
-          )}
-          onAttachmentSelected={() => {}}
-          onAttachmentRemoved={imagesToSend => this.setState({ images: imagesToSend })}
-          notifierId="createBlogPost"
+          notifierId={uppercaseFirstLetter(moduleConfig.name)}
+          imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
+          onAttachmentRemoved={images => this.setState({ images })}
+          attachments={images.map(image => ({
+            mime: image.type,
+            name: image.fileName,
+            uri: image.uri,
+          }))}
         />
       </View>
     );
