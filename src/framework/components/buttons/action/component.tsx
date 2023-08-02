@@ -30,6 +30,7 @@ export const ActionButton = ({
   pictureFill,
   pictureStyle,
   textColor,
+  hitSlop,
 }: ActionButtonProps) => {
   const Component = disabled ? View : TouchableOpacity;
   const [layoutWidth, setLayoutWidth] = useState(0);
@@ -66,6 +67,7 @@ export const ActionButton = ({
 
   return (
     <Component
+      hitSlop={hitSlop}
       onLayout={e => {
         // memoize button width for setting correct width when loading state
         if (!layoutWidth) setLayoutWidth(e?.nativeEvent?.layout?.width);

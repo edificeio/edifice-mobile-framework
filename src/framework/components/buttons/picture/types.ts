@@ -1,4 +1,4 @@
-import { ColorValue } from 'react-native';
+import { ColorValue, Insets } from 'react-native';
 
 export interface PictureButtonProps {
   iconName: string;
@@ -6,4 +6,5 @@ export interface PictureButtonProps {
   disabled?: boolean;
   loading?: boolean;
   pictureFill?: ColorValue;
+  hitSlop?: Insets;
 }

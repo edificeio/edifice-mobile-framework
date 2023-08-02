@@ -1,4 +1,4 @@
-import { ColorValue, LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native';
+import { ColorValue, Insets, LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native';
 
 export interface ActionButtonProps {
   text: string;
@@ -17,4 +17,5 @@ export interface ActionButtonProps {
   pictureFill?: ColorValue;
   pictureStyle?: StyleProp<ViewStyle>;
   textColor?: ColorValue;
+  hitSlop?: Insets;
 }

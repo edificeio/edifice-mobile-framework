@@ -7,7 +7,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import styles from './styles';
 import { PictureButtonProps } from './types';
 
-const PictureButton = ({ iconName, action, disabled, loading, pictureFill }: PictureButtonProps) => {
+const PictureButton = ({ iconName, action, disabled, hitSlop, loading, pictureFill }: PictureButtonProps) => {
   return (
     <ActionButton
       text=""
@@ -18,6 +18,7 @@ const PictureButton = ({ iconName, action, disabled, loading, pictureFill }: Pic
       style={styles.pictureButton}
       pictureSize={UI_SIZES.dimensions.height.large}
       pictureFill={pictureFill ?? theme.palette.grey.darkness}
+      hitSlop={hitSlop}
     />
   );
 };

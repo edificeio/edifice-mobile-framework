@@ -1,6 +1,23 @@
 import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
 import { I18n } from '~/app/i18n';
+import { uppercaseFirstLetter } from './string';
+
+export enum DayOfTheWeek {
+  MONDAY = 'monday',
+  TUESDAY = 'tuesday',
+  WEDNESDAY = 'wednesday',
+  THURSDAY = 'thursday',
+  FRIDAY = 'friday',
+  SATURDAY = 'saturday',
+  SUNDAY = 'sunday',
+}
+
+export enum DayReference {
+  PAST,
+  TODAY,
+  FUTURE,
+}
 
 moment.relativeTimeThreshold('m', 60);
 
@@ -68,7 +85,7 @@ export const displayWeekRange = (date: Moment) => {
   const startDateLong = startOfDateWeek.format('D MMM');
   const endDateShort = endOfDateWeek.format('D');
   const endDateLong = endOfDateWeek.format('D MMM');
-  const endDateMonth = endOfDateWeek.format('MMMM');
+  const endDateMonth = uppercaseFirstLetter(endOfDateWeek.format('MMMM'));
   const endDateYear = endOfDateWeek.format('Y');
 
   return isCurrentWeek

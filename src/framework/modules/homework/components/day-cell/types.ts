@@ -1,5 +1,8 @@
+import { DayOfTheWeek, DayReference } from '~/framework/util/date';
+
 export interface DayCellProps {
-  dayOfTheWeek: string;
+  dayOfTheWeek: DayOfTheWeek;
+  dayReference: DayReference;
   isSelected: boolean;
   onPress: () => void;
 }

@@ -1,16 +1,17 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: UI_SIZES.dimensions.width.huge,
-    width: UI_SIZES.dimensions.width.hug,
-    borderRadius: UI_SIZES.radius.small,
+    padding: UI_SIZES.spacing.minor,
+    borderRadius: UI_SIZES.radius.medium,
     borderWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.grey.cloudy,
+  },
+  text: {
+    textAlign: 'center',
+    width: getScaleWidth(UI_SIZES.dimensions.width.mediumPlus),
   },
 });
