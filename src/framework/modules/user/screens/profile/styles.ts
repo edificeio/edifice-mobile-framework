@@ -2,8 +2,10 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import appConf from '~/framework/util/appConf';
 
-const SIZE_MOOD_PICTURE = getScaleWidth(64);
+const SIZE_MOOD_PICTURE = getScaleWidth(48);
+const WIDTH_MOOD_BOX = appConf.is1d ? getScaleWidth(125) : getScaleWidth(115);
 
 export default StyleSheet.create({
   page: {
@@ -42,8 +44,13 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   mood: {
+    backgroundColor: theme.palette.primary.pale,
+    borderRadius: UI_SIZES.radius.extraLarge,
     marginRight: UI_SIZES.spacing.medium,
     alignItems: 'center',
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    width: WIDTH_MOOD_BOX,
   },
   moodPicture: {
     width: SIZE_MOOD_PICTURE,

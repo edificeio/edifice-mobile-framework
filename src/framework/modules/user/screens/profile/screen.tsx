@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import appConf from '~/framework/util/appConf';
 import { ImagePicked, MenuAction } from '~/framework/components/menus/actions';
-import { BodyText, CaptionBoldText, HeadingSText, SmallText } from '~/framework/components/text';
+import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/components/text';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import UserCard from '~/framework/modules/user/components/user-card';
@@ -412,7 +412,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             {userInfo?.mood ? (
               <>
                 <Image source={renderMoodPicture[degre][userInfo?.mood ?? 'none']} style={styles.moodPicture} />
-                <CaptionBoldText>{I18n.get(`user-profile-mood-${userInfo?.mood}-${degre}`)}</CaptionBoldText>
+                <SmallText>{I18n.get(`user-profile-mood-${userInfo?.mood}-${degre}`)}</SmallText>
               </>
             ) : (
               //verif avec le back si renvoie 'default' automatiquement à la création
@@ -423,16 +423,16 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                   height={UI_SIZES.dimensions.width.largePlus}
                   fill={theme.palette.grey.graphite}
                 />
-                <CaptionBoldText style={styles.textEmpty}>{I18n.get('user-profile-moodEmpty')}</CaptionBoldText>
+                <SmallText style={styles.textEmpty}>{I18n.get('user-profile-moodEmpty')}</SmallText>
               </>
             )}
           </View>
           {isEmpty(userInfo?.motto) ? (
-            <BodyText style={[styles.motto, styles.textEmpty]}>
+            <SmallItalicText style={[styles.motto, styles.textEmpty]}>
               {I18n.get(isMyProfile ? 'user-profile-mottoEmpty' : 'user-profile-notSpecified')}
-            </BodyText>
+            </SmallItalicText>
           ) : (
-            <BodyText style={styles.motto}>{`"${userInfo?.motto}"`}</BodyText>
+            <SmallItalicText style={styles.motto}>{`"${userInfo?.motto}"`}</SmallItalicText>
           )}
         </View>
       </View>
@@ -498,11 +498,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           canEdit={isMyProfile}
           onPressInlineButton={() => onNewMessage()}
         />
+        {appConf.is1d ? renderMoodMotto() : null}
         {renderFamily()}
         {renderStructures()}
         {renderPersonnalInfos()}
         {renderAbout()}
-        {renderMoodMotto()}
+        {appConf.is2d ? renderMoodMotto() : null}
         {renderHobbies()}
       </ScrollView>
     );
