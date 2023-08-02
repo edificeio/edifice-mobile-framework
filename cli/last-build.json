@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-28 17:07:26",
-  "notes": "release: 1.11.0-alpha.2(1110002)",
-  "version": "1.11.0-alpha.3(1110003)",
+  "last": "2023-08-02 18:39:07",
+  "notes": "Squashed commit of the following:\nSquashed commit of the following:\nchore(homework): MB-227, refine daypicker\nchore(homework): MB-1842, attachment-picker inside blog/homework\nchore: square aspect-ratio constant\nchore(homework): MB-1842, attachmentgroupimages styles refacto\nchore(homework): MB-1842, attachmentgroupimages item width\nchore(homework): MB-1842, attachmentgroupimages design\nchore(homework): add x-button in modal\nchore(homework): refactor daycell selection logic\nSquashed commit of the following:\nrelease: 1.11.0-alpha.3(1110003)",
+  "version": "1.11.0-alpha.4(1110004)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
