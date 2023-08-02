@@ -183,7 +183,7 @@ const annotationAdapter = (data: IBackendAnnotation): IDevoir => {
     coefficient: data.coefficient,
     date: moment(data.date),
     diviseur: Number(data.diviseur),
-    id: data.id,
+    id: data.id_devoir,
     isEvaluated: data.is_evaluated,
     libelle: data.libelle ?? undefined,
     moyenne: String(Number((Number(data.sum_notes) / data.nbr_eleves).toFixed(1))),
