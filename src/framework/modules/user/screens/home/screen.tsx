@@ -17,7 +17,7 @@ import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
-import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { HeadingSText, HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
@@ -37,6 +37,7 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
+import { colorType } from '.';
 
 export const computeNavBar = ({
   navigation,
@@ -124,8 +125,10 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
   return React.useMemo(
     () => (
       <>
-        <BodyBoldText style={styles.userInfoName}>{session?.user.displayName}</BodyBoldText>
-        <SmallText style={styles.userInfoType}>{I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}</SmallText>
+        <HeadingXSText style={styles.userInfoName}>{session?.user.displayName}</HeadingXSText>
+        <SmallBoldText style={{ color: colorType[session?.user.type!] }}>
+          {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
+        </SmallBoldText>
         <ActionButton
           text={I18n.get('user-page-userfilebutton')}
           type="secondary"
@@ -214,7 +217,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-configuration')}</HeadingSText>
           <ButtonLineGroup>
             <LineButton
-              title="user-pushnotifssettings-title"
+              title={I18n.get('user-pushnotifssettings-title')}
               onPress={() => {
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
@@ -222,14 +225,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
             <LineButton
               loading={currentLoadingMenu === ModificationType.PASSWORD}
               disabled={!!currentLoadingMenu}
-              title="user-page-editpassword"
+              title={I18n.get('user-page-editpassword')}
               onPress={() => editUserInformation(ModificationType.PASSWORD)}
             />
             {canEditPersonalInfo ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.EMAIL}
                 disabled={!!currentLoadingMenu}
-                title="user-page-editemail"
+                title={I18n.get('user-page-editemail')}
                 onPress={() => editUserInformation(ModificationType.EMAIL)}
               />
             ) : null}
@@ -237,7 +240,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               <LineButton
                 loading={currentLoadingMenu === ModificationType.MOBILE}
                 disabled={!!currentLoadingMenu}
-                title="user-page-editmobile"
+                title={I18n.get('user-page-editmobile')}
                 onPress={() => editUserInformation(ModificationType.MOBILE)}
               />
             ) : null}
@@ -248,14 +251,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           <ButtonLineGroup>
             {showWhoAreWe ? (
               <LineButton
-                title="user-whoarewe-title"
+                title={I18n.get('user-whoarewe-title')}
                 onPress={() => {
                   navigation.navigate(userRouteNames.whoAreWe, {});
                 }}
               />
             ) : null}
             <LineButton
-              title="user-legalnotice-title"
+              title={I18n.get('user-legalnotice-title')}
               onPress={() => {
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}

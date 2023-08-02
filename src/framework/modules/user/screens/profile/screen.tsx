@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import appConf from '~/framework/util/appConf';
 import { ImagePicked, MenuAction } from '~/framework/components/menus/actions';
-import { BodyText, CaptionBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
+import { BodyText, CaptionBoldText, HeadingSText, SmallText } from '~/framework/components/text';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import UserCard from '~/framework/modules/user/components/user-card';
@@ -17,12 +17,11 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image, formatSource } from '~/framework/util/media';
-import Notifier from '~/framework/util/notifier';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
-import { HobbieVisibility, InfoPerson } from '~/framework/modules/user/model';
+import { InfoPerson } from '~/framework/modules/user/model';
 
 import styles from './styles';
 import { ProfilePageProps } from './types';
@@ -32,14 +31,15 @@ import ScrollView from '~/framework/components/scrollView';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import { UserType } from '~/framework/modules/auth/service';
 import { NamedSVG } from '~/framework/components/picture';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 import theme from '~/app/theme';
-import { displayDate } from '~/framework/util/date';
-import { ButtonLineIconGroup, LineIconButton } from '~/framework/components/buttons/lineIcon';
 import BottomSheet from 'react-native-bottomsheet';
 import Clipboard from '@react-native-clipboard/clipboard';
-import ActionButton from '~/framework/components/buttons/action';
 import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
+import InlineButton from '~/framework/components/buttons/inline';
+import { hobbiesItems, renderEmoji } from '.';
+import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
+import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
 
 export const computeNavBar = ({
   navigation,
@@ -51,25 +51,6 @@ export const computeNavBar = ({
     title: I18n.get('user-profile-appname'),
   }),
 });
-
-const renderEmoji = (category): string => {
-  switch (category) {
-    case 'sport':
-      return '🏆';
-    case 'cinema':
-      return '🎬';
-    case 'animals':
-      return '🐼';
-    case 'music':
-      return '🎼';
-    case 'places':
-      return '🌏';
-    case 'books':
-      return '📚';
-    default:
-      return '';
-  }
-};
 
 const renderTextIcon = ({
   icon,
@@ -89,8 +70,8 @@ const renderTextIcon = ({
   if (isEmpty(text) && !show) return;
   const emptyText = textEmpty ?? I18n.get('user-profile-notSpecified');
   return (
-    <LineIconButton
-      text={isEmpty(text) ? emptyText : text!}
+    <LineButton
+      title={isEmpty(text) ? emptyText : text!}
       icon={icon}
       {...(onPress && !isEmpty(text) ? { onPress: onPress } : null)}
       {...(isEmpty(text) ? { textStyle: styles.textEmpty } : null)}
@@ -134,11 +115,10 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const [updatingAvatar, setUpdatingAvatar] = React.useState<boolean>(false);
   const [userInfo, setUserInfo] = React.useState<undefined | InfoPerson>(undefined);
   const [family, setFamily] = React.useState<undefined | { relatedId: string | null; relatedName: string | null }[]>(undefined);
-  const [isMyProfile, setIsMyProfile] = React.useState<boolean>(true);
-  // const isMyProfile = React.useMemo(
-  //   () => (route.params.userId && route.params.userId !== session?.user.id ? false : true),
-  //   [route, session],
-  // );
+  const isMyProfile = React.useMemo(
+    () => (route.params.userId && route.params.userId !== session?.user.id ? false : true),
+    [route, session],
+  );
 
   const renderMoodPicture = {
     ['1d']: {
@@ -254,21 +234,23 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     if (userInfo?.type !== UserType.Relative && userInfo?.type !== UserType.Student) return;
     return (
       <View style={styles.bloc}>
-        <HeadingXSText style={family ? {} : styles.blocTitle}>
+        <HeadingSText style={family ? {} : styles.blocTitle}>
           {userInfo?.type === UserType.Student
             ? I18n.get(family?.length! > 1 ? 'user-profile-relatives' : 'user-profile-relative')
             : I18n.get(family?.length! > 1 ? 'user-profile-children' : 'user-profile-child')}
-        </HeadingXSText>
+        </HeadingSText>
         {!isEmpty(family) ? (
           family?.map(user => (
-            <TouchableOpacity style={styles.userFamily}>
-              <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal size={36} />
+            <TouchableOpacity
+              style={styles.userFamily}
+              onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
+              <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal size={getScaleWidth(48)} />
               <NamedSVG
                 style={styles.userFamilyIcon}
                 name="ui-rafterRight"
                 width={UI_SIZES.dimensions.width.mediumPlus}
                 height={UI_SIZES.dimensions.height.mediumPlus}
-                fill={theme.palette.grey.black}
+                fill={theme.palette.primary.regular}
               />
             </TouchableOpacity>
           ))
@@ -297,10 +279,10 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     });
     return (
       <View style={styles.bloc}>
-        <HeadingXSText style={styles.blocTitle}>
+        <HeadingSText style={styles.blocTitle}>
           {I18n.get(schools.length > 1 ? 'user-profile-structures' : 'user-profile-structure')}
-        </HeadingXSText>
-        <ButtonLineIconGroup>
+        </HeadingSText>
+        <ButtonLineGroup>
           {renderTextIcon({
             icon: 'ui-school',
             text: `${
@@ -309,7 +291,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 ? ' + ' +
                   (schools.length - 1) +
                   ' ' +
-                  I18n.get(schools.length > 1 ? 'user-profile-structures' : 'user-profile-structure').toLowerCase()
+                  I18n.get(schools.length > 2 ? 'user-profile-structures' : 'user-profile-structure').toLowerCase()
                 : '')
             }`,
             onPress:
@@ -322,13 +304,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             icon: 'ui-class',
             text: !isEmpty(classes)
               ? `${
-                  I18n.get('user-profile-classOf') +
                   classes[0] +
                   (classes.length > 1
                     ? ' + ' +
                       (classes.length - 1) +
                       ' ' +
-                      I18n.get(classes.length > 1 ? 'user-profile-classes' : 'user-profile-class')
+                      I18n.get(classes.length > 2 ? 'user-profile-classes' : 'user-profile-class')
                     : '')
                 }`
               : '',
@@ -340,21 +321,28 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 : undefined,
             showArrow: true,
           })}
-        </ButtonLineIconGroup>
+        </ButtonLineGroup>
       </View>
     );
   };
 
   const renderPersonnalInfos = () => {
-    if (isEmpty(userInfo?.birthdate) && isEmpty(userInfo?.email) && isEmpty(userInfo?.tel) && isEmpty(userInfo?.mobile)) return;
+    if (
+      isEmpty(userInfo?.birthdate) &&
+      isEmpty(userInfo?.email) &&
+      isEmpty(userInfo?.tel) &&
+      isEmpty(userInfo?.mobile) &&
+      !isMyProfile
+    )
+      return;
     return (
       <View style={styles.bloc}>
-        <HeadingXSText style={styles.blocTitle}>{I18n.get('user-profile-personnalInfos')}</HeadingXSText>
-        <ButtonLineIconGroup>
+        <HeadingSText style={styles.blocTitle}>{I18n.get('user-profile-personnalInfos')}</HeadingSText>
+        <ButtonLineGroup>
           {userInfo?.birthdate
             ? renderTextIcon({
                 icon: 'ui-anniversary',
-                text: displayDate(userInfo?.birthdate, 'short'),
+                text: userInfo?.birthdate.format('D MMMM Y'),
               })
             : null}
           {renderTextIcon({
@@ -363,6 +351,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             onPress: () =>
               showBottomMenu([{ title: I18n.get('user-profile-copyEmail'), action: () => Clipboard.setString(userInfo?.email!) }]),
             show: isMyProfile,
+            showArrow: false,
           })}
           {renderTextIcon({
             icon: 'ui-phone',
@@ -372,6 +361,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 { title: I18n.get('user-profile-call') + ' ' + userInfo?.tel, action: () => callPhoneNumber(userInfo?.tel) },
               ]),
             show: isMyProfile,
+            showArrow: false,
           })}
           {renderTextIcon({
             icon: 'ui-smartphone',
@@ -381,19 +371,29 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 { title: I18n.get('user-profile-call') + ' ' + userInfo?.mobile, action: () => callPhoneNumber(userInfo?.mobile) },
               ]),
             show: isMyProfile,
+            showArrow: false,
           })}
-        </ButtonLineIconGroup>
+        </ButtonLineGroup>
       </View>
     );
   };
 
   const renderAbout = () => {
+    const description = route.params.newDescription ?? userInfo?.health;
     if (!isMyProfile && isEmpty(userInfo?.health)) return;
     return (
       <View style={styles.bloc}>
-        <HeadingXSText style={styles.blocTitle}>{I18n.get('user-profile-about')}</HeadingXSText>
-        {userInfo?.health ? (
-          <SmallText>{userInfo?.health}</SmallText>
+        <View style={styles.blocTitle}>
+          <HeadingSText>{I18n.get('user-profile-about')}</HeadingSText>
+          {isMyProfile ? (
+            <InlineButton
+              text={I18n.get('common-edit')}
+              action={() => navigation.navigate(userRouteNames.editDescription, { userId: userInfo?.id, description: description })}
+            />
+          ) : null}
+        </View>
+        {description ? (
+          <SmallText>{description}</SmallText>
         ) : (
           <SmallText style={styles.textEmpty}>{I18n.get('user-profile-about-empty')}</SmallText>
         )}
@@ -406,7 +406,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     const degre = appConf.is1d ? '1d' : '2d';
     return (
       <View style={styles.bloc}>
-        <HeadingXSText style={styles.blocTitle}>{I18n.get('user-profile-mood-motto')}</HeadingXSText>
+        <HeadingSText style={styles.blocTitle}>{I18n.get('user-profile-mood-motto')}</HeadingSText>
         <View style={styles.moodMotto}>
           <View style={styles.mood}>
             {userInfo?.mood ? (
@@ -441,30 +441,29 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const renderHobbies = () => {
     let emptyHobbie = '';
-    const hobbiesItems = ['animals', 'books', 'cinema', 'music', 'places', 'sport'];
+    const hobbies = route.params.newHobbies ?? userInfo?.hobbies;
     hobbiesItems.forEach(hobbie => {
-      const index = userInfo?.hobbies.findIndex(
-        //delete profile condition to prod
-        hobbieItem =>
-          isMyProfile
-            ? hobbieItem.category === hobbie
-            : hobbieItem.category === hobbie && hobbieItem.visibility === HobbieVisibility.PUBLIC,
-      );
-      if (index === -1 || (index! >= 0 && userInfo?.hobbies[index!].values === '')) emptyHobbie += `${renderEmoji(hobbie)} `;
+      const index = hobbies?.findIndex(hobbieItem => hobbieItem.category === hobbie);
+      if (index === -1 || (index! >= 0 && hobbies![index!].values === '')) emptyHobbie += `${renderEmoji[hobbie]} `;
     });
     return (
       <View style={styles.bloc}>
-        <HeadingXSText style={styles.blocTitle}>{I18n.get('user-profile-hobbies')}</HeadingXSText>
+        <View style={styles.blocTitle}>
+          <HeadingSText>{I18n.get('user-profile-hobbies')}</HeadingSText>
+          {isMyProfile ? (
+            <InlineButton
+              text={I18n.get('common-edit')}
+              action={() => navigation.navigate(userRouteNames.editHobbies, { userId: userInfo?.id, hobbies })}
+            />
+          ) : null}
+        </View>
+
         <View style={styles.hobbies}>
-          {userInfo?.hobbies.map(hobbie =>
-            //delete myprofile & visibility condition to prod
-            isMyProfile && hobbie.values ? (
+          {hobbies!.map(hobbie =>
+            hobbie.values ? (
               <View style={styles.hobbie}>
-                <SmallText>{`${renderEmoji(hobbie.category)} ${hobbie.values}`}</SmallText>
-              </View>
-            ) : hobbie.values && hobbie.visibility === HobbieVisibility.PUBLIC ? (
-              <View style={styles.hobbie}>
-                <SmallText>{`${renderEmoji(hobbie.category)} ${hobbie.values}`}</SmallText>
+                <SmallText>{`${renderEmoji[hobbie.category]} `}</SmallText>
+                <SmallText style={styles.hobbieValue}>{`${hobbie.values}`}</SmallText>
               </View>
             ) : null,
           )}
@@ -505,7 +504,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         {renderAbout()}
         {renderMoodMotto()}
         {renderHobbies()}
-        <ActionButton text="Toggle profile" type="secondary" action={() => setIsMyProfile(!isMyProfile)} />
       </ScrollView>
     );
   };
@@ -515,7 +513,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       loadContent={init}
       renderContent={renderPage}
       renderError={() => <SmallText>Error</SmallText>}
-      renderLoading={() => <SmallText>Loading</SmallText>}
+      renderLoading={() => <UserPlaceholderProfile />}
     />
   );
 };

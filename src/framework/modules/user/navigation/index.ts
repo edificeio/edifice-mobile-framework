@@ -8,6 +8,8 @@ import type { UserLegalNoticeScreenNavParams } from '~/framework/modules/user/sc
 import type { ProfileScreenNavigationParams } from '~/framework/modules/user/screens/profile';
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
+import { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
+import { UserEditDescriptionScreenNavParams } from '~/framework/modules/user/screens/profile/edit-description';
 
 export const userRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',
@@ -15,6 +17,8 @@ export const userRouteNames = {
   notifPrefsDetails: `${moduleConfig.routeName}/notifPrefs/details` as 'notifPrefsDetails',
   profile: `${moduleConfig.routeName}/profile` as 'profile',
   structures: `${moduleConfig.routeName}/profile/structures` as 'structures',
+  editHobbies: `${moduleConfig.routeName}/profile/editHobbies` as 'editHobbies',
+  editDescription: `${moduleConfig.routeName}/profile/editDescription` as 'editDescription',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
   legalNotice: `${moduleConfig.routeName}/legal-notice` as 'legalNotice',
 };
@@ -24,6 +28,8 @@ export interface UserNavigationParams extends ParamListBase {
   notifPrefsDetails: IPushNotifsItemsListScreenNavigationParams;
   profile: ProfileScreenNavigationParams;
   structures: UserStructuresScreenNavParams;
+  editHobbies: UserEditHobbiesScreenNavParams;
+  editDescription: UserEditDescriptionScreenNavParams;
   whoAreWe: UserWhoAreWeScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
 }

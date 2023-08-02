@@ -107,7 +107,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, []);
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const commentFieldRefs: any[] = [];
 
   const getComments = useCallback(

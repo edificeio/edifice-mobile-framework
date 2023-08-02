@@ -43,7 +43,4 @@ export default StyleSheet.create({
   userInfoName: {
     marginTop: UI_SIZES.spacing.medium,
   },
-  userInfoType: {
-    color: theme.ui.text.light,
-  },
 });

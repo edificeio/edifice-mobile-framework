@@ -9,6 +9,7 @@ export default StyleSheet.create({
     backgroundColor: undefined,
     borderWidth: 0,
     flexDirection: 'row-reverse',
+    alignSelf: 'flex-start',
   },
   picture: {
     marginLeft: 0,

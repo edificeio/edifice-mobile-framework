@@ -41,6 +41,6 @@ export interface InfoPerson {
   email: string;
   tel: null | string;
   mobile: string;
-  birthdate: Moment;
+  birthdate: null | Moment;
   hobbies: HobbieItem[];
 }

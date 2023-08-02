@@ -12,16 +12,8 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 import styles from './styles';
 import { IUserCardProps } from './types';
-import { UserType } from '~/framework/modules/auth/service';
 import InlineButton from '~/framework/components/buttons/inline';
-
-const colorType = {
-  [UserType.Student]: theme.palette.complementary.orange.regular,
-  [UserType.Relative]: theme.palette.complementary.blue.regular,
-  [UserType.Teacher]: theme.palette.complementary.green.regular,
-  [UserType.Guest]: theme.palette.complementary.yellow.regular,
-  [UserType.Personnel]: theme.palette.complementary.purple.regular,
-};
+import { colorType } from '~/framework/modules/user/screens/home';
 
 export const UserCard = ({
   id,
@@ -84,11 +76,16 @@ export const UserCard = ({
       </View>
       <View style={styles.boxTexts}>
         <HeadingXSText>{displayName}</HeadingXSText>
-        <SmallBoldText style={[{ color: colorType[type] }, styles.type]}>
+        <SmallBoldText style={{ color: colorType[type] }}>
           {I18n.get(`user-profiletypes-${type.toLocaleLowerCase()}`)}
         </SmallBoldText>
         {!canEdit ? (
-          <InlineButton iconName="ui-mail" text={I18n.get('user-profile-sendMessage')} action={onPressInlineButton} />
+          <InlineButton
+            style={styles.sendMessage}
+            iconName="ui-mail"
+            text={I18n.get('user-profile-sendMessage')}
+            action={onPressInlineButton}
+          />
         ) : null}
       </View>
     </View>

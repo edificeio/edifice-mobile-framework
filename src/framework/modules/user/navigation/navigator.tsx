@@ -17,6 +17,10 @@ import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { UserNavigationParams, userRouteNames } from './';
+import UserEditHobbiesScreen, { computeNavBar as editHobbiesNavBar } from '~/framework/modules/user/screens/profile/edit-hobbies';
+import UserEditDescriptionScreen, {
+  computeNavBar as editDescriptionNavBar,
+} from '~/framework/modules/user/screens/profile/edit-description';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
@@ -27,6 +31,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         name={userRouteNames.notifPrefs}
         component={PushNotifsTopicsListScreen}
         options={pushNotifsTopicsListNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen
+        name={userRouteNames.legalNotice}
+        component={UserLegalNoticeScreen}
+        options={legalNoticeNavBar}
         initialParams={{}}
       />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
@@ -44,13 +54,27 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           initialParams={{}}
         />
       </Stack.Group>
-      <Stack.Screen
-        name={userRouteNames.legalNotice}
-        component={UserLegalNoticeScreen}
-        options={legalNoticeNavBar}
-        initialParams={{}}
-      />
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Screen
+          name={userRouteNames.editHobbies}
+          component={UserEditHobbiesScreen}
+          options={editHobbiesNavBar}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name={userRouteNames.editDescription}
+          component={UserEditDescriptionScreen}
+          options={editDescriptionNavBar}
+          initialParams={{}}
+        />
+      </Stack.Group>
     </>
   ));
 
-setModalModeForRoutes([userRouteNames.notifPrefsDetails, userRouteNames.whoAreWe]);
+setModalModeForRoutes([
+  userRouteNames.notifPrefsDetails,
+  userRouteNames.whoAreWe,
+  userRouteNames.structures,
+  userRouteNames.editHobbies,
+  userRouteNames.editDescription,
+]);

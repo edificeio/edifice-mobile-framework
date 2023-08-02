@@ -8,7 +8,8 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.ui.background.card,
     flexDirection: 'row',
-    padding: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.big,
   },
   boxAvatar: {
     alignItems: 'center',
@@ -39,7 +40,7 @@ export default StyleSheet.create({
     flexShrink: 1,
     marginLeft: UI_SIZES.spacing.big,
   },
-  type: {
-    marginBottom: UI_SIZES.spacing.small,
+  sendMessage: {
+    marginTop: UI_SIZES.spacing.minor,
   },
 });

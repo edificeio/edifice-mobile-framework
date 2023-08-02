@@ -59,6 +59,7 @@ const imports = {
   'ui-image': import('ASSETS/icons/uiIcons/image.svg'),
   'ui-inbox': import('ASSETS/icons/uiIcons/inbox.svg'),
   'ui-infoCircle': import('ASSETS/icons/uiIcons/infoCircle.svg'),
+  'ui-internet': import('ASSETS/icons/uiIcons/internet.svg'),
   'ui-listOrder': import('ASSETS/icons/uiIcons/listOrder.svg'),
   'ui-lock': import('ASSETS/icons/uiIcons/lock.svg'),
   'ui-mail': import('ASSETS/icons/uiIcons/mail.svg'),

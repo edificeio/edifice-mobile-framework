@@ -2,9 +2,9 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Dispatch } from 'redux';
 
 import { ISession } from '~/framework/modules/auth/model';
-import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { HobbieItem } from '../../model';
 
 export interface ProfilePageDataProps {
   session?: ISession;
@@ -25,4 +25,6 @@ export type ProfilePageProps = ProfilePageDataProps &
 
 export interface ProfileScreenNavigationParams {
   userId?: string;
+  newHobbies?: HobbieItem[];
+  newDescription?: string;
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
 import { ColorValue, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
@@ -8,10 +8,11 @@ import { CaptionItalicText } from '~/framework/components/text';
 
 import styles from './styles';
 import { TextInputProps } from './types';
+import { useSyncRef } from '~/framework/hooks/ref';
 
 const ICON_INPUT_SIZE = 20;
 
-export default function TextInput(props: TextInputProps) {
+const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
   const { annotation, showError, showSuccess, toggleIconOn, toggleIconOff, value, disabled, onToggle, onFocus, onBlur } = props;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -20,8 +21,10 @@ export default function TextInput(props: TextInputProps) {
   // padding right input management if have icon success || error or if have toggle icon or both :)
   const paddingRight = useMemo(
     () =>
-      toggleIconOn && toggleIconOff
-        ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor + 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE
+      toggleIconOn && toggleIconOff && (showError || showSuccess)
+        ? UI_SIZES.spacing.medium + 2 * ICON_INPUT_SIZE + UI_SIZES.spacing.minor + 2 * UI_SIZES.spacing.small
+        : toggleIconOn && toggleIconOff
+        ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small
         : showError || showSuccess
         ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
         : UI_SIZES.spacing.medium,
@@ -97,11 +100,18 @@ export default function TextInput(props: TextInputProps) {
     return (
       <View>
         <RNTextInput
+          {...props}
           onFocus={e => handleFocus(e)}
           onBlur={e => handleBlur(e)}
-          style={[styles.input, { paddingRight, borderColor: colorStatus() }, { ...(disabled ? styles.inputDisabled : null) }]}
+          style={[
+            styles.input,
+            { paddingRight, borderColor: colorStatus() },
+            { ...(disabled ? styles.inputDisabled : null) },
+            props.style,
+          ]}
+          placeholderTextColor={theme.palette.grey.stone}
+          ref={ref}
           {...(disabled ? { editable: false, placeholderTextColor: theme.palette.grey.graphite } : null)}
-          {...props}
         />
         {renderIconInput()}
         {renderToggle()}
@@ -125,4 +135,6 @@ export default function TextInput(props: TextInputProps) {
       {renderAnnotation()}
     </View>
   );
-}
+});
+
+export default TextInput;

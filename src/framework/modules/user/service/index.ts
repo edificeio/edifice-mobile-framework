@@ -1,9 +1,10 @@
 import moment from 'moment';
 
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
 
-import { HobbieItem, InfoPerson } from '../model';
-import { UserType } from '../../auth/service';
+import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
+import { UserType } from '~/framework/modules/auth/service';
+import { hobbiesItems } from '~/framework/modules/user/screens/profile';
 
 interface BackendInfoPerson {
   id: string;
@@ -30,7 +31,7 @@ interface BackendInfoPerson {
   email: string;
   tel: null | string;
   mobile: string;
-  birthdate: string;
+  birthdate: null | string;
   hobbies: { visibility: string; category: string; values: string }[];
 }
 
@@ -40,6 +41,12 @@ interface BackendPerson {
 }
 
 export const infoPersonAdapter = (n: BackendInfoPerson) => {
+  const orderedHobbies: HobbieItem[] = [];
+  hobbiesItems.forEach(hobbie => {
+    const index = n.hobbies.findIndex(hobbieItem => hobbieItem.category === hobbie);
+    if (index !== -1) orderedHobbies.push((n.hobbies as HobbieItem[])[index]);
+  });
+
   const ret = {
     id: n.id,
     login: n.login,
@@ -59,8 +66,8 @@ export const infoPersonAdapter = (n: BackendInfoPerson) => {
     email: n.email,
     tel: n.tel,
     mobile: n.mobile,
-    birthdate: moment(n.birthdate),
-    hobbies: n.hobbies as HobbieItem[],
+    birthdate: n.birthdate ? moment(n.birthdate) : null,
+    hobbies: orderedHobbies,
   };
   return ret as InfoPerson;
 };
@@ -73,6 +80,14 @@ export const userService = {
 
       const person = backendPerson.result.map(person => infoPersonAdapter(person));
       return person as InfoPerson[];
+    },
+    put: async (userId: string, body) => {
+      const api = `/directory/userbook/${userId}`;
+
+      return signedFetchJson2(`${api}`, {
+        method: 'PUT',
+        body,
+      });
     },
   },
 };
