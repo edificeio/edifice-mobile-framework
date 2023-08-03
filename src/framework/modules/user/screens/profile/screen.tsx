@@ -523,17 +523,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 };
 
 const uploadAvatarError = () => {
-  return dispatch => {
-    dispatch(
-      notifierShowAction({
-        id: 'profileOne',
-        text: I18n.get('user-profile-changeavatar-error-upload'),
-        icon: 'close',
-        type: 'error',
-      }),
-    );
-    Trackers.trackEvent('Profile', 'UPDATE ERROR', 'AvatarChangeError');
-  };
+  Toast.showError(I18n.get('user-profile-changeavatar-error-upload'));
 };
 
 const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: ThunkDispatch<any, any, any>) => {
