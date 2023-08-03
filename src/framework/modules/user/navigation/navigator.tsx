@@ -21,6 +21,9 @@ import UserEditHobbiesScreen, { computeNavBar as editHobbiesNavBar } from '~/fra
 import UserEditDescriptionScreen, {
   computeNavBar as editDescriptionNavBar,
 } from '~/framework/modules/user/screens/profile/edit-description';
+import UserEditMoodMottoScreen, {
+  computeNavBar as editMoodMottoNavBar,
+} from '~/framework/modules/user/screens/profile/edit-moodmotto';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
@@ -67,6 +70,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={editDescriptionNavBar}
           initialParams={{}}
         />
+        <Stack.Screen
+          name={userRouteNames.editMoodMotto}
+          component={UserEditMoodMottoScreen}
+          options={editMoodMottoNavBar}
+          initialParams={{}}
+        />
       </Stack.Group>
     </>
   ));
@@ -77,4 +86,5 @@ setModalModeForRoutes([
   userRouteNames.structures,
   userRouteNames.editHobbies,
   userRouteNames.editDescription,
+  userRouteNames.editMoodMotto,
 ]);

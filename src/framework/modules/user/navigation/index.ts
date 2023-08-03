@@ -10,6 +10,7 @@ import type { UserStructuresScreenNavParams } from '~/framework/modules/user/scr
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 import { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
 import { UserEditDescriptionScreenNavParams } from '~/framework/modules/user/screens/profile/edit-description';
+import { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 
 export const userRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',
@@ -19,6 +20,7 @@ export const userRouteNames = {
   structures: `${moduleConfig.routeName}/profile/structures` as 'structures',
   editHobbies: `${moduleConfig.routeName}/profile/editHobbies` as 'editHobbies',
   editDescription: `${moduleConfig.routeName}/profile/editDescription` as 'editDescription',
+  editMoodMotto: `${moduleConfig.routeName}/profile/editMoodMotto` as 'editMoodMotto',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
   legalNotice: `${moduleConfig.routeName}/legal-notice` as 'legalNotice',
 };
@@ -30,6 +32,7 @@ export interface UserNavigationParams extends ParamListBase {
   structures: UserStructuresScreenNavParams;
   editHobbies: UserEditHobbiesScreenNavParams;
   editDescription: UserEditDescriptionScreenNavParams;
+  editMoodMotto: UserEditMoodMottoScreenNavParams;
   whoAreWe: UserWhoAreWeScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
 }

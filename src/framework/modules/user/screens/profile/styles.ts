@@ -26,7 +26,7 @@ export default StyleSheet.create({
   userFamily: {
     position: 'relative',
     marginTop: UI_SIZES.spacing.small,
-    alignItems: 'center',
+    justifyContent: 'center',
   },
   userFamilyIcon: {
     position: 'absolute',

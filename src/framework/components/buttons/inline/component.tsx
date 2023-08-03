@@ -12,7 +12,7 @@ const InlineButton = (props: ActionButtonProps) => {
       text={props.text}
       iconName={props.iconName}
       action={props.action}
-      style={styles.inlineButton}
+      style={[styles.inlineButton, props.style]}
       pictureSize={UI_SIZES.dimensions.height.mediumPlus}
       pictureFill={theme.palette.primary.regular}
       pictureStyle={styles.picture}

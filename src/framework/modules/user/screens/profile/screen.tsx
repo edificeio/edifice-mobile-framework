@@ -98,12 +98,13 @@ const showBottomMenu = (actions: MenuAction[]) => {
 };
 
 const callPhoneNumber = tel => {
-  Linking.canOpenURL(`tel:${tel}`)
+  const telWithoutSpaces = tel.replace(/\s/g, '');
+  Linking.canOpenURL(`tel:${telWithoutSpaces}`)
     .then(supported => {
       if (!supported) {
-        console.log(`L'appel du numéro ${tel} n'est pas supporté.`);
+        console.log(`L'appel du numéro ${telWithoutSpaces} n'est pas supporté.`);
       } else {
-        return Linking.openURL(`tel:${tel}`);
+        return Linking.openURL(`tel:${telWithoutSpaces}`);
       }
     })
     .catch(err => console.error("Une erreur s'est produite lors de l'appel du numéro.", err));
@@ -402,37 +403,32 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderMoodMotto = () => {
+    const mood = route.params.newMood ?? userInfo?.mood;
+    const motto = route.params.newMotto ?? userInfo?.motto;
     if ((isEmpty(userInfo?.mood) || userInfo?.mood === 'default') && isEmpty(userInfo?.motto) && !isMyProfile) return;
     const degre = appConf.is1d ? '1d' : '2d';
     return (
       <View style={styles.bloc}>
-        <HeadingSText style={styles.blocTitle}>{I18n.get('user-profile-mood-motto')}</HeadingSText>
+        <View style={styles.blocTitle}>
+          <HeadingSText>{I18n.get('user-profile-mood-motto')}</HeadingSText>
+          {isMyProfile ? (
+            <InlineButton
+              text={I18n.get('common-edit')}
+              action={() => navigation.navigate(userRouteNames.editMoodMotto, { userId: userInfo?.id, mood, motto })}
+            />
+          ) : null}
+        </View>
         <View style={styles.moodMotto}>
           <View style={styles.mood}>
-            {userInfo?.mood ? (
-              <>
-                <Image source={renderMoodPicture[degre][userInfo?.mood ?? 'none']} style={styles.moodPicture} />
-                <SmallText>{I18n.get(`user-profile-mood-${userInfo?.mood}-${degre}`)}</SmallText>
-              </>
-            ) : (
-              //verif avec le back si renvoie 'default' automatiquement à la création
-              <>
-                <NamedSVG
-                  name="ui-question"
-                  width={UI_SIZES.dimensions.width.largePlus}
-                  height={UI_SIZES.dimensions.width.largePlus}
-                  fill={theme.palette.grey.graphite}
-                />
-                <SmallText style={styles.textEmpty}>{I18n.get('user-profile-moodEmpty')}</SmallText>
-              </>
-            )}
+            <Image source={renderMoodPicture[degre][mood ?? 'none']} style={styles.moodPicture} />
+            <SmallText>{I18n.get(`user-profile-mood-${mood ?? 'none'}-${degre}`)}</SmallText>
           </View>
-          {isEmpty(userInfo?.motto) ? (
+          {isEmpty(motto) ? (
             <SmallItalicText style={[styles.motto, styles.textEmpty]}>
               {I18n.get(isMyProfile ? 'user-profile-mottoEmpty' : 'user-profile-notSpecified')}
             </SmallItalicText>
           ) : (
-            <SmallItalicText style={styles.motto}>{`"${userInfo?.motto}"`}</SmallItalicText>
+            <SmallItalicText style={styles.motto}>{`"${motto}"`}</SmallItalicText>
           )}
         </View>
       </View>
