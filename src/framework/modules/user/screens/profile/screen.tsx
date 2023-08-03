@@ -162,7 +162,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       setUpdatingAvatar(true);
       const sc = await onUploadAvatar(lc);
       await onUpdateAvatar(sc.url);
-      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch (err: any) {
       if (err.message === 'Error picking image') {
         onPickFileError('profileOne');
@@ -178,7 +177,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     try {
       setUpdatingAvatar(true);
       await onUpdateAvatar('');
-      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch {
       onUploadAvatarError();
     } finally {
