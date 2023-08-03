@@ -140,7 +140,7 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
           />
         </View>
       )}
-      ListEmptyComponent={<EmptyComponent title={I18n.get('diary-homeworklist-emptyscreen-sessions')} />}
+      ListEmptyComponent={<EmptyComponent title={I18n.get('diary-homeworklist-emptyscreen-session')} />}
     />
   );
 };
