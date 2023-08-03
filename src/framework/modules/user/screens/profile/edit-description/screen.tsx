@@ -14,12 +14,12 @@ import { userService } from '~/framework/modules/user/service';
 import Toast from '~/framework/components/toast';
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
-import { SmallBoldText } from '~/framework/components/text';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { NamedSVG } from '~/framework/components/picture';
 import { getScaleWidth } from '~/framework/components/constants';
 import theme from '~/app/theme';
+import ScrollView from '~/framework/components/scrollView';
 
 export const computeNavBar = ({
   navigation,
@@ -90,24 +90,26 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
 
   return (
     <PageComponent style={styles.page}>
-      <InputContainer
-        label={{ text: 'Description' }}
-        input={
-          <MultilineTextInput
-            placeholder={I18n.get('user-profile-about-empty')}
-            numberOfLines={15}
-            value={description}
-            onChangeText={txt => setDescription(txt)}
-          />
-        }
-      />
-      <NamedSVG
-        name="ui-internet"
-        height={getScaleWidth(20)}
-        width={getScaleWidth(20)}
-        fill={theme.palette.grey.black}
-        style={styles.icon}
-      />
+      <ScrollView>
+        <InputContainer
+          label={{ text: 'Description' }}
+          input={
+            <MultilineTextInput
+              placeholder={I18n.get('user-profile-about-empty')}
+              numberOfLines={15}
+              value={description}
+              onChangeText={txt => setDescription(txt)}
+            />
+          }
+        />
+        <NamedSVG
+          name="ui-internet"
+          height={getScaleWidth(20)}
+          width={getScaleWidth(20)}
+          fill={theme.palette.grey.black}
+          style={styles.icon}
+        />
+      </ScrollView>
     </PageComponent>
   );
 };

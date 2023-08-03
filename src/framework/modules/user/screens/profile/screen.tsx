@@ -1,6 +1,6 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Linking, TouchableOpacity, View } from 'react-native';
+import { Linking, Platform, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -358,9 +358,11 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             icon: 'ui-phone',
             text: userInfo?.tel ?? undefined,
             onPress: () =>
-              showBottomMenu([
-                { title: I18n.get('user-profile-call') + ' ' + userInfo?.tel, action: () => callPhoneNumber(userInfo?.tel) },
-              ]),
+              Platform.OS === 'ios'
+                ? callPhoneNumber(userInfo?.tel)
+                : showBottomMenu([
+                    { title: I18n.get('user-profile-call') + ' ' + userInfo?.tel, action: () => callPhoneNumber(userInfo?.tel) },
+                  ]),
             show: isMyProfile,
             showArrow: false,
           })}
@@ -368,9 +370,14 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             icon: 'ui-smartphone',
             text: userInfo?.mobile,
             onPress: () =>
-              showBottomMenu([
-                { title: I18n.get('user-profile-call') + ' ' + userInfo?.mobile, action: () => callPhoneNumber(userInfo?.mobile) },
-              ]),
+              Platform.OS === 'ios'
+                ? callPhoneNumber(userInfo?.mobile)
+                : showBottomMenu([
+                    {
+                      title: I18n.get('user-profile-call') + ' ' + userInfo?.mobile,
+                      action: () => callPhoneNumber(userInfo?.mobile),
+                    },
+                  ]),
             show: isMyProfile,
             showArrow: false,
           })}

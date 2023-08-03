@@ -8,7 +8,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { UserEditMoodMottoScreenProps } from './types';
-import { Alert, Image, Platform, TouchableOpacity } from 'react-native';
+import { Alert, Image, Platform, TouchableOpacity, ScrollView } from 'react-native';
 import { NavBarAction } from '~/framework/components/navigation';
 import { userService } from '~/framework/modules/user/service';
 import Toast from '~/framework/components/toast';
@@ -19,7 +19,6 @@ import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { CaptionText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
 import { View } from 'react-native';
-import ScrollView from '~/framework/components/scrollView';
 import { UI_SIZES } from '~/framework/components/constants';
 export const computeNavBar = ({
   navigation,
@@ -42,6 +41,8 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
   const PageComponent = React.useMemo(() => {
     return Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
   }, []);
+
+  const scrollViewRef = React.useRef<ScrollView>(null);
 
   const moods = ['default', 'happy', 'proud', 'dreamy', 'love', 'tired', 'angry', 'worried', 'sick', 'joker', 'sad'];
 
@@ -137,7 +138,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
 
   return (
     <PageComponent style={styles.page}>
-      <ScrollView>
+      <ScrollView ref={scrollViewRef}>
         <InputContainer
           label={{ text: I18n.get('user-profile-mood') }}
           input={<View style={styles.moods}>{moods.map(mood => renderMoodItem(mood))}</View>}
@@ -151,6 +152,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
               numberOfLines={4}
               onChangeText={txt => setMotto(txt)}
               maxLength={75}
+              onFocus={() => scrollViewRef.current?.scrollToEnd()}
             />
           }
         />
