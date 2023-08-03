@@ -367,7 +367,7 @@
   "dashboard-teacher-emptyscreen-text": "La vie scolaire sur l'application est réservée aux familles et aux enseignants.",
   "dashboard-teacher-emptyscreen-title": "Désolé, il n'y a pas de contenu pour votre profil",
   "dashboard-teacher-title": "Vie Scolaire",
-  "date-invalid": "",
+  "date-invalid": " ",
   "date-now": "maintenant",
   "date-today": "aujourd'hui",
   "date-tomorrow": "demain",
