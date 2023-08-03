@@ -136,7 +136,9 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
         data={route.params.hobbies}
         removeClippedSubviews={false}
         renderItem={({ item, index }) => renderInput(item, index)}
-        scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
+        showsVerticalScrollIndicator={false}
+        initialNumToRender={route.params.hobbies.length}
+        keyExtractor={item => item.category}
       />
     );
   };

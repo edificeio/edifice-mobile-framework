@@ -42,5 +42,6 @@ export default StyleSheet.create({
   },
   userInfoName: {
     marginTop: UI_SIZES.spacing.medium,
+    textAlign: 'center',
   },
 });
