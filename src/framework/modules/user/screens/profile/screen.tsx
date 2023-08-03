@@ -22,16 +22,13 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { formatSource } from '~/framework/util/media';
-import Notifier from '~/framework/util/notifier';
-import { notifierShowAction } from '~/framework/util/notifier/actions';
-import { isEmpty } from '~/framework/util/object';
-import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 import { PageContainer } from '~/ui/ContainerContent';
 import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
 import { IProfilePageProps, IProfilePageState } from './types';
+import Toast from '~/framework/components/toast';
 
 export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfilePageState> {
   defaultState: (force?: boolean) => IProfilePageState = force => ({
@@ -68,6 +65,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
       this.setState({ updatingAvatar: true });
       const sc = await onUploadAvatar(lc);
       await onUpdateAvatar(sc.url);
+      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch (err: any) {
       if (err.message === 'Error picking image') {
         onPickFileError('profileOne');
@@ -84,6 +82,7 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     try {
       this.setState({ updatingAvatar: true });
       await onUpdateAvatar('');
+      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch {
       onUploadAvatarError();
     } finally {
@@ -96,8 +95,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     const isEditMode = this.props.route.params.edit ?? false;
     return (
       <PageContainer>
-        <Notifier id="profileOne" />
-        <Notifier id="profileTwo" />
         <KeyboardAvoidingView
           style={styles.profilePage}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -340,17 +337,7 @@ export class UserProfileScreen extends React.PureComponent<IProfilePageProps, IP
 }
 
 const uploadAvatarError = () => {
-  return dispatch => {
-    dispatch(
-      notifierShowAction({
-        id: 'profileOne',
-        text: I18n.get('user-profile-changeavatar-error-upload'),
-        icon: 'close',
-        type: 'error',
-      }),
-    );
-    Trackers.trackEvent('Profile', 'UPDATE ERROR', 'AvatarChangeError');
-  };
+  Toast.showError(I18n.get('user-profile-changeavatar-error-upload'));
 };
 
 const uploadAvatarAction = (avatar: LocalFile) => async (_dispatch: ThunkDispatch<any, any, any>) => {
