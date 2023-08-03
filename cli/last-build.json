@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-02 18:39:07",
-  "notes": "Squashed commit of the following:\nSquashed commit of the following:\nchore(homework): MB-227, refine daypicker\nchore(homework): MB-1842, attachment-picker inside blog/homework\nchore: square aspect-ratio constant\nchore(homework): MB-1842, attachmentgroupimages styles refacto\nchore(homework): MB-1842, attachmentgroupimages item width\nchore(homework): MB-1842, attachmentgroupimages design\nchore(homework): add x-button in modal\nchore(homework): refactor daycell selection logic\nSquashed commit of the following:\nrelease: 1.11.0-alpha.3(1110003)",
-  "version": "1.11.0-alpha.4(1110004)",
+  "last": "2023-08-03 18:07:14",
+  "notes": "feat(profile): hiode scrollbar on hobbies edit view\nfeat(profile): remove toggle on edit description view\nfeat(profile): remove toast after update avatar\nfeat(profile): MB-1605 , we can nox edit and delete avatar on profile page\nSquashed commit of the following:\nfeat(profile): fix lineheight style in multiline text input\nfeat(profile): add scroll to in edit motto view\nfeat(profile): MB-1805 , add edit mood & motto view\nrelease: 1.11.0-alpha.4(1110004)",
+  "version": "1.11.0-alpha.5(1110005)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
