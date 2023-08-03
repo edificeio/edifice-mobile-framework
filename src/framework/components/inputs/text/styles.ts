@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   input: {
@@ -10,7 +10,7 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderRadius: UI_SIZES.radius.input,
     color: theme.ui.text.regular,
-    fontSize: 16,
+    fontSize: getScaleFontSize(16),
   },
   inputDisabled: {
     backgroundColor: theme.palette.grey.pearl,
