@@ -6,9 +6,4 @@ export default StyleSheet.create({
   page: {
     padding: UI_SIZES.spacing.medium,
   },
-  icon: {
-    position: 'absolute',
-    top: 4,
-    right: 0,
-  },
 });

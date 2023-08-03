@@ -403,7 +403,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderAbout = () => {
-    const description = route.params.newDescription ?? userInfo?.health;
+    const description = route.params.newDescription ?? userInfo!.health;
     if (!isMyProfile && isEmpty(userInfo?.health)) return;
     return (
       <View style={styles.bloc}>
@@ -412,7 +412,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           {isMyProfile ? (
             <InlineButton
               text={I18n.get('common-edit')}
-              action={() => navigation.navigate(userRouteNames.editDescription, { userId: userInfo?.id, description: description })}
+              action={() =>
+                navigation.navigate(userRouteNames.editDescription, {
+                  userId: userInfo!.id,
+                  description: description,
+                })
+              }
             />
           ) : null}
         </View>
@@ -426,8 +431,8 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderMoodMotto = () => {
-    const mood = route.params.newMood ?? userInfo?.mood;
-    const motto = route.params.newMotto ?? userInfo?.motto;
+    const mood = route.params.newMood ?? userInfo!.mood;
+    const motto = route.params.newMotto ?? userInfo!.motto;
     if ((isEmpty(userInfo?.mood) || userInfo?.mood === 'default') && isEmpty(userInfo?.motto) && !isMyProfile) return;
     const degre = appConf.is1d ? '1d' : '2d';
     return (
@@ -437,7 +442,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           {isMyProfile ? (
             <InlineButton
               text={I18n.get('common-edit')}
-              action={() => navigation.navigate(userRouteNames.editMoodMotto, { userId: userInfo?.id, mood, motto })}
+              action={() => navigation.navigate(userRouteNames.editMoodMotto, { userId: userInfo!.id, mood, motto })}
             />
           ) : null}
         </View>
@@ -460,7 +465,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const renderHobbies = () => {
     let emptyHobbie = '';
-    const hobbies = route.params.newHobbies ?? userInfo?.hobbies;
+    const hobbies = route.params.newHobbies ?? userInfo!.hobbies;
     hobbiesItems.forEach(hobbie => {
       const index = hobbies?.findIndex(hobbieItem => hobbieItem.category === hobbie);
       if (index === -1 || (index! >= 0 && hobbies![index!].values === '')) emptyHobbie += `${renderEmoji[hobbie]} `;
@@ -472,7 +477,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           {isMyProfile ? (
             <InlineButton
               text={I18n.get('common-edit')}
-              action={() => navigation.navigate(userRouteNames.editHobbies, { userId: userInfo?.id, hobbies })}
+              action={() => navigation.navigate(userRouteNames.editHobbies, { userId: userInfo!.id, hobbies })}
             />
           ) : null}
         </View>

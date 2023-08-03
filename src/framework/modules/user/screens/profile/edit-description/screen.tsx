@@ -16,9 +16,6 @@ import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
-import { NamedSVG } from '~/framework/components/picture';
-import { getScaleWidth } from '~/framework/components/constants';
-import theme from '~/app/theme';
 import ScrollView from '~/framework/components/scrollView';
 
 export const computeNavBar = ({
@@ -101,13 +98,6 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
               onChangeText={txt => setDescription(txt)}
             />
           }
-        />
-        <NamedSVG
-          name="ui-internet"
-          height={getScaleWidth(20)}
-          width={getScaleWidth(20)}
-          fill={theme.palette.grey.black}
-          style={styles.icon}
         />
       </ScrollView>
     </PageComponent>
