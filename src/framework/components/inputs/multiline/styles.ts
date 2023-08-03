@@ -7,5 +7,6 @@ export default StyleSheet.create({
     paddingTop: UI_SIZES.spacing.small,
     paddingBottom: UI_SIZES.spacing.small,
     lineHeight: getScaleFontSize(24),
+    textAlignVertical: 'top',
   },
 });

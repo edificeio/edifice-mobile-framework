@@ -17,9 +17,7 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image, formatSource } from '~/framework/util/media';
-import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { isEmpty } from '~/framework/util/object';
-import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 import { InfoPerson } from '~/framework/modules/user/model';
 
@@ -40,6 +38,7 @@ import InlineButton from '~/framework/components/buttons/inline';
 import { hobbiesItems, renderEmoji } from '.';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
+import Toast from '~/framework/components/toast';
 
 export const computeNavBar = ({
   navigation,
@@ -163,6 +162,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       setUpdatingAvatar(true);
       const sc = await onUploadAvatar(lc);
       await onUpdateAvatar(sc.url);
+      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch (err: any) {
       if (err.message === 'Error picking image') {
         onPickFileError('profileOne');
@@ -178,6 +178,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     try {
       setUpdatingAvatar(true);
       await onUpdateAvatar('');
+      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch {
       onUploadAvatarError();
     } finally {
@@ -229,6 +230,23 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     return navigation.navigate(conversationRouteNames.newMail, {
       toUsers: user,
     });
+  };
+
+  const renderUserCard = () => {
+    const avatar = isMyProfile ? session?.user.photo : userInfo?.photo;
+    return (
+      <UserCard
+        id={avatar && formatSource(`${session?.platform.url}${avatar}`)}
+        displayName={userInfo?.displayName}
+        type={userInfo?.type}
+        hasAvatar={!!session?.user.photo}
+        updatingAvatar={updatingAvatar}
+        onChangeAvatar={onChangeAvatar.bind(this)}
+        onDeleteAvatar={onDeleteAvatar.bind(this)}
+        canEdit={isMyProfile}
+        onPressInlineButton={() => onNewMessage()}
+      />
+    );
   };
 
   const renderFamily = () => {
@@ -488,19 +506,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const renderPage = () => {
     return (
       <ScrollView style={styles.page}>
-        {/* <Notifier id="profileOne" />
-        <Notifier id="profileTwo" /> */}
-        <UserCard
-          id={userInfo?.photo && formatSource(`${session?.platform.url}${userInfo?.photo}`)}
-          displayName={userInfo?.displayName}
-          type={userInfo?.type}
-          hasAvatar={!!session?.user.photo}
-          updatingAvatar={updatingAvatar}
-          onChangeAvatar={onChangeAvatar.bind(this)}
-          onDeleteAvatar={onDeleteAvatar.bind(this)}
-          canEdit={isMyProfile}
-          onPressInlineButton={() => onNewMessage()}
-        />
+        {renderUserCard()}
         {appConf.is1d ? renderMoodMotto() : null}
         {renderFamily()}
         {renderStructures()}
