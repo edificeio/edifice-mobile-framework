@@ -305,14 +305,14 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                   }`,
                 )}
                 text={I18n.get(
-                  `homework-tasklist-emptyscreen-text-${
+                  `homework-tasklist-emptyscreen-text${
                     hasPastHomeWork
                       ? hasCreateHomeworkResourceRight
                         ? ''
-                        : 'nocreationrights'
+                        : '-nocreationrights'
                       : hasCreateHomeworkResourceRight
-                      ? 'notasks'
-                      : 'notasks-nocreationrights'
+                      ? '-notasks'
+                      : '-notasks-nocreationrights'
                   }`,
                 )}
                 buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-tasklist-createactivity') : undefined}
