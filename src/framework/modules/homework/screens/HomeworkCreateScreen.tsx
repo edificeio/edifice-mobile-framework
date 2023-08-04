@@ -45,7 +45,7 @@ export type IHomeworkCreateScreenProps = HomeworkCreateScreenDataProps &
 
 const styles = StyleSheet.create({
   button: {
-    marginTop: UI_SIZES.spacing.major,
+    marginTop: UI_SIZES.spacing.large,
   },
   inputContainer: {
     marginTop: UI_SIZES.spacing.big,
