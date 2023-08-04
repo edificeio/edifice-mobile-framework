@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
+import { computeNavBar as homeworkCreateNavBar } from '~/framework/modules/homework/screens/HomeworkCreateScreen';
 import { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
 import { computeNavBar as homeworkTaskListNavBar } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
 import moduleConfig from '~/framework/modules/homework/module-config';
@@ -40,7 +41,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       />
 
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
-        <Stack.Screen name={homeworkRouteNames.homeworkCreate} component={HomeworkCreateScreen} />
+        <Stack.Screen
+          name={homeworkRouteNames.homeworkCreate}
+          component={HomeworkCreateScreen}
+          options={homeworkCreateNavBar}
+          initialParams={{}}
+        />
       </Stack.Group>
     </>
   ));

@@ -140,7 +140,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     const popupActionsMenu = [
       {
         title: I18n.get('homework-tasklist-addhomework'),
-        action: () => navigation.navigate(homeworkRouteNames.homeworkCreate, { diary: '' }),
+        action: () => navigation.navigate(homeworkRouteNames.homeworkCreate, { diaryId: diaryInformation?.id }),
         icon: {
           ios: 'plus',
           android: 'ic_plus',
