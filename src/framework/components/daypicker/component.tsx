@@ -22,7 +22,7 @@ import theme from '~/app/theme';
 import { Moment } from 'moment';
 import { genericHitSlop } from '../constants';
 
-const DayPicker = (props: DayPickerProps) => {
+const DayPicker = ({ onDateChange }: DayPickerProps) => {
   const isTodayWeekend = isDateWeekend(today());
   const defaultSelectedDate = isTodayWeekend
     ? addTime(today(), 1, 'week').startOf('week')
@@ -31,6 +31,7 @@ const DayPicker = (props: DayPickerProps) => {
 
   const [selectedDate, setSelectedDate] = React.useState(defaultSelectedDate);
   const [startDate, setStartDate] = React.useState(defaultStartDate);
+  React.useEffect(() => onDateChange(defaultSelectedDate), []);
 
   const isPastDisabled = startDate.isSame(subtractTime(defaultStartDate, 8, 'week'));
   const isFutureDisabled = startDate.isSame(addTime(defaultStartDate, 8, 'week'));
@@ -39,6 +40,11 @@ const DayPicker = (props: DayPickerProps) => {
   const isWeekdaySelected = (weekdayNumber: number) => {
     const isWithinSelectedWeek = selectedDate.isBetween(startDate, addTime(startDate, 6, 'day'), undefined, '[]');
     return isWithinSelectedWeek && isDateGivenWeekday(selectedDate, weekdayNumber);
+  };
+  const onSetDate = (amount: number) => {
+    const date = addTime(startDate, amount, 'day');
+    setSelectedDate(date);
+    onDateChange(date);
   };
 
   return (
@@ -64,37 +70,37 @@ const DayPicker = (props: DayPickerProps) => {
         <DayCell
           dayOfTheWeek={DayOfTheWeek.MONDAY}
           dayReference={dayReference(startDate)}
-          onPress={() => setSelectedDate(startDate)}
+          onPress={() => onSetDate(0)}
           isSelected={isWeekdaySelected(1)}
         />
         <DayCell
           dayOfTheWeek={DayOfTheWeek.TUESDAY}
           dayReference={dayReference(addTime(startDate, 1, 'day'))}
-          onPress={() => setSelectedDate(addTime(startDate, 1, 'day'))}
+          onPress={() => onSetDate(1)}
           isSelected={isWeekdaySelected(2)}
         />
         <DayCell
           dayOfTheWeek={DayOfTheWeek.WEDNESDAY}
           dayReference={dayReference(addTime(startDate, 2, 'day'))}
-          onPress={() => setSelectedDate(addTime(startDate, 2, 'day'))}
+          onPress={() => onSetDate(2)}
           isSelected={isWeekdaySelected(3)}
         />
         <DayCell
           dayOfTheWeek={DayOfTheWeek.THURSDAY}
           dayReference={dayReference(addTime(startDate, 3, 'day'))}
-          onPress={() => setSelectedDate(addTime(startDate, 3, 'day'))}
+          onPress={() => onSetDate(3)}
           isSelected={isWeekdaySelected(4)}
         />
         <DayCell
           dayOfTheWeek={DayOfTheWeek.FRIDAY}
           dayReference={dayReference(addTime(startDate, 4, 'day'))}
-          onPress={() => setSelectedDate(addTime(startDate, 4, 'day'))}
+          onPress={() => onSetDate(4)}
           isSelected={isWeekdaySelected(5)}
         />
         <DayCell
           dayOfTheWeek={DayOfTheWeek.SATURDAY}
           dayReference={dayReference(addTime(startDate, 5, 'day'))}
-          onPress={() => setSelectedDate(addTime(startDate, 5, 'day'))}
+          onPress={() => onSetDate(5)}
           isSelected={isWeekdaySelected(6)}
         />
       </View>
