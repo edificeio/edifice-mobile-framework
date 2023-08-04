@@ -43,7 +43,6 @@ function useAppState() {
         if (newLocale !== currentLocale) setCurrentLocale(I18n.updateLanguage());
         // Reset badge value
         setCurrentBadgeValue(0);
-        console.debug('[Badge] reset value');
       } else if (nextAppState === 'background') {
         // Track background state
         console.debug('[App State] now in background mode');
@@ -79,7 +78,6 @@ function App(props: AppProps) {
   useNavigationDevPlugins();
 
   const onRemoteNotification = React.useCallback(notification => {
-    console.debug('IOS notification', notification);
     const isClicked = notification.getData().userInteraction === 1;
 
     if (isClicked) {
@@ -95,7 +93,6 @@ function App(props: AppProps) {
   React.useEffect(() => {
     const type = 'notification';
     PushNotificationIOS.addEventListener(type, onRemoteNotification);
-    console.debug('listen notification IOS');
     return () => {
       PushNotificationIOS.removeEventListener(type);
     };
