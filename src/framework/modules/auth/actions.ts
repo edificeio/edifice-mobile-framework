@@ -74,12 +74,12 @@ function getLegalUrlsAction(platform: Platform) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<LegalUrls | undefined> {
     // === 1: Load legal document urls
     try {
-      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.getLanguage());
       const legalUrls: LegalUrls = {
         cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
         personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
         cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
       };
+      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.getLanguage());
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
           authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),

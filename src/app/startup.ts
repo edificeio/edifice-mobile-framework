@@ -6,6 +6,7 @@ import { actions } from '~/framework/modules/auth/reducer';
 import { loadCurrentPlatform } from '~/framework/modules/auth/service';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { Platform } from '~/framework/util/appConf';
+import { I18n } from './i18n';
 
 /**
  * Logic code that is run for the app start
@@ -13,22 +14,28 @@ import { Platform } from '~/framework/util/appConf';
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatform?: Platform) {
   const [loadedPlatform, setLoadedPlatform] = React.useState<Platform | undefined>(undefined);
   React.useEffect(() => {
-    loadCurrentPlatform()
-      .then(platform => {
-        if (platform)
-          dispatch(loginAction(platform, undefined))
-            .then(redirect => {
-              dispatch(actions.redirectAutoLogin(redirect));
-            })
-            .catch(() => {
-              // Do nothing. Finally clause + default navigation state will handle the case.
-            })
-            .finally(() => {
-              setLoadedPlatform(platform);
-              dispatch(appReadyAction());
-            });
-        else dispatch(appReadyAction());
-      })
+    I18n.init()
+      .then(() =>
+        loadCurrentPlatform()
+          .then(platform => {
+            if (platform)
+              dispatch(loginAction(platform, undefined))
+                .then(redirect => {
+                  dispatch(actions.redirectAutoLogin(redirect));
+                })
+                .catch(() => {
+                  // Do nothing. Finally clause + default navigation state will handle the case.
+                })
+                .finally(() => {
+                  setLoadedPlatform(platform);
+                  dispatch(appReadyAction());
+                });
+            else dispatch(appReadyAction());
+          })
+          .catch(() => {
+            dispatch(appReadyAction());
+          }),
+      )
       .catch(() => {
         dispatch(appReadyAction());
       });
