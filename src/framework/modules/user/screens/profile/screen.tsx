@@ -65,7 +65,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
       this.setState({ updatingAvatar: true });
       const sc = await onUploadAvatar(lc);
       await onUpdateAvatar(sc.url);
-      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch (err: any) {
       if (err.message === 'Error picking image') {
         onPickFileError('profileOne');
@@ -82,7 +81,6 @@ export class ProfilePage extends React.PureComponent<IProfilePageProps, IProfile
     try {
       this.setState({ updatingAvatar: true });
       await onUpdateAvatar('');
-      Toast.showSuccess(I18n.get('user-profilechange-avatar-success'));
     } catch {
       onUploadAvatarError();
     } finally {
