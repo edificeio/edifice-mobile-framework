@@ -50,6 +50,7 @@ import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
+import moment from 'moment';
 
 export const computeNavBar = ({
   navigation,
@@ -273,7 +274,11 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           customHeaderStyle={styles.detailsHeader}
           footer={<CardFooter icon="ui-messageInfo" text={commentsString(comments?.length)} />}
           style={styles.ressourceView}>
-          <CaptionItalicText style={styles.detailsDate}>{displayDate(news.created)}</CaptionItalicText>
+          <CaptionItalicText style={styles.detailsDate}>
+            {moment(news.modified).isAfter(news.created)
+              ? `${displayDate(news.modified) + I18n.get('news-details-modified')}`
+              : displayDate(news.modified)}
+          </CaptionItalicText>
           <HeadingSText>{news.title}</HeadingSText>
           <TextAvatar
             text={news.owner.displayName}

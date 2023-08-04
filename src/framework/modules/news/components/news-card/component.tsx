@@ -13,6 +13,8 @@ import { ArticleContainer } from '~/ui/ContainerContent';
 
 import styles from './styles';
 import { NewsCardProps } from './types';
+import { I18n } from '~/app/i18n';
+import moment from 'moment';
 
 export default function NewsCard(props: NewsCardProps) {
   const { news, thread } = props;
@@ -30,7 +32,11 @@ export default function NewsCard(props: NewsCardProps) {
             {...(news.headline ? { statusIcon: 'ui-star-filled', statusColor: theme.palette.complementary.orange.regular } : null)}
           />
         ) : null}
-        <CaptionItalicText style={styles.date}>{displayDate(news.created)}</CaptionItalicText>
+        <CaptionItalicText style={styles.date}>
+          {moment(news.modified).isAfter(news.created)
+            ? `${displayDate(news.modified) + I18n.get('news-details-modified')}`
+            : displayDate(news.modified)}
+        </CaptionItalicText>
         <BodyText numberOfLines={2}>{news.title}</BodyText>
         {newsText ? (
           <SmallText numberOfLines={2} style={styles.text}>
