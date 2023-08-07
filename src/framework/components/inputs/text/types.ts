@@ -1,4 +1,4 @@
-import { TextInputProps as RNTextInputProps } from 'react-native';
+import { TextInputProps as RNTextInputProps, ViewStyle } from 'react-native';
 
 export interface TextInputProps extends RNTextInputProps {
   annotation?: string;
@@ -7,5 +7,6 @@ export interface TextInputProps extends RNTextInputProps {
   toggleIconOn?: string;
   toggleIconOff?: string;
   disabled?: boolean;
+  viewStyle?: ViewStyle;
   onToggle?: () => void;
 }
