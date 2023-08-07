@@ -1,7 +1,7 @@
 /**
  * constants used for the navBar setup accross navigators
  */
-import { HeaderBackButton } from '@react-navigation/elements';
+import { HeaderBackButton, HeaderTitle } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
@@ -10,7 +10,7 @@ import { Platform, StyleSheet, TextStyle } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
-import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
+import { TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { isEmpty } from '~/framework/util/object';
 
@@ -18,8 +18,11 @@ import { isModalModeOnThisRoute } from './hideTabBarAndroid';
 
 const styles = StyleSheet.create({
   navBarTitleStyle: {
+    ...TextFontStyle.Bold,
     color: theme.ui.text.inverse,
     textAlign: 'center',
+  },
+  navBarTitleStyleAndroid: {
     width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
   },
   backbutton: {
@@ -27,40 +30,40 @@ const styles = StyleSheet.create({
   },
 });
 
-export const navBarTitle = (title?: string, style?: TextStyle) =>
-  !isEmpty(title) && Platform.OS === 'android'
+export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) =>
+  !isEmpty(title)
     ? () => (
-        <BodyBoldText numberOfLines={1} style={[styles.navBarTitleStyle, style ?? {}]}>
+        <HeaderTitle
+          style={[styles.navBarTitleStyle, Platform.OS === 'android' ? styles.navBarTitleStyleAndroid : {}, style ?? {}]}
+          testID={testID}
+          numberOfLines={1}>
           {title}
-        </BodyBoldText>
+        </HeaderTitle>
       )
-    : title ?? '';
+    : '';
 
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;
   title?: string;
   titleStyle?: TextStyle;
-}) => NativeStackNavigationOptions = ({ route, navigation, title, titleStyle }) =>
+  titleTestID?: string;
+  backButtonTestID?: string;
+}) => NativeStackNavigationOptions = ({ route, navigation, title, titleStyle, titleTestID, backButtonTestID }) =>
   ({
     headerStyle: {
       backgroundColor: theme.palette.primary.regular,
     },
-    headerTitle: navBarTitle(title, titleStyle),
-    headerTitleAlign: 'center',
-    headerTitleStyle: {
-      ...TextFontStyle.Bold,
-      color: undefined, // override default test color
-    },
+    headerTitle: navBarTitle(title, titleStyle, titleTestID),
     headerLeft: props => {
       const navState = navigation.getState();
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.
       if (navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0) {
         // On modals, we want to use a close button instead of a back button
         if (isModalModeOnThisRoute(route.name)) {
-          return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" />;
+          return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" testID={backButtonTestID} />;
         } else {
-          return <HeaderBackButton {...props} onPress={navigation.goBack} style={styles.backbutton} />;
+          return <HeaderBackButton {...props} onPress={navigation.goBack} style={styles.backbutton} testID={backButtonTestID} />;
         }
       } else return null;
     },
@@ -69,4 +72,4 @@ export const navBarOptions: (props: {
     headerShadowVisible: true,
     headerBackButtonMenuEnabled: false, // Since headerLeft replaces native back, we cannot use this.
     freezeOnBlur: true,
-  } as NativeStackNavigationOptions);
+  }) as NativeStackNavigationOptions;

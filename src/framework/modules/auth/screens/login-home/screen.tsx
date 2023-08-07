@@ -14,7 +14,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { CaptionText, SmallText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import { authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
@@ -23,6 +23,8 @@ import { Toggle } from '~/ui/forms/Toggle';
 
 import styles from './styles';
 import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginHomeScreenState } from './types';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const initialState: LoginHomeScreenState = {
   login: '',
@@ -40,6 +42,19 @@ const FormContainer = styled.View({
   justifyContent: 'center',
   padding: UI_SIZES.spacing.large,
   paddingTop: UI_SIZES.spacing.huge,
+});
+
+export const computeNavBar = ({
+  navigation,
+  route,
+}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginHome>): NativeStackNavigationOptions => ({
+  ...navBarOptions({
+    navigation,
+    route,
+    title: route.params?.platform.displayName,
+    titleTestID: 'login-title',
+    backButtonTestID: 'login-back',
+  }),
 });
 
 export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps, LoginHomeScreenState> {
@@ -184,6 +199,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
               autoCapitalize="none"
               autoCorrect={false}
               spellCheck={false}
+              testID="login-identifier"
             />
             <TextInputLine
               isPasswordField
@@ -192,13 +208,17 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
               onChangeText={this.onPasswordChanged.bind(this)}
               value={password}
               hasError={!!error}
+              testID="login-password"
             />
             <View style={styles.inputCheckbox}>
-              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.get('auth-login-autologin')}</CaptionText>
+              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }} testID="login-message-connection-toggle">
+                {I18n.get('auth-login-autologin')}
+              </CaptionText>
               <Toggle
                 checked={rememberMe}
                 onCheck={() => this.setState({ rememberMe: true })}
                 onUncheck={() => this.setState({ rememberMe: false })}
+                testID="login-connection-toggle"
               />
             </View>
             <SmallText style={styles.textError}>
@@ -237,6 +257,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                   disabled={this.isSubmitDisabled}
                   text={I18n.get('auth-login-connect')}
                   loading={this.state.loginState === 'RUNNING' || this.state.loginState === 'DONE'}
+                  testID="login-connect"
                 />
               )}
 
@@ -245,14 +266,16 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                   style={styles.textForgotPassword}
                   onPress={() => {
                     navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' });
-                  }}>
+                  }}
+                  testID="login-forgot-password">
                   {I18n.get('auth-login-forgot-password')}
                 </SmallText>
                 <SmallText
                   style={styles.textForgotId}
                   onPress={() => {
                     navigation.navigate(authRouteNames.forgot, { platform, mode: 'id' });
-                  }}>
+                  }}
+                  testID="login-forgot-identifier">
                   {I18n.get('auth-login-forgot-id')}
                 </SmallText>
               </View>

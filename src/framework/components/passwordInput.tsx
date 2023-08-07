@@ -36,7 +36,14 @@ const PasswordInput = ({ iconSize = 25, iconColor = theme.ui.text.light, label =
   return (
     <View style={style}>
       <TextField {...rest} ref={passReference} secureTextEntry={isPassword} label={label} style={styles.input} />
-      <Icon style={styles.icon} name={eyeIcon} size={iconSize} color={iconColor} onPress={changePwdType} />
+      <Icon
+        style={styles.icon}
+        name={eyeIcon}
+        size={iconSize}
+        color={iconColor}
+        onPress={changePwdType}
+        testID="login-see-password"
+      />
     </View>
   );
 };
