@@ -75,6 +75,7 @@
   "auth-error-mustlogagain": "Please log in again with your new password.",
   "auth-error-networkerror": "Unable to log in, try again or check your internet connection.",
   "auth-error-notinitilized": "A problem has occurred. Try Again. (Code 4)",
+  "auth-error-notpremium": "You cannot log in because your school subscription plan does not include the application.",
   "auth-error-other": "Unable to log in ({{errorcode}}). Please try again or contact support.",
   "auth-error-parseerror": "A problem has occurred. Try Again. (Code 3)",
   "auth-error-platformunavailable": "Your educational network is temporarily unavailable, our team is doing its utmost to resolve these disturbances as quickly as possible.",

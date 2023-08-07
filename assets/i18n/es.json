@@ -75,6 +75,7 @@
   "auth-error-mustlogagain": "Vuelva a conectarse con su nueva contraseña.",
   "auth-error-networkerror": "Identificación imposible, intente nuevamente o verifique su conexión a Internet.",
   "auth-error-notinitilized": "Ha ocurrido un problema. Intentar otra vez. (Código 4)",
+  "auth-error-notpremium": "No puede conectarse porque el abono de su escuela no incluye la aplicación móvil.",
   "auth-error-other": "Identificación imposible ({{errorcode}}). Por favor intente nuevamente o contacte a soporte.",
   "auth-error-parseerror": "Ha ocurrido un problema. Intentar otra vez. (Código 3)",
   "auth-error-platformunavailable": "Su red educativa no está disponible temporalmente, nuestro equipo está haciendo todo lo posible para resolver estos disturbios lo más rápido posible.",

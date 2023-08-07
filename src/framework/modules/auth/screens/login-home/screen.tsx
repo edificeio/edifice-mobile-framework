@@ -223,7 +223,7 @@ export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps
                   marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
                 },
               ]}>
-              {error === 'pre_deleted' && !this.state.typing ? (
+              {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
                 <ActionButton
                   action={() => this.goToWeb()}
                   disabled={false}
