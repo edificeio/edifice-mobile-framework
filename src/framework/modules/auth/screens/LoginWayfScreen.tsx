@@ -130,6 +130,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
                 navigation.navigate(authRouteNames.wayf, { platform: route.params.platform });
               }}
+              testID="onboarding-login"
             />
           </View>
         </SafeAreaView>
