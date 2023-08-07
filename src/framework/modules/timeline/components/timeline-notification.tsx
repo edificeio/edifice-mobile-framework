@@ -12,6 +12,7 @@ import NotificationTopInfo from './notification-top-info';
 interface ITimelineNotificationProps {
   notification: ITimelineNotification;
   notificationAction?: () => void;
+  testID?: string;
 }
 
 export function TimelineNotification(props: ITimelineNotificationProps) {
@@ -22,7 +23,7 @@ export function TimelineNotification(props: ITimelineNotificationProps) {
     const text = preview && preview.text;
     const CC = notificationAction ? TouchableResourceCard : ResourceCard;
     return (
-      <ArticleContainer>
+      <ArticleContainer {...(props.testID ? { testID: props.testID } : {})}>
         <CC onPress={notificationAction} style={UI_STYLES.width100} header={<NotificationTopInfo notification={notification} />}>
           {text && /\S/.test(text) ? (
             <SmallText key={notification.id} style={{ marginBottom: media?.length ? UI_SIZES.spacing.small : undefined }}>

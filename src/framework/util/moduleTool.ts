@@ -280,6 +280,7 @@ interface INavigableModuleConfigDisplay {
   displayPictureFocus?: PictureProps; // Picture used to show the modulle acces link/button when its active
   displayBadges?: IAppBadgesInfoDeclaration; // Updates to app badges
   routeName: string; // Technical route name of the module. Must be unique (by default, same as the module name).
+  testID?: string; // testID for QA
 }
 interface IModuleConfigDeclarationDisplay {
   displayI18n:
@@ -301,6 +302,7 @@ interface IModuleConfigDeclarationDisplay {
     | INavigableModuleConfigDisplay['displayBadges']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
   routeName?: INavigableModuleConfigDisplay['routeName'];
+  testID?: INavigableModuleConfigDisplay['testID'];
 }
 
 // All information config available about a navigable module
@@ -545,10 +547,13 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   }
 
   getReducers() {
-    return this.reduce((acc, m) => {
-      acc[m.config.reducerName] = m.reducer;
-      return acc;
-    }, {} as { [key: string]: Reducer<unknown> });
+    return this.reduce(
+      (acc, m) => {
+        acc[m.config.reducerName] = m.reducer;
+        return acc;
+      },
+      {} as { [key: string]: Reducer<unknown> },
+    );
   }
 
   getScopes() {

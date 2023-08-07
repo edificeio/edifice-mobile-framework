@@ -13,4 +13,5 @@ export default new NavigableModuleConfig<'conversation', IConversationState>({
   displayOrder: 1,
   displayPicture: { type: 'Icon', name: 'messagerie-off' },
   displayPictureFocus: { type: 'Icon', name: 'messagerie-on' },
+  testID: 'tabbar-messages',
 });

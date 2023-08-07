@@ -83,6 +83,7 @@ const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
     tabBarIcon: props => {
       return createTabIcon(moduleConfig, props);
     },
+    tabBarTestID: moduleConfig.testID ?? '',
   } as BottomTabNavigationOptions;
 };
 
@@ -122,7 +123,7 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
       // Feebback
       Feedback.tabPressed();
     },
-  } as ScreenListeners<NavigationState, EventMapBase>);
+  }) as ScreenListeners<NavigationState, EventMapBase>;
 
 const stackListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
   transitionEnd: event => {

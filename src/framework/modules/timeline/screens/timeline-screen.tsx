@@ -120,6 +120,7 @@ export const computeNavBar = ({
     navigation,
     route,
     title: I18n.get('timeline-appname'),
+    titleTestID: 'timeline-title',
   }),
   headerLeft: () => (
     <NavBarAction
@@ -127,6 +128,7 @@ export const computeNavBar = ({
       onPress={() => {
         navigate(timelineRouteNames.Filters);
       }}
+      testID="timeline-filter-button"
     />
   ),
 });
@@ -136,9 +138,11 @@ export const computeNavBar = ({
 function NotificationItem({
   notification,
   doOpenNotification,
+  notificationTestID,
 }: {
   notification: ITimelineNotification;
   doOpenNotification: typeof TimelineScreen.prototype.doOpenNotification;
+  notificationTestID?: string;
 }) {
   const onNotificationAction = React.useMemo(
     () =>
@@ -149,7 +153,13 @@ function NotificationItem({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [notification.id, doOpenNotification],
   );
-  return <TimelineNotification notification={notification} notificationAction={onNotificationAction} />;
+  return (
+    <TimelineNotification
+      notification={notification}
+      notificationAction={onNotificationAction}
+      {...(notificationTestID ? { testId: notificationTestID } : {})}
+    />
+  );
 }
 
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
@@ -190,9 +200,13 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     return n.data.id.toString();
   }
 
-  listRenderItem({ item }: ListRenderItemInfo<ITimelineItem>) {
+  listRenderItem({ index, item }: ListRenderItemInfo<ITimelineItem>) {
     return item.type === ITimelineItemType.NOTIFICATION ? (
-      <NotificationItem notification={item.data as ITimelineNotification} doOpenNotification={this.doOpenNotification.bind(this)} />
+      <NotificationItem
+        notification={item.data as ITimelineNotification}
+        doOpenNotification={this.doOpenNotification.bind(this)}
+        notificationTestID={`timeline-notification-${index}`}
+      />
     ) : (
       this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)
     );
@@ -320,7 +334,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
         // eslint-disable-next-line react/no-unstable-nested-components
         headerRight: () => (
           <PopupMenu actions={workflows}>
-            <NavBarAction icon="ui-plus" />
+            <NavBarAction icon="ui-plus" testID="timeline-add-button" />
           </PopupMenu>
         ),
       });
