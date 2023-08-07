@@ -39,6 +39,7 @@ import { hobbiesItems, renderEmoji } from '.';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
 import Toast from '~/framework/components/toast';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 
 export const computeNavBar = ({
   navigation,
@@ -525,7 +526,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     <ContentLoader
       loadContent={init}
       renderContent={renderPage}
-      renderError={() => <SmallText>Error</SmallText>}
+      renderError={() => <EmptyConnectionScreen />}
       renderLoading={() => <UserPlaceholderProfile />}
     />
   );
