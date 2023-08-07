@@ -3,7 +3,7 @@
  * (formerly App.tsx)
  */
 import * as React from 'react';
-import { AppState, AppStateStatus } from 'react-native';
+import { AppState, AppStateStatus, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
@@ -15,7 +15,7 @@ import AppModules from '~/app/modules';
 import { UI_STYLES } from '~/framework/components/constants';
 import Navigation from '~/framework/navigation/RootNavigator';
 import { useNavigationDevPlugins } from '~/framework/navigation/helper';
-import { setCurrentBadgeValue } from '~/framework/util/badge';
+import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { AllModulesBackup } from '~/infra/oauth';
@@ -35,7 +35,6 @@ function useAppState() {
     (nextAppState: AppStateStatus) => {
       if (nextAppState === 'active') {
         // Track foreground state
-        console.debug('[App State] now in foreground');
         Trackers.trackDebugEvent('Application', 'DISPLAY');
         // Change locale if needed
         const locales = RNLocalize.getLocales();
@@ -45,7 +44,6 @@ function useAppState() {
         setCurrentBadgeValue(0);
       } else if (nextAppState === 'background') {
         // Track background state
-        console.debug('[App State] now in background mode');
       }
     },
     [currentLocale],
@@ -77,23 +75,28 @@ function App(props: AppProps) {
   useTrackers();
   useNavigationDevPlugins();
 
-  const onRemoteNotification = React.useCallback(notification => {
-    const isClicked = notification.getData().userInteraction === 1;
+  const onRemoteNotification =
+    Platform.OS !== 'ios'
+      ? React.useCallback(notification => {
+          const isClicked = notification.getData().userInteraction === 1;
 
-    if (isClicked) {
-      // Navigate user to another screen
-    } else {
-      // Do something else with push notification
-    }
-    // Use the appropriate result based on what you needed to do for this notification
-    const result = PushNotificationIOS.FetchResult.NoData;
-    notification.finish(result);
-  }, []);
+          if (isClicked) {
+            setCurrentBadgeValue(0);
+          } else {
+            setCurrentBadgeValue(getCurrentBadgeValue() + 1);
+          }
+          // Use the appropriate result based on what you needed to do for this notification
+          const result = PushNotificationIOS.FetchResult.NoData;
+          notification.finish(result);
+        }, [])
+      : undefined;
 
   React.useEffect(() => {
+    if (Platform.OS !== 'ios') return;
     const type = 'notification';
-    PushNotificationIOS.addEventListener(type, onRemoteNotification);
+    PushNotificationIOS.addEventListener(type, onRemoteNotification!);
     return () => {
+      if (Platform.OS !== 'ios') return;
       PushNotificationIOS.removeEventListener(type);
     };
   }, []);

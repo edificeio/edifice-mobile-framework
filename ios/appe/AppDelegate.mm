@@ -41,6 +41,7 @@
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
+  [[UIApplication sharedApplication] registerForRemoteNotifications];
   // end --- https://github.com/react-native-push-notification/ios
   
   //
@@ -100,6 +101,7 @@
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
 {
   [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+  completionHandler(UIBackgroundFetchResultNewData);
 }
 // Required for the registrationError event.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
