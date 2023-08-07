@@ -58,6 +58,7 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
               onPress={() => {
                 navigation.navigate(getLoginRouteName(item), { platform: item });
               }}
+              testID={item.testID}
             />
           )}
           keyExtractor={item => item.url}
