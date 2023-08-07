@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-27 08:23:38",
-  "notes": "release: 1.10.0-rc.4(1100016)",
-  "version": "1.10.0-rc.5(1100017)",
+  "last": "2023-08-07 18:59:29",
+  "notes": "chore: downgrade flipper to make ios archive possible\nfeat: MB-1769 increment badge when app is in background\nchore: remove some logs\nfix(i18n): MB-1830 , I18n init on startup\nfeat(news): MB-1844 display modified date on news\nfeat(i18n): change back translations\nfix(presences): AMVS-368 solve history dropdown render problems by transforming flatlist back to scrollview\nchore: MB-1837, update syn logo\nfeat(profile): MB-1856 , delete toast after update or delete avatar\nUpdated translations from Phrase\nUpdated translations from Phrase\nfeat: reset badge on foreground\nfix(zimbra): AMZ-138 add read query param on get specific mail\nfeat(profile): MB-1856 , add toast when change or delete avatar\nfix(profile): MB-1857 , fix delete or update avatar on mobile\nchore(phrase): various key updates\nchore: compatibility with nvm\nfix(phrase): MB-1854, homework i18n keys format\nchore(phrase): MB-1853, update incoherent keys\nfix(zimbra): AMZ-137 prevent recipient list from dismissing when scrolling out\nfix(competences): AMVS-374 correct filtering when list includes annotations\nfix(peertube): AMV2-592 redirect with authentication depending on connector address\nfix(legals): MB-1830 , fix legals not found\nfix(news): MB-1722 center border on thread item\nfix(media-player): MB-1839 fix close button on android\nfix(flash-message): MB-1833 , fix open youtube url link\nfix(news): MB-1835 , fix publish or edit comment with spaces only\nfix(auth): MB-1832, cellphone wording in activation form\nrelease: 1.10.0-rc.5(1100017)",
+  "version": "1.10.0-alpha.13(1100018)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
