@@ -18,4 +18,5 @@ export interface ActionButtonProps {
   pictureStyle?: StyleProp<ViewStyle>;
   textColor?: ColorValue;
   hitSlop?: Insets;
+  testID?: string;
 }

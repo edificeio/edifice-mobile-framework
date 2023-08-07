@@ -42,7 +42,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
     return (
       <PageView style={styles.page} statusBar="light">
         <View style={styles.mainContainer}>
-          <HeadingLText style={styles.title}>
+          <HeadingLText style={styles.title} testID="onboarding-title">
             {this.showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
           </HeadingLText>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiper} activeDotStyle={[styles.swiper, styles.swiperActive]}>
@@ -61,6 +61,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
               navigateAfterOnboarding(navigation);
             }}
             style={{ width: buttonsWidth }}
+            testID="onboarding-join"
           />
           {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
@@ -71,6 +72,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
               url={I18n.get('user-onboarding-discoverlink')}
               requireSession={false}
               style={[styles.discoverButton, { width: buttonsWidth }]}
+              testID="onboarding-discover"
             />
           ) : null}
         </View>

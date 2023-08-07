@@ -31,6 +31,7 @@ export const ActionButton = ({
   pictureStyle,
   textColor,
   hitSlop,
+  testID,
 }: ActionButtonProps) => {
   const Component = disabled ? View : TouchableOpacity;
   const [layoutWidth, setLayoutWidth] = useState(0);
@@ -91,7 +92,8 @@ export const ActionButton = ({
             },
           }
         : {})}
-      {...(loading ? { disabled: true } : {})}>
+      {...(loading ? { disabled: true } : {})}
+      {...(testID ? { testID } : {})}>
       {loading ? (
         <ActivityIndicator color={textStyle.color} style={{ height: TextSizeStyle.Normal.lineHeight }} />
       ) : (
