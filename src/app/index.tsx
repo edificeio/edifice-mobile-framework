@@ -76,10 +76,9 @@ function App(props: AppProps) {
   useNavigationDevPlugins();
 
   const onRemoteNotification =
-    Platform.OS !== 'ios'
+    Platform.OS === 'ios'
       ? React.useCallback(notification => {
           const isClicked = notification.getData().userInteraction === 1;
-
           if (isClicked) {
             setCurrentBadgeValue(0);
           } else {
