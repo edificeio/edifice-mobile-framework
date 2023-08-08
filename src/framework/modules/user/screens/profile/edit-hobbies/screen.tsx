@@ -11,7 +11,7 @@ import type { UserEditHobbiesScreenProps, objectHobbies } from './types';
 import TextInput from '~/framework/components/inputs/text';
 import InputContainer from '~/framework/components/inputs/container';
 import { HobbieVisibility } from '~/framework/modules/user/model';
-import { Alert, Platform, View } from 'react-native';
+import { Alert, Keyboard, Platform, View } from 'react-native';
 import { NavBarAction } from '~/framework/components/navigation';
 import { userService } from '~/framework/modules/user/service';
 import Toast from '~/framework/components/toast';
@@ -19,6 +19,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export const computeNavBar = ({
   navigation,
@@ -36,6 +37,7 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   const [initialHobbies, setInitialHobbies] = React.useState<objectHobbies>();
   const [hobbies, setHobbies] = React.useState<objectHobbies>();
   const [isSending, setIsSending] = React.useState<boolean>(false);
+  const [indexHobbie, setIndexHobbie] = React.useState<number>();
 
   const ListComponent = React.useMemo(() => {
     return Platform.select<React.ComponentType<any>>({
@@ -79,10 +81,15 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   };
 
   const onFocusInput = index => {
-    flatListRef.current.scrollToIndex({
-      index,
-      viewPosition: 1,
-    });
+    setIndexHobbie(index);
+    if (Platform.OS !== 'ios') {
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          index,
+          viewPosition: 1,
+        });
+      }, 100);
+    }
   };
 
   const onSaveHobbies = async () => {
@@ -170,6 +177,23 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
       headerRight: () => <NavBarAction icon="ui-check" onPress={onSaveHobbies} />,
     });
   });
+
+  React.useEffect(() => {
+    if (Platform.OS === 'ios') {
+      const keyboardSubscription = Keyboard.addListener('keyboardDidShow', () => {
+        setTimeout(() => {
+          if (indexHobbie !== undefined && indexHobbie > -1) {
+            flatListRef.current?.scrollToIndex({
+              index: indexHobbie,
+              viewPosition: 1,
+              viewOffset: -UI_SIZES.spacing.medium,
+            });
+          }
+        }, 50);
+      });
+      return () => keyboardSubscription.remove();
+    }
+  }, [indexHobbie]);
 
   React.useEffect(() => {
     init();
