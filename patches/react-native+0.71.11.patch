@@ -84,6 +84,35 @@ index 2f48f9e..1c9c605 100644
            // this.frame.height will never go back to its original value.
            // When height changes, we need to disable flex.
            heightStyle = {
+diff --git a/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm b/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm
+index 0d586d8..dcaaa6c 100644
+--- a/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm
++++ b/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm
+@@ -268,11 +268,12 @@ RCT_EXPORT_METHOD(onFinishRemoteNotification : (NSString *)notificationId fetchR
+ {
+   UIBackgroundFetchResult result = [RCTConvert UIBackgroundFetchResult:fetchResult];
+   RCTRemoteNotificationCallback completionHandler = self.remoteNotificationCallbacks[notificationId];
+-  if (!completionHandler) {
+-    RCTLogError(@"There is no completion handler with notification id: %@", notificationId);
+-    return;
+-  }
+-  completionHandler(result);
++  // Edifice Badge fix: the line below was causing a crash when receiving a foreground notification.
++  // if (!completionHandler) {
++  //   RCTLogError(@"There is no completion handler with notification id: %@", notificationId);
++  //   return;
++  // }
++  // completionHandler(result);
+   [self.remoteNotificationCallbacks removeObjectForKey:notificationId];
+ }
+ 
+diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
+new file mode 100644
+index 0000000..361f5fb
+--- /dev/null
++++ b/node_modules/react-native/scripts/.packager.env
+@@ -0,0 +1 @@
++export RCT_METRO_PORT=8081
 diff --git a/node_modules/react-native/sdks/hermes/hermes-engine.podspec b/node_modules/react-native/sdks/hermes/hermes-engine.podspec
 new file mode 100644
 index 0000000..b800547

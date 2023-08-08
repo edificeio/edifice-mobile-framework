@@ -298,7 +298,7 @@ export const zimbraService = {
     toggleUnread: async (session: ISession, ids: string[], unread: boolean) => {
       let api = '/zimbra/toggleUnread?';
       api += ids.reduce((s, id) => s + 'id=' + id + '&', '');
-      api += `&unread=${unread}`;
+      api += `unread=${unread}`;
       await fetchJSONWithCache(api, {
         method: 'POST',
       });
@@ -315,8 +315,8 @@ export const zimbraService = {
     },
   },
   mail: {
-    get: async (session: ISession, id: string) => {
-      const api = `/zimbra/message/${id}`;
+    get: async (session: ISession, id: string, toggleRead: boolean = true) => {
+      const api = `/zimbra/message/${id}?read=${toggleRead}`;
       const mail = (await fetchJSONWithCache(api)) as IBackendMail;
       if (!('id' in mail)) throw new Error();
       return mailAdapter(mail, session.platform.url);

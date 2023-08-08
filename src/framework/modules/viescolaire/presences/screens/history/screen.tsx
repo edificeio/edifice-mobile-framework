@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, Platform, RefreshControl, ScrollView, TouchableOpacity } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -217,29 +217,29 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         : [];
 
     return (
-      <FlatList
-        data={categories}
-        keyExtractor={item => item.title}
-        renderItem={({ item }) => <HistoryCategoryCard {...item} />}
-        ListHeaderComponent={
-          dropdownTerms.length > 1 ? (
-            <DropDownPicker
-              open={isDropdownOpen}
-              value={selectedTerm}
-              items={dropdownTerms}
-              setOpen={setDropdownOpen}
-              setValue={setSelectedTerm}
-              style={[styles.dropdown, styles.dropdownMargin]}
-              dropDownContainerStyle={[styles.dropdown, Platform.OS === 'android' && { position: 'relative', top: -16 }]}
-              textStyle={styles.dropdownText}
-              listMode="SCROLLVIEW"
-            />
-          ) : null
-        }
-        ListEmptyComponent={<LoadingIndicator />}
-        ListHeaderComponentStyle={styles.listHeaderContainer}
-        contentContainerStyle={styles.listContentContainer}
-      />
+      <ScrollView contentContainerStyle={styles.listContentContainer}>
+        {dropdownTerms.length > 1 ? (
+          <DropDownPicker
+            open={isDropdownOpen}
+            value={selectedTerm}
+            items={dropdownTerms}
+            setOpen={setDropdownOpen}
+            setValue={setSelectedTerm}
+            style={[styles.dropdown, styles.dropdownMargin]}
+            dropDownContainerStyle={styles.dropdown}
+            textStyle={styles.dropdownText}
+          />
+        ) : null}
+        {loadingState === AsyncPagedLoadingState.REFRESH ? (
+          <LoadingIndicator />
+        ) : (
+          <View style={{ zIndex: -1 }}>
+            {categories.map(category => (
+              <HistoryCategoryCard {...category} />
+            ))}
+          </View>
+        )}
+      </ScrollView>
     );
   };
 
