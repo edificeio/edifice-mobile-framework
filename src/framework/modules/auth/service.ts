@@ -119,6 +119,7 @@ export interface IUserInfoBackend {
   classes?: string[];
   children?: { [userId: string]: { lastName: string; firstName: string } };
   birthDate?: string;
+  federated?: boolean;
 }
 
 export interface UserPrivateData {
@@ -286,6 +287,7 @@ export function formatSession(
     widgets: userinfo.widgets,
     authorizedActions: userinfo.authorizedActions,
     type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
+    federated: userinfo.federated ?? false,
     // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
     user,
   };

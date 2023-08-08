@@ -210,6 +210,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   );
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
+  const isFederated = session?.federated;
   return React.useMemo(
     () => (
       <>
@@ -222,27 +223,29 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
             />
-            <LineButton
-              loading={currentLoadingMenu === ModificationType.PASSWORD}
-              disabled={!!currentLoadingMenu}
-              title={I18n.get('user-page-editpassword')}
-              onPress={() => editUserInformation(ModificationType.PASSWORD)}
-            />
-            {canEditPersonalInfo ? (
+            {!isFederated ? (
               <LineButton
-                loading={currentLoadingMenu === ModificationType.EMAIL}
+                loading={currentLoadingMenu === ModificationType.PASSWORD}
                 disabled={!!currentLoadingMenu}
-                title={I18n.get('user-page-editemail')}
-                onPress={() => editUserInformation(ModificationType.EMAIL)}
+                title={I18n.get('user-page-editpassword')}
+                onPress={() => editUserInformation(ModificationType.PASSWORD)}
               />
             ) : null}
             {canEditPersonalInfo ? (
-              <LineButton
-                loading={currentLoadingMenu === ModificationType.MOBILE}
-                disabled={!!currentLoadingMenu}
-                title={I18n.get('user-page-editmobile')}
-                onPress={() => editUserInformation(ModificationType.MOBILE)}
-              />
+              <>
+                <LineButton
+                  loading={currentLoadingMenu === ModificationType.EMAIL}
+                  disabled={!!currentLoadingMenu}
+                  title={I18n.get('user-page-editemail')}
+                  onPress={() => editUserInformation(ModificationType.EMAIL)}
+                />
+                <LineButton
+                  loading={currentLoadingMenu === ModificationType.MOBILE}
+                  disabled={!!currentLoadingMenu}
+                  title={I18n.get('user-page-editmobile')}
+                  onPress={() => editUserInformation(ModificationType.MOBILE)}
+                />
+              </>
             ) : null}
           </ButtonLineGroup>
         </View>
