@@ -31,8 +31,10 @@ const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage />
  */
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
+  const currentState = React.useRef<AppStateStatus>();
   const handleAppStateChange = React.useCallback(
     (nextAppState: AppStateStatus) => {
+      currentState.current = nextAppState;
       if (nextAppState === 'active') {
         // Track foreground state
         Trackers.trackDebugEvent('Application', 'DISPLAY');
@@ -56,7 +58,7 @@ function useAppState() {
       appStateListener.remove();
     };
   }, [handleAppStateChange]);
-  return currentLocale;
+  return currentState;
 }
 
 function useTrackers() {
@@ -71,7 +73,7 @@ function useTrackers() {
 interface AppProps extends IStoreProp {}
 
 function App(props: AppProps) {
-  useAppState();
+  const currentState = useAppState();
   useTrackers();
   useNavigationDevPlugins();
 
@@ -79,7 +81,7 @@ function App(props: AppProps) {
     Platform.OS === 'ios'
       ? React.useCallback(notification => {
           const isClicked = notification.getData().userInteraction === 1;
-          if (isClicked) {
+          if (isClicked || currentState.current === 'active') {
             setCurrentBadgeValue(0);
           } else {
             setCurrentBadgeValue(getCurrentBadgeValue() + 1);
