@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-08 10:56:37",
-  "notes": "fix: MB-1769 wrong condition for ios-only madge managment\nrelease: 1.10.0-alpha.13(1100018)",
-  "version": "1.10.0-alpha.14(1100019)",
+  "last": "2023-08-08 12:50:54",
+  "notes": "fic: push-notifs in foreground were crashing\nrelease: 1.10.0-alpha.14(1100019)",
+  "version": "1.10.0-alpha.15(1100020)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
