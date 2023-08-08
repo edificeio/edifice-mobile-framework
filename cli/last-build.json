@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-03 18:07:14",
-  "notes": "feat(profile): hiode scrollbar on hobbies edit view\nfeat(profile): remove toggle on edit description view\nfeat(profile): remove toast after update avatar\nfeat(profile): MB-1605 , we can nox edit and delete avatar on profile page\nSquashed commit of the following:\nfeat(profile): fix lineheight style in multiline text input\nfeat(profile): add scroll to in edit motto view\nfeat(profile): MB-1805 , add edit mood & motto view\nrelease: 1.11.0-alpha.4(1110004)",
-  "version": "1.11.0-alpha.5(1110005)",
+  "last": "2023-08-08 20:19:02",
+  "notes": "fix(carousel): MB-1481 , change permissions on save photo in carousel\nSquashed commit of the following:\nfeat(user): MB-1423 , delete change password button when is wayf logged\nfeat(profile): MB-1859 , scroll on input when focus\nfeat(profile): MB-1859 , some design modifs in profile view\nfeat(profile): MB-1862 , add empty screen when no connection\nfeat(testID): add testId tabbar-zimbra on zimbra module\nfeat(testID): MB-1655 , add testId on platforms card\nfeat(testID): MB-1660 , add testId on wayf login page\nfeat(testID): MB-1653 , add testId on timeline page and on tabbar\nfeat(testID): MB-1656 , add testId on login page\nfeat(testID): MB-1654 , add testId on onboarding page\nRevert \"feat(app): MB-1410 all users access to mobile app\"\nfix(multiline-text-input): MB-1851 , fix grow height when text is more lonnger than numberOfLines\nchore(homework): MB-186, homework-create design\nchore(homework): MB-186, homework-create-screen\nchore(homework): MB-186, homework-creation navigator\nchore: MB-1851, add height logic inside multiline-text-input\nchore(homework): refactor day-picker\nchore: add react-native-uuid package\nrelease: 1.11.0-alpha.5(1110005)",
+  "version": "1.11.0-alpha.6(1110006)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
