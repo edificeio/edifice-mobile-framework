@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-08 12:50:54",
-  "notes": "fic: push-notifs in foreground were crashing\nrelease: 1.10.0-alpha.14(1100019)",
-  "version": "1.10.0-alpha.15(1100020)",
+  "last": "2023-08-08 13:08:43",
+  "notes": "release: 1.10.0-alpha.15(1100020)",
+  "version": "1.10.0-rc.6(1100021)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
