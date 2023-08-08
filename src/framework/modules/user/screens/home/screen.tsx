@@ -107,10 +107,10 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
   return React.useMemo(() => {
     return !userProfilePicture ? (
       <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.profile, {})}>
-        <Avatar sourceOrId={userProfilePicture} size={Size.verylarge} id="" />
+        <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" />
       </TouchableOpacity>
     ) : (
-      <Avatar sourceOrId={userProfilePicture} size={Size.verylarge} id="" />
+      <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" />
     );
   }, [navigation, userProfilePicture]);
 }

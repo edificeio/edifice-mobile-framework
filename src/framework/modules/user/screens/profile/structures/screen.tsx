@@ -29,25 +29,9 @@ export const computeNavBar = ({
 
 const UserStructuresScreen = (props: UserStructuresScreenPrivateProps) => {
   const { route } = props;
-  const schools = React.useMemo(() => {
-    const data = [] as {
-      id: string;
-      name: string;
-      classes: string[];
-    }[];
-    if (route.params.structures)
-      for (const school of route.params.structures) {
-        data.push({
-          id: school.id,
-          name: school.name,
-          classes: school.classes,
-        });
-      }
-    return data;
-  }, [route.params.structures]);
   return (
     <PageView style={styles.page}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
         {route.params.structures.map(structure => (
           <View style={styles.section}>
             <View style={styles.title}>

@@ -91,7 +91,8 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
       setIsSending(true);
       const arrayHobbies = Object.keys(hobbies!).map(category => ({
         category,
-        ...hobbies![category],
+        values: hobbies![category].values.trim(),
+        visibility: hobbies![category].visibility,
       }));
       const body = JSON.stringify({ hobbies: arrayHobbies });
       await userService.person.put(route.params.userId, body);
@@ -139,6 +140,7 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
         showsVerticalScrollIndicator={false}
         initialNumToRender={route.params.hobbies.length}
         keyExtractor={item => item.category}
+        bounces={false}
       />
     );
   };

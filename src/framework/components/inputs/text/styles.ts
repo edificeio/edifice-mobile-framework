@@ -3,9 +3,10 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
   input: {
-    padding: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
     borderWidth: 1,
     borderRadius: UI_SIZES.radius.input,
@@ -41,3 +42,5 @@ export default StyleSheet.create({
     color: theme.palette.status.success.regular,
   },
 });
+
+export default styles;

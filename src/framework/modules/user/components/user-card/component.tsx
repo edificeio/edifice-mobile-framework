@@ -70,12 +70,12 @@ export const UserCard = ({
   return (
     <View style={styles.main}>
       <View style={[styles.boxAvatar, { ...(canEdit ? styles.boxAvatarEdit : {}) }]}>
-        <Avatar sourceOrId={id} size={Size.verylarge} id="" />
+        <Avatar sourceOrId={id} size={Size.xxl} id="" />
         {canEdit ? renderActions(hasAvatar, onChangeAvatar, onDeleteAvatar) : null}
         {updatingAvatar ? <Loading customColor={theme.palette.grey.white} customStyle={styles.loaderAvatar} /> : null}
       </View>
       <View style={styles.boxTexts}>
-        <HeadingXSText>{displayName}</HeadingXSText>
+        <HeadingXSText style={styles.name}>{displayName}</HeadingXSText>
         <SmallBoldText style={{ color: colorType[type] }}>
           {I18n.get(`user-profiletypes-${type.toLocaleLowerCase()}`)}
         </SmallBoldText>

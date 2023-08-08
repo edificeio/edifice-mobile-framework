@@ -16,8 +16,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   boxAvatarEdit: {
-    padding: UI_SIZES.spacing.small,
-    paddingTop: 0,
+    paddingBottom: UI_SIZES.spacing.small,
   },
   buttonsActionAvatar: {
     position: 'absolute',
@@ -35,6 +34,9 @@ export default StyleSheet.create({
     position: 'absolute',
     paddingTop: UI_SIZES.spacing.minor,
     paddingLeft: UI_SIZES.spacing.tiny,
+  },
+  name: {
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   boxTexts: {
     flexShrink: 1,

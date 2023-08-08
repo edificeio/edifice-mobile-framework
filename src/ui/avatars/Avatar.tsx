@@ -23,6 +23,7 @@ export enum Size {
   large,
   small,
   verylarge,
+  xxl,
 }
 
 export enum Status {
@@ -155,6 +156,44 @@ const VeryLargeImage = props => {
   } else return <VeryLargeImageBase {...props} />;
 };
 
+const xxlImageStyle = {
+  alignSelf: 'center',
+  borderRadius: UI_SIZES.elements.avatar.xxl / 2,
+  width: UI_SIZES.elements.avatar.xxl,
+  aspectRatio: UI_SIZES.aspectRatios.square,
+  margin: 0,
+};
+
+const XxlImageBase = styled(FastImage)(xxlImageStyle);
+
+const XXLContainer = styled.View({
+  alignSelf: 'center',
+  borderRadius: UI_SIZES.elements.avatar.xxl / 2,
+  width: UI_SIZES.elements.avatar.xxl,
+  aspectRatio: UI_SIZES.aspectRatios.square,
+  margin: 0,
+  backgroundColor: theme.palette.grey.pearl,
+});
+
+const XxlImage = props => {
+  const isSelected = props.status === Status.selected;
+  const isDisabled = props.status === Status.disabled;
+  if (isSelected) {
+    return (
+      <View>
+        <XxlImageBase {...props} />
+        <SelectedView style={xxlImageStyle} />
+      </View>
+    );
+  } else if (isDisabled) {
+    return (
+      <Grayscale>
+        <XxlImageBase {...props} />
+      </Grayscale>
+    );
+  } else return <XxlImageBase {...props} />;
+};
+
 const smallImageStyle = {
   borderColor: theme.palette.grey.white,
   borderWidth: 1,
@@ -272,6 +311,12 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
           <VeryLargeImage status={this.props.status} source={noAvatarImage} />
         </VLContainer>
       );
+    } else if (this.props.size === Size.xxl) {
+      return (
+        <XXLContainer>
+          <XxlImage status={this.props.status} source={noAvatarImage} />
+        </XXLContainer>
+      );
     } else {
       return (
         <SmallContainer count={this.props.count || 1} index={this.props.index}>
@@ -303,6 +348,12 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
         <VLContainer>
           <VeryLargeImage status={this.props.status} source={require('ASSETS/images/group-avatar.png')} />
         </VLContainer>
+      );
+    } else if (this.props.size === Size.xxl) {
+      return (
+        <XXLContainer>
+          <XxlImage status={this.props.status} source={require('ASSETS/images/group-avatar.png')} />
+        </XXLContainer>
       );
     } else {
       return (
@@ -398,6 +449,12 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
             key={isSelf ? selfAvatarUniqueKey : source.uri}
           />
         </VLContainer>
+      );
+    } else if (this.props.size === Size.xxl) {
+      return (
+        <XXLContainer>
+          <XxlImage {...sharedProps} source={source} status={this.props.status} key={isSelf ? selfAvatarUniqueKey : source.uri} />
+        </XXLContainer>
       );
     } else {
       return (

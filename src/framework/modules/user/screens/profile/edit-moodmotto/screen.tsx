@@ -82,9 +82,9 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
     try {
       setIsSending(true);
 
-      const body = JSON.stringify({ mood, motto });
+      const body = JSON.stringify({ mood, motto: motto?.trim() });
       await userService.person.put(route.params.userId, body);
-      navigation.navigate(userRouteNames.profile, { newMood: mood, newMotto: motto });
+      navigation.navigate(userRouteNames.profile, { newMood: mood, newMotto: motto?.trim() });
       Toast.showSuccess(I18n.get('user-profile-toast-editMoodMottoSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
@@ -138,7 +138,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
 
   return (
     <PageComponent style={styles.page}>
-      <ScrollView ref={scrollViewRef}>
+      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false} bounces={false}>
         <InputContainer
           label={{ text: I18n.get('user-profile-mood') }}
           input={<View style={styles.moods}>{moods.map(mood => renderMoodItem(mood))}</View>}

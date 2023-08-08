@@ -99,6 +99,13 @@ export const UI_SIZES = {
     tabbarLabelMarginTop: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
+    avatar: {
+      sm: getScaleWidth(24),
+      md: getScaleWidth(36),
+      lg: getScaleWidth(48),
+      xl: getScaleWidth(64),
+      xxl: getScaleWidth(88),
+    },
   },
   border: {
     thin: 1,

@@ -44,9 +44,9 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
     try {
       setIsSending(true);
 
-      const body = JSON.stringify({ health: description });
+      const body = JSON.stringify({ health: description?.trim() });
       await userService.person.put(route.params.userId, body);
-      navigation.navigate(userRouteNames.profile, { newDescription: description });
+      navigation.navigate(userRouteNames.profile, { newDescription: description?.trim() });
       Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
@@ -87,7 +87,7 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
 
   return (
     <PageComponent style={styles.page}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
         <InputContainer
           label={{ text: 'Description' }}
           input={

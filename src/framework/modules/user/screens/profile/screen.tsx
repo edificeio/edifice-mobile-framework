@@ -40,6 +40,7 @@ import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
 import Toast from '~/framework/components/toast';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { Size } from '~/ui/avatars/Avatar';
 
 export const computeNavBar = ({
   navigation,
@@ -262,7 +263,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             <TouchableOpacity
               style={styles.userFamily}
               onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
-              <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal size={getScaleWidth(48)} />
+              <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
               <NamedSVG
                 style={styles.userFamilyIcon}
                 name="ui-rafterRight"
@@ -450,7 +451,9 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <View style={styles.moodMotto}>
           <View style={styles.mood}>
             <Image source={renderMoodPicture[degre][mood ?? 'none']} style={styles.moodPicture} />
-            <SmallText>{I18n.get(`user-profile-mood-${mood ?? 'none'}-${degre}`)}</SmallText>
+            <SmallText style={isEmpty(mood) || mood === 'default' ? styles.textEmpty : {}}>
+              {I18n.get(`user-profile-mood-${mood ?? 'none'}-${degre}`)}
+            </SmallText>
           </View>
           {isEmpty(motto) ? (
             <SmallItalicText style={[styles.motto, styles.textEmpty]}>
