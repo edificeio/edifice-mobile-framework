@@ -3,6 +3,7 @@ import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IPresencesReduxState } from './reducer';
+import theme from '~/app/theme';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
@@ -18,5 +19,5 @@ export default new NavigableModuleConfig<'presences', IPresencesReduxState>({
 
   displayI18n: 'presences-moduleconfig-appname',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'presences' },
+  displayPicture: { type: 'NamedSvg', name: 'presences', fill: theme.palette.complementary.yellow.regular },
 });
