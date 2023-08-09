@@ -300,8 +300,8 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
               <EmptyScreen
                 svgImage="empty-hammock"
                 title={I18n.get(
-                  `homework-tasklist-emptyscreen-title-${
-                    hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? 'notasks' : 'notasks-nocreationrights'
+                  `homework-tasklist-emptyscreen-title${
+                    hasPastHomeWork ? '' : hasCreateHomeworkResourceRight ? '-notasks' : '-notasks-nocreationrights'
                   }`,
                 )}
                 text={I18n.get(
