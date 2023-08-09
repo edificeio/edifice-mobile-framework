@@ -573,6 +573,7 @@
   "news-details-deletion-title": "Do you confirm the deletion?",
   "news-details-error-text": "An error occurred. Please try again later.",
   "news-details-error-title": "Whoops...",
+  "news-details-modified": "(Modified)",
   "news-home-appname": "News",
   "news-home-createnews-button": "New news item",
   "news-home-createthread-button": "New newsfeed",
