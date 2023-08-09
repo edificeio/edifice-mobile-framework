@@ -3,6 +3,7 @@ import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IDiaryReduxState } from './reducer';
+import theme from '~/app/theme';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
@@ -18,5 +19,5 @@ export default new NavigableModuleConfig<'diary', IDiaryReduxState>({
 
   displayI18n: 'diary-moduleconfig-appname',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'diary' },
+  displayPicture: { type: 'NamedSvg', name: 'diary', fill: theme.palette.complementary.blue.regular },
 });
