@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     marginRight: UI_SIZES.spacing.small,
   },
   card: {
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginTop: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
   },
   button: {
     marginTop: UI_SIZES.spacing.large,
