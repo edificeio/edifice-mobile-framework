@@ -148,6 +148,15 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         }
         // Only increment pagecount when fromStart is not specified
         return newSchoolbookWords;
+      } else {
+        setNextPageToFetch(prevState => {
+          return isParent
+            ? {
+                ...prevState,
+                [studentId]: -1,
+              }
+            : -1;
+        });
       }
     },
     [isParent, isTeacher, nextPageToFetch, pagingSize, schoolbookWords, selectedChildId, session, userId],
