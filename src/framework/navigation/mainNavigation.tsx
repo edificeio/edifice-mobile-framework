@@ -205,9 +205,6 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
           height: UI_SIZES.elements.tabbarIconSize,
           width: UI_SIZES.elements.tabbarIconSize,
         },
-        tabBarItemStyle: {
-          justifyContent: 'space-between',
-        },
         tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
         tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
         tabBarHideOnKeyboard: Platform.select({ ios: false, android: true }),
