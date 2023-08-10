@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { TertiaryButtonProps } from './types';
+import { SecondaryButtonProps } from './types';
 import DefaultButton from '~/framework/components/buttons/default';
 import theme from '~/app/theme';
-import styles from './styles';
 
-const TertiaryButton = (props: TertiaryButtonProps) => {
+const SecondaryButton = (props: SecondaryButtonProps) => {
   const initialContentColor = theme.palette.primary.regular;
 
   const [contentColor, setContentColor] = useState(initialContentColor);
@@ -20,10 +19,10 @@ const TertiaryButton = (props: TertiaryButtonProps) => {
       activeOpacity={1}
       onPressIn={() => setContentColor(theme.palette.primary.dark)}
       onPressOut={() => setContentColor(contentColor)}
-      style={styles.tertiary}
+      style={{ borderColor: contentColor }}
       contentColor={contentColor}
     />
   );
 };
 
-export default TertiaryButton;
+export default SecondaryButton;

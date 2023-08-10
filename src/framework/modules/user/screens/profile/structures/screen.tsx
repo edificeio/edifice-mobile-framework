@@ -37,8 +37,8 @@ const UserStructuresScreen = (props: UserStructuresScreenPrivateProps) => {
             <View style={styles.title}>
               <NamedSVG
                 name="ui-school"
-                width={UI_SIZES.elements.icon}
-                height={UI_SIZES.elements.icon}
+                width={UI_SIZES.elements.icon.default}
+                height={UI_SIZES.elements.icon.default}
                 fill={theme.palette.grey.black}
                 style={styles.titleIcon}
               />

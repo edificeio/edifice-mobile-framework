@@ -283,7 +283,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
             text={news.owner.displayName}
             userId={news.owner.id}
             isHorizontal
-            size={UI_SIZES.elements.icon}
+            size={UI_SIZES.elements.icon.default}
             viewStyle={styles.detailsOwner}
           />
           <HtmlContentView html={news.content} />

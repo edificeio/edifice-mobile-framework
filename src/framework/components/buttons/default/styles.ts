@@ -1,25 +1,26 @@
 import { StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
   commonView: {
     alignItems: 'center',
     alignSelf: 'center',
-    borderRadius: UI_SIZES.radius.huge,
+    borderRadius: UI_SIZES.radius.extraLarge,
     borderWidth: UI_SIZES.elements.border.default,
     flexDirection: 'row',
     justifyContent: 'center',
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.minor,
   },
-  commonViewEnabled: {
-    borderColor: theme.palette.primary.regular,
-    opacity: 1,
+  iconLeft: {
+    marginRight: UI_SIZES.spacing.minor,
   },
-  commonViewDisabled: {
-    borderColor: theme.ui.text.light,
-    opacity: 0.5,
+  iconRight: {
+    marginLeft: UI_SIZES.spacing.minor,
+  },
+  indicator: {
+    height: TextSizeStyle.Normal.lineHeight,
   },
 });

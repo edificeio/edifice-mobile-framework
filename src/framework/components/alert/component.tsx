@@ -31,8 +31,8 @@ function autoFillPicture(picture: PictureProps, shades: IShades) {
   return {
     ...picture,
     fill: picture.fill ?? shades.regular,
-    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon,
-    height: picture.width !== undefined && picture.height !== undefined ? picture.height : UI_SIZES.elements.icon,
+    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon.default,
+    height: picture.width !== undefined && picture.height !== undefined ? picture.height : UI_SIZES.elements.icon.default,
   };
 }
 
@@ -60,8 +60,8 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
             type: 'NamedSvg',
             name: toastDefaultPictureProps[type],
             fill: colorShades.regular,
-            width: UI_SIZES.elements.icon,
-            height: UI_SIZES.elements.icon,
+            width: UI_SIZES.elements.icon.default,
+            height: UI_SIZES.elements.icon.default,
           } as PictureProps)),
     }),
     [colorShades, picture, type],

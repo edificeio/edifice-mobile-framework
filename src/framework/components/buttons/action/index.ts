@@ -25,7 +25,7 @@ const getActionButtonWidth = async ({
   if (textMeasure) {
     // determine button width
     // add +1 because measure text returns floating value
-    const btnWidth = textMeasure.width + 1 + 2 * UI_SIZES.spacing.medium + 2 * UI_SIZES.elements.actionButtonBorder + 10;
+    const btnWidth = textMeasure.width + 1 + 2 * UI_SIZES.spacing.medium + 2 * UI_SIZES.elements.border.default + 10;
     if (url || iconName)
       return new Promise(resolve => {
         resolve(btnWidth + defaultPictureSize + UI_SIZES.spacing.minor);
