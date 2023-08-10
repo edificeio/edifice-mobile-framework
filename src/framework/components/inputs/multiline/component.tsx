@@ -5,12 +5,13 @@ import TextInput, { styles as stylesTextInput } from '~/framework/components/inp
 import { MultilineTextInputProps } from './types';
 
 import styles from './styles';
+import { TextSizeStyle } from '~/framework/components/text';
 
 const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((props: MultilineTextInputProps, ref) => {
   const { numberOfLines } = props;
-  const initialHeight = styles.multilineInput.lineHeight * numberOfLines + 2 * stylesTextInput.input.paddingVertical;
+  const initialHeight = TextSizeStyle.Medium.lineHeight! * numberOfLines + 2 * stylesTextInput.input.paddingTop;
 
-  return <TextInput {...props} multiline viewStyle={{ minHeight: initialHeight }} style={styles.multilineInput} ref={ref} />;
+  return <TextInput {...props} multiline style={[styles.multilineInput, { minHeight: initialHeight }]} ref={ref} />;
 });
 
 export default MultilineTextInput;

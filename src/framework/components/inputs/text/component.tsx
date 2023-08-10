@@ -12,20 +12,8 @@ import { TextInputProps } from './types';
 const ICON_INPUT_SIZE = 20;
 
 const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
-  const {
-    annotation,
-    showError,
-    showSuccess,
-    toggleIconOn,
-    toggleIconOff,
-    value,
-    disabled,
-    viewStyle,
-    style,
-    onToggle,
-    onFocus,
-    onBlur,
-  } = props;
+  const { annotation, showError, showSuccess, toggleIconOn, toggleIconOff, value, disabled, style, onToggle, onFocus, onBlur } =
+    props;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isToggle, setIsToggle] = useState<boolean>(false);
@@ -111,23 +99,20 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
   const renderInput = useCallback(() => {
     return (
       <View>
-        <View
+        <RNTextInput
+          {...props}
+          onFocus={e => handleFocus(e)}
+          onBlur={e => handleBlur(e)}
+          placeholderTextColor={theme.palette.grey.stone}
+          ref={ref}
+          {...(disabled ? { editable: false, placeholderTextColor: theme.palette.grey.graphite } : null)}
           style={[
             styles.input,
             { paddingRight, borderColor: colorStatus() },
             { ...(disabled ? styles.inputDisabled : null) },
-            viewStyle,
-          ]}>
-          <RNTextInput
-            {...props}
-            onFocus={e => handleFocus(e)}
-            onBlur={e => handleBlur(e)}
-            placeholderTextColor={theme.palette.grey.stone}
-            ref={ref}
-            {...(disabled ? { editable: false, placeholderTextColor: theme.palette.grey.graphite } : null)}
-            style={style}
-          />
-        </View>
+            style,
+          ]}
+        />
 
         {renderIconInput()}
         {renderToggle()}

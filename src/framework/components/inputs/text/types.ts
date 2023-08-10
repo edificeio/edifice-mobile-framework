@@ -7,6 +7,5 @@ export interface TextInputProps extends RNTextInputProps {
   toggleIconOn?: string;
   toggleIconOff?: string;
   disabled?: boolean;
-  viewStyle?: ViewStyle;
   onToggle?: () => void;
 }

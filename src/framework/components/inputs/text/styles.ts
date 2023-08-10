@@ -1,17 +1,20 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
   input: {
+    ...TextSizeStyle.Medium,
+    lineHeight: undefined,
     paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.small,
+    paddingTop: UI_SIZES.spacing.small,
+    paddingBottom: UI_SIZES.spacing.small,
     backgroundColor: theme.ui.background.card,
     borderWidth: 1,
     borderRadius: UI_SIZES.radius.input,
     color: theme.ui.text.regular,
-    fontSize: getScaleFontSize(16),
   },
   inputDisabled: {
     backgroundColor: theme.palette.grey.pearl,
