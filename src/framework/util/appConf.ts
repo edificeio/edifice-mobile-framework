@@ -73,6 +73,7 @@ export class Platform {
     this.showWhoAreWe = pf.showWhoAreWe;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this._webviewIdentifier = pf.webviewIdentifier;
+    this.testID = pf.testID;
   }
 
   get webviewIdentifier() {
