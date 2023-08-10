@@ -157,7 +157,7 @@ function NotificationItem({
     <TimelineNotification
       notification={notification}
       notificationAction={onNotificationAction}
-      {...(notificationTestID ? { testId: notificationTestID } : {})}
+      {...(notificationTestID ? { testID: notificationTestID } : {})}
     />
   );
 }
