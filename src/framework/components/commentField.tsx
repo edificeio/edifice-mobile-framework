@@ -255,7 +255,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
             </TouchableOpacity>
           ) : null}
         </View>
-      ) : props.isManager ? (
+      ) : props.isManager || isUserComment ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>

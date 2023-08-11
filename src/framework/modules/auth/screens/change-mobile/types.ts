@@ -30,7 +30,6 @@ export interface AuthChangeMobileScreenPrivateProps
     AuthChangeMobileScreenDispatchProps {}
 
 export enum MobileState {
-  MOBILE_ALREADY_VERIFIED = 'mobileAlreadyVerified',
   MOBILE_FORMAT_INVALID = 'mobileFormatInvalid',
   PRISTINE = 'pristine',
   STALE = 'stale',
