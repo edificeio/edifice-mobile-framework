@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
@@ -27,6 +26,7 @@ import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeEmail>) =>
   route.params.navBarTitle || I18n.get('auth-change-email-verify');
@@ -192,7 +192,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             ? I18n.get('auth-change-email-error-same')
             : I18n.get('auth-change-email-error-invalid')}
         </CaptionItalicText>
-        <ActionButton
+        <PrimaryButton
           style={styles.sendButton}
           text={texts.button}
           disabled={isEmailEmpty}

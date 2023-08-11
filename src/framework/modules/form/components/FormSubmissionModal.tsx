@@ -5,7 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, NestedText, SmallText } from '~/framework/components/text';
 import { DistributionStatus } from '~/framework/modules/form/model';
@@ -76,7 +76,7 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
                   : 'form-distribution-submissionmodal-lowertext-default',
               )}
             </SmallText>
-            <ActionButton
+            <PrimaryButton
               text={I18n.get('form-distribution-submissionmodal-action')}
               action={() => props.onSubmit(structureId)}
               loading={props.loading}

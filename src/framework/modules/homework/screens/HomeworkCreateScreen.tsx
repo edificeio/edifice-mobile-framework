@@ -4,7 +4,6 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import uuid from 'react-native-uuid';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import DayPicker from '~/framework/components/daypicker';
 import InputContainer from '~/framework/components/inputs/container';
@@ -22,6 +21,7 @@ import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { signedFetch } from '~/infra/fetchWithCache';
 import { getSession } from '../../auth/reducer';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 export interface HomeworkCreateScreenDataProps {}
 
@@ -124,7 +124,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
               }))}
             />
           </View>
-          <ActionButton
+          <PrimaryButton
             text={I18n.get('homework-create-addhomework')}
             action={async () => {
               const { navigation, route } = this.props;

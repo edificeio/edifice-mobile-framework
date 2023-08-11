@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { Image } from '~/framework/util/media';
 import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
@@ -11,6 +10,7 @@ import { Card, InfoCard } from './card/base';
 import { UI_SIZES } from './constants';
 import { CaptionText, SmallBoldText, SmallText } from './text';
 import { Toggle } from './toggle';
+import PrimaryButton from './buttons/primary';
 
 export interface IInfoBubbleProps {
   infoText: string;
@@ -88,7 +88,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
               />
             ) : null}
             <SmallText style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</SmallText>
-            <ActionButton text={I18n.get('myapp-infobubble-understood')} action={() => this.doAcknowledge(true)} />
+            <PrimaryButton text={I18n.get('myapp-infobubble-understood')} action={() => this.doAcknowledge(true)} />
           </View>
         ) : null}
         <TouchableOpacity

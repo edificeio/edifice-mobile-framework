@@ -12,7 +12,8 @@ import {
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -299,8 +300,8 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
             </View>
           </View>
           <View style={styles.buttonsContainer}>
-            <ActionButton text={I18n.get('mediacentre-advancedsearch-cancel')} type="secondary" action={props.closeModal} />
-            <ActionButton
+            <SecondaryButton text={I18n.get('mediacentre-advancedsearch-cancel')} action={props.closeModal} />
+            <PrimaryButton
               text={I18n.get('mediacentre-advancedsearch-search')}
               action={onSearch}
               disabled={areFieldsEmpty}

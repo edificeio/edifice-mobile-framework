@@ -14,6 +14,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { UserWhoAreWeScreenPrivateProps } from './types';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 
 export const computeNavBar = ({
   navigation,
@@ -60,13 +61,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
             });
           }}
         />
-        <ActionButton
-          style={styles.buttonDiscover}
-          type="secondary"
-          text={I18n.get('user-whoarewe-discoveredifice')}
-          iconName="ui-external-link"
-          url="https://edifice.io"
-        />
+        <SecondaryButton style={styles.buttonDiscover} text={I18n.get('user-whoarewe-discoveredifice')} url="https://edifice.io" />
       </View>
     </ScrollView>
   );

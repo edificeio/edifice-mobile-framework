@@ -5,7 +5,7 @@ import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
 import GridList from '~/framework/components/GridList';
-import { ActionButton } from '~/framework/components/buttons/action';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
@@ -77,7 +77,7 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
   private renderFooter() {
     return (
       <>
-        <ActionButton text={I18n.get('myapp-accessweb')} url="/welcome" type="secondary" />
+        <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
         <InfoBubble
           infoText={I18n.get('myapp-infobubble-text', { appName: DeviceInfo.getApplicationName() })}
           infoTitle={I18n.get('myapp-infobubble-title')}

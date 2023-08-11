@@ -11,7 +11,6 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/buttons/action';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -38,6 +37,8 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 import { colorType } from '.';
+import SecondaryButton from '~/framework/components/buttons/secondary';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -129,9 +130,8 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         <SmallBoldText style={{ color: colorType[session?.user.type!] }}>
           {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
         </SmallBoldText>
-        <ActionButton
+        <PrimaryButton
           text={I18n.get('user-page-userfilebutton')}
-          type="secondary"
           action={() => {
             navigation.navigate(userRouteNames.profile, {});
           }}
@@ -346,9 +346,8 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
 function useToggleKeysFeature() {
   if (!I18n.canShowKeys) return;
   return (
-    <ActionButton
+    <SecondaryButton
       text="Toggle i18n Keys"
-      type="secondary"
       action={() => {
         I18n.toggleShowKeys();
       }}

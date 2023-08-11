@@ -11,7 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
@@ -167,7 +167,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
                 })
               : ''}
           </SmallText>
-          <ActionButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
+          <PrimaryButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
       );
     },
@@ -211,7 +211,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
               value={this.dropdownValue}
             />
             <View style={STYLES.submitButton}>
-              <ActionButton
+              <PrimaryButton
                 text={I18n.get('auth-wayf-select-button')}
                 disabled={this.dropdownValue === null}
                 action={() => this.loginWithCustomToken()}

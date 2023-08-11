@@ -30,6 +30,7 @@ import { tryActionLegacy } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import { ISupportCreateTicketScreenEventProps, ISupportCreateTicketScreenProps } from './types';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -164,7 +165,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             </View>
           </View>
         </View>
-        <ActionButton
+        <PrimaryButton
           text={I18n.get('support-createticket-sendaction')}
           action={sendTicket}
           disabled={isActionDisabled}

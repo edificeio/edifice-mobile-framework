@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { ActionButton } from '~/framework/components/buttons/action';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
@@ -23,6 +22,8 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { PresencesDeclareEventScreenPrivateProps } from './types';
+import SecondaryButton from '~/framework/components/buttons/secondary';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -151,15 +152,14 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
         </View>
         <View style={styles.actionsContainer}>
           {event !== undefined ? (
-            <ActionButton
+            <SecondaryButton
               text={I18n.get('presences-declareevent-delete')}
-              type="secondary"
               action={deleteEvent}
               loading={isDeleting}
               style={styles.deleteAction}
             />
           ) : null}
-          <ActionButton
+          <PrimaryButton
             text={I18n.get('presences-declareevent-action')}
             action={createEvent}
             disabled={!date.isBetween(startDate, endDate)}

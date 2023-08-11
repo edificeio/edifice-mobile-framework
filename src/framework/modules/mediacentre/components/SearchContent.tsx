@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FlatList from '~/framework/components/list/flat-list';
@@ -14,6 +13,7 @@ import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
 import { SearchFilter } from './SearchFilter';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 
 const styles = StyleSheet.create({
   fieldContainer: {
@@ -139,7 +139,7 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
         {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
         {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
-      <ActionButton text={I18n.get('common-cancel')} type="secondary" action={props.onCancelSearch} />
+      <SecondaryButton text={I18n.get('common-cancel')} action={props.onCancelSearch} />
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>

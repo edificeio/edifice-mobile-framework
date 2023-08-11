@@ -16,7 +16,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -37,6 +36,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeMobile>) =>
   route.params.navBarTitle || I18n.get('auth-change-mobile-verify');
@@ -313,7 +313,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           <CaptionItalicText style={styles.errorText}>
             {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
           </CaptionItalicText>
-          <ActionButton
+          <PrimaryButton
             style={styles.sendButton}
             text={texts.button}
             disabled={isMobileEmpty}

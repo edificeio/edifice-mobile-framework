@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import AlertCard from '~/framework/components/alert';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
@@ -30,6 +29,7 @@ import {
   ChangePasswordScreenStoreProps,
   IFields,
 } from './types';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 function OldPasswordField(props: { oldPassword: string; form: ChangePasswordFormModel; onChange: ValueChange<string> }) {
   const validator = props.form.oldPassword;
@@ -215,7 +215,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
 
             <View style={styles.noFlexShrink}>
               <ButtonWrapper error={hasErrorKey} typing={typing}>
-                <ActionButton
+                <PrimaryButton
                   action={() => this.doSubmit()}
                   disabled={isNotValid}
                   text={I18n.get('common-save')}

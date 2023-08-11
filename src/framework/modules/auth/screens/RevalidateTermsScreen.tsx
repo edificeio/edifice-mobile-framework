@@ -11,7 +11,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView, PageViewStyle } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
@@ -132,7 +132,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
             {I18n.get('user-revalidateterms-newenduserlicenseagreement')}
           </SmallActionText>
         </SmallText>
-        <ActionButton
+        <PrimaryButton
           style={{ marginTop: UI_SIZES.spacing.large }}
           text={I18n.get('auth-revalidateterms-accept')}
           action={doRevalidateTerms}
