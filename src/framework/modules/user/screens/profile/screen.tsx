@@ -29,18 +29,17 @@ import ScrollView from '~/framework/components/scrollView';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import { UserType } from '~/framework/modules/auth/service';
 import { NamedSVG } from '~/framework/components/picture';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import theme from '~/app/theme';
 import BottomSheet from 'react-native-bottomsheet';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
-import InlineButton from '~/framework/components/buttons/inline';
 import { hobbiesItems, renderEmoji } from '.';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
 import Toast from '~/framework/components/toast';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
-import { Size } from '~/ui/avatars/Avatar';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 
 export const computeNavBar = ({
   navigation,
@@ -412,7 +411,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <View style={styles.blocTitle}>
           <HeadingSText>{I18n.get('user-profile-about')}</HeadingSText>
           {isMyProfile ? (
-            <InlineButton
+            <TertiaryButton
               text={I18n.get('common-edit')}
               action={() =>
                 navigation.navigate(userRouteNames.editDescription, {
@@ -442,7 +441,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <View style={styles.blocTitle}>
           <HeadingSText>{I18n.get('user-profile-mood-motto')}</HeadingSText>
           {isMyProfile ? (
-            <InlineButton
+            <TertiaryButton
               text={I18n.get('common-edit')}
               action={() => navigation.navigate(userRouteNames.editMoodMotto, { userId: userInfo!.id, mood, motto })}
             />
@@ -479,7 +478,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <View style={styles.blocTitle}>
           <HeadingSText>{I18n.get('user-profile-hobbies')}</HeadingSText>
           {isMyProfile ? (
-            <InlineButton
+            <TertiaryButton
               text={I18n.get('common-edit')}
               action={() => navigation.navigate(userRouteNames.editHobbies, { userId: userInfo!.id, hobbies })}
             />

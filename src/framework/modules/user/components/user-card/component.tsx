@@ -12,8 +12,8 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 import styles from './styles';
 import { IUserCardProps } from './types';
-import InlineButton from '~/framework/components/buttons/inline';
 import { colorType } from '~/framework/modules/user/screens/home';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 
 export const UserCard = ({
   id,
@@ -80,9 +80,9 @@ export const UserCard = ({
           {I18n.get(`user-profiletypes-${type.toLocaleLowerCase()}`)}
         </SmallBoldText>
         {!canEdit ? (
-          <InlineButton
+          <TertiaryButton
             style={styles.sendMessage}
-            iconName="ui-mail"
+            iconLeft="ui-mail"
             text={I18n.get('user-profile-sendMessage')}
             action={onPressInlineButton}
           />
