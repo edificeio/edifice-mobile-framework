@@ -38,7 +38,7 @@ import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 import { colorType } from '.';
 import SecondaryButton from '~/framework/components/buttons/secondary';
-import PrimaryButton from '~/framework/components/buttons/primary';
+import DefaultButton from '~/framework/components/buttons/default';
 
 export const computeNavBar = ({
   navigation,
@@ -130,7 +130,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         <SmallBoldText style={{ color: colorType[session?.user.type!] }}>
           {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
         </SmallBoldText>
-        <PrimaryButton
+        <SecondaryButton
           text={I18n.get('user-page-userfilebutton')}
           action={() => {
             navigation.navigate(userRouteNames.profile, {});
@@ -302,9 +302,11 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
    */
   return React.useMemo(() => {
     return (
-      <TouchableOpacity onPress={doLogout}>
-        <SmallBoldText style={styles.logoutButton}>{I18n.get('user-page-disconnect')}</SmallBoldText>
-      </TouchableOpacity>
+      <DefaultButton
+        text={I18n.get('user-page-disconnect')}
+        contentColor={theme.palette.status.failure.regular}
+        action={doLogout}
+      />
     );
   }, [doLogout]);
 }
