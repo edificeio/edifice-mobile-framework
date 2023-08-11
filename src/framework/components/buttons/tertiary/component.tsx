@@ -18,7 +18,7 @@ const TertiaryButton = (props: TertiaryButtonProps) => {
       {...props}
       activeOpacity={1}
       onPressIn={() => setContentColor(theme.palette.primary.dark)}
-      onPressOut={() => setContentColor(contentColor)}
+      onPressOut={() => setContentColor(initialContentColor)}
       contentColor={contentColor}
     />
   );

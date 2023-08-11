@@ -10,6 +10,5 @@ export interface DefaultButtonProps extends TouchableOpacityProps {
   showConfirmation?: boolean;
   requireSession?: boolean;
   loading?: boolean;
-  onLayout?: ((event: LayoutChangeEvent) => void) | undefined;
   action?: () => void;
 }

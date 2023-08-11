@@ -50,7 +50,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
         name={iconName ?? 'pictos-external-link'}
         width={BUTTON_ICON_SIZE}
         height={BUTTON_ICON_SIZE}
-        fill={contentColor ?? theme.ui.text.regular}
+        fill={contentColor ?? theme.palette.grey.graphite}
         style={[iconStyle]}
       />
     );

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { SecondaryButtonProps } from './types';
 import DefaultButton from '~/framework/components/buttons/default';
+import styles from './styles';
 import theme from '~/app/theme';
 
 const SecondaryButton = (props: SecondaryButtonProps) => {
@@ -18,8 +19,8 @@ const SecondaryButton = (props: SecondaryButtonProps) => {
       {...props}
       activeOpacity={1}
       onPressIn={() => setContentColor(theme.palette.primary.dark)}
-      onPressOut={() => setContentColor(contentColor)}
-      style={{ borderColor: contentColor }}
+      onPressOut={() => setContentColor(initialContentColor)}
+      style={[styles.secondary, { borderColor: contentColor }, props.style]}
       contentColor={contentColor}
     />
   );

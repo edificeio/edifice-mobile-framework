@@ -20,7 +20,7 @@ const PrimaryButton = (props: PrimaryButtonProps) => {
       activeOpacity={1}
       onPressIn={() => setBackgroundColor(theme.palette.primary.dark)}
       onPressOut={() => setBackgroundColor(initialBackgroundColor)}
-      style={[styles.primary, { backgroundColor: backgroundColor }]}
+      style={[styles.primary, { backgroundColor: backgroundColor }, props.style]}
       contentColor={theme.palette.grey.white}
     />
   );
