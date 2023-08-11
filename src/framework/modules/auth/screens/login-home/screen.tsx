@@ -1,6 +1,5 @@
-import styled from '@emotion/native';
 import * as React from 'react';
-import { InteractionManager, ScrollView, TextInput, View } from 'react-native';
+import { InteractionManager, ScrollView, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -8,41 +7,26 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Picture } from '~/framework/components/picture';
-import { CaptionText, SmallText } from '~/framework/components/text';
+import { NamedSVG, Picture } from '~/framework/components/picture';
+import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { TextInputLine } from '~/ui/forms/TextInputLine';
-import { Toggle } from '~/ui/forms/Toggle';
 
 import styles from './styles';
-import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginHomeScreenState } from './types';
+import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginState } from './types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-
-const initialState: LoginHomeScreenState = {
-  login: '',
-  password: '',
-  typing: false,
-  rememberMe: true,
-  loginState: 'IDLE',
-  error: undefined, // We stores error retrived via props for display persistence
-};
-
-const FormContainer = styled.View({
-  alignItems: 'center',
-  flex: 1,
-  flexDirection: 'column',
-  justifyContent: 'center',
-  padding: UI_SIZES.spacing.large,
-  paddingTop: UI_SIZES.spacing.huge,
-});
+import InputContainer from '~/framework/components/inputs/container';
+import TextInput from '~/framework/components/inputs/text';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import DefaultButton from '~/framework/components/buttons/default';
+import { OAuth2ErrorCode } from '~/infra/oauth';
+import { AuthErrorCode } from '~/framework/modules/auth/model';
 
 export const computeNavBar = ({
   navigation,
@@ -51,245 +35,262 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params?.platform.displayName,
+    title: I18n.get('auth-login-title'),
     titleTestID: 'login-title',
     backButtonTestID: 'login-back',
   }),
 });
 
-export class LoginHomeScreen extends React.Component<LoginHomeScreenPrivateProps, LoginHomeScreenState> {
-  private mounted = false;
+const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
+  const { route, navigation } = props;
+  const { platform } = route.params;
 
-  private unsubscribeBlur?: () => void;
+  const [login, setLogin] = React.useState<string>('');
+  const [password, setPassword] = React.useState<string>('');
+  const [typing, setTyping] = React.useState<boolean>(false);
+  const [rememberMe, setRememberMe] = React.useState<boolean>(true); // We keep the logic for 1 year, after we delete
+  const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
+  const [error, setError] = React.useState<AuthErrorCode>();
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-  private unsubscribeBlurTask?: ReturnType<typeof InteractionManager.runAfterInteractions>;
+  const inputLogin = React.useRef<any>(null);
+  const inputPassword = React.useRef<any>(null);
+  const mounted = React.useRef(false);
+  const unsubscribeBlur = React.useRef<any>(null);
+  const unsubscribeBlurTask = React.useRef<any>(null);
 
-  private inputLogin: TextInput | null = null;
+  const isSubmitDisabled = React.useMemo(() => !(login && password), [login, password]);
 
-  private setInputLoginRef = (el: TextInput) => (this.inputLogin = el);
+  const toggleVisibilityPassword = () => setShowPassword(!showPassword);
 
-  private inputPassword: TextInput | null = null;
-
-  private setInputPasswordRef = (el: TextInput) => (this.inputPassword = el);
-
-  constructor(props: LoginHomeScreenPrivateProps) {
-    super(props);
-    this.state = { ...initialState };
-  }
-
-  get isSubmitDisabled() {
-    return !(this.state.login && this.state.password);
-  }
-
-  consumeError() {
-    if (this.props.auth.error) {
-      this.setState({ error: this.props.auth.error });
-      this.props.handleConsumeError();
+  const consumeError = () => {
+    if (props.auth.error) {
+      setError(props.auth.error);
+      props.handleConsumeError();
     }
-  }
+  };
 
-  resetError() {
-    this.setState({ error: undefined });
-  }
+  const resetError = () => {
+    setError(undefined);
+  };
 
-  componentDidMount() {
-    this.mounted = true;
-    this.consumeError();
-    this.unsubscribeBlur = this.props.navigation.addListener('blur', () => {
-      this.unsubscribeBlurTask = InteractionManager.runAfterInteractions(() => {
-        this.resetError();
+  React.useEffect(() => {
+    mounted.current = true;
+    const handleBlur = () => {
+      unsubscribeBlurTask.current = InteractionManager.runAfterInteractions(() => {
+        resetError();
       });
-    });
-  }
+    };
 
-  componentDidUpdate() {
-    this.consumeError();
-  }
+    unsubscribeBlur.current = props.navigation.addListener('blur', handleBlur);
 
-  componentWillUnmount(): void {
-    this.mounted = false;
-    this.unsubscribeBlur?.();
-    this.unsubscribeBlurTask?.cancel();
-  }
+    return () => {
+      mounted.current = false;
+      unsubscribeBlur.current();
+      unsubscribeBlurTask.current?.cancel();
+    };
+  }, []);
 
-  onLoginChanged(value: string) {
-    this.setState({ login: value.trim().toLowerCase(), typing: true });
-    this.resetError();
-  }
+  React.useEffect(() => {
+    consumeError();
+  });
 
-  onPasswordChanged(value: string) {
-    this.setState({ password: value, typing: true });
-    this.resetError();
-  }
+  const onTextChange = () => {
+    setTyping(true);
+    resetError();
+  };
 
-  protected async doLogin() {
-    const { route, navigation } = this.props;
-    const { platform } = route.params;
+  const onLoginChanged = value => {
+    setLogin(value.trim().toLowerCase());
+    onTextChange();
+  };
 
-    this.setState({ loginState: 'RUNNING' });
+  const onPasswordChanged = value => {
+    setPassword(value);
+    onTextChange();
+  };
+
+  const onSubmitEditingLogin = () => {
+    if (inputPassword.current) inputPassword.current.focus();
+  };
+
+  const doLogin = async () => {
+    setLoginState(LoginState.RUNNING);
     try {
-      const redirect = await this.props.tryLogin(
-        platform,
-        {
-          username: this.state.login, // login is already trimmed by inputLine
-          password: this.state.password.trim(), // we trim password silently.
-        },
-        this.state.rememberMe,
-      );
+      const loginCredentials = {
+        username: login,
+        password: password.trim(),
+      };
+
+      const redirect = await props.tryLogin(platform, loginCredentials, rememberMe);
+
       if (redirect) {
         redirectLoginNavAction(redirect, platform, navigation);
         setTimeout(() => {
-          // We set timeout to let the app time to navigate before resetting the state of this screen in background
-          if (this.mounted) this.setState({ typing: false, loginState: 'IDLE' });
+          if (mounted) {
+            setTyping(false);
+            setLoginState(LoginState.IDLE);
+          }
         }, 500);
       } else {
-        if (this.mounted) this.setState({ typing: false, loginState: 'DONE' });
+        if (mounted) {
+          setTyping(false);
+          setLoginState(LoginState.DONE);
+        }
       }
     } catch {
-      if (this.mounted) this.setState({ typing: false, loginState: 'IDLE' });
+      if (mounted) {
+        setTyping(false);
+        setLoginState(LoginState.IDLE);
+      }
     }
-  }
-
-  protected goToWeb() {
-    const { route } = this.props;
-    const { platform } = route.params;
-    openUrl(platform.url);
-  }
-
-  public unfocus() {
-    this.inputLogin?.blur();
-    this.inputPassword?.blur();
-  }
-
-  protected renderLogo = () => {
-    const { route } = this.props;
-    const { platform } = route.params;
-    const logoStyle = { height: 64, width: '100%' };
-    if (platform.logoStyle) {
-      Object.assign(logoStyle, platform.logoStyle);
-    }
-    return (
-      <View style={styles.logo}>
-        <Picture type={platform.logoType} source={platform.logo} name={platform.logo} style={logoStyle} resizeMode="contain" />
-      </View>
-    );
   };
 
-  protected renderForm() {
-    const { login, password, typing, rememberMe, error } = this.state;
-    const { route, navigation } = this.props;
-    const { platform } = route.params;
+  const goToWeb = () => {
+    openUrl(platform.url);
+  };
 
+  const renderError = React.useCallback(() => {
+    if (!error) return;
     return (
-      <View style={styles.view}>
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          alwaysBounceVertical={false}
-          overScrollMode="never"
-          contentContainerStyle={styles.scrollview}>
-          <FormContainer>
-            {this.renderLogo()}
-            <TextInputLine
-              inputRef={this.setInputLoginRef}
-              placeholder={I18n.get('auth-login-login')}
-              onChangeText={this.onLoginChanged.bind(this)}
+      <View style={[styles.boxError, styles.userError]}>
+        <NamedSVG
+          name="ui-error"
+          fill={theme.palette.status.failure.regular}
+          width={UI_SIZES.elements.icon.default}
+          height={UI_SIZES.elements.icon.default}
+        />
+        <BodyText style={styles.userTextError}>
+          {I18n.get('auth-error-' + error!.replaceAll('_', ''), {
+            version: DeviceInfo.getVersion(),
+            errorcode: error,
+            currentplatform: platform.url,
+            defaultValue: I18n.get('auth-error-other', {
+              version: DeviceInfo.getVersion(),
+              errorcode: error,
+              currentplatform: platform.url,
+            }),
+          })}
+        </BodyText>
+      </View>
+    );
+  }, [error, platform]);
+
+  const renderPlatform = React.useCallback(() => {
+    const logoStyle = {
+      ...styles.platformLogo,
+    };
+    if (platform.logoStyle) Object.assign(logoStyle, platform.logoStyle);
+    return (
+      <View style={styles.platform}>
+        <Picture type={platform.logoType} source={platform.logo} name={platform.logo} style={logoStyle} resizeMode="contain" />
+        <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText>
+      </View>
+    );
+  }, [platform, error]);
+
+  const renderInputs = React.useCallback(() => {
+    return (
+      <View style={styles.boxInputs}>
+        <InputContainer
+          label={{ text: I18n.get('auth-login-login'), icon: 'ui-user' }}
+          input={
+            <TextInput
+              placeholder={I18n.get('auth-login-inputLogin')}
+              ref={inputLogin}
+              onChangeText={onLoginChanged.bind(this)}
               value={login}
-              hasError={!!error}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
               spellCheck={false}
               testID="login-identifier"
+              showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
+              onSubmitEditing={onSubmitEditingLogin}
             />
-            <TextInputLine
-              isPasswordField
-              inputRef={this.setInputPasswordRef}
-              placeholder={I18n.get('auth-login-password')}
-              onChangeText={this.onPasswordChanged.bind(this)}
+          }
+        />
+        <InputContainer
+          style={styles.inputPassword}
+          label={{ text: I18n.get('auth-login-password'), icon: 'ui-lock' }}
+          input={
+            <TextInput
+              placeholder={I18n.get('auth-login-inputPassword')}
+              ref={inputPassword}
+              onChangeText={onPasswordChanged.bind(this)}
               value={password}
-              hasError={!!error}
+              showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
               testID="login-password"
+              toggleIconOn="ui-hide"
+              toggleIconOff="ui-see"
+              secureTextEntry={!showPassword}
+              onToggle={toggleVisibilityPassword}
+              testIDToggle="login-see-password"
             />
-            <View style={styles.inputCheckbox}>
-              <CaptionText style={{ marginRight: UI_SIZES.spacing.small }} testID="login-message-connection-toggle">
-                {I18n.get('auth-login-autologin')}
-              </CaptionText>
-              <Toggle
-                checked={rememberMe}
-                onCheck={() => this.setState({ rememberMe: true })}
-                onUncheck={() => this.setState({ rememberMe: false })}
-                testID="login-connection-toggle"
-              />
-            </View>
-            <SmallText style={styles.textError}>
-              {error
-                ? I18n.get('auth-error-' + error.replaceAll('_', ''), {
-                    version: DeviceInfo.getVersion(),
-                    errorcode: error,
-                    currentplatform: platform.url,
-                    defaultValue: I18n.get('auth-error-other', {
-                      version: DeviceInfo.getVersion(),
-                      errorcode: error,
-                      currentplatform: platform.url,
-                    }),
-                  })
-                : ''}
-            </SmallText>
-
-            <View
-              style={[
-                styles.boxButtonAndTextForgot,
-                {
-                  marginTop: error && !typing ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
-                },
-              ]}>
-              {(error === 'not_premium' || error === 'pre_deleted') && !this.state.typing ? (
-                <ActionButton
-                  action={() => this.goToWeb()}
-                  disabled={false}
-                  text={I18n.get('LoginWeb')}
-                  loading={false}
-                  iconName="ui-externalLink"
-                />
-              ) : (
-                <ActionButton
-                  action={() => this.doLogin()}
-                  disabled={this.isSubmitDisabled}
-                  text={I18n.get('auth-login-connect')}
-                  loading={this.state.loginState === 'RUNNING' || this.state.loginState === 'DONE'}
-                  testID="login-connect"
-                />
-              )}
-
-              <View style={styles.boxTextForgot}>
-                <SmallText
-                  style={styles.textForgotPassword}
-                  onPress={() => {
-                    navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' });
-                  }}
-                  testID="login-forgot-password">
-                  {I18n.get('auth-login-forgot-password')}
-                </SmallText>
-                <SmallText
-                  style={styles.textForgotId}
-                  onPress={() => {
-                    navigation.navigate(authRouteNames.forgot, { platform, mode: 'id' });
-                  }}
-                  testID="login-forgot-identifier">
-                  {I18n.get('auth-login-forgot-id')}
-                </SmallText>
-              </View>
-            </View>
-          </FormContainer>
-        </ScrollView>
+          }
+        />
       </View>
     );
-  }
+  }, [
+    login,
+    password,
+    error,
+    showPassword,
+    inputLogin,
+    inputPassword,
+    onLoginChanged,
+    onPasswordChanged,
+    toggleVisibilityPassword,
+  ]);
 
-  public render() {
-    return <KeyboardPageView style={{ backgroundColor: theme.ui.background.card }}>{this.renderForm()}</KeyboardPageView>;
-  }
-}
+  const renderLoginButton = React.useCallback(() => {
+    if ((error === 'not_premium' || error === 'pre_deleted') && !typing)
+      return <PrimaryButton action={goToWeb} text={I18n.get('LoginWeb')} iconRight="ui-externalLink" testID="login-opentoweb" />;
+    return (
+      <PrimaryButton
+        action={doLogin}
+        disabled={isSubmitDisabled}
+        text={I18n.get('auth-login-connect')}
+        loading={loginState === LoginState.RUNNING || loginState === LoginState.DONE}
+        testID="login-connect"
+      />
+    );
+  }, [error, typing, isSubmitDisabled, loginState, doLogin, goToWeb]);
+
+  const renderPage = React.useCallback(() => {
+    return (
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        contentContainerStyle={styles.scrollview}>
+        <View style={styles.form}>
+          {renderPlatform()}
+          {renderInputs()}
+          {renderError()}
+          <View style={[styles.boxButtons, !error ? styles.boxButtonsNoError : {}]}>
+            {renderLoginButton()}
+            <View style={styles.boxTextForgot}>
+              <DefaultButton
+                text={I18n.get('auth-login-forgot-password')}
+                action={() => navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' })}
+                testID="login-forgot-password"
+                style={styles.forgotPasswordButton}
+              />
+              <DefaultButton
+                text={I18n.get('auth-login-forgot-id')}
+                action={() => navigation.navigate(authRouteNames.forgot, { platform, mode: 'id' })}
+                testID="login-forgot-identifier"
+              />
+            </View>
+          </View>
+        </View>
+      </ScrollView>
+    );
+  }, [error, renderPlatform, renderInputs, renderError, renderLoginButton]);
+
+  return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
+};
 
 export default connect(
   (state: IGlobalState) => {
@@ -305,4 +306,4 @@ export default connect(
       },
       dispatch,
     ),
-)(LoginHomeScreen);
+)(LoginScreen);

@@ -87,32 +87,30 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
             label={{ text: I18n.get('homework-create-date-title'), icon: 'ui-calendarLight' }}
             input={<DayPicker onDateChange={date => this.setState({ date })} />}
           />
-          <View style={styles.inputContainer}>
-            <InputContainer
-              label={{ text: I18n.get('homework-create-subject-title'), icon: 'ui-book' }}
-              input={
-                <TextInput
-                  placeholder={I18n.get('homework-create-subject-placeholder')}
-                  onChangeText={text => this.setState({ subject: text })}
-                  value={subject}
-                  maxLength={64}
-                />
-              }
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <InputContainer
-              label={{ text: I18n.get('homework-create-description-title'), icon: 'ui-textPage' }}
-              input={
-                <MultilineTextInput
-                  placeholder={I18n.get('homework-create-description-placeholder')}
-                  numberOfLines={4}
-                  onChangeText={text => this.setState({ description: text })}
-                  value={description}
-                />
-              }
-            />
-          </View>
+          <InputContainer
+            style={styles.inputContainer}
+            label={{ text: I18n.get('homework-create-subject-title'), icon: 'ui-book' }}
+            input={
+              <TextInput
+                placeholder={I18n.get('homework-create-subject-placeholder')}
+                onChangeText={text => this.setState({ subject: text })}
+                value={subject}
+                maxLength={64}
+              />
+            }
+          />
+          <InputContainer
+            style={styles.inputContainer}
+            label={{ text: I18n.get('homework-create-description-title'), icon: 'ui-textPage' }}
+            input={
+              <MultilineTextInput
+                placeholder={I18n.get('homework-create-description-placeholder')}
+                numberOfLines={4}
+                onChangeText={text => this.setState({ description: text })}
+                value={description}
+              />
+            }
+          />
           <View style={styles.inputContainer}>
             <AttachmentPicker
               onlyImages

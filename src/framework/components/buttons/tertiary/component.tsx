@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { TertiaryButtonProps } from './types';
 import DefaultButton from '~/framework/components/buttons/default';
 import theme from '~/app/theme';
-import styles from './styles';
 
 const TertiaryButton = (props: TertiaryButtonProps) => {
   const initialContentColor = theme.palette.primary.regular;
@@ -20,7 +19,6 @@ const TertiaryButton = (props: TertiaryButtonProps) => {
       activeOpacity={1}
       onPressIn={() => setContentColor(theme.palette.primary.dark)}
       onPressOut={() => setContentColor(contentColor)}
-      style={styles.tertiary}
       contentColor={contentColor}
     />
   );

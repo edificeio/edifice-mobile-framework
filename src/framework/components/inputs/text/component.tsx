@@ -9,23 +9,41 @@ import { CaptionItalicText } from '~/framework/components/text';
 import styles from './styles';
 import { TextInputProps } from './types';
 
-const ICON_INPUT_SIZE = 20;
+const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 
 const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
-  const { annotation, showError, showSuccess, toggleIconOn, toggleIconOff, value, disabled, style, onToggle, onFocus, onBlur } =
-    props;
+  const {
+    annotation,
+    showError,
+    showSuccess,
+    showIconCallback,
+    toggleIconOn,
+    toggleIconOff,
+    value,
+    disabled,
+    style,
+    testIDToggle,
+    onToggle,
+    onFocus,
+    onBlur,
+  } = props;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isToggle, setIsToggle] = useState<boolean>(false);
 
+  const isShowIconCallback = useMemo(
+    () => (showError || showSuccess) && showIconCallback,
+    [showError, showSuccess, showIconCallback],
+  );
+
   // padding right input management if have icon success || error or if have toggle icon or both :)
   const paddingRight = useMemo(
     () =>
-      toggleIconOn && toggleIconOff && (showError || showSuccess)
+      toggleIconOn && toggleIconOff && isShowIconCallback
         ? UI_SIZES.spacing.medium + 2 * ICON_INPUT_SIZE + UI_SIZES.spacing.minor + 2 * UI_SIZES.spacing.small
         : toggleIconOn && toggleIconOff
         ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small
-        : showError || showSuccess
+        : isShowIconCallback
         ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
         : UI_SIZES.spacing.medium,
     [toggleIconOn, toggleIconOff, showError, showSuccess],
@@ -70,7 +88,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
   }, [isToggle, onToggle]);
 
   const renderIconInput = useCallback(() => {
-    if (showError || showSuccess)
+    if (isShowIconCallback)
       return (
         <NamedSVG
           name={showError ? 'ui-error' : 'ui-success'}
@@ -85,7 +103,10 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
   const renderToggle = useCallback(() => {
     if (toggleIconOn && toggleIconOff)
       return (
-        <TouchableOpacity style={[styles.toggle, { borderColor: colorStatus() }]} onPress={() => handleToggle()}>
+        <TouchableOpacity
+          style={[styles.toggle, { borderColor: colorStatus() }]}
+          onPress={() => handleToggle()}
+          testID={testIDToggle ?? ''}>
           <NamedSVG
             name={isToggle ? toggleIconOn : toggleIconOff}
             fill={disabled ? theme.palette.grey.graphite : theme.palette.grey.black}
@@ -98,7 +119,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
 
   const renderInput = useCallback(() => {
     return (
-      <View>
+      <View style={styles.viewInput}>
         <RNTextInput
           {...props}
           onFocus={e => handleFocus(e)}

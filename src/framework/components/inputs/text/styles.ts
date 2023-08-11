@@ -5,6 +5,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
+  viewInput: {
+    justifyContent: 'center',
+  },
   input: {
     ...TextSizeStyle.Medium,
     lineHeight: undefined,
@@ -22,7 +25,6 @@ const styles = StyleSheet.create({
   },
   callbackIndicator: {
     position: 'absolute',
-    top: UI_SIZES.spacing.medium,
   },
   toggle: {
     position: 'absolute',

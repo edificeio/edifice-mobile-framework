@@ -89,8 +89,8 @@ export const UI_SIZES = {
       large: 4,
     },
     icon: {
-      small: 20,
-      default: 24,
+      small: getScaleWidth(20),
+      default: getScaleWidth(24),
     },
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
     /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
@@ -118,16 +118,16 @@ export const UI_SIZES = {
     small: 2,
   },
   radius: {
-    small: 4,
-    medium: 8,
-    card: 8,
-    input: 12,
-    selector: 12,
-    mediumPlus: 16,
-    explorer: 18,
-    large: 21,
-    extraLarge: 24,
-    huge: 48,
+    small: getScaleWidth(4),
+    medium: getScaleWidth(8),
+    card: getScaleWidth(8),
+    input: getScaleWidth(12),
+    selector: getScaleWidth(12),
+    mediumPlus: getScaleWidth(16),
+    explorer: getScaleWidth(18),
+    large: getScaleWidth(21),
+    extraLarge: getScaleWidth(24),
+    huge: getScaleWidth(48),
   },
   screen: {
     bottomInset: Platform.select({

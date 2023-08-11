@@ -114,24 +114,23 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
 
   const renderInput = (item, index) => {
     return (
-      <View style={styles.inputContainer}>
-        <InputContainer
-          label={{ text: I18n.get(`user-profile-editHobbies-${item.category}`) }}
-          input={
-            <TextInput
-              placeholder={I18n.get(`user-profile-editHobbies-empty${item.category}`)}
-              value={hobbies![item.category].values}
-              toggleIconOn={hobbies![item.category].visibility === HobbieVisibility.PRIVE ? 'ui-lock' : 'ui-internet'}
-              toggleIconOff={hobbies![item.category].visibility === HobbieVisibility.PRIVE ? 'ui-lock' : 'ui-internet'}
-              onChangeText={txt => handleChangeText(txt, item.category)}
-              onToggle={() => handleChangeVisibility(hobbies![item.category].visibility, item.category)}
-              onSubmitEditing={() => onSubmitEditingInput(index)}
-              onFocus={() => onFocusInput(index)}
-              ref={element => (inputRefs[index] = element)}
-            />
-          }
-        />
-      </View>
+      <InputContainer
+        style={styles.inputContainer}
+        label={{ text: I18n.get(`user-profile-editHobbies-${item.category}`) }}
+        input={
+          <TextInput
+            placeholder={I18n.get(`user-profile-editHobbies-empty${item.category}`)}
+            value={hobbies![item.category].values}
+            toggleIconOn={hobbies![item.category].visibility === HobbieVisibility.PRIVE ? 'ui-lock' : 'ui-internet'}
+            toggleIconOff={hobbies![item.category].visibility === HobbieVisibility.PRIVE ? 'ui-lock' : 'ui-internet'}
+            onChangeText={txt => handleChangeText(txt, item.category)}
+            onToggle={() => handleChangeVisibility(hobbies![item.category].visibility, item.category)}
+            onSubmitEditing={() => onSubmitEditingInput(index)}
+            onFocus={() => onFocusInput(index)}
+            ref={element => (inputRefs[index] = element)}
+          />
+        }
+      />
     );
   };
 

@@ -30,7 +30,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
   } = props;
   const [layoutWidth, setLayoutWidth] = useState(0);
 
-  const contentColorStyle = { color: contentColor };
+  const contentColorStyle = { color: contentColor ?? theme.palette.grey.graphite };
 
   const onPressAction = () => {
     if (url) return openUrl(url, undefined, undefined, showConfirmation, requireSession);
@@ -57,7 +57,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
   };
 
   const renderContent = () => {
-    if (loading) return <ActivityIndicator color={contentColor} style={styles.indicator} />;
+    if (loading) return <ActivityIndicator color={contentColor ?? theme.palette.grey.graphite} style={styles.indicator} />;
     return (
       <>
         {renderIcon(iconLeft, 'left')}

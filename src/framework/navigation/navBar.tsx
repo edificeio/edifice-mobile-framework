@@ -10,7 +10,7 @@ import { Platform, StyleSheet, TextStyle } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
-import { TextFontStyle } from '~/framework/components/text';
+import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
 import { isEmpty } from '~/framework/util/object';
 
@@ -31,16 +31,20 @@ const styles = StyleSheet.create({
 });
 
 export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) =>
-  !isEmpty(title)
+  !isEmpty(title) && Platform.OS === 'android'
     ? () => (
-        <HeaderTitle
-          style={[styles.navBarTitleStyle, Platform.OS === 'android' ? styles.navBarTitleStyleAndroid : {}, style ?? {}]}
-          testID={testID}
-          numberOfLines={1}>
+        <BodyBoldText
+          numberOfLines={1}
+          style={[styles.navBarTitleStyle, styles.navBarTitleStyleAndroid, style ?? {}]}
+          testID={testID}>
           {title}
-        </HeaderTitle>
+        </BodyBoldText>
       )
-    : '';
+    : () => (
+        <HeaderTitle style={[styles.navBarTitleStyle, style ?? {}]} testID={testID} numberOfLines={1}>
+          {title ?? ''}
+        </HeaderTitle>
+      );
 
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;
@@ -55,6 +59,7 @@ export const navBarOptions: (props: {
       backgroundColor: theme.palette.primary.regular,
     },
     headerTitle: navBarTitle(title, titleStyle, titleTestID),
+    headerTitleAlign: 'center',
     headerLeft: props => {
       const navState = navigation.getState();
       // Here use canGoBack() is not sufficient. We have to manually check how many routes have been traversed in the current stack.

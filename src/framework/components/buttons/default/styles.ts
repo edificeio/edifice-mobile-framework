@@ -7,12 +7,9 @@ export default StyleSheet.create({
   commonView: {
     alignItems: 'center',
     alignSelf: 'center',
-    borderRadius: UI_SIZES.radius.extraLarge,
-    borderWidth: UI_SIZES.elements.border.default,
     flexDirection: 'row',
     justifyContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.tiny,
   },
   iconLeft: {
     marginRight: UI_SIZES.spacing.minor,
