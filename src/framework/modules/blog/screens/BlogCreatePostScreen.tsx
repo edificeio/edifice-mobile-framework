@@ -1,4 +1,3 @@
-import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, Keyboard, ScrollView, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
@@ -15,9 +14,11 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView } from '~/framework/components/page';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
+import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -28,16 +29,14 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { isEmpty } from '~/framework/util/object';
+import { uppercaseFirstLetter } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-import moduleConfig from '~/framework/modules/blog/module-config';
-import { uppercaseFirstLetter } from '~/framework/util/string';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
@@ -115,24 +114,10 @@ export const computeNavBar = ({
 });
 
 function PreventBack(props: { isEditing: boolean }) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
-    Alert.alert(I18n.get('blog-createpost-confirmation-unsavedpublication'), I18n.get('blog-createpost-unsavedpublication'), [
-      {
-        text: I18n.get('common-quit'),
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-        style: 'destructive',
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'default',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('blog-createpost-confirmation-unsavedpublication'),
+    text: I18n.get('blog-createpost-unsavedpublication'),
+    showAlert: props.isEditing,
   });
   return null;
 }

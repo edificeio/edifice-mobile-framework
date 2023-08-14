@@ -1,25 +1,24 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+import { Keyboard, Platform } from 'react-native';
+import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
+import InputContainer from '~/framework/components/inputs/container';
+import TextInput from '~/framework/components/inputs/text';
+import FlatList from '~/framework/components/list/flat-list';
+import { NavBarAction } from '~/framework/components/navigation';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
+import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
+import { HobbieVisibility } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { UserEditHobbiesScreenProps, objectHobbies } from './types';
-import TextInput from '~/framework/components/inputs/text';
-import InputContainer from '~/framework/components/inputs/container';
-import { HobbieVisibility } from '~/framework/modules/user/model';
-import { Alert, Keyboard, Platform, View } from 'react-native';
-import { NavBarAction } from '~/framework/components/navigation';
-import { userService } from '~/framework/modules/user/service';
-import Toast from '~/framework/components/toast';
-import FlatList from '~/framework/components/list/flat-list';
-import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
-import { UI_SIZES } from '~/framework/components/constants';
 
 export const computeNavBar = ({
   navigation,
@@ -63,14 +62,14 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   };
 
   const handleChangeText = (text, category) => {
-    let newHobbies = { ...hobbies };
+    const newHobbies = { ...hobbies };
     newHobbies[category].values = text;
     setHobbies(newHobbies);
   };
 
   const handleChangeVisibility = (visibility, category) => {
     const newVisibility = visibility === HobbieVisibility.PUBLIC ? HobbieVisibility.PRIVE : HobbieVisibility.PUBLIC;
-    let newHobbies = { ...hobbies };
+    const newHobbies = { ...hobbies };
     newHobbies[category].visibility = newVisibility;
     setHobbies(newHobbies);
   };
@@ -151,23 +150,10 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
     );
   };
 
-  UNSTABLE_usePreventRemove(initialHobbies !== hobbies && !isSending, ({ data }) => {
-    Alert.alert(I18n.get('user-profile-preventremove-title'), I18n.get('user-profile-preventremove-text'), [
-      {
-        text: I18n.get('common-quit'),
-        style: 'destructive',
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'default',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('user-profile-preventremove-title'),
+    text: I18n.get('user-profile-preventremove-text'),
+    showAlert: initialHobbies !== hobbies && !isSending,
   });
 
   React.useEffect(() => {

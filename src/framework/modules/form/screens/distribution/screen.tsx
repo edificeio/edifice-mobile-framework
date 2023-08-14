@@ -9,6 +9,8 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -45,8 +47,6 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import { FormDistributionScreenDispatchProps, FormDistributionScreenPrivateProps } from './types';
-import PrimaryButton from '~/framework/components/buttons/primary';
-import SecondaryButton from '~/framework/components/buttons/secondary';
 
 export const computeNavBar = ({
   navigation,

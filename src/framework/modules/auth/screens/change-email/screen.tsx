@@ -1,32 +1,32 @@
-import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
+import { RouteProp, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useState } from 'react';
-import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, requestEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
 
 import styles from './styles';
-import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
-import PrimaryButton from '~/framework/components/buttons/primary';
+import { AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
 
 const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeEmail>) =>
   route.params.navBarTitle || I18n.get('auth-change-email-verify');
@@ -128,23 +128,10 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     }
   }, [navigation, platform, tryLogout]);
 
-  UNSTABLE_usePreventRemove(!isEmailEmpty && isScreenFocused, ({ data }) => {
-    Alert.alert(I18n.get('auth-change-email-edit-alert-title'), I18n.get('auth-change-email-edit-alert-message'), [
-      {
-        text: I18n.get('auth-change-email-discard'),
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, props.navigation);
-        },
-        style: 'destructive',
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'cancel',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('auth-change-email-edit-alert-title'),
+    text: I18n.get('auth-change-email-edit-alert-message'),
+    showAlert: !isEmailEmpty && isScreenFocused,
   });
 
   const onChangeEmail = useCallback((text: string) => changeEmail(text), [changeEmail]);
@@ -208,7 +195,6 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
     </KeyboardPageView>
   );
 };
-
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {

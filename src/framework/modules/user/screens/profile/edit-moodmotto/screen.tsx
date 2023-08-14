@@ -1,25 +1,23 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+import { Image, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
+import InputContainer from '~/framework/components/inputs/container';
+import MultilineTextInput from '~/framework/components/inputs/multiline';
+import { NavBarAction } from '~/framework/components/navigation';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
+import { CaptionText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
 
 import styles from './styles';
 import type { UserEditMoodMottoScreenProps } from './types';
-import { Alert, Image, Platform, TouchableOpacity, ScrollView } from 'react-native';
-import { NavBarAction } from '~/framework/components/navigation';
-import { userService } from '~/framework/modules/user/service';
-import Toast from '~/framework/components/toast';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
-import InputContainer from '~/framework/components/inputs/container';
-import MultilineTextInput from '~/framework/components/inputs/multiline';
-import { CaptionText } from '~/framework/components/text';
-import appConf from '~/framework/util/appConf';
-import { View } from 'react-native';
-import { UI_SIZES } from '~/framework/components/constants';
 export const computeNavBar = ({
   navigation,
   route,
@@ -49,31 +47,31 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
   const widthMood = React.useMemo(() => (UI_SIZES.screen.width - 2 * UI_SIZES.spacing.medium - 3 * UI_SIZES.spacing.small) / 4, []);
 
   const renderMoodPicture = {
-    ['1d']: {
-      ['angry']: require('ASSETS/images/moods/1d/angry.png'),
-      ['dreamy']: require('ASSETS/images/moods/1d/dreamy.png'),
-      ['happy']: require('ASSETS/images/moods/1d/happy.png'),
-      ['joker']: require('ASSETS/images/moods/1d/joker.png'),
-      ['love']: require('ASSETS/images/moods/1d/love.png'),
-      ['default']: require('ASSETS/images/moods/1d/none.png'),
-      ['proud']: require('ASSETS/images/moods/1d/proud.png'),
-      ['sad']: require('ASSETS/images/moods/1d/sad.png'),
-      ['sick']: require('ASSETS/images/moods/1d/sick.png'),
-      ['tired']: require('ASSETS/images/moods/1d/tired.png'),
-      ['worried']: require('ASSETS/images/moods/1d/worried.png'),
+    '1d': {
+      angry: require('ASSETS/images/moods/1d/angry.png'),
+      dreamy: require('ASSETS/images/moods/1d/dreamy.png'),
+      happy: require('ASSETS/images/moods/1d/happy.png'),
+      joker: require('ASSETS/images/moods/1d/joker.png'),
+      love: require('ASSETS/images/moods/1d/love.png'),
+      default: require('ASSETS/images/moods/1d/none.png'),
+      proud: require('ASSETS/images/moods/1d/proud.png'),
+      sad: require('ASSETS/images/moods/1d/sad.png'),
+      sick: require('ASSETS/images/moods/1d/sick.png'),
+      tired: require('ASSETS/images/moods/1d/tired.png'),
+      worried: require('ASSETS/images/moods/1d/worried.png'),
     },
-    ['2d']: {
-      ['angry']: require('ASSETS/images/moods/2d/angry.png'),
-      ['dreamy']: require('ASSETS/images/moods/2d/dreamy.png'),
-      ['happy']: require('ASSETS/images/moods/2d/happy.png'),
-      ['joker']: require('ASSETS/images/moods/2d/joker.png'),
-      ['love']: require('ASSETS/images/moods/2d/love.png'),
-      ['default']: require('ASSETS/images/moods/2d/none.png'),
-      ['proud']: require('ASSETS/images/moods/2d/proud.png'),
-      ['sad']: require('ASSETS/images/moods/2d/sad.png'),
-      ['sick']: require('ASSETS/images/moods/2d/sick.png'),
-      ['tired']: require('ASSETS/images/moods/2d/tired.png'),
-      ['worried']: require('ASSETS/images/moods/2d/worried.png'),
+    '2d': {
+      angry: require('ASSETS/images/moods/2d/angry.png'),
+      dreamy: require('ASSETS/images/moods/2d/dreamy.png'),
+      happy: require('ASSETS/images/moods/2d/happy.png'),
+      joker: require('ASSETS/images/moods/2d/joker.png'),
+      love: require('ASSETS/images/moods/2d/love.png'),
+      default: require('ASSETS/images/moods/2d/none.png'),
+      proud: require('ASSETS/images/moods/2d/proud.png'),
+      sad: require('ASSETS/images/moods/2d/sad.png'),
+      sick: require('ASSETS/images/moods/2d/sick.png'),
+      tired: require('ASSETS/images/moods/2d/tired.png'),
+      worried: require('ASSETS/images/moods/2d/worried.png'),
     },
   };
 
@@ -105,23 +103,10 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
     );
   };
 
-  UNSTABLE_usePreventRemove((route.params.mood !== mood || route.params.motto !== motto) && !isSending, ({ data }) => {
-    Alert.alert(I18n.get('user-profile-preventremove-title'), I18n.get('user-profile-preventremove-text'), [
-      {
-        text: I18n.get('common-quit'),
-        style: 'destructive',
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'default',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('user-profile-preventremove-title'),
+    text: I18n.get('user-profile-preventremove-text'),
+    showAlert: (route.params.mood !== mood || route.params.motto !== motto) && !isSending,
   });
 
   React.useEffect(() => {

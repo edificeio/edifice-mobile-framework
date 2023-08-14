@@ -1,22 +1,21 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+import { Platform } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import InputContainer from '~/framework/components/inputs/container';
+import MultilineTextInput from '~/framework/components/inputs/multiline';
+import { NavBarAction } from '~/framework/components/navigation';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
+import ScrollView from '~/framework/components/scrollView';
+import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { UserEditDescriptionScreenProps } from './types';
-import { Alert, Platform } from 'react-native';
-import { NavBarAction } from '~/framework/components/navigation';
-import { userService } from '~/framework/modules/user/service';
-import Toast from '~/framework/components/toast';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
-import InputContainer from '~/framework/components/inputs/container';
-import MultilineTextInput from '~/framework/components/inputs/multiline';
-import ScrollView from '~/framework/components/scrollView';
 
 export const computeNavBar = ({
   navigation,
@@ -55,23 +54,10 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
     }
   };
 
-  UNSTABLE_usePreventRemove(route.params.description !== description && !isSending, ({ data }) => {
-    Alert.alert(I18n.get('user-profile-preventremove-title'), I18n.get('user-profile-preventremove-text'), [
-      {
-        text: I18n.get('common-quit'),
-        style: 'destructive',
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'default',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('user-profile-preventremove-title'),
+    text: I18n.get('user-profile-preventremove-text'),
+    showAlert: route.params.description !== description && !isSending,
   });
 
   React.useEffect(() => {

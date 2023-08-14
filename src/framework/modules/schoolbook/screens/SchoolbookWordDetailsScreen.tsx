@@ -1,7 +1,6 @@
 /**
  * Schoolbook word details
  */
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert, Platform, RefreshControl, ScrollView } from 'react-native';
@@ -17,6 +16,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
@@ -26,7 +26,6 @@ import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-ha
 import { IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { hasDeleteRight } from '~/framework/modules/schoolbook/rights';
 import { schoolbookService, schoolbookUriCaptureFunction } from '~/framework/modules/schoolbook/service';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -231,27 +230,14 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
     userId,
   ]);
 
-  UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
-    Alert.alert(
-      I18n.get(`schoolbook-worddetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      [
-        {
-          text: I18n.get('common-quit'),
-          style: 'destructive',
-          onPress: () => {
-            handleRemoveConfirmNavigationEvent(data.action, props.navigation);
-          },
-        },
-        {
-          text: I18n.get('common-continue'),
-          style: 'default',
-          onPress: () => {
-            clearConfirmNavigationEvent();
-          },
-        },
-      ],
-    );
+  usePreventBack({
+    title: I18n.get(`schoolbook-worddetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+    text: I18n.get(
+      `schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-${
+        infoComment.isPublication ? 'publication' : 'modification'
+      }`,
+    ),
+    showAlert: infoComment.changed,
   });
 
   React.useEffect(() => {
