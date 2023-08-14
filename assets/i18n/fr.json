@@ -80,6 +80,7 @@
   "auth-error-parseerror": "Un problème est survenu. Veuillez réessayer. (Code 3)",
   "auth-error-platformunavailable": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
   "auth-error-predeleted": "Votre compte est en pré-suppression. Vous pouvez seulement vous connecter via un navigateur web à l'adresse {{currentplatform}} pour récupérer vos contenus.",
+  "auth-error-requirements": "Le serveur de votre réseau éducatif ne répond pas. Veuillez réessayer ultérieurement. Si le problème persiste, veuillez contacter le support. (Code 7)",
   "auth-error-runtimeerror": "Un problème est survenu. Veuillez réessayer.",
   "auth-error-tooload": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
   "auth-error-tooload-monlyceenet": "Votre réseau éducatif est momentanément indisponible, notre équipe fait le maximum pour résoudre ces perturbations le plus rapidement possible.",
