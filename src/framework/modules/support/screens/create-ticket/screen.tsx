@@ -10,7 +10,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/buttons/action';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';

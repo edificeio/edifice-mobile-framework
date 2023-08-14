@@ -9,7 +9,7 @@ import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker, { DropDownPickerProps } from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
-import { ActionButton, ActionButtonProps } from '~/framework/components/buttons/action';
+import PrimaryButton, { PrimaryButtonProps } from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
@@ -28,7 +28,7 @@ export interface DropdownSelectorTemplateProps {
   message?: string;
   dropDownPickerProps: Omit<DropDownPickerProps<any>, OptionalDropDownPickerProps> &
     Partial<Pick<DropDownPickerProps<any>, OptionalDropDownPickerProps>>;
-  button?: Omit<ActionButtonProps, 'action' | 'url'> & {
+  button?: Omit<PrimaryButtonProps, 'action' | 'url'> & {
     action?: (value: Parameters<Required<DropDownPickerProps<any>>['onChangeValue']>[0]) => void;
     url?: string | ((value: Parameters<Required<DropDownPickerProps<any>>['onChangeValue']>[0]) => string);
   };
@@ -111,7 +111,7 @@ DropdownSelectorTemplate.renderButton = (
 ) => {
   const { action, url, disabled, ...otherButtonProps } = buttonProps;
   return (
-    <ActionButton
+    <PrimaryButton
       action={typeof action === 'function' ? () => action(selected) : action}
       url={typeof url === 'function' ? url(selected) : url}
       disabled={Array.isArray(selected) ? selected.length === 0 : !selected}

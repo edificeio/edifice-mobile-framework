@@ -6,7 +6,6 @@ import DeviceInfo from 'react-native-device-info';
 import Rate, { AndroidMarket } from 'react-native-rate';
 
 import { I18n } from '~/app/i18n';
-import ActionButton from '~/framework/components/buttons/action';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
@@ -15,6 +14,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import styles from './styles';
 import type { UserWhoAreWeScreenPrivateProps } from './types';
 import SecondaryButton from '~/framework/components/buttons/secondary';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -41,10 +41,9 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
         <HeadingXSText>{I18n.get('user-whoarewe-quote-text')}</HeadingXSText>
         <HeadingXSText style={styles.quoteAuthor}>{I18n.get('user-whoarewe-quote-author')}</HeadingXSText>
         <BodyText>{I18n.get('user-whoarewe-description', { appName: DeviceInfo.getApplicationName() })}</BodyText>
-        <ActionButton
+        <PrimaryButton
           style={styles.buttonReview}
           text={I18n.get('user-whoarewe-reviewapp')}
-          emoji="⭐️"
           action={() => {
             const options = {
               AppleAppID: APPLE_APP_ID,

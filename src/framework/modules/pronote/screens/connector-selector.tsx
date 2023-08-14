@@ -60,7 +60,7 @@ class ConnectorSelectorScreen extends React.PureComponent<IConnectorSelectorScre
             action: v => {
               if (v && this.props.session) redirect(this.props.session, v as string);
             },
-            iconName: 'pictos-external-link',
+            iconRight: 'pictos-external-link',
           }}
         />
       </PageView>
