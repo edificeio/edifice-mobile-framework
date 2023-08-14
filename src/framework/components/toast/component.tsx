@@ -5,7 +5,7 @@ import ToastMessage, { ToastConfig } from 'react-native-toast-message';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
 
 import theme, { IShades } from '~/app/theme';
-import CloseButton from '~/framework/components//buttons/close';
+import IconButton from '~/framework/components/buttons/icon';
 import AlertCard, { AlertCardProps } from '~/framework/components/alert';
 import { toastConfigColor } from '~/framework/components/alert/model';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -108,7 +108,7 @@ function ToastCard(params: ToastParams) {
       params.props.duration ? (
         <Animated.View onLayout={measureProgressLayout} style={progressStyle} />
       ) : (
-        <CloseButton action={closeCallback!} />
+        <IconButton name="ui-close" action={closeCallback!} />
       ),
     [measureProgressLayout, params.props.duration, progressStyle],
   );

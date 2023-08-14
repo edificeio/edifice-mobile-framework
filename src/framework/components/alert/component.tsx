@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Platform, View } from 'react-native';
 
 import theme, { IShades } from '~/app/theme';
-import CloseButton from '~/framework/components/buttons/close';
+import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
@@ -71,7 +71,7 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
 }
 
 const defaultRenderCloseButton: Required<AlertCardProps>['renderCloseButton'] = (shades, onClose) =>
-  onClose ? <CloseButton action={onClose} /> : null;
+  onClose ? <IconButton name="ui-close" color={'red'} action={onClose} /> : null;
 
 export function AlertCard(props: AlertCardProps) {
   const {

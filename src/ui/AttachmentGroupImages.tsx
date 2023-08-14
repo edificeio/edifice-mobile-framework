@@ -7,7 +7,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { Image, formatSource } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
 
-import CloseButton from '~/framework/components/buttons/close';
+import IconButton from '~/framework/components/buttons/icon';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { ImagePicked, cameraAction, galleryAction } from '~/framework/components/menus/actions';
 import { Picture } from '~/framework/components/picture';
@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
     aspectRatio: UI_SIZES.aspectRatios.square,
     width: itemWidth,
   },
-  closeButton: {
+  iconButton: {
+    borderRadius: UI_SIZES.radius.huge,
     backgroundColor: theme.palette.primary.regular,
     width: UI_SIZES.dimensions.height.large,
     height: UI_SIZES.dimensions.height.large,
@@ -121,10 +122,11 @@ export class AttachmentGroupImages extends React.PureComponent<{
                   onError={() => onRemove(index)}
                 />
               </TouchableOpacity>
-              <CloseButton
-                style={styles.closeButton}
+              <IconButton
+                name="ui-close"
+                style={styles.iconButton}
                 size={UI_SIZES.dimensions.height.smallPlus}
-                pictureFill={theme.palette.grey.white}
+                color={theme.palette.grey.white}
                 action={() => onRemove(index)}
               />
             </View>
