@@ -1,4 +1,4 @@
-import { ColorValue, TouchableOpacityProps, ViewStyle } from 'react-native';
+import { ColorValue, TouchableOpacityProps } from 'react-native';
 
 export interface IconButtonProps extends TouchableOpacityProps {
   name: string;

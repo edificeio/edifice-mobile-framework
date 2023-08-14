@@ -1,8 +1,10 @@
 import TextSize from 'react-native-text-size';
+
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+
 import { BUTTON_ICON_SIZE, DefaultButton } from './component';
 import { DefaultButtonProps } from './types';
-import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
 const getButtonWidth = async ({ text, icons, type }: { text: string; icons?: number; type: string }): Promise<number> => {
   const textMeasure = await TextSize.measure({

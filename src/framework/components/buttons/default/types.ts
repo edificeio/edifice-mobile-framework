@@ -1,5 +1,4 @@
-import { TouchableOpacityProps } from 'react-native';
-import { ColorValue, LayoutChangeEvent } from 'react-native';
+import { ColorValue, TouchableOpacityProps } from 'react-native';
 
 export interface DefaultButtonProps extends TouchableOpacityProps {
   text?: string;
@@ -10,5 +9,6 @@ export interface DefaultButtonProps extends TouchableOpacityProps {
   showConfirmation?: boolean;
   requireSession?: boolean;
   loading?: boolean;
+  round?: boolean;
   action?: () => void;
 }

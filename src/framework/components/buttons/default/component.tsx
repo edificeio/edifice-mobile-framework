@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -26,9 +26,11 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     testID,
     disabled,
     style,
+    round,
     action,
   } = props;
   const [layoutWidth, setLayoutWidth] = useState(0);
+  const [layoutHeight, setLayoutHeight] = useState(0);
 
   const contentColorStyle = { color: contentColor ?? theme.palette.grey.graphite };
 
@@ -40,6 +42,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
   const memorizeWidthButton = e => {
     // memoize button width for setting correct width when loading state
     if (!layoutWidth) setLayoutWidth(e?.nativeEvent?.layout?.width);
+    if (!layoutHeight) setLayoutHeight(e?.nativeEvent?.layout?.height);
   };
 
   const renderIcon = (iconName, position) => {
@@ -51,7 +54,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
         width={BUTTON_ICON_SIZE}
         height={BUTTON_ICON_SIZE}
         fill={contentColor ?? theme.palette.grey.graphite}
-        style={[iconStyle]}
+        style={!round ? iconStyle : null}
       />
     );
   };
@@ -73,7 +76,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     <TouchableOpacity
       {...props}
       onLayout={memorizeWidthButton.bind(this)}
-      style={[styles.commonView, { width: loading ? layoutWidth : undefined }, style]}
+      style={[styles.commonView, { ...(loading ? { width: layoutWidth, height: layoutHeight } : undefined) }, style]}
       onPress={onPressAction}
       {...(loading || disabled ? { disabled: true } : {})}
       {...(testID ? { testID } : {})}>

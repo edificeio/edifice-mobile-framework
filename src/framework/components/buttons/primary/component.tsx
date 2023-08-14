@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { PrimaryButtonProps } from './types';
-import DefaultButton from '~/framework/components/buttons/default';
-import styles from './styles';
+import { useEffect, useState } from 'react';
+
 import theme from '~/app/theme';
+import DefaultButton from '~/framework/components/buttons/default';
+
+import styles from './styles';
+import { PrimaryButtonProps } from './types';
 
 const PrimaryButton = (props: PrimaryButtonProps) => {
   const initialBackgroundColor = theme.palette.primary.regular;
@@ -20,7 +22,7 @@ const PrimaryButton = (props: PrimaryButtonProps) => {
       activeOpacity={1}
       onPressIn={() => setBackgroundColor(theme.palette.primary.dark)}
       onPressOut={() => setBackgroundColor(initialBackgroundColor)}
-      style={[styles.primary, { backgroundColor: backgroundColor }, props.style]}
+      style={[styles.primary, { backgroundColor }, { ...(props.round ? styles.round : {}) }, props.style]}
       contentColor={theme.palette.grey.white}
     />
   );

@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { useState, useEffect } from 'react';
-import { TertiaryButtonProps } from './types';
-import DefaultButton from '~/framework/components/buttons/default';
+import { useEffect, useState } from 'react';
+
 import theme from '~/app/theme';
+import DefaultButton from '~/framework/components/buttons/default';
+
+import { TertiaryButtonProps } from './types';
 
 const TertiaryButton = (props: TertiaryButtonProps) => {
   const initialContentColor = theme.palette.primary.regular;

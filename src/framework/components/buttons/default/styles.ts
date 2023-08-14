@@ -1,7 +1,8 @@
 import { StyleSheet } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextSizeStyle } from '~/framework/components/text';
+
+import { BUTTON_ICON_SIZE } from './component';
 
 export default StyleSheet.create({
   commonView: {
@@ -18,6 +19,6 @@ export default StyleSheet.create({
     marginLeft: UI_SIZES.spacing.minor,
   },
   indicator: {
-    height: TextSizeStyle.Normal.lineHeight,
+    height: BUTTON_ICON_SIZE,
   },
 });

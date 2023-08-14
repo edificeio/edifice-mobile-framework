@@ -35,7 +35,6 @@ import {
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
 import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
-import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
 import {
@@ -80,7 +79,9 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
       I18n.get(`blog-postdetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(
+        `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+      ),
       [
         {
           text: I18n.get('common-quit'),

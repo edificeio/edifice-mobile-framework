@@ -14,13 +14,13 @@ import {
 import DayCell from '~/framework/modules/homework/components/day-cell';
 import { DayPickerProps } from './types';
 
-import { SmallText } from '../text';
+import { SmallText } from '~/framework/components/text';
 import styles from './styles';
 
-import PictureButton from '../buttons/picture/component';
 import theme from '~/app/theme';
 import { Moment } from 'moment';
-import { genericHitSlop } from '../constants';
+import { genericHitSlop } from '~/framework/components/constants';
+import IconButton from '~/framework/components/buttons/icon';
 
 const DayPicker = ({ onDateChange }: DayPickerProps) => {
   const isTodayWeekend = isDateWeekend(today());
@@ -50,17 +50,17 @@ const DayPicker = ({ onDateChange }: DayPickerProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.weekContainer}>
-        <PictureButton
-          iconName="ui-rafterLeft"
-          pictureFill={theme.palette.grey.black}
+        <IconButton
+          name="ui-rafterLeft"
+          color={theme.palette.grey.black}
           disabled={isPastDisabled}
           action={() => setStartDate(subtractTime(startDate, 1, 'week'))}
           hitSlop={genericHitSlop}
         />
         <SmallText style={styles.week}>{displayWeekRange(startDate)}</SmallText>
-        <PictureButton
-          iconName="ui-rafterRight"
-          pictureFill={theme.palette.grey.black}
+        <IconButton
+          name="ui-rafterRight"
+          color={theme.palette.grey.black}
           disabled={isFutureDisabled}
           action={() => setStartDate(addTime(startDate, 1, 'week'))}
           hitSlop={genericHitSlop}
