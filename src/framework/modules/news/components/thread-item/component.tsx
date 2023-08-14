@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
-import { CaptionText } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText } from '~/framework/components/text';
 import ThumbnailThread from '~/framework/modules/news/components/thumbnail-thread';
 
 import styles from './styles';
@@ -13,9 +13,9 @@ export default function ThreadItem(props: ThreadItemProps) {
   const renderTextItem = () => {
     if (status === ThreadItemStatus.SELECTED) {
       return (
-        <CaptionText numberOfLines={2} style={[styles.textItem, styles.textItemSelected]}>
+        <CaptionBoldText numberOfLines={2} style={styles.textItem}>
           {thread.title}
-        </CaptionText>
+        </CaptionBoldText>
       );
     }
     if (status === ThreadItemStatus.DISABLED) {

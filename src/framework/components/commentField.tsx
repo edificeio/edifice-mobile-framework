@@ -12,6 +12,7 @@ import { displayPastDate } from '~/framework/util/date';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
+import { isEmpty } from '~/framework/util/object';
 
 // TYPES ==========================================================================================
 
@@ -90,7 +91,8 @@ const CommentField = (props: CommentFieldProps, ref) => {
 
   const publishComment = () => {
     if (inputRef.current) inputRef.current.blur();
-    if (props.onPublishComment) props.onPublishComment(comment, props.commentId?.toString());
+    setComment(comment.trim());
+    if (props.onPublishComment) props.onPublishComment(comment.trim(), props.commentId?.toString());
     if (!props.comment) setComment('');
     if (props.onChangeText)
       props.onChangeText({
@@ -117,7 +119,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
       props.onChangeText({
         type: props.isResponse ? 'response' : 'comment',
         isPublication: !props.commentId,
-        changed: (!props.commentId && value !== '') || (props.commentId !== undefined && value !== props.comment),
+        changed: (!props.commentId && value.trim() !== '') || (props.commentId !== undefined && value.trim() !== props.comment),
         value,
       });
     setComment(value);
@@ -126,7 +128,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
     if (props.comment) setComment(props.comment);
     setIsEditing(false);
   };
-  const isCommentUnchanged = () => comment === props.comment;
+  const isCommentUnchanged = () => comment.trim() === props.comment;
   const isCommentFieldFocused = () => inputRef.current?.isFocused();
   React.useImperativeHandle(ref, () => ({
     clearCommentField,
@@ -232,7 +234,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
             <RoundButton
               iconName={isEditing ? 'pictos-save' : 'pictos-send'}
               action={() => publishComment()}
-              disabled={!comment || isCommentUnchanged()}
+              disabled={isEmpty(comment.trim()) || isCommentUnchanged()}
               loading={props.isPublishingComment}
             />
           </View>
@@ -253,7 +255,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
             </TouchableOpacity>
           ) : null}
         </View>
-      ) : props.isManager ? (
+      ) : props.isManager || isUserComment ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>

@@ -114,7 +114,7 @@ export const HistoryCategoryCard = (props: IHistoryCategoryCardProps) => {
           }
           ListFooterComponent={props.events.length > 2 ? renderShowMore() : null}
           scrollEnabled={false}
-          style={styles.eventListContainer}
+          contentContainerStyle={styles.eventListContainer}
         />
       </View>
     </Card>

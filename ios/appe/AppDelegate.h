@@ -1,5 +1,9 @@
 #import <RCTAppDelegate.h>
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : RCTAppDelegate
+// begin --- https://github.com/react-native-push-notification/ios
+#import <UserNotifications/UNUserNotificationCenter.h>
+// end --- https://github.com/react-native-push-notification/ios
+
+@interface AppDelegate : RCTAppDelegate <UNUserNotificationCenterDelegate>
 @end

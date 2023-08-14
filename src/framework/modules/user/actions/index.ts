@@ -47,9 +47,10 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
     dispatch(authActions.profileUpdateRequest(newValues));
     try {
       const userId = session.user.id;
+      const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.photo } : newValues;
       const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         method: 'PUT',
-        body: JSON.stringify(newValues),
+        body: JSON.stringify(updatedValues),
       });
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);
