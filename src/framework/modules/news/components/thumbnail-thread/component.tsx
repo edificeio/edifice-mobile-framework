@@ -9,15 +9,23 @@ import { Image } from '~/framework/util/media';
 
 import styles from './styles';
 import { ThumbnailThreadProps } from './types';
+import { getScaleHeight } from '~/framework/components/constants';
+
+const Selected = () => <View style={styles.thumbnailItemSelected} />;
 
 export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...props }: ThumbnailThreadProps) {
   const { icon, square } = props;
 
   const globalStyle = [styles.thumbnailItem, { ...(square ? styles.thumbnailItemSquare : styles.thumbnailItemRectangle) }];
-  const heightSVGNoIcon = square ? 12.5 : 40;
+  const heightSVGNoIcon = square ? getScaleHeight(12.5) : getScaleHeight(40);
 
   if (icon && status === ThreadItemStatus.SELECTED) {
-    return <Image source={icon} style={[globalStyle, styles.thumbnailItemSelected]} />;
+    return (
+      <View style={styles.thumbnailContainerSelected}>
+        <Selected />
+        <Image source={icon} style={globalStyle} />
+      </View>
+    );
   }
   if (icon && status === ThreadItemStatus.DISABLED) {
     return (
@@ -31,7 +39,8 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
   }
   if (!icon && status === ThreadItemStatus.SELECTED) {
     return (
-      <View style={[globalStyle, styles.thumbnailItemSelected]}>
+      <View style={[globalStyle, styles.thumbnailContainerSelected]}>
+        <Selected />
         <NamedSVG name="newsFeed" fill={theme.palette.primary.regular} height={heightSVGNoIcon} />
       </View>
     );

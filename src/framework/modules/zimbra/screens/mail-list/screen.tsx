@@ -172,7 +172,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       const index = mails.findIndex(m => m.id == id);
 
       if (!session) throw new Error();
-      const mail = await zimbraService.mail.get(session, id);
+      const mail = await zimbraService.mail.get(session, id, false);
       if (index === -1 || !mail) return;
       if (mail.parentId !== mails[index].parentId) {
         setMails(mails.filter(m => m.id !== id));

@@ -50,6 +50,7 @@ import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
+import moment from 'moment';
 
 export const computeNavBar = ({
   navigation,
@@ -247,7 +248,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   const renderFooter = useCallback(() => {
     return hasPermissionComment && isEmpty(indexEditingComment) ? (
       <BottomEditorSheet
-        onPublishComment={() => doPublishComment(news, infoComment.value)}
+        onPublishComment={commentValue => doPublishComment(news, commentValue)}
         isPublishingComment={false}
         onChangeText={data => setInfoComment(() => ({ ...data }))}
       />
@@ -273,7 +274,11 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           customHeaderStyle={styles.detailsHeader}
           footer={<CardFooter icon="ui-messageInfo" text={commentsString(comments?.length)} />}
           style={styles.ressourceView}>
-          <CaptionItalicText style={styles.detailsDate}>{displayDate(news.created)}</CaptionItalicText>
+          <CaptionItalicText style={styles.detailsDate}>
+            {moment(news.modified).isAfter(news.created)
+              ? `${displayDate(news.modified) + I18n.get('news-details-modified')}`
+              : displayDate(news.modified)}
+          </CaptionItalicText>
           <HeadingSText>{news.title}</HeadingSText>
           <TextAvatar
             text={news.owner.displayName}
@@ -295,8 +300,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
           ref={element => (commentFieldRefs[comment.id] = element)}
           index={comment.id}
           isPublishingComment={false}
-          onPublishComment={() => doEditComment(news, infoComment.value, comment.id)}
-          onDeleteComment={() => doDeleteComment(comment.id)}
+          onPublishComment={(commentValue, commentId) => doEditComment(news, commentValue, commentId)}
+          onDeleteComment={commentId => doDeleteComment(commentId)}
           onChangeText={data => setInfoComment(() => ({ ...data }))}
           editCommentCallback={() => {
             const otherComments = comments?.filter(commentItem => commentItem.id !== comment.id);
@@ -401,7 +406,9 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
       I18n.get(`news-details-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(
+        `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+      ),
       [
         {
           text: I18n.get('common-quit'),

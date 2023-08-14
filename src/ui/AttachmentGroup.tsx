@@ -63,7 +63,7 @@ export class AttachmentGroup extends React.PureComponent<
             }}>
             <View style={{ flexDirection: 'row' }}>
               <SmallBoldText style={{ marginRight: UI_SIZES.spacing.tiny }}>
-                {I18n.get(`attachment${attachments.length > 1 ? 's' : ''}`)}
+                {I18n.get(`attachment-attachment${attachments.length > 1 ? 's' : ''}`)}
               </SmallBoldText>
               <Icon
                 color={theme.ui.text.regular}

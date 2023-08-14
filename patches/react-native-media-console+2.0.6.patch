@@ -1,5 +1,5 @@
 diff --git a/node_modules/react-native-media-console/lib/typescript/types.d.ts b/node_modules/react-native-media-console/lib/typescript/types.d.ts
-index 4e95969..0e08e8a 100644
+index 4e95969..d5f41a3 100644
 --- a/node_modules/react-native-media-console/lib/typescript/types.d.ts
 +++ b/node_modules/react-native-media-console/lib/typescript/types.d.ts
 @@ -58,6 +58,12 @@ export interface VideoPlayerProps extends VideoProperties {
@@ -15,8 +15,20 @@ index 4e95969..0e08e8a 100644
      /**
       * Title of the video
       */
+@@ -130,6 +136,11 @@ export interface VideoPlayerProps extends VideoProperties {
+      *
+      */
+     containerStyle?: StyleProp<ViewStyle>;
++    /**
++     * Top controls styles
++     *
++     */
++    topControlsStyle?: StyleProp<ViewStyle>;
+     /**
+      * Fill/handle colour of the seekbar
+      *
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 5ea0ab2..47ea7f0 100644
+index 5ea0ab2..29f6c5f 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
@@ -27,7 +39,15 @@ index 5ea0ab2..47ea7f0 100644
      paused = false,
      muted = false,
      volume = 1,
-@@ -82,6 +83,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -56,6 +57,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     tapAnywhereToPause = false,
+     videoStyle = {},
+     containerStyle = {},
++    topControlsStyle = {},
+     seekColor = '',
+     source,
+     disableBack = false,
+@@ -82,6 +84,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    const [_isFullscreen, setIsFullscreen] = useState<boolean>(
      isFullscreen || resizeMode === 'cover' || false,
    );
@@ -35,7 +55,7 @@ index 5ea0ab2..47ea7f0 100644
    const [_showTimeRemaining, setShowTimeRemaining] =
      useState<boolean>(showTimeRemaining);
    const [volumeTrackWidth, setVolumeTrackWidth] = useState<number>(0);
-@@ -114,10 +116,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -114,10 +117,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    };
  
    const _onSeek = (obj: OnSeekData) => {
@@ -51,7 +71,7 @@ index 5ea0ab2..47ea7f0 100644
  
      if (typeof onSeek === 'function') {
        onSeek(obj);
-@@ -128,6 +132,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -128,6 +133,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
      if (currentTime < duration) {
        setCurrentTime(duration);
        setPaused(true);
@@ -59,7 +79,7 @@ index 5ea0ab2..47ea7f0 100644
  
        if (showOnEnd) {
          setShowControls(true);
-@@ -189,7 +194,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -189,7 +195,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
            togglePlayPause();
            resetControlTimeout();
          } else {
@@ -68,7 +88,15 @@ index 5ea0ab2..47ea7f0 100644
          }
          tapActionTimeout.current = null;
        }, doubleTapTime);
-@@ -426,11 +431,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -417,6 +423,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+               onBack={events.onBack}
+               resetControlTimeout={resetControlTimeout}
+               showControls={showControls}
++              topControlsStyle={topControlsStyle}
+             />
+             <PlayPause
+               animations={animations}
+@@ -426,11 +433,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
                togglePlayPause={togglePlayPause}
                resetControlTimeout={resetControlTimeout}
                showControls={showControls}
@@ -111,8 +139,52 @@ index ef51f8d..92457ce 100644
      </Control>
    );
  };
+diff --git a/node_modules/react-native-media-console/src/components/TopControls.tsx b/node_modules/react-native-media-console/src/components/TopControls.tsx
+index 3df2574..d0baa0c 100644
+--- a/node_modules/react-native-media-console/src/components/TopControls.tsx
++++ b/node_modules/react-native-media-console/src/components/TopControls.tsx
+@@ -6,6 +6,8 @@ import {
+   StyleSheet,
+   View,
+   GestureResponderHandlers,
++  ViewStyle,
++  StyleProp,
+ } from 'react-native';
+ import {Volume} from './Volume';
+ import {Back} from './Back';
+@@ -22,12 +24,14 @@ interface TopControlProps {
+   volumeFillWidth: number;
+   volumeTrackWidth: number;
+   volumePosition: number;
++  topControlsStyle?: StyleProp<ViewStyle>;
+   onBack: () => void;
+   resetControlTimeout: () => void;
+ }
+ 
+ export const TopControls = memo(
+   ({
++    topControlsStyle,
+     showControls,
+     panHandlers,
+     animations,
+@@ -67,13 +71,13 @@ export const TopControls = memo(
+           {
+             opacity: animations.controlsOpacity,
+             marginTop: animations.topControl.marginTop,
+-          },
++          }
+         ]}>
+         <ImageBackground
+           source={require('../assets/img/top-vignette.png')}
+           style={[styles.column]}
+           imageStyle={[styles.vignette]}>
+-          <SafeAreaView style={_styles.topControlGroup}>
++          <SafeAreaView style={[_styles.topControlGroup, topControlsStyle]}>
+             {backControl}
+             <View style={_styles.pullRight}>{volumeControl}</View>
+           </SafeAreaView>
 diff --git a/node_modules/react-native-media-console/src/types.ts b/node_modules/react-native-media-console/src/types.ts
-index ab51aed..36ca814 100644
+index ab51aed..d0857d8 100644
 --- a/node_modules/react-native-media-console/src/types.ts
 +++ b/node_modules/react-native-media-console/src/types.ts
 @@ -62,6 +62,13 @@ export interface VideoPlayerProps extends VideoProperties {
@@ -129,3 +201,16 @@ index ab51aed..36ca814 100644
    /**
     * Title of the video
     */
+@@ -149,6 +156,12 @@ export interface VideoPlayerProps extends VideoProperties {
+    */
+   containerStyle?: StyleProp<ViewStyle>;
+ 
++  /**
++   * Top controls styles
++   *
++   */
++  topControlsStyle?: StyleProp<ViewStyle>;
++
+   /**
+    * Fill/handle colour of the seekbar
+    *

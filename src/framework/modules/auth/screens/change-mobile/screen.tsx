@@ -160,14 +160,6 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         if (!isValidMobileNumberForRegion || !mobileNumberFormatted) return MobileState.MOBILE_FORMAT_INVALID;
         if (isCheckMobile) {
           setIsSendingCode(true);
-          if (isModifyingMobile) {
-            // Exit if mobile has already been verified
-            const mobileValidationInfos = await getMobileValidationInfos();
-            if (mobileNumberFormatted === mobileValidationInfos?.mobileState?.valid) {
-              setIsSendingCode(false);
-              return MobileState.MOBILE_ALREADY_VERIFIED;
-            }
-          }
           await requestMobileVerificationCode(platform, mobileNumberFormatted);
           navigation.navigate(authRouteNames.mfa, {
             platform,
@@ -319,11 +311,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             }}
           />
           <CaptionItalicText style={styles.errorText}>
-            {isMobileStateClean
-              ? I18n.get('common-space')
-              : mobileState === MobileState.MOBILE_ALREADY_VERIFIED
-              ? I18n.get('auth-change-mobile-error-same')
-              : I18n.get('auth-change-mobile-error-invalid')}
+            {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
           </CaptionItalicText>
           <ActionButton
             style={styles.sendButton}

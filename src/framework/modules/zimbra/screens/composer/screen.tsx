@@ -402,7 +402,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
           {isFetching || isPrefilling ? (
             <LoadingIndicator />
           ) : (
-            <ScrollView contentContainerStyle={styles.contentContainer} bounces={false} keyboardShouldPersistTaps="handled">
+            <ScrollView contentContainerStyle={styles.contentContainer} bounces={false} keyboardShouldPersistTaps="always">
               <ComposerHeaders
                 hasZimbraSendExternalRight={hasZimbraSendExternalRight}
                 headers={draft}

@@ -17,6 +17,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 export function computeNavBar({
   navigation,
@@ -78,6 +79,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
   const isLoadingRef = React.useRef<boolean>(true);
+  const headerHeight = useHeaderHeight();
 
   const handleBack = React.useCallback(() => {
     navigationHidden.current = false;
@@ -191,6 +193,7 @@ function MediaPlayer(props: MediaPlayerProps) {
           showOnEnd
           source={realSource}
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+          topControlsStyle={Platform.OS === 'android' ? { paddingTop: headerHeight } : {}}
         />
       );
     }

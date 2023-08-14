@@ -28,7 +28,7 @@ module.exports = {
     ],
     'no-undef': 2,
     'react/jsx-key': 2,
-    'react/jsx-max-depth' : [2, { "max": 4 }],
+    'react/jsx-max-depth': [2, { max: 4 }],
     'react/jsx-no-bind': [
       0,
       {
@@ -54,38 +54,42 @@ module.exports = {
     'react-native/split-platform-components': 2,
     'react-native/no-inline-styles': 2,
     'react-native/no-color-literals': 2,
-    'react-native/no-raw-text': [2,
-      {
-        skip: [
-          "HeadingXLText",
-          "HeadingLText",
-          "HeadingSText",
-          "HeadingXSText",
-          "BodyText",
-          "BodyBoldText",
-          "BodyItalicText",
-          "BodyBoldItalicText",
-          "SmallText",
-          "SmallBoldText",
-          "SmallItalicText",
-          "SmallBoldItalicText",
-          "CaptionText",
-          "CaptionBoldText",
-          "CaptionItalicText",
-          "CaptionBoldItalicText",
-          "SmallInverseText",
-          "SmallActionText",
-          "NestedText",
-          "NestedBoldText",
-          "NestedItalicText",
-          "NestedActionText",
-        ]
-      }
-    ],
+    // Below lines are commented due to a bug on eslint-plugin-react-native :
+    // - https://github.com/Intellicode/eslint-plugin-react-native/issues/270
+    // - https://github.com/Intellicode/eslint-plugin-react-native/pull/314
+    // - https://github.com/babel/babel/discussions/13742
+    // 'react-native/no-raw-text': [2,
+    //   {
+    //     skip: [
+    //       "HeadingXLText",
+    //       "HeadingLText",
+    //       "HeadingSText",
+    //       "HeadingXSText",
+    //       "BodyText",
+    //       "BodyBoldText",
+    //       "BodyItalicText",
+    //       "BodyBoldItalicText",
+    //       "SmallText",
+    //       "SmallBoldText",
+    //       "SmallItalicText",
+    //       "SmallBoldItalicText",
+    //       "CaptionText",
+    //       "CaptionBoldText",
+    //       "CaptionItalicText",
+    //       "CaptionBoldItalicText",
+    //       "SmallInverseText",
+    //       "SmallActionText",
+    //       "NestedText",
+    //       "NestedBoldText",
+    //       "NestedItalicText",
+    //       "NestedActionText",
+    //     ]
+    //   }
+    // ],
     'react-native/no-single-element-style-arrays': 2,
     'react-native/no-unused-styles': 2,
     'react/prop-types': 2,
-    'semi': 2,
+    semi: 2,
   },
   settings: {
     'ft-flow': {

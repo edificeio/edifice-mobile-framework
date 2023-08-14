@@ -1,6 +1,6 @@
 {
-  "last": "2023-07-27 08:23:38",
-  "notes": "release: 1.10.0-rc.4(1100016)",
-  "version": "1.10.0-rc.5(1100017)",
+  "last": "2023-08-11 12:13:10",
+  "notes": "chore: fix eslint by removing rule no-raw-text\nrelease: 1.10.0-rc.7(1100022)",
+  "version": "1.10.0-alpha.16(1100023)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
