@@ -1,45 +1,45 @@
+import Clipboard from '@react-native-clipboard/clipboard';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Linking, Platform, TouchableOpacity, View } from 'react-native';
+import BottomSheet from 'react-native-bottomsheet';
 import { connect } from 'react-redux';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import appConf from '~/framework/util/appConf';
+import theme from '~/app/theme';
+import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { ImagePicked, MenuAction } from '~/framework/components/menus/actions';
+import { NamedSVG } from '~/framework/components/picture';
+import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/components/text';
+import { TextAvatar } from '~/framework/components/textAvatar';
+import Toast from '~/framework/components/toast';
+import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { UserType } from '~/framework/modules/auth/service';
+import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
+import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
 import UserCard from '~/framework/modules/user/components/user-card';
+import { InfoPerson } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { userService } from '~/framework/modules/user/service';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image, formatSource } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
 import { pickFileError } from '~/infra/actions/pickFile';
-import { InfoPerson } from '~/framework/modules/user/model';
 
+import { hobbiesItems, renderEmoji } from '.';
 import styles from './styles';
 import { ProfilePageProps } from './types';
-import { userService } from '~/framework/modules/user/service';
-import { ContentLoader } from '~/framework/hooks/loader';
-import ScrollView from '~/framework/components/scrollView';
-import { TextAvatar } from '~/framework/components/textAvatar';
-import { UserType } from '~/framework/modules/auth/service';
-import { NamedSVG } from '~/framework/components/picture';
-import { UI_SIZES } from '~/framework/components/constants';
-import theme from '~/app/theme';
-import BottomSheet from 'react-native-bottomsheet';
-import Clipboard from '@react-native-clipboard/clipboard';
-import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
-import { hobbiesItems, renderEmoji } from '.';
-import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
-import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
-import Toast from '~/framework/components/toast';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
-import TertiaryButton from '~/framework/components/buttons/tertiary';
 
 export const computeNavBar = ({
   navigation,
@@ -73,7 +73,7 @@ const renderTextIcon = ({
     <LineButton
       title={isEmpty(text) ? emptyText : text!}
       icon={icon}
-      {...(onPress && !isEmpty(text) ? { onPress: onPress } : null)}
+      {...(onPress && !isEmpty(text) ? { onPress } : null)}
       {...(isEmpty(text) ? { textStyle: styles.textEmpty } : null)}
       showArrow={showArrow}
     />
@@ -116,37 +116,34 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const [updatingAvatar, setUpdatingAvatar] = React.useState<boolean>(false);
   const [userInfo, setUserInfo] = React.useState<undefined | InfoPerson>(undefined);
   const [family, setFamily] = React.useState<undefined | { relatedId: string | null; relatedName: string | null }[]>(undefined);
-  const isMyProfile = React.useMemo(
-    () => (route.params.userId && route.params.userId !== session?.user.id ? false : true),
-    [route, session],
-  );
+  const isMyProfile = React.useMemo(() => !(route.params.userId && route.params.userId !== session?.user.id), [route, session]);
 
   const renderMoodPicture = {
-    ['1d']: {
-      ['angry']: require('ASSETS/images/moods/1d/angry.png'),
-      ['dreamy']: require('ASSETS/images/moods/1d/dreamy.png'),
-      ['happy']: require('ASSETS/images/moods/1d/happy.png'),
-      ['joker']: require('ASSETS/images/moods/1d/joker.png'),
-      ['love']: require('ASSETS/images/moods/1d/love.png'),
-      ['default']: require('ASSETS/images/moods/1d/none.png'),
-      ['proud']: require('ASSETS/images/moods/1d/proud.png'),
-      ['sad']: require('ASSETS/images/moods/1d/sad.png'),
-      ['sick']: require('ASSETS/images/moods/1d/sick.png'),
-      ['tired']: require('ASSETS/images/moods/1d/tired.png'),
-      ['worried']: require('ASSETS/images/moods/1d/worried.png'),
+    '1d': {
+      angry: require('ASSETS/images/moods/1d/angry.png'),
+      dreamy: require('ASSETS/images/moods/1d/dreamy.png'),
+      happy: require('ASSETS/images/moods/1d/happy.png'),
+      joker: require('ASSETS/images/moods/1d/joker.png'),
+      love: require('ASSETS/images/moods/1d/love.png'),
+      default: require('ASSETS/images/moods/1d/none.png'),
+      proud: require('ASSETS/images/moods/1d/proud.png'),
+      sad: require('ASSETS/images/moods/1d/sad.png'),
+      sick: require('ASSETS/images/moods/1d/sick.png'),
+      tired: require('ASSETS/images/moods/1d/tired.png'),
+      worried: require('ASSETS/images/moods/1d/worried.png'),
     },
-    ['2d']: {
-      ['angry']: require('ASSETS/images/moods/2d/angry.png'),
-      ['dreamy']: require('ASSETS/images/moods/2d/dreamy.png'),
-      ['happy']: require('ASSETS/images/moods/2d/happy.png'),
-      ['joker']: require('ASSETS/images/moods/2d/joker.png'),
-      ['love']: require('ASSETS/images/moods/2d/love.png'),
-      ['default']: require('ASSETS/images/moods/2d/none.png'),
-      ['proud']: require('ASSETS/images/moods/2d/proud.png'),
-      ['sad']: require('ASSETS/images/moods/2d/sad.png'),
-      ['sick']: require('ASSETS/images/moods/2d/sick.png'),
-      ['tired']: require('ASSETS/images/moods/2d/tired.png'),
-      ['worried']: require('ASSETS/images/moods/2d/worried.png'),
+    '2d': {
+      angry: require('ASSETS/images/moods/2d/angry.png'),
+      dreamy: require('ASSETS/images/moods/2d/dreamy.png'),
+      happy: require('ASSETS/images/moods/2d/happy.png'),
+      joker: require('ASSETS/images/moods/2d/joker.png'),
+      love: require('ASSETS/images/moods/2d/love.png'),
+      default: require('ASSETS/images/moods/2d/none.png'),
+      proud: require('ASSETS/images/moods/2d/proud.png'),
+      sad: require('ASSETS/images/moods/2d/sad.png'),
+      sick: require('ASSETS/images/moods/2d/sick.png'),
+      tired: require('ASSETS/images/moods/2d/tired.png'),
+      worried: require('ASSETS/images/moods/2d/worried.png'),
     },
   };
 
@@ -199,7 +196,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const onNewMessage = () => {
     const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
     if (userInfo?.type === UserType.Student && !isEmpty(family)) {
-      let familyUser: any = [];
+      const familyUser: any = [];
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
         {
@@ -289,7 +286,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderStructures = () => {
-    let schools: string[] = [];
+    const schools: string[] = [];
     let classes: any[] = [];
     userInfo?.schools.forEach(school => {
       schools.push(school.name);
@@ -416,7 +413,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
               action={() =>
                 navigation.navigate(userRouteNames.editDescription, {
                   userId: userInfo!.id,
-                  description: description,
+                  description,
                 })
               }
             />

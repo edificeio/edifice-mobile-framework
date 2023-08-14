@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { LayoutChangeEvent, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -9,11 +9,11 @@ import RoundButton from '~/framework/components/buttons/round';
 import { UI_SIZES } from '~/framework/components/constants';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { displayPastDate } from '~/framework/util/date';
+import { isEmpty } from '~/framework/util/object';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
-import { isEmpty } from '~/framework/util/object';
 import TertiaryButton from './buttons/tertiary';
+import { CaptionBoldText, CaptionItalicText } from './text';
 
 // TYPES ==========================================================================================
 
