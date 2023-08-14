@@ -71,7 +71,7 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
 }
 
 const defaultRenderCloseButton: Required<AlertCardProps>['renderCloseButton'] = (shades, onClose) =>
-  onClose ? <IconButton name="ui-close" action={onClose} /> : null;
+  onClose ? <IconButton icon="ui-close" action={onClose} /> : null;
 
 export function AlertCard(props: AlertCardProps) {
   const {

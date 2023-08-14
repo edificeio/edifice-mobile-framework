@@ -12,7 +12,7 @@ const IconButton = (props: IconButtonProps) => {
   return (
     <TouchableOpacity {...props} onPress={props.action} style={[styles.iconButton, props.style]}>
       <NamedSVG
-        name={props.name}
+        name={props.icon}
         fill={props.color ?? theme.palette.grey.graphite}
         width={props.size ?? UI_SIZES.elements.icon.small}
         height={props.size ?? UI_SIZES.elements.icon.small}

@@ -1,19 +1,19 @@
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import IconButton from '~/framework/components/buttons/icon';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Image, formatSource } from '~/framework/util/media';
-import { Trackers } from '~/framework/util/tracker';
-
-import IconButton from '~/framework/components/buttons/icon';
-import BottomMenu from '~/framework/components/menus/bottom';
 import { ImagePicked, cameraAction, galleryAction } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, TextSizeStyle } from '~/framework/components/text';
-import { I18n } from '~/app/i18n';
+import { Image, formatSource } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
+import { Trackers } from '~/framework/util/tracker';
+
 import { ILocalAttachment } from './Attachment';
 
 const itemWidth =
@@ -123,7 +123,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
                 />
               </TouchableOpacity>
               <IconButton
-                name="ui-close"
+                icon="ui-close"
                 style={styles.iconButton}
                 size={UI_SIZES.dimensions.height.smallPlus}
                 color={theme.palette.grey.white}

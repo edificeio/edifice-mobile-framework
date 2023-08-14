@@ -1,6 +1,12 @@
+import { Moment } from 'moment';
 import * as React from 'react';
 import { View } from 'react-native';
 
+import theme from '~/app/theme';
+import IconButton from '~/framework/components/buttons/icon';
+import { genericHitSlop } from '~/framework/components/constants';
+import { SmallText } from '~/framework/components/text';
+import DayCell from '~/framework/modules/homework/components/day-cell';
 import {
   DayOfTheWeek,
   DayReference,
@@ -11,16 +17,9 @@ import {
   subtractTime,
   today,
 } from '~/framework/util/date';
-import DayCell from '~/framework/modules/homework/components/day-cell';
-import { DayPickerProps } from './types';
 
-import { SmallText } from '~/framework/components/text';
 import styles from './styles';
-
-import theme from '~/app/theme';
-import { Moment } from 'moment';
-import { genericHitSlop } from '~/framework/components/constants';
-import IconButton from '~/framework/components/buttons/icon';
+import { DayPickerProps } from './types';
 
 const DayPicker = ({ onDateChange }: DayPickerProps) => {
   const isTodayWeekend = isDateWeekend(today());
@@ -51,7 +50,7 @@ const DayPicker = ({ onDateChange }: DayPickerProps) => {
     <View style={styles.container}>
       <View style={styles.weekContainer}>
         <IconButton
-          name="ui-rafterLeft"
+          icon="ui-rafterLeft"
           color={theme.palette.grey.black}
           disabled={isPastDisabled}
           action={() => setStartDate(subtractTime(startDate, 1, 'week'))}
@@ -59,7 +58,7 @@ const DayPicker = ({ onDateChange }: DayPickerProps) => {
         />
         <SmallText style={styles.week}>{displayWeekRange(startDate)}</SmallText>
         <IconButton
-          name="ui-rafterRight"
+          icon="ui-rafterRight"
           color={theme.palette.grey.black}
           disabled={isFutureDisabled}
           action={() => setStartDate(addTime(startDate, 1, 'week'))}
