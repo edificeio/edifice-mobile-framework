@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-11 12:57:41",
-  "notes": "Squashed commit of the following:\nchore: fix eslint by removing rule no-raw-text\nfeat(login): MB-1441 , big LoginHomeScreen refacto && redesign\nchore(components): MB-1413 , add (Primary | Secondary | Tertiary)Button components\nfix(testid): fix testid on platforms\nfix(tabbar): MB-1664 , fix tabbar on ipad\nfix(testid): MB-1657 , fix testID on timeline notifs\nfix(multiline-text-input): MB-1851 , fix problems on multiline text input\nfeat(vie-scolaire): MB-1737 , change vie scolaire logos\nrelease: 1.11.0-alpha.6(1110006)",
-  "version": "1.11.0-alpha.7(1110007)",
+  "last": "2023-08-16 19:08:38",
+  "notes": "chore: restructure date.ts\nchore(homework): day-picker disabled rafters color\nfix(media): MB-1878 , fix close position media player\nfix(homework): MB-1842, attachment-group-images container\nfix(homework): MB-227, day-cell width (android)\nfix(buttons): fix border buttons\nfix(profile, inputs): MB-1888, MB-1441 , fix inputs problems & background color white on profile\nchore(prevent-back): MB-1719 , create hook usePreventBack and replace in all app\nchore(buttons): MB-1881 replace name by icon in IconButton\nchore(buttons): MB-1881 replace picture button & round button\nSquashed commit of the following:\nSquashed commit of the following:\nchore(buttons): MB-1881 replace close button by icon button\nchore(buttons): MB-1881 replace action button & measure in onboarding\nchore(buttons): MB-1881 replace button touchableopacity to new buttons\nchore(buttons): MB-1881 replace ActionButton\nchore(buttons): MB-1881 remove InlineButton & replace to tertiaryButton\nchore: little modifs fixs\nrelease: 1.11.0-alpha.7(1110007)",
+  "version": "1.11.0-alpha.8(1110008)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
