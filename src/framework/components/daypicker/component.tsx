@@ -51,7 +51,7 @@ const DayPicker = ({ onDateChange }: DayPickerProps) => {
       <View style={styles.weekContainer}>
         <IconButton
           icon="ui-rafterLeft"
-          color={theme.palette.grey.black}
+          color={isPastDisabled ? theme.palette.grey.grey : theme.palette.grey.black}
           disabled={isPastDisabled}
           action={() => setStartDate(subtractTime(startDate, 1, 'week'))}
           hitSlop={genericHitSlop}
@@ -59,7 +59,7 @@ const DayPicker = ({ onDateChange }: DayPickerProps) => {
         <SmallText style={styles.week}>{displayWeekRange(startDate)}</SmallText>
         <IconButton
           icon="ui-rafterRight"
-          color={theme.palette.grey.black}
+          color={isFutureDisabled ? theme.palette.grey.grey : theme.palette.grey.black}
           disabled={isFutureDisabled}
           action={() => setStartDate(addTime(startDate, 1, 'week'))}
           hitSlop={genericHitSlop}
