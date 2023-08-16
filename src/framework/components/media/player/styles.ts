@@ -45,7 +45,7 @@ export default StyleSheet.create({
   },
   errorScreen: {
     backgroundColor: 'transparent',
-    height: UI_SIZES.screen.height,
     justifyContent: 'center',
+    paddingTop: 0,
   },
 });
