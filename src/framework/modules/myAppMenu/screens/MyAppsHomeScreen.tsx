@@ -23,8 +23,23 @@ const styles = StyleSheet.create({
   image: { height: 64, width: '100%' },
 });
 
-class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
-  private renderGrid(modules?: NavigableModuleArray) {
+const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
+  const renderFooter = () => {
+    return (
+      <>
+        <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
+        <InfoBubble
+          infoText={I18n.get('myapp-infobubble-text', { appName: DeviceInfo.getApplicationName() })}
+          infoTitle={I18n.get('myapp-infobubble-title')}
+          infoImage={require('ASSETS/images/my-apps-infobubble.png')}
+          infoBubbleType="floating"
+          infoBubbleId="myAppsScreen.redirect"
+        />
+      </>
+    );
+  };
+
+  const renderGrid = (modules?: NavigableModuleArray) => {
     const allModules = (modules ?? [])?.sort((a, b) =>
       I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
@@ -32,7 +47,7 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
     const renderGridItem = ({ item }: { item: AnyNavigableModule }) => {
       return (
         <TouchableSelectorPictureCard
-          onPress={() => this.props.navigation.navigate(item.config.routeName)}
+          onPress={() => props.navigation.navigate(item.config.routeName)}
           text={I18n.get(item.config.displayI18n)}
           picture={
             item.config.displayPicture
@@ -64,7 +79,7 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
           keyExtractor={item => item.config.name}
           gap={UI_SIZES.spacing.big}
           gapOutside={UI_SIZES.spacing.big}
-          ListFooterComponent={this.renderFooter()}
+          ListFooterComponent={renderFooter()}
           ListFooterComponentStyle={styles.footer}
           alwaysBounceVertical={false}
           overScrollMode="never"
@@ -72,27 +87,9 @@ class MyAppsHomeScreen extends React.PureComponent<MyAppsHomeScreenProps> {
         />
       </>
     );
-  }
+  };
 
-  private renderFooter() {
-    return (
-      <>
-        <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
-        <InfoBubble
-          infoText={I18n.get('myapp-infobubble-text', { appName: DeviceInfo.getApplicationName() })}
-          infoTitle={I18n.get('myapp-infobubble-title')}
-          infoImage={require('ASSETS/images/my-apps-infobubble.png')}
-          infoBubbleType="floating"
-          infoBubbleId="myAppsScreen.redirect"
-        />
-      </>
-    );
-  }
-
-  public render() {
-    const { modules } = this.props;
-    return <PageView>{this.renderGrid(modules)}</PageView>;
-  }
-}
+  return <PageView>{renderGrid(props.modules)}</PageView>;
+};
 
 export default MyAppsHomeScreen;

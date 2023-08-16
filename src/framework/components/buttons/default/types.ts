@@ -1,6 +1,6 @@
 import { ColorValue, TouchableOpacityProps } from 'react-native';
 
-export interface DefaultButtonProps extends TouchableOpacityProps {
+export interface DefaultButtonProps extends Omit<TouchableOpacityProps, 'onPress' | 'onPressIn' | 'onPressOut'> {
   text?: string;
   iconLeft?: string;
   iconRight?: string;

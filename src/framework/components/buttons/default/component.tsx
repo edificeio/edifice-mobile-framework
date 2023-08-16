@@ -2,10 +2,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import { ActivityIndicator, TouchableOpacity } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { openUrl } from '~/framework/util/linking';
 
 import styles from './styles';
@@ -31,11 +33,23 @@ export const DefaultButton = (props: DefaultButtonProps) => {
   } = props;
   const [layoutWidth, setLayoutWidth] = useState(0);
   const [layoutHeight, setLayoutHeight] = useState(0);
+  const [loadingButton, setLoadingButton] = useState(false);
 
   const contentColorStyle = { color: contentColor ?? theme.palette.grey.graphite };
 
+  const openActionUrl = async () => {
+    try {
+      setLoadingButton(true);
+      await openUrl(url, undefined, undefined, showConfirmation, requireSession);
+    } catch {
+      Toast.showError(I18n.get('toast-error-text'));
+    } finally {
+      setLoadingButton(false);
+    }
+  };
+
   const onPressAction = () => {
-    if (url) return openUrl(url, undefined, undefined, showConfirmation, requireSession);
+    if (url) return openActionUrl();
     if (action) return action();
   };
 
@@ -60,7 +74,8 @@ export const DefaultButton = (props: DefaultButtonProps) => {
   };
 
   const renderContent = () => {
-    if (loading) return <ActivityIndicator color={contentColor ?? theme.palette.grey.graphite} style={styles.indicator} />;
+    if (loading || loadingButton)
+      return <ActivityIndicator color={contentColor ?? theme.palette.grey.graphite} style={styles.indicator} />;
     return (
       <>
         {renderIcon(iconLeft, 'left')}
