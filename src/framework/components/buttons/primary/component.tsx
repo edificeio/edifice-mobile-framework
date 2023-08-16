@@ -23,7 +23,12 @@ const PrimaryButton = (props: PrimaryButtonProps) => {
       activeOpacity={1}
       onPressIn={() => setBackgroundColor(theme.palette.primary.dark)}
       onPressOut={() => setBackgroundColor(initialBackgroundColor)}
-      style={[styles.primary, { backgroundColor }, { ...(props.round ? styles.round : {}) }, props.style]}
+      style={[
+        styles.primary,
+        { backgroundColor, borderColor: backgroundColor },
+        { ...(props.round ? styles.round : {}) },
+        props.style,
+      ]}
       contentColor={theme.palette.grey.white}
     />
   );
