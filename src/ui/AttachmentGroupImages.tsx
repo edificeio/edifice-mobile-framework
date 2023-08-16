@@ -47,16 +47,19 @@ const styles = StyleSheet.create({
     right: -UI_SIZES.spacing._LEGACY_small,
     top: -UI_SIZES.spacing.minor,
     position: 'absolute',
-    elevation: 10,
   },
   container: {
     borderColor: theme.ui.border.input,
     borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.selector,
-    paddingHorizontal: UI_SIZES.spacing.big,
-    paddingVertical: UI_SIZES.spacing.medium,
   },
-  contentContainer: { alignItems: 'center' },
+  contentContainer: {
+    paddingVertical: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.big,
+  },
+  contentContainerAdded: {
+    alignItems: 'center',
+  },
   itemSeperator: { paddingVertical: UI_SIZES.spacing.small },
   photo: {
     aspectRatio: UI_SIZES.aspectRatios.square,
@@ -104,7 +107,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
         numColumns={numColumns}
         scrollEnabled={false}
         style={styles.container}
-        contentContainerStyle={!imagesAdded && styles.contentContainer}
+        contentContainerStyle={[styles.contentContainer, !imagesAdded && styles.contentContainerAdded]}
         ItemSeparatorComponent={() => <View style={styles.itemSeperator} />}
         renderItem={({ item, index }) => {
           if (isEmpty(item)) return <AddPhotosButton />;
