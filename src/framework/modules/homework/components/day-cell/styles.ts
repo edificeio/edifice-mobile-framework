@@ -12,6 +12,6 @@ export default StyleSheet.create({
   },
   text: {
     textAlign: 'center',
-    width: getScaleWidth(UI_SIZES.dimensions.width.mediumPlus),
+    width: getScaleWidth(UI_SIZES.dimensions.width.large),
   },
 });
