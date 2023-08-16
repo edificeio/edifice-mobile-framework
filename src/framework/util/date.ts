@@ -1,6 +1,7 @@
 import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
 import { I18n } from '~/app/i18n';
+
 import { uppercaseFirstLetter } from './string';
 
 export enum DayOfTheWeek {
@@ -20,6 +21,34 @@ export enum DayReference {
 }
 
 moment.relativeTimeThreshold('m', 60);
+
+export const today = () => {
+  return moment();
+};
+
+export const addTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
+  return date.clone().add(amount, unit);
+};
+
+export const subtractTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
+  return date.clone().subtract(amount, unit);
+};
+
+export const getDayOfTheWeek = (date: Moment) => {
+  if (!date || !date.isValid()) {
+    return I18n.get('date-invalid');
+  }
+  return date.locale('en').format('dddd').toLowerCase();
+};
+
+export const isDateWeekend = (date: Moment) => {
+  return date.day() === 6 || date.day() === 0;
+};
+
+export const isDateGivenWeekday = (date: Moment, weekdayNumber: number) => {
+  const weekday = date.day();
+  return weekday === weekdayNumber;
+};
 
 export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
   const now = moment();
@@ -100,32 +129,4 @@ export const displayWeekRange = (date: Moment) => {
         month: endDateMonth,
         year: isEndOfDateWeekCurrentYear ? '' : endDateYear,
       });
-};
-
-export const getDayOfTheWeek = (date: Moment) => {
-  if (!date || !date.isValid()) {
-    return I18n.get('date-invalid');
-  }
-  return date.locale('en').format('dddd').toLowerCase();
-};
-
-export const isDateWeekend = (date: Moment) => {
-  return date.day() === 6 || date.day() === 0;
-};
-
-export const isDateGivenWeekday = (date: Moment, weekdayNumber: number) => {
-  const weekday = date.day();
-  return weekday === weekdayNumber;
-};
-
-export const addTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
-  return date.clone().add(amount, unit);
-};
-
-export const subtractTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
-  return date.clone().subtract(amount, unit);
-};
-
-export const today = () => {
-  return moment();
 };
