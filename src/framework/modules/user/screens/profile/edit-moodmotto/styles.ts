@@ -1,12 +1,13 @@
 import { StyleSheet } from 'react-native';
-import theme from '~/app/theme';
 
+import theme from '~/app/theme';
 import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
 const MOOD_PICTURE_SIZE = getScaleWidth(64);
 
 export default StyleSheet.create({
   page: {
+    backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,
   },
   moods: {

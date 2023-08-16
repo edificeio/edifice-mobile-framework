@@ -12,6 +12,7 @@ const PrimaryButton = (props: PrimaryButtonProps) => {
 
   const [backgroundColor, setBackgroundColor] = useState(initialBackgroundColor);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (props.disabled) setBackgroundColor(theme.palette.primary.light);
     if (!props.disabled && backgroundColor === theme.palette.primary.light) setBackgroundColor(initialBackgroundColor);

@@ -257,6 +257,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         {!isEmpty(family) ? (
           family?.map(user => (
             <TouchableOpacity
+              key={user.relatedId}
               style={styles.userFamily}
               onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
               <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
@@ -485,7 +486,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
         <View style={styles.hobbies}>
           {hobbies!.map(hobbie =>
             hobbie.values ? (
-              <View style={styles.hobbie}>
+              <View style={styles.hobbie} key={hobbie.category}>
                 <SmallText>{`${renderEmoji[hobbie.category]} `}</SmallText>
                 <SmallText style={styles.hobbieValue}>{`${hobbie.values}`}</SmallText>
               </View>

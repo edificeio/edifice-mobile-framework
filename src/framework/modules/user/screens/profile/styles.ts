@@ -65,7 +65,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: theme.palette.primary.pale,
     paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing._LEGACY_tiny,
+    paddingVertical: UI_SIZES.spacing.tiny,
     borderRadius: UI_SIZES.radius.mediumPlus,
     marginRight: UI_SIZES.spacing.minor,
     marginBottom: UI_SIZES.spacing.minor,

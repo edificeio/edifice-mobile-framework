@@ -1,3 +1,4 @@
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { InteractionManager, ScrollView, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -7,26 +8,25 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import DefaultButton from '~/framework/components/buttons/default';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import InputContainer from '~/framework/components/inputs/container';
+import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
+import { AuthErrorCode } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { OAuth2ErrorCode } from '~/infra/oauth';
 
 import styles from './styles';
 import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginState } from './types';
-import { navBarOptions } from '~/framework/navigation/navBar';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import InputContainer from '~/framework/components/inputs/container';
-import TextInput from '~/framework/components/inputs/text';
-import PrimaryButton from '~/framework/components/buttons/primary';
-import DefaultButton from '~/framework/components/buttons/default';
-import { OAuth2ErrorCode } from '~/infra/oauth';
-import { AuthErrorCode } from '~/framework/modules/auth/model';
 
 export const computeNavBar = ({
   navigation,
@@ -187,7 +187,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
         <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText>
       </View>
     );
-  }, [platform, error]);
+  }, [platform]);
 
   const renderInputs = React.useCallback(() => {
     return (
@@ -225,23 +225,14 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
               toggleIconOff="ui-see"
               secureTextEntry={!showPassword}
               onToggle={toggleVisibilityPassword}
+              onSubmitEditing={doLogin}
               testIDToggle="login-see-password"
             />
           }
         />
       </View>
     );
-  }, [
-    login,
-    password,
-    error,
-    showPassword,
-    inputLogin,
-    inputPassword,
-    onLoginChanged,
-    onPasswordChanged,
-    toggleVisibilityPassword,
-  ]);
+  }, [onLoginChanged, login, error, onPasswordChanged, password, showPassword, toggleVisibilityPassword, doLogin]);
 
   const renderLoginButton = React.useCallback(() => {
     if ((error === 'not_premium' || error === 'pre_deleted') && !typing)
@@ -287,7 +278,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
         </View>
       </ScrollView>
     );
-  }, [error, renderPlatform, renderInputs, renderError, renderLoginButton]);
+  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, platform]);
 
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };

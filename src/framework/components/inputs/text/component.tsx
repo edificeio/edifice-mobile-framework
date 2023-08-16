@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useMemo, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ColorValue, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
@@ -46,7 +46,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
         : isShowIconCallback
         ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
         : UI_SIZES.spacing.medium,
-    [toggleIconOn, toggleIconOff, showError, showSuccess],
+    [toggleIconOn, toggleIconOff, isShowIconCallback],
   );
   // position icon success || error management if have toggle icon or not
   const positionIconCallbackInput = useMemo(
@@ -98,7 +98,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
           style={[styles.callbackIndicator, { right: positionIconCallbackInput }]}
         />
       );
-  }, [positionIconCallbackInput, showError, showSuccess]);
+  }, [isShowIconCallback, positionIconCallbackInput, showError]);
 
   const renderToggle = useCallback(() => {
     if (toggleIconOn && toggleIconOff)
@@ -115,7 +115,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
           />
         </TouchableOpacity>
       );
-  }, [colorStatus, disabled, handleToggle, toggleIconOn, toggleIconOff, isToggle]);
+  }, [toggleIconOn, toggleIconOff, colorStatus, testIDToggle, isToggle, disabled, handleToggle]);
 
   const renderInput = useCallback(() => {
     return (
@@ -139,7 +139,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
         {renderToggle()}
       </View>
     );
-  }, [paddingRight, colorStatus, disabled, props, renderIconInput, renderToggle, handleFocus, handleBlur]);
+  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur]);
 
   const renderAnnotation = useCallback(() => {
     if (annotation)

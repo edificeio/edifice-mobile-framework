@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -12,8 +12,8 @@ const styles = StyleSheet.create({
     ...TextSizeStyle.Medium,
     lineHeight: undefined,
     paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingTop: UI_SIZES.spacing.small,
-    paddingBottom: UI_SIZES.spacing.small,
+    paddingTop: Platform.OS === 'android' ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
+    paddingBottom: Platform.OS === 'android' ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
     backgroundColor: theme.ui.background.card,
     borderWidth: 1,
     borderRadius: UI_SIZES.radius.input,
