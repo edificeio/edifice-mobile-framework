@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ColorValue, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { BottomColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { Image, formatSource } from '~/framework/util/media';
 
 const styles = StyleSheet.create({
   gridButtonContainer: {
@@ -32,21 +32,17 @@ const styles = StyleSheet.create({
   gridButtonDisabled: {
     opacity: 0.6,
   },
-  gridButtonImage: {
-    height: 70,
-    width: 70,
-  },
 });
 
 interface ModuleButtonProps {
-  color: string;
-  imageSrc: string;
+  color: ColorValue;
+  icon: string;
   text: string;
   disabled?: boolean;
   onPress: () => void;
 }
 
-export const ModuleButton = ({ color, imageSrc, text, disabled, onPress }: ModuleButtonProps) => {
+export const ModuleButton = ({ color, icon, text, disabled, onPress }: ModuleButtonProps) => {
   return (
     <View style={styles.gridButtonContainer}>
       <BottomColoredItem
@@ -55,7 +51,7 @@ export const ModuleButton = ({ color, imageSrc, text, disabled, onPress }: Modul
         color={color}
         onPress={onPress}
         disabled={disabled}>
-        <Image source={formatSource(imageSrc)} style={styles.gridButtonImage} resizeMode="contain" />
+        <NamedSVG name={icon} height={70} width={70} fill={color} />
         <SmallText>{text}</SmallText>
       </BottomColoredItem>
     </View>
