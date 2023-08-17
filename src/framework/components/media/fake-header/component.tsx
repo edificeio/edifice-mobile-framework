@@ -16,7 +16,7 @@ export default function FakeHeaderMedia() {
       headerLeft={() => (
         <HeaderBackButton
           onPress={() => navigation.goBack()}
-          tintColor={theme.palette.grey.white}
+          tintColor={theme.palette.grey.white.toString()}
           style={{ marginLeft: UI_SIZES.spacing.minor }}
         />
       )}

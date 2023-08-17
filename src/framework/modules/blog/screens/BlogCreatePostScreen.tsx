@@ -173,10 +173,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       }
 
       // Translate entered content to httml
-      const htmlContent = content.replace(/\n/g, '<br>');
+      const htmlContent = content.replace(/\n/g, '<br>').trim();
 
       // Create and submit/publish post
-      await handleSendBlogPost(blog, title, htmlContent, uploadedPostImages);
+      await handleSendBlogPost(blog, title.trim(), htmlContent, uploadedPostImages);
 
       // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
@@ -231,7 +231,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         ) : (
           <NavBarAction
             title={actionText}
-            disabled={this.state.title.length === 0 || this.state.content.length === 0}
+            disabled={this.state.title.trim().length === 0 || this.state.content.trim().length === 0}
             onPress={() => this.doSend()}
           />
         ),
