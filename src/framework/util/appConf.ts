@@ -24,7 +24,6 @@ export type IPlatformAccessDeclaration = {
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
   showWhoAreWe?: boolean; // To show or not the team link in profile page
   showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
-  testID?: string; // testID for QA
 };
 
 export class Platform {
@@ -56,8 +55,6 @@ export class Platform {
 
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
-  testID: IPlatformAccessDeclaration['testID'];
-
   constructor(pf: IPlatformAccessDeclaration) {
     this.displayName = pf.displayName;
     this.federation = pf.federation;
@@ -73,7 +70,6 @@ export class Platform {
     this.showWhoAreWe = pf.showWhoAreWe;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this._webviewIdentifier = pf.webviewIdentifier;
-    this.testID = pf.testID;
   }
 
   get webviewIdentifier() {
