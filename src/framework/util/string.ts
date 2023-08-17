@@ -146,3 +146,22 @@ export function splitWords(
 export function getSafeFileName(input?: string) {
   return input?.replaceAll(/[\\0/]/g, '-');
 }
+
+/**
+ * Create a unique UUID identifier.
+ * @returns The new UUID
+ */
+// from https://www.w3resource.com/javascript-exercises/javascript-math-exercise-23.php
+export function createUUID() {
+  let dt = new Date().getTime();
+  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    // The bitwise AND (&) operator is wanted here
+    // eslint-disable-next-line no-bitwise
+    const r = (dt + Math.random() * 16) % 16 | 0;
+    dt = Math.floor(dt / 16);
+    // The bitwise OR (|) operator is wanted here
+    // eslint-disable-next-line no-bitwise
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+  return uuid;
+}
