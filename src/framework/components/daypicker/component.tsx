@@ -5,8 +5,8 @@ import { View } from 'react-native';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { genericHitSlop } from '~/framework/components/constants';
+import DayCell from '~/framework/components/daypicker/day-cell';
 import { SmallText } from '~/framework/components/text';
-import DayCell from '~/framework/modules/homework/components/day-cell';
 import {
   DayOfTheWeek,
   DayReference,
