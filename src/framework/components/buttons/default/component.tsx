@@ -55,7 +55,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
 
   const memorizeWidthButton = e => {
     // memoize button width for setting correct width when loading state
-    if (!layoutWidth) setLayoutWidth(e?.nativeEvent?.layout?.width);
+    if (!layoutWidth || e?.nativeEvent?.layout?.width > layoutWidth) setLayoutWidth(e?.nativeEvent?.layout?.width);
     if (!layoutHeight) setLayoutHeight(e?.nativeEvent?.layout?.height);
   };
 
@@ -79,7 +79,7 @@ export const DefaultButton = (props: DefaultButtonProps) => {
     return (
       <>
         {renderIcon(iconLeft, 'left')}
-        <SmallBoldText numberOfLines={1} style={contentColorStyle}>
+        <SmallBoldText numberOfLines={1} style={[styles.text, contentColorStyle]}>
           {text}
         </SmallBoldText>
         {renderIcon(iconRight, 'right')}
@@ -89,9 +89,13 @@ export const DefaultButton = (props: DefaultButtonProps) => {
 
   return (
     <TouchableOpacity
-      {...props}
       onLayout={memorizeWidthButton.bind(this)}
-      style={[styles.commonView, { ...(loading ? { width: layoutWidth, height: layoutHeight } : undefined) }, style]}
+      {...props}
+      style={[
+        styles.commonView,
+        style,
+        { ...(loading || loadingButton ? { width: layoutWidth, height: layoutHeight } : undefined) },
+      ]}
       onPress={onPressAction}
       {...(loading || disabled ? { disabled: true } : {})}
       {...(testID ? { testID } : {})}>

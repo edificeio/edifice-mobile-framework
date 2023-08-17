@@ -1,6 +1,6 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
 import { BUTTON_ICON_SIZE } from './component';
 
@@ -17,6 +17,10 @@ export default StyleSheet.create({
   },
   iconRight: {
     marginLeft: UI_SIZES.spacing.minor,
+  },
+  text: {
+    // fix vertical alignment in android buttons
+    marginTop: Platform.OS === 'android' ? -getScaleWidth(2) : 0,
   },
   indicator: {
     height: BUTTON_ICON_SIZE,

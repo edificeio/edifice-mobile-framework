@@ -5,6 +5,9 @@ import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
+import { getButtonWidth } from '~/framework/components/buttons/default';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
@@ -13,9 +16,6 @@ import appConf from '~/framework/util/appConf';
 
 import styles from './styles';
 import { IOnboardingScreenProps, IOnboardingScreenState } from './types';
-import { getButtonWidth } from '~/framework/components/buttons/default';
-import PrimaryButton from '~/framework/components/buttons/primary';
-import SecondaryButton from '~/framework/components/buttons/secondary';
 
 class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnboardingScreenState> {
   state = {
