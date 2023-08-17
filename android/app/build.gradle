@@ -77,8 +77,8 @@ android {
     ndkVersion rootProject.ext.ndkVersion
     defaultConfig {
         applicationId APPID
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
         versionCode 1100100
         versionName "1.10.1"
         manifestPlaceholders.applicationName = APPNAME
@@ -94,6 +94,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false
+            //noinspection ChromeOsAbiSupport
             include (*reactNativeArchitectures())
         }
     }
