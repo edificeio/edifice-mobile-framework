@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import { computeNavBar as homeworkCreateNavBar } from '~/framework/modules/homework/screens/HomeworkCreateScreen';
+import { computeNavBar as homeworkCreateNavBar } from '~/framework/modules/homework/components/HomeworkCreateScreen';
 import { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
 import { computeNavBar as homeworkTaskListNavBar } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
 import moduleConfig from '~/framework/modules/homework/module-config';
@@ -10,12 +10,12 @@ import HomeworkExplorerScreen from '~/framework/modules/homework/screens/Homewor
 import HomeworkInitialScreen from '~/framework/modules/homework/screens/HomeworkInitialScreen';
 import HomeworkTaskDetailsScreen from '~/framework/modules/homework/screens/HomeworkTaskDetailsScreen';
 import HomeworkTaskListScreen from '~/framework/modules/homework/screens/HomeworkTaskListScreen';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { HomeworkNavigationParams, homeworkRouteNames } from '.';
-import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<HomeworkNavigationParams>(moduleConfig.name, Stack => (

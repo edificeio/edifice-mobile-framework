@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+
 import { TextSizeStyle } from '../text';
 
 export default StyleSheet.create({

@@ -446,6 +446,8 @@
   "gallery-readpermissionblocked-title": "Gallery access denied",
   "galleryaction-pick": "Select in the gallery",
   "homework": "Homework",
+  "homework-create-fullstorage": "Your storage space is full. You cannot upload more files.",
+  "homework-create-uploadattachments-error-text": "Attachment upload error: Check that you are connected to the Internet and that your Filespace has enough free storage space",
   "homework-daycheckpoint-for": "For",
   "homework-explorer-creatediary": "Create a Homework Notebook",
   "homework-explorer-creatediary-neo": "Create a homework notebook",

@@ -446,6 +446,8 @@
   "gallery-readpermissionblocked-title": "Acceso denegado a la galería",
   "galleryaction-pick": "Seleccionar en la galería",
   "homework": "Cuaderno",
+  "homework-create-fullstorage": "El espacio de almacenamiento insuficiente para completar esta operación.",
+  "homework-create-uploadattachments-error-text": "Error al enviar archivos adjuntos: compruebe el acceso a Internet y que haya suficiente espacio libre en su espacio documental",
   "homework-daycheckpoint-for": "Para",
   "homework-explorer-creatediary": "Crear cuaderno semanal",
   "homework-explorer-creatediary-neo": "Crear un cuaderno semanal",
