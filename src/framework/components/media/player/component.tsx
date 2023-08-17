@@ -140,18 +140,14 @@ function MediaPlayer(props: MediaPlayerProps) {
     if (type === MediaType.WEB)
       return (
         <>
-          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]} />
+          <FakeHeaderMedia />
           <WebView
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
             scrollEnabled={false}
             source={realSource}
             startInLoadingState
-            style={
-              isPortrait
-                ? [styles.playerPortrait, styles.externalPlayerPortrait]
-                : [styles.playerLandscape, styles.externalPlayerLandscape]
-            }
+            style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
           />
         </>
       );
