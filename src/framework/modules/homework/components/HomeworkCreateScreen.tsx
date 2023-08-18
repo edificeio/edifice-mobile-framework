@@ -1,7 +1,7 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { Alert, Keyboard, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -18,6 +18,7 @@ import Toast from '~/framework/components/toast';
 import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { today } from '~/framework/util/date';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { uppercaseFirstLetter } from '~/framework/util/string';
 import { ILocalAttachment } from '~/ui/Attachment';
@@ -84,21 +85,30 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     isCreatingEntry: false,
   };
 
-  async doCreate() {
-    Keyboard.dismiss();
-    try {
-      this.setState({ isCreatingEntry: true });
-      await this.doCreateEntry();
-    } finally {
-      this.setState({ isCreatingEntry: false });
-    }
+  verifyDate() {
+    const { date } = this.state;
+    const isPastDate = date?.isBefore(today(), 'day');
+
+    if (isPastDate) {
+      Alert.alert(I18n.get('homework-create-warning-past-title'), I18n.get('homework-create-warning-past-text'), [
+        {
+          text: I18n.get('homework-create-warning-past-modify'),
+        },
+        {
+          text: I18n.get('homework-create-warning-past-add'),
+          onPress: () => this.createEntry(),
+        },
+      ]);
+    } else this.createEntry();
   }
 
-  async doCreateEntry() {
+  async createEntry() {
     try {
       const { navigation, route, handleCreateDiaryEntry, handleGetHomeworkTasks, handleUploadEntryImages } = this.props;
       const { date, subject, description, images } = this.state;
       const diaryId = route.params.diaryId;
+
+      this.setState({ isCreatingEntry: true });
 
       if (!diaryId) {
         throw new Error('No diary id');
@@ -132,6 +142,8 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     } catch (e) {
       const isUploadFailure = (e as Error).message && (e as Error).message === 'Upload failure';
       if (!isUploadFailure) Alert.alert('', I18n.get('homework-create-error-publish'));
+    } finally {
+      this.setState({ isCreatingEntry: false });
     }
   }
 
@@ -185,7 +197,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
           </View>
           <PrimaryButton
             text={I18n.get('homework-create-addhomework')}
-            action={() => this.doCreate()}
+            action={() => this.verifyDate()}
             disabled={isButtonDisabled}
             loading={isCreatingEntry}
             style={styles.button}

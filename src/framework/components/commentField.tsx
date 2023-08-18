@@ -5,14 +5,14 @@ import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import RoundButton from '~/framework/components/buttons/round';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { displayPastDate } from '~/framework/util/date';
+import { isEmpty } from '~/framework/util/object';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
-import { isEmpty } from '~/framework/util/object';
 
 // TYPES ==========================================================================================
 
@@ -231,8 +231,9 @@ const CommentField = (props: CommentFieldProps, ref) => {
         </View>
         {!isIdleExistingComment ? (
           <View style={{ marginLeft: UI_SIZES.spacing.minor, alignSelf: 'flex-end' }}>
-            <RoundButton
-              iconName={isEditing ? 'pictos-save' : 'pictos-send'}
+            <PrimaryButton
+              round
+              iconRight={isEditing ? 'pictos-save' : 'pictos-send'}
               action={() => publishComment()}
               disabled={isEmpty(comment.trim()) || isCommentUnchanged()}
               loading={props.isPublishingComment}
