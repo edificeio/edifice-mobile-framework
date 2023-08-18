@@ -104,11 +104,11 @@ function getLegalUrlsAction(platform: Platform) {
  * @param partialSessionScenario
  * @returns
  */
-async function getDefaultInfos(partialSessionScenario: PartialSessionScenario) {
+async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, platformUrl: string) {
   let defaultMobile: string | undefined;
   let defaultEmail: string | undefined;
   if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_MOBILE) {
-    const mobileValidationInfos = await getMobileValidationInfos();
+    const mobileValidationInfos = await getMobileValidationInfos(platformUrl);
     defaultMobile = mobileValidationInfos?.mobile;
   } else if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_EMAIL) {
     const emailValidationInfos = await getEmailValidationInfos();
@@ -172,7 +172,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       // 9. Validate session + return redirect scenario
       const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo, !!mustSaveSession);
       if (partialSessionScenario) {
-        const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario);
+        const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario, platform.url);
         const context = await getAuthContext(platform);
         dispatch(authActions.sessionPartial(sessionInfo));
         return { action: partialSessionScenario, defaultEmail, defaultMobile, context, credentials, rememberMe };

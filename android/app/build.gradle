@@ -94,6 +94,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false
+            //noinspection ChromeOsAbiSupport
             include (*reactNativeArchitectures())
         }
     }

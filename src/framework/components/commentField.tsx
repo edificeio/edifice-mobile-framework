@@ -1,19 +1,18 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { LayoutChangeEvent, Platform, StyleSheet, TextInput, View } from 'react-native';
+import { LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import RoundButton from '~/framework/components/buttons/round';
 import { UI_SIZES } from '~/framework/components/constants';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { displayPastDate } from '~/framework/util/date';
-import { isEmpty } from '~/framework/util/object';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import PrimaryButton from './buttons/primary';
-import TertiaryButton from './buttons/tertiary';
-import { CaptionBoldText, CaptionItalicText } from './text';
+import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
+import { isEmpty } from '~/framework/util/object';
 
 // TYPES ==========================================================================================
 
@@ -232,9 +231,8 @@ const CommentField = (props: CommentFieldProps, ref) => {
         </View>
         {!isIdleExistingComment ? (
           <View style={{ marginLeft: UI_SIZES.spacing.minor, alignSelf: 'flex-end' }}>
-            <PrimaryButton
-              round
-              iconRight={isEditing ? 'pictos-save' : 'pictos-send'}
+            <RoundButton
+              iconName={isEditing ? 'pictos-save' : 'pictos-send'}
               action={() => publishComment()}
               disabled={isEmpty(comment.trim()) || isCommentUnchanged()}
               loading={props.isPublishingComment}
@@ -244,23 +242,27 @@ const CommentField = (props: CommentFieldProps, ref) => {
       </View>
       {isIdleExistingComment && isUserComment && (props.onPublishComment || props.onDeleteComment) ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-          {props.onPublishComment ? <TertiaryButton action={editComment} text={I18n.get('commentfield-modify')} /> : null}
+          {props.onPublishComment ? (
+            <TouchableOpacity onPress={() => editComment()}>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('commentfield-modify')}</SmallBoldText>
+            </TouchableOpacity>
+          ) : null}
           {props.onDeleteComment ? (
-            <TertiaryButton
-              action={deleteComment}
-              text={I18n.get('common-delete')}
-              style={{ marginLeft: UI_SIZES.spacing.medium }}
-            />
+            <TouchableOpacity onPress={() => deleteComment()}>
+              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+                {I18n.get('common-delete')}
+              </SmallBoldText>
+            </TouchableOpacity>
           ) : null}
         </View>
       ) : props.isManager || isUserComment ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onDeleteComment ? (
-            <TertiaryButton
-              action={deleteComment}
-              text={I18n.get('common-delete')}
-              style={{ marginLeft: UI_SIZES.spacing.medium }}
-            />
+            <TouchableOpacity onPress={() => deleteComment()}>
+              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
+                {I18n.get('common-delete')}
+              </SmallBoldText>
+            </TouchableOpacity>
           ) : null}
         </View>
       ) : null}

@@ -84,7 +84,7 @@ export const TextSizeStyle = {
     fontSize: getScaleFontSize(32),
     lineHeight: getScaleFontSize(38),
   },
-} as { [key in TextSizeStyleKey]: TextStyle };
+} as { [key in TextSizeStyleKey]: Required<Pick<TextStyle, 'fontSize' | 'lineHeight'>> };
 
 /**
  * Heading

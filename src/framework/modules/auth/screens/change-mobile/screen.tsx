@@ -1,7 +1,7 @@
 import { RouteProp, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Platform, TouchableOpacity, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import PhoneInput, {
   Country,
   CountryCode,
@@ -16,6 +16,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
@@ -223,7 +224,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   usePreventBack({
     title: I18n.get('auth-change-mobile-edit-alert-title'),
     text: I18n.get('auth-change-mobile-edit-alert-message'),
-    showAlert: !isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused,
+    showAlert: !isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused && isModifyingMobile,
   });
 
   const onChangeMobile = useCallback((text: string) => changeMobile(text), [changeMobile]);
@@ -308,9 +309,12 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             action={onSendSMS}
           />
           {isModifyingMobile ? null : (
-            <TouchableOpacity style={styles.logoutButton} onPress={onRefuseMobileVerification}>
-              <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-mobile-verify-disconnect')}</SmallBoldText>
-            </TouchableOpacity>
+            <DefaultButton
+              style={styles.logoutButton}
+              text={I18n.get('auth-change-mobile-verify-disconnect')}
+              contentColor={theme.palette.status.failure.regular}
+              action={onRefuseMobileVerification}
+            />
           )}
         </View>
       )}

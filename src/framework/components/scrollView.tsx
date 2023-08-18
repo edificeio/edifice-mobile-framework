@@ -2,7 +2,8 @@ import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import { ScrollView as RNScrollView, ScrollViewProps as RNScrollViewProps } from 'react-native';
 
-import { useSyncRef } from '../hooks/ref';
+import { useSyncRef } from '~/framework/hooks/ref';
+
 import { UI_SIZES } from './constants';
 
 export interface ScrollViewProps extends RNScrollViewProps {

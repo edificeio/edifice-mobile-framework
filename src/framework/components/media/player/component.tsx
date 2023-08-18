@@ -1,4 +1,5 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
@@ -10,11 +11,29 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
+import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
+import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
+import { useHeaderHeight } from '@react-navigation/elements';
+
+export function computeNavBar({
+  navigation,
+  route,
+}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
+  return {
+    ...navBarOptions({
+      navigation,
+      route,
+      title: '',
+    }),
+    headerTransparent: true,
+    headerStyle: { backgroundColor: 'transparent' },
+    headerShadowVisible: false,
+  };
+}
 
 const ERRORS_I18N = {
   connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
@@ -60,6 +79,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
   const isLoadingRef = React.useRef<boolean>(true);
+  const headerHeight = useHeaderHeight();
 
   const handleBack = React.useCallback(() => {
     navigationHidden.current = false;
@@ -95,19 +115,17 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const renderError = () => {
+    navigation.setOptions(computeNavBar({ navigation, route }));
     const i18nKeys = ERRORS_I18N[error ?? 'default'] ?? ERRORS_I18N.default;
     return (
-      <>
-        <FakeHeaderMedia />
-        <EmptyScreen
-          customStyle={styles.errorScreen}
-          svgImage="image-not-found"
-          title={I18n.get(i18nKeys[0])}
-          text={I18n.get(i18nKeys[1])}
-          svgFillColor={theme.palette.grey.fog}
-          textColor={theme.palette.grey.fog}
-        />
-      </>
+      <EmptyScreen
+        customStyle={styles.errorScreen}
+        svgImage="image-not-found"
+        title={I18n.get(i18nKeys[0])}
+        text={I18n.get(i18nKeys[1])}
+        svgFillColor={theme.palette.grey.fog}
+        textColor={theme.palette.grey.fog}
+      />
     );
   };
 
@@ -140,14 +158,18 @@ function MediaPlayer(props: MediaPlayerProps) {
     if (type === MediaType.WEB)
       return (
         <>
-          <FakeHeaderMedia />
+          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]} />
           <WebView
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
             scrollEnabled={false}
             source={realSource}
             startInLoadingState
-            style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
+            style={
+              isPortrait
+                ? [styles.playerPortrait, styles.externalPlayerPortrait]
+                : [styles.playerLandscape, styles.externalPlayerLandscape]
+            }
           />
         </>
       );
@@ -171,6 +193,7 @@ function MediaPlayer(props: MediaPlayerProps) {
           showOnEnd
           source={realSource}
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+          topControlsStyle={Platform.OS === 'android' ? { paddingTop: headerHeight } : {}}
         />
       );
     }

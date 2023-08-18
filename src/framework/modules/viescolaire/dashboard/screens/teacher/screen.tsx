@@ -5,12 +5,12 @@ import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { ModuleButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
@@ -48,16 +48,16 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
               <ModuleButton
                 onPress={() => props.navigation.navigate(edtRouteNames.home)}
                 text={I18n.get('dashboard-teacher-edt')}
-                color={viescoTheme.palette.edt}
-                imageSrc={require('ASSETS/viesco/edt.png')}
+                color={theme.palette.complementary.yellow.regular}
+                icon="edt"
               />
             )}
             {props.authorizedViescoApps.diary && (
               <ModuleButton
                 onPress={() => props.navigation.navigate(diaryRouteNames.timetable)}
                 text={I18n.get('dashboard-teacher-diary')}
-                color={viescoTheme.palette.diary}
-                imageSrc={require('ASSETS/viesco/cdt.png')}
+                color={theme.palette.complementary.blue.regular}
+                icon="homework2D"
               />
             )}
           </View>

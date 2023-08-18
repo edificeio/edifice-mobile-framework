@@ -522,12 +522,12 @@ export async function verifyMFACode(key: string) {
   }
 }
 
-export async function getMobileValidationInfos() {
+export async function getMobileValidationInfos(platformUrl: string) {
   try {
-    const mobileValidationInfos = (await fetchJSONWithCache('/directory/user/mobilestate')) as IEntcoreMobileValidationInfos;
+    const mobileValidationInfos = await fetchJSONWithCache('/directory/user/mobilestate', {}, true, platformUrl);
     return mobileValidationInfos;
-  } catch {
-    // console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
+  } catch (e) {
+    console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
   }
 }
 
