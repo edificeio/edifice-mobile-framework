@@ -135,12 +135,17 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     return hasCreateHomeworkResourceRight;
   }
 
+  addEntry() {
+    const { diaryInformation, navigation } = this.props;
+    navigation.navigate(homeworkRouteNames.homeworkCreate, { diaryId: diaryInformation?.id });
+  }
+
   updateNavBarTitle() {
     const { diaryInformation, navigation } = this.props;
     const popupActionsMenu = [
       {
         title: I18n.get('homework-tasklist-addhomework'),
-        action: () => navigation.navigate(homeworkRouteNames.homeworkCreate, { diaryId: diaryInformation?.id }),
+        action: () => this.addEntry(),
         icon: {
           ios: 'plus',
           android: 'ic_plus',
@@ -341,8 +346,10 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                   }`,
                 )}
                 buttonText={this.canCreateHomework() ? I18n.get('homework-tasklist-createactivity') : undefined}
-                buttonUrl={`/homeworks#/view-homeworks/${diaryId}`}
-                buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
+                buttonAction={() => {
+                  this.addEntry();
+                  Trackers.trackEvent('Homework', 'GO TO', 'Create');
+                }}
               />
             ) : null
           }
