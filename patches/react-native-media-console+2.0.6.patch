@@ -22,6 +22,18 @@ index 4e95969..fcff7c4 100644
      /**
       * Title of the video
       */
+@@ -130,6 +136,11 @@ export interface VideoPlayerProps extends VideoProperties {
+      *
+      */
+     containerStyle?: StyleProp<ViewStyle>;
++    /**
++     * Top controls styles
++     *
++     */
++    topControlsStyle?: StyleProp<ViewStyle>;
+     /**
+      * Fill/handle colour of the seekbar
+      *
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 index 5ea0ab2..24bdb4b 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
@@ -68,7 +80,15 @@ index 5ea0ab2..24bdb4b 100644
      paused = false,
      muted = false,
      volume = 1,
-@@ -82,6 +83,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -56,6 +57,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     tapAnywhereToPause = false,
+     videoStyle = {},
+     containerStyle = {},
++    topControlsStyle = {},
+     seekColor = '',
+     source,
+     disableBack = false,
+@@ -82,6 +84,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    const [_isFullscreen, setIsFullscreen] = useState<boolean>(
      isFullscreen || resizeMode === 'cover' || false,
    );
@@ -76,7 +96,7 @@ index 5ea0ab2..24bdb4b 100644
    const [_showTimeRemaining, setShowTimeRemaining] =
      useState<boolean>(showTimeRemaining);
    const [volumeTrackWidth, setVolumeTrackWidth] = useState<number>(0);
-@@ -114,10 +116,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -114,10 +117,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    };
  
    const _onSeek = (obj: OnSeekData) => {
@@ -92,7 +112,7 @@ index 5ea0ab2..24bdb4b 100644
  
      if (typeof onSeek === 'function') {
        onSeek(obj);
-@@ -128,6 +132,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -128,6 +133,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
      if (currentTime < duration) {
        setCurrentTime(duration);
        setPaused(true);
@@ -100,7 +120,7 @@ index 5ea0ab2..24bdb4b 100644
  
        if (showOnEnd) {
          setShowControls(true);
-@@ -189,7 +194,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -189,7 +195,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
            togglePlayPause();
            resetControlTimeout();
          } else {
@@ -109,7 +129,15 @@ index 5ea0ab2..24bdb4b 100644
          }
          tapActionTimeout.current = null;
        }, doubleTapTime);
-@@ -426,11 +431,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -417,6 +423,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+               onBack={events.onBack}
+               resetControlTimeout={resetControlTimeout}
+               showControls={showControls}
++              topControlsStyle={topControlsStyle}
+             />
+             <PlayPause
+               animations={animations}
+@@ -426,11 +433,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
                togglePlayPause={togglePlayPause}
                resetControlTimeout={resetControlTimeout}
                showControls={showControls}
@@ -220,3 +248,16 @@ index ab51aed..a8cf27a 100644
    /**
     * Title of the video
     */
+@@ -149,6 +156,12 @@ export interface VideoPlayerProps extends VideoProperties {
+    */
+   containerStyle?: StyleProp<ViewStyle>;
+ 
++  /**
++   * Top controls styles
++   *
++   */
++  topControlsStyle?: StyleProp<ViewStyle>;
++
+   /**
+    * Fill/handle colour of the seekbar
+    *
