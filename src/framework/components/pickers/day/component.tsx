@@ -21,11 +21,11 @@ import {
 import styles from './styles';
 import { DayPickerProps } from './types';
 
+export const defaultSelectedDate = isDateWeekend(today())
+  ? addTime(today(), 1, 'week').startOf('week')
+  : addTime(today(), 1, 'day').startOf('day');
+
 const DayPicker = ({ onDateChange }: DayPickerProps) => {
-  const isTodayWeekend = isDateWeekend(today());
-  const defaultSelectedDate = isTodayWeekend
-    ? addTime(today(), 1, 'week').startOf('week')
-    : addTime(today(), 1, 'day').startOf('day');
   const defaultStartDate = defaultSelectedDate.clone().startOf('week');
 
   const [selectedDate, setSelectedDate] = React.useState(defaultSelectedDate);
