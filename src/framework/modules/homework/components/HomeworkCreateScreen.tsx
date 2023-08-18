@@ -99,11 +99,12 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
       const { navigation, route, handleCreateDiaryEntry, handleGetHomeworkTasks, handleUploadEntryImages } = this.props;
       const { date, subject, description, images } = this.state;
       const diaryId = route.params.diaryId;
+
       if (!diaryId) {
-        throw new Error('[doSendEntry] failed to retrieve diary information');
+        throw new Error('No diary id');
       }
 
-      // Upload entry images (if added)
+      // Upload images (if added)
       let uploadedEntryImages: undefined | SyncedFile[];
       if (images.length > 0) {
         try {
@@ -112,28 +113,25 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
           // Full storage management
           // statusCode = 400 on iOS and code = 'ENOENT' on Android
           if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
-            Alert.alert('', I18n.get('homework-create-fullstorage'));
+            Alert.alert('', I18n.get('homework-create-error-fullstorage'));
           } else {
-            Alert.alert('', I18n.get('homework-create-uploadattachments-error-text'));
+            Alert.alert('', I18n.get('homework-create-error-upload'));
           }
-          throw new Error('handled');
+          throw new Error('Upload failure');
         }
       }
 
-      // Translate entered description to html
+      // Translate description into html
       const htmlContent = description.replace(/\n/g, '<br>');
 
       // Create entry
       await handleCreateDiaryEntry(diaryId, date!, subject, htmlContent, uploadedEntryImages);
       await handleGetHomeworkTasks(diaryId);
       navigation.goBack();
-    } catch (e: any) {
-      if (e.response?.body === '{"error":"file.too.large"}') {
-        Toast.showError(I18n.get('homework-create-fullstorage'));
-      }
-      if ((e as Error).message && (e as Error).message !== 'handled') {
-        Toast.showError(I18n.get('homework-create-publish-error-text'));
-      }
+      Toast.showSuccess(I18n.get('homework-create-success'));
+    } catch (e) {
+      const isUploadFailure = (e as Error).message && (e as Error).message === 'Upload failure';
+      if (!isUploadFailure) Alert.alert('', I18n.get('homework-create-error-publish'));
     }
   }
 
