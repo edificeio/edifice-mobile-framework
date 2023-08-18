@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { View } from 'react-native';
 
-import { addTime, displayWeekRange, isDateGivenWeekday, isDateWeekend, subtractTime, today } from '~/framework/util/date';
+import PictureButton from '~/framework/components/buttons/picture/component';
+import { SmallText } from '~/framework/components/text';
 import DayCell from '~/framework/modules/homework/components/day-cell';
-import { DaySelectorProps } from './types';
+import { addTime, displayWeekRange, isDateGivenWeekday, isDateWeekend, subtractTime, today } from '~/framework/util/date';
 
-import { SmallText } from '../text';
 import styles from './styles';
-
-import PictureButton from '../buttons/picture/component';
+import { DaySelectorProps } from './types';
 
 const DaySelector = (props: DaySelectorProps) => {
   const isTodayWeekend = isDateWeekend(today());
