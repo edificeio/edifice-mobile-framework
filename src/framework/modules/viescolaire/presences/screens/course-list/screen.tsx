@@ -122,9 +122,8 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
       }
       props.navigation.navigate(presencesRouteNames.call, {
-        classroom: course.roomLabels[0],
+        course,
         id: callId,
-        name: course.classes[0] ?? course.groups[0],
       });
     } catch {
       Toast.showError(I18n.get('presences-courselist-error-text'));
@@ -143,7 +142,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     return (
       <FlatList
         data={props.courses}
-        renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
+        renderItem={({ item }) => <CallCard call={item} onPress={() => openCall(item)} />}
         keyExtractor={item => item.id + item.startDate}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
         ListHeaderComponent={
@@ -172,7 +171,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
   };
 
   return (
-    <PageView>
+    <PageView style={styles.pageContainerStyle}>
       <StructurePicker />
       {renderPage()}
     </PageView>

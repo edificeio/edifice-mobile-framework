@@ -15,9 +15,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.small,
+    marginHorizontal: UI_SIZES.spacing.minor,
   },
   containerSelected: {
-    backgroundColor: theme.palette.complementary.blue.pale,
+    backgroundColor: theme.palette.primary.pale,
     borderRadius: UI_SIZES.radius.medium,
   },
   lastCourseAbsentPicture: {

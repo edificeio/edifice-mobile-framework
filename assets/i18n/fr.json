@@ -628,6 +628,8 @@
   "presences-call-successmessage": "Appel validé",
   "presences-call-title": "Appel",
   "presences-childreneventsmodal-title": "Notifications",
+  "presences-courselist-callcard-afternoon": "Après-midi",
+  "presences-courselist-callcard-morning": "Matin",
   "presences-courselist-callcard-room": "Salle {{name}}",
   "presences-courselist-date": "Appels du {{date}}",
   "presences-courselist-emptyscreen-title": "Il n'y a pas d'appel aujourd'hui",

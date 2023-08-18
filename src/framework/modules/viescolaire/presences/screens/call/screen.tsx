@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -10,13 +10,10 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
+import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
 import StudentListItem from '~/framework/modules/viescolaire/presences/components/StudentListItem';
 import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
@@ -150,7 +147,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
   const renderClassCall = () => {
     const { classCall } = props;
-    const { classroom, name } = props.route.params;
+    const { course } = props.route.params;
     const students = classCall!.students
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(student => ({
@@ -170,20 +167,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
           />
         )}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-        ListHeaderComponent={
-          <LeftColoredItem shadow style={styles.headerCard} color={viescoTheme.palette.presences}>
-            <SmallText>
-              {classCall.startDate.format('LT')} - {classCall.endDate.format('LT')}
-            </SmallText>
-            {classroom ? (
-              <View style={styles.classroomContainer}>
-                <Icon name="pin_drop" size={18} />
-                <SmallText style={styles.classroomText}>{I18n.get('presences-call-room', { name: classroom })}</SmallText>
-              </View>
-            ) : null}
-            <SmallBoldText style={styles.nameText}>{name}</SmallBoldText>
-          </LeftColoredItem>
-        }
+        ListHeaderComponent={<CallCard call={course} isDisabled />}
         ListFooterComponent={
           <PrimaryButton
             text={I18n.get('presences-call-action')}
@@ -193,7 +177,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
             style={styles.validateButton}
           />
         }
-        contentContainerStyle={styles.listContentContainer}
+        ListHeaderComponentStyle={styles.listHeaderContainer}
       />
     ) : null;
   };
@@ -214,7 +198,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     }
   };
 
-  return <PageView>{renderPage()}</PageView>;
+  return <PageView style={styles.pageContainerStyle}>{renderPage()}</PageView>;
 };
 
 export default connect(

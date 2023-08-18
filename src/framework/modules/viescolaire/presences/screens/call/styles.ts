@@ -1,27 +1,18 @@
 import { StyleSheet } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  classroomContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: UI_SIZES.spacing.minor,
+  listHeaderContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+    paddingBottom: UI_SIZES.spacing.big,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.cloudy,
   },
-  classroomText: {
-    marginLeft: UI_SIZES.spacing.tiny,
-  },
-  headerCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    marginBottom: UI_SIZES.spacing.medium,
-  },
-  listContentContainer: {
-    paddingHorizontal: UI_SIZES.spacing.minor,
-  },
-  nameText: {
-    marginLeft: UI_SIZES.spacing.minor,
+  pageContainerStyle: {
+    backgroundColor: theme.palette.grey.white,
   },
   validateButton: {
     margin: UI_SIZES.spacing.medium,

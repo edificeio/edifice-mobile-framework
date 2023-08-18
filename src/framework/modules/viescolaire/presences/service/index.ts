@@ -311,6 +311,7 @@ const courseAdapter = (data: IBackendCourse): ICourse => {
     groups: data.groups,
     endDate: moment(data.endDate),
     id: data.id,
+    registerStateId: data.registerStateId,
     roomLabels: data.roomLabels,
     startDate: moment(data.startDate),
     structureId: data.structureId,
