@@ -614,7 +614,7 @@
   "pickfile-pick": "Choisir dans la galerie",
   "pickfile-take": "Prendre une photo",
   "pickfile-title": "Choissisez le type de fichier à ajouter",
-  "presences-call-action": "Valider",
+  "presences-call-action": "Valider l'appel",
   "presences-call-error-text": "Une erreur est survenue. Veuillez réessayer plus tard.",
   "presences-call-room": "Salle {{name}}",
   "presences-call-successmessage": "Appel validé",

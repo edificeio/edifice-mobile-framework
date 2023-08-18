@@ -17,13 +17,13 @@ export default StyleSheet.create({
     alignSelf: 'flex-end',
     marginBottom: UI_SIZES.spacing.medium,
   },
+  listContentContainer: {
+    paddingHorizontal: UI_SIZES.spacing.minor,
+  },
   nameText: {
     marginLeft: UI_SIZES.spacing.minor,
   },
-  studentHiddenRowContainer: {
-    left: -70,
-  },
   validateButton: {
-    marginBottom: UI_SIZES.spacing.medium,
+    margin: UI_SIZES.spacing.medium,
   },
 });
