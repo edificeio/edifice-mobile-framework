@@ -1,20 +1,32 @@
-#import "AppDelegate.h"
-#import "Orientation.h"
-#import "RNSplashScreen.h"
-
 #import <AppCenterReactNative.h>
 #import <AppCenterReactNativeAnalytics.h>
 #import <AppCenterReactNativeCrashes.h>
 #import <Firebase.h>
+#import <RNCPushNotificationIOS.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
-
-// begin --- https://github.com/react-native-push-notification/ios
 #import <UserNotifications/UserNotifications.h>
-#import <RNCPushNotificationIOS.h>
-// end --- https://github.com/react-native-push-notification/ios
+
+#import "AppDelegate.h"
+#import "Orientation.h"
+#import "RNSplashScreen.h"
+
+static NSString* RECEIVED_PUSHES_KEY = @"RECEIVED_PUSHES";
 
 @implementation AppDelegate
+
+-(void)incrementApplicationBadge {
+  int receivedPushes = [[NSUserDefaults standardUserDefaults] integerForKey:RECEIVED_PUSHES_KEY];
+  [UIApplication sharedApplication].applicationIconBadgeNumber = ++receivedPushes;
+  [[NSUserDefaults standardUserDefaults] setInteger:receivedPushes forKey:RECEIVED_PUSHES_KEY];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
+-(void)resetApplicationBadge {
+  [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+  [[NSUserDefaults standardUserDefaults] setInteger:0 forKey:RECEIVED_PUSHES_KEY];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 -(BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   
@@ -25,7 +37,6 @@
   
   //
   // AppCenter Initialization
-  // @see https://docs.microsoft.com/en-us/appcenter/sdk/getting-started/react-native
   //
   [AppCenterReactNative register];
   [AppCenterReactNativeAnalytics registerWithInitiallyEnabled:true];
@@ -33,21 +44,13 @@
 
   //
   // React Native Firebase Initialization
-  // @see https://rnfirebase.io/#configure-firebase-with-ios-credentials
   //
   if (![FIRApp defaultApp]) [FIRApp configure];
   
-  // being --- https://github.com/react-native-push-notification/ios
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
   [[UIApplication sharedApplication] registerForRemoteNotifications];
-  // end --- https://github.com/react-native-push-notification/ios
-  
-  //
-  // Show SplashScreen
-  //
-  // [RNSplashScreen showSplash:@"LaunchScreen" inRootView:rootView];
   
   //
   // Launch App
@@ -63,6 +66,10 @@
   
   return YES;
   
+}
+
+-(void)applicationDidBecomeActive:(UIApplication *)application {
+  [self resetApplicationBadge];
 }
 
 -(UIInterfaceOrientationMask)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window {
@@ -89,43 +96,44 @@
   #endif
 }
 
-// begin --- https://github.com/react-native-push-notification/ios
+//
+// Push Notifications Management
+//
 
 // Required for the register event.
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
+-(void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
  [RNCPushNotificationIOS didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
+
+// Required for the registrationError event.
+-(void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+ [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
+}
+
 // Required for the notification event. You must call the completion handler after handling the remote notification.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
-fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-{
+-(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  switch ([[UIApplication sharedApplication] applicationState]) {
+    case UIApplicationStateActive:  [self resetApplicationBadge]; break;
+    default:  [self incrementApplicationBadge];
+  }
   [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
   completionHandler(UIBackgroundFetchResultNewData);
 }
-// Required for the registrationError event.
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-{
- [RNCPushNotificationIOS didFailToRegisterForRemoteNotificationsWithError:error];
-}
+
 // Required for localNotification event
-- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void (^)(void))completionHandler
-{
+         withCompletionHandler:(void (^)(void))completionHandler {
   [RNCPushNotificationIOS didReceiveNotificationResponse:response];
 }
+
 //Called when a notification is delivered to a foreground app.
--(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
-{
-  
+-(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
   //Still call the javascript onNotification handler so it can display the new message right away
   NSDictionary *userInfo = notification.request.content.userInfo;
   [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo];
-  
   completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
 }
-
-// end --- https://github.com/react-native-push-notification/ios
 
 @end
