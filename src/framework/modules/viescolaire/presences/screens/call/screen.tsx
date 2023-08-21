@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -14,6 +14,7 @@ import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
 import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
+import { CallSummary } from '~/framework/modules/viescolaire/presences/components/CallSummary';
 import StudentListItem from '~/framework/modules/viescolaire/presences/components/StudentListItem';
 import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
@@ -145,6 +146,25 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     );
   };
 
+  const renderFooter = () => {
+    return (
+      <View style={styles.listFooterContainer}>
+        <View style={styles.separatorContainer} />
+        <View style={styles.summaryContainer}>
+          <CallSummary call={props.classCall!} />
+        </View>
+        <View style={styles.separatorContainer} />
+        <PrimaryButton
+          text={I18n.get('presences-call-action')}
+          action={validateCall}
+          loading={isValidating}
+          iconLeft="ui-check"
+          style={styles.validateContainer}
+        />
+      </View>
+    );
+  };
+
   const renderClassCall = () => {
     const { classCall } = props;
     const { course } = props.route.params;
@@ -168,15 +188,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
         )}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
         ListHeaderComponent={<CallCard call={course} isDisabled />}
-        ListFooterComponent={
-          <PrimaryButton
-            text={I18n.get('presences-call-action')}
-            action={validateCall}
-            loading={isValidating}
-            iconLeft="ui-check"
-            style={styles.validateButton}
-          />
-        }
+        ListFooterComponent={renderFooter}
         ListHeaderComponentStyle={styles.listHeaderContainer}
       />
     ) : null;

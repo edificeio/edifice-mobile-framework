@@ -4,17 +4,31 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  listFooterContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.tiny,
+    rowGap: UI_SIZES.spacing.tiny,
+  },
   listHeaderContainer: {
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingTop: UI_SIZES.spacing.medium,
     paddingBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.tiny,
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
   },
   pageContainerStyle: {
     backgroundColor: theme.palette.grey.white,
   },
-  validateButton: {
-    margin: UI_SIZES.spacing.medium,
+  separatorContainer: {
+    height: 1,
+    marginVertical: UI_SIZES.spacing.tiny,
+    backgroundColor: theme.palette.grey.cloudy,
+  },
+  summaryContainer: {
+    paddingVertical: UI_SIZES.spacing.medium,
+  },
+  validateContainer: {
+    marginVertical: UI_SIZES.spacing.medium,
   },
 });

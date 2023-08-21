@@ -76,7 +76,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
         },
         textColor: theme.ui.text.regular,
       };
-    } else if (now.isBefore(call.endDate)) {
+    } else if (now.isBetween(call.startDate, call.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.info.regular,
         status: {
