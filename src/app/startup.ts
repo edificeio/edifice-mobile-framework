@@ -8,6 +8,8 @@ import { appReadyAction } from '~/framework/navigation/redux';
 import { Platform } from '~/framework/util/appConf';
 import { I18n } from './i18n';
 
+import { I18n } from './i18n';
+
 /**
  * Logic code that is run for the app start
  */

@@ -13,6 +13,7 @@ import { isEmpty } from '~/framework/util/object';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
+import { isEmpty } from '~/framework/util/object';
 
 // TYPES ==========================================================================================
 
