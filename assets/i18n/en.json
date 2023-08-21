@@ -56,7 +56,6 @@
   "auth-change-mobile-verify-title": "Enter your mobile phone number",
   "auth-changepassword-error-confirm": "The passwords must be the same.",
   "auth-changepassword-error-fields": "The form contains errors",
-  "auth-changepassword-error-regex": "The new password does not meet the security criteria.",
   "auth-changepassword-error-submit": "Error while resetting password",
   "auth-changepassword-password-new": "Confirm new password",
   "auth-changepassword-password-new-confirm": "Password confirmed",
