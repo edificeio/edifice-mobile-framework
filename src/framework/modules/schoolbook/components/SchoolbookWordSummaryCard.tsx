@@ -8,7 +8,7 @@ import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/fr
 import CardTopContent from '~/framework/components/card/top-content';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
-import { CaptionBoldText, CaptionItalicText, CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { CaptionBoldText, CaptionItalicText, CaptionText, SmallText } from '~/framework/components/text';
 import { UserType } from '~/framework/modules/auth/service';
 import {
   IAcknowledgment,
@@ -137,10 +137,6 @@ export const SchoolbookWordSummaryCard = ({
             statusText={isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
           />
         )}
-        <SmallBoldText
-          style={{ color: isTeacher || isWordAcknowledged ? theme.ui.text.regular : theme.palette.status.warning.regular }}>
-          {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
-        </SmallBoldText>
         {sendingDate ? (
           <CaptionItalicText style={{ color: theme.palette.grey.graphite, marginTop: UI_SIZES.spacing.minor }}>
             {displayPastDate(sendingDate)}
