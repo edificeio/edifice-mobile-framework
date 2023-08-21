@@ -14,7 +14,9 @@ import TextInput from '~/framework/components/inputs/text';
 import { ImagePicked } from '~/framework/components/menus/actions';
 import { KeyboardPageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
+import { defaultSelectedDate } from '~/framework/components/pickers/day/component';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -75,6 +77,15 @@ export const computeNavBar = ({
     title: I18n.get('homework-create-title'),
   }),
 });
+
+function PreventBack(props: { showAlert: boolean }) {
+  usePreventBack({
+    title: I18n.get('homework-create-leavealert-title'),
+    text: I18n.get('homework-create-leavealert-text'),
+    showAlert: props.showAlert,
+  });
+  return null;
+}
 
 export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScreenProps, HomeworkCreateScreenState> {
   state: HomeworkCreateScreenState = {
@@ -149,61 +160,66 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
 
   render() {
     const { date, subject, description, images, isCreatingEntry } = this.state;
-    const isButtonDisabled = !date || !subject || !description;
+    const isDefaultDateSelected = date?.isSame(defaultSelectedDate);
+    const isEditing = !isDefaultDateSelected || !!subject || !!description || !!images.length;
+    const isRequiredFieldEmpty = !date || !subject || !description;
 
     return (
-      <KeyboardPageView>
-        <ScrollView contentContainerStyle={styles.scrollView}>
-          <InputContainer
-            label={{ text: I18n.get('homework-create-date-title'), icon: 'ui-calendarLight' }}
-            input={<DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} />}
-          />
-          <InputContainer
-            style={styles.inputContainer}
-            label={{ text: I18n.get('homework-create-subject-title'), icon: 'ui-book' }}
-            input={
-              <TextInput
-                placeholder={I18n.get('homework-create-subject-placeholder')}
-                onChangeText={text => this.setState({ subject: text })}
-                value={subject}
-                maxLength={64}
-              />
-            }
-          />
-          <InputContainer
-            style={styles.inputContainer}
-            label={{ text: I18n.get('homework-create-description-title'), icon: 'ui-textPage' }}
-            input={
-              <MultilineTextInput
-                placeholder={I18n.get('homework-create-description-placeholder')}
-                numberOfLines={4}
-                onChangeText={text => this.setState({ description: text })}
-                value={description}
-              />
-            }
-          />
-          <View style={styles.inputContainer}>
-            <AttachmentPicker
-              onlyImages
-              notifierId={uppercaseFirstLetter(moduleConfig.name)}
-              imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
-              onAttachmentRemoved={selectedImages => this.setState({ images: selectedImages })}
-              attachments={images.map(image => ({
-                mime: image.type,
-                name: image.fileName,
-                uri: image.uri,
-              }))}
+      <>
+        <PreventBack showAlert={isEditing && !isCreatingEntry} />
+        <KeyboardPageView>
+          <ScrollView contentContainerStyle={styles.scrollView}>
+            <InputContainer
+              label={{ text: I18n.get('homework-create-date-title'), icon: 'ui-calendarLight' }}
+              input={<DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} />}
             />
-          </View>
-          <PrimaryButton
-            text={I18n.get('homework-create-addhomework')}
-            action={() => this.verifyDate()}
-            disabled={isButtonDisabled}
-            loading={isCreatingEntry}
-            style={styles.button}
-          />
-        </ScrollView>
-      </KeyboardPageView>
+            <InputContainer
+              style={styles.inputContainer}
+              label={{ text: I18n.get('homework-create-subject-title'), icon: 'ui-book' }}
+              input={
+                <TextInput
+                  placeholder={I18n.get('homework-create-subject-placeholder')}
+                  onChangeText={text => this.setState({ subject: text })}
+                  value={subject}
+                  maxLength={64}
+                />
+              }
+            />
+            <InputContainer
+              style={styles.inputContainer}
+              label={{ text: I18n.get('homework-create-description-title'), icon: 'ui-textPage' }}
+              input={
+                <MultilineTextInput
+                  placeholder={I18n.get('homework-create-description-placeholder')}
+                  numberOfLines={4}
+                  onChangeText={text => this.setState({ description: text })}
+                  value={description}
+                />
+              }
+            />
+            <View style={styles.inputContainer}>
+              <AttachmentPicker
+                onlyImages
+                notifierId={uppercaseFirstLetter(moduleConfig.name)}
+                imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
+                onAttachmentRemoved={selectedImages => this.setState({ images: selectedImages })}
+                attachments={images.map(image => ({
+                  mime: image.type,
+                  name: image.fileName,
+                  uri: image.uri,
+                }))}
+              />
+            </View>
+            <PrimaryButton
+              text={I18n.get('homework-create-addhomework')}
+              action={() => this.verifyDate()}
+              disabled={isRequiredFieldEmpty}
+              loading={isCreatingEntry}
+              style={styles.button}
+            />
+          </ScrollView>
+        </KeyboardPageView>
+      </>
     );
   }
 }

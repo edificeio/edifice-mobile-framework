@@ -1,39 +1,29 @@
 import { StyleSheet } from 'react-native';
 
-import theme from '~/app/theme';
-import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   page: {
-    flexGrow: 1,
-  },
-  noFlexShrink: {
-    flexShrink: 0,
+    padding: UI_SIZES.spacing.big,
   },
   pressable: {
     flexGrow: 1,
   },
-  textError: {
-    flexGrow: 0,
-    padding: UI_SIZES.spacing.tiny,
-    textAlign: 'center',
-    alignSelf: 'center',
-    color: theme.palette.status.failure.regular,
-    marginTop: 0,
-    minHeight: getScaleHeight(20) * 3,
+  alert: {
+    marginBottom: UI_SIZES.spacing.medium,
   },
-  textWarning: {
-    textAlign: 'center',
-  },
-  viewInfoForm: {
-    flexShrink: 0,
-    alignItems: 'stretch',
-  },
-  viewWarning: {
-    justifyContent: 'center',
+  infos: {
     alignItems: 'center',
-    padding: UI_SIZES.spacing.tiny,
-    flex: 0,
   },
-  refuse: { color: theme.palette.status.failure.regular, textAlign: 'center' },
+  infosText: {
+    textAlign: 'center',
+    marginTop: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.big,
+  },
+  inputNewPassword: {
+    marginVertical: UI_SIZES.spacing.minor,
+  },
+  buttons: {
+    marginTop: UI_SIZES.spacing.big,
+  },
 });

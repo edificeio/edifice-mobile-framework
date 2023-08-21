@@ -1,24 +1,29 @@
-import styled from '@emotion/native';
 import * as React from 'react';
-import { Pressable, TouchableOpacity, View } from 'react-native';
+import { Pressable, TextInput as RNTextInput, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
+import DefaultButton from '~/framework/components/buttons/default';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import InputContainer from '~/framework/components/inputs/container';
+import { LabelIndicator } from '~/framework/components/inputs/container/label';
+import TextInput, { TextInputProps } from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
-import { BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { NamedSVG } from '~/framework/components/picture';
+import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { changePasswordAction, loginAction, logoutAction } from '~/framework/modules/auth/actions';
 import { IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
 import { getAuthNavigationState, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
-import { TextInputLine } from '~/ui/forms/TextInputLine';
-import { ValueChange, ValueChangeArgs } from '~/utils/form';
+import { ValueChangeArgs } from '~/utils/form';
 
 import ChangePasswordFormModel from './form-model/component';
 import styles from './styles';
@@ -29,63 +34,19 @@ import {
   ChangePasswordScreenStoreProps,
   IFields,
 } from './types';
-import PrimaryButton from '~/framework/components/buttons/primary';
 
-function OldPasswordField(props: { oldPassword: string; form: ChangePasswordFormModel; onChange: ValueChange<string> }) {
-  const validator = props.form.oldPassword;
+const InputPassword = React.forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
+  const [showPassword, setShowPassword] = React.useState(false);
   return (
-    <TextInputLine
-      isPasswordField
-      inputRef={ref => (props.form.inputOldPassword = ref)}
-      placeholder={I18n.get('auth-changepassword-password-old')}
-      onChangeText={validator.changeCallback(props.onChange)}
-      value={props.oldPassword}
-      hasError={props.form.showOldPasswordError(props.oldPassword)}
+    <TextInput
+      {...props}
+      toggleIconOn="ui-hide"
+      toggleIconOff="ui-see"
+      onToggle={() => setShowPassword(!showPassword)}
+      secureTextEntry={!showPassword}
+      ref={ref}
     />
   );
-}
-function NewPasswordField(props: { newPassword: string; form: ChangePasswordFormModel; onChange: ValueChange<string> }) {
-  const validator = props.form.newPassword;
-  return (
-    <TextInputLine
-      isPasswordField
-      inputRef={ref => (props.form.inputNewPassword = ref)}
-      placeholder={I18n.get('auth-changepassword-password-new')}
-      onChangeText={validator.changeCallback(props.onChange)}
-      value={props.newPassword}
-      hasError={props.form.showNewPasswordError(props.newPassword)}
-    />
-  );
-}
-function PasswordConfirmField(props: { confirm: string; form: ChangePasswordFormModel; onChange: ValueChange<string> }) {
-  const validator = props.form.confirm;
-  return (
-    <TextInputLine
-      isPasswordField
-      inputRef={ref => (props.form.inputPasswordConfirm = ref)}
-      placeholder={I18n.get('auth-changepassword-password-new-confirm')}
-      onChangeText={validator.changeCallback(props.onChange)}
-      value={props.confirm}
-      hasError={props.form.showPasswordConfirmError(props.confirm)}
-    />
-  );
-}
-const FormContainer = styled.View({
-  alignItems: 'stretch',
-  flexGrow: 1,
-  flexShrink: 0,
-  justifyContent: 'space-between',
-  paddingTop: UI_SIZES.spacing.big,
-  paddingHorizontal: UI_SIZES.spacing.big,
-});
-const ButtonWrapper = styled.View({
-  alignItems: 'center',
-  flex: 0,
-  justifyContent: 'flex-start',
-  marginTop: UI_SIZES.spacing.small,
-});
-const MiniSpacer = styled.View({
-  marginTop: UI_SIZES.spacing.small,
 });
 
 class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPrivateProps, ChangePasswordScreenState> {
@@ -99,6 +60,12 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     submitState: 'IDLE',
   };
 
+  inputOldPassword = React.createRef<any>();
+
+  inputNewPassword = React.createRef<any>();
+
+  inputConfirmPassword = React.createRef<any>();
+
   private async doSubmit() {
     try {
       this.setState({ typing: false, submitState: 'RUNNING', error: undefined });
@@ -109,8 +76,8 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
         ...this.state,
         login: this.props.route.params.credentials.username,
       };
-      const { platform, forceChange, rememberMe } = this.props.route.params;
-      const redirect = await this.props.trySubmit(platform, payload, forceChange, rememberMe);
+      const { platform, forceChange } = this.props.route.params;
+      const redirect = await this.props.trySubmit(platform, payload, forceChange);
       try {
         redirectLoginNavAction(redirect, platform, this.props.navigation);
         setTimeout(() => {
@@ -128,6 +95,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
       }
     } catch (e) {
       const changePwdError = e as IChangePasswordError;
+      Toast.showError(I18n.get('toast-error-text'));
       if (this.mounted) this.setState({ typing: false, error: changePwdError.error, submitState: 'IDLE' });
     }
   }
@@ -172,66 +140,95 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     const isNotValid = !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
     const errorText = errorKey ? I18n.get(errorKey) : typing ? '' : error;
-    const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState === 'RUNNING';
-    const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
 
     return (
-      <KeyboardPageView scrollable safeArea style={styles.page}>
+      <KeyboardPageView
+        scrollable
+        scrollViewProps={{ showsVerticalScrollIndicator: false, bounces: false }}
+        safeArea
+        style={styles.page}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
-          <FormContainer>
-            <View style={styles.viewInfoForm}>
-              {this.props.route.params.forceChange ? (
-                <View style={styles.viewWarning}>
-                  <BodyText style={styles.textWarning}>{I18n.get('auth-changepassword-warning')}</BodyText>
-                  <MiniSpacer />
-                  <MiniSpacer />
-                </View>
-              ) : null}
+          {this.props.route.params.forceChange ? (
+            <AlertCard style={styles.alert} type="warning" text={I18n.get('auth-changepassword-warning')} />
+          ) : null}
 
-              {authContext.passwordRegexI18n?.[I18n.getLanguage()] ? (
-                <AlertCard type="info" text={authContext.passwordRegexI18n?.[I18n.getLanguage()]} />
-              ) : null}
+          {authContext.passwordRegexI18n?.[I18n.getLanguage()] ? (
+            <View style={styles.infos}>
+              <NamedSVG name="ui-lock-alternate" />
+              <SmallText style={styles.infosText}>{authContext.passwordRegexI18n?.[I18n.getLanguage()]}</SmallText>
             </View>
-            <View style={styles.noFlexShrink}>
-              <OldPasswordField oldPassword={oldPassword} form={formModel} onChange={this.onChange('oldPassword')} />
-              <MiniSpacer />
-            </View>
-            <View style={styles.noFlexShrink}>
-              <NewPasswordField newPassword={newPassword} form={formModel} onChange={this.onChange('newPassword')} />
-              <MiniSpacer />
-            </View>
-            <View style={styles.noFlexShrink}>
-              <PasswordConfirmField confirm={confirm} form={formModel} onChange={this.onChange('confirm')} />
-              <MiniSpacer />
-            </View>
-            <View style={styles.noFlexShrink}>
-              <SmallText style={styles.textError}>
-                {showError && hasErrorKey && (errorKey !== 'auth-changepassword-error-confirm' || this.state.confirm.length > 0)
-                  ? errorText
-                  : ' \n '}
-              </SmallText>
-            </View>
-
-            <View style={styles.noFlexShrink}>
-              <ButtonWrapper error={hasErrorKey} typing={typing}>
-                <PrimaryButton
-                  action={() => this.doSubmit()}
-                  disabled={isNotValid}
-                  text={I18n.get('common-save')}
-                  loading={isSubmitLoading}
-                />
-              </ButtonWrapper>
-              {this.props.route.params.forceChange ? (
-                <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={this.doRefuseTerms}>
-                  <SmallBoldText style={styles.refuse}>{I18n.get('user-revalidateterms-refuseanddisconnect')}</SmallBoldText>
-                </TouchableOpacity>
-              ) : null}
-              <MiniSpacer />
-              <MiniSpacer />
-              <MiniSpacer />
-            </View>
-          </FormContainer>
+          ) : null}
+          <InputContainer
+            label={{ text: I18n.get('auth-changepassword-password-old'), icon: 'ui-lock', indicator: LabelIndicator.REQUIRED }}
+            input={
+              <InputPassword
+                placeholder={I18n.get('auth-changepassword-placeholder')}
+                showIconCallback
+                showError={formModel.showOldPasswordError(oldPassword)}
+                value={oldPassword}
+                onChangeText={formModel.oldPassword.changeCallback(this.onChange('oldPassword'))}
+                annotation=" "
+                ref={this.inputOldPassword}
+                onSubmitEditing={() => this.inputNewPassword.current.focus()}
+              />
+            }
+          />
+          <InputContainer
+            style={styles.inputNewPassword}
+            label={{
+              text: I18n.get('auth-changepassword-password-new'),
+              icon: 'ui-lock',
+              indicator: LabelIndicator.REQUIRED,
+            }}
+            input={
+              <InputPassword
+                placeholder={I18n.get('auth-changepassword-placeholder')}
+                showIconCallback
+                showError={formModel.showNewPasswordError(newPassword)}
+                value={newPassword}
+                onChangeText={formModel.newPassword.changeCallback(this.onChange('newPassword'))}
+                annotation={formModel.showNewPasswordError(newPassword) ? errorText : ' '}
+                ref={this.inputNewPassword}
+                onSubmitEditing={() => this.inputConfirmPassword.current.focus()}
+              />
+            }
+          />
+          <InputContainer
+            label={{
+              text: I18n.get('auth-changepassword-password-new-confirm'),
+              icon: 'ui-lock',
+              indicator: LabelIndicator.REQUIRED,
+            }}
+            input={
+              <InputPassword
+                placeholder={I18n.get('auth-changepassword-placeholder')}
+                showIconCallback
+                showError={formModel.showPasswordConfirmError(confirm)}
+                value={confirm}
+                onChangeText={formModel.confirm.changeCallback(this.onChange('confirm'))}
+                annotation={formModel.showPasswordConfirmError(confirm) ? errorText : ' '}
+                ref={this.inputConfirmPassword}
+                onSubmitEditing={() => (isNotValid ? null : this.doSubmit())}
+              />
+            }
+          />
+          <View style={styles.buttons}>
+            <PrimaryButton
+              action={() => this.doSubmit()}
+              disabled={isNotValid}
+              text={I18n.get('common-save')}
+              loading={isSubmitLoading}
+            />
+            {this.props.route.params.forceChange ? (
+              <DefaultButton
+                text={I18n.get('user-revalidateterms-refuseanddisconnect')}
+                contentColor={theme.palette.status.failure.regular}
+                style={{ marginTop: UI_SIZES.spacing.big }}
+                action={this.doRefuseTerms}
+              />
+            ) : null}
+          </View>
         </Pressable>
       </KeyboardPageView>
     );
