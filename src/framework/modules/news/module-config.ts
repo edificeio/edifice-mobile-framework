@@ -4,7 +4,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { NewsState } from './reducer';
 
-const fillApp = appConf.is1d ? theme.palette.complementary.purple.regular : theme.palette.primary.regular;
+const fillApp = appConf.is1d ? theme.palette.complementary.purple.regular : theme.palette.complementary.blue.regular;
 
 export default new NavigableModuleConfig<'news', NewsState>({
   name: 'news',
