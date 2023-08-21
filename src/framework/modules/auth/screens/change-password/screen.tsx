@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, TextInput as RNTextInput, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -35,7 +35,7 @@ import {
   IFields,
 } from './types';
 
-const InputPassword = (props: TextInputProps) => {
+const InputPassword = React.forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
   const [showPassword, setShowPassword] = React.useState(false);
   return (
     <TextInput
@@ -44,9 +44,10 @@ const InputPassword = (props: TextInputProps) => {
       toggleIconOff="ui-see"
       onToggle={() => setShowPassword(!showPassword)}
       secureTextEntry={!showPassword}
+      ref={ref}
     />
   );
-};
+});
 
 class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPrivateProps, ChangePasswordScreenState> {
   private mounted = false;
@@ -58,6 +59,12 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     typing: false,
     submitState: 'IDLE',
   };
+
+  inputOldPassword = React.createRef<any>();
+
+  inputNewPassword = React.createRef<any>();
+
+  inputConfirmPassword = React.createRef<any>();
 
   private async doSubmit() {
     try {
@@ -136,7 +143,11 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     const isSubmitLoading = submitState === 'RUNNING';
 
     return (
-      <KeyboardPageView scrollable safeArea style={styles.page}>
+      <KeyboardPageView
+        scrollable
+        scrollViewProps={{ showsVerticalScrollIndicator: false, bounces: false }}
+        safeArea
+        style={styles.page}>
         <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
           {this.props.route.params.forceChange ? (
             <AlertCard style={styles.alert} type="warning" text={I18n.get('auth-changepassword-warning')} />
@@ -158,6 +169,8 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 value={oldPassword}
                 onChangeText={formModel.oldPassword.changeCallback(this.onChange('oldPassword'))}
                 annotation=" "
+                ref={this.inputOldPassword}
+                onSubmitEditing={() => this.inputNewPassword.current.focus()}
               />
             }
           />
@@ -176,6 +189,8 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 value={newPassword}
                 onChangeText={formModel.newPassword.changeCallback(this.onChange('newPassword'))}
                 annotation={formModel.showNewPasswordError(newPassword) ? errorText : ' '}
+                ref={this.inputNewPassword}
+                onSubmitEditing={() => this.inputConfirmPassword.current.focus()}
               />
             }
           />
@@ -193,6 +208,8 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 value={confirm}
                 onChangeText={formModel.confirm.changeCallback(this.onChange('confirm'))}
                 annotation={formModel.showPasswordConfirmError(confirm) ? errorText : ' '}
+                ref={this.inputConfirmPassword}
+                onSubmitEditing={() => (isNotValid ? null : this.doSubmit())}
               />
             }
           />
