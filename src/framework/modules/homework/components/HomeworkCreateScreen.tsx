@@ -166,7 +166,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
 
     return (
       <>
-        <PreventBack showAlert={isEditing} />
+        <PreventBack showAlert={isEditing && !isCreatingEntry} />
         <KeyboardPageView>
           <ScrollView contentContainerStyle={styles.scrollView}>
             <InputContainer
