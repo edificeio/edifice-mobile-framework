@@ -6,7 +6,6 @@ import { actions } from '~/framework/modules/auth/reducer';
 import { loadCurrentPlatform } from '~/framework/modules/auth/service';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { Platform } from '~/framework/util/appConf';
-import { I18n } from './i18n';
 
 import { I18n } from './i18n';
 
