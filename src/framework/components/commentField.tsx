@@ -1,18 +1,19 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { LayoutChangeEvent, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { displayPastDate } from '~/framework/util/date';
 import { isEmpty } from '~/framework/util/object';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
+import PrimaryButton from './buttons/primary';
+import TertiaryButton from './buttons/tertiary';
+import { CaptionBoldText, CaptionItalicText } from './text';
 
 // TYPES ==========================================================================================
 
@@ -243,27 +244,23 @@ const CommentField = (props: CommentFieldProps, ref) => {
       </View>
       {isIdleExistingComment && isUserComment && (props.onPublishComment || props.onDeleteComment) ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
-          {props.onPublishComment ? (
-            <TouchableOpacity onPress={() => editComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('commentfield-modify')}</SmallBoldText>
-            </TouchableOpacity>
-          ) : null}
+          {props.onPublishComment ? <TertiaryButton action={editComment} text={I18n.get('commentfield-modify')} /> : null}
           {props.onDeleteComment ? (
-            <TouchableOpacity onPress={() => deleteComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.get('common-delete')}
-              </SmallBoldText>
-            </TouchableOpacity>
+            <TertiaryButton
+              action={deleteComment}
+              text={I18n.get('common-delete')}
+              style={{ marginLeft: UI_SIZES.spacing.medium }}
+            />
           ) : null}
         </View>
       ) : props.isManager || isUserComment ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onDeleteComment ? (
-            <TouchableOpacity onPress={() => deleteComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.get('common-delete')}
-              </SmallBoldText>
-            </TouchableOpacity>
+            <TertiaryButton
+              action={deleteComment}
+              text={I18n.get('common-delete')}
+              style={{ marginLeft: UI_SIZES.spacing.medium }}
+            />
           ) : null}
         </View>
       ) : null}

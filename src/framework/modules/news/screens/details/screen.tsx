@@ -1,6 +1,6 @@
 import { HeaderBackButton } from '@react-navigation/elements';
-import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
@@ -25,6 +25,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
 import {
@@ -41,7 +42,6 @@ import { NewsCommentItem, NewsItem, NewsItemDetails, NewsItemRights, NewsThreadI
 import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
 import { NewsThreadItemReduce } from '~/framework/modules/news/screens/home';
 import { newsUriCaptureFunction } from '~/framework/modules/news/service';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { isEmpty } from '~/framework/util/object';
@@ -50,7 +50,6 @@ import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
-import moment from 'moment';
 
 export const computeNavBar = ({
   navigation,
@@ -108,7 +107,6 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, []);
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const commentFieldRefs: any[] = [];
 
   const getComments = useCallback(
@@ -284,7 +282,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
             text={news.owner.displayName}
             userId={news.owner.id}
             isHorizontal
-            size={UI_SIZES.elements.icon}
+            size={UI_SIZES.elements.icon.default}
             viewStyle={styles.detailsOwner}
           />
           <HtmlContentView html={news.content} />
@@ -403,29 +401,12 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
     }
   }, [indexEditingComment]);
 
-  UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
-    Alert.alert(
-      I18n.get(`news-details-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(
-        `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
-      ),
-      [
-        {
-          text: I18n.get('common-quit'),
-          style: 'destructive',
-          onPress: () => {
-            handleRemoveConfirmNavigationEvent(data.action, navigation);
-          },
-        },
-        {
-          text: I18n.get('common-continue'),
-          style: 'default',
-          onPress: () => {
-            clearConfirmNavigationEvent();
-          },
-        },
-      ],
-    );
+  usePreventBack({
+    title: I18n.get(`news-details-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+    text: I18n.get(
+      `news-details-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+    ),
+    showAlert: infoComment.changed,
   });
 
   return (
