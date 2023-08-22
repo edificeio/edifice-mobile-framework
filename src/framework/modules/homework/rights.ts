@@ -1,6 +1,7 @@
 /**
  * Homework workflow
  */
+import { Alert } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -27,13 +28,17 @@ export default () =>
       wk.create && {
         title: I18n.get('homework-resourcename'),
         action: async () => {
-          await (getStore().dispatch as ThunkDispatch<any, any, any>)(fetchHomeworkDiaryList());
-          const diaryList = getStore().getState().homework?.diaryList?.data;
-          const diaryIdsList = Object.getOwnPropertyNames(diaryList);
-          const hasOneDiary = diaryIdsList?.length === 1;
-          if (hasOneDiary) {
-            navigate(homeworkRouteNames.homeworkCreate);
-          } else navigate(homeworkRouteNames.homeworkSelect);
+          try {
+            await (getStore().dispatch as ThunkDispatch<any, any, any>)(fetchHomeworkDiaryList());
+            const diaryList = getStore().getState().homework?.diaryList?.data;
+            const diaryIdsList = Object.getOwnPropertyNames(diaryList);
+            const hasOneDiary = diaryIdsList?.length === 1;
+            if (hasOneDiary) {
+              navigate(homeworkRouteNames.homeworkCreate);
+            } else navigate(homeworkRouteNames.homeworkSelect);
+          } catch {
+            Alert.alert('', I18n.get('homework-rights-error-text'));
+          }
         },
       }
     );
