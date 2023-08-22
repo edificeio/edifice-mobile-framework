@@ -46,6 +46,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkCr
   dispatch,
 });
 
+export interface HomeworkCreateScreenNavigationParams {}
+
 class HomeworkCreateScreenContainer extends React.PureComponent<IHomeworkCreateScreenProps, object> {
   render() {
     return <HomeworkCreateScreen {...this.props} />;

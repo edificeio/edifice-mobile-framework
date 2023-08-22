@@ -63,8 +63,6 @@ interface IHomeworkTaskListScreenState {
   pastDateLimit: moment.Moment;
 }
 
-export interface HomeworkTaskListScreenNavigationParams {}
-
 export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
   IHomeworkTaskListScreenEventProps &
   NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskList>;

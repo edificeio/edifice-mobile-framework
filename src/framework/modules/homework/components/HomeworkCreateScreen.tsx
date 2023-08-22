@@ -51,8 +51,6 @@ interface HomeworkCreateScreenState {
   isCreatingEntry: boolean;
 }
 
-export interface HomeworkCreateScreenNavigationParams {}
-
 export type IHomeworkCreateScreenProps = HomeworkCreateScreenEventProps &
   HomeworkCreateScreenDataProps &
   NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkCreate>;
