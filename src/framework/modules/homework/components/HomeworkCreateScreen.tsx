@@ -26,6 +26,10 @@ import { uppercaseFirstLetter } from '~/framework/util/string';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 
+export interface HomeworkCreateScreenDataProps {
+  diaryId?: string;
+}
+
 export interface HomeworkCreateScreenEventProps {
   handleUploadEntryImages(images: ImagePicked[]): Promise<SyncedFile[]>;
   handleCreateDiaryEntry(
@@ -47,11 +51,10 @@ interface HomeworkCreateScreenState {
   isCreatingEntry: boolean;
 }
 
-export interface HomeworkCreateScreenNavigationParams {
-  diaryId?: string;
-}
+export interface HomeworkCreateScreenNavigationParams {}
 
 export type IHomeworkCreateScreenProps = HomeworkCreateScreenEventProps &
+  HomeworkCreateScreenDataProps &
   NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkCreate>;
 
 const styles = StyleSheet.create({
@@ -115,9 +118,8 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
 
   async createEntry() {
     try {
-      const { navigation, route, handleCreateDiaryEntry, handleGetHomeworkTasks, handleUploadEntryImages } = this.props;
+      const { navigation, handleCreateDiaryEntry, handleGetHomeworkTasks, handleUploadEntryImages, diaryId } = this.props;
       const { date, subject, description, images } = this.state;
-      const diaryId = route.params.diaryId;
 
       this.setState({ isCreatingEntry: true });
 

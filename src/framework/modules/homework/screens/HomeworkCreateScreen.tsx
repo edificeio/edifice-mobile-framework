@@ -6,6 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import {
   HomeworkCreateScreen,
+  HomeworkCreateScreenDataProps,
   HomeworkCreateScreenEventProps,
   IHomeworkCreateScreenProps,
 } from '~/framework/modules/homework/components/HomeworkCreateScreen';
@@ -13,6 +14,15 @@ import { SyncedFile } from '~/framework/util/fileHandler';
 
 import { createHomeworkDiaryEntry, uploadHomeworkDiaryEntryImages } from '../actions/createEntry';
 import { fetchHomeworkTasks } from '../actions/tasks';
+
+const mapStateToProps: (state: any) => HomeworkCreateScreenDataProps = state => {
+  const localState = state.homework;
+  const selectedDiaryId = localState.selectedDiary;
+
+  return {
+    diaryId: selectedDiaryId,
+  };
+};
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkCreateScreenEventProps = dispatch => ({
   handleUploadEntryImages: async (images: ImagePicked[]) => {
@@ -42,4 +52,4 @@ class HomeworkCreateScreenContainer extends React.PureComponent<IHomeworkCreateS
   }
 }
 
-export default connect(undefined, mapDispatchToProps)(HomeworkCreateScreenContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(HomeworkCreateScreenContainer);
