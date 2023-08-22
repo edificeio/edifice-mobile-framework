@@ -2,6 +2,8 @@
  * Entry point of the app
  * (formerly App.tsx)
  */
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import * as React from 'react';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -9,7 +11,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
 import AppModules from '~/app/modules';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -105,9 +106,11 @@ function App(props: AppProps) {
   return (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <Provider store={props.store}>
-          <Navigation />
-        </Provider>
+        <BottomSheetModalProvider>
+          <Provider store={props.store}>
+            <Navigation />
+          </Provider>
+        </BottomSheetModalProvider>
       </SafeAreaProvider>
       {FlipperAsyncStorageElement}
     </GestureHandlerRootView>

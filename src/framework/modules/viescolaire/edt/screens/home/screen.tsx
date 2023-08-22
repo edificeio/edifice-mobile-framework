@@ -2,13 +2,11 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { UI_STYLES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -248,13 +246,11 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   };
 
   return (
-    <GestureHandlerRootView style={UI_STYLES.flex1}>
-      <PageView>
-        {props.userType === UserType.Teacher ? <StructurePicker /> : null}
-        {props.userType === UserType.Relative ? <ChildPicker /> : null}
-        {renderPage()}
-      </PageView>
-    </GestureHandlerRootView>
+    <PageView>
+      {props.userType === UserType.Teacher ? <StructurePicker /> : null}
+      {props.userType === UserType.Relative ? <ChildPicker /> : null}
+      {renderPage()}
+    </PageView>
   );
 };
 
