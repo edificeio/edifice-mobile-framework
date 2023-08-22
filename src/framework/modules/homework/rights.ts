@@ -29,8 +29,8 @@ export default () =>
         action: async () => {
           await (getStore().dispatch as ThunkDispatch<any, any, any>)(fetchHomeworkDiaryList());
           const diaryList = getStore().getState().homework?.diaryList?.data;
-          const diaryListIds = Object.getOwnPropertyNames(diaryList);
-          const hasOneDiary = diaryListIds?.length === 1;
+          const diaryIdsList = Object.getOwnPropertyNames(diaryList);
+          const hasOneDiary = diaryIdsList?.length === 1;
           if (hasOneDiary) {
             navigate(homeworkRouteNames.homeworkCreate);
           } else navigate(homeworkRouteNames.homeworkSelect);
