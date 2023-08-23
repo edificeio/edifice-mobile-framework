@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: theme.ui.background.card,
     borderRadius: UI_SIZES.radius.card,
-    borderWidth: 1,
     overflow: 'hidden',
   },
   leftContainer: {
@@ -52,6 +51,7 @@ interface CallCardProps {
 
 interface CallCardStyle {
   borderColor: ColorValue;
+  borderWidth: number;
   status: {
     backgroundColor: ColorValue;
     iconColor: ColorValue;
@@ -69,6 +69,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
     if (now.isAfter(call.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.warning.pale,
+        borderWidth: 1,
         status: {
           backgroundColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.warning.pale,
           iconColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.warning.regular,
@@ -79,6 +80,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
     } else if (now.isBetween(call.startDate, call.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.info.regular,
+        borderWidth: 2,
         status: {
           backgroundColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.info.pale,
           iconColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.info.regular,
@@ -89,6 +91,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
     }
     return {
       borderColor: theme.palette.grey.pearl,
+      borderWidth: 1,
       status: {
         backgroundColor: theme.palette.grey.pearl,
         iconColor: theme.palette.grey.graphite,
@@ -113,10 +116,10 @@ export class CallCard extends React.PureComponent<CallCardProps> {
     const hoursLabel = this.getHoursLabel(call.startDate, call.endDate);
     const roomLabel = call.roomLabels[0];
     const classLabel = call.classes.length ? call.classes : call.groups;
-    const { borderColor, status, textColor } = this.getStatusStyle();
+    const { borderColor, borderWidth, status, textColor } = this.getStatusStyle();
 
     return (
-      <TouchableOpacity onPress={onPress} disabled={isDisabled} style={[styles.container, { borderColor }]}>
+      <TouchableOpacity onPress={onPress} disabled={isDisabled} style={[styles.container, { borderColor, borderWidth }]}>
         <View style={styles.leftContainer}>
           <View style={styles.rowContainer}>
             <Picture type="NamedSvg" name="ui-clock" width={22} height={22} fill={textColor} />
