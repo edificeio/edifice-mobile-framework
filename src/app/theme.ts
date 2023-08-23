@@ -89,12 +89,12 @@ export interface ITheme {
   color: {
     homework: {
       days: {
-        monday: { accent: ColorValue; background: ColorValue };
-        tuesday: { accent: ColorValue; background: ColorValue };
-        wednesday: { accent: ColorValue; background: ColorValue };
-        thursday: { accent: ColorValue; background: ColorValue };
-        friday: { accent: ColorValue; background: ColorValue };
-        saturday: { accent: ColorValue; background: ColorValue };
+        monday: { accent: ColorValue; light: ColorValue; background: ColorValue };
+        tuesday: { accent: ColorValue; light: ColorValue; background: ColorValue };
+        wednesday: { accent: ColorValue; light: ColorValue; background: ColorValue };
+        thursday: { accent: ColorValue; light: ColorValue; background: ColorValue };
+        friday: { accent: ColorValue; light: ColorValue; background: ColorValue };
+        saturday: { accent: ColorValue; light: ColorValue; background: ColorValue };
       };
     };
     schoolbook: {
@@ -295,26 +295,32 @@ export const defaultTheme: ThemeInitializer = {
         days: {
           monday: {
             accent: this.palette.complementary.green.regular,
+            light: this.palette.complementary.green.light,
             background: this.palette.complementary.green.pale,
           },
           tuesday: {
             accent: this.palette.complementary.purple.regular,
+            light: this.palette.complementary.purple.light,
             background: this.palette.complementary.purple.pale,
           },
           wednesday: {
             accent: this.palette.complementary.blue.regular,
+            light: this.palette.complementary.blue.light,
             background: this.palette.complementary.blue.pale,
           },
           thursday: {
             accent: this.palette.complementary.red.regular,
+            light: this.palette.complementary.red.light,
             background: this.palette.complementary.red.pale,
           },
           friday: {
             accent: this.palette.complementary.orange.regular,
+            light: this.palette.complementary.orange.light,
             background: this.palette.complementary.orange.pale,
           },
           saturday: {
             accent: this.palette.complementary.yellow.regular,
+            light: this.palette.complementary.yellow.light,
             background: this.palette.complementary.yellow.pale,
           },
         },
