@@ -70,7 +70,7 @@ export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPart
  * @param platform
  * @returns
  */
-function getLegalUrlsAction(platform: Platform) {
+export function getLegalUrlsAction(platform: Platform) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<LegalUrls | undefined> {
     // === 1: Load legal document urls
     try {
