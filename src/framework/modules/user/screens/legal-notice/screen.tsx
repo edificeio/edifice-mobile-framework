@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -11,6 +11,7 @@ import { PageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Icon } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
+import { getLegalUrlsAction } from '~/framework/modules/auth/actions';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -33,6 +34,17 @@ export const computeNavBar = ({
 const LEGAL_ITEMS = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
 
 function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
+  const dispatch = useDispatch();
+
+  // Try to update legal urls
+  React.useEffect(() => {
+    const fetchlegalUrls = async () => {
+      if (props?.session?.platform) dispatch(getLegalUrlsAction(props?.session?.platform));
+    };
+    fetchlegalUrls().catch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const openLegalItem = React.useCallback(
     (legalItem: string) => {
       if (!props.urls) return; // ToDo error popup here
@@ -60,5 +72,6 @@ function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
 }
 
 export default connect((state: IGlobalState) => {
-  return { urls: getAuthState(state).legalUrls };
+  const authState = getAuthState(state);
+  return { session: authState.session, urls: authState.legalUrls };
 })(UserLegalNoticeScreen);

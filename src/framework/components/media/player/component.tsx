@@ -1,3 +1,4 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { BackHandler, Platform, StatusBar, View } from 'react-native';
@@ -15,7 +16,6 @@ import { PageView } from '~/framework/components/page';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
-import { useHeaderHeight } from '@react-navigation/elements';
 
 const ERRORS_I18N = {
   connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],

@@ -21,6 +21,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatfo
         loadCurrentPlatform()
           .then(platform => {
             if (platform) {
+              let loginDone = false;
               dispatch(loginAction(platform, undefined))
                 .then(redirect => {
                   dispatch(actions.redirectAutoLogin(redirect));
@@ -29,13 +30,16 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatfo
                   // Do nothing. Finally clause + default navigation state will handle the case.
                 })
                 .finally(() => {
+                  loginDone = true;
                   setLoadedPlatform(platform);
                   dispatch(appReadyAction());
                 });
               setTimeout(() => {
-                dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
-                setLoadedPlatform(platform);
-                dispatch(appReadyAction());
+                if (!loginDone) {
+                  dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
+                  setLoadedPlatform(platform);
+                  dispatch(appReadyAction());
+                }
               }, 15000);
             } else dispatch(appReadyAction());
           })
