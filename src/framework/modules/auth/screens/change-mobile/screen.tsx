@@ -1,7 +1,7 @@
 import { RouteProp, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Platform, View } from 'react-native';
+import { Alert, Platform, View } from 'react-native';
 import PhoneInput, {
   Country,
   CountryCode,
@@ -230,7 +230,25 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const onChangeMobile = useCallback((text: string) => changeMobile(text), [changeMobile]);
   const onSetRegion = useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
   const onSendSMS = useCallback(() => sendSMS(), [sendSMS]);
-  const onRefuseMobileVerification = useCallback(() => refuseMobileVerification(), [refuseMobileVerification]);
+  const onRefuseMobileVerification = useCallback(() => {
+    if (!isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused) {
+      Alert.alert(I18n.get('auth-change-mobile-edit-alert-title'), I18n.get('auth-change-mobile-edit-alert-message'), [
+        {
+          text: I18n.get('common-quit'),
+          onPress: () => {
+            refuseMobileVerification();
+          },
+          style: 'destructive',
+        },
+        {
+          text: I18n.get('common-continue'),
+          style: 'default',
+        },
+      ]);
+    } else {
+      refuseMobileVerification();
+    }
+  }, [isMobileEmpty, isScreenFocused, mobileState, refuseMobileVerification]);
 
   return (
     <KeyboardPageView style={styles.page} scrollable>

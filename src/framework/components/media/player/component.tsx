@@ -1,5 +1,5 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
@@ -12,28 +12,9 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
-import { useHeaderHeight } from '@react-navigation/elements';
-
-export function computeNavBar({
-  navigation,
-  route,
-}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
-  return {
-    ...navBarOptions({
-      navigation,
-      route,
-      title: '',
-    }),
-    headerTransparent: true,
-    headerStyle: { backgroundColor: 'transparent' },
-    headerShadowVisible: false,
-  };
-}
 
 const ERRORS_I18N = {
   connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],

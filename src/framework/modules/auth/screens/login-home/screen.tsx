@@ -12,6 +12,7 @@ import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
+import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
@@ -51,7 +52,6 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
   const [rememberMe, setRememberMe] = React.useState<boolean>(true); // We keep the logic for 1 year, after we delete
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
   const [error, setError] = React.useState<AuthErrorCode>();
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);
@@ -60,8 +60,6 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
   const unsubscribeBlurTask = React.useRef<any>(null);
 
   const isSubmitDisabled = React.useMemo(() => !(login && password), [login, password]);
-
-  const toggleVisibilityPassword = () => setShowPassword(!showPassword);
 
   const consumeError = () => {
     if (props.auth.error) {
@@ -214,17 +212,13 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
           style={styles.inputPassword}
           label={{ text: I18n.get('auth-login-password'), icon: 'ui-lock' }}
           input={
-            <TextInput
+            <PasswordInput
               placeholder={I18n.get('auth-login-inputPassword')}
               ref={inputPassword}
               onChangeText={onPasswordChanged.bind(this)}
               value={password}
               showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
               testID="login-password"
-              toggleIconOn="ui-hide"
-              toggleIconOff="ui-see"
-              secureTextEntry={!showPassword}
-              onToggle={toggleVisibilityPassword}
               onSubmitEditing={doLogin}
               testIDToggle="login-see-password"
             />
@@ -232,7 +226,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
         />
       </View>
     );
-  }, [onLoginChanged, login, error, onPasswordChanged, password, showPassword, toggleVisibilityPassword, doLogin]);
+  }, [onLoginChanged, login, error, onPasswordChanged, password, doLogin]);
 
   const renderLoginButton = React.useCallback(() => {
     if ((error === 'not_premium' || error === 'pre_deleted') && !typing)

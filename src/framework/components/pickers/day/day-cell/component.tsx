@@ -10,15 +10,17 @@ import styles from './styles';
 import { DayCellProps } from './types';
 
 const DayCell = ({ dayOfTheWeek, dayReference, isSelected, onPress }: DayCellProps) => {
+  const isPastDay = dayReference === DayReference.PAST;
+  const isToday = dayReference === DayReference.TODAY;
   const containerStyle = isSelected
     ? {
-        borderColor: theme.color.homework.days[dayOfTheWeek]?.accent,
+        borderColor: theme.color.homework.days[dayOfTheWeek]?.[isPastDay ? 'light' : 'accent'],
         backgroundColor: theme.color.homework.days[dayOfTheWeek]?.background,
       }
-    : dayReference === DayReference.TODAY
+    : isToday
     ? { borderColor: theme.palette.grey.graphite }
     : undefined;
-  const textStyle = dayReference === DayReference.PAST && { color: theme.palette.grey.graphite };
+  const textStyle = isPastDay && { color: theme.palette.grey.graphite };
   const text = I18n.get(`date-${dayOfTheWeek}`);
 
   return (

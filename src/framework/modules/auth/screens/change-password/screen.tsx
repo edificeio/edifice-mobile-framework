@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Pressable, TextInput as RNTextInput, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -12,8 +12,7 @@ import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
-import { LabelIndicator } from '~/framework/components/inputs/container/label';
-import TextInput, { TextInputProps } from '~/framework/components/inputs/text';
+import PasswordInput from '~/framework/components/inputs/password';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
@@ -34,20 +33,6 @@ import {
   ChangePasswordScreenStoreProps,
   IFields,
 } from './types';
-
-const InputPassword = React.forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  return (
-    <TextInput
-      {...props}
-      toggleIconOn="ui-hide"
-      toggleIconOff="ui-see"
-      onToggle={() => setShowPassword(!showPassword)}
-      secureTextEntry={!showPassword}
-      ref={ref}
-    />
-  );
-});
 
 class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPrivateProps, ChangePasswordScreenState> {
   private mounted = false;
@@ -160,9 +145,9 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             </View>
           ) : null}
           <InputContainer
-            label={{ text: I18n.get('auth-changepassword-password-old'), icon: 'ui-lock', indicator: LabelIndicator.REQUIRED }}
+            label={{ text: I18n.get('auth-changepassword-password-old'), icon: 'ui-lock' }}
             input={
-              <InputPassword
+              <PasswordInput
                 placeholder={I18n.get('auth-changepassword-placeholder')}
                 showIconCallback
                 showError={formModel.showOldPasswordError(oldPassword)}
@@ -179,10 +164,9 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             label={{
               text: I18n.get('auth-changepassword-password-new'),
               icon: 'ui-lock',
-              indicator: LabelIndicator.REQUIRED,
             }}
             input={
-              <InputPassword
+              <PasswordInput
                 placeholder={I18n.get('auth-changepassword-placeholder')}
                 showIconCallback
                 showError={formModel.showNewPasswordError(newPassword)}
@@ -198,10 +182,9 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             label={{
               text: I18n.get('auth-changepassword-password-new-confirm'),
               icon: 'ui-lock',
-              indicator: LabelIndicator.REQUIRED,
             }}
             input={
-              <InputPassword
+              <PasswordInput
                 placeholder={I18n.get('auth-changepassword-placeholder')}
                 showIconCallback
                 showError={formModel.showPasswordConfirmError(confirm)}

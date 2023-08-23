@@ -92,6 +92,7 @@ export function createHomeworkDiaryEntry(
       dispatch(homeworkCreateEntryReceived());
     } catch (error) {
       dispatch(homeworkCreateEntryFetchError(error as string));
+      throw error;
     }
   };
 }

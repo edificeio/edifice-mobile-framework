@@ -63,8 +63,6 @@ interface IHomeworkTaskListScreenState {
   pastDateLimit: moment.Moment;
 }
 
-export interface HomeworkTaskListScreenNavigationParams {}
-
 export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
   IHomeworkTaskListScreenEventProps &
   NativeStackScreenProps<HomeworkNavigationParams, typeof homeworkRouteNames.homeworkTaskList>;
@@ -136,8 +134,8 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   }
 
   addEntry() {
-    const { diaryInformation, navigation } = this.props;
-    navigation.navigate(homeworkRouteNames.homeworkCreate, { diaryId: diaryInformation?.id });
+    const { navigation } = this.props;
+    navigation.navigate(homeworkRouteNames.homeworkCreate);
   }
 
   updateNavBarTitle() {
