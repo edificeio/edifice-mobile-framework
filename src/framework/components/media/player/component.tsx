@@ -11,6 +11,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 
 import styles from './styles';
@@ -96,17 +97,19 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const renderError = () => {
-    navigation.setOptions(computeNavBar({ navigation, route }));
     const i18nKeys = ERRORS_I18N[error ?? 'default'] ?? ERRORS_I18N.default;
     return (
-      <EmptyScreen
-        customStyle={styles.errorScreen}
-        svgImage="image-not-found"
-        title={I18n.get(i18nKeys[0])}
-        text={I18n.get(i18nKeys[1])}
-        svgFillColor={theme.palette.grey.fog}
-        textColor={theme.palette.grey.fog}
-      />
+      <>
+        <FakeHeaderMedia />
+        <EmptyScreen
+          customStyle={styles.errorScreen}
+          svgImage="image-not-found"
+          title={I18n.get(i18nKeys[0])}
+          text={I18n.get(i18nKeys[1])}
+          svgFillColor={theme.palette.grey.fog}
+          textColor={theme.palette.grey.fog}
+        />
+      </>
     );
   };
 
@@ -139,18 +142,14 @@ function MediaPlayer(props: MediaPlayerProps) {
     if (type === MediaType.WEB)
       return (
         <>
-          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]} />
+          <FakeHeaderMedia />
           <WebView
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
             scrollEnabled={false}
             source={realSource}
             startInLoadingState
-            style={
-              isPortrait
-                ? [styles.playerPortrait, styles.externalPlayerPortrait]
-                : [styles.playerLandscape, styles.externalPlayerLandscape]
-            }
+            style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
           />
         </>
       );
