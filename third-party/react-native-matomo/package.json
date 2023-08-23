@@ -1,0 +1,27 @@
+{
+  "name": "react-native-matomo",
+  "version": "0.2.0",
+  "description": "React Native adapter for Matomo native SDKs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BonifyByForteil/react-native-matomo.git"
+  },
+  "keywords": [
+    "react-native",
+    "matomo",
+    "piwik",
+    "android",
+    "ios",
+    "mobile"
+  ],
+  "author": "Bonify",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BonifyByForteil/react-native-matomo/issues"
+  },
+  "homepage": "https://github.com/BonifyByForteil/react-native-matomo#readme"
+}
