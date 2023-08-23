@@ -1,3 +1,4 @@
+import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
@@ -10,6 +11,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
@@ -41,6 +43,7 @@ export const computeNavBar = ({
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   const [selectedStudentId, setSelectedStudentId] = React.useState<string | null>(null);
   const [isValidating, setValidating] = React.useState<boolean>(false);
+  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -122,6 +125,13 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     }
   };
 
+  const openStudentStatus = (id: string) => {
+    setSelectedStudentId(id);
+    bottomSheetModalRef.current?.present();
+  };
+
+  const unselectStudent = () => setSelectedStudentId(null);
+
   const validateCall = async () => {
     try {
       const { navigation, session } = props;
@@ -143,6 +153,26 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
+    );
+  };
+
+  const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
+    return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
+  };
+
+  const renderBottomSheet = () => {
+    const student = props.classCall!.students.find(s => s.id === selectedStudentId);
+    return (
+      <BottomSheetModal
+        ref={bottomSheetModalRef}
+        index={0}
+        snapPoints={['20%']}
+        backdropComponent={renderBackdrop}
+        onDismiss={unselectStudent}>
+        <View>
+          <BodyText>{student?.name}</BodyText>
+        </View>
+      </BottomSheetModal>
     );
   };
 
@@ -176,21 +206,20 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       }));
 
     return classCall ? (
-      <FlatList
-        data={students}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <StudentListItem
-            student={item}
-            isSelected={item.id === selectedStudentId}
-            onPress={() => setSelectedStudentId(item.id)}
-          />
-        )}
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-        ListHeaderComponent={<CallCard call={course} isDisabled />}
-        ListFooterComponent={renderFooter}
-        ListHeaderComponentStyle={styles.listHeaderContainer}
-      />
+      <>
+        <FlatList
+          data={students}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <StudentListItem student={item} isSelected={item.id === selectedStudentId} onPress={() => openStudentStatus(item.id)} />
+          )}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          ListHeaderComponent={<CallCard call={course} isDisabled />}
+          ListFooterComponent={renderFooter}
+          ListHeaderComponentStyle={styles.listHeaderContainer}
+        />
+        {renderBottomSheet()}
+      </>
     ) : null;
   };
 
