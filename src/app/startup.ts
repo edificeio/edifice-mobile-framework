@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { loginAction } from '~/framework/modules/auth/actions';
+import { RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
 import { actions } from '~/framework/modules/auth/reducer';
 import { loadCurrentPlatform } from '~/framework/modules/auth/service';
 import { appReadyAction } from '~/framework/navigation/redux';
@@ -19,7 +20,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatfo
       .then(() =>
         loadCurrentPlatform()
           .then(platform => {
-            if (platform)
+            if (platform) {
               dispatch(loginAction(platform, undefined))
                 .then(redirect => {
                   dispatch(actions.redirectAutoLogin(redirect));
@@ -31,7 +32,12 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatfo
                   setLoadedPlatform(platform);
                   dispatch(appReadyAction());
                 });
-            else dispatch(appReadyAction());
+              setTimeout(() => {
+                dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
+                setLoadedPlatform(platform);
+                dispatch(appReadyAction());
+              }, 15000);
+            } else dispatch(appReadyAction());
           })
           .catch(() => {
             dispatch(appReadyAction());
