@@ -16,6 +16,7 @@ import { PageView } from '~/framework/components/page';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 const ERRORS_I18N = {
   connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
