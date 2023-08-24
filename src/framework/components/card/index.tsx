@@ -17,7 +17,7 @@ import theme from '~/app/theme';
 import { Badge } from '~/framework/components/badge';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Icon, NamedSVG, Picture, PictureProps } from '~/framework/components/picture';
-import { BodyText, CaptionItalicText, CaptionText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { BodyText, CaptionItalicText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -145,14 +145,9 @@ export interface IContentCardIconProps {
 export const ContentCardHeader = (props: IContentCardHeaderProps) => {
   return (
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-      {props.icon ? (
-        <>
-          <View style={UI_STYLES.flex0}>{props.icon}</View>
-          <View style={{ flex: 0, width: 8 }} />
-        </>
-      ) : null}
+      {props.icon ? <View style={[UI_STYLES.flex0, { marginRight: UI_SIZES.spacing.small }]}>{props.icon}</View> : null}
       <View style={UI_STYLES.flex1}>
-        {props.text ? typeof props.text === 'string' ? <CaptionText>{props.text}</CaptionText> : props.text : null}
+        {props.text ? typeof props.text === 'string' ? <SmallText>{props.text}</SmallText> : props.text : null}
         {props.date ? (
           <CaptionItalicText style={{ color: theme.palette.grey.graphite }}>
             {typeof props.date === 'string' ? props.date : displayPastDate(props.date)}

@@ -924,6 +924,8 @@
   "timeline-notiftype-messagerie-storage": "Espace de stockage bientôt plein",
   "timeline-notiftype-mindmap-share": "Partage de carte mentale",
   "timeline-notiftype-minibadge-new-badge-assigned": "Assignation d'un nouveau badge",
+  "timeline-notiftype-mood": "est",
+  "timeline-notiftype-motto": "a mis à jour sa devise",
   "timeline-notiftype-news-info-shared": "Partage d'une actualité",
   "timeline-notiftype-news-news-comment": "Commentaire d'une actualité",
   "timeline-notiftype-news-news-published": "Publication d'une actualité",

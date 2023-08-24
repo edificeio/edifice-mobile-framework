@@ -121,6 +121,7 @@ export const UI_SIZES = {
     small: getScaleWidth(4),
     medium: getScaleWidth(8),
     card: getScaleWidth(8),
+    newCard: getScaleWidth(12),
     input: getScaleWidth(12),
     selector: getScaleWidth(12),
     mediumPlus: getScaleWidth(16),
