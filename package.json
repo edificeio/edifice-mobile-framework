@@ -125,7 +125,7 @@
     "react-native-keyboard-avoiding-scroll-view": "1.0.1",
     "react-native-layout-debug": "1.1.1",
     "react-native-localize": "3.0.2",
-    "react-native-matomo": "git+https://github.com/BonifyByForteil/react-native-matomo.git",
+    "react-native-matomo": "file:third-party/react-native-matomo",
     "react-native-media-console": "2.0.6",
     "react-native-modal": "13.0.1",
     "react-native-orientation-locker": "1.5.0",

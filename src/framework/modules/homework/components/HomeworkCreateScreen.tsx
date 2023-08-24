@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: UI_SIZES.spacing.big,
   },
+  page: { backgroundColor: theme.ui.background.card },
   scrollView: {
     backgroundColor: theme.ui.background.card,
     padding: UI_SIZES.spacing.medium,
@@ -163,12 +164,13 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     const isDefaultDateSelected = date?.isSame(defaultSelectedDate);
     const isEditing = !isDefaultDateSelected || !!subject || !!description || !!images.length;
     const isRequiredFieldEmpty = !date || !subject || !description;
+    const descriptionFieldRef: { current: any } = React.createRef();
 
     return (
       <>
         <PreventBack showAlert={isEditing && !isCreatingEntry} />
-        <KeyboardPageView>
-          <ScrollView contentContainerStyle={styles.scrollView}>
+        <KeyboardPageView style={styles.page}>
+          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollView}>
             <InputContainer
               label={{ text: I18n.get('homework-create-date-title'), icon: 'ui-calendarLight' }}
               input={<DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} />}
@@ -182,6 +184,9 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
                   onChangeText={text => this.setState({ subject: text })}
                   value={subject}
                   maxLength={64}
+                  returnKeyType="next"
+                  onSubmitEditing={() => descriptionFieldRef?.current?.focus()}
+                  blurOnSubmit={false}
                 />
               }
             />
@@ -190,6 +195,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
               label={{ text: I18n.get('homework-create-description-title'), icon: 'ui-textPage' }}
               input={
                 <MultilineTextInput
+                  ref={descriptionFieldRef}
                   placeholder={I18n.get('homework-create-description-placeholder')}
                   numberOfLines={4}
                   onChangeText={text => this.setState({ description: text })}

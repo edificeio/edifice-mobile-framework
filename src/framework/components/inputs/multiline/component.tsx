@@ -11,7 +11,9 @@ const MultilineTextInput = forwardRef<RNTextInput, MultilineTextInputProps>((pro
   const { numberOfLines } = props;
   const initialHeight = TextSizeStyle.Medium.lineHeight! * numberOfLines + 2 * stylesTextInput.input.paddingTop;
 
-  return <TextInput {...props} multiline style={[styles.multilineInput, { minHeight: initialHeight }]} ref={ref} />;
+  return (
+    <TextInput {...props} scrollEnabled={false} multiline style={[styles.multilineInput, { minHeight: initialHeight }]} ref={ref} />
+  );
 });
 
 export default MultilineTextInput;

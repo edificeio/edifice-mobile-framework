@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.selector,
   },
+  containerAdded: { borderColor: theme.palette.grey.stone },
   contentContainer: {
     paddingVertical: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.big,
@@ -106,7 +107,7 @@ export class AttachmentGroupImages extends React.PureComponent<{
         data={[...images, {}]}
         numColumns={numColumns}
         scrollEnabled={false}
-        style={styles.container}
+        style={[styles.container, imagesAdded && styles.containerAdded]}
         contentContainerStyle={[styles.contentContainer, !imagesAdded && styles.contentContainerAdded]}
         ItemSeparatorComponent={() => <View style={styles.itemSeperator} />}
         renderItem={({ item, index }) => {
