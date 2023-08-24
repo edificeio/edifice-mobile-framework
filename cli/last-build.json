@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-23 21:26:46",
-  "notes": "chore(build): Add react-native-matomo package to sources\nfix(legal): MB-1912, Update legal urls when opening UserLegalNoticeScreen\nfix(push+crash): MB-1855, Crash when loading app with state loss network. Add auto connect timeout.\nrelease: 1.10.1-rc.1(1100101)",
-  "version": "1.10.1-rc.2(1100102)",
+  "last": "2023-08-24 15:17:42",
+  "notes": "release: 1.10.1-rc.2(1100102)",
+  "version": "1.10.1-alpha.1(1100103)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
