@@ -113,7 +113,7 @@ static NSString* RECEIVED_PUSHES_KEY = @"RECEIVED_PUSHES";
 // Required for the notification event. You must call the completion handler after handling the remote notification.
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-  [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
+  //[RNCPushNotificationIOS didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
   @try {
     completionHandler(UIBackgroundFetchResultNewData);
     switch ([[UIApplication sharedApplication] applicationState]) {
@@ -127,14 +127,14 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
          withCompletionHandler:(void (^)(void))completionHandler {
-  [RNCPushNotificationIOS didReceiveNotificationResponse:response];
+  //[RNCPushNotificationIOS didReceiveNotificationResponse:response];
 }
 
 //Called when a notification is delivered to a foreground app.
 -(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
   //Still call the javascript onNotification handler so it can display the new message right away
-  NSDictionary *userInfo = notification.request.content.userInfo;
-  [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo];
+  /*NSDictionary *userInfo = notification.request.content.userInfo;
+  [RNCPushNotificationIOS didReceiveRemoteNotification:userInfo];*/
   @try {
     completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
   } @catch (NSException *exception){}
