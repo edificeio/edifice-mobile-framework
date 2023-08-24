@@ -16,8 +16,10 @@ import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 
+import { renderMoodPicture } from '.';
 import styles from './styles';
 import type { UserEditMoodMottoScreenProps } from './types';
+
 export const computeNavBar = ({
   navigation,
   route,
@@ -45,35 +47,6 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
   const moods = ['default', 'happy', 'proud', 'dreamy', 'love', 'tired', 'angry', 'worried', 'sick', 'joker', 'sad'];
 
   const widthMood = React.useMemo(() => (UI_SIZES.screen.width - 2 * UI_SIZES.spacing.medium - 3 * UI_SIZES.spacing.small) / 4, []);
-
-  const renderMoodPicture = {
-    '1d': {
-      angry: require('ASSETS/images/moods/1d/angry.png'),
-      dreamy: require('ASSETS/images/moods/1d/dreamy.png'),
-      happy: require('ASSETS/images/moods/1d/happy.png'),
-      joker: require('ASSETS/images/moods/1d/joker.png'),
-      love: require('ASSETS/images/moods/1d/love.png'),
-      default: require('ASSETS/images/moods/1d/none.png'),
-      proud: require('ASSETS/images/moods/1d/proud.png'),
-      sad: require('ASSETS/images/moods/1d/sad.png'),
-      sick: require('ASSETS/images/moods/1d/sick.png'),
-      tired: require('ASSETS/images/moods/1d/tired.png'),
-      worried: require('ASSETS/images/moods/1d/worried.png'),
-    },
-    '2d': {
-      angry: require('ASSETS/images/moods/2d/angry.png'),
-      dreamy: require('ASSETS/images/moods/2d/dreamy.png'),
-      happy: require('ASSETS/images/moods/2d/happy.png'),
-      joker: require('ASSETS/images/moods/2d/joker.png'),
-      love: require('ASSETS/images/moods/2d/love.png'),
-      default: require('ASSETS/images/moods/2d/none.png'),
-      proud: require('ASSETS/images/moods/2d/proud.png'),
-      sad: require('ASSETS/images/moods/2d/sad.png'),
-      sick: require('ASSETS/images/moods/2d/sick.png'),
-      tired: require('ASSETS/images/moods/2d/tired.png'),
-      worried: require('ASSETS/images/moods/2d/worried.png'),
-    },
-  };
 
   const onSaveMoodMotto = async () => {
     if (mood === route.params.mood && motto === route.params.motto) navigation.goBack();

@@ -1,4 +1,4 @@
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
@@ -27,7 +27,6 @@ import {
   startLoadNotificationsAction,
 } from '~/framework/modules/timeline/actions';
 import { TimelineFlashMessage } from '~/framework/modules/timeline/components/timeline-flash-message';
-import { TimelineNotification } from '~/framework/modules/timeline/components/timeline-notification';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
@@ -35,6 +34,7 @@ import { NotificationsState } from '~/framework/modules/timeline/reducer/notific
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
 import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
+import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navigate } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
@@ -49,6 +49,8 @@ import {
   defaultNotificationActionStack,
   handleNotificationAction,
 } from '~/framework/util/notifications/routing';
+
+import TimelineNotification from '../components/notification';
 
 // TYPES ==========================================================================================
 
@@ -144,11 +146,15 @@ function NotificationItem({
   doOpenNotification: typeof TimelineScreen.prototype.doOpenNotification;
   notificationTestID?: string;
 }) {
+  const navigation = useNavigation();
   const onNotificationAction = React.useMemo(
-    () =>
-      isResourceUriNotification(notification)
-        ? () => doOpenNotification(notification as ITimelineNotification & IResourceUriNotification)
-        : undefined,
+    () => {
+      if (notification.type === 'USERBOOK_MOTTO' || notification.type === 'USERBOOK_MOOD')
+        return () => navigation.navigate(userRouteNames.profile, { userId: notification.backupData.sender });
+      if (isResourceUriNotification(notification))
+        return () => doOpenNotification(notification as ITimelineNotification & IResourceUriNotification);
+      return undefined;
+    },
     // Since notifications are immutable, we can memoize them only by id safely.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [notification.id, doOpenNotification],
