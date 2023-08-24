@@ -1,4 +1,3 @@
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
 import { BackHandler, Platform, StatusBar, View } from 'react-native';
@@ -16,7 +15,6 @@ import { PageView } from '~/framework/components/page';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
-import { useHeaderHeight } from '@react-navigation/elements';
 
 const ERRORS_I18N = {
   connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
@@ -62,7 +60,6 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
   const isLoadingRef = React.useRef<boolean>(true);
-  const headerHeight = useHeaderHeight();
 
   const handleBack = React.useCallback(() => {
     navigationHidden.current = false;
@@ -174,7 +171,6 @@ function MediaPlayer(props: MediaPlayerProps) {
           showOnEnd
           source={realSource}
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
-          topControlsStyle={Platform.OS === 'android' ? { paddingTop: headerHeight } : {}}
         />
       );
     }
