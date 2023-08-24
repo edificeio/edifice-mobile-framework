@@ -83,6 +83,8 @@ const imports = {
   'ui-plus': import('ASSETS/icons/uiIcons/plus.svg'),
   'ui-print': import('ASSETS/icons/uiIcons/print.svg'),
   'ui-question': import('ASSETS/icons/uiIcons/question.svg'),
+  'ui-radio-checked': import('ASSETS/icons/uiIcons/radio-checked.svg'),
+  'ui-radio-unchecked': import('ASSETS/icons/uiIcons/radio-unchecked.svg'),
   'ui-rafterDown': import('ASSETS/icons/uiIcons/rafterDown.svg'),
   'ui-rafterLeft': import('ASSETS/icons/uiIcons/rafterLeft.svg'),
   'ui-rafterRight': import('ASSETS/icons/uiIcons/rafterRight.svg'),
