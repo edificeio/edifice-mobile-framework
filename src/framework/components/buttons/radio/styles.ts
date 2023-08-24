@@ -6,6 +6,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 export default StyleSheet.create({
   container: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.tiny,
   },
@@ -18,5 +19,8 @@ export default StyleSheet.create({
   },
   iconPressedContainer: {
     backgroundColor: theme.palette.primary.pale,
+  },
+  labelText: {
+    flexShrink: 1,
   },
 });

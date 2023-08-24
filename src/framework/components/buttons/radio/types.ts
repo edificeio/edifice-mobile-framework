@@ -1,7 +1,10 @@
+import type { ViewStyle } from 'react-native';
+
 export interface RadioButtonProps {
   isChecked: boolean;
   isDisabled?: boolean;
   label?: string;
   size?: 'default' | 'small';
-  onPress: () => any;
+  style?: ViewStyle;
+  onPress?: () => any;
 }

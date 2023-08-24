@@ -8,7 +8,7 @@ import { BodyText, SmallText } from '~/framework/components/text';
 import styles from './styles';
 import type { RadioButtonProps } from './types';
 
-export const RadioButton = ({ isChecked, isDisabled, label, size = 'default', onPress }: RadioButtonProps) => {
+export const RadioButton = ({ isChecked, isDisabled, label, size = 'default', style, onPress }: RadioButtonProps) => {
   const [isPressed, setPressed] = React.useState<boolean>(false);
   const LabelTextComponent = size === 'default' ? BodyText : SmallText;
   const iconSize = size === 'default' ? 24 : 22;
@@ -18,8 +18,15 @@ export const RadioButton = ({ isChecked, isDisabled, label, size = 'default', on
   const onPressOut = () => setPressed(false);
 
   return (
-    <Pressable onPress={onPress} onPressIn={onPressIn} onPressOut={onPressOut} disabled={isDisabled} style={styles.container}>
-      {label ? <LabelTextComponent style={isDisabled && styles.disabledLabelText}>{label}</LabelTextComponent> : null}
+    <Pressable
+      onPress={onPress}
+      onPressIn={onPressIn}
+      onPressOut={onPressOut}
+      disabled={isDisabled}
+      style={[styles.container, style]}>
+      {label ? (
+        <LabelTextComponent style={[styles.labelText, isDisabled && styles.disabledLabelText]}>{label}</LabelTextComponent>
+      ) : null}
       <View style={[styles.iconContainer, isPressed && styles.iconPressedContainer]}>
         <Picture
           type="NamedSvg"
