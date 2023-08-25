@@ -28,9 +28,11 @@ export default StyleSheet.create({
   },
   motto: {
     textAlign: 'center',
-    marginTop: UI_SIZES.spacing.small,
   },
   flex1: {
     flex: 1,
+  },
+  contentNotif: {
+    marginTop: UI_SIZES.spacing.small,
   },
 });

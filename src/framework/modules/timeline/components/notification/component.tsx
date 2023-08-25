@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_STYLES } from '~/framework/components/constants';
 import { SmallItalicText, SmallText } from '~/framework/components/text';
 import NotificationTopInfo from '~/framework/modules/timeline/components/notification-top-info';
 import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
@@ -40,14 +40,15 @@ export function TimelineNotification(props: ITimelineNotificationProps) {
       <>
         <NotificationTopInfo notification={notification} />
         {notification.type === 'USERBOOK_MOTTO' ? (
-          <SmallItalicText style={styles.motto}>{`"${notification.backupData.params.motto}"`}</SmallItalicText>
+          <SmallItalicText
+            style={[styles.motto, styles.contentNotif]}>{`"${notification.backupData.params.motto}"`}</SmallItalicText>
         ) : null}
         {text && /\S/.test(text) ? (
-          <SmallText key={notification.id} style={{ marginBottom: media?.length ? UI_SIZES.spacing.small : undefined }}>
+          <SmallText key={notification.id} style={styles.contentNotif}>
             {text}
           </SmallText>
         ) : null}
-        {media ? renderMediaPreview(media) : null}
+        {media ? <View style={styles.contentNotif}>{renderMediaPreview(media)}</View> : null}
       </>
     );
     // Since notifications are immutable, we can memoize them only by id safely.

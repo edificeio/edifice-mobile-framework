@@ -10,6 +10,7 @@ import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card'
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { APPBADGES } from '~/framework/modules/timeline/app-badges';
 import appConf from '~/framework/util/appConf';
 import {
   INamedResourceNotification,
@@ -21,6 +22,7 @@ import HtmlContentView from '~/ui/HtmlContentView';
 
 const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: ISession }) => {
   const message = notification && notification.message;
+  const type = notification && notification.type;
   const date = notification && notification.date;
   const sender = notification && getAsSenderNotification(notification)?.sender;
   const resource =
@@ -46,9 +48,14 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
       ).toLocaleLowerCase()}`;
   }
 
+  const badgeInfo = {
+    icon: APPBADGES[type] && APPBADGES[type].icon,
+    color: APPBADGES[type] && APPBADGES[type].color,
+  };
+
   return (
     <ContentCardHeader
-      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/system-avatar.png')]} />}
+      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/system-avatar.png')]} badge={badgeInfo} />}
       date={date}
       text={
         <HtmlContentView
