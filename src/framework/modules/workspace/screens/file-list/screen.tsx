@@ -130,7 +130,7 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   };
 
   const openMedia = (file: IFile) => {
-    const { /*files, */ navigation } = props;
+    //const { /*files, */ navigation } = props;
     // const data = files
     //   .filter(f => f.contentType?.startsWith('image'))
     //   .map(f => ({

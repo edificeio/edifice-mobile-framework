@@ -8,7 +8,13 @@ import { SmallInverseText } from '~/framework/components/text';
 
 import styles from './styles';
 
-export default function NavBarAction(props: { icon?: string; title?: string; disabled?: boolean; onPress?: () => void }) {
+export default function NavBarAction(props: {
+  icon?: string;
+  title?: string;
+  disabled?: boolean;
+  testID?: string;
+  onPress?: () => void;
+}) {
   const opacityIconStyle = React.useMemo(() => (props.disabled ? styles.navBarActionDisabled : undefined), [props.disabled]);
   const opacityTextStyle = React.useMemo(
     () => (props.disabled ? [styles.navBarActionText, styles.navBarActionDisabled] : styles.navBarActionText),
@@ -22,7 +28,8 @@ export default function NavBarAction(props: { icon?: string; title?: string; dis
       {...(props.onPress ? { onPress: props.onPress } : {})}
       hitSlop={genericHitSlop}
       disabled={props.disabled}
-      style={[styles.navBarActionWrapper, { ...(props.icon ? styles.navBarActionWrapperIcon : {}) }]}>
+      style={[styles.navBarActionWrapper, { ...(props.icon ? styles.navBarActionWrapperIcon : {}) }]}
+      {...(props.testID ? { testID: props.testID } : {})}>
       {props.icon ? (
         <NamedSVG
           name={props.icon}

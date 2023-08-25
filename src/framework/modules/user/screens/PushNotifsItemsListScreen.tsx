@@ -1,11 +1,11 @@
 /**
  * Index page for push-notifs settings.
  */
-import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import deepmerge from 'deepmerge';
 import * as React from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -19,6 +19,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { ISession } from '~/framework/modules//auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
@@ -30,7 +31,6 @@ import {
 } from '~/framework/modules/timeline/reducer';
 import { IPushNotifsSettings } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Notifier from '~/framework/util/notifier';
 import { shallowEqual } from '~/framework/util/object';
@@ -80,24 +80,10 @@ export const computeNavBar = ({
 const formatI18nNotifType = (notifType: string) => notifType.replaceAll('_', '').replaceAll('.', '-');
 
 function PreventBack(props: { hasChanged: boolean }) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  UNSTABLE_usePreventRemove(props.hasChanged, ({ data }) => {
-    Alert.alert(I18n.get('user-pushnotifssettings-leavealert-title'), I18n.get('user-pushnotifssettings-leavealert-text'), [
-      {
-        text: I18n.get('common-cancel'),
-        style: 'cancel',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-      {
-        text: I18n.get('common-quit'),
-        style: 'destructive',
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('user-pushnotifssettings-leavealert-title'),
+    text: I18n.get('user-pushnotifssettings-leavealert-text'),
+    showAlert: props.hasChanged,
   });
   return null;
 }

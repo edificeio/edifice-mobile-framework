@@ -545,10 +545,13 @@ export class ModuleArray<ModuleType extends UnknownModule = UnknownModule> exten
   }
 
   getReducers() {
-    return this.reduce((acc, m) => {
-      acc[m.config.reducerName] = m.reducer;
-      return acc;
-    }, {} as { [key: string]: Reducer<unknown> });
+    return this.reduce(
+      (acc, m) => {
+        acc[m.config.reducerName] = m.reducer;
+        return acc;
+      },
+      {} as { [key: string]: Reducer<unknown> },
+    );
   }
 
   getScopes() {

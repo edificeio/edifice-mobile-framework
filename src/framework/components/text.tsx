@@ -9,7 +9,7 @@ import { Platform, Text as RNText, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
 
-import { getScaleFontSize, getScaleHeight } from './constants';
+import { getScaleFontSize } from './constants';
 
 /**
  * Base font properties
@@ -62,29 +62,29 @@ type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Huge' | 'Giant'
 export const TextSizeStyle = {
   Small: {
     fontSize: getScaleFontSize(12),
-    lineHeight: getScaleHeight(20),
+    lineHeight: getScaleFontSize(20),
   },
   Normal: {
     fontSize: getScaleFontSize(14),
-    lineHeight: getScaleHeight(22),
+    lineHeight: getScaleFontSize(22),
   },
   Medium: {
     fontSize: getScaleFontSize(16),
-    lineHeight: getScaleHeight(24),
+    lineHeight: getScaleFontSize(24),
   },
   Big: {
     fontSize: getScaleFontSize(18),
-    lineHeight: getScaleHeight(26),
+    lineHeight: getScaleFontSize(26),
   },
   Huge: {
     fontSize: getScaleFontSize(26),
-    lineHeight: getScaleHeight(34),
+    lineHeight: getScaleFontSize(34),
   },
   Giant: {
     fontSize: getScaleFontSize(32),
-    lineHeight: getScaleHeight(38),
+    lineHeight: getScaleFontSize(38),
   },
-} as { [key in TextSizeStyleKey]: TextStyle };
+} as { [key in TextSizeStyleKey]: Required<Pick<TextStyle, 'fontSize' | 'lineHeight'>> };
 
 /**
  * Heading

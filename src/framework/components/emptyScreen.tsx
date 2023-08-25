@@ -8,12 +8,12 @@ import * as React from 'react';
 import { ColorValue, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 
 import { UI_SIZES, getScaleImageSize } from './constants';
 import { PageViewStyle } from './page';
 import { HeadingSText, SmallText } from './text';
+import PrimaryButton from './buttons/primary';
 
 export const EmptyScreen = ({
   svgImage,
@@ -75,7 +75,7 @@ export const EmptyScreen = ({
       ) : null}
       {hasButton ? (
         <View style={{ marginTop: UI_SIZES.spacing.large }}>
-          <ActionButton text={buttonText} url={buttonUrl} action={buttonAction} iconName={buttonIcon} />
+          <PrimaryButton text={buttonText} url={buttonUrl} action={buttonAction} iconRight={buttonIcon} />
         </View>
       ) : null}
     </PageViewStyle>

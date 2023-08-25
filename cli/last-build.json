@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-08 13:08:43",
-  "notes": "release: 1.10.0-alpha.15(1100020)",
-  "version": "1.10.0-rc.6(1100021)",
+  "last": "2023-08-24 22:19:29",
+  "notes": "fix(chore): imports twice\nfeat(timeline) : MB-1918 , new timeline notifs\nSquashed commit of the following:\nfix(media): HeaderHeight removal.\nSquashed commit of the following:\nfix(homework): MB-1915, improve creation page\nSquashed commit of the following:\nSquashed commit of the following:\nfix(homework):MB-227, day-cell border logic\nfix(change-mobile): MB-1692 , show alert when refuse & logout when innput is filled\nfeat(change-password): MB-1439 feedback change password view\nfix(homework): MB-1592, handle creation error\nchore(homework): MB-187, try-catch rights condition\nfeat(homework): MB-187, create from timeline\nchore(homework): MB-187, navigation model\nchore(homework): MB-187, remove diaryId nav param\nchore(homework): MB-187, timeline navigation condition\nfeat(homework): MB-187, timeline access when rights\nchore(zimbra): AMZ-133 convert composer screen to functional component\nchore: merge errors fixing\nrelease: 1.11.0-alpha.9(1110009)",
+  "version": "1.11.0-alpha.10(1110010)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

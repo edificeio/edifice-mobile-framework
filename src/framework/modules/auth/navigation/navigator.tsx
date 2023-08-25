@@ -13,7 +13,7 @@ import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
-import LoginHomeScreen from '~/framework/modules/auth/screens/login-home';
+import LoginHomeScreen, { computeNavBar as authLoginHomeNavBar } from '~/framework/modules/auth/screens/login-home';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
@@ -31,13 +31,7 @@ export default function () {
         <Stack.Screen name={authRouteNames.onboarding} component={OnboardingScreen} />
         <Stack.Screen name={authRouteNames.platforms} component={PlatformSelectScreen} />
       </Stack.Group>
-      <Stack.Screen
-        name={authRouteNames.loginHome}
-        component={LoginHomeScreen}
-        options={({ route }) => ({
-          headerTitle: navBarTitle(route.params?.platform.displayName),
-        })}
-      />
+      <Stack.Screen name={authRouteNames.loginHome} component={LoginHomeScreen} options={authLoginHomeNavBar} />
       <Stack.Screen
         name={authRouteNames.loginWayf}
         component={LoginWayfScreen}

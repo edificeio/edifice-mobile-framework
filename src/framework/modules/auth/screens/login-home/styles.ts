@@ -1,56 +1,72 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  boxButtonAndTextForgot: {
+  boxError: {
+    marginTop: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.big,
+  },
+  boxButtons: {
     alignItems: 'center',
     flexGrow: 2,
     justifyContent: 'flex-start',
+  },
+  boxButtonsNoError: {
+    marginTop: getScaleWidth(72),
+  },
+  boxInputs: {
+    alignSelf: 'stretch',
   },
   boxTextForgot: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  federatedAccount: {
-    textDecorationLine: 'underline',
-    marginTop: UI_SIZES.spacing.major,
-    textAlign: 'center',
+  forgotPasswordButton: {
+    marginTop: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.tiny,
+  },
+  form: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    padding: UI_SIZES.spacing.big,
+    paddingTop: UI_SIZES.spacing.large,
+  },
+  inputPassword: {
+    marginTop: UI_SIZES.spacing.big,
   },
   inputCheckbox: {
     flexDirection: 'row',
     alignSelf: 'flex-end',
     marginTop: UI_SIZES.spacing.medium,
   },
-  logo: {
-    flexGrow: 2,
+  pageView: {
+    backgroundColor: theme.ui.background.card,
+  },
+  platform: {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    marginBottom: UI_SIZES.spacing.large,
   },
-  textError: {
-    flexGrow: 0,
+  platformLogo: {
+    height: UI_SIZES.elements.logoSize.height,
+  },
+  platformName: {
     marginTop: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.tiny,
+  },
+  userError: {
+    alignItems: 'center',
+  },
+  userTextError: {
     textAlign: 'center',
-    alignSelf: 'center',
     color: theme.palette.status.failure.regular,
-  },
-  textForgotId: {
-    textDecorationLine: 'underline',
-    marginTop: UI_SIZES.spacing.medium,
-    color: theme.ui.text.light,
-  },
-  textForgotPassword: {
-    textDecorationLine: 'underline',
-    marginTop: UI_SIZES.spacing.major,
-    color: theme.ui.text.light,
+    marginTop: UI_SIZES.spacing.minor,
   },
   scrollview: {
     flexGrow: 1,
-  },
-  view: {
-    flex: 1,
   },
 });

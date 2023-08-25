@@ -1,7 +1,7 @@
-import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
+import { Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,7 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
@@ -18,12 +18,12 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, NestedBoldText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
 import { getSupportWorkflowInformation } from '~/framework/modules/support/rights';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
@@ -164,7 +164,7 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             </View>
           </View>
         </View>
-        <ActionButton
+        <PrimaryButton
           text={I18n.get('support-createticket-sendaction')}
           action={sendTicket}
           disabled={isActionDisabled}
@@ -176,23 +176,10 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     );
   };
 
-  UNSTABLE_usePreventRemove(!!(subject || description) && !isSending, ({ data }) => {
-    Alert.alert(I18n.get('support-createticket-leavealert-title'), I18n.get('support-createticket-leavealert-text'), [
-      {
-        text: I18n.get('common-cancel'),
-        style: 'cancel',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-      {
-        text: I18n.get('common-quit'),
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, props.navigation);
-        },
-        style: 'destructive',
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('support-createticket-leavealert-title'),
+    text: I18n.get('support-createticket-leavealert-title'),
+    showAlert: !!(subject || description) && !isSending,
   });
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;

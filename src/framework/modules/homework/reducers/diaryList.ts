@@ -17,6 +17,11 @@ export interface IHomeworkDiary {
   title: string;
   name: string;
   thumbnail: string;
+  shared?: ({
+    [key: string]: boolean | string | undefined;
+  } & {
+    [key in 'userId' | 'groupId']: string;
+  })[];
 }
 
 export type IHomeworkDiaryList = IArrayById<IHomeworkDiary>;

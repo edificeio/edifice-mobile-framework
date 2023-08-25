@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
@@ -124,12 +124,13 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
                   })
                 : ''}
             </SmallText>
-            <ActionButton
+            <PrimaryButton
               text={I18n.get('auth-wayf-main-button')}
               action={() => {
                 Trackers.trackEvent('Auth', 'WAYF', 'Display');
                 navigation.navigate(authRouteNames.wayf, { platform: route.params.platform });
               }}
+              testID="onboarding-login"
             />
           </View>
         </SafeAreaView>

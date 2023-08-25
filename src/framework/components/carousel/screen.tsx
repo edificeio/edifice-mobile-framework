@@ -206,7 +206,7 @@ export function Carousel(props: ICarouselProps) {
           if (!sf) return;
           const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
           const permissions = Platform.select<Permission[]>({
-            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
+            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
             android:
               androidVersionMajor >= 13
                 ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]

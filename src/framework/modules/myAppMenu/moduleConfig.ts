@@ -15,4 +15,5 @@ export default new NavigableModuleConfig<'myapps', null>({
   displayOrder: 4,
   displayPicture: { type: 'Icon', name: 'icon-apps-off' },
   displayPictureFocus: { type: 'Icon', name: 'icon-apps-on' },
+  testID: 'tabbar-apps',
 });

@@ -17,7 +17,7 @@ export default StyleSheet.create({
     marginHorizontal: -UI_SIZES.spacing.tiny,
   },
   navBarActionIcon: {
-    height: UI_SIZES.elements.icon,
+    height: UI_SIZES.elements.icon.default,
   },
   navBarActionDisabled: {
     opacity: 0.618,

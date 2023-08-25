@@ -1,6 +1,5 @@
-import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import * as React from 'react';
-import { Alert, EmitterSubscription, Keyboard, Platform, TouchableOpacity, View } from 'react-native';
+import { EmitterSubscription, Keyboard, Platform, TouchableOpacity, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 
 import { I18n } from '~/app/i18n';
@@ -15,6 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { UserType } from '~/framework/modules/auth/service';
 import {
   IConcernedStudent,
@@ -27,7 +27,6 @@ import {
   getReportByStudentForParent,
   getStudentsForTeacher,
 } from '~/framework/modules/schoolbook/reducer';
-import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
@@ -133,25 +132,10 @@ const SchoolbookWordDetailsCard = (
 
   const editorOffsetRef = React.useRef<number>(0);
 
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-
-  UNSTABLE_usePreventRemove(isParent && !isWordAcknowledgedForParent, ({ data }) => {
-    return Alert.alert(
-      I18n.get('schoolbook-worddetails-alertAcknowledge-title'),
-      I18n.get('schoolbook-worddetails-alertAcknowledge-text'),
-      [
-        {
-          text: I18n.get('common-quit'),
-          style: 'destructive',
-          onPress: () => handleRemoveConfirmNavigationEvent(data.action, navigation),
-        },
-        {
-          text: I18n.get('schoolbook-worddetails-alertAcknowledge-confirm'),
-          style: 'default',
-          onPress: () => action(),
-        },
-      ],
-    );
+  usePreventBack({
+    title: I18n.get('schoolbook-worddetails-alertAcknowledge-title'),
+    text: I18n.get('schoolbook-worddetails-alertAcknowledge-text'),
+    showAlert: isParent && !isWordAcknowledgedForParent,
   });
 
   const scrollToEnd = () => {

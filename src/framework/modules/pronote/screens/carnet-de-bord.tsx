@@ -9,7 +9,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
-import { ActionButton } from '~/framework/components/buttons/action';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
     marginRight: UI_SIZES.spacing.small,
   },
   card: {
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginTop: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
   },
   button: {
     marginTop: UI_SIZES.spacing.large,
@@ -314,13 +314,12 @@ CarnetDeBordScreen.getRenderContent =
               type={CarnetDeBordSection.VIE_SCOLAIRE}
               data={data}
             />
-            <ActionButton
+            <SecondaryButton
               style={styles.button}
-              type="secondary"
               action={() => {
                 if (session) redirect(session, data.address!);
               }}
-              iconName="pictos-external-link"
+              iconRight="pictos-external-link"
               text={I18n.get('pronote-openinpronote')}
             />
           </>

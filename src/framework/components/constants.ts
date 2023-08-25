@@ -53,12 +53,14 @@ export const UI_ANIMATIONS = {
 
 export const UI_SIZES = {
   aspectRatios: {
+    square: 1,
     thumbnail: 7 / 5,
   },
   dimensions: {
     height: {
       tiny: 1,
       small: 2,
+      smallPlus: 16,
       medium: 18,
       mediumPlus: 20,
       large: 22,
@@ -71,6 +73,7 @@ export const UI_SIZES = {
     width: {
       tiny: 1,
       small: 2,
+      smallPlus: 16,
       medium: 18,
       mediumPlus: 20,
       large: 22,
@@ -81,8 +84,14 @@ export const UI_SIZES = {
     },
   },
   elements: {
-    actionButtonBorder: 2,
-    icon: 24,
+    border: {
+      default: 2,
+      large: 4,
+    },
+    icon: {
+      small: getScaleWidth(20),
+      default: getScaleWidth(24),
+    },
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
     /** @todo replace these constants by native ones. For the moment, use useHeaderHeight() instead if possible. */
     navbarHeight: Platform.select({ ios: 44, default: 56 }),
@@ -96,19 +105,30 @@ export const UI_SIZES = {
     tabbarLabelMarginTop: Platform.select({ ios: initialWindowMetrics?.insets?.bottom ? 0 : 4, default: 8 }),
     textFieldMaxHeight: 105,
     thumbnail: getScaleImageSize(150),
+    avatar: {
+      sm: getScaleWidth(24),
+      md: getScaleWidth(36),
+      lg: getScaleWidth(48),
+      xl: getScaleWidth(64),
+      xxl: getScaleWidth(88),
+    },
   },
   border: {
     thin: 1,
+    small: 2,
   },
   radius: {
-    small: 4,
-    medium: 8,
-    card: 8,
-    explorer: 18,
-    mediumPlus: 16,
-    large: 21,
-    extraLarge: 24,
-    huge: 48,
+    small: getScaleWidth(4),
+    medium: getScaleWidth(8),
+    card: getScaleWidth(8),
+    newCard: getScaleWidth(12),
+    input: getScaleWidth(12),
+    selector: getScaleWidth(12),
+    mediumPlus: getScaleWidth(16),
+    explorer: getScaleWidth(18),
+    large: getScaleWidth(21),
+    extraLarge: getScaleWidth(24),
+    huge: getScaleWidth(48),
   },
   screen: {
     bottomInset: Platform.select({

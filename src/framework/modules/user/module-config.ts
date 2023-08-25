@@ -13,4 +13,5 @@ export default new NavigableModuleConfig<'user', UserState>({
   displayOrder: 5,
   displayPicture: { type: 'Icon', name: 'profile-off' },
   displayPictureFocus: { type: 'Icon', name: 'profile-on' },
+  testID: 'tabbar-account',
 });

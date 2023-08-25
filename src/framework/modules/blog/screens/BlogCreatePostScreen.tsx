@@ -1,4 +1,3 @@
-import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, Keyboard, ScrollView, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
@@ -10,16 +9,16 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
-import BottomMenu from '~/framework/components/menus/bottom';
+import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
+import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -30,10 +29,10 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { isEmpty } from '~/framework/util/object';
+import { uppercaseFirstLetter } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
@@ -63,40 +62,11 @@ export interface BlogCreatePostScreenState {
   sendLoadingState: boolean;
   title: string;
   content: string;
-  images: ImagePicked[];
+  images: ImagePicked[] | ILocalAttachment[];
   onPublish: boolean;
 }
 
 const styles = StyleSheet.create({
-  addMedia: {
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  addMediaButtonAdded: {
-    width: 300,
-    marginRight: UI_SIZES.spacing.minor,
-    textAlign: 'center',
-  },
-  addMediaButtonEmpty: {
-    width: 300,
-    marginRight: 0,
-    textAlign: 'center',
-  },
-  addMediaView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.big,
-  },
-  addMediaViewAdded: {
-    flexDirection: 'row',
-    marginBottom: UI_SIZES.spacing.small,
-  },
-  addMediaViewEmpty: {
-    flexDirection: 'column',
-    marginBottom: UI_SIZES.spacing.big,
-  },
   input: {
     marginBottom: UI_SIZES.spacing.big,
     padding: UI_SIZES.spacing.small,
@@ -144,24 +114,10 @@ export const computeNavBar = ({
 });
 
 function PreventBack(props: { isEditing: boolean }) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
-    Alert.alert(I18n.get('blog-createpost-confirmation-unsavedpublication'), I18n.get('blog-createpost-unsavedpublication'), [
-      {
-        text: I18n.get('common-quit'),
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-        style: 'destructive',
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'default',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('blog-createpost-confirmation-unsavedpublication'),
+    text: I18n.get('blog-createpost-unsavedpublication'),
+    showAlert: props.isEditing,
   });
   return null;
 }
@@ -173,12 +129,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     content: '',
     images: [],
     onPublish: false,
-  };
-
-  attachmentPickerRef: any;
-
-  imageCallback = image => {
-    this.setState(prevState => ({ images: [...prevState.images, image] }));
   };
 
   async doSend() {
@@ -223,10 +173,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       }
 
       // Translate entered content to httml
-      const htmlContent = content.replace(/\n/g, '<br>');
+      const htmlContent = content.replace(/\n/g, '<br>').trim();
 
       // Create and submit/publish post
-      await handleSendBlogPost(blog, title, htmlContent, uploadedPostImages);
+      await handleSendBlogPost(blog, title.trim(), htmlContent, uploadedPostImages);
 
       // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
@@ -281,7 +231,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         ) : (
           <NavBarAction
             title={actionText}
-            disabled={this.state.title.length === 0 || this.state.content.length === 0}
+            disabled={this.state.title.trim().length === 0 || this.state.content.trim().length === 0}
             onPress={() => this.doSend()}
           />
         ),
@@ -352,44 +302,18 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   renderPostMedia() {
     const { images } = this.state;
-    const imagesAdded = images.length > 0;
     return (
-      <View style={styles.addMedia}>
-        <BottomMenu
-          title={I18n.get('blog-createpost-bottommenu-addmedia')}
-          actions={[
-            cameraAction({
-              callback: this.imageCallback,
-            }),
-            galleryAction({
-              callback: this.imageCallback,
-              multiple: true,
-            }),
-          ]}>
-          <View
-            style={[styles.addMediaView, imagesAdded ? styles.addMediaViewAdded : styles.addMediaViewEmpty]}
-            // onPress={() => this.attachmentPickerRef.onPickAttachment()}
-          >
-            <SmallActionText style={imagesAdded ? styles.addMediaButtonAdded : styles.addMediaButtonEmpty}>
-              {I18n.get('blog-createpost-create-mediafield')}
-            </SmallActionText>
-            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
-          </View>
-        </BottomMenu>
+      <View>
         <AttachmentPicker
-          ref={r => (this.attachmentPickerRef = r)}
           onlyImages
-          attachments={images.map(
-            img =>
-              ({
-                mime: img.type,
-                name: img.fileName,
-                uri: img.uri,
-              } as ILocalAttachment),
-          )}
-          onAttachmentSelected={() => {}}
-          onAttachmentRemoved={imagesToSend => this.setState({ images: imagesToSend })}
-          notifierId="createBlogPost"
+          notifierId={uppercaseFirstLetter(moduleConfig.name)}
+          imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
+          onAttachmentRemoved={images => this.setState({ images })}
+          attachments={images.map(image => ({
+            mime: image.type,
+            name: image.fileName,
+            uri: image.uri,
+          }))}
         />
       </View>
     );

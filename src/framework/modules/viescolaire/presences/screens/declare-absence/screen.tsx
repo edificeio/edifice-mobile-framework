@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
@@ -29,6 +28,7 @@ import { LocalFile } from '~/framework/util/fileHandler';
 
 import styles from './styles';
 import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -205,7 +205,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
             </BottomMenu>
           )}
         </View>
-        <ActionButton
+        <PrimaryButton
           text={I18n.get('presences-declareabsence-action')}
           action={createAbsence}
           disabled={!areDatesValid}

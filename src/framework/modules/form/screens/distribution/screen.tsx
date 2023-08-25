@@ -9,7 +9,8 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -358,20 +359,19 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   const renderPositionActions = () => {
     if (isPositionAtSummary) {
       return status !== DistributionStatus.FINISHED || editable ? (
-        <ActionButton text={I18n.get('form-distribution-submit')} action={() => modalBoxRef.current?.doShowModal()} />
+        <PrimaryButton text={I18n.get('form-distribution-submit')} action={() => modalBoxRef.current?.doShowModal()} />
       ) : null;
     }
     return (
       <View style={styles.actionsContainer}>
         {positionHistory.length ? (
-          <ActionButton
+          <SecondaryButton
             text={I18n.get('form-distribution-previous')}
-            type="secondary"
             action={goToPreviousPosition}
             loading={isLoadingPrevious}
           />
         ) : null}
-        <ActionButton
+        <PrimaryButton
           text={I18n.get('form-distribution-next')}
           action={goToNextPosition}
           disabled={isMandatoryAnswerMissing}

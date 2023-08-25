@@ -4,10 +4,11 @@ import type { ISession } from '~/framework/modules/auth/model';
 import type { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/modules/zimbra/actions';
 import type { DraftType, IMail, ISignature } from '~/framework/modules/zimbra/model';
 import type { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
+import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface ZimbraComposerScreenProps {
-  hasZimbraSendExternalRight: boolean;
-  isFetching: boolean;
+  initialLoadingState: AsyncPagedLoadingState;
+  hasZimbraSendExternalRight?: boolean;
 }
 
 export interface ZimbraComposerScreenNavParams {
@@ -18,8 +19,8 @@ export interface ZimbraComposerScreenNavParams {
 }
 
 export interface ZimbraComposerScreenStoreProps {
-  mail: IMail;
   signature: ISignature;
+  mail?: IMail;
   session?: ISession;
 }
 

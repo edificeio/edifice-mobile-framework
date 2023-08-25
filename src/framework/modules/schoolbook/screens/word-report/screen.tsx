@@ -10,7 +10,8 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import ModalBox from '~/framework/components/ModalBox';
 import UserList from '~/framework/components/UserList';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { ResourceView } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -251,10 +252,9 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
                   ]}>
                   <HeadingSText>{unacknowledgementsString(word?.ackNumber, word?.total)}</HeadingSText>
                   {hasSchoolbookWordResendRights ? (
-                    <ActionButton
-                      type="secondary"
+                    <SecondaryButton
                       text={I18n.get('schoolbook-wordreport-reminder')}
-                      iconName="pictos-send"
+                      iconRight="pictos-send"
                       action={() => modalBoxRef?.current?.doShowModal()}
                     />
                   ) : null}
@@ -287,7 +287,7 @@ const SchoolbookWordReportScreen = (props: SchoolbookWordReportScreenProps) => {
                 <TouchableOpacity onPress={() => modalBoxRef?.current?.doDismissModal()}>
                   <SmallBoldText style={styles.modalBoxCancel}>{I18n.get('common-cancel')}</SmallBoldText>
                 </TouchableOpacity>
-                <ActionButton text={I18n.get('common-send')} iconName="pictos-send" action={() => sendSchoolbookWordReminder()} />
+                <PrimaryButton text={I18n.get('common-send')} iconRight="pictos-send" action={() => sendSchoolbookWordReminder()} />
               </View>
             </>
           }

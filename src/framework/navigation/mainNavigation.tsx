@@ -83,6 +83,7 @@ const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
     tabBarIcon: props => {
       return createTabIcon(moduleConfig, props);
     },
+    tabBarTestID: moduleConfig.testID ?? '',
   } as BottomTabNavigationOptions;
 };
 
@@ -122,7 +123,7 @@ const tabListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListB
       // Feebback
       Feedback.tabPressed();
     },
-  } as ScreenListeners<NavigationState, EventMapBase>);
+  }) as ScreenListeners<NavigationState, EventMapBase>;
 
 const stackListeners = ({ navigation }: { navigation: NavigationHelpers<ParamListBase> }) => ({
   transitionEnd: event => {
@@ -203,9 +204,6 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
           marginTop: UI_SIZES.elements.tabbarLabelMarginTop,
           height: UI_SIZES.elements.tabbarIconSize,
           width: UI_SIZES.elements.tabbarIconSize,
-        },
-        tabBarItemStyle: {
-          justifyContent: 'space-between',
         },
         tabBarActiveTintColor: theme.palette.primary.regular.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue
         tabBarInactiveTintColor: theme.ui.text.light.toString(), // 😡 F U React Nav 6, using plain string instead of ColorValue

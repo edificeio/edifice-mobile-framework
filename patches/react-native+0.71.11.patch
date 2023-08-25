@@ -85,10 +85,10 @@ index 2f48f9e..1c9c605 100644
            // When height changes, we need to disable flex.
            heightStyle = {
 diff --git a/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm b/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm
-index 0d586d8..dcaaa6c 100644
+index 0d586d8..e98d95d 100644
 --- a/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm
 +++ b/node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotificationManager.mm
-@@ -268,11 +268,12 @@ RCT_EXPORT_METHOD(onFinishRemoteNotification : (NSString *)notificationId fetchR
+@@ -268,10 +268,6 @@ RCT_EXPORT_METHOD(onFinishRemoteNotification : (NSString *)notificationId fetchR
  {
    UIBackgroundFetchResult result = [RCTConvert UIBackgroundFetchResult:fetchResult];
    RCTRemoteNotificationCallback completionHandler = self.remoteNotificationCallbacks[notificationId];
@@ -96,16 +96,9 @@ index 0d586d8..dcaaa6c 100644
 -    RCTLogError(@"There is no completion handler with notification id: %@", notificationId);
 -    return;
 -  }
--  completionHandler(result);
-+  // Edifice Badge fix: the line below was causing a crash when receiving a foreground notification.
-+  // if (!completionHandler) {
-+  //   RCTLogError(@"There is no completion handler with notification id: %@", notificationId);
-+  //   return;
-+  // }
-+  // completionHandler(result);
+   completionHandler(result);
    [self.remoteNotificationCallbacks removeObjectForKey:notificationId];
  }
- 
 diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
 new file mode 100644
 index 0000000..361f5fb

@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
-import ActionButton from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -56,7 +56,7 @@ const CreateFolderModal = React.forwardRef<ModalBoxHandle, ICreateFolderModalPro
         <View>
           <BodyText>{I18n.get('zimbra-maillist-createfoldermodal-title')}</BodyText>
           <TextInput value={name} onChangeText={value => setName(value)} autoFocus style={styles.textInput} />
-          <ActionButton
+          <PrimaryButton
             text={I18n.get('zimbra-maillist-createfoldermodal-action')}
             action={createFolder}
             disabled={!name}

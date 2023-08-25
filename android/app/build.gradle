@@ -79,11 +79,11 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1100021
-        versionName "1.10.0"
+        versionCode 1110010
+        versionName "1.11.0"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"rc.6\""
+        buildConfigField "String", "BundleVersionType", "\"alpha.10\""
         resValue "string", "app_name", "${APPNAME}"
         ndk {
             debugSymbolLevel 'FULL'
@@ -94,6 +94,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false
+            //noinspection ChromeOsAbiSupport
             include (*reactNativeArchitectures())
         }
     }

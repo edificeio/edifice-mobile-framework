@@ -1,7 +1,5 @@
-import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -11,13 +9,13 @@ import CheckboxButton from '~/framework/components/buttons/checkbox';
 import FlatList from '~/framework/components/list/flat-list';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
 import { NotificationFilter } from '~/framework/modules/timeline/reducer/notif-definitions/notif-filters';
 import { INotifFilterSettings } from '~/framework/modules/timeline/reducer/notif-settings/notif-filter-settings';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { shallowEqual } from '~/framework/util/object';
 
@@ -48,24 +46,10 @@ export const computeNavBar = ({
 });
 
 function PreventBack(props: { onPreventBack: boolean }) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  UNSTABLE_usePreventRemove(props.onPreventBack, ({ data }) => {
-    Alert.alert(I18n.get('timeline-filters-leavealert-title'), I18n.get('timeline-filters-leavealert-text'), [
-      {
-        text: I18n.get('common-cancel'),
-        style: 'cancel',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-      {
-        text: I18n.get('common-quit'),
-        style: 'destructive',
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('timeline-filters-leavealert-title'),
+    text: I18n.get('timeline-filters-leavealert-text'),
+    showAlert: props.onPreventBack,
   });
   return null;
 }

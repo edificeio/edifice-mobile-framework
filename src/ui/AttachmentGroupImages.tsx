@@ -1,81 +1,138 @@
 import * as React from 'react';
-import { FlatList, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import IconButton from '~/framework/components/buttons/icon';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES } from '~/framework/components/constants';
+import { ImagePicked, cameraAction, galleryAction } from '~/framework/components/menus/actions';
+import BottomMenu from '~/framework/components/menus/bottom';
+import { Picture } from '~/framework/components/picture';
+import { BodyBoldText, TextSizeStyle } from '~/framework/components/text';
 import { Image, formatSource } from '~/framework/util/media';
+import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
-import { ContentUri } from '~/types/contentUri';
 
-import { IconButton } from './IconButton';
+import { ILocalAttachment } from './Attachment';
 
-class AttachmentGroupImagesNoNav extends React.PureComponent<{
-  attachments: ContentUri[];
+const itemWidth =
+  // The items' width is computed by substracting spacings from the screen's width
+  (UI_SIZES.screen.width -
+    // horizontal padding of page
+    2 * UI_SIZES.spacing.medium -
+    // horizontal padding of items' container
+    2 * UI_SIZES.spacing.big -
+    // space between items
+    2 * UI_SIZES.spacing.big -
+    // vertical border width of "attach photos" button
+    2 * UI_SIZES.border.thin) /
+  3;
+const styles = StyleSheet.create({
+  attachPhotos: { color: theme.palette.primary.regular, marginTop: UI_SIZES.spacing.small, textAlign: 'center' },
+  attachPhotosAdded: { ...TextSizeStyle.Small, marginTop: UI_SIZES.spacing.tiny },
+  attachPhotosContainer: { alignItems: 'center', justifyContent: 'center' },
+  attachPhotosContainerAdded: {
+    borderColor: theme.palette.primary.regular,
+    borderWidth: UI_SIZES.border.thin,
+    borderRadius: UI_SIZES.radius.medium,
+    aspectRatio: UI_SIZES.aspectRatios.square,
+    width: itemWidth,
+  },
+  iconButton: {
+    borderRadius: UI_SIZES.radius.huge,
+    backgroundColor: theme.palette.primary.regular,
+    width: UI_SIZES.dimensions.height.large,
+    height: UI_SIZES.dimensions.height.large,
+    right: -UI_SIZES.spacing._LEGACY_small,
+    top: -UI_SIZES.spacing.minor,
+    position: 'absolute',
+  },
+  container: {
+    borderColor: theme.ui.border.input,
+    borderWidth: UI_SIZES.border.thin,
+    borderRadius: UI_SIZES.radius.selector,
+  },
+  containerAdded: { borderColor: theme.palette.grey.stone },
+  contentContainer: {
+    paddingVertical: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.big,
+  },
+  contentContainerAdded: {
+    alignItems: 'center',
+  },
+  itemSeperator: { paddingVertical: UI_SIZES.spacing.small },
+  photo: {
+    aspectRatio: UI_SIZES.aspectRatios.square,
+    borderRadius: UI_SIZES.radius.medium,
+    width: itemWidth,
+  },
+  photoContainer: { marginRight: UI_SIZES.spacing.big, borderRadius: UI_SIZES.radius.medium },
+});
+
+export class AttachmentGroupImages extends React.PureComponent<{
+  imageCallback: (image: ImagePicked) => void;
   onRemove: (index: number) => void;
+  images: ILocalAttachment[];
+  moduleName: string;
 }> {
   public render() {
-    const { attachments, onRemove } = this.props;
-    const carouselImages = attachments.map(att => ({ src: { uri: att.uri }, alt: 'image' }));
+    const { images, onRemove, imageCallback, moduleName } = this.props;
+    const carouselImages = images.map(image => ({ src: { uri: image.uri }, type: 'image' as 'image', alt: 'image' }));
+    const imagesAdded = images.length > 0;
+    const numColumns = 3;
+
+    const AddPhotosButton = () => {
+      return (
+        <BottomMenu
+          actions={[cameraAction({ callback: imageCallback }), galleryAction({ callback: imageCallback, multiple: true })]}>
+          <View style={[styles.attachPhotosContainer, imagesAdded && styles.attachPhotosContainerAdded]}>
+            <Picture
+              type="NamedSvg"
+              name={imagesAdded ? 'ui-plus' : 'ui-camera'}
+              width={UI_SIZES.dimensions.width[imagesAdded ? 'medium' : 'hug']}
+              height={UI_SIZES.dimensions.height[imagesAdded ? 'medium' : 'hug']}
+              fill={theme.palette.primary.regular}
+            />
+            <BodyBoldText style={[styles.attachPhotos, imagesAdded && styles.attachPhotosAdded]}>
+              {I18n.get('photospicker-addphotos')}
+            </BodyBoldText>
+          </View>
+        </BottomMenu>
+      );
+    };
 
     return (
       <FlatList
-        data={attachments}
-        horizontal
-        persistentScrollbar
-        contentContainerStyle={{ padding: UI_SIZES.spacing.small }}
+        data={[...images, {}]}
+        numColumns={numColumns}
+        scrollEnabled={false}
+        style={[styles.container, imagesAdded && styles.containerAdded]}
+        contentContainerStyle={[styles.contentContainer, !imagesAdded && styles.contentContainerAdded]}
+        ItemSeparatorComponent={() => <View style={styles.itemSeperator} />}
         renderItem={({ item, index }) => {
+          if (isEmpty(item)) return <AddPhotosButton />;
           return (
-            <View
-              style={{
-                marginTop: UI_SIZES.spacing._LEGACY_small,
-                marginRight: index === attachments.length - 1 ? UI_SIZES.spacing.small : UI_SIZES.spacing.big,
-              }}>
+            <View style={styles.photoContainer}>
               <TouchableOpacity
                 onPress={() => {
-                  openCarousel({
-                    data: carouselImages.map(img => ({
-                      type: 'image' as 'image',
-                      src: img.src,
-                      ...(img.alt ? { alt: img.alt } : undefined),
-                    })),
-                  });
-                  Trackers.trackEvent('Post creation', 'OPEN ATTACHMENT', 'Edit mode');
-                  //FIXME: ugly code here  (module name (1st argument) must be obtained dynamically)
-                }}
-                style={{
-                  shadowColor: theme.ui.shadowColor,
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.15,
-                  elevation: 7,
-                  backgroundColor: theme.ui.background.card,
-                  borderRadius: 3,
+                  Trackers.trackEvent(moduleName, 'OPEN ATTACHMENT', 'Edit mode');
+                  openCarousel({ data: carouselImages });
                 }}>
-                <Image source={formatSource(item.uri)} style={{ width: 110, height: 110, borderRadius: 3 }} resizeMode="cover" />
+                <Image
+                  style={styles.photo}
+                  resizeMode="cover"
+                  source={formatSource((item as ILocalAttachment).uri)}
+                  onError={() => onRemove(index)}
+                />
               </TouchableOpacity>
-              <View style={{ position: 'absolute', right: -25, top: -25, elevation: 10 }}>
-                <TouchableOpacity
-                  onPress={() => onRemove(index)}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <IconButton
-                    iconName="close"
-                    iconColor={theme.palette.grey.black}
-                    iconSize={18}
-                    buttonStyle={{
-                      backgroundColor: theme.palette.grey.fog,
-                      shadowColor: theme.ui.shadowColor,
-                      shadowOffset: { width: 0, height: 4 },
-                      shadowOpacity: 0.15,
-                      elevation: 7,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
+              <IconButton
+                icon="ui-close"
+                style={styles.iconButton}
+                size={UI_SIZES.dimensions.height.smallPlus}
+                color={theme.palette.grey.white}
+                action={() => onRemove(index)}
+              />
             </View>
           );
         }}
@@ -83,4 +140,3 @@ class AttachmentGroupImagesNoNav extends React.PureComponent<{
     );
   }
 }
-export const AttachmentGroupImages = AttachmentGroupImagesNoNav;

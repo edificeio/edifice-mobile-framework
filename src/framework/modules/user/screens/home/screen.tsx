@@ -11,13 +11,12 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/buttons/action';
-import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line/component';
+import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
-import { BodyBoldText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { HeadingSText, HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
@@ -37,6 +36,9 @@ import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
+import { colorType } from '.';
+import SecondaryButton from '~/framework/components/buttons/secondary';
+import DefaultButton from '~/framework/components/buttons/default';
 
 export const computeNavBar = ({
   navigation,
@@ -106,10 +108,10 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
   return React.useMemo(() => {
     return !userProfilePicture ? (
       <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.profile, {})}>
-        <Avatar sourceOrId={userProfilePicture} size={Size.verylarge} id="" />
+        <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" />
       </TouchableOpacity>
     ) : (
-      <Avatar sourceOrId={userProfilePicture} size={Size.verylarge} id="" />
+      <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" />
     );
   }, [navigation, userProfilePicture]);
 }
@@ -124,11 +126,12 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
   return React.useMemo(
     () => (
       <>
-        <BodyBoldText style={styles.userInfoName}>{session?.user.displayName}</BodyBoldText>
-        <SmallText style={styles.userInfoType}>{I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}</SmallText>
-        <ActionButton
+        <HeadingXSText style={styles.userInfoName}>{session?.user.displayName}</HeadingXSText>
+        <SmallBoldText style={{ color: colorType[session?.user.type!] }}>
+          {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
+        </SmallBoldText>
+        <SecondaryButton
           text={I18n.get('user-page-userfilebutton')}
-          type="secondary"
           action={() => {
             navigation.navigate(userRouteNames.profile, {});
           }}
@@ -206,9 +209,8 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
-  const isStudent = session?.user.type === UserType.Student;
-  const isRelative = session?.user.type === UserType.Relative;
   const showWhoAreWe = session?.platform.showWhoAreWe;
+  const isFederated = session?.federated;
   return React.useMemo(
     () => (
       <>
@@ -216,53 +218,34 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-configuration')}</HeadingSText>
           <ButtonLineGroup>
             <LineButton
-              title="user-pushnotifssettings-title"
+              title={I18n.get('user-pushnotifssettings-title')}
               onPress={() => {
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
             />
-            <LineButton
-              loading={currentLoadingMenu === ModificationType.PASSWORD}
-              disabled={!!currentLoadingMenu}
-              title="user-page-editpassword"
-              onPress={() => editUserInformation(ModificationType.PASSWORD)}
-            />
-            {canEditPersonalInfo ? (
+            {!isFederated ? (
               <LineButton
-                loading={currentLoadingMenu === ModificationType.EMAIL}
+                loading={currentLoadingMenu === ModificationType.PASSWORD}
                 disabled={!!currentLoadingMenu}
-                title="user-page-editemail"
-                onPress={() => editUserInformation(ModificationType.EMAIL)}
+                title={I18n.get('user-page-editpassword')}
+                onPress={() => editUserInformation(ModificationType.PASSWORD)}
               />
             ) : null}
             {canEditPersonalInfo ? (
-              <LineButton
-                loading={currentLoadingMenu === ModificationType.MOBILE}
-                disabled={!!currentLoadingMenu}
-                title="user-page-editmobile"
-                onPress={() => editUserInformation(ModificationType.MOBILE)}
-              />
-            ) : null}
-            <LineButton
-              title="user-structures-title"
-              onPress={() => {
-                navigation.navigate(userRouteNames.structures, {});
-              }}
-            />
-            {isStudent ? (
-              <LineButton
-                title="user-relatives-title"
-                onPress={() => {
-                  navigation.navigate(userRouteNames.family, { mode: 'relatives' });
-                }}
-              />
-            ) : isRelative ? (
-              <LineButton
-                title="user-children-title"
-                onPress={() => {
-                  navigation.navigate(userRouteNames.family, { mode: 'children' });
-                }}
-              />
+              <>
+                <LineButton
+                  loading={currentLoadingMenu === ModificationType.EMAIL}
+                  disabled={!!currentLoadingMenu}
+                  title={I18n.get('user-page-editemail')}
+                  onPress={() => editUserInformation(ModificationType.EMAIL)}
+                />
+                <LineButton
+                  loading={currentLoadingMenu === ModificationType.MOBILE}
+                  disabled={!!currentLoadingMenu}
+                  title={I18n.get('user-page-editmobile')}
+                  onPress={() => editUserInformation(ModificationType.MOBILE)}
+                />
+              </>
             ) : null}
           </ButtonLineGroup>
         </View>
@@ -271,14 +254,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           <ButtonLineGroup>
             {showWhoAreWe ? (
               <LineButton
-                title="user-whoarewe-title"
+                title={I18n.get('user-whoarewe-title')}
                 onPress={() => {
                   navigation.navigate(userRouteNames.whoAreWe, {});
                 }}
               />
             ) : null}
             <LineButton
-              title="user-legalnotice-title"
+              title={I18n.get('user-legalnotice-title')}
               onPress={() => {
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}
@@ -287,7 +270,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         </View>
       </>
     ),
-    [currentLoadingMenu, canEditPersonalInfo, isStudent, isRelative, showWhoAreWe, navigation, editUserInformation],
+    [currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
   );
 }
 
@@ -319,9 +302,11 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
    */
   return React.useMemo(() => {
     return (
-      <TouchableOpacity onPress={doLogout}>
-        <SmallBoldText style={styles.logoutButton}>{I18n.get('user-page-disconnect')}</SmallBoldText>
-      </TouchableOpacity>
+      <DefaultButton
+        text={I18n.get('user-page-disconnect')}
+        contentColor={theme.palette.status.failure.regular}
+        action={doLogout}
+      />
     );
   }, [doLogout]);
 }
@@ -363,9 +348,8 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
 function useToggleKeysFeature() {
   if (!I18n.canShowKeys) return;
   return (
-    <ActionButton
+    <SecondaryButton
       text="Toggle i18n Keys"
-      type="secondary"
       action={() => {
         I18n.toggleShowKeys();
       }}

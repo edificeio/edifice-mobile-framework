@@ -1,10 +1,3 @@
-import { ColorValue } from 'react-native';
+import { DefaultButtonProps } from '~/framework/components/buttons/default';
 
-export interface TertiaryButtonProps {
-  text: string;
-  iconName?: string;
-  action: () => void;
-  disabled?: boolean;
-  loading?: boolean;
-  pictureFill?: ColorValue;
-}
+export interface TertiaryButtonProps extends DefaultButtonProps {}

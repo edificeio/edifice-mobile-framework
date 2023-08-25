@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { ActionButton } from '~/framework/components/buttons/action';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -29,6 +28,7 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
+import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -232,7 +232,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
             ],
           })}
         />
-        <ActionButton
+        <PrimaryButton
           text={I18n.get('presences-call-action')}
           action={validateCall}
           loading={isValidating}

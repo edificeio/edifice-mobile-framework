@@ -74,6 +74,8 @@ const mapDispatchToProps: (dispatch: any) => IHomeworkTaskListScreenEventProps =
   };
 };
 
+export interface HomeworkTaskListScreenNavigationParams {}
+
 class HomeworkTaskListScreenContainer extends React.PureComponent<IHomeworkTaskListScreenProps, object> {
   render() {
     return <HomeworkTaskListScreen {...this.props} />;

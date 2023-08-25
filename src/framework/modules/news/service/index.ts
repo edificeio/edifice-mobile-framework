@@ -1,7 +1,5 @@
 import moment from 'moment';
 
-import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
-
 import {
   NewsCommentItem,
   NewsItem,
@@ -11,7 +9,8 @@ import {
   NewsOwner,
   NewsThreadItem,
   NewsThreadItemRights,
-} from '../model';
+} from '~/framework/modules/news/model';
+import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
 
 export interface BackendNewsItem {
   id: number;

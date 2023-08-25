@@ -119,6 +119,7 @@ export interface IUserInfoBackend {
   classes?: string[];
   children?: { [userId: string]: { lastName: string; firstName: string } };
   birthDate?: string;
+  federated?: boolean;
 }
 
 export interface UserPrivateData {
@@ -286,6 +287,7 @@ export function formatSession(
     widgets: userinfo.widgets,
     authorizedActions: userinfo.authorizedActions,
     type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
+    federated: userinfo.federated ?? false,
     // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
     user,
   };
@@ -520,12 +522,12 @@ export async function verifyMFACode(key: string) {
   }
 }
 
-export async function getMobileValidationInfos() {
+export async function getMobileValidationInfos(platformUrl: string) {
   try {
-    const mobileValidationInfos = (await fetchJSONWithCache('/directory/user/mobilestate')) as IEntcoreMobileValidationInfos;
+    const mobileValidationInfos = await fetchJSONWithCache('/directory/user/mobilestate', {}, true, platformUrl);
     return mobileValidationInfos;
-  } catch {
-    // console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
+  } catch (e) {
+    console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
   }
 }
 

@@ -39,6 +39,7 @@ import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helpe
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
@@ -69,6 +70,7 @@ export interface ConversationNewMailScreenNavigationParams {
   getGoBack?: () => void;
   getSendDraft?: () => void;
   mailId?: string;
+  toUsers?: ISearchUsers;
   type: DraftType;
 }
 
@@ -147,10 +149,16 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const { id } = this.state;
     const draftType = route.params.type;
     const mailId = route.params.mailId;
+    const toUsers = route.params.toUsers;
     navigation.setParams(this.navigationHeaderFunction);
     if (mailId) {
       this.setState({ isPrefilling: true });
       fetchMailContent(mailId);
+    }
+    if (toUsers) {
+      this.setState(prevState => ({
+        mail: { ...prevState.mail, to: toUsers },
+      }));
     }
     if (draftType !== DraftType.DRAFT) {
       this.setState({ id: undefined });
@@ -270,7 +278,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     },
     getSendDraft: async () => {
       const { mail, tempAttachment } = this.state;
-      if (mail.to.length === 0) {
+      if (isEmpty(mail.to) && isEmpty(mail.cc) && isEmpty(mail.cci)) {
         Keyboard.dismiss();
         Toast.showError(I18n.get('conversation-newmail-missingreceiver'));
         return;

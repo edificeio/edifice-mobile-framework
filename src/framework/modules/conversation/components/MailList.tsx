@@ -14,9 +14,8 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import SwipeableList from '~/framework/components/swipeableList';
-import { CaptionBoldText, CaptionText, SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import { CaptionBoldText, CaptionText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import moduleConfig from '~/framework/modules/conversation/module-config';
 import { ConversationNavigationParams, conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import CreateFolderModal from '~/framework/modules/conversation/screens/ConversationCreateFolderModal';
 import { IInit } from '~/framework/modules/conversation/screens/ConversationMailListScreen';
@@ -28,6 +27,7 @@ import { IMail } from '~/framework/modules/conversation/state/mailContent';
 import { IMailList } from '~/framework/modules/conversation/state/mailList';
 import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
 import { displayPastDate } from '~/framework/util/date';
+import { isEmpty } from '~/framework/util/object';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
 import { Loading } from '~/ui/Loading';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
@@ -388,8 +388,26 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                     const isMailUnread = item.unread && !isFolderDrafts && !isFolderOutbox;
                     const mailContacts = getMailPeople(item);
                     const TextSubjectComponent = isMailUnread ? CaptionBoldText : CaptionText;
-                    let contacts = !isFolderOutbox && !isFolderDrafts ? [mailContacts.from] : mailContacts.to;
-                    if (contacts.length === 0) contacts = [[undefined, I18n.get('conversation-maillist-emptyto'), false]];
+                    let contacts =
+                      !isFolderOutbox && !isFolderDrafts
+                        ? [mailContacts.from]
+                        : [...mailContacts.to, ...mailContacts.cc, ...mailContacts.cci];
+                    if (isEmpty(contacts)) contacts = [[undefined, I18n.get('conversation-maillist-emptyto'), false]];
+                    const renderContacts = (prefix, data) => {
+                      if (isEmpty(data)) return;
+                      return (
+                        <>
+                          <SmallText style={{ color: isMailUnread ? theme.ui.text.regular : theme.ui.text.light }}>
+                            {I18n.get(prefix) + ' '}
+                          </SmallText>
+                          <SmallText>
+                            {data[0][1]}
+                            {data.length > 1 ? ', +' + (data.length - 1) + ' ' : ' '}
+                          </SmallText>
+                        </>
+                      );
+                    };
+
                     return (
                       <TouchableOpacity onPress={() => this.renderMailContent(item)}>
                         <ListItem
@@ -399,16 +417,18 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                             <View style={styles.mailInfos}>
                               {/* Contact name */}
                               <View style={styles.contactsAndDateContainer}>
-                                {isFolderOutbox || isFolderDrafts ? (
-                                  <SmallText style={{ color: isMailUnread ? theme.ui.text.regular : theme.ui.text.light }}>
-                                    {I18n.get('conversation-maillist-toprefix') + ' '}
+                                {isEmpty(contacts.length) || (!isFolderOutbox && !isFolderDrafts) ? (
+                                  <SmallText numberOfLines={1} style={styles.contacts}>
+                                    {contacts[0][1]}
                                   </SmallText>
-                                ) : null}
-                                <SmallBoldText
-                                  numberOfLines={1}
-                                  style={[styles.contacts, isFolderDrafts ? { color: theme.palette.status.warning.regular } : {}]}>
-                                  {contacts.map(c => c[1]).join(', ')}
-                                </SmallBoldText>
+                                ) : (
+                                  <SmallText numberOfLines={1} style={styles.contacts}>
+                                    {renderContacts('conversation-maillist-toprefix', mailContacts.to)}
+                                    {renderContacts('conversation-mailcontentitems-ccprefix', mailContacts.cc)}
+                                    {renderContacts('conversation-mailcontentitems-bccprefix', mailContacts.cci)}
+                                  </SmallText>
+                                )}
+
                                 {/* Date */}
                                 <SmallText style={styles.mailDate} numberOfLines={1}>
                                   {displayPastDate(moment(item.date))}
