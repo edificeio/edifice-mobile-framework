@@ -11,6 +11,7 @@ import {
   IHomeworkCreateScreenProps,
 } from '~/framework/modules/homework/components/HomeworkCreateScreen';
 import { SyncedFile } from '~/framework/util/fileHandler';
+import { getState as getConnectionTrackerState } from '~/infra/reducers/connectionTracker';
 
 import { createHomeworkDiaryEntry, uploadHomeworkDiaryEntryImages } from '../actions/createEntry';
 import { fetchHomeworkTasks } from '../actions/tasks';
@@ -21,6 +22,7 @@ const mapStateToProps: (state: any) => HomeworkCreateScreenDataProps = state => 
 
   return {
     diaryId: selectedDiaryId,
+    connectionTrackerState: getConnectionTrackerState(state),
   };
 };
 

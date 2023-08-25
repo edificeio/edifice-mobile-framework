@@ -466,6 +466,7 @@
   "homework-create-description-placeholder": "Ex : Lire le premier chapitre de ...",
   "homework-create-description-title": "En quoi consiste le devoir ?",
   "homework-create-error-fullstorage": "Votre espace de stockage est plein. Vous ne pouvez plus importer de documents.",
+  "homework-create-error-offline": "Le téléphone est hors ligne. Il n'est pas possible d'ajouter le devoir",
   "homework-create-error-publish": "Erreur lors de la publication",
   "homework-create-error-upload": "Erreur d'envoi des pièces jointes : verifiez votre accès à internet et que votre espace documentaire dispose d'assez d'espace libre",
   "homework-create-leavealert-text": "Les informations que vous avez renseignées seront perdues.",
