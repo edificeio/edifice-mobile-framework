@@ -339,7 +339,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       this.props.navigation.setOptions({
         // eslint-disable-next-line react/no-unstable-nested-components
         headerRight: () => (
-          <PopupMenu actions={workflows} testID="timeline-add-button">
+          <PopupMenu actions={workflows}>
             <NavBarAction icon="ui-plus" />
           </PopupMenu>
         ),
