@@ -10,6 +10,7 @@ import {
   HomeworkCreateScreenEventProps,
   IHomeworkCreateScreenProps,
 } from '~/framework/modules/homework/components/HomeworkCreateScreen';
+import { homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { getState as getConnectionTrackerState } from '~/infra/reducers/connectionTracker';
 
@@ -48,7 +49,9 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkCr
   dispatch,
 });
 
-export interface HomeworkCreateScreenNavigationParams {}
+export interface HomeworkCreateScreenNavigationParams {
+  sourceRoute?: keyof typeof homeworkRouteNames;
+}
 
 class HomeworkCreateScreenContainer extends React.PureComponent<IHomeworkCreateScreenProps, object> {
   render() {

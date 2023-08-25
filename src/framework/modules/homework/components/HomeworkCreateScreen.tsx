@@ -126,6 +126,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
         handleGetHomeworkTasks,
         handleUploadEntryImages,
         diaryId,
+        route,
       } = this.props;
       const { date, subject, description, images } = this.state;
 
@@ -163,7 +164,9 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
       // Create entry
       await handleCreateDiaryEntry(diaryId, date!, subject, htmlContent, uploadedEntryImages);
       await handleGetHomeworkTasks(diaryId);
-      navigation.goBack();
+      if (route.params.sourceRoute === homeworkRouteNames.homeworkTaskList) {
+        navigation.goBack();
+      } else navigation.popToTop();
       Toast.showSuccess(I18n.get('homework-create-success'));
     } catch (e) {
       const isHandled = (e as Error).message && ((e as Error).message === 'Upload failure' || (e as Error).message === 'Offline');
