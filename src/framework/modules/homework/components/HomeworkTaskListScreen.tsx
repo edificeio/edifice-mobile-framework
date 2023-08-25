@@ -135,7 +135,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
 
   addEntry() {
     const { navigation } = this.props;
-    navigation.navigate(homeworkRouteNames.homeworkCreate);
+    navigation.navigate(homeworkRouteNames.homeworkCreate, { sourceRoute: homeworkRouteNames.homeworkTaskList });
   }
 
   updateNavBarTitle() {

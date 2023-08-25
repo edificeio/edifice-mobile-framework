@@ -1,4 +1,5 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import Lottie from 'lottie-react-native';
 import * as React from 'react';
 import { BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
@@ -12,6 +13,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
+import { getSession } from '~/framework/modules/auth/reducer';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
@@ -22,15 +24,26 @@ const ERRORS_I18N = {
   default: ['mediaplayer-error-content-title', 'mediaplayer-error-content-text'],
 };
 const DELAY_STATUS_HIDE = Platform.select({ ios: 250, default: 0 });
+export const ANIMATION_AUDIO = {
+  one: require('ASSETS/animations/audio/disque-one.json'),
+  neo: require('ASSETS/animations/audio/disque-neo.json'),
+  default: require('ASSETS/animations/audio/disque.json'),
+};
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const { route, navigation, connected } = props;
+  const { route, navigation, connected, session } = props;
   const { source, type, filetype } = route.params;
 
   const isAudio = type === MediaType.AUDIO;
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
   const isPortrait = React.useMemo(() => orientation === PORTRAIT, [orientation]);
+  const animationRef = React.useRef<Lottie>(null);
+  const platform = React.useMemo(() => {
+    if (session?.platform.name === 'prod-neo') return 'neo';
+    if (session?.platform.name === 'prod-one') return 'one';
+    return 'default';
+  }, [session]);
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
       const isPortraitOrLandscape =
@@ -55,7 +68,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     };
   }, [handleOrientationChange, isAudio, isFocused]);
 
-  const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
+  const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(3000);
 
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
@@ -136,6 +149,14 @@ function MediaPlayer(props: MediaPlayerProps) {
     isLoadingRef.current = false;
   }, []);
 
+  const onPlay = React.useCallback(() => {
+    animationRef.current?.play();
+  }, []);
+
+  const onPause = React.useCallback(() => {
+    animationRef.current?.pause();
+  }, []);
+
   const player = React.useMemo(() => {
     if (type === MediaType.WEB)
       return (
@@ -156,7 +177,6 @@ function MediaPlayer(props: MediaPlayerProps) {
       navigation.setOptions({ headerLeft: () => <View /> });
       return (
         <VideoPlayer
-          alwaysShowControls={isAudio}
           controlTimeoutDelay={videoPlayerControlTimeoutDelay}
           disableFullscreen
           disableVolume
@@ -165,26 +185,36 @@ function MediaPlayer(props: MediaPlayerProps) {
           onEnd={handleVideoPlayerEnd}
           onError={onError}
           onLoad={onLoad}
+          onPause={onPause}
+          onPlay={onPlay}
           rewindTime={10}
           showDuration
           showOnStart
           showOnEnd
           source={realSource}
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+          {...(isAudio
+            ? {
+                posterElement: <Lottie ref={animationRef} source={ANIMATION_AUDIO[platform]} style={styles.poster} speed={0.5} />,
+              }
+            : {})}
         />
       );
     }
   }, [
     type,
-    isPortrait,
     realSource,
+    isPortrait,
     navigation,
-    isAudio,
     videoPlayerControlTimeoutDelay,
     handleBack,
     handleVideoPlayerEnd,
     onError,
     onLoad,
+    onPause,
+    onPlay,
+    isAudio,
+    platform,
   ]);
 
   // Manage Android back button
@@ -228,4 +258,5 @@ function MediaPlayer(props: MediaPlayerProps) {
 
 export default connect((state: any) => ({
   connected: !!state.connectionTracker.connected,
+  session: getSession(),
 }))(MediaPlayer);

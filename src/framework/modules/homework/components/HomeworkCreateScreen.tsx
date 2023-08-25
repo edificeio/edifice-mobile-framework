@@ -23,11 +23,13 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { today } from '~/framework/util/date';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { uppercaseFirstLetter } from '~/framework/util/string';
+import { ConnectionTrackerState } from '~/infra/reducers/connectionTracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 
 export interface HomeworkCreateScreenDataProps {
   diaryId?: string;
+  connectionTrackerState: ConnectionTrackerState;
 }
 
 export interface HomeworkCreateScreenEventProps {
@@ -117,13 +119,26 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
 
   async createEntry() {
     try {
-      const { navigation, handleCreateDiaryEntry, handleGetHomeworkTasks, handleUploadEntryImages, diaryId } = this.props;
+      const {
+        connectionTrackerState,
+        navigation,
+        handleCreateDiaryEntry,
+        handleGetHomeworkTasks,
+        handleUploadEntryImages,
+        diaryId,
+        route,
+      } = this.props;
       const { date, subject, description, images } = this.state;
 
       this.setState({ isCreatingEntry: true });
 
       if (!diaryId) {
         throw new Error('No diary id');
+      }
+
+      if (!connectionTrackerState?.connected) {
+        Toast.showError(I18n.get('homework-create-error-offline'));
+        throw new Error('Offline');
       }
 
       // Upload images (if added)
@@ -135,9 +150,9 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
           // Full storage management
           // statusCode = 400 on iOS and code = 'ENOENT' on Android
           if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
-            Alert.alert('', I18n.get('homework-create-error-fullstorage'));
+            Toast.showError(I18n.get('homework-create-error-fullstorage'));
           } else {
-            Alert.alert('', I18n.get('homework-create-error-upload'));
+            Toast.showError(I18n.get('homework-create-error-upload'));
           }
           throw new Error('Upload failure');
         }
@@ -149,11 +164,13 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
       // Create entry
       await handleCreateDiaryEntry(diaryId, date!, subject, htmlContent, uploadedEntryImages);
       await handleGetHomeworkTasks(diaryId);
-      navigation.goBack();
+      if (route.params.sourceRoute === homeworkRouteNames.homeworkTaskList) {
+        navigation.goBack();
+      } else navigation.popToTop();
       Toast.showSuccess(I18n.get('homework-create-success'));
     } catch (e) {
-      const isUploadFailure = (e as Error).message && (e as Error).message === 'Upload failure';
-      if (!isUploadFailure) Alert.alert('', I18n.get('homework-create-error-publish'));
+      const isHandled = (e as Error).message && ((e as Error).message === 'Upload failure' || (e as Error).message === 'Offline');
+      if (!isHandled) Toast.showError(I18n.get('homework-create-error-publish'));
     } finally {
       this.setState({ isCreatingEntry: false });
     }

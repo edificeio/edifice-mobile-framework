@@ -1,6 +1,6 @@
 import TextSize from 'react-native-text-size';
 
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
 import { BUTTON_ICON_SIZE, DefaultButton } from './component';
@@ -15,9 +15,9 @@ const getButtonWidth = async ({ text, icons, type }: { text: string; icons?: num
   if (textMeasure) {
     let btnWidth;
     // determine button width
-    if (type !== 'primary' && type !== 'secondary') btnWidth = getScaleWidth(textMeasure.width) + 2 * UI_SIZES.spacing.tiny;
-    else btnWidth = getScaleWidth(textMeasure.width) + 2 * UI_SIZES.spacing.small + 2 * UI_SIZES.elements.border.default;
-
+    // + 10 bc textMeasure is not precise
+    if (type !== 'primary' && type !== 'secondary') btnWidth = textMeasure.width + 10 + 2 * UI_SIZES.spacing.tiny;
+    else btnWidth = textMeasure.width + 10 + 2 * UI_SIZES.spacing.small + 2 * UI_SIZES.elements.border.default;
     if (icons)
       return new Promise(resolve => {
         resolve(btnWidth + (BUTTON_ICON_SIZE + UI_SIZES.spacing.minor) * icons);
