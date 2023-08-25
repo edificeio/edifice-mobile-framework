@@ -1,4 +1,4 @@
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
@@ -140,17 +140,18 @@ export const computeNavBar = ({
 function NotificationItem({
   notification,
   doOpenNotification,
+  doOpenMoodMottoNotification,
   notificationTestID,
 }: {
   notification: ITimelineNotification;
   doOpenNotification: typeof TimelineScreen.prototype.doOpenNotification;
+  doOpenMoodMottoNotification: typeof TimelineScreen.prototype.doOpenMoodMottoNotification;
   notificationTestID?: string;
 }) {
-  const navigation = useNavigation();
   const onNotificationAction = React.useMemo(
     () => {
       if (notification.type === 'USERBOOK_MOTTO' || notification.type === 'USERBOOK_MOOD')
-        return () => navigation.navigate(userRouteNames.profile, { userId: notification.backupData.sender });
+        return () => doOpenMoodMottoNotification(notification.backupData.sender!);
       if (isResourceUriNotification(notification))
         return () => doOpenNotification(notification as ITimelineNotification & IResourceUriNotification);
       return undefined;
@@ -211,6 +212,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
       <NotificationItem
         notification={item.data as ITimelineNotification}
         doOpenNotification={this.doOpenNotification.bind(this)}
+        doOpenMoodMottoNotification={this.doOpenMoodMottoNotification.bind(this)}
         notificationTestID={`timeline-notification-${index}`}
       />
     ) : (
@@ -378,6 +380,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   async doNextPage() {
     if (!this.props.notifications.endReached) await this.props.handleNextPage();
+  }
+
+  doOpenMoodMottoNotification(userId: string) {
+    this.props.navigation.navigate(userRouteNames.profile, { userId });
   }
 
   async doOpenNotification(n: IResourceUriNotification) {
