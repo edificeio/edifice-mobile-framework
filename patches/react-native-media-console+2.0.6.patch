@@ -1,41 +1,27 @@
 diff --git a/node_modules/react-native-media-console/lib/typescript/types.d.ts b/node_modules/react-native-media-console/lib/typescript/types.d.ts
-index 4e95969..fcff7c4 100644
+index 4e95969..3eb2fec 100644
 --- a/node_modules/react-native-media-console/lib/typescript/types.d.ts
 +++ b/node_modules/react-native-media-console/lib/typescript/types.d.ts
 @@ -1,5 +1,5 @@
- import type { RefObject } from 'react';
+-import type { RefObject } from 'react';
 -import type { Animated, ViewStyle, StyleProp } from 'react-native';
++import type { ReactElement, RefObject } from 'react';
 +import type { Animated, StyleProp, ViewStyle } from 'react-native';
  import type VideoResource from 'react-native-video';
  import type { VideoProperties } from 'react-native-video';
  export interface VideoAnimations {
-@@ -58,6 +58,12 @@ export interface VideoPlayerProps extends VideoProperties {
-      * @default false
+@@ -197,4 +197,9 @@ export interface VideoPlayerProps extends VideoProperties {
+      * @default 15
       */
-     showOnEnd?: boolean;
+     rewindTime?: number;
 +    /**
-+     * Show controls always even when you touch the screen
-+     *
-+     * @default false
-+     */
-+    alwaysShowControls?: boolean;
-     /**
-      * Title of the video
-      */
-@@ -130,6 +136,11 @@ export interface VideoPlayerProps extends VideoProperties {
-      *
-      */
-     containerStyle?: StyleProp<ViewStyle>;
-+    /**
-+     * Top controls styles
++     * Element to replace video
 +     *
 +     */
-+    topControlsStyle?: StyleProp<ViewStyle>;
-     /**
-      * Fill/handle colour of the seekbar
-      *
++    posterElement?: ReactElement;
+ }
 diff --git a/node_modules/react-native-media-console/src/VideoPlayer.tsx b/node_modules/react-native-media-console/src/VideoPlayer.tsx
-index 5ea0ab2..24bdb4b 100644
+index 5ea0ab2..24ea200 100644
 --- a/node_modules/react-native-media-console/src/VideoPlayer.tsx
 +++ b/node_modules/react-native-media-console/src/VideoPlayer.tsx
 @@ -1,23 +1,23 @@
@@ -72,23 +58,15 @@ index 5ea0ab2..24bdb4b 100644
  
  const volumeWidth = 150;
  const iconOffset = 0;
-@@ -31,6 +31,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
-     isFullscreen = false,
-     showOnStart = false,
-     showOnEnd = false,
-+    alwaysShowControls = false,
-     paused = false,
-     muted = false,
-     volume = 1,
-@@ -56,6 +57,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
-     tapAnywhereToPause = false,
-     videoStyle = {},
-     containerStyle = {},
-+    topControlsStyle = {},
-     seekColor = '',
-     source,
-     disableBack = false,
-@@ -82,6 +84,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -67,6 +67,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+     disableSeekButtons = false,
+     navigator,
+     rewindTime = 15,
++    posterElement
+   } = props;
+ 
+   const mounted = useRef(false);
+@@ -82,6 +83,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    const [_isFullscreen, setIsFullscreen] = useState<boolean>(
      isFullscreen || resizeMode === 'cover' || false,
    );
@@ -96,7 +74,7 @@ index 5ea0ab2..24bdb4b 100644
    const [_showTimeRemaining, setShowTimeRemaining] =
      useState<boolean>(showTimeRemaining);
    const [volumeTrackWidth, setVolumeTrackWidth] = useState<number>(0);
-@@ -114,10 +117,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -114,10 +116,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    };
  
    const _onSeek = (obj: OnSeekData) => {
@@ -112,7 +90,7 @@ index 5ea0ab2..24bdb4b 100644
  
      if (typeof onSeek === 'function') {
        onSeek(obj);
-@@ -128,6 +133,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -128,6 +132,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
      if (currentTime < duration) {
        setCurrentTime(duration);
        setPaused(true);
@@ -120,24 +98,19 @@ index 5ea0ab2..24bdb4b 100644
  
        if (showOnEnd) {
          setShowControls(true);
-@@ -189,7 +195,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
-           togglePlayPause();
-           resetControlTimeout();
-         } else {
--          toggleControls();
-+          if(!alwaysShowControls) {toggleControls()};
-         }
-         tapActionTimeout.current = null;
-       }, doubleTapTime);
-@@ -417,6 +423,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
-               onBack={events.onBack}
-               resetControlTimeout={resetControlTimeout}
-               showControls={showControls}
-+              topControlsStyle={topControlsStyle}
-             />
-             <PlayPause
-               animations={animations}
-@@ -426,11 +433,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -397,9 +402,10 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+           paused={_paused}
+           muted={_muted}
+           rate={rate}
+-          style={[_styles.player.video, styles.videoStyle]}
++          style={[_styles.player.video, styles.videoStyle, {...posterElement ? {opacity: 0}: {}}]}
+           source={source}
+         />
++        {posterElement ?? null}
+         {loading ? (
+           <Loader animations={animations} />
+         ) : (
+@@ -426,11 +432,25 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
                togglePlayPause={togglePlayPause}
                resetControlTimeout={resetControlTimeout}
                showControls={showControls}
@@ -220,13 +193,13 @@ index 3df2574..ea74e23 100644
          <ImageBackground
            source={require('../assets/img/top-vignette.png')}
 diff --git a/node_modules/react-native-media-console/src/types.ts b/node_modules/react-native-media-console/src/types.ts
-index ab51aed..a8cf27a 100644
+index ab51aed..00552c1 100644
 --- a/node_modules/react-native-media-console/src/types.ts
 +++ b/node_modules/react-native-media-console/src/types.ts
 @@ -1,7 +1,7 @@
 -import type {RefObject} from 'react';
 -import type {Animated, ViewStyle, StyleProp} from 'react-native';
-+import type { RefObject } from 'react';
++import type { ReactElement, RefObject } from 'react';
 +import type { Animated, StyleProp, ViewStyle } from 'react-native';
  import type VideoResource from 'react-native-video';
 -import type {VideoProperties} from 'react-native-video';
@@ -234,30 +207,14 @@ index ab51aed..a8cf27a 100644
  
  export interface VideoAnimations {
    bottomControl: {marginBottom: Animated.Value};
-@@ -62,6 +62,13 @@ export interface VideoPlayerProps extends VideoProperties {
+@@ -226,4 +226,10 @@ export interface VideoPlayerProps extends VideoProperties {
+    * @default 15
     */
-   showOnEnd?: boolean;
- 
-+  /**
-+     * Show controls always even when you touch the screen
-+     *
-+     * @default false
-+     */
-+  alwaysShowControls?: boolean;
+   rewindTime?: number;
 +
-   /**
-    * Title of the video
-    */
-@@ -149,6 +156,12 @@ export interface VideoPlayerProps extends VideoProperties {
-    */
-   containerStyle?: StyleProp<ViewStyle>;
- 
 +  /**
-+   * Top controls styles
++   * Element to replace video
 +   *
 +   */
-+  topControlsStyle?: StyleProp<ViewStyle>;
-+
-   /**
-    * Fill/handle colour of the seekbar
-    *
++  posterElement?: ReactElement;
+ }
