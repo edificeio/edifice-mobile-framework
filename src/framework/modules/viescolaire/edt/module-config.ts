@@ -1,9 +1,9 @@
+import theme from '~/app/theme';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IEdtReduxState } from './reducer';
-import theme from '~/app/theme';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
@@ -17,5 +17,5 @@ export default new NavigableModuleConfig<'edt', IEdtReduxState>({
 
   displayI18n: 'edt-moduleconfig-appname',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'edt', fill: theme.palette.complementary.yellow.regular },
+  displayPicture: { type: 'NamedSvg', name: 'edt', fill: theme.palette.complementary.indigo.regular },
 });
