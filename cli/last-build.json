@@ -1,6 +1,6 @@
 {
-  "last": "2023-08-25 08:30:36",
-  "notes": "release: 1.10.1-alpha.1(1100103)",
-  "version": "1.10.1-rc.3(1100104)",
+  "last": "2023-08-28 19:43:31",
+  "notes": "feat(viesco): MB-1737 change color module viesco\nrelease: 1.10.1-rc.3(1100104)",
+  "version": "1.10.1-rc.4(1100105)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
