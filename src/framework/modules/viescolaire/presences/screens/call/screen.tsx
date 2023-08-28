@@ -1,4 +1,10 @@
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import {
+  BottomSheetModal,
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetView,
+  useBottomSheetDynamicSnapPoints,
+} from '@gorhom/bottom-sheet';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
@@ -44,6 +50,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   const [selectedStudentId, setSelectedStudentId] = React.useState<string | null>(null);
   const [isValidating, setValidating] = React.useState<boolean>(false);
   const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
+  const initialSnapPoints = React.useMemo(() => ['CONTENT_HEIGHT'], []);
+  const { animatedHandleHeight, animatedSnapPoints, animatedContentHeight, handleContentLayout } =
+    useBottomSheetDynamicSnapPoints(initialSnapPoints);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -191,18 +200,22 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
-        snapPoints={['50%']}
+        snapPoints={animatedSnapPoints}
+        handleHeight={animatedHandleHeight}
+        contentHeight={animatedContentHeight}
         backdropComponent={renderBackdrop}
         onDismiss={unselectStudent}>
-        <StudentStatus
-          student={student}
-          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === EventType.ABSENCE)}
-          style={styles.studentStatusContainer}
-          createAbsence={createAbsence}
-          deleteAbsence={deleteAbsence}
-          dismissBottomSheet={dismissBottomSheet}
-          openEvent={openEvent}
-        />
+        <BottomSheetView onLayout={handleContentLayout}>
+          <StudentStatus
+            student={student}
+            hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === EventType.ABSENCE)}
+            style={styles.studentStatusContainer}
+            createAbsence={createAbsence}
+            deleteAbsence={deleteAbsence}
+            dismissBottomSheet={dismissBottomSheet}
+            openEvent={openEvent}
+          />
+        </BottomSheetView>
       </BottomSheetModal>
     );
   };

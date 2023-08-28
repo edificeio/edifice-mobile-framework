@@ -27,7 +27,8 @@ export default StyleSheet.create({
   },
   studentStatusContainer: {
     paddingHorizontal: UI_SIZES.spacing.big,
-    paddingVertical: UI_SIZES.spacing.large,
+    paddingTop: UI_SIZES.spacing.large,
+    paddingBottom: UI_SIZES.spacing.large + UI_SIZES.screen.bottomInset,
   },
   summaryContainer: {
     paddingVertical: UI_SIZES.spacing.medium,
