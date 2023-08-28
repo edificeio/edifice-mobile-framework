@@ -51,6 +51,7 @@ const homeworkDiaryListAdapter: (data: IHomeworkDiaryListBackend) => IHomeworkDi
       title: item.title,
       thumbnail: item.thumbnail,
       shared: item.shared,
+      owner: item.owner,
     };
   }
   return result;
