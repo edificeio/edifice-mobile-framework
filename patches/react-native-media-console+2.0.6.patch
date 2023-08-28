@@ -153,6 +153,58 @@ index ef51f8d..92457ce 100644
      </Control>
    );
  };
+diff --git a/node_modules/react-native-media-console/src/components/BottomControls.tsx b/node_modules/react-native-media-console/src/components/BottomControls.tsx
+index 6d4dce3..d9d76b2 100644
+--- a/node_modules/react-native-media-console/src/components/BottomControls.tsx
++++ b/node_modules/react-native-media-console/src/components/BottomControls.tsx
+@@ -1,19 +1,19 @@
+-import React, {Dispatch, SetStateAction} from 'react';
++import React, { Dispatch, SetStateAction } from 'react';
+ import {
+   Animated,
++  GestureResponderHandlers,
+   ImageBackground,
+   SafeAreaView,
+   StyleSheet,
+-  GestureResponderHandlers,
+ } from 'react-native';
+-import {Timer} from './Timer';
+-import {Title} from './Title';
+-import {NullControl} from './NullControl';
+-import {Fullscreen} from './Fullscreen';
+-import {Seekbar} from './Seekbar';
+-import {calculateTime} from '../utils';
+-import type {VideoAnimations} from '../types';
+-import {styles} from './styles';
++import type { VideoAnimations } from '../types';
++import { calculateTime } from '../utils';
++import { Fullscreen } from './Fullscreen';
++import { NullControl } from './NullControl';
++import { Seekbar } from './Seekbar';
++import { Timer } from './Timer';
++import { Title } from './Title';
++import { styles } from './styles';
+ 
+ interface BottomControlsProps {
+   showControls: boolean;
+diff --git a/node_modules/react-native-media-console/src/components/Seekbar/styles.ts b/node_modules/react-native-media-console/src/components/Seekbar/styles.ts
+index 554a24b..4c0557e 100644
+--- a/node_modules/react-native-media-console/src/components/Seekbar/styles.ts
++++ b/node_modules/react-native-media-console/src/components/Seekbar/styles.ts
+@@ -1,4 +1,4 @@
+-import {StyleSheet} from 'react-native';
++import { StyleSheet } from 'react-native';
+ 
+ export const styles = StyleSheet.create({
+   container: {
+@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
+     height: 28,
+     marginLeft: 20,
+     marginRight: 20,
++    marginBottom: 15,
+   },
+   track: {
+     backgroundColor: '#333',
 diff --git a/node_modules/react-native-media-console/src/components/TopControls.tsx b/node_modules/react-native-media-console/src/components/TopControls.tsx
 index 3df2574..ea74e23 100644
 --- a/node_modules/react-native-media-console/src/components/TopControls.tsx
