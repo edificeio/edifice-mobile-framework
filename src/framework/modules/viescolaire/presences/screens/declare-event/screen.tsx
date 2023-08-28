@@ -10,7 +10,7 @@ import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import DateTimePicker from '~/framework/components/dateTimePicker';
-import TextInput from '~/framework/components/inputs/text';
+import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { Picture } from '~/framework/components/picture';
@@ -141,9 +141,9 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
         };
       case EventType.DEPARTURE:
         return {
-          deleteActionText: 'TODO',
-          reasonText: 'TODO',
-          timeText: 'TODO',
+          deleteActionText: I18n.get('presences-declareevent-departure-delete'),
+          reasonText: I18n.get('presences-declareevent-departure-reason'),
+          timeText: I18n.get('presences-declareevent-departure-time'),
         };
     }
   };
@@ -208,12 +208,11 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
         {type === EventType.DEPARTURE ? (
           <View style={styles.fieldContainer}>
             <SmallBoldText>{reasonText}</SmallBoldText>
-            <TextInput
-              annotation={reasonText}
+            <MultilineTextInput
+              placeholder={I18n.get('presences-declareevent-textinput-placeholder')}
               value={comment}
+              numberOfLines={0}
               onChangeText={text => setComment(text)}
-              multiline
-              textAlignVertical="top"
             />
           </View>
         ) : null}
@@ -223,7 +222,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
           action={createEvent}
           disabled={
             (type !== EventType.DEPARTURE && reasons.length && !reasonId) ||
-            (type !== EventType.ABSENCE && !date.isBetween(course.startDate, course.endDate))
+            (type !== EventType.ABSENCE && (date.isBefore(course.startDate) || date.isAfter(course.endDate)))
           }
           loading={isCreating}
           style={styles.primaryActionContainer}
