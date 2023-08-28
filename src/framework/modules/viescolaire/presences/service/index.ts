@@ -609,11 +609,10 @@ export const presencesService = {
         reason_id: reasonId,
         comment,
       });
-      const event = (await fetchJSONWithCache(api, {
+      await fetchWithCache(api, {
         method: 'PUT',
         body,
-      })) as IBackendEvent;
-      return eventAdapter(event);
+      });
     },
   },
   eventReasons: {
@@ -653,7 +652,7 @@ export const presencesService = {
         student_id: studentId,
         structure_id: structureId,
       });
-      await fetchJSONWithCache(api, {
+      await fetchWithCache(api, {
         method: 'PUT',
         body,
       });

@@ -19,10 +19,11 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
-import { EventType } from '~/framework/modules/viescolaire/presences/model';
+import { EventType, ICourse, IEvent } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { addTime, subtractTime } from '~/framework/util/date';
 
 import styles from './styles';
 import type { PresencesDeclareEventScreenPrivateProps } from './types';
@@ -38,28 +39,31 @@ export const computeNavBar = ({
   }),
 });
 
+const getInitialDate = (course: ICourse, eventType: EventType, event?: IEvent): Moment => {
+  const now = moment();
+
+  if (event) return eventType === EventType.LATENESS ? event.endDate : event.startDate;
+  if (now.isSameOrAfter(course.startDate) && now.isSameOrBefore(course.endDate)) return now;
+  return eventType === EventType.LATENESS ? addTime(course.startDate, 5, 'm') : subtractTime(course.endDate, 5, 'm');
+};
+
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
   const [isEventAlreadyExisting] = React.useState<boolean>(props.route.params.event !== undefined);
-  const [date, setDate] = React.useState<Moment>(moment());
+  const [date, setDate] = React.useState<Moment>(
+    getInitialDate(props.route.params.course, props.route.params.type, props.route.params.event),
+  );
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [reasonId, setReasonId] = React.useState<number | null>(props.route.params.event?.reasonId ?? null);
   const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
   const [isCreating, setCreating] = React.useState<boolean>(false);
   const [isDeleting, setDeleting] = React.useState<boolean>(false);
 
-  React.useEffect(() => {
+  const getIsEventEdited = (): boolean => {
     const { event, type } = props.route.params;
 
-    if (event) {
-      setDate(type === EventType.LATENESS ? event.endDate : event.startDate);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getIsEventEdited = (): boolean => {
-    const { event } = props.route.params;
-
     if (!event) return false;
+    if (type === EventType.LATENESS && !date.isSame(event.endDate)) return true;
+    if (type === EventType.DEPARTURE && !date.isSame(event.startDate)) return true;
     return reasonId !== event.reasonId || comment !== event.comment;
   };
 
@@ -123,17 +127,25 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
   const getStatusTexts = () => {
     const { type } = props.route.params;
 
-    if (type === EventType.ABSENCE) {
-      return {
-        deleteActionText: I18n.get('presences-declareevent-absence-delete'),
-        reasonText: I18n.get('presences-declareevent-absence-reason'),
-      };
+    switch (type) {
+      case EventType.ABSENCE:
+        return {
+          deleteActionText: I18n.get('presences-declareevent-absence-delete'),
+          reasonText: I18n.get('presences-declareevent-absence-reason'),
+        };
+      case EventType.LATENESS:
+        return {
+          deleteActionText: I18n.get('presences-declareevent-lateness-delete'),
+          reasonText: I18n.get('presences-declareevent-lateness-reason'),
+          timeText: I18n.get('presences-declareevent-lateness-time'),
+        };
+      case EventType.DEPARTURE:
+        return {
+          deleteActionText: 'TODO',
+          reasonText: 'TODO',
+          timeText: 'TODO',
+        };
     }
-    return {
-      deleteActionText: 'TODO',
-      reasonText: 'TODO',
-      timeText: 'TODO',
-    };
   };
 
   const renderHeading = () => {
@@ -167,7 +179,14 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
         {type !== EventType.ABSENCE ? (
           <View style={styles.fieldContainer}>
             <SmallBoldText>{timeText}</SmallBoldText>
-            <DateTimePicker mode="time" value={date} onChangeValue={value => setDate(value)} style={styles.timePickerContainer} />
+            <DateTimePicker
+              mode="time"
+              value={date}
+              onChangeValue={value => setDate(value)}
+              minimumDate={course.startDate}
+              maximumDate={course.endDate}
+              style={styles.timePickerContainer}
+            />
           </View>
         ) : null}
         {(type === EventType.ABSENCE || type === EventType.LATENESS) && reasons.length ? (
