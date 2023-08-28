@@ -44,8 +44,8 @@ const styles = StyleSheet.create({
 });
 
 interface CallCardProps {
-  call: ICourse;
-  isDisabled?: boolean;
+  course: ICourse;
+  disabled?: boolean;
   onPress?: () => void;
 }
 
@@ -62,11 +62,11 @@ interface CallCardStyle {
 
 export class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
-    const { call } = this.props;
+    const { course } = this.props;
     const now = moment();
-    const isValidated = call.registerStateId === 3;
+    const isValidated = course.registerStateId === 3;
 
-    if (now.isAfter(call.endDate)) {
+    if (now.isAfter(course.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.warning.pale,
         borderWidth: 1,
@@ -77,7 +77,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
         },
         textColor: theme.ui.text.regular,
       };
-    } else if (now.isBetween(call.startDate, call.endDate)) {
+    } else if (now.isBetween(course.startDate, course.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.info.regular,
         borderWidth: 2,
@@ -112,14 +112,14 @@ export class CallCard extends React.PureComponent<CallCardProps> {
   }
 
   public render() {
-    const { call, isDisabled, onPress } = this.props;
+    const { course: call, disabled, onPress } = this.props;
     const hoursLabel = this.getHoursLabel(call.startDate, call.endDate);
     const roomLabel = call.roomLabels[0];
     const classLabel = call.classes.length ? call.classes : call.groups;
     const { borderColor, borderWidth, status, textColor } = this.getStatusStyle();
 
     return (
-      <TouchableOpacity onPress={onPress} disabled={isDisabled} style={[styles.container, { borderColor, borderWidth }]}>
+      <TouchableOpacity onPress={onPress} disabled={disabled} style={[styles.container, { borderColor, borderWidth }]}>
         <View style={styles.leftContainer}>
           <View style={styles.rowContainer}>
             <Picture type="NamedSvg" name="ui-clock" width={22} height={22} fill={textColor} />

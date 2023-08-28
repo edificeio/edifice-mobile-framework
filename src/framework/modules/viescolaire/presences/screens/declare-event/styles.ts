@@ -5,57 +5,29 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   container: {
-    padding: UI_SIZES.spacing.medium,
     flexGrow: 1,
-    justifyContent: 'space-between',
+    padding: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.big,
   },
-  dropdown: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
+  deleteActionContainer: {
+    zIndex: -1,
   },
-  dropdownText: {
-    color: theme.ui.text.regular,
+  fieldContainer: {
+    rowGap: UI_SIZES.spacing.minor,
   },
-  recapHeader: {
-    paddingVertical: UI_SIZES.spacing.small,
-    alignSelf: 'flex-end',
-    width: '90%',
-    marginBottom: UI_SIZES.spacing.medium,
-  },
-  recapHeaderView: {
+  headingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    columnGap: UI_SIZES.spacing.minor,
   },
-  recapHeaderText: {
-    marginHorizontal: UI_SIZES.spacing.tiny,
+  pageContainer: {
+    backgroundColor: theme.palette.grey.white,
   },
-  timePickerRowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: UI_SIZES.spacing.medium,
+  primaryActionContainer: {
+    marginTop: UI_SIZES.spacing.big,
+    zIndex: -1,
   },
-  timePickerText: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  commentText: {
-    marginBottom: UI_SIZES.spacing.minor,
-  },
-  commentInput: {
-    marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.small,
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-    height: 100,
-    color: theme.ui.text.regular,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  deleteAction: {
-    marginRight: UI_SIZES.spacing.medium,
+  timePickerContainer: {
+    alignSelf: 'center',
   },
 });

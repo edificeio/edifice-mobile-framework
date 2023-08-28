@@ -289,6 +289,7 @@ const classCallAdapter = (data: IBackendClassCall): IClassCall => {
     endDate: moment(data.end_date),
     startDate: moment(data.start_date),
     stateId: data.state_id,
+    structureId: data.structure_id,
     students: data.students.map(student => ({
       events: student.events.map(eventAdapter),
       exempted: student.exempted,
@@ -620,6 +621,42 @@ export const presencesService = {
       const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
       const eventReasons = (await fetchJSONWithCache(api)) as IBackendEventReasonList;
       return eventReasons.map(eventReasonAdapter);
+    },
+  },
+  eventReason: {
+    update: async (
+      session: ISession,
+      id: number,
+      studentId: string,
+      structureId: string,
+      callId: string,
+      type: EventType,
+      startDate: Moment,
+      endDate: Moment,
+      reasonId: number | null,
+    ) => {
+      const api = '/presences/events/reason';
+      const body = JSON.stringify({
+        events: [
+          {
+            register_id: callId,
+            student_id: studentId,
+            start_date: startDate,
+            end_date: endDate,
+            type_id: type,
+            id,
+            counsellor_input: true,
+            reason_id: reasonId,
+          },
+        ],
+        reasonId,
+        student_id: studentId,
+        structure_id: structureId,
+      });
+      await fetchJSONWithCache(api, {
+        method: 'PUT',
+        body,
+      });
     },
   },
   history: {

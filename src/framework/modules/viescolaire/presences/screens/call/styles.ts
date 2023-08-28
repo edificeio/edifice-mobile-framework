@@ -17,13 +17,17 @@ export default StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.cloudy,
   },
-  pageContainerStyle: {
+  pageContainer: {
     backgroundColor: theme.palette.grey.white,
   },
   separatorContainer: {
     height: 1,
     marginVertical: UI_SIZES.spacing.tiny,
     backgroundColor: theme.palette.grey.cloudy,
+  },
+  studentStatusContainer: {
+    paddingHorizontal: UI_SIZES.spacing.big,
+    paddingVertical: UI_SIZES.spacing.large,
   },
   summaryContainer: {
     paddingVertical: UI_SIZES.spacing.medium,

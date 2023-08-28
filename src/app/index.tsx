@@ -106,11 +106,11 @@ function App(props: AppProps) {
   return (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <BottomSheetModalProvider>
-          <Provider store={props.store}>
+        <Provider store={props.store}>
+          <BottomSheetModalProvider>
             <Navigation />
-          </Provider>
-        </BottomSheetModalProvider>
+          </BottomSheetModalProvider>
+        </Provider>
       </SafeAreaProvider>
       {FlipperAsyncStorageElement}
     </GestureHandlerRootView>

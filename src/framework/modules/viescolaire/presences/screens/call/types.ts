@@ -1,7 +1,10 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ISession } from '~/framework/modules/auth/model';
-import type { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
+import type {
+  fetchPresencesClassCallAction,
+  fetchPresencesEventReasonsAction,
+} from '~/framework/modules/viescolaire/presences/actions';
 import type { IClassCall, ICourse, IEventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -23,6 +26,7 @@ export interface PresencesCallScreenStoreProps {
 
 export interface PresencesCallScreenDispatchProps {
   tryFetchClassCall: (...args: Parameters<typeof fetchPresencesClassCallAction>) => Promise<IClassCall>;
+  tryFetchEventReasons: (...args: Parameters<typeof fetchPresencesEventReasonsAction>) => Promise<IEventReason[]>;
 }
 
 export type PresencesCallScreenPrivateProps = PresencesCallScreenProps &

@@ -18,7 +18,6 @@ import StructurePicker from '~/framework/modules/viescolaire/common/components/S
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesCoursesAction,
-  fetchPresencesEventReasonsAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
@@ -58,7 +57,6 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       if (!structureId || !teacherId) throw new Error();
       const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
       const registerPreference = await props.tryFetchRegisterPreference();
-      await props.tryFetchEventReasons(structureId);
       const today = moment().format('YYYY-MM-DD');
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
@@ -142,7 +140,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     return (
       <FlatList
         data={props.courses}
-        renderItem={({ item }) => <CallCard call={item} onPress={() => openCall(item)} />}
+        renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
         keyExtractor={item => item.id + item.startDate}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
         ListHeaderComponent={
@@ -198,7 +196,6 @@ export default connect(
     bindActionCreators<PresencesCourseListScreenDispatchProps>(
       {
         tryFetchCourses: tryAction(fetchPresencesCoursesAction),
-        tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
         tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
         tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),
       },
