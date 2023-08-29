@@ -57,7 +57,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
                 onPress={() => props.navigation.navigate(diaryRouteNames.timetable)}
                 text={I18n.get('dashboard-teacher-diary')}
                 color={theme.palette.complementary.green.regular}
-                icon="homework2D"
+                icon="diary"
               />
             )}
           </View>
