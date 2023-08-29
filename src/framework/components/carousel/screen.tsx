@@ -5,6 +5,7 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -29,6 +30,8 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
+import { isEmpty } from '~/framework/util/object';
+import { getItemJson, setItemJson } from '~/framework/util/storage';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -85,13 +88,23 @@ async function assertPermissions(permissions: Permission[]) {
 }
 
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
-  const showPrivacyAlert = action => {
-    Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
-      {
-        text: I18n.get('carousel-privacy-button'),
-        onPress: action,
-      },
-    ]);
+  const showPrivacyAlert = async action => {
+    try {
+      const getDatePrivacyAlert: Moment | undefined = await getItemJson('privacyAlert');
+      if (isEmpty(getDatePrivacyAlert) || moment().startOf('day').isAfter(getDatePrivacyAlert)) {
+        Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
+          {
+            text: I18n.get('carousel-privacy-button'),
+            onPress: action,
+          },
+        ]);
+        await setItemJson('privacyAlert', moment().startOf('day'));
+      } else {
+        action();
+      }
+    } catch {
+      throw new Error();
+    }
   };
 
   return (
