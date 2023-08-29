@@ -16,14 +16,13 @@ import { IHomeworkDiary } from './reducers/diaryList';
 import { registerTimelineWorkflow } from '../timeline/timeline-modules';
 
 export const deleteHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|deleteEntry';
+export const modifyHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|modifyEntry';
 
 export const viewHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|view';
 export const createHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|createHomework';
 
-export const hasPermissionManager = (homework: IHomeworkDiary, session: ISession) => {
-  return (
-    homework && (homework.owner.userId === session.user.id || resourceHasRight(homework, deleteHomeworkEntryResourceRight, session))
-  );
+export const hasPermissionManager = (homework: IHomeworkDiary, right: string, session: ISession) => {
+  return homework && (homework.owner.userId === session.user.id || resourceHasRight(homework, right, session));
 };
 
 export const getHomeworkWorkflowInformation = (session: ISession) => ({
