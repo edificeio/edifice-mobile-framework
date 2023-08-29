@@ -12,7 +12,6 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
-import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
@@ -142,26 +141,11 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
 
   updateNavBarTitle() {
     const { diaryInformation, navigation } = this.props;
-    const popupActionsMenu = [
-      {
-        title: I18n.get('homework-tasklist-addhomework'),
-        action: () => this.addEntry(),
-        icon: {
-          ios: 'plus',
-          android: 'ic_plus',
-        },
-      },
-    ];
     navigation.setOptions({
       headerTitle: navBarTitle(diaryInformation?.title),
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () =>
-        this.canCreateEntry() ? (
-          <PopupMenu actions={popupActionsMenu}>
-            <NavBarAction icon="ui-options" />
-          </PopupMenu>
-        ) : undefined,
+      headerRight: () => (this.canCreateEntry() ? <NavBarAction icon="ui-plus" onPress={() => this.addEntry()} /> : undefined),
     });
   }
 
