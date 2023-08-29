@@ -13,6 +13,7 @@ phrase:
       - file: ./assets/i18n/es.json
         params:
           locale_id: 80f576935a8cb9630a4a8bd0f2c4c122
+    update_translations: true
 
   pull:
     targets:

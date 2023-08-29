@@ -23,6 +23,11 @@ export interface IHomeworkTasksBackend {
     userId: string;
     displayName: string;
   };
+  shared?: ({
+    [key: string]: boolean | string | undefined;
+  } & {
+    [key in 'userId' | 'groupId']: string;
+  })[];
   created: {
     $date: number;
   };
@@ -87,6 +92,8 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
     name: data.title, // What is name ??? Baby don't hurt me ! title duplicate ?
     id: data._id,
     thumbnail: data.thumbnail,
+    owner: data.owner,
+    shared: data.shared,
   };
   return ret;
 };

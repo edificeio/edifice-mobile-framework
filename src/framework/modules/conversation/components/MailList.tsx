@@ -129,6 +129,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     };
   }
 
+  drawerRef = React.createRef();
+
   componentDidMount() {
     this.props.navigation.addListener('focus', this.handleFocus);
   }
@@ -138,6 +140,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   }
 
   handleFocus = () => {
+    this.drawerRef.current.closeWhenFocus();
     this.refreshMailList();
     this.props.fetchInit();
   };
@@ -526,6 +529,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
             <Drawer
               isNavbar
               isTabbar
+              ref={this.drawerRef}
               items={drawerItems}
               selectedItem={navigationKey}
               selectItem={selectedItem => {

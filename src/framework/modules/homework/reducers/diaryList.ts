@@ -17,6 +17,10 @@ export interface IHomeworkDiary {
   title: string;
   name: string;
   thumbnail: string;
+  owner: {
+    userId: string;
+    displayName: string;
+  };
   shared?: ({
     [key: string]: boolean | string | undefined;
   } & {

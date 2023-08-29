@@ -8,13 +8,23 @@ import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import { ISession } from '~/framework/modules/auth/model';
 import { navigate } from '~/framework/navigation/helper';
+import { resourceHasRight } from '~/framework/util/resourceRights';
 
 import { fetchHomeworkDiaryList } from './actions/diaryList';
 import { homeworkRouteNames } from './navigation';
+import { IHomeworkDiary } from './reducers/diaryList';
 import { registerTimelineWorkflow } from '../timeline/timeline-modules';
+
+export const deleteHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|deleteEntry';
 
 export const viewHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|view';
 export const createHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|createHomework';
+
+export const hasPermissionManager = (homework: IHomeworkDiary, session: ISession) => {
+  return (
+    homework && (homework.owner.userId === session.user.id || resourceHasRight(homework, deleteHomeworkEntryResourceRight, session))
+  );
+};
 
 export const getHomeworkWorkflowInformation = (session: ISession) => ({
   view: session.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
