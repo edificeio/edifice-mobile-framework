@@ -15,8 +15,6 @@ import { ArticleContainer } from '~/ui/ContainerContent';
 
 import styles from './styles';
 import { NewsCardProps } from './types';
-import { I18n } from '~/app/i18n';
-import moment from 'moment';
 
 export default function NewsCard(props: NewsCardProps) {
   const { news, thread } = props;
