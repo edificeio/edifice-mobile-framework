@@ -63,18 +63,22 @@ export const presencesCoursesActionsCreators = createAsyncActionCreators(actionT
 export const fetchPresencesCoursesAction =
   (
     teacherId: string,
-    structureId: string,
-    startDate: string,
-    endDate: string,
+    structureIds: string[],
+    date: string,
     allowMultipleSlots?: boolean,
   ): ThunkAction<Promise<ICourse[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
+      let courses: ICourse[] = [];
       const session = assertSession();
       dispatch(presencesCoursesActionsCreators.request());
-      const courses = await presencesService.courses.get(session, teacherId, structureId, startDate, endDate, allowMultipleSlots);
+      for (const structureId of structureIds) {
+        courses = courses.concat(
+          await presencesService.courses.get(session, teacherId, structureId, date, date, allowMultipleSlots),
+        );
+      }
       dispatch(presencesCoursesActionsCreators.receipt(courses));
-      return courses;
+      return courses.filter(course => course.allowRegister === true);
     } catch (e) {
       dispatch(presencesCoursesActionsCreators.error(e as Error));
       throw e;

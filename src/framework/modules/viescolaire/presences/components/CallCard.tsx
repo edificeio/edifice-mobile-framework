@@ -69,7 +69,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
     if (now.isAfter(course.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.warning.pale,
-        borderWidth: 1,
+        borderWidth: UI_SIZES.border.thin,
         status: {
           backgroundColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.warning.pale,
           iconColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.warning.regular,
@@ -80,7 +80,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
     } else if (now.isBetween(course.startDate, course.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.info.regular,
-        borderWidth: 2,
+        borderWidth: UI_SIZES.border.small,
         status: {
           backgroundColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.info.pale,
           iconColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.info.regular,
@@ -91,7 +91,7 @@ export class CallCard extends React.PureComponent<CallCardProps> {
     }
     return {
       borderColor: theme.palette.grey.pearl,
-      borderWidth: 1,
+      borderWidth: UI_SIZES.border.thin,
       status: {
         backgroundColor: theme.palette.grey.pearl,
         iconColor: theme.palette.grey.graphite,

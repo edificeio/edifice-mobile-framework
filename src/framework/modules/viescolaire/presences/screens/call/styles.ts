@@ -14,7 +14,7 @@ export default StyleSheet.create({
     paddingTop: UI_SIZES.spacing.medium,
     paddingBottom: UI_SIZES.spacing.big,
     marginBottom: UI_SIZES.spacing.tiny,
-    borderBottomWidth: 1,
+    borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
   },
   pageContainer: {

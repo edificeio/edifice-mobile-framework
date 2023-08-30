@@ -1,21 +1,21 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { SmallBoldText } from '~/framework/components/text';
+import DayPicker from '~/framework/components/pickers/day';
+import { BodyBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesCoursesAction,
   fetchPresencesMultipleSlotSettingAction,
@@ -27,6 +27,7 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -45,6 +46,7 @@ export const computeNavBar = ({
 });
 
 const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps) => {
+  const [date, setDate] = React.useState<Moment>(moment());
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -52,17 +54,16 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 
   const fetchCourses = async () => {
     try {
-      const { structureId, teacherId } = props;
+      const { structureIds, teacherId } = props;
 
-      if (!structureId || !teacherId) throw new Error();
-      const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
+      if (!structureIds.length || !teacherId) throw new Error();
+      /*const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
       const registerPreference = await props.tryFetchRegisterPreference();
-      const today = moment().format('YYYY-MM-DD');
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
-      }
-      await props.tryFetchCourses(teacherId, structureId, today, today, multipleSlot);
+      }*/
+      await props.tryFetchCourses(teacherId, structureIds, date.format('YYYY-MM-DD'), false);
     } catch {
       throw new Error();
     }
@@ -103,12 +104,12 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [props.navigation, date]);
 
   React.useEffect(() => {
     if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.structureId]);
+  }, [date]);
 
   const openCall = async (course: ICourse) => {
     try {
@@ -138,17 +139,27 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 
   const renderCourseList = () => {
     return (
-      <FlatList
-        data={props.courses}
-        renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
-        keyExtractor={item => item.id + item.startDate}
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-        ListHeaderComponent={
-          <SmallBoldText>{I18n.get('presences-courselist-date', { date: moment().format('DD MMMM YYYY') })}</SmallBoldText>
-        }
-        ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('presences-courselist-emptyscreen-title')} />}
-        contentContainerStyle={styles.listContentContainer}
-      />
+      <View style={UI_STYLES.flex1}>
+        <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
+        <FlatList
+          data={props.courses}
+          renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
+          keyExtractor={item => item.id + item.startDate}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          ListHeaderComponent={
+            appConf.is2d && props.courses.length ? <BodyBoldText>{I18n.get('presences-courselist-heading')}</BodyBoldText> : null
+          }
+          ListEmptyComponent={
+            <EmptyScreen
+              svgImage="empty-presences"
+              title={I18n.get('presences-courselist-emptyscreen-title')}
+              text={I18n.get('presences-courselist-emptyscreen-text')}
+              customStyle={styles.emptyScreenContainer}
+            />
+          }
+          contentContainerStyle={styles.listContentContainer}
+        />
+      </View>
     );
   };
 
@@ -168,27 +179,21 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     }
   };
 
-  return (
-    <PageView style={styles.pageContainerStyle}>
-      <StructurePicker />
-      {renderPage()}
-    </PageView>
-  );
+  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
 };
 
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
-    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
       allowMultipleSlots: presencesState.allowMultipleSlots.data,
-      courses: presencesState.courses.data.filter(course => course.allowRegister === true),
-      initialLoadingState: presencesState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
+      courses: presencesState.courses.data,
+      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       registerPreference: presencesState.registerPreference.data,
       session,
-      structureId: dashboardState.selectedStructureId,
+      structureIds: session?.user.structures?.map(structure => structure.id) ?? [],
       teacherId: session?.user.id,
     };
   },

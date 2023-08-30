@@ -21,8 +21,8 @@ export interface PresencesCourseListScreenStoreProps {
   courses: ICourse[];
   registerId: string;
   registerPreference: string;
+  structureIds: string[];
   session?: ISession;
-  structureId?: string;
   teacherId?: string;
 }
 

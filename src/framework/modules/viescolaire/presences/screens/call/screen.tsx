@@ -1,7 +1,7 @@
 import {
-  BottomSheetModal,
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
+  BottomSheetModal,
   BottomSheetView,
   useBottomSheetDynamicSnapPoints,
 } from '@gorhom/bottom-sheet';
@@ -128,7 +128,6 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       type,
       title: student.name,
     });
-    //setTimeout(dismissBottomSheet, 1000);
   };
 
   const createAbsence = async (studentId: string) => {
