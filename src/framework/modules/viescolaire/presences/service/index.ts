@@ -499,7 +499,7 @@ export const presencesService = {
     },
   },
   classCall: {
-    get: async (session: ISession, id: string) => {
+    get: async (session: ISession, id: number) => {
       const api = `/presences/registers/${id}`;
       const classCall = (await fetchJSONWithCache(api)) as IBackendClassCall;
       return classCallAdapter(classCall);
@@ -523,7 +523,7 @@ export const presencesService = {
       })) as { id: number };
       return classCall.id;
     },
-    updateStatus: async (session: ISession, id: string, status: number) => {
+    updateStatus: async (session: ISession, id: number, status: number) => {
       const api = `/presences/registers/${id}/status`;
       const body = JSON.stringify({
         state_id: status,
@@ -559,7 +559,7 @@ export const presencesService = {
     create: async (
       session: ISession,
       studentId: string,
-      callId: string,
+      callId: number,
       type: EventType,
       startDate: Moment,
       endDate: Moment,
@@ -592,7 +592,7 @@ export const presencesService = {
       session: ISession,
       id: number,
       studentId: string,
-      callId: string,
+      callId: number,
       type: EventType,
       startDate: Moment,
       endDate: Moment,
@@ -628,7 +628,7 @@ export const presencesService = {
       id: number,
       studentId: string,
       structureId: string,
-      callId: string,
+      callId: number,
       type: EventType,
       startDate: Moment,
       endDate: Moment,

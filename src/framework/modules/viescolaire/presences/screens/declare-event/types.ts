@@ -7,7 +7,7 @@ import type { PresencesNavigationParams, presencesRouteNames } from '~/framework
 export interface PresencesDeclareEventScreenProps {}
 
 export interface PresencesDeclareEventScreenNavParams {
-  callId: string;
+  callId: number;
   course: ICourse;
   reasons: IEventReason[];
   student: IClassCallStudent;

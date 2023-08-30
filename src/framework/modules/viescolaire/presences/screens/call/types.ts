@@ -15,7 +15,7 @@ export interface PresencesCallScreenProps {
 
 export interface PresencesCallScreenNavParams {
   course: ICourse;
-  id: string;
+  id: number;
 }
 
 export interface PresencesCallScreenStoreProps {

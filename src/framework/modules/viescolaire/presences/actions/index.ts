@@ -42,7 +42,7 @@ export const fetchPresencesChildrenEventsAction =
  */
 export const presencesClassCallActionsCreators = createAsyncActionCreators(actionTypes.classCall);
 export const fetchPresencesClassCallAction =
-  (id: string): ThunkAction<Promise<IClassCall>, any, any, any> =>
+  (id: number): ThunkAction<Promise<IClassCall>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
