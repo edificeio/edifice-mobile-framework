@@ -1,0 +1,26 @@
+name: Sync phrase-translations
+
+on:
+  push:
+    branches:
+      - dev/1.11.0
+
+jobs:
+  sync-branches:
+    name: Sync phrase-translations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Opening pull request
+        id: pull
+        uses: tretuna/sync-branches@1.4.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.PHRASE_TRANSLATIONS }}
+          FROM_BRANCH: "dev/1.11.0"
+          TO_BRANCH: "phrase-translations"
+          PULL_REQUEST_AUTO_MERGE_METHOD: "rebase"
