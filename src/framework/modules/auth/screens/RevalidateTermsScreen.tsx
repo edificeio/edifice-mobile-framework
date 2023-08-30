@@ -97,10 +97,10 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation, props.tryLogin]);
 
-  const doOpenCGU = React.useCallback((url?: string) => {
+  const doOpenLegalUrl = React.useCallback((title: string, url?: string) => {
     openPDFReader({
       src: url,
-      title: I18n.get('auth-revalidateterms-cgu'),
+      title,
     });
   }, []);
 
@@ -109,6 +109,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
   const imageWidth = UI_SIZES.screen.width - 4 * UI_SIZES.spacing.big;
   const imageHeight = imageWidth / UI_SIZES.aspectRatios.thumbnail;
   const eulaUrl = props.legalUrls?.cgu;
+  const userCharterUrl = props.legalUrls?.userCharter;
 
   return (
     <PageView>
@@ -128,7 +129,13 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
         </HeadingSText>
         <SmallText numberOfLines={3} style={styles.mustAccept}>
           {`${I18n.get('user-revalidateterms-mustaccept')} `}
-          <SmallActionText onPress={() => doOpenCGU(eulaUrl)} style={styles.newEULALink}>
+          <SmallActionText
+            onPress={() => doOpenLegalUrl(I18n.get('user-legalnotice-usercharter'), userCharterUrl)}
+            style={styles.newEULALink}>
+            {I18n.get('user-revalidateterms-newendusercharter')}
+          </SmallActionText>
+          {` ${I18n.get('user-revalidateterms-and')} `}
+          <SmallActionText onPress={() => doOpenLegalUrl(I18n.get('auth-revalidateterms-cgu'), eulaUrl)} style={styles.newEULALink}>
             {I18n.get('user-revalidateterms-newenduserlicenseagreement')}
           </SmallActionText>
         </SmallText>
