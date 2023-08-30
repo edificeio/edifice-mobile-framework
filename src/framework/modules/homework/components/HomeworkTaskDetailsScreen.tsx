@@ -22,7 +22,7 @@ import HtmlContentView from '~/ui/HtmlContentView';
 
 import { ISession } from '../../auth/model';
 import { IHomeworkDiary } from '../reducers/diaryList';
-import { hasPermissionManager } from '../rights';
+import { deleteHomeworkEntryResourceRight, hasPermissionManager } from '../rights';
 
 const dayImages = {
   monday: 'days-monday',
@@ -92,7 +92,9 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
   updateNavBarTitle() {
     const { diaryInformation, route, navigation, session } = this.props;
     const hasDeletionRight =
-      session && (hasPermissionManager(diaryInformation!, session) || diaryInformation?.owner.userId === session.user.id);
+      session &&
+      (hasPermissionManager(diaryInformation!, deleteHomeworkEntryResourceRight, session) ||
+        diaryInformation?.owner.userId === session.user.id);
     const diaryId = route.params.diaryId;
     const task = route.params.task;
     const taskId = task.taskId;

@@ -21,7 +21,7 @@ import { ISession } from '~/framework/modules/auth/model';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
-import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
+import { hasPermissionManager, modifyHomeworkEntryResourceRight } from '~/framework/modules/homework/rights';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
@@ -126,11 +126,13 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     } else return null;
   }
 
-  canCreateHomework() {
-    const { session } = this.props;
-    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
-    const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
-    return hasCreateHomeworkResourceRight;
+  canCreateEntry() {
+    const { diaryInformation, session } = this.props;
+    const hasCreationRight =
+      session &&
+      (hasPermissionManager(diaryInformation!, modifyHomeworkEntryResourceRight, session) ||
+        diaryInformation?.owner.userId === session.user.id);
+    return hasCreationRight;
   }
 
   addEntry() {
@@ -155,7 +157,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
-        this.canCreateHomework() ? (
+        this.canCreateEntry() ? (
           <PopupMenu actions={popupActionsMenu}>
             <NavBarAction icon="ui-options" />
           </PopupMenu>
@@ -329,21 +331,21 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                 svgImage="empty-hammock"
                 title={I18n.get(
                   `homework-tasklist-emptyscreen-title${
-                    hasPastHomeWork ? '' : this.canCreateHomework() ? '-notasks' : '-notasks-nocreationrights'
+                    hasPastHomeWork ? '' : this.canCreateEntry() ? '-notasks' : '-notasks-nocreationrights'
                   }`,
                 )}
                 text={I18n.get(
                   `homework-tasklist-emptyscreen-text${
                     hasPastHomeWork
-                      ? this.canCreateHomework()
+                      ? this.canCreateEntry()
                         ? ''
                         : '-nocreationrights'
-                      : this.canCreateHomework()
+                      : this.canCreateEntry()
                       ? '-notasks'
                       : '-notasks-nocreationrights'
                   }`,
                 )}
-                buttonText={this.canCreateHomework() ? I18n.get('homework-tasklist-createactivity') : undefined}
+                buttonText={this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined}
                 buttonAction={() => {
                   this.addEntry();
                   Trackers.trackEvent('Homework', 'GO TO', 'Create');
