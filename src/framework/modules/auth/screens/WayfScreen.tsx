@@ -233,6 +233,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           onError={this.onError.bind(this)}
           onHttpError={this.onHttpError.bind(this)}
           onLoad={this.onLoad.bind(this)}
+          onLoadStart={this.onLoadStart.bind(this)}
           onMessage={this.onMessage.bind(this)}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
@@ -432,6 +433,15 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   onLoad() {
     // Flag first webview page loading completion
     this.isFirstLoadFinished = true;
+  }
+
+  onLoadStart() {
+    setTimeout(() => {
+      if (!this.isFirstLoadFinished) {
+        this.error = 'wayftoolong';
+        this.setState({ mode: WAYFPageMode.ERROR });
+      }
+    }, 20000);
   }
 
   // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)
