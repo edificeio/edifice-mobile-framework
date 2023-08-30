@@ -267,7 +267,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
                 title={item.title}
                 content={item.content}
                 date={item.date}
-                onPress={() => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item })}
+                onPress={() => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId })}
               />
             )
           }
