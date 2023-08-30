@@ -8,6 +8,7 @@ import {
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import * as React from 'react';
 
+import styles from './styles';
 import type { CustomBottomSheetModalProps } from './types';
 
 export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, CustomBottomSheetModalProps>(
@@ -29,7 +30,9 @@ export const CustomBottomSheetModal = React.forwardRef<BottomSheetModalMethods, 
         contentHeight={animatedContentHeight}
         backdropComponent={renderBackdrop}
         {...props}>
-        <BottomSheetView onLayout={handleContentLayout}>{props.children}</BottomSheetView>
+        <BottomSheetView onLayout={handleContentLayout} style={styles.contentContainer}>
+          {props.children}
+        </BottomSheetView>
       </BottomSheetModal>
     );
   },

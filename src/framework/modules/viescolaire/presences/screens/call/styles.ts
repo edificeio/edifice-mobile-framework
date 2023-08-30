@@ -25,11 +25,6 @@ export default StyleSheet.create({
     marginVertical: UI_SIZES.spacing.tiny,
     backgroundColor: theme.palette.grey.cloudy,
   },
-  studentStatusContainer: {
-    paddingHorizontal: UI_SIZES.spacing.big,
-    paddingTop: UI_SIZES.spacing.large,
-    paddingBottom: UI_SIZES.spacing.large + UI_SIZES.screen.bottomInset,
-  },
   summaryContainer: {
     paddingVertical: UI_SIZES.spacing.medium,
   },

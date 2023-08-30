@@ -4,7 +4,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
-import { DropdownType, DropdownSize } from './types';
+import { DropdownSize, DropdownType } from './types';
 
 const styles = StyleSheet.create({
   bigPaddingGhost: {
@@ -45,7 +45,6 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     maxHeight: 224,
-    top: 0,
     backgroundColor: theme.palette.grey.white,
     borderWidth: 0,
     borderRadius: UI_SIZES.radius.mediumPlus,

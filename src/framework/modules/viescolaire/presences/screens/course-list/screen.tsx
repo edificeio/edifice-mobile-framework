@@ -1,19 +1,21 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import { Alert, FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
+import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
-import { BodyBoldText } from '~/framework/components/text';
+import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
@@ -22,7 +24,8 @@ import {
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
 import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
-import { ICourse } from '~/framework/modules/viescolaire/presences/model';
+import { CallSummary } from '~/framework/modules/viescolaire/presences/components/CallSummary';
+import { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -47,6 +50,9 @@ export const computeNavBar = ({
 
 const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps) => {
   const [date, setDate] = React.useState<Moment>(moment());
+  const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
+  const [bottomSheetCall, setBottomSheetCall] = React.useState<IClassCall | null>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -111,8 +117,9 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
-  const openCall = async (course: ICourse) => {
+  const openCall = async (course?: ICourse) => {
     try {
+      if (!course) throw new Error();
       let { callId } = course;
 
       if (!callId) {
@@ -120,6 +127,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         if (!session || !teacherId) throw new Error();
         callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
       }
+      bottomSheetModalRef.current?.dismiss();
       props.navigation.navigate(presencesRouteNames.call, {
         course,
         id: callId,
@@ -127,6 +135,29 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     } catch {
       Toast.showError(I18n.get('presences-courselist-error-text'));
     }
+  };
+
+  const onPressCourse = async (course: ICourse) => {
+    if (moment().isBefore(course.startDate)) {
+      Alert.alert(
+        I18n.get('presences-courselist-unavailablealert-title'),
+        I18n.get('presences-courselist-unavailablealert-message'),
+      );
+    } else if (course.registerStateId === 3 || moment().isAfter(course.endDate)) {
+      setSelectedCourseId(course.id);
+      bottomSheetModalRef.current?.present();
+      if (course.registerStateId === 3 && props.session) {
+        const call = await presencesService.classCall.get(props.session, course.callId);
+        setBottomSheetCall(call);
+      }
+    } else {
+      openCall(course);
+    }
+  };
+
+  const clearBottomSheetContent = () => {
+    setSelectedCourseId(null);
+    setBottomSheetCall(null);
   };
 
   const renderError = () => {
@@ -137,13 +168,46 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     );
   };
 
+  const renderBottomSheet = () => {
+    const course = props.courses.find(c => c.id === selectedCourseId);
+    const isValidated = course?.registerStateId === 3;
+
+    return (
+      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={clearBottomSheetContent}>
+        <View style={styles.bottomSheetContainer}>
+          {isValidated ? (
+            bottomSheetCall ? (
+              <CallSummary call={bottomSheetCall} />
+            ) : (
+              <LoadingIndicator />
+            )
+          ) : (
+            <View style={styles.bottomSheetMissedCallContainer}>
+              <HeadingSText>{I18n.get('presences-courselist-bottomsheet-heading')}</HeadingSText>
+              <BodyText style={styles.bottomSheetMissedCallText}>
+                {I18n.get('presences-courselist-bottomsheet-missedcall')}
+              </BodyText>
+            </View>
+          )}
+          <PrimaryButton
+            text={I18n.get(
+              isValidated ? 'presences-courselist-bottomsheet-action-edit' : 'presences-courselist-bottomsheet-action-new',
+            )}
+            iconLeft={isValidated ? 'ui-edit' : 'presences'}
+            action={() => openCall(course)}
+          />
+        </View>
+      </BottomSheetModal>
+    );
+  };
+
   const renderCourseList = () => {
     return (
       <View style={UI_STYLES.flex1}>
         <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
         <FlatList
           data={props.courses}
-          renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
+          renderItem={({ item }) => <CallCard course={item} onPress={() => onPressCourse(item)} />}
           keyExtractor={item => item.id + item.startDate}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={
@@ -159,6 +223,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
           }
           contentContainerStyle={styles.listContentContainer}
         />
+        {renderBottomSheet()}
       </View>
     );
   };

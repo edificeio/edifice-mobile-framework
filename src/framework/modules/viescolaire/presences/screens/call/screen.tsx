@@ -189,7 +189,6 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
         <StudentStatus
           student={student}
           hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === EventType.ABSENCE)}
-          style={styles.studentStatusContainer}
           createAbsence={createAbsence}
           deleteAbsence={deleteAbsence}
           dismissBottomSheet={dismissBottomSheet}
