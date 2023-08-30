@@ -405,7 +405,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const renderMoodMotto = () => {
     const mood = route.params.newMood ?? userInfo!.mood;
     const motto = route.params.newMotto ?? userInfo!.motto;
-    if (!getShowMottoMoodRight(props.session!)) return;
+    if (isMyProfile && !getShowMottoMoodRight(props.session!)) return;
     if ((isEmpty(userInfo?.mood) || userInfo?.mood === 'default') && isEmpty(userInfo?.motto) && !isMyProfile) return;
     const degre = appConf.is1d ? '1d' : '2d';
     return (
