@@ -66,6 +66,7 @@ export function createHomeworkDiaryEntry(
 
     dispatch(homeworkCreateEntryRequested());
     try {
+      const entryId = createUUID();
       let contentHtml = `<div>${content}<div>`;
       if (uploadedImages) {
         const entryImageUploads = Object.values(uploadedImages);
@@ -84,12 +85,13 @@ export function createHomeworkDiaryEntry(
         method: 'PUT',
         body: JSON.stringify({
           date: date?.format('YYYY-MM-DD'),
-          entryid: createUUID(),
+          entryid: entryId,
           title,
           value: contentHtml,
         }),
       });
       dispatch(homeworkCreateEntryReceived());
+      return entryId;
     } catch (error) {
       dispatch(homeworkCreateEntryFetchError(error as string));
       throw error;

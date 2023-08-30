@@ -1,3 +1,4 @@
+import { useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
@@ -47,6 +48,7 @@ export interface IHomeworkTaskListScreenDataProps {
   }[];
   lastUpdated: any;
   session?: ISession;
+  isFocused: boolean;
 }
 
 export interface IHomeworkTaskListScreenEventProps {
@@ -112,7 +114,7 @@ export const computeNavBar = ({
   }),
 });
 
-export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, IHomeworkTaskListScreenState> {
+class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreenProps, IHomeworkTaskListScreenState> {
   state = {
     fetching: false,
     refreshing: false,
@@ -154,10 +156,21 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   }
 
   componentDidUpdate(prevProps: any) {
-    const { isFetching, diaryId } = this.props;
+    const { isFetching, diaryId, tasksByDay, route, isFocused } = this.props;
+    const { pastDateLimit } = this.state;
+    const createdEntryId = route.params.createdEntryId;
 
     if (prevProps.isFetching !== isFetching) {
       this.setState({ fetching: isFetching });
+    }
+    if (!prevProps.isFocused && isFocused && createdEntryId) {
+      const createdTask = tasksByDay?.find(day => day.tasks.find(task => task.taskId === createdEntryId));
+      const createdTaskDate = createdTask?.date;
+      const isPastCreatedTaskHidden = createdTaskDate?.isBefore(pastDateLimit, 'day');
+      if (isPastCreatedTaskHidden) {
+        const createdTaskDayWeekStart = moment(createdTaskDate).startOf('isoWeek');
+        this.setState({ pastDateLimit: createdTaskDayWeekStart });
+      }
     }
     if (prevProps.diaryId !== diaryId) {
       this.setState({ pastDateLimit: today() });
@@ -359,4 +372,7 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
     ) : null;
 }
 
-export default HomeworkTaskListScreen;
+export default function (props) {
+  const isFocused = useIsFocused();
+  return <HomeworkTaskListScreen {...props} isFocused={isFocused} />;
+}
