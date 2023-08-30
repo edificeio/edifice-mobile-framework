@@ -24,13 +24,14 @@ on:
 #          FROM_BRANCH: "dev/1.11.0"
 #          TO_BRANCH: "phrase-translations"
 #          PULL_REQUEST_AUTO_MERGE_METHOD: "rebase"
+
 jobs:
   sync-branch:
     name: Sync phrase-translations
     runs-on: ubuntu-latest
-  steps:
+    steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
       - uses: connor-baer/action-sync-branch@main
         with:
           branch: dev/1.11.0
