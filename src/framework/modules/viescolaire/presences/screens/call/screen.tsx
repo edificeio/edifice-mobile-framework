@@ -1,10 +1,3 @@
-import {
-  BottomSheetBackdrop,
-  BottomSheetBackdropProps,
-  BottomSheetModal,
-  BottomSheetView,
-  useBottomSheetDynamicSnapPoints,
-} from '@gorhom/bottom-sheet';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
@@ -16,6 +9,7 @@ import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
+import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -49,10 +43,7 @@ export const computeNavBar = ({
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   const [selectedStudentId, setSelectedStudentId] = React.useState<string | null>(null);
   const [isValidating, setValidating] = React.useState<boolean>(false);
-  const bottomSheetModalRef = React.useRef<BottomSheetModal>(null);
-  const initialSnapPoints = React.useMemo(() => ['CONTENT_HEIGHT'], []);
-  const { animatedHandleHeight, animatedSnapPoints, animatedContentHeight, handleContentLayout } =
-    useBottomSheetDynamicSnapPoints(initialSnapPoints);
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -191,32 +182,19 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     );
   };
 
-  const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
-    return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
-  };
-
   const renderBottomSheet = () => {
     const student = props.classCall!.students.find(s => s.id === selectedStudentId);
     return (
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={0}
-        snapPoints={animatedSnapPoints}
-        handleHeight={animatedHandleHeight}
-        contentHeight={animatedContentHeight}
-        backdropComponent={renderBackdrop}
-        onDismiss={unselectStudent}>
-        <BottomSheetView onLayout={handleContentLayout}>
-          <StudentStatus
-            student={student}
-            hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === EventType.ABSENCE)}
-            style={styles.studentStatusContainer}
-            createAbsence={createAbsence}
-            deleteAbsence={deleteAbsence}
-            dismissBottomSheet={dismissBottomSheet}
-            openEvent={openEvent}
-          />
-        </BottomSheetView>
+      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={unselectStudent}>
+        <StudentStatus
+          student={student}
+          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === EventType.ABSENCE)}
+          style={styles.studentStatusContainer}
+          createAbsence={createAbsence}
+          deleteAbsence={deleteAbsence}
+          dismissBottomSheet={dismissBottomSheet}
+          openEvent={openEvent}
+        />
       </BottomSheetModal>
     );
   };
