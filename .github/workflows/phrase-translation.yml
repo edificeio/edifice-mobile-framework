@@ -16,4 +16,4 @@ jobs:
         with:
           branch: phrase-translations
           token: ${{ secrets.PHRASE_TRANSLATIONS }}
-          force: false
+          force: true
