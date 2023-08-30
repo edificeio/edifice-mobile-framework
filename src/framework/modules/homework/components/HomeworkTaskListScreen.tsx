@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/icon';
@@ -253,6 +253,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
               const dayOfTheWeek = getDayOfTheWeek(title);
               const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.cloudy;
               const timelineColor = isPastDate ? theme.palette.grey.cloudy : dayColor;
+              // TODO: use real computed height of HomeworkCard (instead of magic number)
+              const timelineHeight = data.length * getScaleHeight(150);
               return (
                 <View
                   style={{
@@ -263,6 +265,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
                     <HomeworkDayCheckpoint date={title} />
                   </View>
                   <HomeworkTimeline
+                    height={timelineHeight}
                     leftPosition={UI_SIZES.spacing.minor}
                     topPosition={UI_SIZES.spacing.tiny}
                     color={timelineColor}

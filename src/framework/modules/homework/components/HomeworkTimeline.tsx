@@ -7,26 +7,27 @@ import { UI_SIZES } from '~/framework/components/constants';
 export interface IHomeworkTimelineProps {
   leftPosition: number;
   topPosition?: number;
+  height?: number;
   color?: ColorValue;
 }
 
 const styles = StyleSheet.create({
   timeline: {
     width: UI_SIZES.dimensions.width.tiny,
-    height: UI_SIZES.screen.height,
     position: 'absolute',
   },
 });
 
-const HomeworkTimeline = ({ leftPosition, topPosition, color }: IHomeworkTimelineProps) => (
+const HomeworkTimeline = ({ height, leftPosition, topPosition, color }: IHomeworkTimelineProps) => (
   <View
     style={[
+      styles.timeline,
       {
         backgroundColor: color || theme.palette.grey.pearl,
         left: leftPosition,
         top: topPosition,
+        height: height || UI_SIZES.screen.height,
       },
-      styles.timeline,
     ]}
   />
 );
