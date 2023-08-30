@@ -66,7 +66,7 @@ export function createHomeworkDiaryEntry(
 
     dispatch(homeworkCreateEntryRequested());
     try {
-      let contentHtml = `<p class="ng-scope" style="">${content}</p>`;
+      let contentHtml = `<div>${content}<div>`;
       if (uploadedImages) {
         const entryImageUploads = Object.values(uploadedImages);
         const images = entryImageUploads
