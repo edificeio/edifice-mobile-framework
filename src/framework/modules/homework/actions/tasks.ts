@@ -42,6 +42,7 @@ export interface IHomeworkTasksBackend {
     entries: {
       title: string;
       value: string;
+      _id: string;
     }[];
   }[];
 }
@@ -79,6 +80,7 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
         content: itemtask.value,
         id: indextask.toString(),
         title: itemtask.title,
+        taskId: itemtask._id,
       };
     });
     // Now we put the homeworkDay into the return value

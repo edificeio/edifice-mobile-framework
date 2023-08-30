@@ -88,6 +88,7 @@
   "auth-error-toomanytries": "Pour des raisons de sécurité, votre compte est bloqué temporairement suite à un trop grand nombre de tentatives de connexion. Veuillez réessayer ultérieurement.",
   "auth-error-unknowndenied": "Un problème est survenu. Veuillez réessayer. (Code 1)",
   "auth-error-unknownresponse": "Un problème est survenu. Veuillez réessayer. (Code 2)",
+  "auth-error-wayftoolong": "Nous n'arrivons pas à afficher la page de connexion. Veuillez vérifier votre connexion et réessayer.",
   "auth-forgot-email": "Courriel",
   "auth-forgot-error-unknown": "Erreur",
   "auth-forgot-id": "Identifiant oublié",

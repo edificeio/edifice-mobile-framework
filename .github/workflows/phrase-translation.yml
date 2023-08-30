@@ -1,0 +1,19 @@
+name: Sync phrase-translations
+
+on:
+  push:
+    branches:
+      - dev/1.11.0
+
+jobs:
+  sync-branch:
+    name: Sync phrase-translations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: connor-baer/action-sync-branch@main
+        with:
+          branch: phrase-translations
+          token: ${{ secrets.PHRASE_TRANSLATIONS }}
+          force: true
