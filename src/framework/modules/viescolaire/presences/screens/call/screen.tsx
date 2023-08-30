@@ -168,13 +168,15 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   const validateCall = async () => {
     try {
       const { navigation, session } = props;
-      const { id } = props.route.params;
+      const { course, id } = props.route.params;
 
       setValidating(true);
       if (!session) throw new Error();
       await presencesService.classCall.updateStatus(session, id, 3);
       navigation.goBack();
-      Toast.showSuccess(I18n.get('presences-call-successmessage'));
+      Toast.showSuccess(
+        I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),
+      );
     } catch {
       setValidating(false);
       Toast.showError(I18n.get('presences-call-error-text'));

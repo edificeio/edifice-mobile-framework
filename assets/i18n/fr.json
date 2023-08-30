@@ -650,7 +650,7 @@
   "presences-call-studentstatus-departure": "Départ anticipé",
   "presences-call-studentstatus-lateness": "Retard",
   "presences-call-studentstatus-present": "Présent",
-  "presences-call-successmessage": "Appel validé",
+  "presences-call-successmessage": "L'appel de {{class}} a bien été validé.",
   "presences-call-summary-absent": "Absents :",
   "presences-call-summary-heading": "Récapitulatif",
   "presences-call-summary-present": "Présents :",
