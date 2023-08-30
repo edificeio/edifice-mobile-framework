@@ -74,7 +74,7 @@ index 5ea0ab2..24ea200 100644
    const [_showTimeRemaining, setShowTimeRemaining] =
      useState<boolean>(showTimeRemaining);
    const [volumeTrackWidth, setVolumeTrackWidth] = useState<number>(0);
-@@ -114,10 +116,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -114,10 +117,12 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
    };
  
    const _onSeek = (obj: OnSeekData) => {
@@ -90,7 +90,7 @@ index 5ea0ab2..24ea200 100644
  
      if (typeof onSeek === 'function') {
        onSeek(obj);
-@@ -128,6 +132,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
+@@ -128,6 +133,7 @@ export const VideoPlayer = (props: VideoPlayerProps) => {
      if (currentTime < duration) {
        setCurrentTime(duration);
        setPaused(true);

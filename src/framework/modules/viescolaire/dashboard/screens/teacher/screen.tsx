@@ -48,7 +48,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
               <ModuleButton
                 onPress={() => props.navigation.navigate(edtRouteNames.home)}
                 text={I18n.get('dashboard-teacher-edt')}
-                color={theme.palette.complementary.yellow.regular}
+                color={theme.palette.complementary.indigo.regular}
                 icon="edt"
               />
             )}
@@ -56,8 +56,8 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
               <ModuleButton
                 onPress={() => props.navigation.navigate(diaryRouteNames.timetable)}
                 text={I18n.get('dashboard-teacher-diary')}
-                color={theme.palette.complementary.blue.regular}
-                icon="homework2D"
+                color={theme.palette.complementary.green.regular}
+                icon="diary"
               />
             )}
           </View>
