@@ -1,18 +1,21 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Keyboard, ScrollView, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { LoadingIndicator } from '~/framework/components/loading';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import InputContainer from '~/framework/components/inputs/container';
+import MultilineTextInput from '~/framework/components/inputs/multiline';
+import TextInput from '~/framework/components/inputs/text';
 import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView } from '~/framework/components/page';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { NamedSVG } from '~/framework/components/picture';
+import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { ISession } from '~/framework/modules/auth/model';
@@ -31,12 +34,12 @@ import { startLoadNotificationsAction } from '~/framework/modules/timeline/actio
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
+import { Image } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
 import { uppercaseFirstLetter } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
@@ -63,41 +66,48 @@ export interface BlogCreatePostScreenState {
   title: string;
   content: string;
   images: ImagePicked[] | ILocalAttachment[];
-  onPublish: boolean;
+  thumbnailBlog: string | undefined;
 }
 
+const SIZE_THUMBNAIL = getScaleWidth(32);
+const SIZE_THUMBNAIL_SVG = getScaleWidth(22);
+const RADIUS_THUMBNAIL = SIZE_THUMBNAIL / 2;
+
 const styles = StyleSheet.create({
-  input: {
-    marginBottom: UI_SIZES.spacing.big,
-    padding: UI_SIZES.spacing.small,
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-    color: theme.ui.text.regular,
-  },
-  inputArea: {
-    marginBottom: UI_SIZES.spacing.medium,
-    height: 140,
-  },
-  loaderPublish: {
-    justifyContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.big,
+  page: {
+    backgroundColor: theme.palette.grey.white,
   },
   scrollView: {
     flexGrow: 1,
-    paddingVertical: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.medium,
   },
   userInfos: {
-    marginBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.large,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  userInfos_texts: {
-    flex: 1,
+  thumbnailBlog: {
+    height: SIZE_THUMBNAIL,
+    width: SIZE_THUMBNAIL,
+    borderRadius: RADIUS_THUMBNAIL,
+  },
+  thumbnailNoBlog: {
+    backgroundColor: theme.palette.complementary.indigo.pale,
+    height: SIZE_THUMBNAIL,
+    width: SIZE_THUMBNAIL,
+    borderRadius: RADIUS_THUMBNAIL,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  blogTitle: {
+    color: theme.palette.grey.darkness,
     marginLeft: UI_SIZES.spacing.minor,
+  },
+  input: {
+    marginBottom: UI_SIZES.spacing.big,
+  },
+  button: {
+    marginTop: UI_SIZES.spacing.large,
   },
 });
 
@@ -128,7 +138,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     title: '',
     content: '',
     images: [],
-    onPublish: false,
+    thumbnailBlog: this.props.route.params.blog.thumbnail,
   };
 
   async doSend() {
@@ -195,9 +205,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
-      this.setState({
-        onPublish: true,
-      });
       navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
         ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
       });
@@ -212,40 +219,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     }
   }
 
-  setActionNavbar = () => {
-    const blog = this.props.route.params.blog;
-    const blogPostRight = blog && this.props.session && getBlogPostRight(blog, this.props.session);
-    const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
-    const actionText =
-      blogPostDisplayRight &&
-      {
-        [createBlogPostResourceRight]: I18n.get('blog-createpost-create'),
-        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit'),
-        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish'),
-      }[blogPostDisplayRight];
-    this.props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () =>
-        this.state.sendLoadingState ? (
-          <LoadingIndicator small customColor={theme.ui.text.inverse} customStyle={styles.loaderPublish} />
-        ) : (
-          <NavBarAction
-            title={actionText}
-            disabled={this.state.title.trim().length === 0 || this.state.content.trim().length === 0}
-            onPress={() => this.doSend()}
-          />
-        ),
-    });
-  };
-
-  componentDidMount() {
-    this.setActionNavbar();
-  }
-
-  componentDidUpdate() {
-    this.setActionNavbar();
-  }
-
   renderError() {
     return <SmallBoldText>Error</SmallBoldText>; // ToDo: great error screen here
   }
@@ -256,22 +229,44 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         {this.renderBlogInfos()}
         {this.renderPostInfos()}
         {this.renderPostMedia()}
+        {this.renderButton()}
       </>
+    );
+  }
+
+  renderThumbnail() {
+    const { route } = this.props;
+    const blog = route.params.blog;
+    if (this.state.thumbnailBlog)
+      return (
+        <View>
+          <Image
+            source={blog?.thumbnail}
+            style={styles.thumbnailBlog}
+            onError={() => this.setState({ thumbnailBlog: undefined })}
+          />
+        </View>
+      );
+    return (
+      <View style={styles.thumbnailNoBlog}>
+        <NamedSVG
+          name="blog"
+          fill={theme.palette.complementary.indigo.regular}
+          height={SIZE_THUMBNAIL_SVG}
+          width={SIZE_THUMBNAIL_SVG}
+        />
+      </View>
     );
   }
 
   renderBlogInfos() {
     const { route, session } = this.props;
     if (!session) return <View style={styles.userInfos} />;
-    const { id, displayName } = session.user;
     const blog = route.params.blog;
     return (
       <View style={styles.userInfos}>
-        <GridAvatars users={[id]} />
-        <View style={styles.userInfos_texts}>
-          <SmallBoldText>{displayName}</SmallBoldText>
-          <SmallText>{blog?.title}</SmallText>
-        </View>
+        {this.renderThumbnail()}
+        <BodyText style={styles.blogTitle}>{blog?.title}</BodyText>
       </View>
     );
   }
@@ -280,21 +275,28 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     const { title, content } = this.state;
     return (
       <>
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-post-title')}</SmallBoldText>
-        <TextInput
-          placeholder={I18n.get('blog-createpost-post-title-placeholder')}
-          value={title}
-          onChangeText={text => this.setState({ title: text })}
+        <InputContainer
+          label={{ text: I18n.get('blog-createpost-post-title'), icon: 'ui-write' }}
+          input={
+            <TextInput
+              placeholder={I18n.get('blog-createpost-post-title-placeholder')}
+              value={title}
+              onChangeText={text => this.setState({ title: text })}
+            />
+          }
           style={styles.input}
         />
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-postcontent')}</SmallBoldText>
-        <TextInput
-          placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
-          value={content}
-          onChangeText={text => this.setState({ content: text })}
-          style={[styles.input, styles.inputArea]}
-          textAlignVertical="top"
-          multiline
+        <InputContainer
+          label={{ text: I18n.get('blog-createpost-postcontent'), icon: 'ui-textPage' }}
+          input={
+            <MultilineTextInput
+              placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
+              value={content}
+              onChangeText={text => this.setState({ content: text })}
+              numberOfLines={5}
+            />
+          }
+          style={styles.input}
         />
       </>
     );
@@ -319,12 +321,34 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     );
   }
 
+  renderButton() {
+    const blog = this.props.route.params.blog;
+    const blogPostRight = blog && this.props.session && getBlogPostRight(blog, this.props.session);
+    const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
+    const actionText =
+      blogPostDisplayRight &&
+      {
+        [createBlogPostResourceRight]: I18n.get('blog-createpost-create'),
+        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit'),
+        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish'),
+      }[blogPostDisplayRight];
+    return (
+      <PrimaryButton
+        text={actionText}
+        loading={this.state.sendLoadingState}
+        disabled={this.state.title.trim().length === 0 || this.state.content.trim().length === 0}
+        action={() => this.doSend()}
+        style={styles.button}
+      />
+    );
+  }
+
   render() {
-    const isEditing = !isEmpty(this.state.title || this.state.content || this.state.images) && !this.state.onPublish;
+    const isEditing = !isEmpty(this.state.title || this.state.content || this.state.images) && !this.state.sendLoadingState;
     return (
       <>
         <PreventBack isEditing={isEditing} />
-        <KeyboardPageView scrollable={false}>
+        <KeyboardPageView scrollable={false} style={styles.page}>
           {/* ToDo : don't use magic keywords like this. */}
           <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.scrollView}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>

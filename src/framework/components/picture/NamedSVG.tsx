@@ -110,6 +110,8 @@ const imports = {
   'ui-success_outline': import('ASSETS/icons/uiIcons/success_outline.svg'),
   'ui-success': import('ASSETS/icons/uiIcons/success.svg'),
   'ui-textPage': import('ASSETS/icons/uiIcons/textPage.svg'),
+  'ui-text-size': import('ASSETS/icons/uiIcons/text-size.svg'),
+  'ui-text-typo': import('ASSETS/icons/uiIcons/text-typo.svg'),
   'ui-tool': import('ASSETS/icons/uiIcons/tool.svg'),
   'ui-trash': import('ASSETS/icons/uiIcons/trash.svg'),
   'ui-trending-up': import('ASSETS/icons/uiIcons/trending-up.svg'),
