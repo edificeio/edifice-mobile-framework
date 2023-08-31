@@ -1,15 +1,7 @@
 import styled from '@emotion/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform as RNPlatform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform as RNPlatform, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -154,8 +146,8 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     };
   };
 
-  private doOpenCGU = (url?: string) => {
-    openPDFReader({ src: url, title: I18n.get('auth-activation-cgu') });
+  private doOpenLegalUrls = (title: string, url?: string) => {
+    openPDFReader({ src: url, title });
   };
 
   public render() {
@@ -173,6 +165,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     const hasErrorKey = !!errorText;
     const isSubmitLoading = activationState === 'RUNNING';
     const cguUrl = this.props.legalUrls?.cgu;
+    const usercharterUrl = this.props.legalUrls?.userCharter;
 
     return (
       <PageView>
@@ -205,9 +198,14 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                       />
                       <View style={styles.cguText}>
                         <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
-                        <TouchableOpacity onPress={() => this.doOpenCGU(cguUrl)}>
-                          <SmallActionText>{I18n.get('auth-activation-cgu')}</SmallActionText>
-                        </TouchableOpacity>
+                        <SmallActionText
+                          onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}>
+                          {I18n.get('auth-activation-usercharter')}
+                        </SmallActionText>
+                        <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
+                        <SmallActionText onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}>
+                          {I18n.get('auth-activation-cgu')}
+                        </SmallActionText>
                       </View>
                     </View>
                     <SmallText style={styles.errorMsg}>
