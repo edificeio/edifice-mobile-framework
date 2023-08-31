@@ -71,7 +71,7 @@ export type IHomeworkTaskListScreenProps = IHomeworkTaskListScreenDataProps &
 type DataType = {
   type: 'day';
   title: moment.Moment;
-  data: { type: 'day'; id: string; title: string; content: string; date: moment.Moment }[];
+  data: { type: 'day'; id: string; taskId: string; title: string; content: string; date: moment.Moment }[];
 };
 type DataTypeOrFooter = DataType | { type: 'footer'; data: [{ type: 'footer' }]; title?: never };
 
@@ -121,10 +121,40 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     pastDateLimit: today(),
   };
 
+  sectionListRef: { current: any } = React.createRef();
+
   static getDerivedStateFromProps(nextProps: any, prevState: any) {
     if (nextProps.isFetching !== prevState.fetching) {
       return { fetching: nextProps.isFetching };
     } else return null;
+  }
+
+  getDataInfo() {
+    const { tasksByDay } = this.props;
+    const dataInfo: DataType[] = tasksByDay
+      ? tasksByDay.map(day => ({
+          type: 'day',
+          title: day.date,
+          data: day.tasks.map(task => ({
+            ...task,
+            date: day.date,
+            type: 'day',
+          })),
+        }))
+      : [];
+    return dataInfo;
+  }
+
+  getDisplayedPastHomework() {
+    const { pastDateLimit } = this.state;
+    const pastHomework = this.getDataInfo().filter(item => item.title.isBefore(today(), 'day'));
+    const futureHomework = this.getDataInfo().filter(item => item.title.isSameOrAfter(today(), 'day'));
+    const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
+    const displayedHomework = [...displayedPastHomework, ...futureHomework];
+    // Add footer only if there is at least one element
+    // We must keep the empty state displaying if the list is empty.
+    if (displayedHomework.length) (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
+    return displayedHomework;
   }
 
   canCreateEntry() {
@@ -159,22 +189,41 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const { isFetching, diaryId, tasksByDay, route, isFocused } = this.props;
     const { pastDateLimit } = this.state;
     const createdEntryId = route.params.createdEntryId;
+    const prevCreatedEntryId = prevProps.route.params.createdEntryId;
 
     if (prevProps.isFetching !== isFetching) {
       this.setState({ fetching: isFetching });
     }
-    if (!prevProps.isFocused && isFocused && createdEntryId) {
+
+    if (!prevProps.isFocused && isFocused && prevCreatedEntryId !== createdEntryId) {
       const createdTask = tasksByDay?.find(day => day.tasks.find(task => task.taskId === createdEntryId));
       const createdTaskDate = createdTask?.date;
       const isPastCreatedTaskHidden = createdTaskDate?.isBefore(pastDateLimit, 'day');
+
       if (isPastCreatedTaskHidden) {
         const createdTaskDayWeekStart = moment(createdTaskDate).startOf('isoWeek');
         this.setState({ pastDateLimit: createdTaskDayWeekStart });
       }
+
+      setTimeout(() => {
+        const createdTaskDayIndex = this.getDisplayedPastHomework()?.findIndex(day =>
+          day.data.some(task => task.taskId === createdEntryId),
+        );
+        const createdTaskIndex = this.getDisplayedPastHomework()?.[createdTaskDayIndex]?.data?.findIndex(
+          task => task.taskId === createdEntryId,
+        );
+        this.sectionListRef?.current?.scrollToLocation({
+          sectionIndex: createdTaskDayIndex,
+          itemIndex: createdTaskIndex,
+          viewPosition: 0.5,
+        });
+      }, 1000);
     }
+
     if (prevProps.diaryId !== diaryId) {
       this.setState({ pastDateLimit: today() });
     }
+
     this.updateNavBarTitle();
   }
 
@@ -192,27 +241,15 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   private renderList() {
-    const { diaryId, tasksByDay, navigation, onRefresh } = this.props;
+    const { diaryId, navigation, onRefresh } = this.props;
     const { refreshing, pastDateLimit } = this.state;
-    const dataInfo: DataType[] = tasksByDay
-      ? tasksByDay.map(day => ({
-          type: 'day',
-          title: day.date,
-          data: day.tasks.map(task => ({
-            ...task,
-            date: day.date,
-            type: 'day',
-          })),
-        }))
-      : [];
-    const hasHomework = dataInfo.length > 0;
-    const pastHomework = dataInfo.filter(item => item.title.isBefore(today(), 'day'));
+
+    const hasHomework = this.getDataInfo().length > 0;
+    const pastHomework = this.getDataInfo().filter(item => item.title.isBefore(today(), 'day'));
     const hasPastHomeWork = pastHomework.length > 0;
     const remainingPastHomework = pastHomework.filter(item => item.title.isBefore(pastDateLimit, 'day'));
-    const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
-    const futureHomework = dataInfo.filter(item => item.title.isSameOrAfter(today(), 'day'));
-    const displayedHomework = [...displayedPastHomework, ...futureHomework];
-    const isHomeworkDisplayed = displayedHomework.length > 0;
+    const futureHomework = this.getDataInfo().filter(item => item.title.isSameOrAfter(today(), 'day'));
+    const isHomeworkDisplayed = this.getDisplayedPastHomework().length > 0;
     const noRemainingPastHomework = remainingPastHomework.length === 0;
     const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), 'day');
 
@@ -222,16 +259,13 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
       flex: noFutureHomeworkHiddenPast ? 1 : undefined,
     };
 
-    // Add footer only if there is at least one element
-    // We must keep the empty state displaying if the list is empty.
-    if (displayedHomework.length) (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
-
     return (
       <View style={styles.taskList}>
         {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.medium + UI_SIZES.spacing.minor} />}
         <SectionList
+          ref={this.sectionListRef}
           contentContainerStyle={stylesContentSectionList}
-          sections={displayedHomework as DataType[]}
+          sections={this.getDisplayedPastHomework() as DataType[]}
           CellRendererComponent={ViewOverflow}
           stickySectionHeadersEnabled={false}
           renderSectionHeader={({ section: { title, type, data } }: { section: DataType }) => {
