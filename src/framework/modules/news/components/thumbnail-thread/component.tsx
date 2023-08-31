@@ -3,13 +3,13 @@ import { View } from 'react-native';
 import { Grayscale } from 'react-native-color-matrix-image-filters';
 
 import theme from '~/app/theme';
+import { getScaleHeight } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { ThreadItemStatus } from '~/framework/modules/news/components/thread-item';
 import { Image } from '~/framework/util/media';
 
 import styles from './styles';
 import { ThumbnailThreadProps } from './types';
-import { getScaleHeight } from '~/framework/components/constants';
 
 const Selected = () => <View style={styles.thumbnailItemSelected} />;
 
