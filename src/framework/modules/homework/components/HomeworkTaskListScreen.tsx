@@ -82,8 +82,9 @@ const styles = StyleSheet.create({
   dayCheckpoint: {
     zIndex: 1,
   },
-  taskList: {
-    flex: 1,
+  dayCheckpointContainer: {
+    marginBottom: UI_SIZES.spacing.tiny,
+    marginTop: UI_SIZES.spacing.big,
   },
   footer: {
     flexDirection: 'row',
@@ -100,6 +101,13 @@ const styles = StyleSheet.create({
     marginRight: UI_SIZES.spacing.medium,
   },
   footerText: {
+    flex: 1,
+  },
+  labelContainer: {
+    marginTop: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.small,
+  },
+  taskList: {
     flex: 1,
   },
 });
@@ -145,12 +153,36 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     return dataInfo;
   }
 
+  pastHomework() {
+    return this.getDataInfo().filter(item => item.title.isBefore(today(), 'day'));
+  }
+
+  futureHomework() {
+    return this.getDataInfo().filter(item => item.title.isSameOrAfter(today(), 'day'));
+  }
+
+  noFutureHomeworkHiddenPast() {
+    const { pastDateLimit } = this.state;
+    return this.futureHomework().length === 0 && pastDateLimit.isSame(today(), 'day');
+  }
+
+  hasPastHomeWork() {
+    return this.pastHomework().length > 0;
+  }
+
+  hasHomework() {
+    return this.getDataInfo().length > 0;
+  }
+
+  remainingPastHomework() {
+    const { pastDateLimit } = this.state;
+    return this.pastHomework().filter(item => item.title.isBefore(pastDateLimit, 'day'));
+  }
+
   getDisplayedPastHomework() {
     const { pastDateLimit } = this.state;
-    const pastHomework = this.getDataInfo().filter(item => item.title.isBefore(today(), 'day'));
-    const futureHomework = this.getDataInfo().filter(item => item.title.isSameOrAfter(today(), 'day'));
-    const displayedPastHomework = pastHomework.filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
-    const displayedHomework = [...displayedPastHomework, ...futureHomework];
+    const displayedPastHomework = this.pastHomework().filter(item => item.title.isBetween(pastDateLimit, today(), 'day', '[)'));
+    const displayedHomework = [...displayedPastHomework, ...this.futureHomework()];
     // Add footer only if there is at least one element
     // We must keep the empty state displaying if the list is empty.
     if (displayedHomework.length) (displayedHomework as DataTypeOrFooter[]).push({ type: 'footer', data: [{ type: 'footer' }] });
@@ -176,6 +208,13 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   addEntry() {
     const { navigation } = this.props;
     navigation.navigate(homeworkRouteNames.homeworkCreate, { sourceRoute: homeworkRouteNames.homeworkTaskList });
+  }
+
+  displayPastHomework() {
+    const newestRemainingPastHW = this.remainingPastHomework()[this.remainingPastHomework().length - 1];
+    const newestRemainingPastHWDate = newestRemainingPastHW.title;
+    const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf('isoWeek');
+    this.setState({ pastDateLimit: newestRemainingPastHWWeekStart });
   }
 
   updateNavBarTitle() {
@@ -239,7 +278,6 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   render() {
     const { isFetching, didInvalidate, error } = this.props;
     const pageContent = isFetching && didInvalidate ? <Loading /> : error ? this.renderError() : this.renderList();
-
     return <PageView>{pageContent}</PageView>;
   }
 
@@ -247,152 +285,71 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     return <EmptyContentScreen />;
   }
 
-  private renderList() {
-    const { diaryId, navigation, onRefresh } = this.props;
-    const { refreshing, pastDateLimit } = this.state;
-
-    const hasHomework = this.getDataInfo().length > 0;
-    const pastHomework = this.getDataInfo().filter(item => item.title.isBefore(today(), 'day'));
-    const hasPastHomeWork = pastHomework.length > 0;
-    const remainingPastHomework = pastHomework.filter(item => item.title.isBefore(pastDateLimit, 'day'));
-    const futureHomework = this.getDataInfo().filter(item => item.title.isSameOrAfter(today(), 'day'));
-    const isHomeworkDisplayed = this.getDisplayedPastHomework().length > 0;
-    const noRemainingPastHomework = remainingPastHomework.length === 0;
-    const noFutureHomeworkHiddenPast = futureHomework.length === 0 && pastDateLimit.isSame(today(), 'day');
-
-    const stylesContentSectionList = {
-      padding: hasHomework ? UI_SIZES.spacing.medium : undefined,
-      paddingTop: hasHomework ? undefined : 0,
-      flex: noFutureHomeworkHiddenPast ? 1 : undefined,
-    };
-
-    return (
-      <View style={styles.taskList}>
-        {noFutureHomeworkHiddenPast ? null : <HomeworkTimeline leftPosition={UI_SIZES.spacing.medium + UI_SIZES.spacing.minor} />}
-        <SectionList
-          ref={this.sectionListRef}
-          contentContainerStyle={stylesContentSectionList}
-          sections={this.getDisplayedPastHomework() as DataType[]}
-          CellRendererComponent={ViewOverflow}
-          stickySectionHeadersEnabled={false}
-          renderSectionHeader={({ section: { title, type, data } }: { section: DataType }) => {
-            if (type !== 'day') {
-              return (
-                <>
-                  <HomeworkTimeline topPosition={UI_SIZES.spacing.large} />
-                  <View
-                    style={{
-                      marginTop: UI_SIZES.spacing.big,
-                      marginBottom: UI_SIZES.spacing.small,
-                    }}>
-                    <Label color={theme.palette.grey.grey} text={I18n.get('homework-tasklist-nofuturehomework')} />
-                  </View>
-                </>
-              );
-            } else {
-              return (
-                <View
-                  style={{
-                    marginBottom: UI_SIZES.spacing.tiny,
-                    marginTop: UI_SIZES.spacing.big,
-                  }}>
-                  <View style={styles.dayCheckpoint}>
-                    <HomeworkDayCheckpoint date={title} />
-                  </View>
-                  <HomeworkTimeline topPosition={UI_SIZES.spacing.tiny} color={this.getTimlineColor(title)} />
-                </View>
-              );
-            }
-          }}
-          renderItem={({ item, index, section }) => {
-            return (item as unknown as { type: string }).type !== 'day' ? (
-              this.renderFooterItem(isHomeworkDisplayed)
-            ) : (
-              <>
-                <HomeworkTimeline color={this.getTimlineColor(section.title)} />
-                <HomeworkCard
-                  key={index}
-                  title={item.title}
-                  content={item.content}
-                  date={item.date}
-                  onPress={() => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId })}
-                />
-              </>
-            );
-          }}
-          keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={async () => {
-                this.setState({ fetching: true, refreshing: true });
-                if (onRefresh && diaryId) {
-                  await onRefresh(diaryId);
-                }
-                this.setState({ refreshing: false });
-              }}
-            />
-          }
-          // eslint-disable-next-line react/no-unstable-nested-components
-          ListHeaderComponent={() => {
-            const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
-            const labelText = I18n.get(`homework-tasklist-${noRemainingPastHomework ? 'nomorepasthomework' : 'displaypastdays'}`);
-            return hasPastHomeWork ? (
-              <TouchableOpacity
-                style={styles.buttonPastHomework}
-                disabled={noRemainingPastHomework}
-                onPress={() => {
-                  const newestRemainingPastHW = remainingPastHomework[remainingPastHomework.length - 1];
-                  const newestRemainingPastHWDate = newestRemainingPastHW.title;
-                  const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf('isoWeek');
-                  this.setState({ pastDateLimit: newestRemainingPastHWWeekStart });
-                }}>
-                <Label
-                  labelStyle="outline"
-                  labelSize="large"
-                  icon={noRemainingPastHomework ? undefined : 'back'}
-                  iconStyle={{ transform: [{ rotate: '90deg' }] }}
-                  color={labelColor}
-                  text={labelText}
-                />
-              </TouchableOpacity>
-            ) : null;
-          }}
-          ListEmptyComponent={
-            noFutureHomeworkHiddenPast ? (
-              <EmptyScreen
-                svgImage="empty-hammock"
-                title={I18n.get(
-                  `homework-tasklist-emptyscreen-title${
-                    hasPastHomeWork ? '' : this.canCreateEntry() ? '-notasks' : '-notasks-nocreationrights'
-                  }`,
-                )}
-                text={I18n.get(
-                  `homework-tasklist-emptyscreen-text${
-                    hasPastHomeWork
-                      ? this.canCreateEntry()
-                        ? ''
-                        : '-nocreationrights'
-                      : this.canCreateEntry()
-                      ? '-notasks'
-                      : '-notasks-nocreationrights'
-                  }`,
-                )}
-                buttonText={this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined}
-                buttonAction={() => {
-                  this.addEntry();
-                  Trackers.trackEvent('Homework', 'GO TO', 'Create');
-                }}
-              />
-            ) : null
-          }
+  private renderListHeaderComponent() {
+    const noRemainingPastHomework = this.remainingPastHomework().length === 0;
+    const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
+    const labelText = I18n.get(`homework-tasklist-${noRemainingPastHomework ? 'nomorepasthomework' : 'displaypastdays'}`);
+    return this.hasPastHomeWork() ? (
+      <TouchableOpacity
+        style={styles.buttonPastHomework}
+        disabled={noRemainingPastHomework}
+        onPress={() => this.displayPastHomework()}>
+        <Label
+          labelStyle="outline"
+          labelSize="large"
+          icon={noRemainingPastHomework ? undefined : 'back'}
+          iconStyle={{ transform: [{ rotate: '90deg' }] }}
+          color={labelColor}
+          text={labelText}
         />
-      </View>
-    );
+      </TouchableOpacity>
+    ) : null;
   }
 
-  renderFooterItem = (isHomeworkDisplayed: boolean) =>
-    isHomeworkDisplayed ? (
+  private renderListEmptyComponent() {
+    return this.noFutureHomeworkHiddenPast() ? (
+      <EmptyScreen
+        svgImage="empty-hammock"
+        title={I18n.get(
+          `homework-tasklist-emptyscreen-title${
+            this.hasPastHomeWork() ? '' : this.canCreateEntry() ? '-notasks' : '-notasks-nocreationrights'
+          }`,
+        )}
+        text={I18n.get(
+          `homework-tasklist-emptyscreen-text${
+            this.hasPastHomeWork()
+              ? this.canCreateEntry()
+                ? ''
+                : '-nocreationrights'
+              : this.canCreateEntry()
+              ? '-notasks'
+              : '-notasks-nocreationrights'
+          }`,
+        )}
+        buttonText={this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined}
+        buttonAction={() => {
+          this.addEntry();
+          Trackers.trackEvent('Homework', 'GO TO', 'Create');
+        }}
+      />
+    ) : null;
+  }
+
+  private renderRefreshControl() {
+    const { diaryId, onRefresh } = this.props;
+    const { refreshing } = this.state;
+    const refreshEntries = async () => {
+      this.setState({ fetching: true, refreshing: true });
+      if (onRefresh && diaryId) {
+        await onRefresh(diaryId);
+      }
+      this.setState({ refreshing: false });
+    };
+    return <RefreshControl refreshing={refreshing} onRefresh={refreshEntries} />;
+  }
+
+  private renderFooterItem() {
+    return this.getDisplayedPastHomework().length > 0 ? (
       <>
         <View style={styles.footer}>
           <View style={styles.footerIcon}>
@@ -406,6 +363,73 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
         </View>
       </>
     ) : null;
+  }
+
+  private renderList() {
+    const { navigation, diaryId } = this.props;
+    const stylesContentSectionList = {
+      padding: this.hasHomework() ? UI_SIZES.spacing.medium : undefined,
+      paddingTop: this.hasHomework() ? undefined : 0,
+      flex: this.noFutureHomeworkHiddenPast() ? 1 : undefined,
+    };
+    const displayEntry = item => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId });
+
+    return (
+      <View style={styles.taskList}>
+        {this.noFutureHomeworkHiddenPast() ? null : (
+          <HomeworkTimeline leftPosition={UI_SIZES.spacing.medium + UI_SIZES.spacing.minor} />
+        )}
+        <SectionList
+          ref={this.sectionListRef}
+          contentContainerStyle={stylesContentSectionList}
+          sections={this.getDisplayedPastHomework() as DataType[]}
+          CellRendererComponent={ViewOverflow}
+          stickySectionHeadersEnabled={false}
+          renderSectionHeader={({ section: { title, type } }: { section: DataType }) => {
+            if (type !== 'day') {
+              return (
+                <>
+                  <HomeworkTimeline topPosition={UI_SIZES.spacing.large} />
+                  <View style={styles.labelContainer}>
+                    <Label color={theme.palette.grey.grey} text={I18n.get('homework-tasklist-nofuturehomework')} />
+                  </View>
+                </>
+              );
+            } else {
+              return (
+                <View style={styles.dayCheckpointContainer}>
+                  <View style={styles.dayCheckpoint}>
+                    <HomeworkDayCheckpoint date={title} />
+                  </View>
+                  <HomeworkTimeline topPosition={UI_SIZES.spacing.tiny} color={this.getTimlineColor(title)} />
+                </View>
+              );
+            }
+          }}
+          renderItem={({ item, index, section }) => {
+            return (item as unknown as { type: string }).type !== 'day' ? (
+              this.renderFooterItem()
+            ) : (
+              <>
+                <HomeworkTimeline color={this.getTimlineColor(section.title)} />
+                <HomeworkCard
+                  key={index}
+                  title={item.title}
+                  content={item.content}
+                  date={item.date}
+                  onPress={() => displayEntry(item)}
+                />
+              </>
+            );
+          }}
+          keyExtractor={item => item.id}
+          refreshControl={this.renderRefreshControl()}
+          ListHeaderComponent={this.renderListHeaderComponent()}
+          ListEmptyComponent={this.renderListEmptyComponent()}
+        />
+      </View>
+    );
+  }
 }
 
 export default function (props) {
