@@ -68,6 +68,11 @@ const styles = StyleSheet.create({
     aspectRatio: UI_SIZES.aspectRatios.square,
     borderRadius: UI_SIZES.radius.medium,
   },
+  diaryItemNoImage: {
+    backgroundColor: theme.palette.complementary.green.pale,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   diaryItemSharedText: { marginTop: UI_SIZES.spacing.tiny },
   diaryItemTexts: {
     flex: 1,
@@ -161,10 +166,13 @@ export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScre
         <ListItem
           leftElement={
             <View style={styles.diaryItem}>
-              <Image
-                source={diary.thumbnail ? { uri: diary.thumbnail } : require('ASSETS/images/resource-avatar.png')}
-                style={styles.diaryItemImage}
-              />
+              {diary.thumbnail ? (
+                <Image source={{ uri: diary.thumbnail }} style={styles.diaryItemImage} />
+              ) : (
+                <View style={[styles.diaryItemImage, styles.diaryItemNoImage]}>
+                  <NamedSVG name="homework1D" fill={theme.palette.complementary.green.regular} width={32} height={32} />
+                </View>
+              )}
               <View style={styles.diaryItemTexts}>
                 <SmallBoldText numberOfLines={1}>{diary.title}</SmallBoldText>
                 <CaptionText style={styles.diaryItemSharedText}>
@@ -178,9 +186,9 @@ export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScre
           rightElement={
             <NamedSVG
               name="ui-rafterRight"
-              fill={theme.palette.grey.black}
-              width={UI_SIZES.elements.icon.default}
-              height={UI_SIZES.elements.icon.default}
+              fill={theme.palette.primary.regular}
+              width={UI_SIZES.elements.icon.small}
+              height={UI_SIZES.elements.icon.small}
             />
           }
         />
