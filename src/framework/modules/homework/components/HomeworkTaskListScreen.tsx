@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import ViewOverflow from 'react-native-view-overflow';
@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { Icon } from '~/framework/components/icon';
@@ -157,6 +157,13 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     return displayedHomework;
   }
 
+  getTimlineColor(date: Moment) {
+    const isPastDate = date?.isBefore(today(), 'day');
+    const dayOfTheWeek = getDayOfTheWeek(date);
+    const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.cloudy;
+    return isPastDate ? theme.palette.grey.cloudy : dayColor;
+  }
+
   canCreateEntry() {
     const { diaryInformation, session } = this.props;
     const hasCreationRight =
@@ -272,7 +279,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
             if (type !== 'day') {
               return (
                 <>
-                  <HomeworkTimeline topPosition={UI_SIZES.spacing.large} leftPosition={UI_SIZES.spacing.minor} />
+                  <HomeworkTimeline topPosition={UI_SIZES.spacing.large} />
                   <View
                     style={{
                       marginTop: UI_SIZES.spacing.big,
@@ -283,12 +290,6 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
                 </>
               );
             } else {
-              const isPastDate = title.isBefore(today(), 'day');
-              const dayOfTheWeek = getDayOfTheWeek(title);
-              const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.cloudy;
-              const timelineColor = isPastDate ? theme.palette.grey.cloudy : dayColor;
-              // TODO: use real computed height of HomeworkCard (instead of magic number)
-              const timelineHeight = data.length * getScaleHeight(150);
               return (
                 <View
                   style={{
@@ -298,29 +299,27 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
                   <View style={styles.dayCheckpoint}>
                     <HomeworkDayCheckpoint date={title} />
                   </View>
-                  <HomeworkTimeline
-                    height={timelineHeight}
-                    leftPosition={UI_SIZES.spacing.minor}
-                    topPosition={UI_SIZES.spacing.tiny}
-                    color={timelineColor}
-                  />
+                  <HomeworkTimeline topPosition={UI_SIZES.spacing.tiny} color={this.getTimlineColor(title)} />
                 </View>
               );
             }
           }}
-          renderItem={({ item, index }) =>
-            (item as unknown as { type: string }).type !== 'day' ? (
+          renderItem={({ item, index, section }) => {
+            return (item as unknown as { type: string }).type !== 'day' ? (
               this.renderFooterItem(isHomeworkDisplayed)
             ) : (
-              <HomeworkCard
-                key={index}
-                title={item.title}
-                content={item.content}
-                date={item.date}
-                onPress={() => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId })}
-              />
-            )
-          }
+              <>
+                <HomeworkTimeline color={this.getTimlineColor(section.title)} />
+                <HomeworkCard
+                  key={index}
+                  title={item.title}
+                  content={item.content}
+                  date={item.date}
+                  onPress={() => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId })}
+                />
+              </>
+            );
+          }}
           keyExtractor={item => item.id}
           refreshControl={
             <RefreshControl
