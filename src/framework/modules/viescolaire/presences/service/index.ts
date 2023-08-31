@@ -619,7 +619,7 @@ export const presencesService = {
     get: async (session: ISession, structureId: string) => {
       const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
       const eventReasons = (await fetchJSONWithCache(api)) as IBackendEventReasonList;
-      return eventReasons.map(eventReasonAdapter);
+      return eventReasons.filter(reason => !reason.hidden).map(eventReasonAdapter);
     },
   },
   eventReason: {

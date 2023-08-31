@@ -117,7 +117,6 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       reasons: eventReasons.filter(reason => reason.reasonTypeId === type),
       student,
       type,
-      title: student.name,
     });
   };
 

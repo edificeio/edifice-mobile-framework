@@ -11,7 +11,6 @@ export interface PresencesDeclareEventScreenNavParams {
   course: ICourse;
   reasons: IEventReason[];
   student: IClassCallStudent;
-  title: string;
   type: EventType;
   event?: IEvent;
 }

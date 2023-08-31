@@ -21,7 +21,7 @@ export const DropdownPicker = <T extends ValueType>(props: DropdownPickerProps<T
   const renderBody = () => (
     <View style={styles.bodyContainer}>
       {iconName ? <Picture type="NamedSvg" name={iconName} width={22} height={22} fill={theme.palette.grey.black} /> : null}
-      {value ? (
+      {value !== null ? (
         <BodyText style={disabled && styles.disabledText}>{getSelectedItemLabel()}</BodyText>
       ) : (
         <BodyItalicText style={disabled && styles.disabledText}>{placeholder}</BodyItalicText>

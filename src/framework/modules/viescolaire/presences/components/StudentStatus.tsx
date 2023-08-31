@@ -76,7 +76,7 @@ export const StudentStatus = ({
   return (
     <View style={[styles.container, style]}>
       <View style={styles.nameContainer}>
-        <SingleAvatar size={48} userId={student.id} status={2} />
+        <SingleAvatar size={36} userId={student.id} status={2} />
         <BodyText numberOfLines={1}>{student.name}</BodyText>
       </View>
       <EventButton

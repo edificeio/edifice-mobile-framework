@@ -17,8 +17,18 @@ export default StyleSheet.create({
   },
   headingContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    columnGap: UI_SIZES.spacing.minor,
+    columnGap: UI_SIZES.spacing.small,
+  },
+  headingNameContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexShrink: 1,
+  },
+  headingNameText: {
+    marginLeft: UI_SIZES.spacing.small,
+    flexShrink: 1,
   },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,

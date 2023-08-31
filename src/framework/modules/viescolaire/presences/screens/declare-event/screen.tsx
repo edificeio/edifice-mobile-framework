@@ -10,11 +10,11 @@ import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import DateTimePicker from '~/framework/components/dateTimePicker';
-import MultilineTextInput from '~/framework/components/inputs/multiline';
+import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { Picture } from '~/framework/components/picture';
-import { HeadingSText, SmallBoldText } from '~/framework/components/text';
+import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -24,9 +24,21 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { addTime, subtractTime } from '~/framework/util/date';
+import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import styles from './styles';
 import type { PresencesDeclareEventScreenPrivateProps } from './types';
+
+const getNavBarTitle = (eventType: EventType): string => {
+  switch (eventType) {
+    case EventType.ABSENCE:
+      return I18n.get('presences-declareevent-absence');
+    case EventType.LATENESS:
+      return I18n.get('presences-declareevent-lateness');
+    case EventType.DEPARTURE:
+      return I18n.get('presences-declareevent-departure');
+  }
+};
 
 export const computeNavBar = ({
   navigation,
@@ -35,7 +47,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.title,
+    title: getNavBarTitle(route.params.type),
   }),
 });
 
@@ -53,7 +65,9 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     getInitialDate(props.route.params.course, props.route.params.type, props.route.params.event),
   );
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
-  const [reasonId, setReasonId] = React.useState<number | null>(props.route.params.event?.reasonId ?? null);
+  const [reasonId, setReasonId] = React.useState<number | null>(
+    props.route.params.event?.reasonId ?? props.route.params.reasons.length ? 0 : null,
+  );
   const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
   const [isCreating, setCreating] = React.useState<boolean>(false);
   const [isDeleting, setDeleting] = React.useState<boolean>(false);
@@ -149,21 +163,19 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
   };
 
   const renderHeading = () => {
-    const { type } = props.route.params;
+    const { student, type } = props.route.params;
     const color = type === EventType.ABSENCE ? theme.palette.status.failure.regular : theme.palette.status.warning.regular;
     const iconName = type === EventType.ABSENCE ? 'ui-error' : type === EventType.LATENESS ? 'ui-clock-alert' : 'ui-leave';
-    const text = I18n.get(
-      type === EventType.ABSENCE
-        ? 'presences-declareevent-absence'
-        : type === EventType.LATENESS
-        ? 'presences-declareevent-lateness'
-        : 'presences-declareevent-departure',
-    );
 
     return (
       <View style={styles.headingContainer}>
+        <View style={styles.headingNameContainer}>
+          <SingleAvatar size={36} userId={student.id} status={2} />
+          <BodyText numberOfLines={1} style={[styles.headingNameText, { color }]}>
+            {student.name}
+          </BodyText>
+        </View>
         <Picture type="NamedSvg" name={iconName} width={32} height={32} fill={color} />
-        <HeadingSText style={{ color }}>{text}</HeadingSText>
       </View>
     );
   };
@@ -195,23 +207,24 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             <DropdownPicker
               open={isDropdownOpen}
               value={reasonId}
-              items={reasons.map(r => ({
-                label: r.label,
-                value: r.id,
-              }))}
+              items={[
+                { label: I18n.get('presences-declareevent-withoutreason'), value: 0 },
+                ...reasons.map(r => ({
+                  label: r.label,
+                  value: r.id,
+                })),
+              ]}
               setOpen={setDropdownOpen}
               setValue={setReasonId}
-              placeholder={I18n.get('presences-declareevent-dropdown-placeholder')}
             />
           </View>
         ) : null}
         {type === EventType.DEPARTURE ? (
           <View style={styles.fieldContainer}>
             <SmallBoldText>{reasonText}</SmallBoldText>
-            <MultilineTextInput
+            <TextInput
               placeholder={I18n.get('presences-declareevent-textinput-placeholder')}
               value={comment}
-              numberOfLines={0}
               onChangeText={text => setComment(text)}
             />
           </View>
@@ -220,10 +233,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
           text={I18n.get(isEventAlreadyExisting ? 'presences-declareevent-edit' : 'presences-declareevent-validate')}
           iconLeft="ui-check"
           action={createEvent}
-          disabled={
-            (type !== EventType.DEPARTURE && reasons.length && !reasonId) ||
-            (type !== EventType.ABSENCE && (date.isBefore(course.startDate) || date.isAfter(course.endDate)))
-          }
+          disabled={type !== EventType.ABSENCE && (date.isBefore(course.startDate) || date.isAfter(course.endDate))}
           loading={isCreating}
           style={styles.primaryActionContainer}
         />
