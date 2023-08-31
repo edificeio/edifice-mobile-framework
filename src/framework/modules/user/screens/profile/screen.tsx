@@ -28,6 +28,7 @@ import UserPlaceholderProfile from '~/framework/modules/user/components/placehol
 import UserCard from '~/framework/modules/user/components/user-card';
 import { InfoPerson } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { getShowMottoMoodRight } from '~/framework/modules/user/rights';
 import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import { userService } from '~/framework/modules/user/service';
 import workspaceService from '~/framework/modules/workspace/service';
@@ -404,6 +405,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const renderMoodMotto = () => {
     const mood = route.params.newMood ?? userInfo!.mood;
     const motto = route.params.newMotto ?? userInfo!.motto;
+    if (isMyProfile && !getShowMottoMoodRight(props.session!)) return;
     if ((isEmpty(userInfo?.mood) || userInfo?.mood === 'default') && isEmpty(userInfo?.motto) && !isMyProfile) return;
     const degre = appConf.is1d ? '1d' : '2d';
     return (
