@@ -65,9 +65,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     getInitialDate(props.route.params.course, props.route.params.type, props.route.params.event),
   );
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
-  const [reasonId, setReasonId] = React.useState<number | null>(
-    props.route.params.event?.reasonId ?? props.route.params.reasons.length ? 0 : null,
-  );
+  const [reasonId, setReasonId] = React.useState<number | null>(props.route.params.event?.reasonId ?? null);
   const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
   const [isCreating, setCreating] = React.useState<boolean>(false);
   const [isDeleting, setDeleting] = React.useState<boolean>(false);
@@ -206,7 +204,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             <SmallBoldText>{reasonText}</SmallBoldText>
             <DropdownPicker
               open={isDropdownOpen}
-              value={reasonId}
+              value={reasonId ?? 0}
               items={[
                 { label: I18n.get('presences-declareevent-withoutreason'), value: 0 },
                 ...reasons.map(r => ({
@@ -215,7 +213,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
                 })),
               ]}
               setOpen={setDropdownOpen}
-              setValue={setReasonId}
+              setValue={value => setReasonId(value || null)}
             />
           </View>
         ) : null}

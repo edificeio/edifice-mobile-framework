@@ -52,13 +52,16 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   const fetchCall = async () => {
     try {
       const { eventReasons, session } = props;
-      const { id } = props.route.params;
+      let { classCall } = props;
+      const { course, id } = props.route.params;
       const structureCount = session?.user.structures?.length;
 
       if (!id) throw new Error();
-      const call = await props.tryFetchClassCall(id);
+      if (!classCall || classCall.courseId !== course.id) {
+        classCall = await props.tryFetchClassCall(id);
+      }
       if (!eventReasons.length || structureCount !== 1) {
-        await props.tryFetchEventReasons(call.structureId);
+        await props.tryFetchEventReasons(classCall.structureId);
       }
     } catch {
       throw new Error();

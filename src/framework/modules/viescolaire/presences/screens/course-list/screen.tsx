@@ -19,6 +19,7 @@ import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/tex
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
+  fetchPresencesClassCallAction,
   fetchPresencesCoursesAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
@@ -147,7 +148,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       setSelectedCourseId(course.id);
       bottomSheetModalRef.current?.present();
       if (course.registerStateId === 3 && props.session) {
-        const call = await presencesService.classCall.get(props.session, course.callId);
+        const call = await props.tryFetchClassCall(course.callId);
         setBottomSheetCall(call);
       }
     } else {
@@ -265,6 +266,7 @@ export default connect(
   dispatch =>
     bindActionCreators<PresencesCourseListScreenDispatchProps>(
       {
+        tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
         tryFetchCourses: tryAction(fetchPresencesCoursesAction),
         tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
         tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),
