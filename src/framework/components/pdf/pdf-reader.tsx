@@ -1,6 +1,6 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Pdf from 'react-native-pdf';
 
 import theme from '~/app/theme';
@@ -59,7 +59,7 @@ export class PDFReader extends React.PureComponent<
     if (error) return this.renderError();
     return (
       <Pdf
-        source={{ cache: true, uri }}
+        source={{ cache: false, uri }}
         style={styles.pdf}
         trustAllCerts={false}
         onError={() => this.setState({ error: true })}
