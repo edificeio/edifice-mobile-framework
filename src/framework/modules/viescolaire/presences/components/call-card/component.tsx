@@ -1,68 +1,18 @@
 import moment, { Moment } from 'moment';
 import React from 'react';
-import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, HeadingSText } from '~/framework/components/text';
-import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: theme.ui.background.card,
-    borderRadius: UI_SIZES.radius.card,
-    overflow: 'hidden',
-  },
-  leftContainer: {
-    flexShrink: 1,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.small,
-    rowGap: UI_SIZES.spacing.minor,
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    flexShrink: 1,
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.minor,
-  },
-  roomContainer: {
-    flexDirection: 'row',
-    flexShrink: 1,
-    columnGap: UI_SIZES.spacing.minor,
-  },
-  roomText: {
-    color: theme.ui.text.light,
-  },
-  statusContainer: {
-    justifyContent: 'center',
-    padding: UI_SIZES.spacing.minor,
-  },
-});
+import styles from './styles';
+import type { CallCardProps, CallCardStyle } from './types';
 
-interface CallCardProps {
-  course: ICourse;
-  disabled?: boolean;
-  showStatus?: boolean;
-  onPress?: () => void;
-}
-
-interface CallCardStyle {
-  borderColor: ColorValue;
-  borderWidth: number;
-  textColor: ColorValue;
-  status?: {
-    backgroundColor: ColorValue;
-    iconColor: ColorValue;
-    iconName: string;
-  };
-}
-
-export class CallCard extends React.PureComponent<CallCardProps> {
+export default class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
     const { course, showStatus } = this.props;
     const now = moment();

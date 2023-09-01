@@ -1,9 +1,9 @@
+import theme from '~/app/theme';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IPresencesReduxState } from './reducer';
-import theme from '~/app/theme';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;

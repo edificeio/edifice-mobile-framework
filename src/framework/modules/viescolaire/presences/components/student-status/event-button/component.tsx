@@ -1,34 +1,14 @@
 import * as React from 'react';
-import { ColorValue, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, BodyText } from '~/framework/components/text';
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.small,
-    padding: UI_SIZES.spacing.minor,
-    borderRadius: UI_SIZES.radius.newCard,
-  },
-  containerDisabled: {
-    backgroundColor: theme.palette.grey.pearl,
-  },
-});
+import styles from './styles';
+import type { EventButtonProps } from './types';
 
-type EventButtonProps = {
-  backgroundColor: ColorValue;
-  iconName: string;
-  text: string;
-  disabled?: boolean;
-  isSelected?: boolean;
-  onPress: () => void;
-};
-
-export const EventButton = (props: EventButtonProps) => {
+export default function EventButton(props: EventButtonProps) {
   const TextComponent = props.disabled || props.isSelected ? BodyBoldText : BodyText;
   return (
     <TouchableOpacity
@@ -43,4 +23,4 @@ export const EventButton = (props: EventButtonProps) => {
       <TextComponent>{props.text}</TextComponent>
     </TouchableOpacity>
   );
-};
+}

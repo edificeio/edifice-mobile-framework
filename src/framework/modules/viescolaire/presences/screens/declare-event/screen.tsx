@@ -18,7 +18,7 @@ import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
+import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import { EventType, ICourse, IEvent } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';

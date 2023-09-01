@@ -24,8 +24,8 @@ import {
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
-import { CallSummary } from '~/framework/modules/viescolaire/presences/components/CallSummary';
+import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
+import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
 import { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
