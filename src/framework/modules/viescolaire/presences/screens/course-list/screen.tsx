@@ -222,7 +222,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
               customStyle={styles.emptyScreenContainer}
             />
           }
-          contentContainerStyle={styles.listContentContainer}
+          contentContainerStyle={props.courses.length ? styles.listContentContainer : undefined}
         />
         {renderBottomSheet()}
       </View>
