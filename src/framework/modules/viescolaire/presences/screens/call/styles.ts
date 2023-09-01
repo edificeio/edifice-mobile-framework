@@ -10,9 +10,7 @@ export default StyleSheet.create({
     rowGap: UI_SIZES.spacing.tiny,
   },
   listHeaderContainer: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingTop: UI_SIZES.spacing.medium,
-    paddingBottom: UI_SIZES.spacing.big,
+    padding: UI_SIZES.spacing.medium,
     marginBottom: UI_SIZES.spacing.tiny,
     borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,

@@ -59,13 +59,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  dropdownItemRadioContainer: {
-    flexGrow: 1,
+  dropdownListContainer: {
+    borderRadius: UI_SIZES.radius.mediumPlus,
   },
   dropdownListContentContainer: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.minor,
     paddingVertical: UI_SIZES.spacing.small,
-    rowGap: UI_SIZES.spacing.minor,
+    rowGap: UI_SIZES.spacing.tiny,
   },
   mediumPaddingOutline: {
     paddingHorizontal: UI_SIZES.spacing.small,

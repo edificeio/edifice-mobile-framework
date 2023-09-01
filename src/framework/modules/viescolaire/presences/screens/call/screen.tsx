@@ -264,14 +264,16 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 };
 
 export default connect(
-  (state: IGlobalState) => {
+  (state: IGlobalState, props: PresencesCallScreenPrivateProps) => {
     const presencesState = moduleConfig.getState(state);
     const session = getSession();
+    const classCall = presencesState.classCall.data;
+    const { course } = props.route.params;
 
     return {
-      classCall: presencesState.classCall.data,
+      classCall,
       eventReasons: presencesState.eventReasons.data,
-      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+      initialLoadingState: classCall?.courseId === course.id ? AsyncPagedLoadingState.DONE : AsyncPagedLoadingState.PRISTINE,
       session,
     };
   },
