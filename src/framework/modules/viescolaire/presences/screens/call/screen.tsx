@@ -7,17 +7,17 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesClassCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
-import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
-import { CallSummary } from '~/framework/modules/viescolaire/presences/components/CallSummary';
-import StudentListItem from '~/framework/modules/viescolaire/presences/components/StudentListItem';
-import { StudentStatus } from '~/framework/modules/viescolaire/presences/components/StudentStatus';
+import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
+import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
+import StudentListItem from '~/framework/modules/viescolaire/presences/components/student-list-item';
+import StudentStatus from '~/framework/modules/viescolaire/presences/components/student-status';
 import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -235,7 +235,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
             <StudentListItem student={item} isSelected={item.id === selectedStudentId} onPress={() => openStudentStatus(item.id)} />
           )}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-          ListHeaderComponent={<CallCard course={course} disabled />}
+          ListHeaderComponent={<CallCard course={course} showStatus disabled />}
           ListFooterComponent={renderFooter}
           ListHeaderComponentStyle={styles.listHeaderContainer}
         />

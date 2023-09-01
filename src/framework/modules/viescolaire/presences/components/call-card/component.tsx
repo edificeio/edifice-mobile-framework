@@ -1,71 +1,30 @@
 import moment, { Moment } from 'moment';
 import React from 'react';
-import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, HeadingSText } from '~/framework/components/text';
-import { ICourse } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    backgroundColor: theme.ui.background.card,
-    borderRadius: UI_SIZES.radius.card,
-    overflow: 'hidden',
-  },
-  leftContainer: {
-    flexShrink: 1,
-    justifyContent: 'space-evenly',
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.small,
-    rowGap: UI_SIZES.spacing.minor,
-  },
-  rowContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.minor,
-  },
-  roomContainer: {
-    flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.minor,
-  },
-  roomText: {
-    color: theme.ui.text.light,
-  },
-  statusContainer: {
-    justifyContent: 'center',
-    padding: UI_SIZES.spacing.minor,
-  },
-});
+import styles from './styles';
+import type { CallCardProps, CallCardStyle } from './types';
 
-interface CallCardProps {
-  course: ICourse;
-  disabled?: boolean;
-  onPress?: () => void;
-}
-
-interface CallCardStyle {
-  borderColor: ColorValue;
-  borderWidth: number;
-  status: {
-    backgroundColor: ColorValue;
-    iconColor: ColorValue;
-    iconName: string;
-  };
-  textColor: ColorValue;
-}
-
-export class CallCard extends React.PureComponent<CallCardProps> {
+export default class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
-    const { course } = this.props;
+    const { course, showStatus } = this.props;
     const now = moment();
     const isValidated = course.registerStateId === 3;
 
+    if (!showStatus) {
+      return {
+        borderColor: theme.palette.grey.graphite,
+        borderWidth: UI_SIZES.border.thin,
+        textColor: theme.ui.text.regular,
+      };
+    }
     if (now.isAfter(course.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.warning.pale,
@@ -112,10 +71,10 @@ export class CallCard extends React.PureComponent<CallCardProps> {
   }
 
   public render() {
-    const { course: call, disabled, onPress } = this.props;
-    const hoursLabel = this.getHoursLabel(call.startDate, call.endDate);
-    const roomLabel = call.roomLabels[0];
-    const classLabel = call.classes.length ? call.classes : call.groups;
+    const { course, disabled, showStatus, onPress } = this.props;
+    const hoursLabel = this.getHoursLabel(course.startDate, course.endDate);
+    const roomLabel = course.roomLabels[0];
+    const classLabel = course.classes.length ? course.classes : course.groups;
     const { borderColor, borderWidth, status, textColor } = this.getStatusStyle();
 
     return (
@@ -127,15 +86,21 @@ export class CallCard extends React.PureComponent<CallCardProps> {
             {roomLabel ? (
               <View style={styles.roomContainer}>
                 <BodyText style={styles.roomText}>-</BodyText>
-                <BodyText style={styles.roomText}>{I18n.get('presences-courselist-callcard-room', { name: roomLabel })}</BodyText>
+                <BodyText numberOfLines={1} style={styles.roomText}>
+                  {I18n.get('presences-courselist-callcard-room', { name: roomLabel })}
+                </BodyText>
               </View>
             ) : null}
           </View>
-          <HeadingSText style={{ color: textColor }}>{appConf.is1d ? hoursLabel : classLabel}</HeadingSText>
+          <HeadingSText numberOfLines={1} style={{ color: textColor }}>
+            {appConf.is1d ? hoursLabel : classLabel}
+          </HeadingSText>
         </View>
-        <View style={[styles.statusContainer, { backgroundColor: status.backgroundColor }]}>
-          <Picture type="NamedSvg" name={status.iconName} width={32} height={32} fill={status.iconColor} />
-        </View>
+        {showStatus ? (
+          <View style={[styles.statusContainer, { backgroundColor: status!.backgroundColor }]}>
+            <Picture type="NamedSvg" name={status!.iconName} width={32} height={32} fill={status!.iconColor} />
+          </View>
+        ) : null}
       </TouchableOpacity>
     );
   }

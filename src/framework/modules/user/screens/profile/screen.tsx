@@ -12,7 +12,7 @@ import theme from '~/app/theme';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { ImagePicked, MenuAction } from '~/framework/components/menus/actions';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';

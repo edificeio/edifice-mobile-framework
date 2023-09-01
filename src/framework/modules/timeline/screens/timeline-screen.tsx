@@ -11,7 +11,7 @@ import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_STYLES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';

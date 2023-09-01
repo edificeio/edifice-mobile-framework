@@ -16,7 +16,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';

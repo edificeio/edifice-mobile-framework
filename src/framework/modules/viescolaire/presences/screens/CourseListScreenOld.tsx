@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';

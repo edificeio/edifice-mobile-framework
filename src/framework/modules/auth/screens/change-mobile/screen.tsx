@@ -19,7 +19,7 @@ import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';

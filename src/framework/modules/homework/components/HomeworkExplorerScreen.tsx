@@ -6,7 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import Explorer from '~/framework/components/explorer';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';

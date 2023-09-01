@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { LvsNavigationParams, lvsRouteNames } from '~/framework/modules/connectors/lvs/navigation';
 import redirect from '~/framework/modules/connectors/lvs/service/redirect';

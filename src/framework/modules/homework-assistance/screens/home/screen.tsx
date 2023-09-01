@@ -8,7 +8,8 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
@@ -26,7 +27,6 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import { HomeworkAssistanceHomeScreenPrivateProps } from './types';
-import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,

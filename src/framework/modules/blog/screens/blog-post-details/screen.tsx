@@ -16,7 +16,7 @@ import { BottomSheet } from '~/framework/components/BottomSheet';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';

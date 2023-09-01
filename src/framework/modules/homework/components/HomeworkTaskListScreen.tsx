@@ -9,12 +9,11 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { Icon } from '~/framework/components/icon';
 import Label from '~/framework/components/label';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
-import { PageView } from '~/framework/components/page';
+import { PageView, pageGutterSize } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
@@ -78,13 +77,13 @@ type DataTypeOrFooter = DataType | { type: 'footer'; data: [{ type: 'footer' }];
 const styles = StyleSheet.create({
   buttonPastHomework: {
     alignSelf: 'center',
+    marginBottom: UI_SIZES.spacing.big,
   },
   dayCheckpoint: {
     zIndex: 1,
   },
   dayCheckpointContainer: {
     marginBottom: UI_SIZES.spacing.tiny,
-    marginTop: UI_SIZES.spacing.big,
   },
   footer: {
     flexDirection: 'row',
@@ -104,8 +103,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   labelContainer: {
-    marginTop: UI_SIZES.spacing.big,
     marginBottom: UI_SIZES.spacing.small,
+  },
+  lastCard: {
+    marginBottom: UI_SIZES.spacing.big,
   },
   taskList: {
     flex: 1,
@@ -369,7 +370,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const { navigation, diaryId } = this.props;
     const stylesContentSectionList = {
       padding: this.hasHomework() ? UI_SIZES.spacing.medium : undefined,
-      paddingTop: this.hasHomework() ? undefined : 0,
+      paddingTop: !this.hasPastHomeWork() ? UI_SIZES.spacing.big + pageGutterSize : this.hasHomework() ? undefined : 0,
       flex: this.noFutureHomeworkHiddenPast() ? 1 : undefined,
     };
     const displayEntry = item => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId });
@@ -401,23 +402,25 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
                   <View style={styles.dayCheckpoint}>
                     <HomeworkDayCheckpoint date={title} />
                   </View>
-                  <HomeworkTimeline topPosition={UI_SIZES.spacing.tiny} color={this.getTimlineColor(title)} />
+                  <HomeworkTimeline topPosition={UI_SIZES.spacing.small} color={this.getTimlineColor(title)} />
                 </View>
               );
             }
           }}
           renderItem={({ item, index, section }) => {
+            const isLastItem = index === section?.data?.length - 1;
             return (item as unknown as { type: string }).type !== 'day' ? (
               this.renderFooterItem()
             ) : (
               <>
-                <HomeworkTimeline color={this.getTimlineColor(section.title)} />
+                <HomeworkTimeline topPosition={UI_SIZES.spacing.tiny} color={this.getTimlineColor(section.title)} />
                 <HomeworkCard
                   key={index}
                   title={item.title}
                   content={item.content}
                   date={item.date}
                   onPress={() => displayEntry(item)}
+                  style={isLastItem && styles.lastCard}
                 />
               </>
             );

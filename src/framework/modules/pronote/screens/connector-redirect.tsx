@@ -7,7 +7,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import type { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';

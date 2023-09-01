@@ -1,49 +1,14 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
+import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: UI_SIZES.spacing.minor,
-    paddingVertical: UI_SIZES.spacing.small,
-    marginHorizontal: UI_SIZES.spacing.minor,
-  },
-  containerSelected: {
-    backgroundColor: theme.palette.primary.pale,
-    borderRadius: UI_SIZES.radius.medium,
-  },
-  lastCourseAbsentPicture: {
-    marginRight: UI_SIZES.spacing.small,
-  },
-  leftContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexShrink: 1,
-  },
-  nameText: {
-    marginHorizontal: UI_SIZES.spacing.small,
-    flexShrink: 1,
-  },
-  statusesContainer: {
-    flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.minor,
-  },
-});
-
-type StudentListItemProps = {
-  student: IClassCallStudent;
-  isSelected?: boolean;
-  onPress: () => void;
-};
+import styles from './styles';
+import type { StudentListItemProps } from './types';
 
 export default class StudentListItem extends React.PureComponent<StudentListItemProps> {
   constructor(props: StudentListItemProps) {

@@ -1,43 +1,17 @@
 import * as React from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
-import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
+import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { EventButton } from './EventButton';
+import EventButton from './event-button';
+import styles from './styles';
+import type { StudentStatusProps } from './types';
 
-const styles = StyleSheet.create({
-  container: {
-    rowGap: UI_SIZES.spacing.small,
-  },
-  nameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    columnGap: UI_SIZES.spacing.small,
-    marginBottom: UI_SIZES.spacing.small,
-  },
-  separatorContainer: {
-    height: 1,
-    marginHorizontal: UI_SIZES.spacing.minor,
-    backgroundColor: theme.palette.grey.cloudy,
-  },
-});
-
-type StudentStatusProps = {
-  hasAbsenceReasons: boolean;
-  student?: IClassCallStudent;
-  style?: ViewStyle;
-  createAbsence: (studentId: string) => Promise<void>;
-  deleteAbsence: (eventId: number) => Promise<void>;
-  dismissBottomSheet: () => void;
-  openEvent: (student: IClassCallStudent, type: EventType) => void;
-};
-
-export const StudentStatus = ({
+export default function StudentStatus({
   hasAbsenceReasons,
   student,
   style,
@@ -45,7 +19,7 @@ export const StudentStatus = ({
   deleteAbsence,
   dismissBottomSheet,
   openEvent,
-}: StudentStatusProps) => {
+}: StudentStatusProps) {
   if (!student) return null;
   const isAbsent = student.events.some(event => event.typeId === EventType.ABSENCE);
   const hasSecondaryEvent = student.events.some(event => [EventType.LATENESS, EventType.DEPARTURE].includes(event.typeId));
@@ -111,4 +85,4 @@ export const StudentStatus = ({
       />
     </View>
   );
-};
+}

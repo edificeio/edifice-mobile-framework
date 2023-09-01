@@ -9,8 +9,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
@@ -24,8 +23,8 @@ import {
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
-import { CallSummary } from '~/framework/modules/viescolaire/presences/components/CallSummary';
+import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
+import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
 import { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -208,7 +207,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
         <FlatList
           data={props.courses}
-          renderItem={({ item }) => <CallCard course={item} onPress={() => onPressCourse(item)} />}
+          renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
           keyExtractor={item => item.id + item.startDate}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={
@@ -222,7 +221,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
               customStyle={styles.emptyScreenContainer}
             />
           }
-          contentContainerStyle={styles.listContentContainer}
+          contentContainerStyle={props.courses.length ? styles.listContentContainer : undefined}
         />
         {renderBottomSheet()}
       </View>

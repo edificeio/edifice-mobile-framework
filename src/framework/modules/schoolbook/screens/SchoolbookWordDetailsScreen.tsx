@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { InfoCommentField } from '~/framework/components/commentField';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';

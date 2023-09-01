@@ -1,10 +1,9 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 
-import { EmptyScreen } from './emptyScreen';
-
-export const EmptyConnectionScreen = () => {
+const EmptyConnectionScreen = () => {
   return (
     <EmptyScreen
       svgImage="empty-light"
@@ -13,3 +12,5 @@ export const EmptyConnectionScreen = () => {
     />
   );
 };
+
+export default EmptyConnectionScreen;
