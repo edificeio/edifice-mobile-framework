@@ -12,7 +12,7 @@ import UserList, { IUserListItem, UserListProps } from '~/framework/components/U
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import type { PictureProps } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';

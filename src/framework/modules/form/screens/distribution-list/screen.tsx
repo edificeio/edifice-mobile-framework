@@ -1,19 +1,18 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { SearchBar } from '~/framework/components/searchBar';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchFormDistributionsAction, fetchFormsReceivedAction } from '~/framework/modules/form/actions';
-import { SearchBar } from '~/framework/components/searchBar';
 import { FormDistributionCard } from '~/framework/modules/form/components/FormDistributionCard';
 import FormDistributionListModal from '~/framework/modules/form/components/FormDistributionListModal';
 import { DistributionStatus, IForm } from '~/framework/modules/form/model';

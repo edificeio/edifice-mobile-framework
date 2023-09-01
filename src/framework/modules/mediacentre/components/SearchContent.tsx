@@ -3,17 +3,17 @@ import { Image, StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
 import { SearchFilter } from './SearchFilter';
-import SecondaryButton from '~/framework/components/buttons/secondary';
 
 const styles = StyleSheet.create({
   fieldContainer: {

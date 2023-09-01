@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IUser } from '~/framework/modules/auth/model';

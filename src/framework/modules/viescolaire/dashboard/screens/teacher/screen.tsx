@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';

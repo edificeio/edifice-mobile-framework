@@ -12,8 +12,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import Explorer, {
   IExplorerFolderItem,
   IExplorerResourceItemWithIcon,

@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';

@@ -11,8 +11,9 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import DateTimePicker from '~/framework/components/dateTimePicker';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
@@ -37,7 +38,6 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
-import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,

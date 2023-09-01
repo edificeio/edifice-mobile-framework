@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { RefreshControl, ScrollView, ScrollViewProps } from 'react-native';
 
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 
 export enum LoadingState {

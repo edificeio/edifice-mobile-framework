@@ -8,14 +8,15 @@ import * as React from 'react';
 import { ColorValue, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
+import { PageViewStyle } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
+import { HeadingSText, SmallText } from '~/framework/components/text';
 
-import { UI_SIZES, getScaleImageSize } from './constants';
-import { PageViewStyle } from './page';
-import { HeadingSText, SmallText } from './text';
-import PrimaryButton from './buttons/primary';
+import styles from './styles';
 
-export const EmptyScreen = ({
+const EmptyScreen = ({
   svgImage,
   title,
   text,
@@ -50,26 +51,16 @@ export const EmptyScreen = ({
         },
         customStyle,
       ]}>
-      <NamedSVG style={{ alignSelf: 'center' }} name={svgImage} width={imageWidth} height={imageHeight} fill={svgFillColor} />
+      <NamedSVG style={styles.icon} name={svgImage} width={imageWidth} height={imageHeight} fill={svgFillColor} />
       {title ? (
-        <HeadingSText
-          numberOfLines={2}
-          style={{
-            textAlign: 'center',
-            color: textColor ?? theme.palette.primary.regular,
-            marginTop: UI_SIZES.spacing.large,
-          }}>
+        <HeadingSText numberOfLines={2} style={[styles.title, { color: textColor ?? theme.palette.primary.regular }]}>
           {title}
         </HeadingSText>
       ) : null}
       {text ? (
         <SmallText
           // numberOfLines={5}
-          style={{
-            textAlign: 'center',
-            ...(textColor ? { color: textColor } : {}),
-            marginTop: UI_SIZES.spacing.small,
-          }}>
+          style={[styles.text, textColor ? { color: textColor } : {}]}>
           {text}
         </SmallText>
       ) : null}
@@ -81,3 +72,5 @@ export const EmptyScreen = ({
     </PageViewStyle>
   );
 };
+
+export default EmptyScreen;

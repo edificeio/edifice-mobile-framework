@@ -13,7 +13,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';

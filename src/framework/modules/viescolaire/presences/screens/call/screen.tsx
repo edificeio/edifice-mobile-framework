@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';

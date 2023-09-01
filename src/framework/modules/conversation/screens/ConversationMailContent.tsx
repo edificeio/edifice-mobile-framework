@@ -11,7 +11,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
