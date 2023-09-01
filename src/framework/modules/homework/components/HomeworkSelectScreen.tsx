@@ -11,7 +11,7 @@ import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Image } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  diaryItemSharedText: { marginTop: UI_SIZES.spacing.tiny },
   diaryItemTexts: {
     flex: 1,
     marginLeft: UI_SIZES.spacing.small,
@@ -174,12 +173,12 @@ export class HomeworkSelectScreen extends React.PureComponent<HomeworkSelectScre
                 </View>
               )}
               <View style={styles.diaryItemTexts}>
-                <SmallBoldText numberOfLines={1}>{diary.title}</SmallBoldText>
-                <CaptionText style={styles.diaryItemSharedText}>
+                <BodyBoldText numberOfLines={1}>{diary.title}</BodyBoldText>
+                <SmallText>
                   {I18n.get(`homework-select-sharedtonbperson${diaryShareNumber === 1 ? '' : 's'}`, {
                     nb: diaryShareNumber || 0,
                   })}
-                </CaptionText>
+                </SmallText>
               </View>
             </View>
           }
