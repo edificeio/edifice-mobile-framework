@@ -20,18 +20,19 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     flexShrink: 1,
-    justifyContent: 'space-evenly',
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.small,
     rowGap: UI_SIZES.spacing.minor,
   },
   rowContainer: {
     flexDirection: 'row',
+    flexShrink: 1,
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
   },
   roomContainer: {
     flexDirection: 'row',
+    flexShrink: 1,
     columnGap: UI_SIZES.spacing.minor,
   },
   roomText: {
@@ -127,11 +128,15 @@ export class CallCard extends React.PureComponent<CallCardProps> {
             {roomLabel ? (
               <View style={styles.roomContainer}>
                 <BodyText style={styles.roomText}>-</BodyText>
-                <BodyText style={styles.roomText}>{I18n.get('presences-courselist-callcard-room', { name: roomLabel })}</BodyText>
+                <BodyText numberOfLines={1} style={styles.roomText}>
+                  {I18n.get('presences-courselist-callcard-room', { name: roomLabel })}
+                </BodyText>
               </View>
             ) : null}
           </View>
-          <HeadingSText style={{ color: textColor }}>{appConf.is1d ? hoursLabel : classLabel}</HeadingSText>
+          <HeadingSText numberOfLines={1} style={{ color: textColor }}>
+            {appConf.is1d ? hoursLabel : classLabel}
+          </HeadingSText>
         </View>
         <View style={[styles.statusContainer, { backgroundColor: status.backgroundColor }]}>
           <Picture type="NamedSvg" name={status.iconName} width={32} height={32} fill={status.iconColor} />
