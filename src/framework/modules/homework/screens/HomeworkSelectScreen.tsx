@@ -13,6 +13,7 @@ import {
 } from '~/framework/modules/homework/components/HomeworkSelectScreen';
 
 import { fetchHomeworkDiaryList } from '../actions/diaryList';
+import { hasPermissionManager, modifyHomeworkEntryResourceRight } from '../rights';
 
 const mapStateToProps: (state: IGlobalState) => HomeworkSelectScreenDataProps = (state: IGlobalState) => {
   const session = getSession();
@@ -28,11 +29,15 @@ const mapStateToProps: (state: IGlobalState) => HomeworkSelectScreenDataProps = 
     title: homeworkDiaryList.data[diaryId].title,
     thumbnail: homeworkDiaryList.data[diaryId].thumbnail,
     shared: homeworkDiaryList.data[diaryId].shared,
+    owner: homeworkDiaryList.data[diaryId].owner,
   }));
+  const diaryListWithCreationRight = flatHomeworkDiaryList.filter(diary =>
+    hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session),
+  );
 
   return {
     session,
-    diaryList: flatHomeworkDiaryList,
+    diaryList: diaryListWithCreationRight,
     isFetching: homeworkDiaryList.isFetching,
     didInvalidate: homeworkDiaryList.didInvalidate,
   };

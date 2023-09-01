@@ -1,19 +1,19 @@
 /**
  * Homework workflow
  */
-import { Alert } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
+import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
 import { fetchHomeworkDiaryList } from './actions/diaryList';
 import { homeworkRouteNames } from './navigation';
 import { IHomeworkDiary } from './reducers/diaryList';
-import { registerTimelineWorkflow } from '../timeline/timeline-modules';
 
 export const deleteHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|deleteEntry';
 export const modifyHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers-HomeworksController|modifyEntry';
@@ -41,12 +41,24 @@ export default () =>
             await (getStore().dispatch as ThunkDispatch<any, any, any>)(fetchHomeworkDiaryList());
             const diaryList = getStore().getState().homework?.diaryList?.data;
             const diaryIdsList = Object.getOwnPropertyNames(diaryList);
-            const hasOneDiary = diaryIdsList?.length === 1;
+            const flatDiaryList = diaryIdsList?.map(diaryId => ({
+              id: diaryId,
+              name: diaryList[diaryId].name,
+              title: diaryList[diaryId].title,
+              thumbnail: diaryList[diaryId].thumbnail,
+              shared: diaryList[diaryId].shared,
+              owner: diaryList[diaryId].owner,
+            }));
+            const diaryListWithCreationRight = flatDiaryList?.filter(diary =>
+              hasPermissionManager(diary, modifyHomeworkEntryResourceRight, session),
+            );
+            const hasOneDiary = diaryListWithCreationRight?.length === 1;
+
             if (hasOneDiary) {
               navigate(homeworkRouteNames.homeworkCreate);
             } else navigate(homeworkRouteNames.homeworkSelect);
           } catch {
-            Alert.alert('', I18n.get('homework-rights-error-text'));
+            Toast.showError(I18n.get('homework-rights-error-text'));
           }
         },
       }
