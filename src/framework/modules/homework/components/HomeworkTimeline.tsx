@@ -5,9 +5,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export interface IHomeworkTimelineProps {
-  leftPosition: number;
+  leftPosition?: number;
   topPosition?: number;
-  height?: number;
   color?: ColorValue;
 }
 
@@ -15,18 +14,18 @@ const styles = StyleSheet.create({
   timeline: {
     width: UI_SIZES.dimensions.width.tiny,
     position: 'absolute',
+    height: '200%',
   },
 });
 
-const HomeworkTimeline = ({ height, leftPosition, topPosition, color }: IHomeworkTimelineProps) => (
+const HomeworkTimeline = ({ color, leftPosition, topPosition }: IHomeworkTimelineProps) => (
   <View
     style={[
       styles.timeline,
       {
         backgroundColor: color || theme.palette.grey.pearl,
-        left: leftPosition,
+        left: leftPosition || UI_SIZES.spacing.minor,
         top: topPosition,
-        height: height || UI_SIZES.screen.height,
       },
     ]}
   />

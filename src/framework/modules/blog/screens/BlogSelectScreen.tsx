@@ -10,11 +10,11 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { Icon } from '~/framework/components/icon';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import { NamedSVG } from '~/framework/components/picture';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
@@ -22,7 +22,7 @@ import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/n
 import { Blog, BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
+import { Image } from '~/framework/util/media';
 
 export interface BlogSelectScreenDataProps {
   session?: ISession;
@@ -62,6 +62,16 @@ const styles = StyleSheet.create({
   listBlog: {
     flexGrow: 1,
   },
+  blogItemImage: {
+    width: UI_SIZES.elements.avatar.lg,
+    aspectRatio: UI_SIZES.aspectRatios.square,
+    borderRadius: UI_SIZES.radius.medium,
+  },
+  blogItemNoImage: {
+    backgroundColor: theme.palette.complementary.indigo.pale,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export const computeNavBar = ({
@@ -74,6 +84,46 @@ export const computeNavBar = ({
     title: I18n.get('blog-select-title'),
   }),
 });
+
+const BlogItem = ({ blog, navigation }: { blog: Blog; navigation: any }) => {
+  const [thumbnailError, setThumbnailError] = React.useState(false);
+
+  const blogShareNumber = blog.shared?.length;
+
+  return (
+    <TouchableOpacity onPress={() => navigation.navigate(blogRouteNames.blogCreatePost, { blog })}>
+      <ListItem
+        leftElement={
+          <View style={styles.blogItem}>
+            {blog.thumbnail && !thumbnailError ? (
+              <Image source={{ uri: blog.thumbnail }} style={styles.blogItemImage} onError={() => setThumbnailError(true)} />
+            ) : (
+              <View style={[styles.blogItemImage, styles.blogItemNoImage]}>
+                <NamedSVG name="blog" fill={theme.palette.complementary.indigo.regular} width={32} height={32} />
+              </View>
+            )}
+            <View style={styles.blogItemTexts}>
+              <BodyBoldText numberOfLines={1}>{blog.title}</BodyBoldText>
+              <SmallText>
+                {I18n.get(`blog-select-sharedtonbperson${blogShareNumber === 1 ? '' : 's'}`, {
+                  nb: blogShareNumber || 0,
+                })}
+              </SmallText>
+            </View>
+          </View>
+        }
+        rightElement={
+          <NamedSVG
+            name="ui-rafterRight"
+            fill={theme.palette.primary.regular}
+            width={UI_SIZES.elements.icon.small}
+            height={UI_SIZES.elements.icon.small}
+          />
+        }
+      />
+    </TouchableOpacity>
+  );
+};
 
 export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps, BlogSelectScreenState> {
   state: BlogSelectScreenState = {
@@ -128,7 +178,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
     return (
       <FlatList
         data={blogsData}
-        renderItem={({ item }: { item: Blog }) => this.renderBlog(item)}
+        renderItem={({ item }: { item: Blog }) => <BlogItem blog={item} navigation={this.props.navigation} />}
         keyExtractor={(item: Blog) => item.id.toString()}
         contentContainerStyle={[
           styles.listBlog,
@@ -158,36 +208,6 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
         buttonText={hasBlogCreationRights ? I18n.get('blog-select-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
-    );
-  }
-
-  renderBlog(blog: Blog) {
-    const { navigation } = this.props;
-    const blogShareNumber = blog.shared?.length;
-    return (
-      <TouchableOpacity onPress={() => navigation.navigate(blogRouteNames.blogCreatePost, { blog })}>
-        <ListItem
-          leftElement={
-            <View style={styles.blogItem}>
-              <GridAvatars
-                users={[blog.thumbnail ? { uri: blog.thumbnail } : require('ASSETS/images/resource-avatar.png')]}
-                fallback={require('ASSETS/images/resource-avatar.png')}
-              />
-              <View style={styles.blogItemTexts}>
-                <SmallBoldText numberOfLines={1}>{blog.title}</SmallBoldText>
-                <CaptionText style={{ marginTop: UI_SIZES.spacing.minor }}>
-                  {I18n.get(`blog-select-sharedtonbperson${blogShareNumber === 1 ? '' : 's'}`, {
-                    nb: blogShareNumber || 0,
-                  })}
-                </CaptionText>
-              </View>
-            </View>
-          }
-          rightElement={
-            <Icon name="arrow_down" color={theme.palette.grey.graphite} style={{ transform: [{ rotate: '270deg' }] }} />
-          }
-        />
-      </TouchableOpacity>
     );
   }
 

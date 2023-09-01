@@ -8,7 +8,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import TextInput from '~/framework/components/inputs/text';
@@ -69,10 +69,6 @@ export interface BlogCreatePostScreenState {
   thumbnailBlog: string | undefined;
 }
 
-const SIZE_THUMBNAIL = getScaleWidth(32);
-const SIZE_THUMBNAIL_SVG = getScaleWidth(22);
-const RADIUS_THUMBNAIL = SIZE_THUMBNAIL / 2;
-
 const styles = StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
@@ -87,15 +83,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   thumbnailBlog: {
-    height: SIZE_THUMBNAIL,
-    width: SIZE_THUMBNAIL,
-    borderRadius: RADIUS_THUMBNAIL,
+    width: UI_SIZES.elements.avatar.lg,
+    aspectRatio: UI_SIZES.aspectRatios.square,
+    borderRadius: UI_SIZES.radius.medium,
   },
   thumbnailNoBlog: {
     backgroundColor: theme.palette.complementary.indigo.pale,
-    height: SIZE_THUMBNAIL,
-    width: SIZE_THUMBNAIL,
-    borderRadius: RADIUS_THUMBNAIL,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -248,13 +241,8 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         </View>
       );
     return (
-      <View style={styles.thumbnailNoBlog}>
-        <NamedSVG
-          name="blog"
-          fill={theme.palette.complementary.indigo.regular}
-          height={SIZE_THUMBNAIL_SVG}
-          width={SIZE_THUMBNAIL_SVG}
-        />
+      <View style={[styles.thumbnailBlog, styles.thumbnailNoBlog]}>
+        <NamedSVG name="blog" fill={theme.palette.complementary.indigo.regular} height={32} width={32} />
       </View>
     );
   }

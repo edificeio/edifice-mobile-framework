@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Pressable, View } from 'react-native';
-import DropDownPicker, { RenderListItemPropsInterface, ValueType } from 'react-native-dropdown-picker';
+import { View } from 'react-native';
+import DropDownPicker, { ValueType } from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
-import RadioButton from '~/framework/components/buttons/radio';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyItalicText, BodyText } from '~/framework/components/text';
 
+import DropdownListItem from './list-item';
 import styles, { getToggleStyle } from './styles';
 import { DropdownPickerProps } from './types';
 
@@ -49,30 +49,20 @@ export const DropdownPicker = <T extends ValueType>(props: DropdownPickerProps<T
     />
   );
 
-  const renderListItem = (itemProps: RenderListItemPropsInterface<T>) => (
-    <Pressable onPress={() => itemProps.onPress(itemProps.item)} style={styles.dropdownItemContainer}>
-      {itemProps.IconComponent}
-      <RadioButton
-        isChecked={itemProps.isSelected}
-        label={itemProps.label}
-        onPress={() => itemProps.onPress(itemProps.item)}
-        style={styles.dropdownItemRadioContainer}
-      />
-    </Pressable>
-  );
-
   return (
     <DropDownPicker
       {...props}
       BodyComponent={renderBody}
       ArrowUpIconComponent={renderArrowUpIcon}
       ArrowDownIconComponent={renderArrowDownIcon}
-      renderListItem={renderListItem}
+      renderListItem={DropdownListItem}
       disableBorderRadius={false}
       textStyle={styles.text}
       dropDownContainerStyle={styles.dropdownContainer}
-      listItemContainerStyle={styles.dropdownItemContainer}
-      flatListProps={{ contentContainerStyle: styles.dropdownListContentContainer }}
+      flatListProps={{
+        style: styles.dropdownListContainer,
+        contentContainerStyle: styles.dropdownListContentContainer,
+      }}
       {...getToggleStyle(type, size, open, style)}
     />
   );
