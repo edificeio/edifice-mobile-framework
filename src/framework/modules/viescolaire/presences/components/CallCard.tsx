@@ -47,26 +47,34 @@ const styles = StyleSheet.create({
 interface CallCardProps {
   course: ICourse;
   disabled?: boolean;
+  showStatus?: boolean;
   onPress?: () => void;
 }
 
 interface CallCardStyle {
   borderColor: ColorValue;
   borderWidth: number;
-  status: {
+  textColor: ColorValue;
+  status?: {
     backgroundColor: ColorValue;
     iconColor: ColorValue;
     iconName: string;
   };
-  textColor: ColorValue;
 }
 
 export class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
-    const { course } = this.props;
+    const { course, showStatus } = this.props;
     const now = moment();
     const isValidated = course.registerStateId === 3;
 
+    if (!showStatus) {
+      return {
+        borderColor: theme.palette.grey.graphite,
+        borderWidth: UI_SIZES.border.thin,
+        textColor: theme.ui.text.regular,
+      };
+    }
     if (now.isAfter(course.endDate)) {
       return {
         borderColor: isValidated ? theme.palette.status.success.pale : theme.palette.status.warning.pale,
@@ -113,10 +121,10 @@ export class CallCard extends React.PureComponent<CallCardProps> {
   }
 
   public render() {
-    const { course: call, disabled, onPress } = this.props;
-    const hoursLabel = this.getHoursLabel(call.startDate, call.endDate);
-    const roomLabel = call.roomLabels[0];
-    const classLabel = call.classes.length ? call.classes : call.groups;
+    const { course, disabled, showStatus, onPress } = this.props;
+    const hoursLabel = this.getHoursLabel(course.startDate, course.endDate);
+    const roomLabel = course.roomLabels[0];
+    const classLabel = course.classes.length ? course.classes : course.groups;
     const { borderColor, borderWidth, status, textColor } = this.getStatusStyle();
 
     return (
@@ -138,9 +146,11 @@ export class CallCard extends React.PureComponent<CallCardProps> {
             {appConf.is1d ? hoursLabel : classLabel}
           </HeadingSText>
         </View>
-        <View style={[styles.statusContainer, { backgroundColor: status.backgroundColor }]}>
-          <Picture type="NamedSvg" name={status.iconName} width={32} height={32} fill={status.iconColor} />
-        </View>
+        {showStatus ? (
+          <View style={[styles.statusContainer, { backgroundColor: status!.backgroundColor }]}>
+            <Picture type="NamedSvg" name={status!.iconName} width={32} height={32} fill={status!.iconColor} />
+          </View>
+        ) : null}
       </TouchableOpacity>
     );
   }

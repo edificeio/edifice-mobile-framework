@@ -208,7 +208,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
         <FlatList
           data={props.courses}
-          renderItem={({ item }) => <CallCard course={item} onPress={() => onPressCourse(item)} />}
+          renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
           keyExtractor={item => item.id + item.startDate}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={

@@ -235,7 +235,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
             <StudentListItem student={item} isSelected={item.id === selectedStudentId} onPress={() => openStudentStatus(item.id)} />
           )}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-          ListHeaderComponent={<CallCard course={course} disabled />}
+          ListHeaderComponent={<CallCard course={course} showStatus disabled />}
           ListFooterComponent={renderFooter}
           ListHeaderComponentStyle={styles.listHeaderContainer}
         />
