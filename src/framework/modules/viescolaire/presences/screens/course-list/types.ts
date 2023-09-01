@@ -2,12 +2,12 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ISession } from '~/framework/modules/auth/model';
 import type {
+  fetchPresencesClassCallAction,
   fetchPresencesCoursesAction,
-  fetchPresencesEventReasonsAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import type { ICourse, IEventReason } from '~/framework/modules/viescolaire/presences/model';
+import type { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -22,14 +22,14 @@ export interface PresencesCourseListScreenStoreProps {
   courses: ICourse[];
   registerId: string;
   registerPreference: string;
+  structureIds: string[];
   session?: ISession;
-  structureId?: string;
   teacherId?: string;
 }
 
 export interface PresencesCourseListScreenDispatchProps {
+  tryFetchClassCall: (...args: Parameters<typeof fetchPresencesClassCallAction>) => Promise<IClassCall>;
   tryFetchCourses: (...args: Parameters<typeof fetchPresencesCoursesAction>) => Promise<ICourse[]>;
-  tryFetchEventReasons: (...args: Parameters<typeof fetchPresencesEventReasonsAction>) => Promise<IEventReason[]>;
   tryFetchMultipleSlotsSetting: (...args: Parameters<typeof fetchPresencesMultipleSlotSettingAction>) => Promise<boolean>;
   tryFetchRegisterPreference: (...args: Parameters<typeof fetchPresencesRegisterPreferenceAction>) => Promise<string>;
 }

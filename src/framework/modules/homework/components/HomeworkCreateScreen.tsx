@@ -61,6 +61,11 @@ const styles = StyleSheet.create({
   button: {
     marginTop: UI_SIZES.spacing.large,
   },
+  dayPickerContainer: {
+    borderColor: theme.palette.grey.stone,
+    borderWidth: UI_SIZES.border.thin,
+    borderRadius: UI_SIZES.radius.selector,
+  },
   inputContainer: {
     marginTop: UI_SIZES.spacing.big,
   },
@@ -190,7 +195,9 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollView}>
             <InputContainer
               label={{ text: I18n.get('homework-create-date-title'), icon: 'ui-calendarLight' }}
-              input={<DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} />}
+              input={
+                <DayPicker onDateChange={selectedDate => this.setState({ date: selectedDate })} style={styles.dayPickerContainer} />
+              }
             />
             <InputContainer
               style={styles.inputContainer}

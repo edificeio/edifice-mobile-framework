@@ -7,6 +7,7 @@ export interface ICourse {
   endDate: Moment;
   groups: string[];
   id: string;
+  registerStateId: number;
   roomLabels: string[];
   startDate: Moment;
   structureId: string;

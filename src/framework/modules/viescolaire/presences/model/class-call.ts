@@ -18,6 +18,7 @@ export interface IClassCall {
   endDate: Moment;
   startDate: Moment;
   stateId: number;
+  structureId: string;
   students: IClassCallStudent[];
   subjectId: string;
 }

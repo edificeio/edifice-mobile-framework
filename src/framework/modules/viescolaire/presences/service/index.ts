@@ -289,6 +289,7 @@ const classCallAdapter = (data: IBackendClassCall): IClassCall => {
     endDate: moment(data.end_date),
     startDate: moment(data.start_date),
     stateId: data.state_id,
+    structureId: data.structure_id,
     students: data.students.map(student => ({
       events: student.events.map(eventAdapter),
       exempted: student.exempted,
@@ -311,6 +312,7 @@ const courseAdapter = (data: IBackendCourse): ICourse => {
     groups: data.groups,
     endDate: moment(data.endDate),
     id: data.id,
+    registerStateId: data.registerStateId,
     roomLabels: data.roomLabels,
     startDate: moment(data.startDate),
     structureId: data.structureId,
@@ -497,7 +499,7 @@ export const presencesService = {
     },
   },
   classCall: {
-    get: async (session: ISession, id: string) => {
+    get: async (session: ISession, id: number) => {
       const api = `/presences/registers/${id}`;
       const classCall = (await fetchJSONWithCache(api)) as IBackendClassCall;
       return classCallAdapter(classCall);
@@ -521,7 +523,7 @@ export const presencesService = {
       })) as { id: number };
       return classCall.id;
     },
-    updateStatus: async (session: ISession, id: string, status: number) => {
+    updateStatus: async (session: ISession, id: number, status: number) => {
       const api = `/presences/registers/${id}/status`;
       const body = JSON.stringify({
         state_id: status,
@@ -557,7 +559,7 @@ export const presencesService = {
     create: async (
       session: ISession,
       studentId: string,
-      callId: string,
+      callId: number,
       type: EventType,
       startDate: Moment,
       endDate: Moment,
@@ -590,7 +592,7 @@ export const presencesService = {
       session: ISession,
       id: number,
       studentId: string,
-      callId: string,
+      callId: number,
       type: EventType,
       startDate: Moment,
       endDate: Moment,
@@ -607,18 +609,53 @@ export const presencesService = {
         reason_id: reasonId,
         comment,
       });
-      const event = (await fetchJSONWithCache(api, {
+      await fetchWithCache(api, {
         method: 'PUT',
         body,
-      })) as IBackendEvent;
-      return eventAdapter(event);
+      });
     },
   },
   eventReasons: {
     get: async (session: ISession, structureId: string) => {
       const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
       const eventReasons = (await fetchJSONWithCache(api)) as IBackendEventReasonList;
-      return eventReasons.map(eventReasonAdapter);
+      return eventReasons.filter(reason => !reason.hidden).map(eventReasonAdapter);
+    },
+  },
+  eventReason: {
+    update: async (
+      session: ISession,
+      id: number,
+      studentId: string,
+      structureId: string,
+      callId: number,
+      type: EventType,
+      startDate: Moment,
+      endDate: Moment,
+      reasonId: number | null,
+    ) => {
+      const api = '/presences/events/reason';
+      const body = JSON.stringify({
+        events: [
+          {
+            register_id: callId,
+            student_id: studentId,
+            start_date: startDate,
+            end_date: endDate,
+            type_id: type,
+            id,
+            counsellor_input: true,
+            reason_id: reasonId,
+          },
+        ],
+        reasonId,
+        student_id: studentId,
+        structure_id: structureId,
+      });
+      await fetchWithCache(api, {
+        method: 'PUT',
+        body,
+      });
     },
   },
   history: {

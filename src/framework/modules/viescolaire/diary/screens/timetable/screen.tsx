@@ -1,13 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
@@ -88,17 +86,15 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 
   public render() {
     return (
-      <GestureHandlerRootView style={UI_STYLES.flex1}>
-        <PageView>
-          <StructurePicker />
-          <DiaryTeacherTimetable
-            {...this.props}
-            startDate={this.state.startDate}
-            selectedDate={this.state.selectedDate}
-            updateSelectedDate={this.updateSelectedDate}
-          />
-        </PageView>
-      </GestureHandlerRootView>
+      <PageView>
+        <StructurePicker />
+        <DiaryTeacherTimetable
+          {...this.props}
+          startDate={this.state.startDate}
+          selectedDate={this.state.selectedDate}
+          updateSelectedDate={this.updateSelectedDate}
+        />
+      </PageView>
     );
   }
 }

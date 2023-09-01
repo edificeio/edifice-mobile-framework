@@ -1,29 +1,34 @@
 import { StyleSheet } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  classroomContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: UI_SIZES.spacing.minor,
+  listFooterContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.tiny,
+    rowGap: UI_SIZES.spacing.tiny,
   },
-  classroomText: {
-    marginLeft: UI_SIZES.spacing.tiny,
+  listHeaderContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+    paddingBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.tiny,
+    borderBottomWidth: UI_SIZES.border.thin,
+    borderBottomColor: theme.palette.grey.cloudy,
   },
-  headerCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    marginBottom: UI_SIZES.spacing.medium,
+  pageContainer: {
+    backgroundColor: theme.palette.grey.white,
   },
-  nameText: {
-    marginLeft: UI_SIZES.spacing.minor,
+  separatorContainer: {
+    height: 1,
+    marginVertical: UI_SIZES.spacing.tiny,
+    backgroundColor: theme.palette.grey.cloudy,
   },
-  studentHiddenRowContainer: {
-    left: -70,
+  summaryContainer: {
+    paddingVertical: UI_SIZES.spacing.medium,
   },
-  validateButton: {
-    marginBottom: UI_SIZES.spacing.medium,
+  validateContainer: {
+    marginVertical: UI_SIZES.spacing.medium,
   },
 });

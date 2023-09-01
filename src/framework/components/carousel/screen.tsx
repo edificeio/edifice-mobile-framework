@@ -9,14 +9,13 @@ import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
 import Share from 'react-native-share';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -356,13 +355,11 @@ export function Carousel(props: ICarouselProps) {
   const navBarAndStatusBarHeight = useHeaderHeight();
 
   return (
-    <GestureHandlerRootView style={UI_STYLES.flex1}>
-      <PageView style={styles.page} showNetworkBar={false} showToast={false}>
-        <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
-        {imageViewer}
-        <ToastHandler offset={navBarAndStatusBarHeight + DEFAULTS.offset} />
-      </PageView>
-    </GestureHandlerRootView>
+    <PageView style={styles.page} showNetworkBar={false} showToast={false}>
+      <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
+      {imageViewer}
+      <ToastHandler offset={navBarAndStatusBarHeight + DEFAULTS.offset} />
+    </PageView>
   );
 }
 

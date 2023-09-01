@@ -15,6 +15,7 @@ import PresencesDeclareEventScreen, {
 } from '~/framework/modules/viescolaire/presences/screens/declare-event';
 import PresencesHistoryScreen, { computeNavBar as historyNavBar } from '~/framework/modules/viescolaire/presences/screens/history';
 import PresencesMementoScreen, { computeNavBar as mementoNavBar } from '~/framework/modules/viescolaire/presences/screens/memento';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -45,13 +46,15 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={callNavBar}
           initialParams={{}}
         />,
-        <Stack.Screen
-          key={presencesRouteNames.declareEvent}
-          name={presencesRouteNames.declareEvent}
-          component={PresencesDeclareEventScreen}
-          options={declareEventNavBar}
-          initialParams={{}}
-        />,
+        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+          <Stack.Screen
+            key={presencesRouteNames.declareEvent}
+            name={presencesRouteNames.declareEvent}
+            component={PresencesDeclareEventScreen}
+            options={declareEventNavBar}
+            initialParams={{}}
+          />
+        </Stack.Group>,
         <Stack.Screen
           key={presencesRouteNames.memento}
           name={presencesRouteNames.memento}
@@ -86,3 +89,5 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     }
     return <>{screens}</>;
   });
+
+setModalModeForRoutes([presencesRouteNames.declareEvent]);

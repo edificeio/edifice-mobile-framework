@@ -1,23 +1,23 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
+import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import SwipeableList from '~/framework/components/swipeableList';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
-import StudentRow from '~/framework/modules/viescolaire/presences/components/StudentRow';
+import { fetchPresencesClassCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
+import { CallCard } from '~/framework/modules/viescolaire/presences/components/CallCard';
+import { CallSummary } from '~/framework/modules/viescolaire/presences/components/CallSummary';
+import StudentListItem from '~/framework/modules/viescolaire/presences/components/StudentListItem';
+import { StudentStatus } from '~/framework/modules/viescolaire/presences/components/StudentStatus';
 import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -28,7 +28,6 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
-import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -42,7 +41,9 @@ export const computeNavBar = ({
 });
 
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
+  const [selectedStudentId, setSelectedStudentId] = React.useState<string | null>(null);
   const [isValidating, setValidating] = React.useState<boolean>(false);
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -50,10 +51,15 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
   const fetchCall = async () => {
     try {
+      const { eventReasons, session } = props;
       const { id } = props.route.params;
+      const structureCount = session?.user.structures?.length;
 
       if (!id) throw new Error();
-      await props.tryFetchClassCall(id);
+      const call = await props.tryFetchClassCall(id);
+      if (!eventReasons.length || structureCount !== 1) {
+        await props.tryFetchEventReasons(call.structureId);
+      }
     } catch {
       throw new Error();
     }
@@ -96,6 +102,24 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
+  const dismissBottomSheet = () => bottomSheetModalRef.current?.dismiss();
+
+  const openEvent = (student: IClassCallStudent, type: EventType) => {
+    const { classCall, eventReasons } = props;
+    const { course, id } = props.route.params;
+
+    if (!classCall) return Toast.showError(I18n.get('presences-call-error-text'));
+    dismissBottomSheet();
+    props.navigation.navigate(presencesRouteNames.declareEvent, {
+      callId: id,
+      course,
+      event: student.events.find(event => event.typeId === type),
+      reasons: eventReasons.filter(reason => reason.reasonTypeId === type),
+      student,
+      type,
+    });
+  };
+
   const createAbsence = async (studentId: string) => {
     try {
       const { classCall, session } = props;
@@ -110,13 +134,13 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     }
   };
 
-  const deleteAbsence = async (event: any) => {
+  const deleteAbsence = async (eventId: number) => {
     try {
       const { session } = props;
       const { id } = props.route.params;
 
       if (!session) throw new Error();
-      await presencesService.event.delete(session, event.id);
+      await presencesService.event.delete(session, eventId);
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
@@ -124,16 +148,25 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     }
   };
 
+  const openStudentStatus = (id: string) => {
+    setSelectedStudentId(id);
+    bottomSheetModalRef.current?.present();
+  };
+
+  const unselectStudent = () => setSelectedStudentId(null);
+
   const validateCall = async () => {
     try {
       const { navigation, session } = props;
-      const { id } = props.route.params;
+      const { course, id } = props.route.params;
 
       setValidating(true);
       if (!session) throw new Error();
       await presencesService.classCall.updateStatus(session, id, 3);
       navigation.goBack();
-      Toast.showSuccess(I18n.get('presences-call-successmessage'));
+      Toast.showSuccess(
+        I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),
+      );
     } catch {
       setValidating(false);
       Toast.showError(I18n.get('presences-call-error-text'));
@@ -148,9 +181,44 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     );
   };
 
-  const renderStudentsList = () => {
-    const { classCall, eventReasons, navigation } = props;
-    const { id } = props.route.params;
+  const renderBottomSheet = () => {
+    const student = props.classCall!.students.find(s => s.id === selectedStudentId);
+    return (
+      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={unselectStudent}>
+        <StudentStatus
+          student={student}
+          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === EventType.ABSENCE)}
+          createAbsence={createAbsence}
+          deleteAbsence={deleteAbsence}
+          dismissBottomSheet={dismissBottomSheet}
+          openEvent={openEvent}
+        />
+      </BottomSheetModal>
+    );
+  };
+
+  const renderFooter = () => {
+    return (
+      <View style={styles.listFooterContainer}>
+        <View style={styles.separatorContainer} />
+        <View style={styles.summaryContainer}>
+          <CallSummary call={props.classCall!} />
+        </View>
+        <View style={styles.separatorContainer} />
+        <PrimaryButton
+          text={I18n.get('presences-call-action')}
+          action={validateCall}
+          loading={isValidating}
+          iconLeft="ui-check"
+          style={styles.validateContainer}
+        />
+      </View>
+    );
+  };
+
+  const renderClassCall = () => {
+    const { classCall } = props;
+    const { course } = props.route.params;
     const students = classCall!.students
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(student => ({
@@ -158,109 +226,20 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
         ...student,
       }));
 
-    return classCall && students.length > 0 ? (
-      <>
-        <SwipeableList<IClassCallStudent & { key: string }>
-          data={students}
-          keyExtractor={(item: IClassCallStudent) => item.id}
-          renderItem={({ item }) => (
-            <StudentRow
-              student={item}
-              checkAbsent={() => createAbsence(item.id)}
-              uncheckAbsent={deleteAbsence}
-              openMemento={() => props.navigation.navigate(presencesRouteNames.memento, { studentId: item.id })}
-              openLateness={() => {
-                navigation.navigate(presencesRouteNames.declareEvent, {
-                  type: EventType.LATENESS,
-                  callId: id,
-                  student: item,
-                  startDate: classCall.startDate,
-                  endDate: classCall.endDate,
-                  event: item.events.find(event => event.typeId === EventType.LATENESS),
-                });
-              }}
-              openDeparture={() => {
-                navigation.navigate(presencesRouteNames.declareEvent, {
-                  type: EventType.DEPARTURE,
-                  callId: id,
-                  student: item,
-                  startDate: classCall.startDate,
-                  endDate: classCall.endDate,
-                  event: item.events.find(event => event.typeId === EventType.DEPARTURE),
-                });
-              }}
-            />
-          )}
-          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-          swipeActionWidth={70}
-          hiddenRowStyle={styles.studentHiddenRowContainer}
-          itemSwipeActionProps={({ item }) => ({
-            left: [
-              {
-                action: async row => {
-                  navigation.navigate(presencesRouteNames.declareEvent, {
-                    type: EventType.DEPARTURE,
-                    callId: id,
-                    student: item,
-                    startDate: classCall.startDate,
-                    endDate: classCall.endDate,
-                    event: item.events.find(e => e.typeId === EventType.DEPARTURE),
-                  });
-                  row[item.key]?.closeRow();
-                },
-                backgroundColor: viescoTheme.palette.presencesEvents.departure,
-                actionIcon: 'ui-walk',
-                actionIconSize: 28,
-              },
-              {
-                action: async row => {
-                  navigation.navigate(presencesRouteNames.declareEvent, {
-                    type: EventType.LATENESS,
-                    callId: id,
-                    student: item,
-                    startDate: classCall.startDate,
-                    endDate: classCall.endDate,
-                    event: item.events.find(e => e.typeId === EventType.LATENESS),
-                    reasons: eventReasons.filter(reason => reason.reasonTypeId === 2),
-                  });
-                  row[item.key]?.closeRow();
-                },
-                backgroundColor: viescoTheme.palette.presencesEvents.lateness,
-                actionIcon: 'ui-clock',
-                actionIconSize: 28,
-              },
-            ],
-          })}
-        />
-        <PrimaryButton
-          text={I18n.get('presences-call-action')}
-          action={validateCall}
-          loading={isValidating}
-          style={styles.validateButton}
-        />
-      </>
-    ) : null;
-  };
-
-  const renderClassCall = () => {
-    const { classCall } = props;
-    const { classroom, name } = props.route.params;
-
     return classCall ? (
       <>
-        <LeftColoredItem shadow style={styles.headerCard} color={viescoTheme.palette.presences}>
-          <SmallText>
-            {classCall.startDate.format('LT')} - {classCall.endDate.format('LT')}
-          </SmallText>
-          {classroom ? (
-            <View style={styles.classroomContainer}>
-              <Icon name="pin_drop" size={18} />
-              <SmallText style={styles.classroomText}>{I18n.get('presences-call-room', { name: classroom })}</SmallText>
-            </View>
-          ) : null}
-          <SmallBoldText style={styles.nameText}>{name}</SmallBoldText>
-        </LeftColoredItem>
-        {renderStudentsList()}
+        <FlatList
+          data={students}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <StudentListItem student={item} isSelected={item.id === selectedStudentId} onPress={() => openStudentStatus(item.id)} />
+          )}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          ListHeaderComponent={<CallCard course={course} disabled />}
+          ListFooterComponent={renderFooter}
+          ListHeaderComponentStyle={styles.listHeaderContainer}
+        />
+        {renderBottomSheet()}
       </>
     ) : null;
   };
@@ -281,7 +260,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     }
   };
 
-  return <PageView>{renderPage()}</PageView>;
+  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
 };
 
 export default connect(
@@ -300,6 +279,7 @@ export default connect(
     bindActionCreators<PresencesCallScreenDispatchProps>(
       {
         tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
+        tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
       },
       dispatch,
     ),

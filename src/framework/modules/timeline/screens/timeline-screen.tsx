@@ -1,4 +1,4 @@
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
@@ -148,6 +148,7 @@ function NotificationItem({
   doOpenMoodMottoNotification: typeof TimelineScreen.prototype.doOpenMoodMottoNotification;
   notificationTestID?: string;
 }) {
+  const navigation = useNavigation();
   const onNotificationAction = React.useMemo(
     () => {
       if (notification.type === 'USERBOOK_MOTTO' || notification.type === 'USERBOOK_MOOD')

@@ -25,12 +25,12 @@ export const defaultSelectedDate = isDateWeekend(today())
   ? addTime(today(), 1, 'week').startOf('week')
   : addTime(today(), 1, 'day').startOf('day');
 
-const DayPicker = ({ onDateChange }: DayPickerProps) => {
-  const defaultStartDate = defaultSelectedDate.clone().startOf('week');
+const DayPicker = ({ initialSelectedDate = defaultSelectedDate, style, onDateChange }: DayPickerProps) => {
+  const defaultStartDate = initialSelectedDate.clone().startOf('week');
 
-  const [selectedDate, setSelectedDate] = React.useState(defaultSelectedDate);
+  const [selectedDate, setSelectedDate] = React.useState(initialSelectedDate);
   const [startDate, setStartDate] = React.useState(defaultStartDate);
-  React.useEffect(() => onDateChange(defaultSelectedDate), []);
+  React.useEffect(() => onDateChange(initialSelectedDate), []);
 
   const isPastDisabled = startDate.isSame(subtractTime(defaultStartDate, 8, 'week'));
   const isFutureDisabled = startDate.isSame(addTime(defaultStartDate, 8, 'week'));
@@ -47,7 +47,7 @@ const DayPicker = ({ onDateChange }: DayPickerProps) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]}>
       <View style={styles.weekContainer}>
         <IconButton
           icon="ui-rafterLeft"
