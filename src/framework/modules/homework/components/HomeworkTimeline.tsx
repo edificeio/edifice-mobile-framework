@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   timeline: {
     width: UI_SIZES.dimensions.width.tiny,
     position: 'absolute',
-    height: '200%',
+    height: '100%',
   },
 });
 
