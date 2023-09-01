@@ -234,8 +234,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   componentDidUpdate(prevProps: any) {
     const { isFetching, diaryId, tasksByDay, route, isFocused } = this.props;
     const { pastDateLimit } = this.state;
-    const createdEntryId = route.params.createdEntryId;
-    const prevCreatedEntryId = prevProps.route.params.createdEntryId;
+    const createdEntryId = route.params?.createdEntryId;
+    const prevCreatedEntryId = prevProps.route.params?.createdEntryId;
 
     if (prevProps.isFetching !== isFetching) {
       this.setState({ fetching: isFetching });
