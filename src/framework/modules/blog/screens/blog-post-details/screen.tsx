@@ -17,7 +17,6 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -36,6 +35,7 @@ import {
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
 import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
+import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
 import {
@@ -628,7 +628,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         <PreventBack infoComment={this.state.infoComment} />
         <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
-            <LoadingIndicator />
+            <BlogPlaceholderDetails />
           ) : errorState ? (
             this.renderError()
           ) : (

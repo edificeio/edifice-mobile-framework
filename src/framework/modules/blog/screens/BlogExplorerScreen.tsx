@@ -18,12 +18,12 @@ import Explorer, {
   IExplorerResourceItemWithIcon,
   IExplorerResourceItemWithImage,
 } from '~/framework/components/explorer';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchBlogsAndFoldersAction } from '~/framework/modules/blog/actions';
+import BlogPlaceholderExplorer from '~/framework/modules/blog/components/placeholder/explorer';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogFlatTree, BlogFolder, BlogFolderWithChildren, BlogFolderWithResources } from '~/framework/modules/blog/reducer';
@@ -225,7 +225,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
 
       case AsyncLoadingState.PRISTINE:
       case AsyncLoadingState.INIT:
-        return <LoadingIndicator />;
+        return <BlogPlaceholderExplorer />;
 
       case AsyncLoadingState.INIT_FAILED:
       case AsyncLoadingState.RETRY:
