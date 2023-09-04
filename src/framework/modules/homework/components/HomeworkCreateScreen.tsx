@@ -1,7 +1,7 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Moment } from 'moment';
 import * as React from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -69,7 +69,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: UI_SIZES.spacing.big,
   },
-  page: { backgroundColor: theme.ui.background.card },
+  page: {
+    backgroundColor: theme.ui.background.card,
+    marginBottom: Platform.select({ ios: -UI_SIZES.screen.bottomInset, default: 0 }),
+  },
   scrollView: {
     backgroundColor: theme.ui.background.card,
     padding: UI_SIZES.spacing.medium,
