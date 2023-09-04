@@ -76,66 +76,78 @@ export class AttachmentGroupImages extends React.PureComponent<{
   images: ILocalAttachment[];
   moduleName: string;
 }> {
-  public render() {
-    const { images, onRemove, imageCallback, moduleName } = this.props;
+  public imagesAdded() {
+    const { images } = this.props;
+    return images.length > 0;
+  }
+
+  public onOpenImage = () => {
+    const { images, moduleName } = this.props;
     const carouselImages = images.map(image => ({ src: { uri: image.uri }, type: 'image' as 'image', alt: 'image' }));
-    const imagesAdded = images.length > 0;
+    Trackers.trackEvent(moduleName, 'OPEN ATTACHMENT', 'Edit mode');
+    openCarousel({ data: carouselImages });
+  };
+
+  public renderItemSeparator() {
+    return <View style={styles.itemSeperator} />;
+  }
+
+  public AddPhotosButton() {
+    const { imageCallback } = this.props;
+    return (
+      <BottomMenu actions={[cameraAction({ callback: imageCallback }), galleryAction({ callback: imageCallback, multiple: true })]}>
+        <View style={[styles.attachPhotosContainer, this.imagesAdded() && styles.attachPhotosContainerAdded]}>
+          <Picture
+            type="NamedSvg"
+            name={this.imagesAdded() ? 'ui-plus' : 'ui-camera'}
+            width={UI_SIZES.dimensions.width[this.imagesAdded() ? 'medium' : 'hug']}
+            height={UI_SIZES.dimensions.height[this.imagesAdded() ? 'medium' : 'hug']}
+            fill={theme.palette.primary.regular}
+          />
+          <BodyBoldText style={[styles.attachPhotos, this.imagesAdded() && styles.attachPhotosAdded]}>
+            {I18n.get('photospicker-addphotos')}
+          </BodyBoldText>
+        </View>
+      </BottomMenu>
+    );
+  }
+
+  public renderItem = ({ item, index }) => {
+    const { onRemove } = this.props;
+    if (isEmpty(item)) return this.AddPhotosButton();
+    return (
+      <View style={styles.photoContainer}>
+        <TouchableOpacity onPress={this.onOpenImage}>
+          <Image
+            style={styles.photo}
+            resizeMode="cover"
+            source={formatSource((item as ILocalAttachment).uri)}
+            onError={() => onRemove(index)}
+          />
+        </TouchableOpacity>
+        <IconButton
+          icon="ui-close"
+          style={styles.iconButton}
+          size={UI_SIZES.dimensions.height.smallPlus}
+          color={theme.palette.grey.white}
+          action={() => onRemove(index)}
+        />
+      </View>
+    );
+  };
+
+  public render() {
+    const { images } = this.props;
     const numColumns = 3;
-
-    const AddPhotosButton = () => {
-      return (
-        <BottomMenu
-          actions={[cameraAction({ callback: imageCallback }), galleryAction({ callback: imageCallback, multiple: true })]}>
-          <View style={[styles.attachPhotosContainer, imagesAdded && styles.attachPhotosContainerAdded]}>
-            <Picture
-              type="NamedSvg"
-              name={imagesAdded ? 'ui-plus' : 'ui-camera'}
-              width={UI_SIZES.dimensions.width[imagesAdded ? 'medium' : 'hug']}
-              height={UI_SIZES.dimensions.height[imagesAdded ? 'medium' : 'hug']}
-              fill={theme.palette.primary.regular}
-            />
-            <BodyBoldText style={[styles.attachPhotos, imagesAdded && styles.attachPhotosAdded]}>
-              {I18n.get('photospicker-addphotos')}
-            </BodyBoldText>
-          </View>
-        </BottomMenu>
-      );
-    };
-
     return (
       <FlatList
         data={[...images, {}]}
         numColumns={numColumns}
         scrollEnabled={false}
-        style={[styles.container, imagesAdded && styles.containerAdded]}
-        contentContainerStyle={[styles.contentContainer, !imagesAdded && styles.contentContainerAdded]}
-        ItemSeparatorComponent={() => <View style={styles.itemSeperator} />}
-        renderItem={({ item, index }) => {
-          if (isEmpty(item)) return <AddPhotosButton />;
-          return (
-            <View style={styles.photoContainer}>
-              <TouchableOpacity
-                onPress={() => {
-                  Trackers.trackEvent(moduleName, 'OPEN ATTACHMENT', 'Edit mode');
-                  openCarousel({ data: carouselImages });
-                }}>
-                <Image
-                  style={styles.photo}
-                  resizeMode="cover"
-                  source={formatSource((item as ILocalAttachment).uri)}
-                  onError={() => onRemove(index)}
-                />
-              </TouchableOpacity>
-              <IconButton
-                icon="ui-close"
-                style={styles.iconButton}
-                size={UI_SIZES.dimensions.height.smallPlus}
-                color={theme.palette.grey.white}
-                action={() => onRemove(index)}
-              />
-            </View>
-          );
-        }}
+        style={[styles.container, this.imagesAdded() && styles.containerAdded]}
+        contentContainerStyle={[styles.contentContainer, !this.imagesAdded() && styles.contentContainerAdded]}
+        ItemSeparatorComponent={this.renderItemSeparator}
+        renderItem={this.renderItem}
       />
     );
   }

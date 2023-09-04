@@ -17,15 +17,15 @@ import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { BlogPostResourceCard } from '~/framework/modules/blog/components/BlogPostResourceCard';
+import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
+import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import { blogService } from '~/framework/modules/blog/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-
-import { DisplayedBlog } from './BlogExplorerScreen';
 
 export interface BlogPostListScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
@@ -282,7 +282,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         return renderBlogPostList();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
-        return <LoadingIndicator />;
+        return <BlogPlaceholderList />;
       case AsyncPagedLoadingState.INIT_FAILED:
       case AsyncPagedLoadingState.RETRY:
         return renderError();

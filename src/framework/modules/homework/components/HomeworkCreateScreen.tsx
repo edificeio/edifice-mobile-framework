@@ -105,7 +105,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     isCreatingEntry: false,
   };
 
-  verifyDate() {
+  verifyDate = () => {
     const { date } = this.state;
     const isPastDate = date?.isBefore(today(), 'day');
 
@@ -120,7 +120,7 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
         },
       ]);
     } else this.createEntry();
-  }
+  };
 
   async createEntry() {
     try {
@@ -187,6 +187,11 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
     const isEditing = !isDefaultDateSelected || !!subject || !!description || !!images.length;
     const isRequiredFieldEmpty = !date || !subject || !description;
     const descriptionFieldRef: { current: any } = React.createRef();
+    const attachments = images.map(image => ({
+      mime: image.type,
+      name: image.fileName,
+      uri: image.uri,
+    }));
 
     return (
       <>
@@ -233,16 +238,12 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
                 notifierId={uppercaseFirstLetter(moduleConfig.name)}
                 imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
                 onAttachmentRemoved={selectedImages => this.setState({ images: selectedImages })}
-                attachments={images.map(image => ({
-                  mime: image.type,
-                  name: image.fileName,
-                  uri: image.uri,
-                }))}
+                attachments={attachments}
               />
             </View>
             <PrimaryButton
               text={I18n.get('homework-create-addhomework')}
-              action={() => this.verifyDate()}
+              action={this.verifyDate}
               disabled={isRequiredFieldEmpty}
               loading={isCreatingEntry}
               style={styles.button}

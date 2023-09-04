@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, HeadingSText } from '~/framework/components/text';
 import appConf from '~/framework/util/appConf';
@@ -82,7 +82,9 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
         <View style={styles.leftContainer}>
           <View style={styles.rowContainer}>
             <Picture type="NamedSvg" name="ui-clock" width={22} height={22} fill={textColor} />
-            <BodyText style={{ color: textColor }}>{appConf.is1d ? classLabel : hoursLabel}</BodyText>
+            <BodyText numberOfLines={1} style={[UI_STYLES.flexShrink1, { color: textColor }]}>
+              {appConf.is1d ? classLabel : hoursLabel}
+            </BodyText>
             {roomLabel ? (
               <View style={styles.roomContainer}>
                 <BodyText style={styles.roomText}>-</BodyText>

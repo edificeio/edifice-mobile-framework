@@ -75,16 +75,9 @@ type DataType = {
 type DataTypeOrFooter = DataType | { type: 'footer'; data: [{ type: 'footer' }]; title?: never };
 
 const styles = StyleSheet.create({
-  buttonPastHomework: {
-    alignSelf: 'center',
-    marginBottom: UI_SIZES.spacing.big,
-  },
-  dayCheckpoint: {
-    zIndex: 1,
-  },
-  dayCheckpointContainer: {
-    marginBottom: UI_SIZES.spacing.tiny,
-  },
+  buttonPastHomework: { alignSelf: 'center', marginBottom: UI_SIZES.spacing.big },
+  dayCheckpoint: { zIndex: 1 },
+  dayCheckpointContainer: { marginBottom: UI_SIZES.spacing.tiny },
   footer: {
     flexDirection: 'row',
     borderWidth: UI_SIZES.dimensions.width.tiny,
@@ -95,22 +88,12 @@ const styles = StyleSheet.create({
     paddingLeft: UI_SIZES.spacing.medium,
     marginLeft: UI_SIZES.spacing.big,
   },
-  footerIcon: {
-    justifyContent: 'center',
-    marginRight: UI_SIZES.spacing.medium,
-  },
-  footerText: {
-    flex: 1,
-  },
-  labelContainer: {
-    marginBottom: UI_SIZES.spacing.small,
-  },
-  lastCard: {
-    marginBottom: UI_SIZES.spacing.big,
-  },
-  taskList: {
-    flex: 1,
-  },
+  footerIcon: { justifyContent: 'center', marginRight: UI_SIZES.spacing.medium },
+  footerText: { color: theme.palette.grey.graphite },
+  footerTextContainer: { flex: 1 },
+  labelContainer: { marginBottom: UI_SIZES.spacing.small },
+  lastCard: { marginBottom: UI_SIZES.spacing.big },
+  taskList: { flex: 1 },
 });
 
 export const computeNavBar = ({
@@ -206,17 +189,27 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     return hasCreationRight;
   }
 
-  addEntry() {
+  addEntry = () => {
     const { navigation } = this.props;
     navigation.navigate(homeworkRouteNames.homeworkCreate, { sourceRoute: homeworkRouteNames.homeworkTaskList });
-  }
+    Trackers.trackEvent('Homework', 'GO TO', 'Create');
+  };
 
-  displayPastHomework() {
+  refreshEntries = async () => {
+    const { diaryId, onRefresh } = this.props;
+    this.setState({ fetching: true, refreshing: true });
+    if (onRefresh && diaryId) {
+      await onRefresh(diaryId);
+    }
+    this.setState({ refreshing: false });
+  };
+
+  displayPastHomework = () => {
     const newestRemainingPastHW = this.remainingPastHomework()[this.remainingPastHomework().length - 1];
     const newestRemainingPastHWDate = newestRemainingPastHW.title;
     const newestRemainingPastHWWeekStart = moment(newestRemainingPastHWDate).startOf('isoWeek');
     this.setState({ pastDateLimit: newestRemainingPastHWWeekStart });
-  }
+  };
 
   updateNavBarTitle() {
     const { diaryInformation, navigation } = this.props;
@@ -224,7 +217,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
       headerTitle: navBarTitle(diaryInformation?.title),
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () => (this.canCreateEntry() ? <NavBarAction icon="ui-plus" onPress={() => this.addEntry()} /> : undefined),
+      headerRight: () => (this.canCreateEntry() ? <NavBarAction icon="ui-plus" onPress={this.addEntry} /> : undefined),
     });
   }
 
@@ -290,15 +283,13 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
     const noRemainingPastHomework = this.remainingPastHomework().length === 0;
     const labelColor = noRemainingPastHomework ? theme.palette.grey.grey : theme.palette.grey.black;
     const labelText = I18n.get(`homework-tasklist-${noRemainingPastHomework ? 'nomorepasthomework' : 'displaypastdays'}`);
+    const icon = noRemainingPastHomework ? undefined : 'back';
     return this.hasPastHomeWork() ? (
-      <TouchableOpacity
-        style={styles.buttonPastHomework}
-        disabled={noRemainingPastHomework}
-        onPress={() => this.displayPastHomework()}>
+      <TouchableOpacity style={styles.buttonPastHomework} disabled={noRemainingPastHomework} onPress={this.displayPastHomework}>
         <Label
           labelStyle="outline"
           labelSize="large"
-          icon={noRemainingPastHomework ? undefined : 'back'}
+          icon={icon}
           iconStyle={{ transform: [{ rotate: '90deg' }] }}
           color={labelColor}
           text={labelText}
@@ -308,45 +299,75 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   private renderListEmptyComponent() {
+    const title = I18n.get(
+      `homework-tasklist-emptyscreen-title${
+        this.hasPastHomeWork() ? '' : this.canCreateEntry() ? '-notasks' : '-notasks-nocreationrights'
+      }`,
+    );
+    const text = I18n.get(
+      `homework-tasklist-emptyscreen-text${
+        this.hasPastHomeWork()
+          ? this.canCreateEntry()
+            ? ''
+            : '-nocreationrights'
+          : this.canCreateEntry()
+          ? '-notasks'
+          : '-notasks-nocreationrights'
+      }`,
+    );
+    const buttonText = this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined;
     return this.noFutureHomeworkHiddenPast() ? (
-      <EmptyScreen
-        svgImage="empty-hammock"
-        title={I18n.get(
-          `homework-tasklist-emptyscreen-title${
-            this.hasPastHomeWork() ? '' : this.canCreateEntry() ? '-notasks' : '-notasks-nocreationrights'
-          }`,
-        )}
-        text={I18n.get(
-          `homework-tasklist-emptyscreen-text${
-            this.hasPastHomeWork()
-              ? this.canCreateEntry()
-                ? ''
-                : '-nocreationrights'
-              : this.canCreateEntry()
-              ? '-notasks'
-              : '-notasks-nocreationrights'
-          }`,
-        )}
-        buttonText={this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined}
-        buttonAction={() => {
-          this.addEntry();
-          Trackers.trackEvent('Homework', 'GO TO', 'Create');
-        }}
-      />
+      <EmptyScreen svgImage="empty-hammock" title={title} text={text} buttonText={buttonText} buttonAction={this.addEntry} />
     ) : null;
   }
 
+  private renderSectionHeader({ section: { title, type } }: { section: DataType }) {
+    if (type !== 'day') {
+      return (
+        <>
+          <HomeworkTimeline topPosition={UI_SIZES.spacing.large} />
+          <View style={styles.labelContainer}>
+            <Label color={theme.palette.grey.grey} text={I18n.get('homework-tasklist-nofuturehomework')} />
+          </View>
+        </>
+      );
+    } else {
+      return (
+        <View style={styles.dayCheckpointContainer}>
+          <View style={styles.dayCheckpoint}>
+            <HomeworkDayCheckpoint date={title} />
+          </View>
+          <HomeworkTimeline topPosition={UI_SIZES.spacing.small} color={this.getTimlineColor(title)} />
+        </View>
+      );
+    }
+  }
+
+  private renderItem({ item, index, section }) {
+    const { navigation, diaryId } = this.props;
+    const isLastItem = index === section?.data?.length - 1;
+    const displayEntry = () => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId });
+
+    return (item as unknown as { type: string }).type !== 'day' ? (
+      this.renderFooterItem()
+    ) : (
+      <>
+        <HomeworkTimeline topPosition={UI_SIZES.spacing.tiny} color={this.getTimlineColor(section.title)} />
+        <HomeworkCard
+          key={index}
+          title={item.title}
+          content={item.content}
+          date={item.date}
+          onPress={displayEntry}
+          style={isLastItem && styles.lastCard}
+        />
+      </>
+    );
+  }
+
   private renderRefreshControl() {
-    const { diaryId, onRefresh } = this.props;
     const { refreshing } = this.state;
-    const refreshEntries = async () => {
-      this.setState({ fetching: true, refreshing: true });
-      if (onRefresh && diaryId) {
-        await onRefresh(diaryId);
-      }
-      this.setState({ refreshing: false });
-    };
-    return <RefreshControl refreshing={refreshing} onRefresh={refreshEntries} />;
+    return <RefreshControl refreshing={refreshing} onRefresh={this.refreshEntries} />;
   }
 
   private renderFooterItem() {
@@ -356,10 +377,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           <View style={styles.footerIcon}>
             <Icon name="informations" color={theme.palette.grey.stone} size={TextSizeStyle.Huge.fontSize} />
           </View>
-          <View style={styles.footerText}>
-            <SmallText style={{ color: theme.palette.grey.graphite }}>
-              {I18n.get('homework-tasklist-nofuturehomework-tryagain')}
-            </SmallText>
+          <View style={styles.footerTextContainer}>
+            <SmallText style={styles.footerText}>{I18n.get('homework-tasklist-nofuturehomework-tryagain')}</SmallText>
           </View>
         </View>
       </>
@@ -367,13 +386,11 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   private renderList() {
-    const { navigation, diaryId } = this.props;
     const stylesContentSectionList = {
       padding: this.hasHomework() ? UI_SIZES.spacing.medium : undefined,
       paddingTop: !this.hasPastHomeWork() ? UI_SIZES.spacing.big + pageGutterSize : this.hasHomework() ? undefined : 0,
       flex: this.noFutureHomeworkHiddenPast() ? 1 : undefined,
     };
-    const displayEntry = item => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId });
 
     return (
       <View style={styles.taskList}>
@@ -386,45 +403,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           sections={this.getDisplayedPastHomework() as DataType[]}
           CellRendererComponent={ViewOverflow}
           stickySectionHeadersEnabled={false}
-          renderSectionHeader={({ section: { title, type } }: { section: DataType }) => {
-            if (type !== 'day') {
-              return (
-                <>
-                  <HomeworkTimeline topPosition={UI_SIZES.spacing.large} />
-                  <View style={styles.labelContainer}>
-                    <Label color={theme.palette.grey.grey} text={I18n.get('homework-tasklist-nofuturehomework')} />
-                  </View>
-                </>
-              );
-            } else {
-              return (
-                <View style={styles.dayCheckpointContainer}>
-                  <View style={styles.dayCheckpoint}>
-                    <HomeworkDayCheckpoint date={title} />
-                  </View>
-                  <HomeworkTimeline topPosition={UI_SIZES.spacing.small} color={this.getTimlineColor(title)} />
-                </View>
-              );
-            }
-          }}
-          renderItem={({ item, index, section }) => {
-            const isLastItem = index === section?.data?.length - 1;
-            return (item as unknown as { type: string }).type !== 'day' ? (
-              this.renderFooterItem()
-            ) : (
-              <>
-                <HomeworkTimeline topPosition={UI_SIZES.spacing.tiny} color={this.getTimlineColor(section.title)} />
-                <HomeworkCard
-                  key={index}
-                  title={item.title}
-                  content={item.content}
-                  date={item.date}
-                  onPress={() => displayEntry(item)}
-                  style={isLastItem && styles.lastCard}
-                />
-              </>
-            );
-          }}
+          renderSectionHeader={section => this.renderSectionHeader(section)}
+          renderItem={item => this.renderItem(item)}
           keyExtractor={item => item.id}
           refreshControl={this.renderRefreshControl()}
           ListHeaderComponent={this.renderListHeaderComponent()}

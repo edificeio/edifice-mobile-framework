@@ -8,7 +8,6 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import { LoadingIndicator } from '~/framework/components/loading';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
@@ -16,6 +15,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesClassCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
+import CallPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call';
 import StudentListItem from '~/framework/modules/viescolaire/presences/components/student-list-item';
 import StudentStatus from '~/framework/modules/viescolaire/presences/components/student-status';
 import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
@@ -253,7 +253,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
         return renderClassCall();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
-        return <LoadingIndicator />;
+        return <CallPlaceholder />;
       case AsyncPagedLoadingState.INIT_FAILED:
       case AsyncPagedLoadingState.RETRY:
         return renderError();
