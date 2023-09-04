@@ -24,7 +24,7 @@ type IBackendCourse = {
   classesExternalIds: string[];
   groups: string[];
   groupsExternalIds: string[];
-  roomLabels: string[];
+  roomLabels?: string[];
   dayOfWeek: number;
   manual: boolean;
   theoretical: boolean;
@@ -100,7 +100,7 @@ const courseAdapter = (data: IBackendCourse): IEdtCourse => {
     endDate: moment(data.endDate),
     groups: data.groups,
     id: data._id,
-    roomLabels: data.roomLabels,
+    roomLabels: data.roomLabels ?? [],
     startDate: moment(data.startDate),
     subject: data.subject,
     tags: data.tags,
