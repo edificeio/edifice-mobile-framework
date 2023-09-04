@@ -5,32 +5,35 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   //GLOBAL
-  h32: {
-    height: 32,
-  },
   h22: {
     height: 22,
   },
-  h20: {
-    height: 20,
+  h18: {
+    height: 18,
+  },
+  h12: {
+    height: 12,
   },
   mb0: {
     marginBottom: 0,
   },
+  pearl: {
+    backgroundColor: theme.palette.grey.pearl,
+  },
   //ELEMENTS
   page: {
-    padding: UI_SIZES.spacing.big,
+    padding: UI_SIZES.spacing.medium,
   },
   user: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.medium,
   },
   avatar: {
     marginRight: UI_SIZES.spacing.minor,
   },
-  dateTitle: {
-    marginBottom: UI_SIZES.spacing.big,
+  date: {
+    marginBottom: UI_SIZES.spacing.medium,
   },
   content: {
     width: '100%',

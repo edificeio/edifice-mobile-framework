@@ -11,12 +11,9 @@ export default function BlogPlaceholderDetails() {
         <PlaceholderMedia isRound style={styles.avatar} size={48} />
         <PlaceholderLine style={[styles.mb0, styles.h22]} width={50} />
       </View>
-      <View style={styles.dateTitle}>
-        <PlaceholderLine width={40} style={styles.h22} />
-        <PlaceholderLine width={60} style={styles.h32} />
-      </View>
-      <PlaceholderLine style={styles.h20} />
-      <PlaceholderLine width={50} style={styles.h20} />
+      <PlaceholderLine width={30} style={[styles.h12, styles.date, styles.pearl]} />
+      <PlaceholderLine width={90} style={[styles.h18, styles.pearl]} />
+      <PlaceholderLine width={50} style={[styles.h18, styles.pearl]} />
       <PlaceholderMedia style={styles.content} />
     </Placeholder>
   );

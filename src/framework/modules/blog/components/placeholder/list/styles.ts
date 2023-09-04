@@ -21,6 +21,7 @@ export default StyleSheet.create({
   page: {
     paddingTop: UI_SIZES.spacing.big,
     paddingHorizontal: UI_SIZES.spacing.medium,
+    backgroundColor: theme.palette.grey.white,
   },
   cardBlog: {
     backgroundColor: theme.palette.grey.white,
