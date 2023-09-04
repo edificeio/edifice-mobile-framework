@@ -27,7 +27,7 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
     return (
       <TouchableOpacity onPress={onPress} style={[styles.container, isSelected && styles.containerSelected]}>
         <View style={styles.leftContainer}>
-          <SingleAvatar size={36} userId={student.id} status={2} />
+          <SingleAvatar size={48} userId={student.id} status={2} />
           <BodyText numberOfLines={1} style={styles.nameText}>
             {student.name}
           </BodyText>

@@ -10,7 +10,6 @@ import { IGlobalState } from '~/app/store';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
-import { LoadingIndicator } from '~/framework/components/loading';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
@@ -25,6 +24,8 @@ import {
 } from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
+import CallSummaryPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-summary';
+import CourseListPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/course-list';
 import { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -103,6 +104,13 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
+  const fetchNext = () => {
+    setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
+    fetchCourses()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
+  };
+
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
@@ -113,7 +121,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
   }, [props.navigation, date]);
 
   React.useEffect(() => {
-    if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
+    if (loadingRef.current === AsyncPagedLoadingState.DONE) fetchNext();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
@@ -174,29 +182,29 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={clearBottomSheetContent}>
-        <View style={styles.bottomSheetContainer}>
-          {isValidated ? (
-            bottomSheetCall ? (
-              <CallSummary call={bottomSheetCall} />
+        {isValidated && !bottomSheetCall ? (
+          <CallSummaryPlaceholder />
+        ) : (
+          <View style={styles.bottomSheetContainer}>
+            {isValidated ? (
+              <CallSummary call={bottomSheetCall!} />
             ) : (
-              <LoadingIndicator />
-            )
-          ) : (
-            <View style={styles.bottomSheetMissedCallContainer}>
-              <HeadingSText>{I18n.get('presences-courselist-bottomsheet-heading')}</HeadingSText>
-              <BodyText style={styles.bottomSheetMissedCallText}>
-                {I18n.get('presences-courselist-bottomsheet-missedcall')}
-              </BodyText>
-            </View>
-          )}
-          <PrimaryButton
-            text={I18n.get(
-              isValidated ? 'presences-courselist-bottomsheet-action-edit' : 'presences-courselist-bottomsheet-action-new',
+              <View style={styles.bottomSheetMissedCallContainer}>
+                <HeadingSText>{I18n.get('presences-courselist-bottomsheet-heading')}</HeadingSText>
+                <BodyText style={styles.bottomSheetMissedCallText}>
+                  {I18n.get('presences-courselist-bottomsheet-missedcall')}
+                </BodyText>
+              </View>
             )}
-            iconLeft={isValidated ? 'ui-edit' : 'presences'}
-            action={() => openCall(course)}
-          />
-        </View>
+            <PrimaryButton
+              text={I18n.get(
+                isValidated ? 'presences-courselist-bottomsheet-action-edit' : 'presences-courselist-bottomsheet-action-new',
+              )}
+              iconLeft={isValidated ? 'ui-edit' : 'presences'}
+              action={() => openCall(course)}
+            />
+          </View>
+        )}
       </BottomSheetModal>
     );
   };
@@ -205,24 +213,28 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     return (
       <View style={UI_STYLES.flex1}>
         <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
-        <FlatList
-          data={props.courses}
-          renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
-          keyExtractor={item => item.id + item.startDate}
-          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-          ListHeaderComponent={
-            appConf.is2d && props.courses.length ? <BodyBoldText>{I18n.get('presences-courselist-heading')}</BodyBoldText> : null
-          }
-          ListEmptyComponent={
-            <EmptyScreen
-              svgImage="empty-presences"
-              title={I18n.get('presences-courselist-emptyscreen-title')}
-              text={I18n.get('presences-courselist-emptyscreen-text')}
-              customStyle={styles.emptyScreenContainer}
-            />
-          }
-          contentContainerStyle={props.courses.length ? styles.listContentContainer : undefined}
-        />
+        {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (
+          <CourseListPlaceholder />
+        ) : (
+          <FlatList
+            data={props.courses}
+            renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
+            keyExtractor={item => item.id + item.startDate}
+            refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+            ListHeaderComponent={
+              appConf.is2d && props.courses.length ? <BodyBoldText>{I18n.get('presences-courselist-heading')}</BodyBoldText> : null
+            }
+            ListEmptyComponent={
+              <EmptyScreen
+                svgImage="empty-presences"
+                title={I18n.get('presences-courselist-emptyscreen-title')}
+                text={I18n.get('presences-courselist-emptyscreen-text')}
+                customStyle={styles.emptyScreenContainer}
+              />
+            }
+            contentContainerStyle={props.courses.length ? styles.listContentContainer : undefined}
+          />
+        )}
         {renderBottomSheet()}
       </View>
     );
@@ -234,10 +246,12 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       case AsyncPagedLoadingState.REFRESH:
       case AsyncPagedLoadingState.REFRESH_FAILED:
       case AsyncPagedLoadingState.REFRESH_SILENT:
+      case AsyncPagedLoadingState.FETCH_NEXT:
+      case AsyncPagedLoadingState.FETCH_NEXT_FAILED:
         return renderCourseList();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
-        return <LoadingIndicator />;
+        return <CourseListPlaceholder showDayPicker />;
       case AsyncPagedLoadingState.INIT_FAILED:
       case AsyncPagedLoadingState.RETRY:
         return renderError();
