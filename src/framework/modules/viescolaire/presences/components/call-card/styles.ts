@@ -24,6 +24,7 @@ export default StyleSheet.create({
     columnGap: UI_SIZES.spacing.minor,
   },
   roomContainer: {
+    flex: 1,
     flexDirection: 'row',
     flexShrink: 1,
     columnGap: UI_SIZES.spacing.minor,
