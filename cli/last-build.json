@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-04 19:00:42",
-  "notes": "fix(edt): AMVS-379 edit backend course mapping, assign empty array to undefined roomLabels\nrelease: 1.10.3(1100300)\nrelease: 1.10.2(1100200)\nrelease: 1.10.1-rc.8(1100109)",
-  "version": "1.10.3-rc.1(1100301)",
+  "last": "2023-09-05 18:59:12",
+  "notes": "fix(zimbra): MB-1968 prevent crash due to body images without source\nrelease: 1.10.3-rc.1(1100301)",
+  "version": "1.10.3-rc.2(1100302)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
