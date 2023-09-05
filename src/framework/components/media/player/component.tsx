@@ -1,3 +1,4 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Lottie from 'lottie-react-native';
 import * as React from 'react';
@@ -73,6 +74,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
   const isLoadingRef = React.useRef<boolean>(true);
+  const headerHeight = useHeaderHeight();
 
   const handleBack = React.useCallback(() => {
     navigationHidden.current = false;
