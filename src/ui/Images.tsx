@@ -130,7 +130,7 @@ class Images extends React.Component<
       return breakpoints.find(b => pixelWidth < b) || breakpoints[breakpoints.length - 1];
     };
     const getImageSource = (imageSrc: ImageURISource, removeThumbnail?: boolean) => {
-      if (!imageSrc.uri) return imageSrc;
+      if (!imageSrc || !imageSrc.uri) return imageSrc;
       const uri = new URL(urlSigner.getAbsoluteUrl(imageSrc.uri)!);
       if (removeThumbnail) {
         uri.searchParams.delete('thumbnail');
