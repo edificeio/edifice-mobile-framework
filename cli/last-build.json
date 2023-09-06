@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-05 18:17:34",
-  "notes": "Squashed commit of the following:\nremove useHeaderHeight on media player\nSquashed commit of the following:\nfix(login): MB-1950 fix autocomplete & autocaps in password inputs\nfix(homework): MB-1915, creation page bottom-inset\nfix(presences): MB-1896 set call card class text to 1 line for 1d platforms\nfeat(presences): MB-1938 add course list and call skeletons\nfeat(blog): MB-1941 , add skeleton on explorer, list and details screen\nfeat(blog): MB-1941 , add skeleton on explorer, list and details screen\nchore(homework): rafactor create & task-list pages\nrelease: 1.11.0-alpha.12(1110012)",
-  "version": "1.11.0-alpha.13(1110013)",
+  "last": "2023-09-06 18:28:36",
+  "notes": "feat(presences): MB-1959, timline notifications\nfix(blog) remove background white on skeleton blog list screen\nfeat(presences): MB-1943 close dropdown on tap outside, disable declare event scrollview always bouncing\nfeat(viescolaire): MB-1932 delete old assets, delete memento screen, replace teacher dashboard course component with call card\nfeat(i18n): MB-1971 add presences notiftypes keys\nfix(presences): MB-1938 edit course list placeholder\nfix(dropdown): MB-1911 set border color to graphite when item is selected\nrelease: 1.11.0-alpha.13(1110013)",
+  "version": "1.11.0-alpha.14(1110014)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
