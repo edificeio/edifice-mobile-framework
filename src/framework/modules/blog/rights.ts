@@ -1,5 +1,4 @@
-import I18n from 'i18n-js';
-
+import { I18n } from '~/app/i18n';
 import { ISession } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
@@ -66,7 +65,7 @@ export default () =>
     const wk = getBlogWorkflowInformation(session);
     return (
       wk.blog.create && {
-        title: I18n.t('blog.resourceName'),
+        title: I18n.get('blog-resourcename'),
         action: () => {
           navigate(blogRouteNames.home);
         },

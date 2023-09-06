@@ -1,20 +1,18 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
-import ScrollView from '~/framework/components/scrollView';
 import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesCoursesAction,
   fetchPresencesEventReasonsAction,
@@ -26,10 +24,17 @@ import { ICourse, IEventReason } from '~/framework/modules/viescolaire/presences
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-type IPresencesCourseListScreenOldProps = {
+interface PresencesCourseListScreenOldDispatchProps {
+  tryFetchCourses: (...args: Parameters<typeof fetchPresencesCoursesAction>) => Promise<ICourse[]>;
+  tryFetchMultipleSlotsSetting: (...args: Parameters<typeof fetchPresencesMultipleSlotSettingAction>) => Promise<boolean>;
+  tryFetchRegisterPreference: (...args: Parameters<typeof fetchPresencesRegisterPreferenceAction>) => Promise<string>;
+  tryFetchEventReasons: (...args: Parameters<typeof fetchPresencesEventReasonsAction>) => Promise<IEventReason[]>;
+}
+
+type PresencesCourseListScreenOldProps = {
   allowMultipleSlots: boolean;
   courses: ICourse[];
   initialLoadingState: AsyncPagedLoadingState;
@@ -38,19 +43,10 @@ type IPresencesCourseListScreenOldProps = {
   session?: ISession;
   structureId?: string;
   teacherId?: string;
-  fetchCourses: (
-    teacherId: string,
-    structureId: string,
-    startDate: string,
-    endDate: string,
-    multipleSlot?: boolean,
-  ) => Promise<ICourse[]>;
-  fetchMultipleSlotsSetting: (structureId: string) => Promise<boolean>;
-  fetchRegisterPreference: () => Promise<string>;
-  fetchEventReasons: (structureId: string) => Promise<IEventReason[]>;
-} & NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.memento>;
+} & PresencesCourseListScreenOldDispatchProps &
+  NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.memento>;
 
-const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps) => {
+const PresencesCourseListScreenOld = (props: PresencesCourseListScreenOldProps) => {
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -61,15 +57,15 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
       const { structureId, teacherId } = props;
 
       if (!structureId || !teacherId) throw new Error();
-      const allowMultipleSlots = await props.fetchMultipleSlotsSetting(structureId);
-      const registerPreference = await props.fetchRegisterPreference();
-      await props.fetchEventReasons(structureId);
+      const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
+      const registerPreference = await props.tryFetchRegisterPreference();
+      await props.tryFetchEventReasons(structureId);
       const today = moment().format('YYYY-MM-DD');
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }
-      await props.fetchCourses(teacherId, structureId, today, today, multipleSlot);
+      await props.tryFetchCourses(teacherId, structureId, today, today, multipleSlot);
     } catch {
       throw new Error();
     }
@@ -119,28 +115,26 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
 
   const openCall = async (course: ICourse) => {
     try {
-      let { registerId } = course;
+      let { callId } = course;
 
-      if (!registerId) {
+      if (!callId) {
         const { allowMultipleSlots, session, teacherId } = props;
         if (!session || !teacherId) throw new Error();
-        const courseRegister = await presencesService.courseRegister.create(session, course, teacherId, allowMultipleSlots);
-        registerId = courseRegister.id;
+        callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
       }
       props.navigation.navigate(presencesRouteNames.call, {
         classroom: course.roomLabels[0],
-        id: registerId,
+        id: callId,
         name: course.classes[0] ?? course.groups[0],
       });
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-courselistold-error-text'));
     }
   };
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -174,6 +168,7 @@ const PresencesCourseListScreenOld = (props: IPresencesCourseListScreenOldProps)
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
@@ -182,17 +177,17 @@ export default connect(
       initialLoadingState: presencesState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       registerPreference: presencesState.registerPreference.data,
       session,
-      structureId: getSelectedStructure(state),
+      structureId: dashboardState.selectedStructureId,
       teacherId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<PresencesCourseListScreenOldDispatchProps>(
       {
-        fetchCourses: tryActionLegacy(fetchPresencesCoursesAction, undefined, true),
-        fetchMultipleSlotsSetting: tryActionLegacy(fetchPresencesMultipleSlotSettingAction, undefined, true),
-        fetchRegisterPreference: tryActionLegacy(fetchPresencesRegisterPreferenceAction, undefined, true),
-        fetchEventReasons: tryActionLegacy(fetchPresencesEventReasonsAction, undefined, true),
+        tryFetchCourses: tryAction(fetchPresencesCoursesAction),
+        tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
+        tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),
+        tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
       },
       dispatch,
     ),

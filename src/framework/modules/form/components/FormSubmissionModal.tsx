@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -47,11 +47,11 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.t('form.formDistributionScreen.submissionModal.title')}</BodyText>
+          <BodyText>{I18n.get('form-distribution-submissionmodal-title')}</BodyText>
           <SmallText style={styles.topMargin}>
-            {I18n.t('form.formDistributionScreen.submissionModal.upperText')}
+            {I18n.get('form-distribution-submissionmodal-uppertext')}
             {props.structures.length > 1 ? (
-              <NestedText> {I18n.t('form.formDistributionScreen.submissionModal.selectStructure')}</NestedText>
+              <NestedText> {I18n.get('form-distribution-submissionmodal-selectstructure')}</NestedText>
             ) : null}
           </SmallText>
           {props.structures.length > 1 ? (
@@ -68,16 +68,16 @@ const FormSubmissionModal = React.forwardRef<ModalBoxHandle, IFormSubmissionModa
           ) : null}
           <View style={{ zIndex: -1 }}>
             <SmallText style={styles.topMargin}>
-              {I18n.t(
+              {I18n.get(
                 props.status === DistributionStatus.ON_CHANGE
-                  ? 'form.formDistributionScreen.submissionModal.lowerText.replace'
+                  ? 'form-distribution-submissionmodal-lowertext-replace'
                   : props.editable
-                  ? 'form.formDistributionScreen.submissionModal.lowerText.editable'
-                  : 'form.formDistributionScreen.submissionModal.lowerText.default',
+                  ? 'form-distribution-submissionmodal-lowertext-editable'
+                  : 'form-distribution-submissionmodal-lowertext-default',
               )}
             </SmallText>
             <ActionButton
-              text={I18n.t('common.confirm')}
+              text={I18n.get('form-distribution-submissionmodal-action')}
               action={() => props.onSubmit(structureId)}
               loading={props.loading}
               style={styles.topMargin}

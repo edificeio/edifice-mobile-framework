@@ -3,15 +3,15 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { SmallText } from '~/framework/components/text';
+import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ICompetence, IDomaine, ILevel } from '~/framework/modules/viescolaire/competences/model';
-import { ArticleContainer } from '~/ui/ContainerContent';
 
 const styles = StyleSheet.create({
   competenceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginVertical: UI_SIZES.spacing.minor,
   },
   levelColorContainer: {
     marginLeft: UI_SIZES.spacing.small,
@@ -29,10 +29,10 @@ interface IDomaineListItemProps {
 
 export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> {
   getLevelColor(evaluation: number) {
-    const levels = this.props.levels.filter(level => level.cycle === 'Cycle 3');
+    const { levels } = this.props;
 
     if (evaluation >= 0 && evaluation < levels.length) {
-      return levels[evaluation].couleur ?? levels[evaluation].default;
+      return levels[evaluation].color ?? levels[evaluation].defaultColor;
     }
     return theme.palette.grey.cloudy;
   }
@@ -43,16 +43,16 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
 
     return (
       <>
-        {domaine.degree > 1 && competences.length ? <SmallText>{nameText}</SmallText> : null}
         <FlatList
           data={competences}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <View style={styles.competenceContainer}>
-              <SmallText style={UI_STYLES.flexShrink1}>{domaine.competences?.find(c => c.id === item.id)?.name}</SmallText>
+              <SmallText style={UI_STYLES.flexShrink1}>{item.name}</SmallText>
               <View style={[styles.levelColorContainer, { backgroundColor: this.getLevelColor(item.evaluation) }]} />
             </View>
           )}
+          ListHeaderComponent={domaine.degree > 1 && competences.length ? <SmallBoldText>{nameText}</SmallBoldText> : null}
         />
         {domaine.domaines?.map(d => this.renderDomaineCompetences(d))}
       </>
@@ -64,10 +64,10 @@ export class DomaineListItem extends React.PureComponent<IDomaineListItemProps> 
     const nameText = domaine.codification ? `${domaine.codification} - ${domaine.name}` : domaine.name;
 
     return (
-      <ArticleContainer>
-        <SmallText>{nameText}</SmallText>
+      <View>
+        <BodyBoldText>{nameText}</BodyBoldText>
         {this.renderDomaineCompetences(domaine)}
-      </ArticleContainer>
+      </View>
     );
   }
 }

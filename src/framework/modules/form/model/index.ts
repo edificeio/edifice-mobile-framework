@@ -57,8 +57,11 @@ export interface IQuestionChoice {
   questionId: number;
   value: string;
   type: string;
-  nextSectionId: number | null;
+  nextFormElementId: number | null;
+  nextFormElementType: 'QUESTION' | 'SECTION' | null;
+  isNextFormElementDefault: boolean | null;
   isCustom: boolean;
+  image: string | null;
 }
 
 export interface IQuestionResponse {
@@ -69,7 +72,6 @@ export interface IQuestionResponse {
   customAnswer?: string;
   choicePosition?: number;
   files?: IResponseFile[];
-  toDelete?: boolean;
 }
 
 export interface IQuestion {
@@ -129,16 +131,16 @@ export const formatElement = (element: IFormElement): IFormElement[] => {
 
 const getVisitedPositions = (elements: IFormElement[], responses: IQuestionResponse[]): number[] => {
   const visitedPositions: number[] = [];
-  let nextSectionId;
+  let nextFormElementId;
 
   for (const element of elements) {
-    if (nextSectionId !== undefined && element.id !== nextSectionId) continue;
-    nextSectionId = undefined;
+    if (nextFormElementId !== undefined && element.id !== nextFormElementId) continue;
+    nextFormElementId = undefined;
     visitedPositions.push(element.position!);
     const conditionalQuestion = (!('type' in element) ? element.questions : [element]).find(q => q.conditional);
     if (conditionalQuestion) {
       const choiceId = responses.find(r => r.questionId === conditionalQuestion.id)?.choiceId;
-      nextSectionId = conditionalQuestion.choices.find(c => c.id === choiceId)?.nextSectionId;
+      nextFormElementId = conditionalQuestion.choices.find(c => c.id === choiceId)?.nextFormElementId;
     }
   }
   return visitedPositions;
@@ -177,7 +179,7 @@ export const getIsMandatoryAnswerMissing = (elements: IFormElement[], responses:
   for (const question of questions) {
     const questionIds = question.type === QuestionType.MATRIX ? question.children!.map(q => q.id) : [question.id];
     for (const id of questionIds) {
-      const questionResponses = responses.filter(r => r.questionId === id && !r.toDelete);
+      const questionResponses = responses.filter(r => r.questionId === id);
       if (!questionResponses.length || questionResponses.some(r => !r.answer)) return true;
     }
   }
@@ -202,4 +204,37 @@ export const getPositionHistory = (elements: IFormElement[], responses: IQuestio
       return index === self.indexOf(elem);
     })
     .sort();
+};
+
+export const findLongestPathInFormElement = (elementId: number, formElements: IFormElement[]): number => {
+  const currentNode = formElements.find(node => node.id === elementId);
+
+  if (!currentNode) return 1;
+  if (getIsElementSection(currentNode)) {
+    const questions: IQuestion[] = (currentNode as ISection).questions;
+    const choices: IQuestionChoice[] = questions.filter(q => q.conditional).flatMap(q => q.choices);
+    return findLongestPathInQuestionChoices(choices, currentNode, formElements);
+  } else {
+    const question: IQuestion = currentNode as IQuestion;
+    const choices: IQuestionChoice[] = question.conditional ? question.choices : [];
+    return findLongestPathInQuestionChoices(choices, currentNode, formElements);
+  }
+};
+
+const findLongestPathInQuestionChoices = (
+  choices: IQuestionChoice[],
+  currentFormElement: IFormElement,
+  formElements: IFormElement[],
+): number => {
+  if (!choices.length) {
+    let nextElementId = formElements.find(node => node.position === currentFormElement.position! + 1)?.id;
+    if (!nextElementId) return 1;
+    return findLongestPathInFormElement(nextElementId, formElements) + 1;
+  } else {
+    let tab: number[] = choices.map(choice => {
+      if (!choice.nextFormElementId) return 1;
+      return findLongestPathInFormElement(choice.nextFormElementId, formElements);
+    });
+    return Math.max(...tab) + 1;
+  }
 };

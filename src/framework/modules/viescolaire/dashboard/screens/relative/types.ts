@@ -1,39 +1,53 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IUser } from '~/framework/modules/auth/model';
-import { ICompetence, IDevoir, IDomaine, ILevel, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
-import { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
-import type { DashboardNavigationParams } from '~/framework/modules/viescolaire/dashboard/navigation';
-import { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import { AsyncState } from '~/framework/util/redux/async';
+import type { IUser } from '~/framework/modules/auth/model';
+import type {
+  fetchCompetencesAction,
+  fetchCompetencesDevoirsAction,
+  fetchCompetencesSubjectsAction,
+  fetchCompetencesUserChildrenAction,
+} from '~/framework/modules/viescolaire/competences/actions';
+import type { ICompetence, IDevoir, ISubject, IUserChild } from '~/framework/modules/viescolaire/competences/model';
+import type { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
+import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
+import type { fetchDiaryHomeworksFromChildAction, fetchDiaryTeachersAction } from '~/framework/modules/viescolaire/diary/actions';
+import type { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import type { fetchPresencesChildrenEventsAction } from '~/framework/modules/viescolaire/presences/actions';
+import type { IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
+import type { AsyncState } from '~/framework/util/redux/async';
 
-export interface DashboardRelativeScreenProps {
-  authorizedViescoApps: IAuthorizedViescoApps;
-  competences: ICompetence[];
-  devoirs: AsyncState<IDevoir[]>;
-  domaines: IDomaine[];
-  homeworks: AsyncState<IHomeworkMap>;
-  hasRightToCreateAbsence: boolean;
-  levels: ILevel[];
-  subjects: ISubject[];
-  userChildren: IUserChild[];
-  childId?: string;
-  structureId?: string;
-  userId?: string;
-  fetchCompetences: (studentId: string, classId: string) => Promise<ICompetence[]>;
-  fetchDevoirs: (structureId: string, childId: string) => Promise<IDevoir[]>;
-  fetchDomaines: (classId: string) => Promise<IDomaine[]>;
-  fetchHomeworks: (childId: string, structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
-  fetchLevels: (structureId: string) => Promise<ILevel[]>;
-  fetchSubjects: (structureId: string) => Promise<ISubject[]>;
-  fetchTeachers: (structureId: string) => Promise<IUser[]>;
-  fetchUserChildren: (structureId: string, userId: string) => Promise<IUserChild[]>;
-}
+export interface DashboardRelativeScreenProps {}
 
 export interface DashboardRelativeScreenNavParams {}
 
-export interface DashboardRelativeScreenPrivateProps
-  extends NativeStackScreenProps<DashboardNavigationParams, 'relative'>,
-    DashboardRelativeScreenProps {
-  // @scaffolder add HOC props here
+export interface DashboardRelativeScreenStoreProps {
+  authorizedViescoApps: IAuthorizedViescoApps;
+  childrenEvents: IChildrenEvents;
+  competences: ICompetence[];
+  devoirs: IDevoir[];
+  eventCount: number;
+  homeworks: AsyncState<IHomeworkMap>;
+  isFetchingDevoirs: boolean;
+  subjects: ISubject[];
+  userChildren: IUserChild[];
+  childId?: string;
+  hasPresencesCreateAbsenceRight?: boolean;
+  structureId?: string;
+  userId?: string;
 }
+
+export interface DashboardRelativeScreenDispatchProps {
+  handleClearLevels: () => void;
+  tryFetchChildrenEvents: (...args: Parameters<typeof fetchPresencesChildrenEventsAction>) => Promise<IChildrenEvents>;
+  tryFetchCompetences: (...args: Parameters<typeof fetchCompetencesAction>) => Promise<ICompetence[]>;
+  tryFetchDevoirs: (...args: Parameters<typeof fetchCompetencesDevoirsAction>) => Promise<IDevoir[]>;
+  tryFetchHomeworks: (...args: Parameters<typeof fetchDiaryHomeworksFromChildAction>) => Promise<IHomeworkMap>;
+  tryFetchSubjects: (...args: Parameters<typeof fetchCompetencesSubjectsAction>) => Promise<ISubject[]>;
+  tryFetchTeachers: (...args: Parameters<typeof fetchDiaryTeachersAction>) => Promise<IUser[]>;
+  tryFetchUserChildren: (...args: Parameters<typeof fetchCompetencesUserChildrenAction>) => Promise<IUserChild[]>;
+}
+
+export type DashboardRelativeScreenPrivateProps = DashboardRelativeScreenProps &
+  DashboardRelativeScreenStoreProps &
+  DashboardRelativeScreenDispatchProps &
+  NativeStackScreenProps<DashboardNavigationParams, typeof dashboardRouteNames.relative>;

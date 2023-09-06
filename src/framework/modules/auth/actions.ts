@@ -1,9 +1,8 @@
 import CookieManager from '@react-native-cookies/cookies';
-import I18n from 'i18n-js';
 import DeviceInfo from 'react-native-device-info';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { SupportedLocales } from '~/app/i18n';
+import { I18n } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
@@ -23,10 +22,11 @@ import {
   LegalUrls,
   PartialSessionScenario,
   RuntimeAuthErrorCode,
+  SessionType,
   createActivationError,
   createChangePasswordError,
 } from './model';
-import { assertSession, actions as authActions } from './reducer';
+import { assertSession, actions as authActions, getSession } from './reducer';
 import {
   createSession,
   ensureCredentialsMatchActivationCode,
@@ -34,6 +34,7 @@ import {
   fetchUserInfo,
   fetchUserPublicInfo,
   fetchUserRequirements,
+  forgetPreviousSession,
   formatSession,
   getAuthContext,
   getAuthTranslationKeys,
@@ -69,19 +70,19 @@ export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPart
  * @param platform
  * @returns
  */
-function getLegalUrlsAction(platform: Platform) {
+export function getLegalUrlsAction(platform: Platform) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<LegalUrls | undefined> {
     // === 1: Load legal document urls
     try {
       const legalUrls: LegalUrls = {
-        cgu: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cgu'), platform),
-        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.personalDataProtection'), platform),
-        cookies: urlSigner.getAbsoluteUrl(I18n.t('user.legalUrl.cookies'), platform),
+        cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
+        cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
       };
-      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.locale as SupportedLocales);
+      const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.getLanguage());
       if (authTranslationKeys) {
         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
-          authTranslationKeys['auth.charter'] || I18n.t('user.legalUrl.userCharter'),
+          authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),
           platform,
         );
       }
@@ -157,7 +158,9 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 7. Save session info if needed
       await savePlatform(platform);
-      if (!credentials || rememberMe || platform.wayf) await saveSession();
+      const mustSaveSession = !credentials || rememberMe || platform.wayf;
+      await forgetPreviousSession();
+      if (mustSaveSession) await saveSession();
 
       // 8. Do tracking
       if (credentials) await Trackers.trackEvent('Auth', 'LOGIN', partialSessionScenario);
@@ -167,7 +170,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       await CookieManager.clearAll();
 
       // 9. Validate session + return redirect scenario
-      const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo);
+      const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo, !!mustSaveSession);
       if (partialSessionScenario) {
         const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario);
         const context = await getAuthContext(platform);
@@ -242,7 +245,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
       });
       // === 3 - Check whether the activation was successfull
       if (!res.ok) {
-        throw createActivationError('activation', I18n.t('activation-errorSubmit'));
+        throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'));
       }
       // a json response can contains an error field
       if (res.headers.get('content-type')?.indexOf('application/json') !== -1) {
@@ -273,7 +276,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
       return redirect;
     } catch (e) {
       if ((e as IActivationError).name === 'EACTIVATION') throw e;
-      else throw createActivationError('activation', I18n.t('activation-errorSubmit'), '', e as object);
+      else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '', e as object);
     }
   };
 }
@@ -347,7 +350,6 @@ function sessionDestroyAction(platform: Platform) {
 export function sessionInvalidateAction(platform: Platform, error?: AuthError) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     // Unregister the device token from the backend
-    console.debug('call removeFirebaseToken');
     await removeFirebaseToken(platform);
     // Validate log out
     dispatch(authActions.sessionError(error?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
@@ -377,7 +379,7 @@ export interface IChangePasswordSubmitPayload {
 export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      // === 1 - prepare payload
+      // === 2 - prepare chg pwd payload
       const payload: IChangePasswordSubmitPayload = {
         oldPassword: p.oldPassword,
         password: p.newPassword,
@@ -390,7 +392,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       for (const key in payload) {
         formdata.append(key, payload[key as keyof IChangePasswordSubmitPayload]);
       }
-      // === 2 - Send change password information
+      // === 3 - Send change password information
       const res = await fetch(`${platform.url}/auth/reset`, {
         body: formdata,
         headers: {
@@ -402,7 +404,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       });
       // === 3 - Check whether the password change was successfull
       if (!res.ok) {
-        throw createChangePasswordError('change password', I18n.t('changePassword-errorSubmit'));
+        throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
       // a json response can contains an error field
       if (res.headers.get('content-type') && res.headers.get('content-type')!.indexOf('application/json') !== -1) {
@@ -412,9 +414,9 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
           const pwdRegex = getState().user.changePassword?.context?.passwordRegex;
           const regexp = new RegExp(pwdRegex);
           if (pwdRegex && !regexp.test(p.newPassword)) {
-            throw createChangePasswordError('change password', I18n.t('changePassword-errorRegex'));
+            throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-regex'));
           } else {
-            throw createChangePasswordError('change password', I18n.t('changePassword-errorFields'));
+            throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-fields'));
           }
         }
       }
@@ -423,7 +425,16 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
     } catch (e) {
       Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
-      else throw createChangePasswordError('change password', I18n.t('changePassword-errorSubmit'));
+      else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
     }
+
+    // 4 === Login back to get renewed token
+    const credentials: IAuthCredentials = {
+      username: p.login,
+      password: p.newPassword,
+    };
+    const rememberMe = getSession()?.type === SessionType.PERMANENT;
+    const redirect = await dispatch(loginAction(platform, credentials, rememberMe));
+    return redirect;
   };
 }

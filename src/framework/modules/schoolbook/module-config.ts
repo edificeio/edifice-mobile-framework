@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<'schoolbook', ISchoolbookState>({
   entcoreScope: ['schoolbook'],
   matchEntcoreApp: '/schoolbook',
 
-  displayI18n: 'schoolbook.tabName',
+  displayI18n: 'schoolbook-moduleconfig-tabname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'homeLiaisonDiary', fill: theme.palette.complementary.green.regular },
 });

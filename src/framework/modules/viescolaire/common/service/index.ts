@@ -1,19 +1,26 @@
 import moment from 'moment';
 
 import { ISession, IUser } from '~/framework/modules/auth/model';
+import { UserType } from '~/framework/modules/auth/service';
 import { IClassGroups, ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 type IBackendClassGroups = {
-  id_classe: string;
-  id_groups: string[];
-  name_classe: string;
+  id_structure: string;
+  id_classe: string | null;
+  name_classe: string | null;
   name_groups: string[];
+  id_groups: string[];
 };
 
 type IBackendSchoolYear = {
+  id: number;
   start_date: string;
   end_date: string;
+  description: string | null;
+  id_structure: string;
+  code: string;
+  is_opening: boolean;
 };
 
 type IBackendTerm = {
@@ -50,63 +57,64 @@ const classGroupsAdapter = (data: IBackendClassGroups): IClassGroups => {
     className: data.name_classe,
     groupIds: data.id_groups,
     groupNames: data.name_groups,
-  } as IClassGroups;
+  };
 };
 
 const schoolYearAdapter = (data: IBackendSchoolYear): ISchoolYear => {
   return {
-    startDate: moment(data.start_date),
     endDate: moment(data.end_date),
-  } as ISchoolYear;
+    id: data.id,
+    startDate: moment(data.start_date),
+  };
 };
 
 const termAdapter = (data: IBackendTerm): ITerm => {
   return {
-    startDate: moment(data.timestamp_dt),
     endDate: moment(data.timestamp_fn),
     order: data.ordre,
+    startDate: moment(data.timestamp_dt),
     type: data.type,
     typeId: data.id_type,
-  } as ITerm;
+  };
 };
 
 const userAdapter = (data: IBackendUser): IUser => {
   return {
+    displayName: data.displayName,
     id: data.id,
     login: '',
-    type: data.type,
-    displayName: data.displayName,
-  } as IUser;
+    type: data.type as UserType,
+  };
 };
 
 export const viescoService = {
   classGroups: {
-    get: async (session: ISession, classes: string, studentId?: string) => {
-      let api = `/viescolaire/group/from/class?classes=${classes}`;
+    get: async (session: ISession, classes: string[], studentId?: string) => {
+      let api = `/viescolaire/group/from/class?classes=${classes.join('&classes=')}`;
       if (studentId) api += `&student=${studentId}`;
       const classGroups = (await fetchJSONWithCache(api)) as IBackendClassGroupsList;
-      return classGroups.map(c => classGroupsAdapter(c)) as IClassGroups[];
+      return classGroups.map(classGroupsAdapter);
     },
   },
   schoolYear: {
     get: async (session: ISession, structureId: string) => {
       const api = `/viescolaire/settings/periode/schoolyear?structureId=${structureId}`;
       const schoolYear = (await fetchJSONWithCache(api)) as IBackendSchoolYear;
-      return schoolYearAdapter(schoolYear) as ISchoolYear;
+      return schoolYearAdapter(schoolYear);
     },
   },
   teachers: {
     get: async (session: ISession, structureId: string) => {
       const api = `/viescolaire/user/list?profile=Teacher&structureId=${structureId}`;
       const teachers = (await fetchJSONWithCache(api)) as IBackendUserList;
-      return teachers.map(teacher => userAdapter(teacher)) as IUser[];
+      return teachers.map(userAdapter);
     },
   },
   terms: {
     get: async (session: ISession, structureId: string, groupId: string) => {
       const api = `/viescolaire/periodes?idEtablissement=${structureId}&idGroupe=${groupId}`;
       const terms = (await fetchJSONWithCache(api)) as IBackendTermList;
-      return terms.map(term => termAdapter(term)) as ITerm[];
+      return terms.map(termAdapter);
     },
   },
 };

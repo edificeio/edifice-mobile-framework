@@ -1,24 +1,21 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl } from 'react-native';
+import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesCoursesAction,
   fetchPresencesEventReasonsAction,
@@ -31,11 +28,11 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesCourseListScreenPrivateProps } from './types';
+import type { PresencesCourseListScreenDispatchProps, PresencesCourseListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -44,7 +41,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-presences'),
+    title: I18n.get('presences-courselist-title'),
   }),
 });
 
@@ -59,15 +56,15 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       const { structureId, teacherId } = props;
 
       if (!structureId || !teacherId) throw new Error();
-      const allowMultipleSlots = await props.fetchMultipleSlotsSetting(structureId);
-      const registerPreference = await props.fetchRegisterPreference();
-      await props.fetchEventReasons(structureId);
+      const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
+      const registerPreference = await props.tryFetchRegisterPreference();
+      await props.tryFetchEventReasons(structureId);
       const today = moment().format('YYYY-MM-DD');
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }
-      await props.fetchCourses(teacherId, structureId, today, today, multipleSlot);
+      await props.tryFetchCourses(teacherId, structureId, today, today, multipleSlot);
     } catch {
       throw new Error();
     }
@@ -117,48 +114,44 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 
   const openCall = async (course: ICourse) => {
     try {
-      let { registerId } = course;
+      let { callId } = course;
 
-      if (!registerId) {
+      if (!callId) {
         const { allowMultipleSlots, session, teacherId } = props;
         if (!session || !teacherId) throw new Error();
-        const courseRegister = await presencesService.courseRegister.create(session, course, teacherId, allowMultipleSlots);
-        registerId = courseRegister.id;
+        callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
       }
       props.navigation.navigate(presencesRouteNames.call, {
         classroom: course.roomLabels[0],
-        id: registerId,
+        id: callId,
         name: course.classes[0] ?? course.groups[0],
       });
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-courselist-error-text'));
     }
   };
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
   };
 
   const renderCourseList = () => {
-    const dateText = `${I18n.t('viesco-register-date')} ${moment().format('DD MMMM YYYY')}`;
     return (
-      <>
-        <SmallBoldText style={styles.dateText}>{dateText}</SmallBoldText>
-        <FlatList
-          data={props.courses}
-          renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
-          keyExtractor={item => item.id + item.startDate}
-          refreshControl={
-            <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh()} />
-          }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.t('viesco-no-register-today')} />}
-        />
-      </>
+      <FlatList
+        data={props.courses}
+        renderItem={({ item }) => <CallCard course={item} onPress={() => openCall(item)} />}
+        keyExtractor={item => item.id + item.startDate}
+        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+        ListHeaderComponent={
+          <SmallBoldText>{I18n.get('presences-courselist-date', { date: moment().format('DD MMMM YYYY') })}</SmallBoldText>
+        }
+        ListEmptyComponent={<EmptyScreen svgImage="empty-absences" title={I18n.get('presences-courselist-emptyscreen-title')} />}
+        contentContainerStyle={styles.listContentContainer}
+      />
     );
   };
 
@@ -189,6 +182,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
@@ -197,33 +191,17 @@ export default connect(
       initialLoadingState: presencesState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       registerPreference: presencesState.registerPreference.data,
       session,
-      structureId: getSelectedStructure(state),
+      structureId: dashboardState.selectedStructureId,
       teacherId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<PresencesCourseListScreenDispatchProps>(
       {
-        fetchCourses: tryActionLegacy(
-          fetchPresencesCoursesAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchCourses'],
-        fetchEventReasons: tryActionLegacy(
-          fetchPresencesEventReasonsAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchEventReasons'],
-        fetchMultipleSlotsSetting: tryActionLegacy(
-          fetchPresencesMultipleSlotSettingAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchMultipleSlotsSetting'],
-        fetchRegisterPreference: tryActionLegacy(
-          fetchPresencesRegisterPreferenceAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCourseListScreenPrivateProps['fetchRegisterPreference'],
+        tryFetchCourses: tryAction(fetchPresencesCoursesAction),
+        tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
+        tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
+        tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),
       },
       dispatch,
     ),

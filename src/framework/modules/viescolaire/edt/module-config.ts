@@ -1,3 +1,4 @@
+import theme from '~/app/theme';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
@@ -14,7 +15,7 @@ export default new NavigableModuleConfig<'edt', IEdtReduxState>({
   entcoreScope: ['edt'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
 
-  displayI18n: 'viesco-timetable',
+  displayI18n: 'edt-moduleconfig-appname',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'edt' },
+  displayPicture: { type: 'NamedSvg', name: 'edt', fill: theme.palette.complementary.indigo.regular },
 });

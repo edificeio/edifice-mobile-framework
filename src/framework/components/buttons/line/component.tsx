@@ -1,9 +1,9 @@
 import styled from '@emotion/native';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import * as ReactIs from 'react-is';
 import { ActivityIndicator, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import styles from '~/framework/components/buttons/line/styles';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -58,7 +58,7 @@ export const LineButton = ({
           first ? styles.containerFirst : last ? styles.containerLast : alone ? styles.containerAlone : null,
         ]}>
         <SmallText style={styles.lineButtonText} numberOfLines={1}>
-          {I18n.t(title)}
+          {I18n.get(title)}
         </SmallText>
         {loading ? (
           <ActivityIndicator color={theme.palette.primary.regular} size={UI_SIZES.dimensions.width.mediumPlus} />

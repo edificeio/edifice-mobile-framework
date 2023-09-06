@@ -1,23 +1,21 @@
-import { ICourseTag } from './course-tag';
+import type { Moment } from 'moment';
 
 export interface IEdtCourse {
-  id: string;
-  startDate: moment.Moment;
-  endDate: moment.Moment;
-  subjectId: string;
-  roomLabels: string[];
-  teacherIds: string[];
   classes: string[];
+  endDate: Moment;
   groups: string[];
-  exceptionnal: string;
+  id: string;
+  roomLabels: string[];
+  startDate: Moment;
   subject: {
-    code: string;
-    externalId: string;
     id: string;
     name: string;
     rank: number;
   };
-  color: string;
-  tags: ICourseTag[];
-  tagIds: number[];
+  tags: {
+    id: number;
+    label: string;
+    abbreviation: string;
+  }[];
+  teacherIds: string[];
 }

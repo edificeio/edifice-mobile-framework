@@ -7,7 +7,7 @@ export default new NavigableModuleConfig<'mediacentre', IMediacentreReduxState>(
   entcoreScope: ['mediacentre'],
   matchEntcoreApp: '/mediacentre',
 
-  displayI18n: 'mediacentre.tabName',
+  displayI18n: 'mediacentre-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'mediacentre' },
 });

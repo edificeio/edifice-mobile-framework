@@ -1,8 +1,7 @@
 export interface IClass {
   color: string;
-  externalId: string;
+  groupType: number;
   id: string;
   name: string;
   notEmptyClass: boolean;
-  groupType: number;
 }

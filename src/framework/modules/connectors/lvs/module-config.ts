@@ -12,7 +12,7 @@ export default new NavigableModuleConfig<'lvs', null>({
   entcoreScope: ['lvs'],
   matchEntcoreApp: entcoreApp => hasConnectorApp(entcoreApp),
 
-  displayI18n: 'lvs.tabName',
+  displayI18n: 'lvs-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'lvs' },
 });

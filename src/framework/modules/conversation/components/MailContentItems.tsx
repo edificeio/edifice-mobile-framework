@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { ColorValue, Platform, StyleSheet, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
@@ -12,7 +12,7 @@ import { CaptionText, NestedText, SmallBoldText, SmallText } from '~/framework/c
 import Toast from '~/framework/components/toast';
 import { getFileIcon } from '~/framework/modules/conversation/utils/fileIcon';
 import { getMailPeople } from '~/framework/modules/conversation/utils/mailInfos';
-import { getProfileColor, getUserColor } from '~/framework/modules/conversation/utils/userColor';
+import { getUserColor } from '~/framework/modules/conversation/utils/userColor';
 import { displayPastDate } from '~/framework/util/date';
 import { IDistantFileWithId, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { downloadFileAction } from '~/framework/util/fileHandler/actions';
@@ -36,7 +36,6 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 15,
-    marginTop: UI_SIZES.spacing.tiny,
     marginRight: UI_SIZES.spacing.tiny,
   },
   fileIcon: { flex: 0 },
@@ -81,13 +80,13 @@ const styles = StyleSheet.create({
   },
   sendersCollapsed: { marginTop: UI_SIZES.spacing.tiny, flex: 0 },
   sendersContainer: { flex: 1 },
-  userContainer: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'baseline' },
+  userContainer: { flexDirection: 'row', marginLeft: UI_SIZES.spacing.tiny, alignItems: 'center' },
   users: { flexDirection: 'row', flexWrap: 'wrap' },
-  usersContainer: { flexDirection: 'row' },
+  usersContainer: { flexDirection: 'row', alignItems: 'center' },
 });
 
 const User = ({ userId, userName }) => {
-  const [dotColor, setDotColor] = React.useState(getProfileColor('Guest'));
+  const [dotColor, setDotColor] = React.useState<undefined | ColorValue>();
   getUserColor(userId).then(setDotColor);
   return (
     <View style={styles.userContainer} key={userId}>
@@ -103,12 +102,12 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
     <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
       {inInbox || (
         <View style={styles.usersContainer}>
-          <CaptionText style={styles.greyColor}>{I18n.t('conversation.fromPrefix')}</CaptionText>
+          <CaptionText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-fromprefix')}</CaptionText>
           <User userId={contacts.from[0]} userName={contacts.from[1]} />
         </View>
       )}
       <View style={styles.usersContainer}>
-        <SmallText style={styles.greyColor}>{I18n.t('conversation.toPrefix')}</SmallText>
+        <SmallText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-toprefix')}</SmallText>
         <View style={styles.users}>
           {contacts.to.map(person => (
             <User userId={person[0]} userName={person[1]} />
@@ -117,7 +116,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       </View>
       {contacts.cc && contacts.cc.length > 0 && (
         <View style={styles.usersContainer}>
-          <SmallText style={styles.greyColor}>{I18n.t('conversation.ccPrefix')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-ccprefix')}</SmallText>
           <View style={styles.users}>
             {contacts.cc.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -127,7 +126,7 @@ const SendersDetails = ({ mailInfos, inInbox }) => {
       )}
       {contacts.cci && contacts.cci.length > 0 && (
         <View style={styles.usersContainer}>
-          <SmallText style={styles.greyColor}>{I18n.t('conversation.bccPrefix')}</SmallText>
+          <SmallText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-bccprefix')}</SmallText>
           <View style={styles.users}>
             {contacts.cci.map(person => (
               <User userId={person[0]} userName={person[1]} />
@@ -145,7 +144,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   const [isVisible, toggleVisible] = React.useState(false);
   const isFolderInbox = currentFolder === 'inbox';
   const mailContacts = getMailPeople(mailInfos);
-  if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.t('conversation.emptyTo'), false]];
+  if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.get('conversation-mailcontentitems-emptyto'), false]];
   const contactsToMore = mailContacts.to.length + mailContacts.cc.length + mailContacts.cci.length - 1;
 
   return (
@@ -177,10 +176,12 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
                   <SendersDetails mailInfos={mailInfos} inInbox={isFolderInbox} />
                 ) : (
                   <CaptionText style={styles.sendersCollapsed} numberOfLines={1}>
-                    <NestedText style={{ color: styles.greyColor.color }}>{I18n.t('conversation.toPrefix') + ' '}</NestedText>
+                    <NestedText style={{ color: styles.greyColor.color }}>
+                      {I18n.get('conversation-mailcontentitems-toprefix') + ' '}
+                    </NestedText>
                     <NestedText style={{ color: theme.palette.primary.regular }}>
                       {mailContacts.to[0][1]}
-                      {contactsToMore > 0 ? I18n.t('conversation.toMore', { count: contactsToMore }) : null}
+                      {contactsToMore > 0 ? I18n.get('conversation-mailcontentitems-tomore', { count: contactsToMore }) : null}
                     </NestedText>
                   </CaptionText>
                 )}
@@ -238,7 +239,7 @@ export const RenderPJs = ({
               try {
                 await sf.open();
               } catch {
-                Toast.showError(I18n.t('download-error-generic'));
+                Toast.showError(I18n.get('conversation-mailcontent-download-error'));
               }
             }}>
             <View style={styles.attachmentSubContainer}>
@@ -262,9 +263,9 @@ export const RenderPJs = ({
                     try {
                       const sf = (await dispatch(downloadFileAction<SyncedFileWithId>(df, {}))) as unknown as SyncedFileWithId;
                       await sf.mirrorToDownloadFolder();
-                      Toast.showSuccess(I18n.t('download-success-name', { name: sf.filename }));
+                      Toast.showSuccess(I18n.get('conversation-mailcontent-downloadsuccess-name', { name: sf.filename }));
                     } catch {
-                      Toast.showError(I18n.t('download-error-generic'));
+                      Toast.showError(I18n.get('conversation-mailcontent-download-error'));
                     }
                   }}
                   style={{ paddingHorizontal: UI_SIZES.spacing.small }}>

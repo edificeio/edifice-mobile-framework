@@ -1,11 +1,11 @@
 import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Keyboard, ScrollView, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -29,18 +29,15 @@ import {
   submitBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
+import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
-import Notifier from '~/framework/util/notifier';
-import { notifierShowAction } from '~/framework/util/notifier/actions';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 import { GridAvatars } from '~/ui/avatars/GridAvatars';
-
-import { timelineRouteNames } from '../../timeline/navigation';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
@@ -141,7 +138,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('blog.blogCreatePostScreen.title'),
+    title: I18n.get('blog-createpost-title'),
     titleStyle: { width: undefined },
   }),
 });
@@ -149,26 +146,22 @@ export const computeNavBar = ({
 function PreventBack(props: { isEditing: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
-    Alert.alert(
-      I18n.t('common.confirmationUnsavedPublication'),
-      I18n.t('blog.blogCreatePostScreen.confirmationUnsavedPublication'),
-      [
-        {
-          text: I18n.t('common.quit'),
-          onPress: () => {
-            handleRemoveConfirmNavigationEvent(data.action, navigation);
-          },
-          style: 'destructive',
+    Alert.alert(I18n.get('blog-createpost-confirmation-unsavedpublication'), I18n.get('blog-createpost-unsavedpublication'), [
+      {
+        text: I18n.get('common-quit'),
+        onPress: () => {
+          handleRemoveConfirmNavigationEvent(data.action, navigation);
         },
-        {
-          text: I18n.t('common.continue'),
-          style: 'default',
-          onPress: () => {
-            clearConfirmNavigationEvent();
-          },
+        style: 'destructive',
+      },
+      {
+        text: I18n.get('common-continue'),
+        style: 'default',
+        onPress: () => {
+          clearConfirmNavigationEvent();
         },
-      ],
-    );
+      },
+    ]);
   });
   return null;
 }
@@ -221,9 +214,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
           // Full storage management
           // statusCode = 400 on iOS and code = 'ENOENT' on Android
           if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
-            Alert.alert('', I18n.t('fullStorage'));
+            Alert.alert('', I18n.get('blog-createpost-fullstorage'));
           } else {
-            Alert.alert('', I18n.t('blog-post-upload-attachments-error-text'));
+            Alert.alert('', I18n.get('blog-createpost-uploadattachments-error-text'));
           }
           throw new Error('handled');
         }
@@ -235,7 +228,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       // Create and submit/publish post
       await handleSendBlogPost(blog, title, htmlContent, uploadedPostImages);
 
-      // Track action, load/navigate to timeline and display notifier
+      // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
       const event = {
         [createBlogPostResourceRight]: 'Enregistrer',
@@ -244,10 +237,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       }[blogPostDisplayRight];
       const eventName = `Rédaction blog - ${event}`;
       const eventCategory = route.params.referrer ? 'Blog' : 'Timeline';
-      const notifierSuccessText = {
-        [createBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.createSuccess'),
-        [submitBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.submitSuccess'),
-        [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishSuccess'),
+      const toastSuccessText = {
+        [createBlogPostResourceRight]: I18n.get('blog-createpost-create-success'),
+        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit-success'),
+        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish-success'),
       }[blogPostDisplayRight];
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
@@ -258,21 +251,13 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
         ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
       });
-      dispatch(
-        notifierShowAction({
-          id: route.params.referrer ?? 'timeline',
-          text: notifierSuccessText,
-          icon: 'checked',
-          type: 'success',
-          duration: 8000,
-        }),
-      );
+      Toast.showSuccess(toastSuccessText);
     } catch (e: any) {
       if (e.response?.body === '{"error":"file.too.large"}') {
-        Toast.showError(I18n.t('fullStorage'));
+        Toast.showError(I18n.get('blog-createpost-fullstorage'));
       }
       if ((e as Error).message && (e as Error).message !== 'handled') {
-        Toast.showError(I18n.t('blog-post-publish-error-text'));
+        Toast.showError(I18n.get('blog-createpost-publish-error-text'));
       }
     }
   }
@@ -284,9 +269,9 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     const actionText =
       blogPostDisplayRight &&
       {
-        [createBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.createAction'),
-        [submitBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.submitAction'),
-        [publishBlogPostResourceRight]: I18n.t('blog.blogCreatePostScreen.publishAction'),
+        [createBlogPostResourceRight]: I18n.get('blog-createpost-create'),
+        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit'),
+        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish'),
       }[blogPostDisplayRight];
     this.props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
@@ -345,20 +330,16 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     const { title, content } = this.state;
     return (
       <>
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>
-          {I18n.t('blog.blogCreatePostScreen.postTitle')}
-        </SmallBoldText>
+        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-post-title')}</SmallBoldText>
         <TextInput
-          placeholder={I18n.t('blog.blogCreatePostScreen.postTitlePlaceholder')}
+          placeholder={I18n.get('blog-createpost-post-title-placeholder')}
           value={title}
           onChangeText={text => this.setState({ title: text })}
           style={styles.input}
         />
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>
-          {I18n.t('blog.blogCreatePostScreen.postContent')}
-        </SmallBoldText>
+        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-postcontent')}</SmallBoldText>
         <TextInput
-          placeholder={I18n.t('blog.blogCreatePostScreen.postContentPlaceholder')}
+          placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
           value={content}
           onChangeText={text => this.setState({ content: text })}
           style={[styles.input, styles.inputArea]}
@@ -375,7 +356,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     return (
       <View style={styles.addMedia}>
         <BottomMenu
-          title={I18n.t('bottom-menu-add-media')}
+          title={I18n.get('blog-createpost-bottommenu-addmedia')}
           actions={[
             cameraAction({
               callback: this.imageCallback,
@@ -390,7 +371,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
             // onPress={() => this.attachmentPickerRef.onPickAttachment()}
           >
             <SmallActionText style={imagesAdded ? styles.addMediaButtonAdded : styles.addMediaButtonEmpty}>
-              {I18n.t('createPost-create-mediaField')}
+              {I18n.get('blog-createpost-create-mediafield')}
             </SmallActionText>
             <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
           </View>
@@ -420,7 +401,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       <>
         <PreventBack isEditing={isEditing} />
         <KeyboardPageView scrollable={false}>
-          <Notifier id="createPost" />
           {/* ToDo : don't use magic keywords like this. */}
           <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.scrollView}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>

@@ -9,7 +9,6 @@ export default StyleSheet.create({
   },
   listContentContainer: {
     flexGrow: 1,
-    backgroundColor: theme.ui.background.card,
   },
   navBarCountText: {
     textAlign: 'center',
@@ -28,7 +27,13 @@ export default StyleSheet.create({
   navBarTitle: {
     width: undefined,
   },
+  pageContainer: {
+    backgroundColor: theme.ui.background.card,
+  },
   rightMargin: {
     marginRight: UI_SIZES.spacing.small,
+  },
+  searchBarContainer: {
+    margin: UI_SIZES.spacing.small,
   },
 });

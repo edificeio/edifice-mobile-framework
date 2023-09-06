@@ -1,23 +1,23 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesHistoryAction,
   fetchPresencesSchoolYearAction,
@@ -25,23 +25,22 @@ import {
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
 import {
-  DepartureCard,
-  ForgotNotebookCard,
-  IncidentCard,
-  LatenessCard,
-  NoReasonCard,
-  PunishmentCard,
-  RegularizedCard,
-  UnregularizedCard,
-} from '~/framework/modules/viescolaire/presences/components/PresenceCard';
+  HistoryCategoryCard,
+  renderDeparture,
+  renderForgottenNotebook,
+  renderIncident,
+  renderLateness,
+  renderPunishment,
+} from '~/framework/modules/viescolaire/presences/components/HistoryCategoryCard';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesHistoryScreenPrivateProps } from './types';
+import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -50,15 +49,13 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-history'),
+    title: I18n.get('presences-history-title'),
   }),
 });
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
-  const [startDate, setStartDate] = React.useState<Moment>(moment());
-  const [endDate, setEndDate] = React.useState<Moment>(moment());
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -72,17 +69,30 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       let groupId = classes?.[0];
       if (userType === UserType.Relative) {
-        const children = await props.fetchUserChildren(userId);
+        const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
-      if (selectedTerm !== 'year') setSelectedTerm('year');
-      await props.fetchTerms(structureId, groupId ?? '');
-      const schoolYear = await props.fetchSchoolYear(structureId);
-      setStartDate(schoolYear.startDate);
-      setEndDate(schoolYear.endDate);
-      const start = schoolYear.startDate.format('YYYY-MM-DD');
-      const end = schoolYear.endDate.format('YYYY-MM-DD');
-      await props.fetchHistory(studentId, structureId, start, end);
+      const terms = await props.tryFetchTerms(structureId, groupId ?? '');
+      const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
+      if (currentTerm && selectedTerm === 'year') setSelectedTerm(currentTerm.order.toString());
+      const schoolYear = await props.tryFetchSchoolYear(structureId);
+      const startDate = currentTerm?.startDate ?? schoolYear.startDate;
+      const endDate = currentTerm?.endDate ?? schoolYear.endDate;
+      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
+    } catch {
+      throw new Error();
+    }
+  };
+
+  const refreshEvents = async () => {
+    try {
+      const { schoolYear, structureId, studentId, terms } = props;
+
+      if (!schoolYear || !structureId || !studentId) throw new Error();
+      const term = selectedTerm !== 'year' ? terms.find(t => t.order.toString() === selectedTerm) : undefined;
+      const startDate = term?.startDate ?? schoolYear.startDate;
+      const endDate = term?.endDate ?? schoolYear.endDate;
+      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
     } catch {
       throw new Error();
     }
@@ -100,6 +110,13 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     fetchEvents()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    refreshEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
 
   const refreshSilent = () => {
@@ -124,25 +141,13 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   }, [props.studentId]);
 
   React.useEffect(() => {
-    const { schoolYear } = props;
-
-    if (selectedTerm === 'year' && schoolYear) {
-      setStartDate(schoolYear.startDate);
-      setEndDate(schoolYear.endDate);
-    } else {
-      const term = props.terms.find(t => t.order.toString() === selectedTerm);
-      if (term) {
-        setStartDate(term.startDate);
-        setEndDate(term.endDate);
-      }
-    }
+    if (loadingState === AsyncPagedLoadingState.DONE) refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTerm]);
 
   const renderError = () => {
     return (
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload()} />}>
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
     );
@@ -151,15 +156,68 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const renderHistory = () => {
     const { history, terms } = props;
     const dropdownTerms = [
-      { label: I18n.t('viesco-fullyear'), value: 'year' },
+      { label: I18n.get('presences-history-year'), value: 'year' },
       ...terms.map(term => ({
-        label: `${I18n.t('viesco-trimester')} ${term.order}`,
+        label: `${I18n.get('presences-history-trimester')} ${term.order}`,
         value: term.order.toString(),
       })),
     ];
+    const categories =
+      loadingState !== AsyncPagedLoadingState.REFRESH
+        ? [
+            {
+              title: I18n.get('presences-history-category-noreason'),
+              color: viescoTheme.palette.presencesEvents.noReason,
+              ...history.NO_REASON,
+              recoveryMethod: history.recoveryMethod,
+            },
+            {
+              title: I18n.get('presences-history-category-unregularized'),
+              color: viescoTheme.palette.presencesEvents.unregularized,
+              ...history.UNREGULARIZED,
+              recoveryMethod: history.recoveryMethod,
+            },
+            {
+              title: I18n.get('presences-history-category-regularized'),
+              color: viescoTheme.palette.presencesEvents.regularized,
+              ...history.REGULARIZED,
+              recoveryMethod: history.recoveryMethod,
+            },
+            {
+              title: I18n.get('presences-history-category-latenesses'),
+              color: viescoTheme.palette.presencesEvents.lateness,
+              ...history.LATENESS,
+              renderEvent: renderLateness,
+            },
+            {
+              title: I18n.get('presences-history-category-departures'),
+              color: viescoTheme.palette.presencesEvents.departure,
+              ...history.DEPARTURE,
+              renderEvent: renderDeparture,
+            },
+            {
+              title: I18n.get('presences-history-category-forgottennotebooks'),
+              color: viescoTheme.palette.presencesEvents.forgotNotebook,
+              ...history.FORGOTTEN_NOTEBOOK,
+              renderEvent: renderForgottenNotebook,
+            },
+            {
+              title: I18n.get('presences-history-category-incidents'),
+              color: viescoTheme.palette.presencesEvents.incident,
+              ...history.INCIDENT,
+              renderEvent: renderIncident,
+            },
+            {
+              title: I18n.get('presences-history-category-punishments'),
+              color: viescoTheme.palette.presences,
+              ...history.PUNISHMENT,
+              renderEvent: renderPunishment,
+            },
+          ]
+        : [];
 
     return (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView contentContainerStyle={styles.listContentContainer}>
         {dropdownTerms.length > 1 ? (
           <DropDownPicker
             open={isDropdownOpen}
@@ -172,16 +230,15 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             textStyle={styles.dropdownText}
           />
         ) : null}
-        <View style={{ zIndex: -1 }}>
-          <NoReasonCard elements={history.noReason.filter(e => e.start_date.isBetween(startDate, endDate))} />
-          <UnregularizedCard elements={history.unregularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
-          <RegularizedCard elements={history.regularized.filter(e => e.start_date.isBetween(startDate, endDate))} />
-          <LatenessCard elements={history.latenesses.filter(e => e.start_date.isBetween(startDate, endDate))} />
-          <IncidentCard elements={history.incidents.filter(e => e.date.isBetween(startDate, endDate))} />
-          <PunishmentCard elements={history.punishments.filter(e => e.start_date.isBetween(startDate, endDate))} />
-          <ForgotNotebookCard elements={history.forgottenNotebooks.filter(e => e.date.isBetween(startDate, endDate))} />
-          <DepartureCard elements={history.departures.filter(e => e.start_date.isBetween(startDate, endDate))} />
-        </View>
+        {loadingState === AsyncPagedLoadingState.REFRESH ? (
+          <LoadingIndicator />
+        ) : (
+          <View style={{ zIndex: -1 }}>
+            {categories.map(category => (
+              <HistoryCategoryCard {...category} />
+            ))}
+          </View>
+        )}
       </ScrollView>
     );
   };
@@ -205,12 +262,12 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   return (
     <PageView>
       {props.userType === UserType.Relative ? (
-        <ChildPicker>
-          {props.hasRightToCreateAbsence ? (
+        <ChildPicker redirectedChildName={props.route.params.notification?.backupData.params.studentName}>
+          {props.hasPresencesCreateAbsenceRight ? (
             <TouchableOpacity
               onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
               style={styles.declareAbsenceButton}>
-              <SmallBoldText style={styles.declareAbscenceText}>{I18n.t('viesco-declareAbsence')}</SmallBoldText>
+              <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('presences-history-reportabsence')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
         </ChildPicker>
@@ -223,48 +280,32 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
 
     return {
       classes: session?.user.classes,
-      hasRightToCreateAbsence: session?.authorizedActions.some(
-        action => action.displayName === 'presences.absence.statements.create',
-      ),
+      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       history: presencesState.history.data,
-      initialLoadingState: presencesState.history.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
+      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
-      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
-      studentId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
+      structureId:
+        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
+      studentId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
       terms: presencesState.terms.data,
       userId,
       userType,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<PresencesHistoryScreenDispatchProps>(
       {
-        fetchHistory: tryActionLegacy(
-          fetchPresencesHistoryAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchHistory'],
-        fetchSchoolYear: tryActionLegacy(
-          fetchPresencesSchoolYearAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchSchoolYear'],
-        fetchTerms: tryActionLegacy(
-          fetchPresencesTermsAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchTerms'],
-        fetchUserChildren: tryActionLegacy(
-          fetchPresencesUserChildrenAction,
-          undefined,
-          true,
-        ) as unknown as PresencesHistoryScreenPrivateProps['fetchUserChildren'],
+        tryFetchHistory: tryAction(fetchPresencesHistoryAction),
+        tryFetchSchoolYear: tryAction(fetchPresencesSchoolYearAction),
+        tryFetchTerms: tryAction(fetchPresencesTermsAction),
+        tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
       dispatch,
     ),

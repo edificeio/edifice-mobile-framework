@@ -1,14 +1,14 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
+import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
@@ -19,13 +19,13 @@ import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/
 import {
   fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
-  fetchCompetencesDomainesAction,
-  fetchCompetencesLevelsAction,
   fetchCompetencesSubjectsAction,
 } from '~/framework/modules/viescolaire/competences/actions';
 import { DashboardAssessmentCard } from '~/framework/modules/viescolaire/competences/components/Item';
+import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import competencesConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
+import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import {
@@ -40,10 +40,10 @@ import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigatio
 import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import type { DashboardStudentScreenPrivateProps } from './types';
+import type { DashboardStudentScreenDispatchProps, DashboardStudentScreenPrivateProps } from './types';
 
 type IHomeworkByDateList = {
   [key: string]: IHomework[];
@@ -56,34 +56,41 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco'),
+    title: I18n.get('dashboard-student-title'),
   }),
 });
 
 class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenPrivateProps> {
   constructor(props) {
     super(props);
-    const { structureId, userId } = props;
+    const { classes, structureId, userId } = props;
     this.state = {
       // fetching next month homeworks only, when screen is focused
       focusListener: this.props.navigation.addListener('focus', () => {
-        this.props.fetchHomeworks(
+        this.props.tryFetchHomeworks(
           structureId,
           moment().add(1, 'days').format('YYYY-MM-DD'),
           moment().add(1, 'month').format('YYYY-MM-DD'),
         );
-        this.props.fetchDevoirs(structureId, userId);
-        this.props.fetchSubjects(structureId);
+        this.props.tryFetchCompetences(userId, classes[0]);
+        this.props.tryFetchDevoirs(structureId, userId);
+        this.props.tryFetchSubjects(structureId);
       }),
     };
   }
 
   public componentDidMount() {
-    const { classes, structureId, userId } = this.props;
-    this.props.fetchCompetences(userId, classes[0]);
-    this.props.fetchDomaines(classes[0]);
-    this.props.fetchLevels(structureId);
-    this.props.fetchTeachers(structureId);
+    const { structureId } = this.props;
+    this.props.tryFetchTeachers(structureId);
+  }
+
+  private openAssessment(assessment: IDevoir) {
+    const { classes, navigation } = this.props;
+
+    navigation.navigate(competencesRouteNames.assessment, {
+      assessment,
+      studentClass: classes?.[0] ?? '',
+    });
   }
 
   private renderNavigationGrid() {
@@ -94,7 +101,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.presences && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(presencesRouteNames.history)}
-            text={I18n.t('viesco-history')}
+            text={I18n.get('dashboard-student-presences')}
             color={viescoTheme.palette.presences}
             icon="access_time"
             nbModules={nbModules}
@@ -103,7 +110,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.edt && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(edtRouteNames.home)}
-            text={I18n.t('viesco-timetable')}
+            text={I18n.get('dashboard-student-edt')}
             color={viescoTheme.palette.edt}
             icon="calendar_today"
             nbModules={nbModules}
@@ -112,7 +119,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.diary && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(diaryRouteNames.homeworkList)}
-            text={I18n.t('Homework')}
+            text={I18n.get('dashboard-student-diary')}
             color={viescoTheme.palette.diary}
             icon="checkbox-multiple-marked"
             nbModules={nbModules}
@@ -121,7 +128,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
         {this.props.authorizedViescoApps.competences && (
           <ModuleIconButton
             onPress={() => this.props.navigation.navigate(competencesRouteNames.home)}
-            text={I18n.t('viesco-tests')}
+            text={I18n.get('dashboard-student-competences')}
             color={viescoTheme.palette.competences}
             icon="equalizer"
             nbModules={nbModules}
@@ -139,7 +146,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
       homeworksByDate[key].push(hm);
     });
 
-    const tomorrowDate = moment().add(1, 'day') as moment.Moment;
+    const tomorrowDate = moment().add(1, 'day') as Moment;
 
     homeworksByDate = Object.keys(homeworksByDate)
       .filter(date => moment(date).isAfter(moment()))
@@ -152,16 +159,16 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
 
     return (
       <View style={styles.dashboardPart}>
-        <BodyBoldText>{I18n.t('viesco-homework')}</BodyBoldText>
+        <BodyBoldText>{I18n.get('dashboard-student-homework-recent')}</BodyBoldText>
         {!Object.keys(homeworksByDate).length ? (
-          <EmptyScreen svgImage="empty-homework" title={I18n.t('viesco-homework-EmptyScreenText')} />
+          <EmptyScreen svgImage="empty-homework" title={I18n.get('dashboard-student-homework-emptyscreen-title')} />
         ) : null}
         {Object.keys(homeworksByDate).map(date => (
           <>
             <SmallText style={styles.subtitle}>
               {moment(date).isSame(tomorrowDate, 'day')
-                ? I18n.t('viesco-homework-fortomorrow')
-                : `${I18n.t('viesco-homework-fordate')} ${moment(date).format('DD/MM/YYYY')}`}
+                ? I18n.get('dashboard-student-homework-duetomorrow')
+                : I18n.get('dashboard-student-homework-duedate', { date: moment(date).format('DD/MM/YYYY') })}
             </SmallText>
             {homeworksByDate[date].map(homework => (
               <HomeworkItem
@@ -170,7 +177,7 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
                 title={homework.subject_id !== 'exceptional' ? homework.subject.name : homework.exceptional_label}
                 subtitle={homework.type}
                 onChange={() => {
-                  this.props.updateHomeworkProgress(homework.id, !isHomeworkDone(homework));
+                  this.props.tryUpdateHomeworkProgress(homework.id, !isHomeworkDone(homework));
                 }}
                 onPress={() =>
                   this.props.navigation.navigate(diaryRouteNames.homework, homeworkListDetailsAdapter(homework, homeworks))
@@ -186,19 +193,20 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
   private renderLastAssessments() {
     return (
       <FlatList
-        data={this.props.devoirs.data.slice(0, 5)}
+        data={this.props.devoirs.slice(0, 5)}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => (
           <DashboardAssessmentCard
             devoir={item}
-            competences={this.props.competences.filter(competence => competence.devoirId === item.id)}
-            domaines={this.props.domaines}
-            levels={this.props.levels}
-            subject={this.props.subjects.find(subject => subject.id === item.subjectId)}
+            hasCompetences={this.props.competences.some(c => c.devoirId === item.id)}
+            subject={this.props.subjects.find(s => s.id === item.subjectId)}
+            openAssessment={() => this.openAssessment(item)}
           />
         )}
-        ListHeaderComponent={<BodyBoldText>{I18n.t('viesco-lasteval')}</BodyBoldText>}
-        ListEmptyComponent={<EmptyScreen svgImage="empty-evaluations" title={I18n.t('viesco-eval-EmptyScreenText')} />}
+        ListHeaderComponent={<BodyBoldText>{I18n.get('dashboard-student-assessments-recent')}</BodyBoldText>}
+        ListEmptyComponent={
+          <EmptyScreen svgImage="empty-evaluations" title={I18n.get('dashboard-student-assessments-emptyscreen-title')} />
+        }
         scrollEnabled={false}
         style={styles.dashboardPart}
       />
@@ -208,14 +216,14 @@ class DashboardStudentScreen extends React.PureComponent<DashboardStudentScreenP
   scrollRef = React.createRef<typeof ScrollView>();
 
   public render() {
-    const { authorizedViescoApps, devoirs, homeworks } = this.props;
+    const { authorizedViescoApps, homeworks, isFetchingDevoirs } = this.props;
 
     return (
       <PageView>
         {this.renderNavigationGrid()}
         <ScrollView ref={this.scrollRef}>
           {authorizedViescoApps.diary ? this.renderHomework(homeworks.data) : null}
-          {authorizedViescoApps.competences ? devoirs.isFetching ? <LoadingIndicator /> : this.renderLastAssessments() : null}
+          {authorizedViescoApps.competences ? isFetchingDevoirs ? <LoadingIndicator /> : this.renderLastAssessments() : null}
         </ScrollView>
       </PageView>
     );
@@ -235,60 +243,25 @@ export default connect(
         edt: session?.apps.some(app => app.address === '/edt'),
         presences: session?.apps.some(app => app.address === '/presences'),
       },
-      classes: session?.user.classes ?? [],
+      classes: session?.user.classes,
       competences: competencesState.competences.data,
-      devoirs: competencesState.devoirs,
-      domaines: competencesState.domaines.data,
+      devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       homeworks: diaryState.homeworks,
-      levels: competencesState.levels.data,
+      isFetchingDevoirs: competencesState.devoirs.isFetching,
       structureId: session?.user.structures?.[0]?.id,
       subjects: competencesState.subjects.data,
       userId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<DashboardStudentScreenDispatchProps>(
       {
-        fetchCompetences: tryActionLegacy(
-          fetchCompetencesAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchCompetences'],
-        fetchDevoirs: tryActionLegacy(
-          fetchCompetencesDevoirsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchDevoirs'],
-        fetchDomaines: tryActionLegacy(
-          fetchCompetencesDomainesAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchDomaines'],
-        fetchHomeworks: tryActionLegacy(
-          fetchDiaryHomeworksAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchHomeworks'],
-        fetchLevels: tryActionLegacy(
-          fetchCompetencesLevelsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchLevels'],
-        fetchSubjects: tryActionLegacy(
-          fetchCompetencesSubjectsAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchSubjects'],
-        fetchTeachers: tryActionLegacy(
-          fetchDiaryTeachersAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['fetchTeachers'],
-        updateHomeworkProgress: tryActionLegacy(
-          updateDiaryHomeworkProgressAction,
-          undefined,
-          true,
-        ) as unknown as DashboardStudentScreenPrivateProps['updateHomeworkProgress'],
+        tryFetchCompetences: tryAction(fetchCompetencesAction),
+        tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
+        tryFetchHomeworks: tryAction(fetchDiaryHomeworksAction),
+        tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),
+        tryFetchTeachers: tryAction(fetchDiaryTeachersAction),
+        tryUpdateHomeworkProgress: tryAction(updateDiaryHomeworkProgressAction),
       },
       dispatch,
     ),

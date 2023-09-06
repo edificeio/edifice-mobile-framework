@@ -1,12 +1,12 @@
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { cardPaddingMerging } from '~/framework/components/card/base';
@@ -119,7 +119,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('timeline.appName'),
+    title: I18n.get('timeline-appname'),
   }),
   headerLeft: () => (
     <NavBarAction
@@ -213,7 +213,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                   } // Do nothing, just to prevent error
                 },
                 actionColor: theme.palette.status.warning.regular,
-                actionText: I18n.t('timeline.reportAction.button'),
+                actionText: I18n.get('timeline-reportaction-button'),
                 actionIcon: 'ui-warning',
               },
             ]
@@ -229,7 +229,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
                   } // Do nothing, just to prevent error
                 },
                 actionColor: theme.palette.status.failure.regular,
-                actionText: I18n.t('common.close'),
+                actionText: I18n.get('timeline-close'),
                 actionIcon: 'ui-close',
               },
             ]
@@ -285,8 +285,8 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     return (
       <EmptyScreen
         svgImage="empty-timeline"
-        title={I18n.t('timeline.emptyScreenTitle')}
-        text={I18n.t('timeline.emptyScreenText')}
+        title={I18n.get('timeline-emptyscreen-title')}
+        text={I18n.get('timeline-emptyscreen-text')}
       />
     );
   }
@@ -386,23 +386,23 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
   doReportConfirm(notif: ITimelineNotification) {
     return new Promise<boolean>((resolve, reject) => {
       if (!this.rights.notification.report) reject(this.rights.notification.report);
-      Alert.alert(I18n.t('timeline.reportAction.title'), I18n.t('timeline.reportAction.description'), [
+      Alert.alert(I18n.get('timeline-reportaction-title'), I18n.get('timeline-reportaction-description'), [
         {
-          text: I18n.t('timeline.reportAction.submit'),
+          text: I18n.get('timeline-reportaction-submit'),
           onPress: async () => {
             try {
               await notificationsService.report(this.props.session, notif.id);
               resolve(true);
-              Toast.showSuccess(I18n.t('timeline.reportAction.success'));
+              Toast.showSuccess(I18n.get('timeline-reportaction-success'));
             } catch (e) {
-              Alert.alert(I18n.t('common.error.text'));
+              Alert.alert(I18n.get('timeline-error-text'));
               reject(e);
             }
           },
           style: 'destructive',
         },
         {
-          text: I18n.t('common.cancel'),
+          text: I18n.get('common-cancel'),
           onPress: () => {
             resolve(false);
           },
@@ -441,7 +441,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
     try {
       await dispatch(dismissFlashMessageAction(flashMessageId));
     } catch {
-      Toast.showError(I18n.t('timeline-flash-message-dismiss-error-text'));
+      Toast.showError(I18n.get('timeline-flashmessage-dismisserror-text'));
     }
   },
   handleOpenNotification: async (

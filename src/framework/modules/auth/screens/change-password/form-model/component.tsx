@@ -38,8 +38,8 @@ export default class ChangePasswordFormModel {
   errors(model: IChangePasswordModel) {
     const errors: string[] = [];
     this.check(errors, this.oldPassword.isValid(model.oldPassword));
-    this.check(errors, this.newPassword.isValid(model.newPassword), 'changePassword-errorRegex');
-    this.check(errors, this.confirm.isValid(model.confirm), 'changePassword-errorConfirm');
+    this.check(errors, this.newPassword.isValid(model.newPassword), 'auth-changepassword-error-regex');
+    this.check(errors, this.confirm.isValid(model.confirm), 'auth-changepassword-error-confirm');
     return errors;
   }
 

@@ -1,12 +1,12 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { TouchableContentCard } from '~/framework/components/card';
 import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
+import { SmallBoldText, SmallItalicText, TextFontStyle } from '~/framework/components/text';
 import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -57,7 +57,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const signature = flashMessage && flashMessage.signature;
     const signatureColor = flashMessage && flashMessage.signatureColor;
     const contents = flashMessage && flashMessage.contents;
-    const appLanguage = I18n.currentLocale();
+    const appLanguage = I18n.getLanguage();
     const contentsHasAppLanguage = contents && Object.prototype.hasOwnProperty.call(contents, appLanguage);
     const contentsLanguages = contents && Object.keys(contents);
     const flashMessageHtml = contentsHasAppLanguage ? contents[appLanguage] : contents && contents[contentsLanguages[0]];
@@ -97,6 +97,11 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                   boldTextStyle: {
                     color: theme.ui.text.inverse,
                   },
+                  linkTextStyle: {
+                    ...TextFontStyle.Bold,
+                    color: theme.ui.text.inverse,
+                    textDecorationLine: 'underline',
+                  },
                   textColor: false,
                   images: false,
                   iframes: false,
@@ -115,7 +120,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
           }>
           {longText && !isExtended ? (
             <View style={styles.seeMore}>
-              <SmallBoldText style={{ color: theme.ui.text.inverse }}>{I18n.t('seeMore')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.ui.text.inverse }}>{I18n.get('timeline-seemore')}</SmallBoldText>
               <Icon
                 name="arrow_down"
                 color={theme.ui.text.inverse}

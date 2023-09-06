@@ -1,10 +1,10 @@
 // Libraries
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
@@ -63,8 +63,8 @@ export class PlatformSelectScreen extends React.PureComponent<IPlatformSelectScr
           keyExtractor={item => item.url}
           ListHeaderComponent={
             <>
-              <HeadingSText style={styles.heading}>{I18n.t('welcome')}</HeadingSText>
-              <SmallText style={styles.lightP}>{I18n.t('select-platform')}</SmallText>
+              <HeadingSText style={styles.heading}>{I18n.get('auth-platformselect-welcome')}</HeadingSText>
+              <SmallText style={styles.lightP}>{I18n.get('auth-platformselect-select')}</SmallText>
             </>
           }
           alwaysBounceVertical={false}

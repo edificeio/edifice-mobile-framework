@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
@@ -26,7 +26,7 @@ export const UserCard = ({
   const renderUserType = (userType: 'Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest') => (
     <View style={styles.textType}>
       <View style={styles.roundColorType} key={userType} />
-      <SmallText style={{ color: theme.ui.text.light }}>{I18n.t(`profileTypes.${userType}`)}</SmallText>
+      <SmallText style={{ color: theme.ui.text.light }}>{I18n.get(`user-profiletypes-${userType}`.toLowerCase())}</SmallText>
     </View>
   );
 
@@ -35,7 +35,7 @@ export const UserCard = ({
       {avatar ? (
         <>
           <BottomMenu
-            title={I18n.t('bottom-menu-change-avatar')}
+            title={I18n.get('user-usercard-bottommenu-changeavatar')}
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),
@@ -56,7 +56,7 @@ export const UserCard = ({
         <>
           <View style={styles.viewNoAvatar} />
           <BottomMenu
-            title={I18n.t('bottom-menu-change-avatar')}
+            title={I18n.get('user-usercard-bottommenu-changeavatar')}
             actions={[
               cameraAction({
                 callback: image => (updatingAvatar ? undefined : changeAvatar(image)),

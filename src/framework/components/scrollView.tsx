@@ -2,6 +2,8 @@ import { useScrollToTop } from '@react-navigation/native';
 import * as React from 'react';
 import { ScrollView as RNScrollView, ScrollViewProps as RNScrollViewProps } from 'react-native';
 
+import { useSyncRef } from '~/framework/hooks/ref';
+
 import { UI_SIZES } from './constants';
 
 export interface ScrollViewProps extends RNScrollViewProps {
@@ -13,7 +15,9 @@ function ScrollView(props: ScrollViewProps, ref) {
   const realContentContainerStyle = React.useMemo(() => {
     return bottomInset ? [{ paddingBottom: UI_SIZES.screen.bottomInset }, contentContainerStyle] : contentContainerStyle;
   }, [bottomInset, contentContainerStyle]);
+
   const scrollViewRef: { current: any } = React.useRef();
+  const syncRef = useSyncRef(ref, scrollViewRef);
   const scrollToEnd = () => scrollViewRef?.current?.scrollToEnd();
   React.useImperativeHandle(ref, () => ({ scrollToEnd }));
 
@@ -21,7 +25,7 @@ function ScrollView(props: ScrollViewProps, ref) {
 
   return (
     <RNScrollView
-      ref={scrollViewRef}
+      ref={syncRef}
       {...otherProps}
       contentContainerStyle={realContentContainerStyle}
       scrollIndicatorInsets={scrollIndicatorInsets || ScrollView.scrollIndicatorInsets} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.

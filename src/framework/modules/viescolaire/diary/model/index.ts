@@ -1,7 +1,7 @@
 import { IAudience } from './audience';
-import { IDiarySession } from './diary-session';
+import { IDiaryCourse } from './course';
 import { IHomework, IHomeworkMap } from './homework';
-import { ISessionHomework } from './session-homework';
+import { IDiarySession } from './session';
 import { ISubject } from './subject';
 
-export { IAudience, IHomework, IHomeworkMap, IDiarySession, ISessionHomework, ISubject };
+export { IAudience, IDiaryCourse, IHomework, IHomeworkMap, IDiarySession, ISubject };

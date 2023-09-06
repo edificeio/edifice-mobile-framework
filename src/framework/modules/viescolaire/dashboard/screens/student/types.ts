@@ -1,37 +1,48 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IUser } from '~/framework/modules/auth/model';
-import { ICompetence, IDevoir, IDomaine, ILevel, ISubject } from '~/framework/modules/viescolaire/competences/model';
-import { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
-import type { DashboardNavigationParams } from '~/framework/modules/viescolaire/dashboard/navigation';
-import { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
-import { AsyncState } from '~/framework/util/redux/async';
+import type { IUser } from '~/framework/modules/auth/model';
+import type {
+  fetchCompetencesAction,
+  fetchCompetencesDevoirsAction,
+  fetchCompetencesSubjectsAction,
+} from '~/framework/modules/viescolaire/competences/actions';
+import type { ICompetence, IDevoir, ISubject } from '~/framework/modules/viescolaire/competences/model';
+import type { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
+import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
+import type {
+  fetchDiaryHomeworksAction,
+  fetchDiaryTeachersAction,
+  updateDiaryHomeworkProgressAction,
+} from '~/framework/modules/viescolaire/diary/actions';
+import type { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import type { AsyncState } from '~/framework/util/redux/async';
 
-export interface DashboardStudentScreenProps {
-  authorizedViescoApps: IAuthorizedViescoApps;
-  classes: string[];
-  competences: ICompetence[];
-  devoirs: AsyncState<IDevoir[]>;
-  domaines: IDomaine[];
-  homeworks: AsyncState<IHomeworkMap>;
-  levels: ILevel[];
-  subjects: ISubject[];
-  structureId?: string;
-  userId?: string;
-  fetchCompetences: (studentId: string, classId: string) => Promise<ICompetence[]>;
-  fetchDevoirs: (structureId: string, childId: string) => Promise<IDevoir[]>;
-  fetchDomaines: (classId: string) => Promise<IDomaine[]>;
-  fetchHomeworks: (structureId: string, startDate: string, endDate: string) => Promise<IHomeworkMap>;
-  fetchLevels: (structureId: string) => Promise<ILevel[]>;
-  fetchSubjects: (structureId: string) => Promise<ISubject[]>;
-  fetchTeachers: (structureId: string) => Promise<IUser[]>;
-  updateHomeworkProgress: (homeworkId: number, isDone: boolean) => Promise<void>;
-}
+export interface DashboardStudentScreenProps {}
 
 export interface DashboardStudentScreenNavParams {}
 
-export interface DashboardStudentScreenPrivateProps
-  extends NativeStackScreenProps<DashboardNavigationParams, 'student'>,
-    DashboardStudentScreenProps {
-  // @scaffolder add HOC props here
+export interface DashboardStudentScreenStoreProps {
+  authorizedViescoApps: IAuthorizedViescoApps;
+  competences: ICompetence[];
+  devoirs: IDevoir[];
+  homeworks: AsyncState<IHomeworkMap>;
+  isFetchingDevoirs: boolean;
+  subjects: ISubject[];
+  classes?: string[];
+  structureId?: string;
+  userId?: string;
 }
+
+export interface DashboardStudentScreenDispatchProps {
+  tryFetchCompetences: (...args: Parameters<typeof fetchCompetencesAction>) => Promise<ICompetence[]>;
+  tryFetchDevoirs: (...args: Parameters<typeof fetchCompetencesDevoirsAction>) => Promise<IDevoir[]>;
+  tryFetchHomeworks: (...args: Parameters<typeof fetchDiaryHomeworksAction>) => Promise<IHomeworkMap>;
+  tryFetchSubjects: (...args: Parameters<typeof fetchCompetencesSubjectsAction>) => Promise<ISubject[]>;
+  tryFetchTeachers: (...args: Parameters<typeof fetchDiaryTeachersAction>) => Promise<IUser[]>;
+  tryUpdateHomeworkProgress: (...args: Parameters<typeof updateDiaryHomeworkProgressAction>) => Promise<void>;
+}
+
+export type DashboardStudentScreenPrivateProps = DashboardStudentScreenProps &
+  DashboardStudentScreenStoreProps &
+  DashboardStudentScreenDispatchProps &
+  NativeStackScreenProps<DashboardNavigationParams, typeof dashboardRouteNames.student>;

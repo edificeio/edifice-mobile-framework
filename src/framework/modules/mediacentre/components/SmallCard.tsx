@@ -1,8 +1,8 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ColorValue, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { TouchCard } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -99,7 +99,7 @@ export class SmallCard extends React.PureComponent<ISmallCardProps> {
 
   copyToClipboard = () => {
     Clipboard.setString(this.props.resource.link);
-    Toast.showInfo(I18n.t('mediacentre.link-copied'));
+    Toast.showInfo(I18n.get('mediacentre-home-linkcopied'));
   };
 
   public render() {

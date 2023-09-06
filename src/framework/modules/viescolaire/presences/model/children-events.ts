@@ -1,12 +1,13 @@
-export interface IChildrenEvents {
-  studentsEvents: any;
-  limit?: number;
-  offset?: number;
-  recoveryMethods: string; // {HALF_DAY / HOUR / DAY}
-  totals: {
-    JUSTIFIED: number;
-    UNJUSTIFIED: number;
-    LATENESS: number;
-    DEPARTURE: number;
-  };
-}
+import { IEvent } from './events';
+
+export type IChildEvents = {
+  DEPARTURE: IEvent[];
+  LATENESS: IEvent[];
+  NO_REASON: IEvent[];
+  REGULARIZED: IEvent[];
+  UNREGULARIZED: IEvent[];
+};
+
+export type IChildrenEvents = {
+  [studentId: string]: IChildEvents;
+};

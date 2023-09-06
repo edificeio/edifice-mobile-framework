@@ -1,6 +1,6 @@
-import I18n from 'i18n-js';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { TimelineState } from '~/framework/modules/timeline/reducer';
@@ -111,7 +111,7 @@ export const updatePushNotifsSettingsAction =
         notifierShowAction({
           type: 'error',
           id: 'timeline/push-notifications',
-          text: I18n.t('common.error.text'),
+          text: I18n.get('timeline-notifsettings-error-text'),
         }),
       );
     }

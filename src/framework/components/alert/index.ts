@@ -1,4 +1,4 @@
-import AlertCard from './component';
+import { AlertCard } from './component';
 
 export default AlertCard;
-export { AlertCardProps } from './type';
+export type { AlertCardProps } from './types';

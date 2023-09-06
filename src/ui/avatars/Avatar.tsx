@@ -33,7 +33,13 @@ export enum Status {
 const SelectedView = styled(View)({
   position: 'absolute',
   borderColor: theme.palette.primary.regular,
-  borderWidth: 2,
+  borderWidth: 4,
+  // increase width & height 2px to center border (2px outside & inside)
+  top: -2,
+  left: -2,
+  borderRadius: 26,
+  height: 52,
+  width: 52,
 });
 
 const largeImageStyle = {
@@ -51,7 +57,7 @@ const LargeImage = props => {
     return (
       <View>
         <LargeImageBase {...props} />
-        <SelectedView style={largeImageStyle} />
+        <SelectedView />
       </View>
     );
   } else if (isDisabled) {

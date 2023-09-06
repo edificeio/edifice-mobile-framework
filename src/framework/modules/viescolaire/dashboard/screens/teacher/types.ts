@@ -1,19 +1,22 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { UserType } from '~/framework/modules/auth/service';
-import { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
-import type { DashboardNavigationParams } from '~/framework/modules/viescolaire/dashboard/navigation';
+import type { UserType } from '~/framework/modules/auth/service';
+import type { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
+import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 
-export interface DashboardTeacherScreenProps {
+export interface DashboardTeacherScreenProps {}
+
+export interface DashboardTeacherScreenNavParams {}
+
+export interface DashboardTeacherScreenStoreProps {
   authorizedViescoApps: IAuthorizedViescoApps;
   structureId?: string;
   userType?: UserType;
 }
 
-export interface DashboardTeacherScreenNavParams {}
+export interface DashboardTeacherScreenDispatchProps {}
 
-export interface DashboardTeacherScreenPrivateProps
-  extends NativeStackScreenProps<DashboardNavigationParams, 'teacher'>,
-    DashboardTeacherScreenProps {
-  // @scaffolder add HOC props here
-}
+export type DashboardTeacherScreenPrivateProps = DashboardTeacherScreenProps &
+  DashboardTeacherScreenStoreProps &
+  DashboardTeacherScreenDispatchProps &
+  NativeStackScreenProps<DashboardNavigationParams, typeof dashboardRouteNames.teacher>;

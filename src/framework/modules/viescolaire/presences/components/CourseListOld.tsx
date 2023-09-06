@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -84,14 +84,11 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
   }
 
   private getCurrentCourseIndex(courses: ICourse[]): number {
-    let index = 0;
     const now = moment();
+    let index = courses.findIndex(course => course.startDate.clone().subtract(15, 'minutes').isAfter(now)) - 1;
 
-    for (const course of courses) {
-      if (course.startDate.clone().subtract(15, 'minutes').isAfter(now)) return index;
-      index += 1;
-    }
-    return index;
+    if (index === -2) index = courses.length - 1;
+    return Math.max(index, 0);
   }
 
   public render() {
@@ -99,7 +96,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
     return (
       <View>
         <SmallBoldText style={styles.dateText}>
-          {I18n.t('viesco-register-date')} {moment().format('DD MMMM YYYY')}
+          {I18n.get('presences-courselist-date', { date: moment().format('DD MMMM YYYY') })}
         </SmallBoldText>
         <View style={styles.renderContainer}>
           {isFetching ? (
@@ -116,8 +113,8 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
                 <CourseComponent
                   key={item.id}
                   item={item}
-                  isCourseEditable={!moment(item.startDate).subtract(15, 'minutes').isAfter(moment())}
-                  isCourseNow={moment().isBetween(moment(item.startDate).subtract(15, 'minutes'), moment(item.endDate))}
+                  isCourseEditable={!item.startDate.clone().subtract(15, 'minutes').isAfter(moment())}
+                  isCourseNow={moment().isBetween(item.startDate.clone().subtract(15, 'minutes'), item.endDate)}
                   onPress={() => this.props.onCoursePress(item)}
                 />
               ))}
@@ -125,7 +122,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
           ) : (
             <>
               <View style={[styles.noCallChip, styles.absentColor]} />
-              <BodyBoldText style={styles.noCallText}>{I18n.t('viesco-no-register-today')}</BodyBoldText>
+              <BodyBoldText style={styles.noCallText}>{I18n.get('presences-courselist-emptyscreen-title')}</BodyBoldText>
               <View style={[styles.noCallChip, styles.presentColor]} />
             </>
           )}

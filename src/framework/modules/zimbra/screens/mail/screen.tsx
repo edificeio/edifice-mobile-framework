@@ -1,12 +1,11 @@
 import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
-import { Alert, RefreshControl, ScrollView, View } from 'react-native';
+import { Alert, Platform, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -18,19 +17,21 @@ import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraMailAction, fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framework/modules/zimbra/actions';
-import { FooterButton, HeaderMail, HeaderMailDetails, RenderPJs } from '~/framework/modules/zimbra/components/MailContentItems';
+import { FooterButton, RenderPJs } from '~/framework/modules/zimbra/components/MailContentItems';
+import { MailHeaders } from '~/framework/modules/zimbra/components/MailHeaders';
 import MoveMailsModal from '~/framework/modules/zimbra/components/modals/MoveMailsModal';
 import { DraftType } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { navBarOptions } from '~/framework/navigation/navBar';
+import fileTransferService from '~/framework/util/fileHandler/service';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
-import { ZimbraMailScreenPrivateProps } from './types';
+import { ZimbraMailScreenDispatchProps, ZimbraMailScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -39,12 +40,11 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.subject,
+    title: '',
   }),
 });
 
 const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
-  const [areDetailsVisible, setDetailsVisible] = React.useState<boolean>(false);
   const moveModalRef = React.useRef<ModalBoxHandle>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -56,9 +56,9 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       const { rootFolders } = props;
       const { id } = props.route.params;
 
-      await props.fetchMail(id);
-      await props.fetchQuota();
-      if (!rootFolders.length) await props.fetchRootFolders();
+      await props.tryFetchMail(id);
+      await props.tryFetchQuota();
+      if (!rootFolders.length) await props.tryFetchRootFolders();
     } catch {
       throw new Error();
     }
@@ -88,7 +88,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('beforeRemove', () => {
-      props.route.params.refreshList?.();
+      props.route.params.onNavigateBack?.();
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +103,26 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       await zimbraService.mails.toggleUnread(session, [id], true);
       navigation.dispatch(CommonActions.goBack());
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('zimbra-mail-error-text'));
+    }
+  };
+
+  const downloadAttachments = async () => {
+    try {
+      const { mail, session } = props;
+
+      if (!mail || !mail.attachments.length || !session) throw new Error();
+      for (const attachment of mail.attachments) {
+        const syncedFile = await fileTransferService.downloadFile(session, attachment, {});
+        await syncedFile.mirrorToDownloadFolder();
+      }
+      if (mail.attachments.length > 1) {
+        Toast.showSuccess(I18n.get('zimbra-mail-download-success-count', { count: mail.attachments.length }));
+      } else {
+        Toast.showSuccess(I18n.get('zimbra-mail-download-success-name', { name: mail.attachments[0]?.filename }));
+      }
+    } catch {
+      Toast.showError(I18n.get('zimbra-mail-download-error'));
     }
   };
 
@@ -115,9 +134,9 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.trash(session, [id]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('zimbra-message-deleted'));
+      Toast.showSuccess(I18n.get('zimbra-mail-mail-trashed'));
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('zimbra-mail-error-text'));
     }
   };
 
@@ -129,20 +148,20 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.delete(session, [id]);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('zimbra-message-deleted'));
+      Toast.showSuccess(I18n.get('zimbra-mail-mail-deleted'));
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('zimbra-mail-error-text'));
     }
   };
 
   const alertPermanentDeletion = () => {
-    Alert.alert(I18n.t('zimbra-message-deleted-confirm'), I18n.t('zimbra-message-deleted-confirm-text'), [
+    Alert.alert(I18n.get('zimbra-mail-deletealert-title'), I18n.get('zimbra-mail-deletealert-message'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'default',
       },
       {
-        text: I18n.t('common.delete'),
+        text: I18n.get('common-delete'),
         onPress: deleteMail,
         style: 'destructive',
       },
@@ -161,7 +180,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     const { id } = props.route.params;
 
     if (quota.quota > 0 && quota.storage >= quota.quota) {
-      return Alert.alert(I18n.t('zimbra-quota-overflowTitle'), I18n.t('zimbra-quota-overflowText'));
+      return Alert.alert(I18n.get('zimbra-mail-storagealert-title'), I18n.get('zimbra-mail-storagealert-message'));
     }
     navigation.navigate(zimbraRouteNames.composer, {
       type,
@@ -170,13 +189,14 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
   };
 
   const getMenuActions = () => {
+    const { mail } = props;
     const { folderPath } = props.route.params;
 
     return [
       ...(folderPath.startsWith('/Inbox') || folderPath === '/Junk'
         ? [
             {
-              title: I18n.t('zimbra-mark-unread'),
+              title: I18n.get('zimbra-mail-menuactions-markunread'),
               action: markAsUnread,
               icon: {
                 ios: 'eye.slash',
@@ -184,7 +204,7 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
               },
             },
             {
-              title: I18n.t('zimbra-move'),
+              title: I18n.get('zimbra-mail-menuactions-move'),
               action: () => moveModalRef.current?.doShowModal(),
               icon: {
                 ios: 'arrow.up.square',
@@ -196,11 +216,23 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
       ...(folderPath === '/Trash'
         ? [
             {
-              title: I18n.t('zimbra-restore'),
+              title: I18n.get('zimbra-mail-menuactions-restore'),
               action: () => moveModalRef.current?.doShowModal(),
               icon: {
                 ios: 'arrow.uturn.backward.circle',
                 android: 'ic_restore',
+              },
+            },
+          ]
+        : []),
+      ...(mail?.hasAttachment && Platform.OS === 'android'
+        ? [
+            {
+              title: I18n.get('zimbra-mail-menuactions-downloadattachments'),
+              action: downloadAttachments,
+              icon: {
+                ios: 'square.and.arrow.down',
+                android: 'ic_download',
               },
             },
           ]
@@ -215,7 +247,6 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     if (loadingState !== AsyncPagedLoadingState.DONE || !mail) return;
     const actions = getMenuActions();
     navigation.setOptions({
-      headerTitle: navBarTitle(mail.subject),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <PopupMenu actions={actions}>
@@ -238,10 +269,10 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
     const { folderPath } = props.route.params;
 
     return folderPath !== '/Trash' ? (
-      <View style={styles.containerFooter}>
-        <FooterButton icon="reply" text={I18n.t('zimbra-reply')} onPress={() => openComposer(DraftType.REPLY)} />
-        <FooterButton icon="reply_all" text={I18n.t('zimbra-replyAll')} onPress={() => openComposer(DraftType.REPLY_ALL)} />
-        <FooterButton icon="forward" text={I18n.t('zimbra-forward')} onPress={() => openComposer(DraftType.FORWARD)} />
+      <View style={styles.footerContainer}>
+        <FooterButton icon="reply" text={I18n.get('zimbra-mail-reply')} onPress={() => openComposer(DraftType.REPLY)} />
+        <FooterButton icon="reply_all" text={I18n.get('zimbra-mail-replyall')} onPress={() => openComposer(DraftType.REPLY_ALL)} />
+        <FooterButton icon="forward" text={I18n.get('zimbra-mail-forward')} onPress={() => openComposer(DraftType.FORWARD)} />
       </View>
     ) : null;
   };
@@ -249,37 +280,34 @@ const ZimbraMailScreen = (props: ZimbraMailScreenPrivateProps) => {
   const renderMail = () => {
     const { mail } = props;
 
-    return mail ? (
-      <View style={styles.fullContainer}>
-        <HeaderMail mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} />
-        {areDetailsVisible ? <HeaderMailDetails mailInfos={mail} setDetailsVisibility={value => setDetailsVisible(value)} /> : null}
-        {mail.hasAttachment ? <RenderPJs attachments={mail.attachments} /> : null}
-        <View style={styles.shadowContainer}>
-          <View style={styles.marginView} />
-          <View style={styles.scrollContainer}>
-            <ScrollView style={styles.scrollAlign} contentContainerStyle={styles.scrollContent}>
-              {mail.body ? (
-                <HtmlContentView
-                  html={mail.body}
-                  opts={{ selectable: true }}
-                  onHtmlError={() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED)}
-                />
-              ) : null}
-            </ScrollView>
+    if (!mail) return renderError();
+    return (
+      <>
+        <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.contentContainer}>
+          <View>
+            <MailHeaders mail={mail} />
+            {mail.hasAttachment ? <RenderPJs attachments={mail.attachments} /> : null}
+            {mail.body ? (
+              <HtmlContentView
+                html={mail.body}
+                opts={{ selectable: true }}
+                onHtmlError={() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED)}
+                style={styles.bodyContainer}
+              />
+            ) : null}
           </View>
-        </View>
-        {renderFooter()}
+          {renderFooter()}
+        </ScrollView>
         <MoveMailsModal
           ref={moveModalRef}
           folderPath={props.route.params.folderPath}
           folders={props.rootFolders}
+          mailFolders={[mail.systemFolder]}
           mailIds={[mail.id]}
           session={props.session}
           successCallback={moveMailCallback}
         />
-      </View>
-    ) : (
-      renderError()
+      </>
     );
   };
 
@@ -312,20 +340,12 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<ZimbraMailScreenDispatchProps>(
       {
-        fetchMail: tryActionLegacy(fetchZimbraMailAction, undefined, true) as unknown as ZimbraMailScreenPrivateProps['fetchMail'],
-        fetchQuota: tryActionLegacy(
-          fetchZimbraQuotaAction,
-          undefined,
-          true,
-        ) as unknown as ZimbraMailScreenPrivateProps['fetchQuota'],
-        fetchRootFolders: tryActionLegacy(
-          fetchZimbraRootFoldersAction,
-          undefined,
-          true,
-        ) as unknown as ZimbraMailScreenPrivateProps['fetchRootFolders'],
+        tryFetchMail: tryAction(fetchZimbraMailAction),
+        tryFetchQuota: tryAction(fetchZimbraQuotaAction),
+        tryFetchRootFolders: tryAction(fetchZimbraRootFoldersAction),
       },
       dispatch,
     ),

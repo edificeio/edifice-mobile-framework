@@ -1,9 +1,9 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
@@ -58,7 +58,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('homework.homeworkExplorerScreen.homeworks'),
+    title: I18n.get('homework-explorer-homeworks'),
   }),
 });
 
@@ -89,9 +89,9 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     return (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.t(`homework-diaries-emptyScreenTitle`)}
-        text={I18n.t('homework-diaries-emptyScreenText')}
-        buttonText={hasCreateHomeworkResourceRight ? I18n.t('homework-createDiary') : undefined}
+        title={I18n.get('homework-explorer-emptyscreen-title')}
+        text={I18n.get('homework-explorer-emptyscreen-text')}
+        buttonText={hasCreateHomeworkResourceRight ? I18n.get('homework-explorer-creatediary') : undefined}
         buttonUrl="/homeworks"
         buttonAction={() => Trackers.trackEvent('Homework', 'GO TO', 'Create in Browser')}
       />

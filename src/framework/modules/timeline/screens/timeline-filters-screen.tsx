@@ -1,14 +1,14 @@
 import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
-import FlatList from '~/framework/components/flatList';
+import FlatList from '~/framework/components/list/flat-list';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';
@@ -43,23 +43,23 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('timeline.filtersScreen.title'),
+    title: I18n.get('timeline-filters-title'),
   }),
 });
 
 function PreventBack(props: { onPreventBack: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.onPreventBack, ({ data }) => {
-    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('timeline-filters-leavealert-title'), I18n.get('timeline-filters-leavealert-text'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.t('common.quit'),
+        text: I18n.get('common-quit'),
         style: 'destructive',
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, navigation);
@@ -100,7 +100,12 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
         initialNumToRender={15} // Items are thin, 15 renders ok on iPhone 13
         ListHeaderComponent={
           notifFilters.length < 2 ? null : (
-            <CheckboxButton onPress={() => this.doToggleAllFilters()} title="common.all" isChecked={!someNotSet} isAllButton />
+            <CheckboxButton
+              onPress={() => this.doToggleAllFilters()}
+              title="timeline-filters-all"
+              isChecked={!someNotSet}
+              isAllButton
+            />
           )
         }
         renderItem={({ item }) => this.renderFilterItem(item)}
@@ -173,7 +178,9 @@ const mapStateToProps: (s: IGlobalState) => ITimelineFiltersScreenDataProps = s 
   return {
     notifFilterSettings: ts.notifSettings.notifFilterSettings.data,
     notifFilters:
-      ts?.notifDefinitions?.notifFilters?.data?.sort((a, b) => I18n.t(a.i18n).localeCompare(I18n.t(b.i18n), I18n.locale)) || [],
+      ts?.notifDefinitions?.notifFilters?.data?.sort((a, b) =>
+        I18n.get(a.i18n).localeCompare(I18n.get(b.i18n), I18n.getLanguage()),
+      ) || [],
   };
 };
 

@@ -1,19 +1,11 @@
 import styled from '@emotion/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
-import {
-  KeyboardAvoidingView,
-  Platform as RNPlatform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform as RNPlatform, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
@@ -84,7 +76,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     color: theme.palette.status.failure.regular,
   },
-  alertCard: { width: '100%', marginTop: UI_SIZES.spacing.medium },
+  alertCard: { marginTop: UI_SIZES.spacing.medium },
 });
 
 const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
@@ -154,8 +146,8 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     };
   };
 
-  private doOpenCGU = (url?: string) => {
-    openPDFReader({ src: url, title: I18n.t('activation-cgu') });
+  private doOpenLegalUrls = (title: string, url?: string) => {
+    openPDFReader({ src: url, title });
   };
 
   public render() {
@@ -169,10 +161,11 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
     });
     const isNotValid = !acceptCGU || !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
-    const errorText = errorKey ? I18n.t(errorKey) : error;
+    const errorText = errorKey ? I18n.get(errorKey) : error;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = activationState === 'RUNNING';
     const cguUrl = this.props.legalUrls?.cgu;
+    const usercharterUrl = this.props.legalUrls?.userCharter;
 
     return (
       <PageView>
@@ -186,8 +179,8 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                       <PFLogo pf={this.props.route.params.platform} />
                     </LogoWrapper>
                     {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
-                    {authContext.passwordRegexI18n?.[I18n.currentLocale()] ? (
-                      <AlertCard type="info" text={authContext.passwordRegexI18n[I18n.currentLocale()]} style={styles.alertCard} />
+                    {authContext.passwordRegexI18n?.[I18n.getLanguage()] ? (
+                      <AlertCard type="info" text={authContext.passwordRegexI18n[I18n.getLanguage()]} style={styles.alertCard} />
                     ) : null}
                     <InputPassword password={password} form={formModel} onChange={this.onFieldChange('password')} />
                     <InputPasswordConfirm
@@ -204,20 +197,25 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                         customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
                       />
                       <View style={styles.cguText}>
-                        <SmallText>{I18n.t('activation-cgu-accept')}</SmallText>
-                        <TouchableOpacity onPress={() => this.doOpenCGU(cguUrl)}>
-                          <SmallActionText>{I18n.t('activation-cgu')}</SmallActionText>
-                        </TouchableOpacity>
+                        <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
+                        <SmallActionText
+                          onPress={() => this.doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}>
+                          {I18n.get('auth-activation-usercharter')}
+                        </SmallActionText>
+                        <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
+                        <SmallActionText onPress={() => this.doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}>
+                          {I18n.get('auth-activation-cgu')}
+                        </SmallActionText>
                       </View>
                     </View>
                     <SmallText style={styles.errorMsg}>
-                      {(hasErrorKey || errorText) && !typing ? I18n.t('activation-errorSubmit') : ''}
+                      {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
                     </SmallText>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
                       <ActionButton
                         action={() => this.doActivation()}
                         disabled={isNotValid}
-                        text={I18n.t('Activate')}
+                        text={I18n.get('auth-activation-activate')}
                         loading={isSubmitLoading}
                       />
                     </ButtonWrapper>

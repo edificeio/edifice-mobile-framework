@@ -1,30 +1,24 @@
-import I18n from 'i18n-js';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { Card } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
-import { BodyBoldText, NestedBoldText } from '~/framework/components/text';
-import { ButtonTextIcon } from '~/ui/ButtonTextIcon';
-import { ArticleContainer } from '~/ui/ContainerContent';
+import { BodyBoldText, NestedBoldText, SmallActionText } from '~/framework/components/text';
 
 const styles = StyleSheet.create({
-  mandatoryText: {
-    color: theme.palette.complementary.red.regular,
-  },
-  lowerContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  actionContainer: {
+    flexGrow: 1,
+    alignItems: 'flex-end',
     marginTop: UI_SIZES.spacing.small,
   },
   childrenContainer: {
-    flexGrow: 100,
-  },
-  actionContainer: {
     flexGrow: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
+    marginTop: UI_SIZES.spacing.small,
+  },
+  mandatoryText: {
+    color: theme.palette.complementary.red.regular,
   },
 });
 
@@ -41,27 +35,23 @@ export class FormQuestionCard extends React.PureComponent<IFormQuestionCardProps
     const { title, children, isMandatory, onClearAnswer, onEditQuestion } = this.props;
     const mandatoryText = ' *';
     return (
-      <ArticleContainer>
-        <Card>
-          <BodyBoldText>
-            {title}
-            {isMandatory ? <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText> : null}
-          </BodyBoldText>
-          <View style={styles.lowerContainer}>
-            <View style={styles.childrenContainer}>{children}</View>
-            {onClearAnswer ? (
-              <View style={styles.actionContainer}>
-                <ButtonTextIcon title={I18n.t('form.clearAnswer')} onPress={() => onClearAnswer()} />
-              </View>
-            ) : null}
-            {onEditQuestion ? (
-              <View style={styles.actionContainer}>
-                <ButtonTextIcon title={I18n.t('common.modify')} onPress={() => onEditQuestion()} />
-              </View>
-            ) : null}
-          </View>
-        </Card>
-      </ArticleContainer>
+      <Card>
+        <BodyBoldText>
+          {title}
+          {isMandatory ? <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText> : null}
+        </BodyBoldText>
+        <View style={styles.childrenContainer}>{children}</View>
+        {onClearAnswer ? (
+          <TouchableOpacity onPress={onClearAnswer} style={styles.actionContainer}>
+            <SmallActionText>{I18n.get('form-distribution-questioncard-clearanswer')}</SmallActionText>
+          </TouchableOpacity>
+        ) : null}
+        {onEditQuestion ? (
+          <TouchableOpacity onPress={onEditQuestion} style={styles.actionContainer}>
+            <SmallActionText>{I18n.get('form-distribution-questioncard-edit')}</SmallActionText>
+          </TouchableOpacity>
+        ) : null}
+      </Card>
     );
   }
 }

@@ -1,8 +1,8 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Linking, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import Toast from '~/framework/components/toast';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
@@ -29,8 +29,8 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
         const isAppInstalled = await Linking.canOpenURL(appUrl);
         if (isAppInstalled) {
           openUrl(appUrl, {
-            title: I18n.t('common.redirect.app.title'),
-            message: I18n.t('common.redirect.app.message'),
+            title: I18n.get('linking-redirectapp-title'),
+            message: I18n.get('linking-redirectapp-message'),
           });
           return;
         }
@@ -42,7 +42,7 @@ function ConnectorRedirectScreen(props: ConnectorRedirectScreenPrivateProps) {
     if (url) {
       openUrl(`/auth/redirect?url=${url}`);
     } else {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }
   };
 

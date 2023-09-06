@@ -1,9 +1,9 @@
 import Clipboard from '@react-native-clipboard/clipboard';
-import I18n from 'i18n-js';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Carousel from 'react-native-snap-carousel';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -103,7 +103,7 @@ const Card: React.FunctionComponent<ICardProps> = (props: ICardProps) => {
   };
   const copyToClipboard = () => {
     Clipboard.setString(props.resource.link);
-    Toast.showInfo(I18n.t('mediacentre.link-copied'));
+    Toast.showInfo(I18n.get('mediacentre-home-linkcopied'));
   };
   return (
     <TouchCardWithoutPadding onPress={openUrlCallback} style={[styles.cardContainer, { backgroundColor: props.color }]}>
@@ -140,7 +140,7 @@ export const FavoritesCarousel: React.FunctionComponent<IFavoritesCarouselProps>
   }, [props.resources.length, cardColors]);
   return (
     <View style={styles.mainContainer}>
-      <SmallBoldText style={styles.titleText}>{I18n.t('mediacentre.favorites').toUpperCase()}</SmallBoldText>
+      <SmallBoldText style={styles.titleText}>{I18n.get('mediacentre-home-section-favorites').toUpperCase()}</SmallBoldText>
       {props.resources.length > 2 ? (
         <Carousel
           data={props.resources}

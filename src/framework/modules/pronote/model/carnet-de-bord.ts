@@ -1,5 +1,6 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
+
+import { I18n } from '~/app/i18n';
 
 export enum CarnetDeBordSection {
   CAHIER_DE_TEXTES = 1, // No falsy values in this
@@ -112,20 +113,20 @@ export type ICarnetDeBordReleveDeNotesDevoir = {
   DateString?: string;
 };
 const carnetDeBordReleveDeNotesDevoirSpecialValueI18n = {
-  abs: 'pronote.carnetDeBord.releveDeNotes.value.abs',
-  disp: 'pronote.carnetDeBord.releveDeNotes.value.disp',
-  'n.not': 'pronote.carnetDeBord.releveDeNotes.value.nnot',
-  inap: 'pronote.carnetDeBord.releveDeNotes.value.inap',
-  'n.rdu': 'pronote.carnetDeBord.releveDeNotes.value.nrdu',
+  abs: 'pronote-transcript-value-absent',
+  disp: 'pronote-transcript-value-exempted',
+  'n.not': 'pronote-transcript-value-unrated',
+  inap: 'pronote-transcript-value-unfit',
+  'n.rdu': 'pronote-transcript-value-unreturned',
 };
 export function formatCarnetDeBordReleveDeNotesDevoirNoteBareme(note?: string | number, bareme?: string) {
-  if (note === undefined) return I18n.t('pronote.carnetDeBord.noInfo');
+  if (note === undefined) return I18n.get('pronote-noinfo');
   const noteLowerCase = note.toString().toLowerCase();
   if (Object.prototype.hasOwnProperty.call(carnetDeBordReleveDeNotesDevoirSpecialValueI18n, noteLowerCase)) {
-    return I18n.t(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
+    return I18n.get(carnetDeBordReleveDeNotesDevoirSpecialValueI18n[noteLowerCase]);
   } else
     return bareme
-      ? I18n.t('pronote.carnetDeBord.releveDeNotes.note', {
+      ? I18n.get('pronote-transcript-note', {
           note,
           bareme,
         })
@@ -203,33 +204,33 @@ export function getSummaryItem<T>(itemsPast?: T[], itemsFuture?: T[]) {
 }
 
 const carnetDeBordVieScolaireTypeI18n = {
-  Absence: 'pronote.carnetDeBord.vieScolaire.type.Absence',
-  Retard: 'pronote.carnetDeBord.vieScolaire.type.Retard',
-  PassageInfirmerie: 'pronote.carnetDeBord.vieScolaire.type.PassageInfirmerie',
-  Punition: 'pronote.carnetDeBord.vieScolaire.type.Punition',
-  Sanction: 'pronote.carnetDeBord.vieScolaire.type.Sanction',
-  Observation: 'pronote.carnetDeBord.vieScolaire.type.Observation',
+  Absence: 'pronote-viescolaire-type-absence',
+  Retard: 'pronote-viescolaire-type-lateness',
+  PassageInfirmerie: 'pronote-viescolaire-type-infirmary',
+  Punition: 'pronote-viescolaire-type-punishment',
+  Sanction: 'pronote-viescolaire-type-sanction',
+  Observation: 'pronote-viescolaire-type-observation',
 };
 
 export function formatCarnetDeBordVieScolaireType(type?: string) {
   return type && Object.prototype.hasOwnProperty.call(carnetDeBordVieScolaireTypeI18n, type)
-    ? I18n.t(carnetDeBordVieScolaireTypeI18n[type])
-    : I18n.t('pronote.carnetDeBord.noInfo');
+    ? I18n.get(carnetDeBordVieScolaireTypeI18n[type])
+    : I18n.get('pronote-noinfo');
 }
 const carnetDeBordCompetencesValueI18n = {
-  1: 'pronote.carnetDeBord.competences.value.1',
-  2: 'pronote.carnetDeBord.competences.value.2',
-  3: 'pronote.carnetDeBord.competences.value.3',
-  4: 'pronote.carnetDeBord.competences.value.4',
-  5: 'pronote.carnetDeBord.competences.value.5',
-  6: 'pronote.carnetDeBord.competences.value.6',
-  7: 'pronote.carnetDeBord.competences.value.7',
-  8: 'pronote.carnetDeBord.competences.value.8',
+  1: 'pronote-skills-value-1',
+  2: 'pronote-skills-value-2',
+  3: 'pronote-skills-value-3',
+  4: 'pronote-skills-value-4',
+  5: 'pronote-skills-value-5',
+  6: 'pronote-skills-value-6',
+  7: 'pronote-skills-value-7',
+  8: 'pronote-skills-value-8',
 };
 export function formatCarnetDeBordCompetencesValue(value?: number) {
   return value && Object.prototype.hasOwnProperty.call(carnetDeBordCompetencesValueI18n, value)
-    ? I18n.t(carnetDeBordCompetencesValueI18n[value])
-    : I18n.t('pronote.carnetDeBord.noInfo');
+    ? I18n.get(carnetDeBordCompetencesValueI18n[value])
+    : I18n.get('pronote-noinfo');
 }
 
 export class PronoteCdbInitError extends Error {}

@@ -4,18 +4,18 @@
 import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import deepmerge from 'deepmerge';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import FlatList from '~/framework/components/flatList';
+import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
@@ -72,24 +72,26 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('directory-notificationsTitle'),
+    title: I18n.get('user-pushnotifssettings-title'),
     titleStyle: { width: undefined },
   }),
 });
 
+const formatI18nNotifType = (notifType: string) => notifType.replaceAll('_', '').replaceAll('.', '-');
+
 function PreventBack(props: { hasChanged: boolean }) {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
   UNSTABLE_usePreventRemove(props.hasChanged, ({ data }) => {
-    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('user-pushnotifssettings-leavealert-title'), I18n.get('user-pushnotifssettings-leavealert-text'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.t('common.quit'),
+        text: I18n.get('common-quit'),
         style: 'destructive',
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, navigation);
@@ -180,7 +182,9 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
     const subListData =
       Object.entries(items) && Object.entries(items).length > 0
         ? Object.entries(items).sort((a, b) =>
-            I18n.t(`timeline.notifType.${a[0]}`).localeCompare(I18n.t(`timeline.notifType.${b[0]}`)),
+            I18n.get(formatI18nNotifType(`timeline-notiftype-${a[0]}`)).localeCompare(
+              I18n.get(formatI18nNotifType(`timeline-notiftype-${b[0]}`)),
+            ),
           )
         : [];
     const hasEmptySubListData = subListData.length === 0;
@@ -197,7 +201,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
           hasEmptySubListData ? null : (
             <CheckboxButton
               onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
-              title="common.all"
+              title="user-pushnotifssettings-all"
               isChecked={areAllChecked}
               isAllButton
             />
@@ -211,7 +215,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
     return (
       <CheckboxButton
         onPress={() => this.doTogglePushNotifSetting([item[0], !item[1]])}
-        title={`timeline.notifType.${item[0]}`}
+        title={formatI18nNotifType(`timeline-notiftype-${item[0]}`)}
         isChecked={item[1]}
       />
     );

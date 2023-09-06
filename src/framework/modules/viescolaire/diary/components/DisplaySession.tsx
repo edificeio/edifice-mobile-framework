@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -134,7 +134,7 @@ export default class DisplaySession extends React.PureComponent<IDisplaySessionP
 
             <ScrollView>
               <View style={styles.sessionPart}>
-                <SmallText style={styles.pageTitle}>{I18n.t('viesco-session')}</SmallText>
+                <SmallText style={styles.pageTitle}>{I18n.get('diary-session-session')}</SmallText>
                 {sessionList && sessionList[indexSelectedSession]?.title && (
                   <BodyBoldText>{sessionList[indexSelectedSession].title}</BodyBoldText>
                 )}

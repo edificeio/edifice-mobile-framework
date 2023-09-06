@@ -1,10 +1,9 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -19,7 +18,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesMementoScreenPrivateProps } from './types';
+import type { PresencesMementoScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -28,7 +27,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-memento'),
+    title: I18n.get('presences-memento-title'),
   }),
 });
 
@@ -86,18 +85,18 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
     return memento ? (
       <ScrollView>
         <View style={styles.studentInfos}>
-          {memento.name ? <BodyBoldText style={styles.studentName}>{memento.name}</BodyBoldText> : null}
+          <BodyBoldText style={styles.studentName}>{memento.name}</BodyBoldText>
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="cake-variant" />
             <SmallText>
-              {memento.birth_date ? `${I18n.t('viesco-memento-born-date')} ${moment(memento.birth_date).format('L')}` : '-'}
+              {memento.birthDate ? I18n.get('presences-memento-birthdate', { date: memento.birthDate.format('L') }) : '-'}
             </SmallText>
           </View>
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="school" />
-            <SmallText>{memento.classes?.length ? memento.classes.join(', ') : '-'}</SmallText>
+            <SmallText>{memento.classes.length ? memento.classes.join(', ') : '-'}</SmallText>
           </View>
-          {memento.groups.length > 0 && <SmallText style={styles.studentGroups}>{memento.groups.join(', ')}</SmallText>}
+          {memento.groups.length ? <SmallText style={styles.studentGroups}>{memento.groups.join(', ')}</SmallText> : null}
           <View style={styles.infoLine}>
             <Icon style={styles.iconDisplay} size={20} name="silverware" />
             <SmallText>{memento.accommodation ? memento.accommodation.toLocaleLowerCase() : '-'}</SmallText>
@@ -105,29 +104,27 @@ const PresencesMementoScreen = (props: PresencesMementoScreenPrivateProps) => {
         </View>
         {memento.relatives.length ? (
           <View style={[styles.relativesInfos, styles.shadow]}>
-            <SmallText style={styles.relativesTitleText}>{I18n.t('viesco-memento-relatives')}</SmallText>
+            <SmallText style={styles.relativesTitleText}>{I18n.get('presences-memento-relatives')}</SmallText>
             {memento.relatives.map(relative => (
               <View style={styles.relativesContainer}>
-                {relative.name ? (
-                  <SmallBoldText style={styles.relativesIdentity}>
-                    {relative.title ? relative.title + ' ' + relative.name : relative.name}
-                  </SmallBoldText>
-                ) : null}
+                <SmallBoldText style={styles.relativesIdentity}>
+                  {relative.title ? relative.title + ' ' + relative.name : relative.name}
+                </SmallBoldText>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="email" />
-                  <SmallText>{relative.email || '-'}</SmallText>
+                  <SmallText>{relative.email ?? '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="cellphone" />
-                  <SmallText>{relative.mobile || '-'}</SmallText>
+                  <SmallText>{relative.mobile ?? '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="phone" />
-                  <SmallText>{relative.phone || '-'}</SmallText>
+                  <SmallText>{relative.phone ?? '-'}</SmallText>
                 </View>
                 <View style={styles.infoLine}>
                   <Icon style={styles.iconDisplay} size={20} name="home" />
-                  <SmallText>{relative.address || '-'}</SmallText>
+                  <SmallText>{relative.address ?? '-'}</SmallText>
                 </View>
               </View>
             ))}

@@ -2,19 +2,19 @@
  * Schoolbook word list
  */
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import UserList from '~/framework/components/UserList';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
+import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -63,7 +63,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('schoolbook.appName'),
+    title: I18n.get('schoolbook-wordlist-appname'),
   }),
   headerRight: undefined,
 });
@@ -148,6 +148,15 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
         }
         // Only increment pagecount when fromStart is not specified
         return newSchoolbookWords;
+      } else {
+        setNextPageToFetch(prevState => {
+          return isParent
+            ? {
+                ...prevState,
+                [studentId]: -1,
+              }
+            : -1;
+        });
       }
     },
     [isParent, isTeacher, nextPageToFetch, pagingSize, schoolbookWords, selectedChildId, session, userId],
@@ -260,7 +269,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
           <PopupMenu
             actions={[
               linkAction({
-                title: I18n.t('schoolbook.word.create'),
+                title: I18n.get('schoolbook-wordlist-wordcreate'),
                 action: () => {
                   //TODO: get session.platform from redux
                   if (!session?.platform) {
@@ -306,15 +315,11 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
     return (
       <EmptyScreen
         svgImage="empty-schoolbook"
-        title={I18n.t(
-          `schoolbook.schoolbookWordListScreen.emptyScreen.title${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`,
-        )}
-        text={I18n.t(
-          `schoolbook.schoolbookWordListScreen.emptyScreen.text${hasSchoolbookWordCreationRights ? '' : 'NoCreationRights'}`,
-        )}
+        title={I18n.get(`schoolbook-wordlist-emptyscreen-title${hasSchoolbookWordCreationRights ? '' : '-nocreationrights'}`)}
+        text={I18n.get(`schoolbook-wordlist-emptyscreen-text${hasSchoolbookWordCreationRights ? '' : '-nocreationrights'}`)}
         {...(hasSchoolbookWordCreationRights
           ? {
-              buttonText: I18n.t('schoolbook.word.create'),
+              buttonText: I18n.get('schoolbook-wordlist-wordcreate'),
               buttonUrl: '/schoolbook#/list',
             }
           : {})}
@@ -339,7 +344,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
     return (
       <UserList
         data={children}
-        style={{ margin: UI_SIZES.spacing.medium }}
+        style={{ padding: UI_SIZES.spacing.medium }}
         renderBadge={user => ({ badgeContent: user.unacknowledgedWordsCount, badgeColor: theme.ui.notificationBadge })}
         onSelect={id => setSelectedChildId(id)}
         selectedId={selectedChildId}

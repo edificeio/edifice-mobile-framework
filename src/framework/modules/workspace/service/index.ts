@@ -1,10 +1,10 @@
 /**
  * API Consumer for Backend Workspace application
  */
-import I18n from 'i18n-js';
 import moment from 'moment';
 import queryString from 'query-string';
 
+import { I18n } from '~/app/i18n';
 import { ISession } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
@@ -103,7 +103,7 @@ export const factoryRootFolder = (filter: Filter): IFile => {
     key: filter,
     date: 0,
     isFolder: true,
-    name: I18n.t(filter),
+    name: I18n.get(`workspace-filelist-${filter}`),
     owner: '',
     ownerName: '',
     parentId: 'root',

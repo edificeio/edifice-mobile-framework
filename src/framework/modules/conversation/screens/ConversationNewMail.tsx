@@ -1,6 +1,5 @@
 import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import React from 'react';
 import { Alert, AlertButton, Keyboard, Platform, StyleSheet } from 'react-native';
@@ -8,6 +7,7 @@ import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
@@ -39,6 +39,7 @@ import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helpe
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
@@ -115,7 +116,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('conversation.newMessage'),
+    title: I18n.get('conversation-newmail-newmessage'),
     titleStyle: styles.title,
   }),
 });
@@ -171,7 +172,10 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     const sendDraft = this.navigationHeaderFunction.getSendDraft;
 
     navigation.setOptions({
-      headerTitle: navBarTitle(I18n.t(isSavedDraft ? 'conversation.draft' : 'conversation.newMessage'), styles.title),
+      headerTitle: navBarTitle(
+        I18n.get(isSavedDraft ? 'conversation-newmail-draft' : 'conversation-newmail-newmessage'),
+        styles.title,
+      ),
       // React Navigation 6 uses this syntax to setup nav options
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
@@ -225,20 +229,24 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
         checkBody = checkBody.replace(/<\/?(div|br)\/?>/g, '');
         if (/<("[^"]*"|'[^']*'|[^'">])*>/.test(checkBody)) {
           this.setState({ webDraftWarning: true });
-          Alert.alert(I18n.t('conversation.warning.webDraft.title'), I18n.t('conversation.warning.webDraft.text'), [
-            {
-              text: I18n.t('common.quit'),
-              onPress: async () => {
-                this.props.navigation.goBack();
+          Alert.alert(
+            I18n.get('conversation-newmail-warning-webdraft-title'),
+            I18n.get('conversation-newmail-warning-webdraft-text'),
+            [
+              {
+                text: I18n.get('common-quit'),
+                onPress: async () => {
+                  this.props.navigation.goBack();
+                },
+                style: 'cancel',
               },
-              style: 'cancel',
-            },
-            {
-              text: I18n.t('common.continue'),
-              onPress: async () => {},
-              style: 'default',
-            },
-          ]);
+              {
+                text: I18n.get('common-continue'),
+                onPress: async () => {},
+                style: 'default',
+              },
+            ],
+          );
         }
       }
   };
@@ -263,26 +271,26 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
     },
     getSendDraft: async () => {
       const { mail, tempAttachment } = this.state;
-      if (mail.to.length === 0) {
+      if (isEmpty(mail.to) && isEmpty(mail.cc) && isEmpty(mail.cci)) {
         Keyboard.dismiss();
-        Toast.showError(I18n.t('conversation.missingReceiver'));
+        Toast.showError(I18n.get('conversation-newmail-missingreceiver'));
         return;
       } else if (tempAttachment && tempAttachment !== null) {
         Keyboard.dismiss();
-        Toast.showInfo(I18n.t('conversation.sendAttachmentProgress'));
+        Toast.showInfo(I18n.get('conversation-newmail-sendattachment-progress'));
         return;
       } else if (!mail.body || !mail.subject) {
         Keyboard.dismiss();
         Alert.alert(
-          I18n.t(`conversation.missing${!mail.body ? 'Body' : 'Subject'}Title`),
-          I18n.t(`conversation.missing${!mail.body ? 'Body' : 'Subject'}Message`),
+          I18n.get(`conversation-newmail-missing${!mail.body ? 'body' : 'subject'}-title`),
+          I18n.get(`conversation-newmail-missing${!mail.body ? 'body' : 'subject'}-message`),
           [
             {
-              text: I18n.t('common.send'),
+              text: I18n.get('common-send'),
               onPress: () => this.sendDraft(),
             },
             {
-              text: I18n.t('common.cancel'),
+              text: I18n.get('common-cancel'),
               style: 'cancel',
             },
           ],
@@ -300,7 +308,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           await deleteMessage([id]);
           navigation.goBack();
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Succès');
-          Toast.showSuccess(I18n.t('conversation.messageDeleted'));
+          Toast.showSuccess(I18n.get('conversation-newmail-messagedeleted'));
         } catch {
           Trackers.trackEventOfModule(moduleConfig, 'Supprimer', 'Rédaction mail - Supprimer le brouillon - Échec');
         }
@@ -321,17 +329,17 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
 
       if (isUploadingAttachment) {
         Keyboard.dismiss();
-        Toast.showInfo(I18n.t('conversation.sendAttachmentProgress'));
+        Toast.showInfo(I18n.get('conversation-newmail-sendattachment-progress'));
       } else if (!isDraftEmpty) {
         const textToDisplay = {
-          title: 'conversation.saveDraftTitle',
-          text: isSavedDraft ? 'conversation.saveAgainDraftMessage' : 'conversation.saveDraftMessage',
+          title: 'conversation-newmail-savedraft-title',
+          text: isSavedDraft ? 'conversation-newmail-saveagaindraft-message' : 'conversation-newmail-savedraft-message',
         };
         const options = [
           ...(isSavedDraft
             ? [
                 {
-                  text: isSavedDraft ? I18n.t('conversation.deleteDraft') : I18n.t('common.delete'),
+                  text: isSavedDraft ? I18n.get('conversation-newmail-deletedraft') : I18n.get('common-delete'),
                   onPress: async () => {
                     try {
                       if (id) {
@@ -357,7 +365,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
               ]
             : []),
           {
-            text: isSavedDraft ? I18n.t('conversation.cancelModifications') : I18n.t('common.delete'),
+            text: isSavedDraft ? I18n.get('conversation-newmail-cancelmodifications') : I18n.get('common-delete'),
             onPress: async () => {
               try {
                 if ((isNewDraft && id) || (!isNewDraft && id && id !== mailId)) {
@@ -385,7 +393,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             style: isSavedDraft ? 'default' : 'destructive',
           },
           {
-            text: isSavedDraft ? I18n.t('conversation.saveModifications') : I18n.t('common.save'),
+            text: isSavedDraft ? I18n.get('conversation-newmail-savemodifications') : I18n.get('common-save'),
             onPress: async () => {
               try {
                 await this.saveDraft();
@@ -407,8 +415,8 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           },
         ] as AlertButton[];
         Alert.alert(
-          I18n.t(textToDisplay.title),
-          I18n.t(textToDisplay.text),
+          I18n.get(textToDisplay.title),
+          I18n.get(textToDisplay.text),
           Platform.select({
             ios: [...options].reverse(),
             android: options,
@@ -493,7 +501,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           prevBody: getPrevBody(),
           mail: {
             to: route.params.currentFolder === 'sendMessages' ? mail.to.map(getUser) : [mail.from].map(getUser),
-            subject: I18n.t('conversation.replySubject') + mail.subject,
+            subject: I18n.get('conversation-newmail-replysubject') + mail.subject,
           },
         };
       }
@@ -535,7 +543,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
             to,
             cc,
             cci,
-            subject: I18n.t('conversation.replySubject') + mail.subject,
+            subject: I18n.get('conversation-newmail-replysubject') + mail.subject,
           },
         };
       }
@@ -544,7 +552,7 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
           replyTo: mail.id,
           prevBody: getPrevBody(),
           mail: {
-            subject: I18n.t('conversation.forwardSubject') + mail.subject,
+            subject: I18n.get('conversation-newmail-forwardsubject') + mail.subject,
             body: '',
             attachments: mail.attachments,
           },
@@ -619,9 +627,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       // Full storage management
       // statusCode = 400 on iOS and code = 'ENOENT' on Android
       if (e?.response?.statusCode === 400 || e?.code === 'ENOENT') {
-        Toast.showError(I18n.t('fullStorage'));
+        Toast.showError(I18n.get('conversation-newmail-fullstorage'));
       } else {
-        Toast.showError(I18n.t('conversation.attachmentError'));
+        Toast.showError(I18n.get('conversation-newmail-attachmenterror'));
       }
       this.setState({ tempAttachment: null });
       throw e;
@@ -668,9 +676,9 @@ class NewMailScreen extends React.PureComponent<ConversationNewMailScreenProps, 
       Keyboard.dismiss();
       await sendMail(this.getMailData(), id, replyTo);
       navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('conversation.sendMail'));
+      Toast.showSuccess(I18n.get('conversation-newmail-sendmail'));
     } catch {
-      Toast.showError(I18n.t('conversation-send-error'));
+      Toast.showError(I18n.get('conversation-newmail-senderror'));
       // TODO: Manage error
     } finally {
       this.setState({ isSending: false });

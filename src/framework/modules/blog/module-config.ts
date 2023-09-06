@@ -7,7 +7,7 @@ export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   name: 'blog',
   entcoreScope: ['blog'],
   matchEntcoreApp: '/blog',
-  displayI18n: 'blog.tabName',
+  displayI18n: 'blog-tabname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'blog', fill: theme.palette.complementary.indigo.regular },
 });

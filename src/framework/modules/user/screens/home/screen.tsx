@@ -1,7 +1,6 @@
 import { useHeaderHeight } from '@react-navigation/elements';
-import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
+import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
@@ -9,6 +8,7 @@ import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
@@ -45,7 +45,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('MyAccount'),
+    title: I18n.get('user-profile-myaccount'),
   }),
   headerShadowVisible: false,
 });
@@ -57,7 +57,6 @@ export const computeNavBar = ({
  */
 function useCurvedNavBarFeature() {
   const navBarHeight = useHeaderHeight() - UI_SIZES.screen.topInset;
-
   // SVG size management
   const svgDisplayWidth = UI_SIZES.screen.width;
   const svgDisplayHeight = Math.ceil(
@@ -67,7 +66,6 @@ function useCurvedNavBarFeature() {
     Math.ceil(navBarHeight * (svgDisplayWidth / useCurvedNavBarFeature.svgOriginalWidth)) -
     svgDisplayHeight +
     UI_SIZES.elements.statusbarHeight;
-
   // SVG size management
   return React.useMemo(() => {
     return (
@@ -81,6 +79,7 @@ function useCurvedNavBarFeature() {
     );
   }, [svgDisplayHeight, svgDisplayTopOffset, svgDisplayWidth]);
 }
+
 useCurvedNavBarFeature.svgOriginalWidth = 375;
 useCurvedNavBarFeature.svgOriginalHeight = 545;
 useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
@@ -103,7 +102,6 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
       } as ImageURISource)
     );
   }, [session?.platform, session?.user.photo]);
-
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
     return !userProfilePicture ? (
@@ -127,9 +125,9 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     () => (
       <>
         <BodyBoldText style={styles.userInfoName}>{session?.user.displayName}</BodyBoldText>
-        <SmallText style={styles.userInfoType}>{I18n.t(`profileTypes.${session?.user.type}`)}</SmallText>
+        <SmallText style={styles.userInfoType}>{I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}</SmallText>
         <ActionButton
-          text={I18n.t('user.page.userFileButton')}
+          text={I18n.get('user-page-userfilebutton')}
           type="secondary"
           action={() => {
             navigation.navigate(userRouteNames.profile, {});
@@ -147,25 +145,21 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
  * @param session
  * @returns the React Element of the menus
  */
-function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
+function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], focusedRef: React.MutableRefObject<boolean>) {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
-  const isFocused = useIsFocused();
-
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
     return authContextRef.current;
   }, [session]);
-
   const fetchMFAValidationInfos = React.useCallback(async () => {
     const requirements = await getUserRequirements(session?.platform!);
     const needMfa = requirements?.needMfa;
     if (needMfa) await getMFAValidationInfos();
     return needMfa;
   }, [session]);
-
   const editUserInformation = React.useCallback(
     async (modificationType: ModificationType) => {
       try {
@@ -181,12 +175,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
         let routeName = routeNames[modificationType];
         const params = {
           [ModificationType.EMAIL]: {
-            navBarTitle: I18n.t('user.page.editEmail'),
+            navBarTitle: I18n.get('user-page-editemail'),
             modificationType: ModificationType.EMAIL,
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeEmailScreenNavParams,
           [ModificationType.MOBILE]: {
-            navBarTitle: I18n.t('user.page.editMobile'),
+            navBarTitle: I18n.get('user-page-editmobile'),
             modificationType: ModificationType.MOBILE,
             platform: session?.platform,
           } as AuthMFAScreenNavParams | AuthChangeMobileScreenNavParams,
@@ -194,6 +188,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
             platform: session?.platform,
             context: authContextRef?.current,
             credentials: { username: session?.user.login },
+            navCallback: CommonActions.goBack(),
           } as ChangePasswordScreenNavParams,
         };
         const routeParams = params[modificationType];
@@ -201,29 +196,27 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
           (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
           routeName = authRouteNames.mfaModal;
         }
-        if (isFocused) navigation.navigate(routeName, routeParams);
+        if (focusedRef.current) navigation.navigate(routeName, routeParams);
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('user-page-error-text'));
       } finally {
         setCurrentLoadingMenu(undefined);
       }
     },
-    [fetchAuthContext, fetchMFAValidationInfos, isFocused, navigation, session?.platform, session?.user?.login],
+    [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
-
   const canEditPersonalInfo = session?.user.type !== UserType.Student;
   const isStudent = session?.user.type === UserType.Student;
   const isRelative = session?.user.type === UserType.Relative;
   const showWhoAreWe = session?.platform.showWhoAreWe;
-
   return React.useMemo(
     () => (
       <>
         <View style={styles.section}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.t('user.page.configuration')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-configuration')}</HeadingSText>
           <ButtonLineGroup>
             <LineButton
-              title="directory-notificationsTitle"
+              title="user-pushnotifssettings-title"
               onPress={() => {
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
@@ -231,14 +224,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
             <LineButton
               loading={currentLoadingMenu === ModificationType.PASSWORD}
               disabled={!!currentLoadingMenu}
-              title="user.page.editPassword"
+              title="user-page-editpassword"
               onPress={() => editUserInformation(ModificationType.PASSWORD)}
             />
             {canEditPersonalInfo ? (
               <LineButton
                 loading={currentLoadingMenu === ModificationType.EMAIL}
                 disabled={!!currentLoadingMenu}
-                title="user.page.editEmail"
+                title="user-page-editemail"
                 onPress={() => editUserInformation(ModificationType.EMAIL)}
               />
             ) : null}
@@ -246,26 +239,26 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
               <LineButton
                 loading={currentLoadingMenu === ModificationType.MOBILE}
                 disabled={!!currentLoadingMenu}
-                title="user.page.editMobile"
+                title="user-page-editmobile"
                 onPress={() => editUserInformation(ModificationType.MOBILE)}
               />
             ) : null}
             <LineButton
-              title="directory-structuresTitle"
+              title="user-structures-title"
               onPress={() => {
                 navigation.navigate(userRouteNames.structures, {});
               }}
             />
             {isStudent ? (
               <LineButton
-                title="directory-relativesTitle"
+                title="user-relatives-title"
                 onPress={() => {
                   navigation.navigate(userRouteNames.family, { mode: 'relatives' });
                 }}
               />
             ) : isRelative ? (
               <LineButton
-                title="directory-childrenTitle"
+                title="user-children-title"
                 onPress={() => {
                   navigation.navigate(userRouteNames.family, { mode: 'children' });
                 }}
@@ -274,18 +267,18 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session']) {
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.t('user.page.others')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-others')}</HeadingSText>
           <ButtonLineGroup>
             {showWhoAreWe ? (
               <LineButton
-                title="directory-whoAreWeTitle"
+                title="user-whoarewe-title"
                 onPress={() => {
                   navigation.navigate(userRouteNames.whoAreWe, {});
                 }}
               />
             ) : null}
             <LineButton
-              title="directory-legalNoticeTitle"
+              title="user-legalnotice-title"
               onPress={() => {
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}
@@ -309,26 +302,25 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
    * Caution: Alert callbacks eats any exception thrown silently.
    */
   const doLogout = React.useCallback(() => {
-    Alert.alert('', I18n.t('auth-disconnectConfirm'), [
+    Alert.alert('', I18n.get('auth-disconnect-confirm'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'default',
       },
       {
-        text: I18n.t('directory-disconnectButton'),
+        text: I18n.get('user-page-disconnect'),
         style: 'destructive',
         onPress: () => handleLogout(),
       },
     ]);
   }, [handleLogout]);
-
   /**
    * renders the logout button
    */
   return React.useMemo(() => {
     return (
       <TouchableOpacity onPress={doLogout}>
-        <SmallBoldText style={styles.logoutButton}>{I18n.t('directory-disconnectButton')}</SmallBoldText>
+        <SmallBoldText style={styles.logoutButton}>{I18n.get('user-page-disconnect')}</SmallBoldText>
       </TouchableOpacity>
     );
   }, [doLogout]);
@@ -343,18 +335,15 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
    * When true, version number display more info about build / platform / override / etc
    */
   const [isVersionDetailsShown, setIsVersionDetailsShown] = React.useState<boolean>(false);
-
   const toggleVersionDetails = React.useCallback(() => {
     setIsVersionDetailsShown(oldState => !oldState);
   }, []);
-
   const currentPlatform = session?.platform.displayName;
-
   return React.useMemo(() => {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
         <SmallBoldText style={styles.versionButton}>
-          {I18n.t('version-number')} {useVersionFeature.versionNumber}
+          {I18n.get('user-page-versionnumber')} {useVersionFeature.versionNumber}
           {isVersionDetailsShown ? ` ${useVersionFeature.versionType} (${useVersionFeature.buildNumber})` : null}
         </SmallBoldText>
         {isVersionDetailsShown ? (
@@ -366,6 +355,25 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
     );
   }, [currentPlatform, isVersionDetailsShown, toggleVersionDetails]);
 }
+
+/**
+ * Setup a version number feature that can secretly display detailed information when long pressed.
+ * @returns the React Element of the touchable toggle i18n keys
+ */
+function useToggleKeysFeature() {
+  if (!I18n.canShowKeys) return;
+  return (
+    <ActionButton
+      text="Toggle i18n Keys"
+      type="secondary"
+      action={() => {
+        I18n.toggleShowKeys();
+      }}
+      style={styles.userInfoButton}
+    />
+  );
+}
+
 // All these values are compile-time constants. So we decalre them as function statics.
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
 useVersionFeature.buildNumber = DeviceInfo.getBuildNumber();
@@ -380,11 +388,24 @@ useVersionFeature.versionOverride = RNConfigReader.BundleVersionOverride as stri
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const { handleLogout, session } = props;
 
+  // Manages focus to send to others features in this screen.
+  // We must store it in a Ref because of async operations
+  const focusedRef = React.useRef(useIsFocused());
+  useFocusEffect(
+    React.useCallback(() => {
+      focusedRef.current = true;
+      return () => {
+        focusedRef.current = false;
+      };
+    }, []),
+  );
+
   const navBarDecoration = useCurvedNavBarFeature();
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
-  const accountMenu = useAccountMenuFeature(session);
+  const accountMenu = useAccountMenuFeature(session, focusedRef);
   const logoutButton = useLogoutFeature(handleLogout);
+  const toggleKeysButton = useToggleKeysFeature();
   const versionButton = useVersionFeature(session);
 
   return (
@@ -399,6 +420,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         <View style={styles.sectionBottom}>
           {logoutButton}
           {versionButton}
+          {toggleKeysButton}
         </View>
       </ScrollView>
     </PageView>

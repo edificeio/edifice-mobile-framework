@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { LayoutChangeEvent, View } from 'react-native';
 import rnTextSize, { TSMeasureParams, TSMeasureResult } from 'react-native-text-size';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CaptionText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
@@ -31,7 +31,7 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
   };
 
   static defaultProps = {
-    expandMessage: I18n.t('common.readMore'),
+    expandMessage: I18n.get('textpreview-readmore'),
     numberOfLines: 5,
     expansionTextStyle: { color: theme.palette.complementary.blue.regular },
     textStyle: { marginTop: UI_SIZES.spacing.tiny },
@@ -65,8 +65,8 @@ export class TextPreview extends React.PureComponent<ITextPreviewProps, ITextPre
       expansionTextStyle,
     } = this.props;
     const { isExpanded } = this.state;
-    const expand = expandMessage || I18n.t('seeMore');
-    const collapse = collapseMessage || I18n.t('seeLess');
+    const expand = expandMessage || I18n.get('textpreview-seemore');
+    const collapse = collapseMessage || I18n.get('textpreview-seeless');
     return (
       this.showExpansionLabels() && (
         <CaptionText

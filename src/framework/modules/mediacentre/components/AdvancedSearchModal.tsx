@@ -1,4 +1,3 @@
-import I18n from 'i18n-js';
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import {
   ImageSourcePropType,
@@ -11,6 +10,7 @@ import {
   View,
 } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { Checkbox } from '~/framework/components/checkbox';
@@ -152,7 +152,10 @@ interface IAdvancedSearchModalProps {
 }
 
 const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICriteriaInputProps) => {
-  const buttons = [I18n.t('mediacentre.advancedSearch.or'), I18n.t('mediacentre.advancedSearch.and')];
+  const buttons = [
+    I18n.get('mediacentre-advancedsearch-or').toUpperCase(),
+    I18n.get('mediacentre-advancedsearch-and').toUpperCase(),
+  ];
   const onChangeOperand = (value: number) => {
     props.field.operand = value;
     props.onChange(props.field);
@@ -172,10 +175,10 @@ const CriteriaInput: React.FunctionComponent<ICriteriaInputProps> = (props: ICri
         />
       ) : null}
       <View style={styles.criteriaContainer}>
-        <SmallText>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallText>
+        <SmallText>{I18n.get(`mediacentre-advancedsearch-${props.field.name}-label`)}</SmallText>
         <TextInput
           defaultValue={props.field.value}
-          placeholder={I18n.t(`mediacentre.advancedSearch.search-${props.field.name}`)}
+          placeholder={I18n.get(`mediacentre-advancedsearch-${props.field.name}-placeholder`)}
           clearButtonMode="always"
           maxLength={30}
           onChangeText={onChangeText}
@@ -253,7 +256,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
         keyboardVerticalOffset={60}
         style={styles.safeAreaContainer}>
         <View style={styles.headerContainer}>
-          <BodyBoldText style={styles.headerTitle}>{I18n.t('mediacentre.advanced-search')}</BodyBoldText>
+          <BodyBoldText style={styles.headerTitle}>{I18n.get('mediacentre-advancedsearch-title')}</BodyBoldText>
           <TouchableOpacity onPress={props.closeModal}>
             <Picture type="NamedSvg" name="ui-close" width={24} height={24} fill={theme.ui.text.inverse} />
           </TouchableOpacity>
@@ -263,7 +266,7 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
             <CriteriaInput field={field} onChange={newField => updateField(index, newField)} key={index} />
           ))}
           <View style={styles.sourcesContainer}>
-            <SmallText>{I18n.t('mediacentre.advancedSearch.sources')}</SmallText>
+            <SmallText>{I18n.get('mediacentre-advancedsearch-sources')}</SmallText>
             <View style={styles.sourcesContentContainer}>
               {props.availableSources.includes(Source.GAR) ? (
                 <SourceCheckbox
@@ -296,8 +299,13 @@ export const AdvancedSearchModal: React.FunctionComponent<IAdvancedSearchModalPr
             </View>
           </View>
           <View style={styles.buttonsContainer}>
-            <ActionButton text={I18n.t('common.cancel')} type="secondary" action={props.closeModal} />
-            <ActionButton text={I18n.t('common.search')} action={onSearch} disabled={areFieldsEmpty} style={styles.searchButton} />
+            <ActionButton text={I18n.get('mediacentre-advancedsearch-cancel')} type="secondary" action={props.closeModal} />
+            <ActionButton
+              text={I18n.get('mediacentre-advancedsearch-search')}
+              action={onSearch}
+              disabled={areFieldsEmpty}
+              style={styles.searchButton}
+            />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

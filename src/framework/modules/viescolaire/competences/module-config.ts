@@ -3,6 +3,7 @@ import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { ICompetencesReduxState } from './reducer';
+import theme from '~/app/theme';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
@@ -14,7 +15,7 @@ export default new NavigableModuleConfig<'competences', ICompetencesReduxState>(
   entcoreScope: ['competences'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
 
-  displayI18n: 'viesco-tests',
+  displayI18n: 'competences-moduleconfig-appname',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'competences' },
+  displayPicture: { type: 'NamedSvg', name: 'competences', fill: theme.palette.complementary.red.regular },
 });

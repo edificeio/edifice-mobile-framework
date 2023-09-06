@@ -57,6 +57,8 @@ let _overrides_localRepoPath; // Will be computed after;
 const _override_copyMergePaths = {
   [_override_entryPoint]: 'override.json', // Applied override information
   i18n: 'assets/i18n/override', // I18n overrides
+  '.phrase.yml': './.phrase.yml', // Phrase configuration file
+  'phrase.json': './phrase.json', // Phrase secrets
   'appconf.ts': 'src/app/override/appconf.ts', // App configuration + included platforms
   platforms: 'src/platforms', // All possible platforms. Only used ones will be included into the bundle
   'modules.ts': 'src/app/override/modules.ts', // Included modules in the override

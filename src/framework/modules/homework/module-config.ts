@@ -11,7 +11,7 @@ export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>
   entcoreScope: ['homeworks'],
   matchEntcoreApp: '/homeworks',
 
-  displayI18n: 'Homework',
+  displayI18n: 'homework',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'homework1D', fill: fillName },
 });

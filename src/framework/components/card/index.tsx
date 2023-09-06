@@ -85,10 +85,12 @@ const ContentCardBase = (props: IContentCardPropsBase) => {
   const FooterFlexViewWithPadding = styled(FooterFlexView)(cardPaddingSmall, withoutPadding && { paddingHorizontal: 0 });
   return (
     <CC {...viewProps}>
-      <HeaderFlexViewWithPadding>
-        <View style={UI_STYLES.flex1}>{props.header ?? null}</View>
-        <View style={[UI_STYLES.flex0, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
-      </HeaderFlexViewWithPadding>
+      {header ? (
+        <HeaderFlexViewWithPadding>
+          <View style={UI_STYLES.flex1}>{props.header ?? null}</View>
+          <View style={[UI_STYLES.flex0, props.customHeaderIndicatorStyle]}>{props.headerIndicator ?? null}</View>
+        </HeaderFlexViewWithPadding>
+      ) : null}
       {props.children ? <ContentFlexViewWithPadding>{props.children}</ContentFlexViewWithPadding> : null}
       {props.footer ? (
         <>
@@ -176,7 +178,7 @@ export const ContentCardIcon = (props: IContentCardIconProps) => {
   );
 };
 
-export interface IResourceCardProps extends ViewProps, Omit<Partial<IContentCardProps>, 'header'> {
+export interface IResourceCardProps extends ViewProps, Omit<Partial<IContentCardProps & IContentCardPropsBase>, 'header'> {
   icon?: IContentCardIconProps;
   header?: string | React.ReactElement;
   headerHtml?: string;

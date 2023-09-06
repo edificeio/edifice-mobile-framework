@@ -2,7 +2,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import * as React from 'react';
 
 import DrawerContent from '~/framework/modules/zimbra/components/DrawerContent';
-import { DefaultFolder } from '~/framework/modules/zimbra/model';
+import { SystemFolder } from '~/framework/modules/zimbra/model';
 import ZimbraMailListScreen, { computeNavBar as mailListNavBar } from '~/framework/modules/zimbra/screens/mail-list';
 
 import { zimbraRouteNames } from '.';
@@ -15,7 +15,7 @@ export default () => {
         name={zimbraRouteNames.mailList}
         component={ZimbraMailListScreen}
         options={mailListNavBar}
-        initialParams={{ folderName: DefaultFolder.INBOX, folderPath: '/Inbox', isTrashed: false }}
+        initialParams={{ folderName: SystemFolder.INBOX, folderPath: '/Inbox', isTrashed: false }}
       />
     </Drawer.Navigator>
   );

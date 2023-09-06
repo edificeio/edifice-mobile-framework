@@ -1,13 +1,14 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, StyleSheet, Switch, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
+import FlatList from '~/framework/components/list/flat-list';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IUser } from '~/framework/modules/auth/model';
 import { UserType } from '~/framework/modules/auth/service';
@@ -23,7 +24,6 @@ import {
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { PageContainer } from '~/ui/ContainerContent';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import { HomeworkItem, SessionItem } from './Items';
 
@@ -99,7 +99,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
           {index === 0 ||
           moment(item.due_date).format('DD/MM/YY') !== moment(homeworksArray[index - 1].due_date).format('DD/MM/YY') ? (
             <SmallBoldText>
-              {I18n.t('viesco-homework-fordate')} {moment(item.due_date).format('dddd Do MMMM')}
+              {I18n.get('diary-homeworklist-duedate', { date: moment(item.due_date).format('dddd Do MMMM') })}
             </SmallBoldText>
           ) : null}
           <HomeworkItem
@@ -112,7 +112,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
           />
         </View>
       )}
-      ListEmptyComponent={<EmptyComponent title={I18n.t('viesco-homework-EmptyScreenText')} />}
+      ListEmptyComponent={<EmptyComponent title={I18n.get('diary-homeworklist-emptyscreen-homework')} />}
     />
   );
 };
@@ -140,15 +140,15 @@ const SessionList = ({ isFetching, onRefreshSessions, sessionList, onSessionTap,
           />
         </View>
       )}
-      ListEmptyComponent={<EmptyComponent title={I18n.t('viesco-session-EmptyScreenText')} />}
+      ListEmptyComponent={<EmptyComponent title={I18n.get('diary-homeworklist-emptyscreen-session')} />}
     />
   );
 };
 
 export default (props: HomeworkListProps) => {
   const [switchValue, toggleSwitch] = React.useState<SwitchState>(SwitchState.HOMEWORK);
-  const [startDate, setStartDate] = React.useState<moment.Moment>(moment());
-  const [endDate, setEndDate] = React.useState<moment.Moment>(moment().add(3, 'week'));
+  const [startDate, setStartDate] = React.useState<Moment>(moment());
+  const [endDate, setEndDate] = React.useState<Moment>(moment().add(3, 'week'));
 
   const notFirstRender = React.useRef(false);
 
@@ -187,28 +187,28 @@ export default (props: HomeworkListProps) => {
       {userType === UserType.Relative ? <ChildPicker /> : null}
       <View style={styles.homeworkPart}>
         <View style={styles.grid}>
-          <SmallText>{I18n.t('viesco-from')}</SmallText>
+          <SmallText>{I18n.get('diary-homeworklist-from')}</SmallText>
           <DateTimePicker
             mode="date"
-            style={styles.datePicker}
             value={startDate}
+            onChangeValue={setStartDate}
             maximumDate={endDate}
-            onChange={setStartDate}
-            color={viescoTheme.palette.diary}
+            iconColor={viescoTheme.palette.diary}
+            style={styles.datePicker}
           />
-          <SmallText>{I18n.t('viesco-to')}</SmallText>
+          <SmallText>{I18n.get('diary-homeworklist-to')}</SmallText>
           <DateTimePicker
             mode="date"
-            style={styles.datePicker}
             value={endDate}
+            onChangeValue={setEndDate}
             minimumDate={startDate}
-            onChange={setEndDate}
-            color={viescoTheme.palette.diary}
+            iconColor={viescoTheme.palette.diary}
+            style={styles.datePicker}
           />
         </View>
         <View style={styles.grid}>
           <View style={styles.gridHomeworkTitle}>
-            <SmallText>{I18n.t('viesco-homework')}</SmallText>
+            <SmallText>{I18n.get('diary-homeworklist-homework')}</SmallText>
           </View>
           <Switch
             style={styles.gridSwith}
@@ -219,7 +219,7 @@ export default (props: HomeworkListProps) => {
             {...switchProps}
           />
           <View style={styles.gridSesionTitle}>
-            <SmallText>{I18n.t('viesco-session')}</SmallText>
+            <SmallText>{I18n.get('diary-homeworklist-session')}</SmallText>
           </View>
         </View>
         {switchValue === SwitchState.HOMEWORK ? (

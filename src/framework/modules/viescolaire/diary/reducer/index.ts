@@ -5,12 +5,13 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { IUser } from '~/framework/modules/auth/model';
-import { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import { IDiaryCourse, IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 interface IDiaryReduxStateData {
+  courses: IDiaryCourse[];
   homeworks: IHomeworkMap;
   sessions: IDiarySession[];
   slots: ISlot[];
@@ -18,6 +19,7 @@ interface IDiaryReduxStateData {
 }
 
 export interface IDiaryReduxState {
+  courses: AsyncState<IDiaryCourse[]>;
   homeworks: AsyncState<IHomeworkMap>;
   sessions: AsyncState<IDiarySession[]>;
   slots: AsyncState<ISlot[]>;
@@ -25,6 +27,7 @@ export interface IDiaryReduxState {
 }
 
 const initialState: IDiaryReduxStateData = {
+  courses: [],
   homeworks: {},
   sessions: [],
   slots: [],
@@ -32,6 +35,7 @@ const initialState: IDiaryReduxStateData = {
 };
 
 export const actionTypes = {
+  courses: createAsyncActionTypes(moduleConfig.namespaceActionType('COURSES')),
   homeworks: createAsyncActionTypes(moduleConfig.namespaceActionType('HOMEWORKS')),
   sessions: createAsyncActionTypes(moduleConfig.namespaceActionType('SESSIONS')),
   teachers: createAsyncActionTypes(moduleConfig.namespaceActionType('TEACHERS')),
@@ -51,6 +55,7 @@ const homeworksActionHandler = {
 };
 
 const reducer = combineReducers({
+  courses: createSessionAsyncReducer(initialState.courses, actionTypes.courses),
   homeworks: createSessionAsyncReducer(initialState.homeworks, actionTypes.homeworks, homeworksActionHandler),
   sessions: createSessionAsyncReducer(initialState.sessions, actionTypes.sessions),
   slots: createSessionAsyncReducer(initialState.slots, actionTypes.timeSlots),

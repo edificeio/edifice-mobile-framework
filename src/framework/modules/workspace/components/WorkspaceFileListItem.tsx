@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
@@ -53,7 +53,7 @@ export class WorkspaceFileListItem extends React.PureComponent<IWorkspaceFileLis
     const { item, isDisabled, isSelected } = this.props;
     const { id, isFolder, name, date, ownerName, contentType, parentId } = item;
     const borderBottomWidth = isDisabled ? 0 : 1;
-    const longOwnerName = `${I18n.t('common.by').toLowerCase()} ${ownerName}`;
+    const longOwnerName = `${I18n.get('common-by').toLowerCase()} ${ownerName}`;
     return (
       <TouchableOpacity onPress={this.onPressCallback} onLongPress={this.onLongPressCallback} disabled={isDisabled}>
         <ListItem

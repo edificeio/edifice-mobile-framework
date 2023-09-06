@@ -1,14 +1,14 @@
-import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
 import { View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
+import CardTopContent from '~/framework/components/card/top-content';
 import { UI_SIZES } from '~/framework/components/constants';
-import { ImageLabel, ImageType } from '~/framework/components/imageLabel';
 import { Picture } from '~/framework/components/picture';
-import { CaptionBoldText, CaptionItalicText, CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { CaptionBoldText, CaptionItalicText, CaptionText, SmallText } from '~/framework/components/text';
 import { UserType } from '~/framework/modules/auth/service';
 import {
   IAcknowledgment,
@@ -21,14 +21,16 @@ import { displayPastDate } from '~/framework/util/date';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
+import CardTopContentCategory from './cardtopcontent-category';
+
 const acknowledgementsString = (ackNumber: number, total: number) =>
-  `${ackNumber}/${total} ${I18n.t(`schoolbook.acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
+  `${ackNumber}/${total} ${I18n.get(`schoolbook-wordlist-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
 const acknowledgedString = (isWordAcknowledged: boolean) =>
-  I18n.t(`schoolbook.${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
+  I18n.get(`schoolbook-wordlist-${isWordAcknowledged ? 'acknowledged' : 'acknowledge'}`);
 const responsesString = (responses: number) =>
   responses === 1
-    ? `1 ${I18n.t('schoolbook.response').toLowerCase()}`
-    : `${responses} ${I18n.t('schoolbook.responses').toLowerCase()}`;
+    ? `1 ${I18n.get('schoolbook-wordlist-response').toLowerCase()}`
+    : `${responses} ${I18n.get('schoolbook-wordlist-responses').toLowerCase()}`;
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
@@ -98,7 +100,7 @@ export const SchoolbookWordSummaryCard = ({
               icon={<SingleAvatar status={undefined} size={36} userId={owner} />}
               text={
                 <CaptionText numberOfLines={usersTextMaxLines}>
-                  {`${I18n.t('common.from')} `}
+                  {`${I18n.get('schoolbook-wordlist-from')} `}
                   <CaptionBoldText>{ownerName}</CaptionBoldText>
                 </CaptionText>
               }
@@ -121,23 +123,20 @@ export const SchoolbookWordSummaryCard = ({
             </View>
           ) : undefined
         }>
-        <View style={styles.topContainer}>
-          {category ? (
-            <ImageLabel
-              cachedSVG
-              imageType={ImageType.svg}
-              text={I18n.t(`schoolbook.categories.${category}`)}
-              imageName={`schoolbook-${category}`}
-              color={theme.color.schoolbook.categories[category]}
-            />
-          ) : (
-            <View />
-          )}
-          <SmallBoldText
-            style={{ color: isTeacher || isWordAcknowledged ? theme.ui.text.regular : theme.palette.status.warning.regular }}>
-            {isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
-          </SmallBoldText>
-        </View>
+        {category ? (
+          <CardTopContentCategory
+            category={category}
+            statusColor={isTeacher || isWordAcknowledged ? theme.ui.text.regular : theme.palette.status.warning.regular}
+            statusText={isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
+          />
+        ) : (
+          <CardTopContent
+            image={<View />}
+            text=""
+            statusColor={isTeacher || isWordAcknowledged ? theme.ui.text.regular : theme.palette.status.warning.regular}
+            statusText={isTeacher ? acknowledgementsString(ackNumber, total) : acknowledgedString(isWordAcknowledged)}
+          />
+        )}
         {sendingDate ? (
           <CaptionItalicText style={{ color: theme.palette.grey.graphite, marginTop: UI_SIZES.spacing.minor }}>
             {displayPastDate(sendingDate)}

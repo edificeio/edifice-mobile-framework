@@ -8,7 +8,7 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
   matchEntcoreApp: app => app.prefix === '/timeline',
   hasRight: () => true, // The timeline is always displayed
 
-  displayI18n: 'timeline.tabName',
+  displayI18n: 'timeline-tabname',
   displayAs: 'tabModule',
   displayOrder: 0,
   displayPicture: { type: 'Icon', name: 'nouveautes-off' },

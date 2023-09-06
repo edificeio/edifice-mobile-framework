@@ -31,7 +31,7 @@ import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 import { UI_SIZES } from './constants';
-import { ScreenToast } from './toast/component';
+import { ToastHandler } from './toast/component';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
@@ -101,7 +101,7 @@ export const PageViewContainer = (props: PageViewProps) => {
         {showNetworkBar ? <DEPRECATED_ConnectionTrackingBar /> : null}
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
-        {isModal && showToast ? <ScreenToast /> : null}
+        {isModal && showToast ? <ToastHandler /> : null}
       </>
     </PageViewStyle>
   );

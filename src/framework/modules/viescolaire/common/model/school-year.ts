@@ -1,4 +1,7 @@
+import type { Moment } from 'moment';
+
 export interface ISchoolYear {
-  startDate: moment.Moment;
-  endDate: moment.Moment;
+  endDate: Moment;
+  id: number;
+  startDate: Moment;
 }

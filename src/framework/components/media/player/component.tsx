@@ -1,23 +1,23 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
-import { BackHandler, Platform, StatusBar, TouchableOpacity, View } from 'react-native';
+import { BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 export function computeNavBar({
   navigation,
@@ -36,9 +36,9 @@ export function computeNavBar({
 }
 
 const ERRORS_I18N = {
-  connection: ['common.error.connection.title', 'common.error.connection.text'],
-  AVFoundationErrorDomain: ['common.error.mediaNotSupported.title', 'common.error.mediaNotSupported.text'],
-  default: ['common.error.content.title', 'common.error.content.text'],
+  connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
+  AVFoundationErrorDomain: ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
+  default: ['mediaplayer-error-content-title', 'mediaplayer-error-content-text'],
 };
 const DELAY_STATUS_HIDE = Platform.select({ ios: 250, default: 0 });
 
@@ -79,6 +79,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
   const isLoadingRef = React.useRef<boolean>(true);
+  const headerHeight = useHeaderHeight();
 
   const handleBack = React.useCallback(() => {
     navigationHidden.current = false;
@@ -114,13 +115,14 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const renderError = () => {
+    navigation.setOptions(computeNavBar({ navigation, route }));
     const i18nKeys = ERRORS_I18N[error ?? 'default'] ?? ERRORS_I18N.default;
     return (
       <EmptyScreen
         customStyle={styles.errorScreen}
         svgImage="image-not-found"
-        title={I18n.t(i18nKeys[0])}
-        text={I18n.t(i18nKeys[1])}
+        title={I18n.get(i18nKeys[0])}
+        text={I18n.get(i18nKeys[1])}
         svgFillColor={theme.palette.grey.fog}
         textColor={theme.palette.grey.fog}
       />
@@ -171,30 +173,42 @@ function MediaPlayer(props: MediaPlayerProps) {
           />
         </>
       );
-    else
+    else {
+      // eslint-disable-next-line react/no-unstable-nested-components
+      navigation.setOptions({ headerLeft: () => <View /> });
       return (
-        <>
-          <VideoPlayer
-            alwaysShowControls={isAudio}
-            controlTimeoutDelay={videoPlayerControlTimeoutDelay}
-            disableFullscreen
-            disableVolume
-            disableBack
-            ignoreSilentSwitch="ignore"
-            onBack={handleBack}
-            onEnd={handleVideoPlayerEnd}
-            onError={onError}
-            onLoad={onLoad}
-            rewindTime={10}
-            showDuration
-            showOnStart
-            showOnEnd
-            source={realSource}
-            videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
-          />
-        </>
+        <VideoPlayer
+          alwaysShowControls={isAudio}
+          controlTimeoutDelay={videoPlayerControlTimeoutDelay}
+          disableFullscreen
+          disableVolume
+          ignoreSilentSwitch="ignore"
+          onBack={handleBack}
+          onEnd={handleVideoPlayerEnd}
+          onError={onError}
+          onLoad={onLoad}
+          rewindTime={10}
+          showDuration
+          showOnStart
+          showOnEnd
+          source={realSource}
+          videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
+          topControlsStyle={Platform.OS === 'android' ? { paddingTop: headerHeight } : {}}
+        />
       );
-  }, [type, isPortrait, handleBack, realSource, isAudio, videoPlayerControlTimeoutDelay, handleVideoPlayerEnd, onError, onLoad]);
+    }
+  }, [
+    type,
+    isPortrait,
+    realSource,
+    navigation,
+    isAudio,
+    videoPlayerControlTimeoutDelay,
+    handleBack,
+    handleVideoPlayerEnd,
+    onError,
+    onLoad,
+  ]);
 
   // Manage Android back button
   React.useEffect(() => {

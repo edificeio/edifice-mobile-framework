@@ -1,6 +1,7 @@
 /**
  * EDT actions
  */
+import type { Moment } from 'moment';
 import { ThunkAction } from 'redux-thunk';
 
 import { IUser } from '~/framework/modules/auth/model';
@@ -36,7 +37,7 @@ export const fetchEdtClassesAction =
  */
 export const edtClassGroupsActionsCreators = createAsyncActionCreators(actionTypes.classGroups);
 export const fetchEdtClassGroupsAction =
-  (classes: string, studentId?: string): ThunkAction<Promise<IClassGroups[]>, any, any, any> =>
+  (classes: string[], studentId?: string): ThunkAction<Promise<IClassGroups[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
@@ -57,8 +58,8 @@ export const edtCoursesActionsCreators = createAsyncActionCreators(actionTypes.c
 export const fetchEdtCoursesAction =
   (
     structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
+    startDate: Moment,
+    endDate: Moment,
     classGroups: IClassGroups[],
   ): ThunkAction<Promise<IEdtCourse[]>, any, any, any> =>
   async (dispatch, getState) => {
@@ -86,12 +87,7 @@ export const fetchEdtCoursesAction =
  * Fetch the courses of the specified teacher.
  */
 export const fetchEdtTeacherCoursesAction =
-  (
-    structureId: string,
-    startDate: moment.Moment,
-    endDate: moment.Moment,
-    teacherId: string,
-  ): ThunkAction<Promise<IEdtCourse[]>, any, any, any> =>
+  (structureId: string, startDate: Moment, endDate: Moment, teacherId: string): ThunkAction<Promise<IEdtCourse[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();

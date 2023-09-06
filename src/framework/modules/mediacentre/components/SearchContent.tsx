@@ -1,11 +1,11 @@
-import I18n from 'i18n-js';
 import React, { useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
-import FlatList from '~/framework/components/flatList';
+import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
@@ -125,7 +125,7 @@ const getSources = (resources: IResource[]) => {
 const AdvancedSearchField: React.FunctionComponent<IAdvancedSearchFieldProps> = (props: IAdvancedSearchFieldProps) =>
   props.field.value !== '' ? (
     <View style={styles.fieldContainer}>
-      <SmallBoldText>{I18n.t(`mediacentre.advancedSearch.${props.field.name}`)}</SmallBoldText>
+      <SmallBoldText>{I18n.get(`mediacentre-advancedsearch-${props.field.name}`)}</SmallBoldText>
       <SmallText style={styles.fieldValueText}>{props.field.value}</SmallText>
     </View>
   ) : null;
@@ -139,7 +139,7 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
         {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
         {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
-      <ActionButton text={I18n.t('common.cancel')} type="secondary" action={props.onCancelSearch} />
+      <ActionButton text={I18n.get('common-cancel')} type="secondary" action={props.onCancelSearch} />
     </View>
     {props.searchState === SearchState.ADVANCED ? (
       <View style={styles.fieldsContainer}>
@@ -191,7 +191,7 @@ export const SearchContent: React.FunctionComponent<ISearchContentProps> = (prop
               <SearchFilter resources={props.resources} onChange={onChange} containerStyle={styles.filterContainer} />
             ) : null
           }
-          ListEmptyComponent={<EmptyScreen svgImage="empty-search" title={I18n.t('mediacentre.empty-search')} />}
+          ListEmptyComponent={<EmptyScreen svgImage="empty-search" title={I18n.get('mediacentre-home-emptyscreen-search')} />}
         />
       )}
     </View>

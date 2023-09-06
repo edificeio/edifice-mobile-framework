@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -54,7 +54,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
     if (form) {
       props.openDistribution(id, status, form);
     } else {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('form-distributionlist-error-text'));
     }
   };
 
@@ -71,7 +71,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
         }
         openDistributionCallback(distribution.id, distribution.status);
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('form-distributionlist-error-text'));
       }
     } else {
       openDistributionCallback(id, DistributionStatus.FINISHED);
@@ -93,13 +93,15 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
       openDistributionCallback(distribution.id, distribution.status);
     } catch {
       setLoading(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('form-distributionlist-error-text'));
     }
   };
 
   const renderListItem = (distribution: IDistribution, index: number) => {
     const { dateResponse } = distribution;
-    const text = `${index}. ${I18n.t('form.answeredOnDate', { date: dateResponse?.format('DD/MM/YYYY, HH:mm') })}`;
+    const text = `${index}. ${I18n.get('form-distributionlist-formcard-answerdate', {
+      date: dateResponse?.format('DD/MM/YYYY, HH:mm'),
+    })}`;
     return (
       <TouchableOpacity onPress={() => openSentDistribution(distribution.id)} style={styles.itemContainer}>
         <SmallText>{text}</SmallText>
@@ -120,7 +122,9 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
       ref={ref}
       content={
         <View>
-          <BodyText style={styles.titleMargin}>{`${I18n.t('form.myAnswers')} - ${props.form?.title}`}</BodyText>
+          <BodyText style={styles.titleMargin}>{`${I18n.get('form-distributionlist-listmodal-myanswers')} - ${
+            props.form?.title
+          }`}</BodyText>
           <FlatList
             data={data}
             initialNumToRender={data.length}
@@ -129,7 +133,11 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
             persistentScrollbar
             style={styles.flatListContainer}
           />
-          <ActionButton text={I18n.t('form.answerAgain')} action={openNewDistribution} loading={isLoading} />
+          <ActionButton
+            text={I18n.get('form-distributionlist-listmodal-action')}
+            action={openNewDistribution}
+            loading={isLoading}
+          />
         </View>
       }
     />

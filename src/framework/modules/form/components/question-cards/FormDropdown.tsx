@@ -1,16 +1,20 @@
 import { Picker } from '@react-native-picker/picker';
-import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
-import { SmallText } from '~/framework/components/text';
-import { ButtonsOkCancel } from '~/ui/ButtonsOkCancel';
-import { ModalBox, ModalContent, ModalContentBlock, ModalContentText } from '~/ui/Modal';
+import { SmallActionText, SmallText } from '~/framework/components/text';
+import { ModalBox, ModalContent } from '~/ui/Modal';
 
 const styles = StyleSheet.create({
+  actionsContainer: {
+    flexDirection: 'row',
+    gap: UI_SIZES.spacing.large,
+    marginBottom: UI_SIZES.spacing.large,
+  },
   container: {
     borderRadius: UI_SIZES.radius.medium,
     borderColor: theme.palette.primary.regular,
@@ -43,9 +47,6 @@ const styles = StyleSheet.create({
 
 interface IDropdownProps {
   data: any[];
-  keyId?: string;
-  style?: ViewStyle;
-  title?: string;
   value?: string;
   onSelect: (item: string) => void;
   keyExtractor?: (item: any) => string;
@@ -54,20 +55,14 @@ interface IDropdownProps {
 
 const DropdownAndroid = ({
   data,
-  style,
-  title,
   value,
   onSelect,
   keyExtractor = item => item.toString(),
   renderItem = item => item.toString(),
 }: IDropdownProps) => {
   return (
-    <View style={[styles.container, style]}>
-      <Picker
-        selectedValue={value}
-        onValueChange={(itemValue, itemIndex) => onSelect(itemValue)}
-        prompt={title}
-        style={styles.androidPickerColor}>
+    <View style={styles.container}>
+      <Picker selectedValue={value} onValueChange={(itemValue, itemIndex) => onSelect(itemValue)} style={styles.androidPickerColor}>
         {data.map(item => (
           <Picker.Item label={renderItem(item)} value={keyExtractor(item)} />
         ))}
@@ -78,9 +73,6 @@ const DropdownAndroid = ({
 
 const DropdownIOS = ({
   data,
-  keyId,
-  style,
-  title,
   value,
   onSelect,
   keyExtractor = item => item.toString(),
@@ -90,13 +82,9 @@ const DropdownIOS = ({
   const [tempValue, setTempValue] = React.useState<string | undefined>(value ?? keyExtractor(data[0]));
   const selectedValue = data.find(item => keyExtractor(item) === value);
 
-  if (value !== tempValue && !isModalVisible && keyId === 'competences.periods') {
-    setTempValue(value);
-  }
-
   return (
     <>
-      <TouchableOpacity style={[styles.container, styles.rowContainer, style]} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity style={[styles.container, styles.rowContainer]} onPress={() => setModalVisible(true)}>
         <SmallText style={styles.valueText} numberOfLines={1}>
           {renderItem(selectedValue)}
         </SmallText>
@@ -104,11 +92,6 @@ const DropdownIOS = ({
       </TouchableOpacity>
       <ModalBox isVisible={isModalVisible} onDismiss={() => setModalVisible(false)}>
         <ModalContent style={styles.modalContent}>
-          {title ? (
-            <ModalContentBlock>
-              <ModalContentText>{title}</ModalContentText>
-            </ModalContentBlock>
-          ) : null}
           <View style={styles.dropdownPicker}>
             <Picker selectedValue={tempValue} onValueChange={(itemValue, itemIndex) => setTempValue(itemValue)}>
               {data.map(item => (
@@ -116,18 +99,18 @@ const DropdownIOS = ({
               ))}
             </Picker>
           </View>
-          <ModalContentBlock>
-            <ButtonsOkCancel
-              onCancel={() => {
-                setModalVisible(false);
-              }}
-              onValid={() => {
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <SmallActionText>{I18n.get('common-cancel')}</SmallActionText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
                 setModalVisible(false);
                 onSelect(tempValue!);
-              }}
-              title={I18n.t('common-ok')}
-            />
-          </ModalContentBlock>
+              }}>
+              <SmallActionText>{I18n.get('common-ok')}</SmallActionText>
+            </TouchableOpacity>
+          </View>
         </ModalContent>
       </ModalBox>
     </>

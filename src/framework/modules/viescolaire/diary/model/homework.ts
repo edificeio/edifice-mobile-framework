@@ -1,19 +1,21 @@
+import type { Moment } from 'moment';
+
 import { IAudience } from './audience';
 import { ISubject } from './subject';
 
 export interface IHomework {
-  due_date: moment.Moment;
+  due_date: Moment;
   id: string;
   is_published: boolean;
-  progress?: {
+  progress: {
     created: string;
     homework_id: number;
     modified: string;
     state_id: number;
     state_label: string;
     user_id: string;
-  };
-  exceptional_label: string;
+  } | null;
+  exceptional_label: string | null;
   subject_id: string;
   subject: ISubject;
   type: {
@@ -23,7 +25,7 @@ export interface IHomework {
     structure_id: string;
   };
   description: string;
-  created_date: moment.Moment;
+  created_date: Moment;
   audience: IAudience;
   session_id: string;
 }

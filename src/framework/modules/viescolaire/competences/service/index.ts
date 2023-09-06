@@ -12,6 +12,32 @@ import {
 } from '~/framework/modules/viescolaire/competences/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
+type IBackendAnnotation = {
+  id_devoir: number;
+  id: number;
+  libelle: string;
+  libelle_court: string;
+  id_etablissement: string;
+  id_eleve: string;
+  owner: string;
+  id_matiere: string;
+  id_sousmatiere: number | null;
+  name: string;
+  is_evaluated: boolean;
+  id_periode: number;
+  id_type: number;
+  diviseur: string;
+  date_publication: string;
+  date: string;
+  apprec_visible: boolean;
+  coefficient: string;
+  _type_libelle: string;
+  formative: boolean;
+  sum_notes: string;
+  nbr_eleves: number;
+  id_groupe: string;
+};
+
 type IBackendAverage = {
   devoirs: IBackendDevoir[];
   id_groupe: string;
@@ -134,14 +160,16 @@ type IBackendSubject = {
 };
 
 type IBackendUserChild = {
+  id: string;
   displayName: string;
   firstName: string;
-  id: string;
+  lastName: string;
   idClasse: string;
   idStructure: string;
-  lastName: string;
+  id_cycle: number;
 };
 
+type IBackendAnnotationList = IBackendAnnotation[];
 type IBackendAverageList = { [key: string]: IBackendAverage };
 type IBackendCompetenceList = IBackendCompetence[];
 type IBackendDevoirList = IBackendDevoir[];
@@ -149,6 +177,22 @@ type IBackendDomaineList = IBackendDomaine[];
 type IBackendLevelList = IBackendLevel[];
 type IBackendSubjectList = IBackendSubject[];
 type IBackendUserChildren = IBackendUserChild[];
+
+const annotationAdapter = (data: IBackendAnnotation): IDevoir => {
+  return {
+    coefficient: data.coefficient,
+    date: moment(data.date),
+    diviseur: Number(data.diviseur),
+    id: data.id_devoir,
+    isEvaluated: data.is_evaluated,
+    libelle: data.libelle ?? undefined,
+    moyenne: String(Number((Number(data.sum_notes) / data.nbr_eleves).toFixed(1))),
+    name: data.name,
+    note: data.libelle_court,
+    subjectId: data.id_matiere,
+    termId: data.id_periode,
+  };
+};
 
 const averageAdapter = (list: IBackendAverageList): IAverage[] => {
   return Object.entries(list).map(([subjectId, data]) => {
@@ -160,39 +204,66 @@ const averageAdapter = (list: IBackendAverageList): IAverage[] => {
       subjectRank: data.matiere_rank,
       teacher: data.teacher,
     };
-  }) as IAverage[];
+  });
 };
 
 const competenceAdapter = (data: IBackendCompetence): ICompetence => {
   return {
+    date: moment(data.date),
     devoirId: data.id_devoir,
     domaineId: data.id_domaine,
     evaluation: data.evaluation,
     id: data.id_competence,
-  } as ICompetence;
+    ownerName: data.owner_name,
+    subjectId: data.id_matiere,
+  };
 };
 
 const devoirAdapter = (data: IBackendDevoir): IDevoir => {
   return {
     coefficient: data.coefficient,
-    competencesCount: data.nbcompetences,
     date: moment(data.date),
     diviseur: data.diviseur,
     id: data.id,
     isEvaluated: data.is_evaluated,
     libelle: data.libelle ?? undefined,
-    moyenne: String(Number(data.sum_notes) / data.nbr_eleves),
+    moyenne: String(Number((Number(data.sum_notes) / data.nbr_eleves).toFixed(1))),
     name: data.name,
     note: data.note,
     subjectId: data.id_matiere,
     teacher: data.teacher,
     termId: data.id_periode,
-  } as IDevoir;
+  };
+};
+
+const compareDevoirs = (a: IDevoir, b: IDevoir): number => {
+  return b.date.diff(a.date);
+};
+
+// Append assessments with no grade to given assessment array
+export const concatDevoirs = (devoirs: IDevoir[], competences: ICompetence[]): IDevoir[] => {
+  return devoirs
+    .concat(
+      competences
+        .filter(c => !devoirs.map(d => d.id).includes(c.devoirId))
+        .map(
+          c =>
+            ({
+              date: c.date,
+              id: c.devoirId,
+              subjectId: c.subjectId,
+              teacher: c.ownerName,
+            }) as IDevoir,
+        )
+        .filter((devoir, index, array) => array.findIndex(d => d.id === devoir.id) === index),
+    )
+    .sort(compareDevoirs);
 };
 
 const domaineAdapter = (data: IBackendDomaine): IDomaine => {
   return {
     codification: data.codification,
+    cycleId: data.id_cycle,
     degree: data.niveau,
     id: data.id,
     name: data.nom,
@@ -202,27 +273,18 @@ const domaineAdapter = (data: IBackendDomaine): IDomaine => {
       hidden: c.masque,
     })),
     domaines: data.domaines?.map(domaineAdapter),
-  } as IDomaine;
-};
-
-const compareDevoirs = (a: IDevoir, b: IDevoir): number => {
-  return b.date.diff(a.date);
+  };
 };
 
 const levelAdapter = (data: IBackendLevel): ILevel => {
   return {
-    couleur: data.couleur,
-    cycle: data.cycle,
-    default: data.default,
-    default_lib: data.default_lib,
+    color: data.couleur,
+    cycleId: data.id_cycle,
+    defaultColor: data.default,
     id: data.id,
-    id_cycle: data.id_cycle,
-    id_etablissement: data.id_etablissement,
-    id_niveau: data.id_niveau,
-    lettre: data.lettre,
-    libelle: data.libelle,
-    ordre: data.ordre,
-  } as ILevel;
+    label: data.libelle,
+    order: data.ordre,
+  };
 };
 
 const subjectAdapter = (data: IBackendSubject): ISubject => {
@@ -230,21 +292,29 @@ const subjectAdapter = (data: IBackendSubject): ISubject => {
     id: data.id,
     name: data.name,
     rank: data.rank,
-  } as ISubject;
+  };
 };
 
 const userChildAdapter = (data: IBackendUserChild): IUserChild => {
   return {
+    classId: data.idClasse,
+    cycleId: data.id_cycle,
     displayName: data.displayName,
     firstName: data.firstName,
     id: data.id,
-    idClasse: data.idClasse,
-    idStructure: data.idStructure,
     lastName: data.lastName,
-  } as IUserChild;
+    structureId: data.idStructure,
+  };
 };
 
 export const competencesService = {
+  annotations: {
+    get: async (session: ISession, studentId: string, classId: string) => {
+      const api = `/viescolaire/annotations/eleve?idEleve=${studentId}&idClasse=${classId}`;
+      const annotations = (await fetchJSONWithCache(api)) as IBackendAnnotationList;
+      return annotations.map(annotationAdapter);
+    },
+  },
   averages: {
     get: async (session: ISession, structureId: string, studentId: string, termId?: string) => {
       let api = `/competences/devoirs/notes?idEtablissement=${structureId}&idEleve=${studentId}`;
@@ -252,49 +322,49 @@ export const competencesService = {
         api += `&idPeriode=${termId}`;
       }
       const averages = (await fetchJSONWithCache(api)) as IBackendAverageList;
-      return averageAdapter(averages) as IAverage[];
+      return averageAdapter(averages);
     },
   },
   competences: {
     get: async (session: ISession, studentId: string, classId: string) => {
       const api = `/viescolaire/competences/eleve?idEleve=${studentId}&idClasse=${classId}`;
       const competences = (await fetchJSONWithCache(api)) as IBackendCompetenceList;
-      return competences.map(competence => competenceAdapter(competence)) as ICompetence[];
+      return competences.map(competenceAdapter);
     },
   },
   devoirs: {
     get: async (session: ISession, structureId: string, studentId: string) => {
       const api = `/competences/devoirs?idEtablissement=${structureId}&idEleve=${studentId}`;
       const devoirs = (await fetchJSONWithCache(api)) as IBackendDevoirList;
-      return devoirs.map(devoir => devoirAdapter(devoir)).sort(compareDevoirs) as IDevoir[];
+      return devoirs.map(devoirAdapter);
     },
   },
   domaines: {
     get: async (session: ISession, classId: string) => {
       const api = `/competences/domaines?idClasse=${classId}`;
       const domaines = (await fetchJSONWithCache(api)) as IBackendDomaineList;
-      return domaines.map(domaine => domaineAdapter(domaine)) as IDomaine[];
+      return domaines.map(domaineAdapter);
     },
   },
   levels: {
     get: async (session: ISession, structureId: string) => {
       const api = `/competences/maitrise/level/${structureId}`;
       const levels = (await fetchJSONWithCache(api)) as IBackendLevelList;
-      return levels.map(level => levelAdapter(level)) as ILevel[];
+      return levels.map(levelAdapter);
     },
   },
   subjects: {
     get: async (session: ISession, structureId: string) => {
       const api = `/viescolaire/matieres/services-filter?idEtablissement=${structureId}`;
       const subjects = (await fetchJSONWithCache(api)) as IBackendSubjectList;
-      return subjects.map(subject => subjectAdapter(subject)) as ISubject[];
+      return subjects.map(subjectAdapter);
     },
   },
   userChildren: {
     get: async (session: ISession, structureId: string, relativeId: string) => {
       const api = `/competences/enfants?idEtablissement=${structureId}&userId=${relativeId}`;
       const userChildren = (await fetchJSONWithCache(api)) as IBackendUserChildren;
-      return userChildren.map(child => userChildAdapter(child)) as IUserChild[];
+      return userChildren.map(userChildAdapter);
     },
   },
 };

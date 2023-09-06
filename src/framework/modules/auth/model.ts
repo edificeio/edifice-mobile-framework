@@ -32,7 +32,6 @@ export interface StructureNode {
   distributions: any[];
   externalId: string;
   feederName: string;
-  hasApp: boolean;
   id: string;
   joinKey: string[];
   levelsOfEducation: number[];
@@ -99,6 +98,11 @@ export type UserChildrenFlattened = (UserChild & {
   structureName: string;
 })[];
 
+export enum SessionType {
+  PERMANENT,
+  TEMPORARY,
+}
+
 /**
  * Current session information including authentification, rights & user info.
  */
@@ -109,6 +113,7 @@ export interface ISession {
   widgets: IEntcoreWidget[];
   authorizedActions: IAuthorizedAction[];
   user: ILoggedUser;
+  type: SessionType; // Is Session remembering set on ?
 }
 
 /** Error codes as an enum, values can be string that backend returns */
@@ -119,13 +124,14 @@ export enum RuntimeAuthErrorCode {
   USERPUBLICINFO_FAIL = 'userpublicinfo-fail',
   USERREQUIREMENTS_FAIL = 'userrequirements-fail',
   FIREBASE_ERROR = 'firebase_error',
-  NOT_PREMIUM = 'not_premium',
   PRE_DELETED = 'pre_deleted',
   PLATFORM_NOT_EXISTS = 'platform-not-exists',
   ACTIVATION_ERROR = 'activation-error',
   UNKNOWN_ERROR = 'unknown-error',
   LOAD_I18N_ERROR = 'load-i18n-error',
+  NETWORK_ERROR = 'network_error',
 }
+
 export type AuthErrorCode = OAuth2ErrorCode | RuntimeAuthErrorCode;
 
 export interface AuthErrorDetails {

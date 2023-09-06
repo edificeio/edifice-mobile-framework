@@ -1,11 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
-import { RefreshControl, SafeAreaView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
@@ -13,7 +13,6 @@ import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
-import ScrollView from '~/framework/components/scrollView';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
@@ -39,7 +38,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('homeworkAssistance.tabName'),
+    title: I18n.get('homeworkassistance-home-title'),
   }),
 });
 
@@ -87,12 +86,12 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
     if (!props.config) return renderError();
     const { header, body, days, time, info } = props.config.messages;
     return (
-      <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.container}>
         <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
         <SmallText style={styles.primaryText}>{body}</SmallText>
         <Picture type="NamedSvg" name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
         <View>
-          <SmallText>{I18n.t('homeworkAssistance.serviceAvailable')}</SmallText>
+          <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
           <View style={styles.rowContainer}>
             <Picture type="NamedSvg" name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.secondaryText}>{days}</SmallText>
@@ -106,8 +105,8 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
             <SmallText style={styles.secondaryText}>{info}</SmallText>
           </View>
         </View>
-        <ActionButton text={I18n.t('homeworkAssistance.makeARequest')} action={goToRequest} style={styles.actionContainer} />
-      </SafeAreaView>
+        <ActionButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} style={styles.actionContainer} />
+      </ScrollView>
     );
   };
 

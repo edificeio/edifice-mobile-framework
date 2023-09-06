@@ -1,44 +1,34 @@
-import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
-import Calendar from '~/framework/modules/viescolaire/common/components/Calendar';
+import Timetable from '~/framework/modules/viescolaire/common/components/Timetable';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   homeworkListDetailsTeacherAdapter,
   sessionListDetailsTeacherAdapter,
 } from '~/framework/modules/viescolaire/common/utils/diary';
-import { ICourse } from '~/framework/modules/viescolaire/dashboard/state/courses';
-import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import { IDiaryCourse, IDiarySession, IHomework } from '~/framework/modules/viescolaire/diary/model';
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { DiaryTimetableScreenProps } from '~/framework/modules/viescolaire/diary/screens/timetable';
 import { TimetableState } from '~/framework/modules/viescolaire/diary/screens/timetable/screen';
-import { PageContainer } from '~/ui/ContainerContent';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 const styles = StyleSheet.create({
-  refreshContainer: {
-    height: '100%',
-    zIndex: 0,
-  },
   weekPickerView: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: UI_SIZES.spacing.minor,
+    marginTop: UI_SIZES.spacing.medium,
   },
   weekText: {
     marginRight: UI_SIZES.spacing.minor,
-  },
-  calendarContainer: {
-    height: 1,
-    flexGrow: 1,
   },
   courseView: {
     flexDirection: 'row',
@@ -47,6 +37,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: theme.palette.grey.white,
+    borderRadius: UI_SIZES.radius.medium,
   },
   subjectView: {
     flexShrink: 1,
@@ -63,7 +54,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 45,
-    marginBottom: UI_SIZES.spacing.medium,
     paddingHorizontal: UI_SIZES.spacing.small,
   },
   halfSessionMargin: {
@@ -75,19 +65,20 @@ const styles = StyleSheet.create({
   homeworkMargin: {
     marginRight: UI_SIZES.spacing.tiny,
   },
+  activeCourseBorder: {
+    borderColor: viescoTheme.palette.diary,
+    borderWidth: 2,
+  },
 });
 
 type ISessionModifiedList = IDiarySession & {
-  startDate?: moment.Moment;
-  endDate?: moment.Moment;
+  startDate?: Moment;
+  endDate?: Moment;
   classes?: string[];
   calendarType?: string;
 };
 
-const adaptCourses = (courses: ICourse[], homeworks: IHomeworkMap, sessions: ISessionModifiedList[]) => {
-  const homeworksArray = Object.values(homeworks) as IHomework[];
-
-  const homeworksWithoutCourse = [] as IHomework[];
+const adaptCourses = (courses: IDiaryCourse[], sessions: ISessionModifiedList[]) => {
   const calendarList = [...courses] as any;
 
   courses.sort((a, b) => moment(a.startDate).diff(moment(b.startDate)));
@@ -110,30 +101,23 @@ const adaptCourses = (courses: ICourse[], homeworks: IHomeworkMap, sessions: ISe
         }
       });
     });
-
-  // Sort homeworks whose are not linked to sessions but to day
-  homeworksArray
-    .sort((a, b) => moment(a.due_date).diff(moment(b.due_date)))
-    .map(hwk => {
-      if (!hwk.session_id && hwk.is_published) {
-        homeworksWithoutCourse.push(hwk);
-      }
-    });
-
-  return { calendarList, homeworksWithoutCourse };
+  return calendarList;
 };
 
-type TimetableComponentProps = DiaryTimetableScreenProps &
-  TimetableState & { updateSelectedDate: (newDate: moment.Moment) => void };
+type TimetableComponentProps = DiaryTimetableScreenProps & TimetableState & { updateSelectedDate: (newDate: Moment) => void };
 
 export default class DiaryTeacherTimetable extends React.PureComponent<TimetableComponentProps> {
   // Display homeworks to do for the day
-  renderDaysHomeworks = (homeworks: IHomework[]) => {
+  renderTodaysHomeworks = (day: Moment) => {
+    const homeworks = Object.values(this.props.homeworks.data)
+      .filter(homework => homework.due_date.isSame(day, 'day') && homework.is_published && !homework.session_id)
+      .sort((a, b) => a.due_date.diff(b.due_date));
     const isEmpty = !homeworks.length;
+
     return (
       <View style={styles.homeworksContainer}>
         <BodyBoldText>
-          {I18n.t('viesco-homework')}
+          {I18n.get('diary-timetable-todayshomework')}
           {homeworks.length > 1 && ' (' + homeworks.length + ')'}
         </BodyBoldText>
         <TouchableOpacity
@@ -210,9 +194,10 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
 
   renderCourse = (course, isHalfCourse: boolean = false) => {
     const className = course.classes.length > 0 ? course.classes[0] : course.groups[0];
+    const isActive = moment().isBetween(course.startDate, course.endDate);
 
     return (
-      <View style={styles.courseView}>
+      <View style={[styles.courseView, isActive && styles.activeCourseBorder]}>
         <View style={[styles.subjectView, !isHalfCourse && styles.subjectPadding]}>
           <HeadingXSText numberOfLines={1}>{className}</HeadingXSText>
           <SmallText numberOfLines={1}>{course.subject?.name || course.exceptionnal}</SmallText>
@@ -228,38 +213,30 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
   renderHalf = course => this.renderCourse(course, true);
 
   public render() {
-    const { startDate, selectedDate, courses, slots, updateSelectedDate, homeworks, sessions } = this.props;
-    const slotEvents = adaptCourses(courses.data, homeworks.data, sessions.data);
+    const { startDate, selectedDate, courses, slots, updateSelectedDate, sessions } = this.props;
+    const slotEvents = adaptCourses(courses.data, sessions.data);
 
     return (
-      <PageContainer>
-        <View style={styles.refreshContainer}>
-          <View style={styles.weekPickerView}>
-            <SmallText style={styles.weekText}>{I18n.t('viesco-edt-week-of')}</SmallText>
-            <DateTimePicker value={startDate} mode="date" onChange={updateSelectedDate} color={viescoTheme.palette.diary} />
-          </View>
-          {courses.isFetching || courses.isPristine ? (
-            <LoadingIndicator />
-          ) : (
-            <View style={styles.calendarContainer}>
-              <Calendar
-                startDate={startDate}
-                data={slotEvents.calendarList}
-                renderElement={this.renderCourse}
-                renderHalf={this.renderHalf}
-                daysHomeworks={slotEvents.homeworksWithoutCourse}
-                renderDaysHomeworks={this.renderDaysHomeworks}
-                numberOfDays={6}
-                slotHeight={70}
-                mainColor={viescoTheme.palette.diary}
-                slots={slots.data}
-                initialSelectedDate={selectedDate}
-                hideSlots
-              />
-            </View>
-          )}
+      <View style={UI_STYLES.flex1}>
+        <View style={styles.weekPickerView}>
+          <SmallText style={styles.weekText}>{I18n.get('diary-timetable-week')}</SmallText>
+          <DateTimePicker mode="date" value={startDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.diary} />
         </View>
-      </PageContainer>
+        {courses.isFetching || courses.isPristine ? (
+          <LoadingIndicator />
+        ) : (
+          <Timetable
+            courses={slotEvents}
+            mainColor={viescoTheme.palette.diary}
+            slots={slots.data}
+            startDate={startDate}
+            initialSelectedDate={selectedDate}
+            renderCourse={this.renderCourse}
+            renderCourseHalf={this.renderHalf}
+            renderHeader={this.renderTodaysHomeworks}
+          />
+        )}
+      </View>
     );
   }
 }

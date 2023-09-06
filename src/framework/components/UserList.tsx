@@ -8,7 +8,7 @@ import { ListRenderItemInfo, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import FlatList, { FlatListProps } from '~/framework/components/flatList';
+import FlatList, { FlatListProps } from '~/framework/components/list/flat-list';
 import { BadgeAvatarProps, TextAvatar } from '~/framework/components/textAvatar';
 import { Status } from '~/ui/avatars/Avatar';
 
@@ -76,17 +76,19 @@ UserList.renderItem = <ItemType extends IUserListItem>({
   UserListProps<ItemType>,
   'onSelect' | 'renderBadge' | 'avatarSize' | 'selectedId' | 'horizontal' | 'data' | 'customItemStyle' | 'withSeparator'
 >) => {
+  const isFirstItem = data && info.index === 0;
   const isLastItem = data && info.index === data.length - 1;
   return (
     <TouchableOpacity
       style={[
         horizontal
-          ? { marginRight: isLastItem ? undefined : UI_SIZES.spacing.big }
+          ? { marginRight: isLastItem ? UI_SIZES.spacing.tiny : UI_SIZES.spacing.big }
           : {
               marginBottom: isLastItem ? undefined : UI_SIZES.spacing.medium,
               borderBottomWidth: !withSeparator || isLastItem ? 0 : 1,
               borderBottomColor: theme.palette.grey.cloudy,
             },
+        { marginLeft: isFirstItem ? 2 : undefined },
         customItemStyle,
       ]}
       onPress={() => onSelect?.(info.item.id)}

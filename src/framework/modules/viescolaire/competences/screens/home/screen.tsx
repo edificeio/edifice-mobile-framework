@@ -1,12 +1,11 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, Platform, RefreshControl, ScrollView, Switch, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -18,12 +17,12 @@ import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
+  clearCompetencesLevelsAction,
   fetchCompetencesAction,
   fetchCompetencesAveragesAction,
   fetchCompetencesDevoirsAction,
-  fetchCompetencesDomainesAction,
-  fetchCompetencesLevelsAction,
   fetchCompetencesSubjectsAction,
   fetchCompetencesTermsAction,
   fetchCompetencesUserChildrenAction,
@@ -33,14 +32,15 @@ import { SubjectAverageCard } from '~/framework/modules/viescolaire/competences/
 import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 import styles from './styles';
-import type { CompetencesHomeScreenPrivateProps } from './types';
+import type { CompetencesHomeScreenDispatchProps, CompetencesHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -49,7 +49,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-tests'),
+    title: I18n.get('competences-home-title'),
   }),
 });
 
@@ -74,20 +74,30 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       getItemJson<boolean>(STORAGE_KEY).then(value => {
         if (value) setAverageColorsShown(true);
       });
-      await props.fetchDevoirs(structureId, childId);
       if (term !== 'default') {
-        await props.fetchAverages(structureId, childId, term);
+        await props.tryFetchAverages(structureId, childId, term);
       }
-      await props.fetchSubjects(structureId);
+      await props.tryFetchSubjects(structureId);
       let childClasses = classes?.[0];
       if (userType === UserType.Relative) {
-        const children = await props.fetchUserChildren(structureId, userId);
-        childClasses = children.find(c => c.id === childId)?.idClasse;
+        const children = await props.tryFetchUserChildren(structureId, userId);
+        childClasses = children.find(c => c.id === childId)?.classId;
       }
-      await props.fetchTerms(structureId, childClasses ?? '');
-      await props.fetchCompetences(childId, childClasses ?? '');
-      await props.fetchDomaines(childClasses ?? '');
-      await props.fetchLevels(structureId);
+      await props.tryFetchDevoirs(structureId, childId, childClasses);
+      await props.tryFetchCompetences(childId, childClasses ?? '');
+      await props.tryFetchTerms(structureId, childClasses ?? '');
+      props.handleClearLevels();
+    } catch {
+      throw new Error();
+    }
+  };
+
+  const fetchSubjectAverages = async () => {
+    try {
+      const { childId, structureId } = props;
+
+      if (!childId || !structureId) throw new Error();
+      await props.tryFetchAverages(structureId, childId, term);
     } catch {
       throw new Error();
     }
@@ -109,7 +119,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   const refresh = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH);
-    fetchAssessments()
+    fetchSubjectAverages()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
@@ -142,7 +152,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   const openAssessment = (assessment: IDevoir) => {
     const { childId, classes, navigation, userChildren, userType } = props;
-    const studentClass = userType === UserType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.idClasse;
+    const studentClass = userType === UserType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.classId;
 
     navigation.navigate(competencesRouteNames.assessment, {
       assessment,
@@ -169,7 +179,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
     return (
       <View style={styles.headerContainer}>
-        <SmallText>{I18n.t('viesco-report-card')}</SmallText>
+        <SmallText>{I18n.get('competences-home-transcript')}</SmallText>
         <View style={styles.dropdownsContainer}>
           <DropDownPicker
             open={isTermDropdownOpen}
@@ -197,10 +207,12 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
           />
         </View>
         <View style={styles.headerRow}>
-          <SmallBoldText>{I18n.t(displaySubjectAverages ? 'viesco-average' : 'viesco-last-grades')}</SmallBoldText>
+          <SmallBoldText>
+            {I18n.get(displaySubjectAverages ? 'competences-home-averages' : 'competences-home-lastgrades')}
+          </SmallBoldText>
           {showColorSwitch ? (
             <View style={styles.switchContainer}>
-              <SmallText style={styles.colorsText}>{I18n.t('viesco-colors')}</SmallText>
+              <SmallText style={styles.colorsText}>{I18n.get('competences-home-colors')}</SmallText>
               <Switch
                 value={areAverageColorsShown}
                 onValueChange={() => {
@@ -218,7 +230,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
   };
 
   const renderAssessments = () => {
-    const { averages, competences, domaines, levels, subjects } = props;
+    const { averages, subjects } = props;
     const displaySubjectAverages = term !== 'default' && subject === 'default';
     const devoirs = props.devoirs.filter(devoir => {
       if (term !== 'default' && devoir.termId !== Number(term)) return false;
@@ -239,8 +251,8 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 devoirs={devoirs.filter(d => d.isEvaluated && d.subjectId === item.subjectId).sort((a, b) => a.date.diff(b.date))}
               />
             )}
-            ListEmptyComponent={renderEmpty(I18n.t('viesco-empty-subject-averages'))}
-            style={styles.listContainer}
+            ListEmptyComponent={renderEmpty(I18n.get('competences-home-emptyscreen-averages'))}
+            contentContainerStyle={styles.listContentContainer}
           />
         ) : (
           <FlatList
@@ -249,16 +261,14 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
             renderItem={({ item }) => (
               <AssessmentCard
                 assessment={item}
-                competences={competences.filter(competence => competence.devoirId === item.id)}
-                domaines={domaines}
-                levels={levels}
+                hasCompetences={props.competences.some(c => c.devoirId === item.id)}
                 subject={subjects.find(s => s.id === item.subjectId)}
                 showAverageColor={areAverageColorsShown}
                 onPress={() => openAssessment(item)}
               />
             )}
-            ListEmptyComponent={renderEmpty(I18n.t('viesco-eval-EmptyScreenText'))}
-            style={styles.listContainer}
+            ListEmptyComponent={renderEmpty(I18n.get('competences-home-emptyscreen-default'))}
+            contentContainerStyle={styles.listContentContainer}
           />
         )}
       </>
@@ -291,6 +301,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     const competencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
@@ -298,20 +309,19 @@ export default connect(
     return {
       averages: competencesState.averages.data,
       classes: session?.user.classes,
+      childId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
       competences: competencesState.competences.data,
-      childId: userType === UserType.Student ? userId : getSelectedChild(state)?.id,
-      devoirs: competencesState.devoirs.data,
-      domaines: competencesState.domaines.data,
+      devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       dropdownItems: {
         terms: [
-          { label: I18n.t('viesco-competences-period'), value: 'default' },
+          { label: I18n.get('competences-home-term'), value: 'default' },
           ...competencesState.terms.data.map(term => ({
-            label: `${I18n.t('viesco-competences-period-' + term.type)} ${term.order}`,
+            label: `${I18n.get('competences-home-term-' + term.type)} ${term.order}`,
             value: term.typeId.toString(),
           })),
         ],
         subjects: [
-          { label: I18n.t('viesco-competences-subject'), value: 'default' },
+          { label: I18n.get('competences-home-subject'), value: 'default' },
           ...competencesState.subjects.data
             .filter(subject => competencesState.devoirs.data.some(devoir => devoir.subjectId === subject.id))
             .map(subject => ({
@@ -324,57 +334,24 @@ export default connect(
         competencesState.devoirs.isPristine || competencesState.subjects.isPristine
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
-      levels: competencesState.levels.data,
-      structureId: userType === UserType.Student ? session?.user.structures?.[0]?.id : getSelectedChildStructure(state)?.id,
+      structureId:
+        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,
       userChildren: competencesState.userChildren.data,
       userId,
       userType,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<CompetencesHomeScreenDispatchProps>(
       {
-        fetchAverages: tryActionLegacy(
-          fetchCompetencesAveragesAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchAverages'],
-        fetchCompetences: tryActionLegacy(
-          fetchCompetencesAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchCompetences'],
-        fetchDevoirs: tryActionLegacy(
-          fetchCompetencesDevoirsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchDevoirs'],
-        fetchDomaines: tryActionLegacy(
-          fetchCompetencesDomainesAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchDomaines'],
-        fetchLevels: tryActionLegacy(
-          fetchCompetencesLevelsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchLevels'],
-        fetchSubjects: tryActionLegacy(
-          fetchCompetencesSubjectsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchSubjects'],
-        fetchTerms: tryActionLegacy(
-          fetchCompetencesTermsAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchTerms'],
-        fetchUserChildren: tryActionLegacy(
-          fetchCompetencesUserChildrenAction,
-          undefined,
-          true,
-        ) as unknown as CompetencesHomeScreenPrivateProps['fetchUserChildren'],
+        handleClearLevels: handleAction(clearCompetencesLevelsAction),
+        tryFetchAverages: tryAction(fetchCompetencesAveragesAction),
+        tryFetchCompetences: tryAction(fetchCompetencesAction),
+        tryFetchDevoirs: tryAction(fetchCompetencesDevoirsAction),
+        tryFetchSubjects: tryAction(fetchCompetencesSubjectsAction),
+        tryFetchTerms: tryAction(fetchCompetencesTermsAction),
+        tryFetchUserChildren: tryAction(fetchCompetencesUserChildrenAction),
       },
       dispatch,
     ),

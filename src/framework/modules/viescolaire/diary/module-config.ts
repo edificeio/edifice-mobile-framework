@@ -1,3 +1,4 @@
+import theme from '~/app/theme';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
@@ -16,7 +17,7 @@ export default new NavigableModuleConfig<'diary', IDiaryReduxState>({
   entcoreScope: ['diary'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
 
-  displayI18n: 'Homework',
+  displayI18n: 'diary-moduleconfig-appname',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'diary' },
+  displayPicture: { type: 'NamedSvg', name: 'diary', fill: theme.palette.complementary.green.regular },
 });

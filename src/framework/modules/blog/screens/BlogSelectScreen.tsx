@@ -1,10 +1,10 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -18,7 +18,6 @@ import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
-import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
@@ -72,7 +71,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('blog.blogSelectScreen.title'),
+    title: I18n.get('blog-select-title'),
   }),
 });
 
@@ -154,9 +153,9 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
     return (
       <EmptyScreen
         svgImage="empty-search"
-        title={I18n.t('blog.blogsEmptyScreen.title')}
-        text={I18n.t(`blog.blogsEmptyScreen.text${hasBlogCreationRights ? '' : 'NoCreationRights'}`)}
-        buttonText={hasBlogCreationRights ? I18n.t('blog.blogsEmptyScreen.button') : undefined}
+        title={I18n.get('blog-select-emptyscreen-title')}
+        text={I18n.get(`blog-select-emptyscreen-text${hasBlogCreationRights ? '' : '-nocreationrights'}`)}
+        buttonText={hasBlogCreationRights ? I18n.get('blog-select-emptyscreen-button') : undefined}
         buttonUrl="/blog#/edit/new"
       />
     );
@@ -177,7 +176,7 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
               <View style={styles.blogItemTexts}>
                 <SmallBoldText numberOfLines={1}>{blog.title}</SmallBoldText>
                 <CaptionText style={{ marginTop: UI_SIZES.spacing.minor }}>
-                  {I18n.t(`blog.blogSelectScreen.sharedToNbPerson${blogShareNumber === 1 ? '' : 's'}`, {
+                  {I18n.get(`blog-select-sharedtonbperson${blogShareNumber === 1 ? '' : 's'}`, {
                     nb: blogShareNumber || 0,
                   })}
                 </CaptionText>

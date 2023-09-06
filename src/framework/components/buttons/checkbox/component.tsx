@@ -1,6 +1,6 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_STYLES } from '~/framework/components/constants';
@@ -24,7 +24,7 @@ export const CheckboxButton = ({
   return (
     <TouchableOpacity onPress={onPress}>
       <ListItem
-        leftElement={<SmallText style={UI_STYLES.flexShrink1}>{I18n.t(title)}</SmallText>}
+        leftElement={<SmallText style={UI_STYLES.flexShrink1}>{I18n.get(title)}</SmallText>}
         rightElement={
           <Checkbox
             {...(isChecked && isAllButton ? { customCheckboxColor: theme.ui.text.light } : {})}

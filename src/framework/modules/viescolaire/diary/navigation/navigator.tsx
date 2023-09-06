@@ -31,6 +31,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={diaryRouteNames.timetable}
           component={DiaryTimetableScreen}
           options={timetableNavBar}
+          initialParams={{}}
         />,
       );
       moduleConfig.routeName = diaryRouteNames.timetable;
@@ -41,6 +42,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={diaryRouteNames.homeworkList}
           component={DiaryHomeworkListScreen}
           options={homeworkListNavBar}
+          initialParams={{}}
         />,
       );
       moduleConfig.routeName = diaryRouteNames.homeworkList;
@@ -52,12 +54,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         name={diaryRouteNames.homework}
         component={DiaryHomeworkScreen}
         options={homeworkNavBar}
+        initialParams={{}}
       />,
       <Stack.Screen
         key={diaryRouteNames.session}
         name={diaryRouteNames.session}
         component={DiarySessionScreen}
         options={sessionNavBar}
+        initialParams={{}}
       />,
     );
 

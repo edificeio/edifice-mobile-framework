@@ -1,13 +1,13 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import BottomSheet from 'react-native-bottomsheet';
 
+import { I18n } from '~/app/i18n';
 import { MenuProps } from '~/framework/components/menus/types/types';
 
 const BottomMenu = (props: React.PropsWithChildren<MenuProps & { title: string }>) => {
   //add cancel action to actions
-  props.actions.push({ title: I18n.t('Cancel'), action: () => {} });
+  props.actions.push({ title: I18n.get('common-cancel'), action: () => {} });
 
   const showBottomMenu = () => {
     BottomSheet.showBottomSheetWithOptions(

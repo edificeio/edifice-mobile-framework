@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { Image } from '~/framework/util/media';
 import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
@@ -88,7 +88,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
               />
             ) : null}
             <SmallText style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</SmallText>
-            <ActionButton text={I18n.t('common.infoBubble-understood')} action={() => this.doAcknowledge(true)} />
+            <ActionButton text={I18n.get('myapp-infobubble-understood')} action={() => this.doAcknowledge(true)} />
           </View>
         ) : null}
         <TouchableOpacity
@@ -115,7 +115,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
       <InfoCard style={style}>
         <SmallText style={{ textAlign: 'left', marginBottom: UI_SIZES.spacing.medium }}>{infoText}</SmallText>
         <View style={{ flexDirection: 'row', alignSelf: 'flex-end', alignItems: 'center' }}>
-          <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.t('common.infoBubble-doNotShow')}</CaptionText>
+          <CaptionText style={{ marginRight: UI_SIZES.spacing.small }}>{I18n.get('myapp-infobubble-donotshow')}</CaptionText>
           <Toggle checked={acknowledgeToggle} onCheckChange={() => this.doAcknowledge(!acknowledgeToggle)} />
         </View>
       </InfoCard>

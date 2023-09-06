@@ -14,7 +14,7 @@ export default new NavigableModuleConfig<'dashboard', IDashboardReduxState>({
   matchEntcoreApp: entcoreApp => hasViescoApp(entcoreApp),
   hasRight: matchingApps => matchingApps.length > 0 && getSession()?.platform.showVieScolaireDashboard === true,
 
-  displayI18n: 'viesco',
+  displayI18n: 'dashboard-moduleconfig-tabname',
   displayAs: 'tabModule',
   displayOrder: 2,
   displayPicture: { type: 'Icon', name: 'school' },

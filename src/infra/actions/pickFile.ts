@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import { ActionSheetIOS, Platform } from 'react-native';
 import ActionSheet from 'react-native-action-sheet';
 import Permissions, { PERMISSIONS } from 'react-native-permissions';
 
+import { I18n } from '~/app/i18n';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 
@@ -22,21 +22,21 @@ type PhotoCaptions = {
 };
 
 const captions: Captions = {
-  image: 'common-picker-image',
-  document: 'common-picker-document',
+  image: 'pickfile-image',
+  document: 'pickfile-document',
   cancel: 'Cancel',
-  title: 'common-picker-title',
+  title: 'pickfile-title',
 };
 
 const photoCaptions: PhotoCaptions = {
-  title: 'common-photoPicker-title',
+  title: 'pickfile-photo-title',
   cancelButtonTitle: 'Cancel',
-  takePhotoButtonTitle: 'common-photoPicker-take',
-  chooseFromLibraryButtonTitle: 'common-photoPicker-pick',
+  takePhotoButtonTitle: 'pickfile-take',
+  chooseFromLibraryButtonTitle: 'pickfile-pick',
   permissionDenied: {
-    title: 'common-ErrorStorageAccessAlertTitle',
-    text: 'common-ErrorStorageAccessAlertText',
-    reTryTitle: 'common-ErrorStorageAccessAlertRetry',
+    title: 'pickfile-error-storageaccess-alert-title',
+    text: 'pickfile-error-storageaccess-alert-text',
+    reTryTitle: 'pickfile-error-storageaccess-alert-retry',
     okTitle: 'common-ok',
   },
 };
@@ -49,11 +49,11 @@ const transformCaptions: (captions: any) => {} = captions => {
   let result = {};
   for (let caption of Object.keys(captions)) {
     if (typeof captions[caption] === 'string') {
-      result[caption] = I18n.t(captions[caption]);
+      result[caption] = I18n.get(captions[caption]);
     } else if (typeof captions[caption] === 'object') {
       result[caption] = {};
       for (let subCaption of Object.keys(captions[caption])) {
-        result[caption][subCaption] = I18n.t(captions[caption][subCaption]);
+        result[caption][subCaption] = I18n.get(captions[caption][subCaption]);
       }
     }
   }
@@ -90,7 +90,7 @@ export const pickFileError = (notifierId: string) => {
     dispatch(
       notifierShowAction({
         id: notifierId,
-        text: I18n.t('common-ErrorStorageAccess'),
+        text: I18n.get('pickfile-error-storageaccess'),
         icon: 'close',
         type: 'error',
       }),

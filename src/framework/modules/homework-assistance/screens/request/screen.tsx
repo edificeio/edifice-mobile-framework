@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { Platform, RefreshControl, ScrollView, TextInput, View } from 'react-native';
@@ -8,10 +7,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import ActionButton from '~/framework/components/buttons/action';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
@@ -34,7 +35,6 @@ import {
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
 import { HomeworkAssistanceRequestScreenPrivateProps } from './types';
@@ -49,7 +49,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('homeworkAssistance.myRequest'),
+    title: I18n.get('homeworkassistance-request-title'),
   }),
 });
 
@@ -111,10 +111,10 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
       await props.addRequest(selectedService, phoneNumber, date, time, student ?? null, structureName, className, information);
       setSendingRequest(false);
       props.navigation.goBack();
-      Toast.showSuccess(I18n.t('homeworkAssistance.requestSent'));
+      Toast.showSuccess(I18n.get('homeworkassistance-request-successmessage'));
     } catch {
       setSendingRequest(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('homeworkassistance-request-error-text'));
     }
   };
 
@@ -153,14 +153,14 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
             items={props.services}
             setOpen={setServiceDropdownOpen}
             setValue={setService}
-            placeholder={I18n.t('homeworkAssistance.chooseASubject')}
+            placeholder={I18n.get('homeworkassistance-request-subject-placeholder')}
             style={styles.dropdownContainer}
             containerStyle={{ zIndex: -1 }}
             dropDownContainerStyle={styles.dropdownContainer}
             textStyle={styles.dropdownText}
           />
           <View style={{ zIndex: -2 }}>
-            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.phoneNumberToCallYouBackOn')}</SmallText>
+            <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-request-phonenumber')}</SmallText>
             <TextInput
               placeholder="+33 (0)6..."
               value={phoneNumber}
@@ -169,29 +169,29 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
               style={styles.phoneNumberInput}
             />
             <View style={styles.rowContainer}>
-              <SmallText>{I18n.t('homeworkAssistance.dateOfCall')}</SmallText>
+              <SmallText>{I18n.get('homeworkassistance-request-date-label')}</SmallText>
               <DateTimePicker
                 mode="date"
                 value={date}
-                onChange={value => setDate(value)}
+                onChangeValue={value => setDate(value)}
                 minimumDate={moment().startOf('day')}
-                color={theme.palette.secondary.regular}
+                iconColor={theme.palette.secondary.regular}
               />
             </View>
             <View style={styles.rowContainer}>
-              <SmallText>{I18n.t('homeworkAssistance.time')}</SmallText>
+              <SmallText>{I18n.get('homeworkassistance-request-time')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={time}
-                onChange={value => setTime(value)}
+                onChangeValue={value => setTime(value)}
                 minimumDate={openingTime.start}
                 maximumDate={openingTime.end}
-                color={theme.palette.secondary.regular}
+                iconColor={theme.palette.secondary.regular}
               />
             </View>
-            <SmallText style={styles.textMargin}>{I18n.t('homeworkAssistance.additionalInformation')}</SmallText>
+            <SmallText style={styles.textMargin}>{I18n.get('homeworkassistance-request-information-label')}</SmallText>
             <TextInput
-              placeholder={I18n.t('homeworkAssistance.detailsAbout')}
+              placeholder={I18n.get('homeworkassistance-request-information-placeholder')}
               value={information}
               onChangeText={text => setInformation(text)}
               multiline
@@ -202,10 +202,10 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
         </View>
         <View>
           {!isDateValid ? (
-            <AlertCard type="failure" text={I18n.t('homeworkAssistance.serviceClosedError')} style={styles.errorAlert} />
+            <AlertCard type="error" text={I18n.get('homeworkassistance-request-date-error')} style={styles.errorAlert} />
           ) : null}
           <ActionButton
-            text={I18n.t('homeworkAssistance.sendMyRequest')}
+            text={I18n.get('homeworkassistance-request-action')}
             action={sendRequest}
             disabled={isActionDisabled}
             loading={isSendingRequest}

@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, TextInput, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -29,14 +29,12 @@ const styles = StyleSheet.create({
 });
 
 export enum WorkspaceModalType {
+  COPY,
   CREATE_FOLDER,
-  DELETE,
   DOWNLOAD,
-  DUPLICATE,
-  EDIT,
   MOVE,
   NONE,
-  TRASH,
+  RENAME,
 }
 
 interface IWorkspaceModalSettings {
@@ -58,20 +56,36 @@ interface IWorkspaceModalProps {
 
 const getModalSettings = (type: WorkspaceModalType): IWorkspaceModalSettings => {
   switch (type) {
+    case WorkspaceModalType.COPY:
+      return {
+        buttonText: I18n.get('workspace-filelist-modal-copy-action'),
+        title: I18n.get('workspace-filelist-modal-copy-title'),
+        hasDestinationSelector: true,
+      };
     case WorkspaceModalType.CREATE_FOLDER:
-      return { buttonText: I18n.t('create'), title: I18n.t('create-folder'), hasInput: true };
-    case WorkspaceModalType.DELETE:
-      return { buttonText: I18n.t('delete'), title: I18n.t('delete-confirm'), hasFileList: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-modal-createfolder-action'),
+        title: I18n.get('workspace-filelist-modal-createfolder-title'),
+        hasInput: true,
+      };
     case WorkspaceModalType.DOWNLOAD:
-      return { buttonText: I18n.t('download'), title: I18n.t('download-documents'), hasFileList: true };
-    case WorkspaceModalType.DUPLICATE:
-      return { buttonText: I18n.t('copy'), title: I18n.t('copy-documents'), hasDestinationSelector: true };
-    case WorkspaceModalType.EDIT:
-      return { buttonText: I18n.t('modify'), title: I18n.t('rename'), hasInput: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-modal-download-action'),
+        title: I18n.get('workspace-filelist-modal-download-title'),
+        hasFileList: true,
+      };
     case WorkspaceModalType.MOVE:
-      return { buttonText: I18n.t('move'), title: I18n.t('move-documents'), hasDestinationSelector: true };
-    case WorkspaceModalType.TRASH:
-      return { buttonText: I18n.t('delete'), title: I18n.t('trash-confirm'), hasFileList: true };
+      return {
+        buttonText: I18n.get('workspace-filelist-modal-move-action'),
+        title: I18n.get('workspace-filelist-modal-move-title'),
+        hasDestinationSelector: true,
+      };
+    case WorkspaceModalType.RENAME:
+      return {
+        buttonText: I18n.get('workspace-filelist-modal-rename-action'),
+        title: I18n.get('workspace-filelist-modal-rename-title'),
+        hasInput: true,
+      };
     case WorkspaceModalType.NONE:
     default:
       return { buttonText: '', title: '' };
@@ -90,7 +104,7 @@ export const WorkspaceModal = React.forwardRef<ModalBoxHandle, IWorkspaceModalPr
     const action = () => onAction(selectedFiles, inputValue + fileExtension, destination);
 
     useEffect(() => {
-      if (type === WorkspaceModalType.EDIT && selectedFiles.length) {
+      if (type === WorkspaceModalType.RENAME && selectedFiles.length) {
         const name = selectedFiles[0].name;
         const index = name.lastIndexOf('.');
         setInputValue(index > 0 ? name.substring(0, index) : name);

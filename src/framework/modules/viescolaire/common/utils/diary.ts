@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 import { IUser } from '~/framework/modules/auth/model';
 import { IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
@@ -7,16 +7,16 @@ export type Homework = {
   id: string;
   subject: string;
   description: string;
-  due_date: moment.Moment;
+  due_date: Moment;
   type: string;
-  created_date: moment.Moment;
+  created_date: Moment;
   audience?: string;
 };
 
 export type Session = {
   id: string;
   subject: string;
-  date: moment.Moment;
+  date: Moment;
   teacher: string;
   description: string;
   title: string;

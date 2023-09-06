@@ -18,7 +18,7 @@ import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~
 
 interface IPresencesReduxStateData {
   allowMultipleSlots: boolean;
-  childrenEvents?: IChildrenEvents;
+  childrenEvents: IChildrenEvents;
   classCall?: IClassCall;
   courses: ICourse[];
   eventReasons: IEventReason[];
@@ -31,7 +31,7 @@ interface IPresencesReduxStateData {
 
 export interface IPresencesReduxState {
   allowMultipleSlots: AsyncState<boolean>;
-  childrenEvents: AsyncState<IChildrenEvents | undefined>;
+  childrenEvents: AsyncState<IChildrenEvents>;
   classCall: AsyncState<IClassCall | undefined>;
   courses: AsyncState<ICourse[]>;
   eventReasons: AsyncState<IEventReason[]>;
@@ -44,17 +44,42 @@ export interface IPresencesReduxState {
 
 const initialState: IPresencesReduxStateData = {
   allowMultipleSlots: true,
+  childrenEvents: {},
   courses: [],
   eventReasons: [],
   history: {
-    latenesses: [],
-    departures: [],
-    regularized: [],
-    unregularized: [],
-    noReason: [],
-    forgottenNotebooks: [],
-    incidents: [],
-    punishments: [],
+    DEPARTURE: {
+      events: [],
+      total: 0,
+    },
+    FORGOTTEN_NOTEBOOK: {
+      events: [],
+      total: 0,
+    },
+    INCIDENT: {
+      events: [],
+      total: 0,
+    },
+    LATENESS: {
+      events: [],
+      total: 0,
+    },
+    NO_REASON: {
+      events: [],
+      total: 0,
+    },
+    PUNISHMENT: {
+      events: [],
+      total: 0,
+    },
+    REGULARIZED: {
+      events: [],
+      total: 0,
+    },
+    UNREGULARIZED: {
+      events: [],
+      total: 0,
+    },
   },
   registerPreference: '',
   terms: [],

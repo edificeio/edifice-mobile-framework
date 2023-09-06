@@ -1,9 +1,9 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
@@ -23,7 +23,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.mode === 'children' ? I18n.t('directory-childrenTitle') : I18n.t('directory-relativesTitle'),
+    title: route.params.mode === 'children' ? I18n.get('user-children-title') : I18n.get('user-relatives-title'),
   }),
 });
 

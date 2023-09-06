@@ -1,32 +1,34 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, ScrollView, TextInput, TouchableOpacity, View } from 'react-native';
 import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { getSelectedChild, getSelectedChildStructure } from '~/framework/modules/viescolaire/dashboard/state/children';
+import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
-import { PresencesDeclareAbsenceScreenPrivateProps } from './types';
+import type { PresencesDeclareAbsenceScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -35,7 +37,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-absence-declaration'),
+    title: I18n.get('presences-declareabsence-title'),
   }),
 });
 
@@ -75,10 +77,10 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         await presencesService.absence.create(session, structureId, childId, startDate, endDate, comment);
       }
       navigation.goBack();
-      Toast.showSuccess(I18n.t('viesco-absence-declared'));
+      Toast.showSuccess(I18n.get('presences-declareabsence-successmessage'));
     } catch {
       setCreating(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-declareabsence-error-text'));
     }
   };
 
@@ -86,7 +88,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
     const { childName, navigation } = props;
 
     navigation.setOptions({
-      headerTitle: navBarTitle(`${I18n.t('viesco-absence-declaration')} ${childName}`),
+      headerTitle: navBarTitle(`${I18n.get('presences-declareabsence-title')} ${childName}`),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childName]);
@@ -101,7 +103,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
             <TouchableOpacity
               style={[styles.switchPart, styles.leftSwitch, isSingleDay && styles.selected]}
               onPress={() => setSingleDay(true)}>
-              <SmallText>{I18n.t('viesco-single-day')}</SmallText>
+              <SmallText>{I18n.get('presences-declareabsence-singleday')}</SmallText>
               <SmallBoldText>{startDate.format('DD/MM')}</SmallBoldText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -109,14 +111,14 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               onPress={() => setSingleDay(false)}>
               {isSingleDay ? (
                 <View style={styles.rightSwitchSingle}>
-                  <SmallText>{I18n.t('viesco-several-days')}</SmallText>
+                  <SmallText>{I18n.get('presences-declareabsence-severaldays')}</SmallText>
                   <SmallBoldText style={styles.rightSwitchSingleText}>+</SmallBoldText>
                 </View>
               ) : (
                 <View>
-                  <SmallText>{I18n.t('viesco-several-days')}</SmallText>
+                  <SmallText>{I18n.get('presences-declareabsence-severaldays')}</SmallText>
                   <SmallBoldText>
-                    {I18n.t('viesco-from')} {startDate.format('DD/MM')} {I18n.t('viesco-to')} {endDate.format('DD/MM')}
+                    {I18n.get('presences-declareabsence-dates', { start: startDate.format('DD/MM'), end: endDate.format('DD/MM') })}
                   </SmallBoldText>
                 </View>
               )}
@@ -127,51 +129,51 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
               <DateTimePicker
                 mode="date"
                 value={startDate}
-                onChange={date => setSingleDayDate(date)}
+                onChangeValue={date => setSingleDayDate(date)}
                 minimumDate={moment().startOf('day')}
-                color={viescoTheme.palette.presences}
+                iconColor={viescoTheme.palette.presences}
               />
             ) : (
               <>
                 <DateTimePicker
                   mode="date"
                   value={startDate}
-                  onChange={date => setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                  onChangeValue={date => setStartDate(startDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
                   minimumDate={moment().startOf('day')}
                   maximumDate={endDate}
-                  color={viescoTheme.palette.presences}
+                  iconColor={viescoTheme.palette.presences}
                 />
                 <DateTimePicker
                   mode="date"
                   value={endDate}
-                  onChange={date => setEndDate(endDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
+                  onChangeValue={date => setEndDate(endDate.clone().set({ dayOfYear: date.dayOfYear(), year: date.year() }))}
                   minimumDate={startDate}
-                  color={viescoTheme.palette.presences}
+                  iconColor={viescoTheme.palette.presences}
                 />
               </>
             )}
           </View>
           <View style={styles.timePickerMainContainer}>
             <View style={styles.timePickerContainer}>
-              <SmallText style={styles.timePickerText}>{I18n.t('viesco-from-hour')}</SmallText>
+              <SmallText style={styles.timePickerText}>{I18n.get('presences-declareabsence-from')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={startDate}
-                onChange={date => setStartDate(startDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
-                color={viescoTheme.palette.presences}
+                onChangeValue={date => setStartDate(startDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
+                iconColor={viescoTheme.palette.presences}
               />
             </View>
             <View style={styles.timePickerContainer}>
-              <SmallText style={styles.timePickerText}>{I18n.t('viesco-to-hour')}</SmallText>
+              <SmallText style={styles.timePickerText}>{I18n.get('presences-declareabsence-to')}</SmallText>
               <DateTimePicker
                 mode="time"
                 value={endDate}
-                onChange={date => setEndDate(endDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
-                color={viescoTheme.palette.presences}
+                onChangeValue={date => setEndDate(endDate.clone().set({ hour: date.hour(), minute: date.minute() }))}
+                iconColor={viescoTheme.palette.presences}
               />
             </View>
           </View>
-          <SmallText style={styles.commentLabelText}>{I18n.t('viesco-absence-motive')}</SmallText>
+          <SmallText style={styles.commentLabelText}>{I18n.get('presences-declareabsence-reason')}</SmallText>
           <TextInput
             value={comment}
             onChangeText={text => setComment(text)}
@@ -183,7 +185,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
             <Attachment name={attachment.filename} type={attachment.filetype} onRemove={() => setAttachment(undefined)} />
           ) : (
             <BottomMenu
-              title={I18n.t('viesco-attachment')}
+              title={I18n.get('presences-declareabsence-attachment')}
               actions={[
                 cameraAction({ callback: onPickAttachment }),
                 galleryAction({ callback: onPickAttachment }),
@@ -198,12 +200,17 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
                   fill={theme.palette.primary.regular}
                   style={styles.iconAttMarginRight}
                 />
-                <SmallActionText>{I18n.t('viesco-attachment')}</SmallActionText>
+                <SmallActionText>{I18n.get('presences-declareabsence-attachment')}</SmallActionText>
               </View>
             </BottomMenu>
           )}
         </View>
-        <ActionButton text={I18n.t('viesco-validate')} action={createAbsence} disabled={!areDatesValid} loading={isCreating} />
+        <ActionButton
+          text={I18n.get('presences-declareabsence-action')}
+          action={createAbsence}
+          disabled={!areDatesValid}
+          loading={isCreating}
+        />
       </ScrollView>
     );
   };
@@ -214,13 +221,14 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
 };
 
 export default connect((state: IGlobalState) => {
+  const dashboardState = dashboardConfig.getState(state);
   const session = getSession();
-  const child = getSelectedChild(state);
+  const childId = dashboardState.selectedChildId;
 
   return {
-    childId: child?.id,
-    childName: child?.firstName,
+    childId,
+    childName: getFlattenedChildren(session?.user.children)?.find(child => child.id === childId)?.firstName,
     session,
-    structureId: getSelectedChildStructure(state)?.id,
+    structureId: getChildStructureId(childId),
   };
 })(PresencesDeclareAbsenceScreen);

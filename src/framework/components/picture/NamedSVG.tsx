@@ -11,10 +11,6 @@ import { Platform } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 
 const imports = {
-  // Platform logos
-  'logo-moncollege': import('ASSETS/platforms/logo-moncollege.svg'),
-  'logo-monecole': import('ASSETS/platforms/logo-monecole.svg'),
-  'logo-porto-vecchio': import('ASSETS/platforms/logo-porto-vecchio.svg'),
   // UI Icons
   'ui-addUser': import('ASSETS/icons/uiIcons/addUser.svg'),
   'ui-alert-triangle': import('ASSETS/icons/uiIcons/alert-triangle.svg'),
@@ -94,6 +90,7 @@ const imports = {
     android: import('ASSETS/icons/uiIcons/shareAOS.svg'),
   }),
   'ui-skills': import('ASSETS/icons/uiIcons/skills.svg'),
+  'ui-star-filled': import('ASSETS/icons/uiIcons/star-filled.svg'),
   'ui-success_fill': import('ASSETS/icons/uiIcons/success_fill.svg'),
   'ui-success_outline': import('ASSETS/icons/uiIcons/success_outline.svg'),
   'ui-success': import('ASSETS/icons/uiIcons/success.svg'),
@@ -173,6 +170,7 @@ const imports = {
   'empty-homework': import('ASSETS/images/empty-screen/empty-homework.svg'),
   'empty-light': import('ASSETS/images/empty-screen/empty-light.svg'),
   'empty-mediacentre': import('ASSETS/images/empty-screen/empty-mediacentre.svg'),
+  'empty-news': import('ASSETS/images/empty-screen/empty-news.svg'),
   'empty-schoolbook': import('ASSETS/images/empty-screen/empty-schoolbook.svg'),
   'empty-search': import('ASSETS/images/empty-screen/empty-search.svg'),
   'empty-support': import('ASSETS/images/empty-screen/empty-support.svg'),

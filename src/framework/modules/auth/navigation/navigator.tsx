@@ -1,9 +1,9 @@
 /**
  * Navigator for the auth section
  */
-import I18n from 'i18n-js';
 import * as React from 'react';
 
+import { I18n } from '~/app/i18n';
 import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
 import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
@@ -49,35 +49,37 @@ export default function () {
         name={authRouteNames.wayf}
         component={WayfScreen}
         options={{
-          headerTitle: navBarTitle(I18n.t('login-wayf-main-title')),
+          headerTitle: navBarTitle(I18n.get('auth-wayf-main-title')),
         }}
       />
       <Stack.Screen
         name={authRouteNames.activation}
         component={ActivationScreen}
         options={{
-          headerTitle: navBarTitle(I18n.t('activation-title')),
+          headerTitle: navBarTitle(I18n.get('auth-navigation-activation-title')),
         }}
       />
       <Stack.Screen
         name={authRouteNames.forgot}
         component={ForgotScreen}
         options={({ route }) => ({
-          headerTitle: navBarTitle(route.params.mode === 'id' ? I18n.t('forgot-id') : I18n.t('forgot-password')),
+          headerTitle: navBarTitle(
+            route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
+          ),
         })}
       />
       <Stack.Screen
         name={authRouteNames.revalidateTerms}
         component={RevalidateTermsScreen}
         options={{
-          headerTitle: navBarTitle(I18n.t('user.revalidateTermsScreen.title')),
+          headerTitle: navBarTitle(I18n.get('user-revalidateterms-title')),
         }}
       />
       <Stack.Screen
         name={authRouteNames.changePassword}
         component={ChangePasswordScreen}
         options={{
-          headerTitle: navBarTitle(I18n.t('user.page.editPassword')),
+          headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
         }}
       />
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
@@ -85,7 +87,7 @@ export default function () {
           name={authRouteNames.changePasswordModal}
           component={ChangePasswordScreen}
           options={{
-            headerTitle: navBarTitle(I18n.t('user.page.editPassword')),
+            headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
           }}
         />
       </Stack.Group>

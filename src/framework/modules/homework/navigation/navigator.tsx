@@ -1,6 +1,6 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 
+import { I18n } from '~/app/i18n';
 import { computeNavBar as homeworkExplorerNavBar } from '~/framework/modules/homework/components/HomeworkExplorerScreen';
 import { computeNavBar as homeworkTaskListNavBar } from '~/framework/modules/homework/components/HomeworkTaskListScreen';
 import moduleConfig from '~/framework/modules/homework/module-config';
@@ -27,7 +27,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       <Stack.Screen
         name={homeworkRouteNames.homeworkTaskDetails}
         component={HomeworkTaskDetailsScreen}
-        options={{ headerTitle: navBarTitle(I18n.t('Homework')) }}
+        options={{ headerTitle: navBarTitle(I18n.get('homework')) }}
         initialParams={{}}
       />
       <Stack.Screen

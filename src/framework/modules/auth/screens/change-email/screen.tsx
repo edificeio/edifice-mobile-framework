@@ -1,12 +1,12 @@
 import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React, { useCallback, useState } from 'react';
 import { Alert, TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -17,7 +17,7 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
-import { getEmailValidationInfos, sendEmailVerificationCode } from '~/framework/modules/auth/service';
+import { getEmailValidationInfos, requestEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -29,7 +29,7 @@ import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
 
 const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeEmail>) =>
-  route.params.navBarTitle || I18n.t('auth-change-email-verify');
+  route.params.navBarTitle || I18n.get('auth-change-email-verify');
 
 export const computeNavBar = ({
   navigation,
@@ -55,16 +55,16 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isModifyingEmail = modificationType === ModificationType.EMAIL;
   const texts: PageTexts = isModifyingEmail
     ? {
-        button: I18n.t('auth-change-email-verify-button'),
-        label: I18n.t('auth-change-email-edit-label'),
-        message: I18n.t('auth-change-email-edit-message'),
-        title: I18n.t('auth-change-email-edit-title'),
+        button: I18n.get('auth-change-email-verify-button'),
+        label: I18n.get('auth-change-email-edit-label'),
+        message: I18n.get('auth-change-email-edit-message'),
+        title: I18n.get('auth-change-email-edit-title'),
       }
     : {
-        button: I18n.t('auth-change-email-verify-button'),
-        label: I18n.t('auth-change-email-verify-label'),
-        message: I18n.t('auth-change-email-verify-message'),
-        title: I18n.t('auth-change-email-verify-title'),
+        button: I18n.get('auth-change-email-verify-button'),
+        label: I18n.get('auth-change-email-verify-label'),
+        message: I18n.get('auth-change-email-verify-message'),
+        title: I18n.get('auth-change-email-verify-title'),
       };
 
   const [isSendingCode, setIsSendingCode] = useState(false);
@@ -73,7 +73,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const isEmailEmpty = isEmpty(email);
   const isEmailStatePristine = emailState === EmailState.PRISTINE;
 
-  const doSendEmailVerificationCode = useCallback(
+  const doRequestEmailVerificationCode = useCallback(
     async (toVerify: string) => {
       // Exit if email is not valid
       if (!new ValidatorBuilder().withEmail().build<string>().isValid(toVerify)) return EmailState.EMAIL_FORMAT_INVALID;
@@ -88,7 +88,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             return EmailState.EMAIL_ALREADY_VERIFIED;
           }
         }
-        await sendEmailVerificationCode(platform, toVerify);
+        await requestEmailVerificationCode(platform, toVerify);
         navigation.navigate(authRouteNames.mfa, {
           platform,
           rememberMe,
@@ -98,7 +98,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
           navBarTitle: getNavBarTitle(route),
         });
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('auth-change-email-error-text'));
       } finally {
         setIsSendingCode(false);
       }
@@ -107,9 +107,9 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   );
 
   const sendEmail = useCallback(async () => {
-    const sendResponse = await doSendEmailVerificationCode(email);
+    const sendResponse = await doRequestEmailVerificationCode(email);
     if (sendResponse) setEmailState(sendResponse);
-  }, [doSendEmailVerificationCode, email]);
+  }, [doRequestEmailVerificationCode, email]);
 
   const changeEmail = useCallback(
     (text: string) => {
@@ -124,21 +124,21 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
       await tryLogout();
       navigation.reset(getAuthNavigationState(platform));
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('auth-change-email-error-text'));
     }
   }, [navigation, platform, tryLogout]);
 
   UNSTABLE_usePreventRemove(!isEmailEmpty && isScreenFocused, ({ data }) => {
-    Alert.alert(I18n.t('auth-change-email-edit-alert-title'), I18n.t('auth-change-email-edit-alert-message'), [
+    Alert.alert(I18n.get('auth-change-email-edit-alert-title'), I18n.get('auth-change-email-edit-alert-message'), [
       {
-        text: I18n.t('common.discard'),
+        text: I18n.get('auth-change-email-discard'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
         style: 'destructive',
       },
       {
-        text: I18n.t('common.continue'),
+        text: I18n.get('common-continue'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
@@ -178,7 +178,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             autoCorrect={false}
             autoCapitalize="none"
             keyboardType="email-address"
-            placeholder={I18n.t('auth-change-email-placeholder')}
+            placeholder={I18n.get('auth-change-email-placeholder')}
             placeholderTextColor={theme.palette.grey.graphite}
             style={styles.input}
             value={email}
@@ -187,10 +187,10 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         </View>
         <CaptionItalicText style={styles.errorText}>
           {isEmailStatePristine
-            ? I18n.t('common.space')
+            ? I18n.get('common-space')
             : emailState === EmailState.EMAIL_ALREADY_VERIFIED
-            ? I18n.t('auth-change-email-error-same')
-            : I18n.t('auth-change-email-error-invalid')}
+            ? I18n.get('auth-change-email-error-same')
+            : I18n.get('auth-change-email-error-invalid')}
         </CaptionItalicText>
         <ActionButton
           style={styles.sendButton}
@@ -201,7 +201,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
         />
         {isModifyingEmail ? null : (
           <TouchableOpacity style={styles.logoutButton} onPress={onRefuseEmailVerification}>
-            <SmallBoldText style={styles.logoutText}>{I18n.t('auth-change-email-verify-disconnect')}</SmallBoldText>
+            <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-email-verify-disconnect')}</SmallBoldText>
           </TouchableOpacity>
         )}
       </View>

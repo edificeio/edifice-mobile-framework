@@ -15,10 +15,10 @@ import {
   ScreenListeners,
   StackActions,
 } from '@react-navigation/native';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Platform } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -33,7 +33,7 @@ import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
 import { ModuleScreens } from './moduleScreens';
 import { getTypedRootStack } from './navigators';
-import { NAVIGATE_CLOSE_DELAY, consumeModalCloseAction, setConfirmQuitAction } from './nextTabJump';
+import { setConfirmQuitAction } from './nextTabJump';
 import { computeTabRouteName, tabModules } from './tabModules';
 
 //  88888888888       888      888b    888                   d8b                   888
@@ -79,7 +79,7 @@ const createTabIcon = (
 
 const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {
   return {
-    tabBarLabel: I18n.t(moduleConfig.displayI18n),
+    tabBarLabel: I18n.get(moduleConfig.displayI18n),
     tabBarIcon: props => {
       return createTabIcon(moduleConfig, props);
     },
@@ -143,8 +143,15 @@ export function TabStack({ module }: { module: AnyNavigableModule }) {
 }
 
 export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]) {
+  // Simple Hack : session can be recreated with same values.
+  // By using JSON-stringified version for useMemo() deps, we ensure that the navigation will be re-rendered only if necessary.
+  const appsJson = JSON.stringify(apps);
+
   const tabModulesCache = tabModules.get();
-  const moduleTabStackCache = React.useMemo(() => tabModulesCache.map(module => <TabStack module={module} />), [tabModulesCache]);
+  const moduleTabStackCache = React.useMemo(
+    () => tabModulesCache.map(module => <TabStack module={module} key={module.config.name} />),
+    [tabModulesCache],
+  );
   const moduleTabStackGetterCache = React.useMemo(() => moduleTabStackCache.map(ts => () => ts), [moduleTabStackCache]);
   const availableTabModules = React.useMemo(
     () =>
@@ -152,7 +159,8 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
         .get()
         .filterAvailables(apps ?? [])
         .sort((a, b) => a.config.displayOrder - b.config.displayOrder),
-    [apps],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [appsJson],
   );
   const tabRoutes = React.useMemo(() => {
     return availableTabModules.map(module => {
@@ -171,7 +179,7 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
     });
     // We effectively want to have this deps to minimise re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apps]);
+  }, [appsJson]);
   const screenOptions: (props: { route: RouteProp<ParamListBase>; navigation: any }) => BottomTabNavigationOptions =
     React.useCallback(({ route, navigation }) => {
       return {

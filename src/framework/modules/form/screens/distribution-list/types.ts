@@ -1,28 +1,34 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ISession } from '~/framework/modules/auth/model';
-import { IDistribution, IForm } from '~/framework/modules/form/model';
-import { FormNavigationParams } from '~/framework/modules/form/navigation';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import type { ISession } from '~/framework/modules/auth/model';
+import type { fetchFormDistributionsAction, fetchFormsReceivedAction } from '~/framework/modules/form/actions';
+import type { IDistribution, IForm } from '~/framework/modules/form/model';
+import type { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
+import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export type IFormDistributions = IForm & {
   distributions: IDistribution[];
 };
 
 export interface FormDistributionListScreenProps {
-  formDistributions: IFormDistributions[];
   initialLoadingState: AsyncPagedLoadingState;
-  session?: ISession;
-  fetchDistributions: () => Promise<IDistribution[]>;
-  fetchForms: () => Promise<IForm[]>;
 }
 
 export interface FormDistributionListScreenNavParams {
   notificationFormId?: number;
 }
 
-export interface FormDistributionListScreenPrivateProps
-  extends NativeStackScreenProps<FormNavigationParams, 'home'>,
-    FormDistributionListScreenProps {
-  // @scaffolder add HOC props here
+export interface FormDistributionListScreenStoreProps {
+  formDistributions: IFormDistributions[];
+  session?: ISession;
 }
+
+export interface FormDistributionListScreenDispatchProps {
+  tryFetchDistributions: (...args: Parameters<typeof fetchFormDistributionsAction>) => Promise<IDistribution[]>;
+  tryFetchForms: (...args: Parameters<typeof fetchFormsReceivedAction>) => Promise<IForm[]>;
+}
+
+export type FormDistributionListScreenPrivateProps = FormDistributionListScreenProps &
+  FormDistributionListScreenStoreProps &
+  FormDistributionListScreenDispatchProps &
+  NativeStackScreenProps<FormNavigationParams, typeof formRouteNames.home>;

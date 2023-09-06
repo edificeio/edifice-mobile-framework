@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -45,10 +45,10 @@ export default class MoveToFolderModal extends React.Component<
     const { openDropdown } = this.state;
     const isCurrentFolderInbox = currentFolder === 'inbox';
     const isCurrentFolderTrash = currentFolder === 'trash';
-    const modalTitle = `conversation.${isCurrentFolderTrash ? 'restore' : 'move'}To`;
+    const modalTitle = `conversation-movetofolder-${isCurrentFolderTrash ? 'restore' : 'move'}to`;
     const foldersWithoutCurrent = folders && folders.filter(folder => folder.folderName !== currentFolder);
     const options: any = [];
-    if (!isCurrentFolderInbox) options.push({ label: I18n.t('conversation.inbox'), value: 'inbox' });
+    if (!isCurrentFolderInbox) options.push({ label: I18n.get('conversation-movetofolder-inbox'), value: 'inbox' });
 
     if (foldersWithoutCurrent && foldersWithoutCurrent.length > 0) {
       for (const folder of foldersWithoutCurrent) {
@@ -92,9 +92,9 @@ export default class MoveToFolderModal extends React.Component<
         }}>
         <ModalContent style={styles.modalContent}>
           <View>
-            <SmallBoldText style={styles.text}>{I18n.t(modalTitle)}</SmallBoldText>
+            <SmallBoldText style={styles.text}>{I18n.get(modalTitle)}</SmallBoldText>
             {isMoveImpossible ? (
-              <SmallBoldText style={styles.text}>{I18n.t('conversation.moveImpossible')}</SmallBoldText>
+              <SmallBoldText style={styles.text}>{I18n.get('conversation-movetofolder-moveimpossible')}</SmallBoldText>
             ) : (
               <DropDownPicker
                 open={openDropdown}
@@ -102,7 +102,7 @@ export default class MoveToFolderModal extends React.Component<
                 value={selectedFolder}
                 setOpen={() => this.setState({ openDropdown: !openDropdown })}
                 setValue={callback => selectFolder(callback(selectedFolder))}
-                placeholder={I18n.t('conversation.moveSelect')}
+                placeholder={I18n.get('conversation-movetofolder-moveselect')}
                 placeholderStyle={{ color: theme.ui.text.light, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
                 textStyle={{ color: theme.palette.primary.regular, ...TextFontStyle.Bold, ...TextSizeStyle.Normal }}
                 style={styles.dropDownPicker}
@@ -117,7 +117,7 @@ export default class MoveToFolderModal extends React.Component<
           {!openDropdown ? (
             <View style={styles.buttonsContainer}>
               <ActionButton
-                text={I18n.t('Cancel')}
+                text={I18n.get('common-cancel')}
                 type="secondary"
                 action={() => {
                   selectFolder('');
@@ -125,7 +125,7 @@ export default class MoveToFolderModal extends React.Component<
                 }}
               />
               <ActionButton
-                text={I18n.t(`conversation.${isCurrentFolderTrash ? 'restore' : 'move'}`)}
+                text={I18n.get(`conversation-movetofolder-${isCurrentFolderTrash ? 'restore' : 'move'}`)}
                 style={{ marginLeft: UI_SIZES.spacing.medium }}
                 disabled={isMoveImpossible || !selectedFolder}
                 action={() => {

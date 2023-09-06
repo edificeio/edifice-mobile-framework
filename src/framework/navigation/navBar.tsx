@@ -5,7 +5,7 @@ import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Platform, TextStyle } from 'react-native';
+import { Platform, StyleSheet, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -16,20 +16,21 @@ import { isEmpty } from '~/framework/util/object';
 
 import { isModalModeOnThisRoute } from './hideTabBarAndroid';
 
-const backbuttonStyle = {
-  marginHorizontal: 0,
-};
-
-const navBarTitleStyle: TextStyle = {
-  color: theme.ui.text.inverse,
-  textAlign: 'center',
-  width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
-};
+const styles = StyleSheet.create({
+  navBarTitleStyle: {
+    color: theme.ui.text.inverse,
+    textAlign: 'center',
+    width: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 3 * UI_SIZES.elements.navbarMargin,
+  },
+  backbutton: {
+    marginHorizontal: 0,
+  },
+});
 
 export const navBarTitle = (title?: string, style?: TextStyle) =>
   !isEmpty(title) && Platform.OS === 'android'
     ? () => (
-        <BodyBoldText numberOfLines={1} style={[navBarTitleStyle, style ?? {}]}>
+        <BodyBoldText numberOfLines={1} style={[styles.navBarTitleStyle, style ?? {}]}>
           {title}
         </BodyBoldText>
       )
@@ -59,7 +60,7 @@ export const navBarOptions: (props: {
         if (isModalModeOnThisRoute(route.name)) {
           return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" />;
         } else {
-          return <HeaderBackButton {...props} style={backbuttonStyle} onPress={navigation.goBack} />;
+          return <HeaderBackButton {...props} onPress={navigation.goBack} style={styles.backbutton} />;
         }
       } else return null;
     },

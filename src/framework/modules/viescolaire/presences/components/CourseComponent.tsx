@@ -1,8 +1,7 @@
-import I18n from 'i18n-js';
-import moment from 'moment';
 import React from 'react';
 import { ImageBackground, StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -66,7 +65,7 @@ export default ({
             style={styles.iconMarginRight}
           />
           <SmallText>
-            {moment(item.startDate).format('LT')} - {moment(item.endDate).format('LT')}
+            {item.startDate.format('LT')} - {item.endDate.format('LT')}
           </SmallText>
         </View>
         <HeadingSText>{item.classes[0] !== undefined ? item.classes : item.groups}</HeadingSText>
@@ -74,9 +73,7 @@ export default ({
         {item.roomLabels[0] !== '' && (
           <View style={styles.itemRowStyle}>
             <Icon style={styles.iconMarginRight} size={20} name="pin_drop" />
-            <SmallText>
-              {I18n.t('viesco-room')} {item.roomLabels}
-            </SmallText>
+            <SmallText>{I18n.get('presences-courselist-callcard-room', { name: item.roomLabels[0] })}</SmallText>
           </View>
         )}
       </View>

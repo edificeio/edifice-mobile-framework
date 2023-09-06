@@ -5,7 +5,7 @@ export default new NavigableModuleConfig<'wekan', null>({
   entcoreScope: ['cas'],
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('WEKAN'),
 
-  displayI18n: 'wekan.tabName',
+  displayI18n: 'wekan-moduleconfig-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'wekan' },
 });

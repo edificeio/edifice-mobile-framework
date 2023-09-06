@@ -1,10 +1,10 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import type { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
 import type { ISession } from '~/framework/modules/auth/model';
@@ -36,7 +36,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('Pronote'),
+    title: I18n.get('pronote'),
   }),
 });
 
@@ -49,14 +49,14 @@ class ConnectorSelectorScreen extends React.PureComponent<IConnectorSelectorScre
     return (
       <PageView>
         <DropdownSelector
-          message={I18n.t('pronote.selector.title')}
+          message={I18n.get('pronote-connectorselector-title')}
           dropDownPickerProps={{
             items,
             showTickIcon: false,
-            placeholder: I18n.t('pronote.selector.placeholder'),
+            placeholder: I18n.get('pronote-connectorselector-placeholder'),
           }}
           button={{
-            text: I18n.t('pronote.selector.action'),
+            text: I18n.get('pronote-connectorselector-action'),
             action: v => {
               if (v && this.props.session) redirect(this.props.session, v as string);
             },

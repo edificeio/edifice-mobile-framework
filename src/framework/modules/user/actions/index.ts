@@ -1,10 +1,10 @@
 /**
  * Thunk actions for module user
  */
-import I18n from 'i18n-js';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
@@ -19,12 +19,14 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
     const isUpdatingPhoto = newValues.photo !== undefined;
     const notifierId = `profile${isUpdatingPhoto ? 'One' : 'Two'}`;
-    const notifierSuccessText = I18n.t(`ProfileChange${isUpdatingPhoto ? 'Avatar' : ''}Success`);
+    const notifierSuccessText = I18n.get(`user-profilechange${isUpdatingPhoto ? '-avatar' : ''}-success`);
     const getNotifierErrorText = () => {
       if (isUpdatingPhoto) {
-        return !newValues.photo ? I18n.t('ProfileDeleteAvatarError') : I18n.t('ProfileChangeAvatarErrorAssign');
+        return !newValues.photo
+          ? I18n.get('user-profilechange-avatar-error-delete')
+          : I18n.get('user-profilechange-avatar-error-assign');
       } else {
-        return I18n.t('ProfileChangeError');
+        return I18n.get('user-profilechange-error');
       }
     };
 
@@ -45,9 +47,10 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
     dispatch(authActions.profileUpdateRequest(newValues));
     try {
       const userId = session.user.id;
+      const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.photo } : newValues;
       const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         method: 'PUT',
-        body: JSON.stringify(newValues),
+        body: JSON.stringify(updatedValues),
       });
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);
@@ -72,12 +75,12 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
         dispatch(
           notifierShowAction({
             id: notifierId,
-            text: I18n.t('ProfileChangeLoginError'),
+            text: I18n.get('user-profilechange-login-error'),
             icon: 'close',
             type: 'error',
           }),
         );
-        Trackers.trackEvent('Profile', 'UPDATE ERROR', 'ProfileChangeLoginError');
+        Trackers.trackEvent('Profile', 'UPDATE ERROR', 'user-profilechange-login-error');
       } else {
         dispatch(
           notifierShowAction({

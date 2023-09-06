@@ -1,17 +1,18 @@
 import styled from '@emotion/native';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import AlertCard from '~/framework/components/alert';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { BodyText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { changePasswordAction, loginAction, logoutAction } from '~/framework/modules/auth/actions';
 import { IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
 import { getAuthNavigationState, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
@@ -36,7 +37,7 @@ function OldPasswordField(props: { oldPassword: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputOldPassword = ref)}
-      placeholder={I18n.t('PasswordOld')}
+      placeholder={I18n.get('auth-changepassword-password-old')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.oldPassword}
       hasError={props.form.showOldPasswordError(props.oldPassword)}
@@ -49,7 +50,7 @@ function NewPasswordField(props: { newPassword: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputNewPassword = ref)}
-      placeholder={I18n.t('PasswordNew')}
+      placeholder={I18n.get('auth-changepassword-password-new')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.newPassword}
       hasError={props.form.showNewPasswordError(props.newPassword)}
@@ -62,7 +63,7 @@ function PasswordConfirmField(props: { confirm: string; form: ChangePasswordForm
     <TextInputLine
       isPasswordField
       inputRef={ref => (props.form.inputPasswordConfirm = ref)}
-      placeholder={I18n.t('PasswordNewConfirm')}
+      placeholder={I18n.get('auth-changepassword-password-new-confirm')}
       onChangeText={validator.changeCallback(props.onChange)}
       value={props.confirm}
       hasError={props.form.showPasswordConfirmError(props.confirm)}
@@ -102,27 +103,24 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
     try {
       this.setState({ typing: false, submitState: 'RUNNING', error: undefined });
       if (!this.props.route.params.credentials) {
-        throw createChangePasswordError('change password', I18n.t('changePassword-errorSubmit'));
+        throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
       const payload = {
         ...this.state,
         login: this.props.route.params.credentials.username,
       };
-      await this.props.trySubmit(this.props.route.params.platform, payload, this.props.route.params.rememberMe);
-
-      const platform = this.props.route.params.platform;
-      const credentials = {
-        ...this.props.route.params.credentials,
-        password: payload.newPassword,
-      };
-      const rememberMe = this.props.route.params.rememberMe;
+      const { platform, forceChange, rememberMe } = this.props.route.params;
+      const redirect = await this.props.trySubmit(platform, payload, forceChange, rememberMe);
       try {
-        const redirect = await this.props.tryLogin(platform, credentials, rememberMe);
         redirectLoginNavAction(redirect, platform, this.props.navigation);
         setTimeout(() => {
           // We set timeout to let the app time to navigate before resetting the state of this screen in background
           if (this.mounted) this.setState({ typing: false, submitState: 'IDLE', error: undefined });
+          Toast.showSuccess(I18n.get('auth-changepassword-success'));
         }, 500);
+        if (this.props.route.params.navCallback) {
+          this.props.navigation.dispatch(this.props.route.params.navCallback);
+        }
       } catch {
         // If error during the login phase, redirect to login screen
         this.props.tryLogout();
@@ -173,7 +171,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
 
     const isNotValid = !formModel.validate({ ...this.state });
     const errorKey = formModel.firstErrorKey({ ...this.state });
-    const errorText = errorKey ? I18n.t(errorKey) : typing ? '' : error;
+    const errorText = errorKey ? I18n.get(errorKey) : typing ? '' : error;
     const hasErrorKey = !!errorText;
     const isSubmitLoading = submitState === 'RUNNING';
     const showError = this.state.newPassword.length > 0 || this.state.confirm.length > 0;
@@ -185,14 +183,14 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             <View style={styles.viewInfoForm}>
               {this.props.route.params.forceChange ? (
                 <View style={styles.viewWarning}>
-                  <BodyText style={styles.textWarning}>{I18n.t('PasswordChangeWarning')}</BodyText>
+                  <BodyText style={styles.textWarning}>{I18n.get('auth-changepassword-warning')}</BodyText>
                   <MiniSpacer />
                   <MiniSpacer />
                 </View>
               ) : null}
 
-              {authContext.passwordRegexI18n?.[I18n.currentLocale()] ? (
-                <AlertCard type="info" text={authContext.passwordRegexI18n?.[I18n.currentLocale()]} />
+              {authContext.passwordRegexI18n?.[I18n.getLanguage()] ? (
+                <AlertCard type="info" text={authContext.passwordRegexI18n?.[I18n.getLanguage()]} />
               ) : null}
             </View>
             <View style={styles.noFlexShrink}>
@@ -209,7 +207,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             </View>
             <View style={styles.noFlexShrink}>
               <SmallText style={styles.textError}>
-                {showError && hasErrorKey && (errorKey !== 'changePassword-errorConfirm' || this.state.confirm.length > 0)
+                {showError && hasErrorKey && (errorKey !== 'auth-changepassword-error-confirm' || this.state.confirm.length > 0)
                   ? errorText
                   : ' \n '}
               </SmallText>
@@ -220,13 +218,13 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 <ActionButton
                   action={() => this.doSubmit()}
                   disabled={isNotValid}
-                  text={I18n.t('Save')}
+                  text={I18n.get('common-save')}
                   loading={isSubmitLoading}
                 />
               </ButtonWrapper>
               {this.props.route.params.forceChange ? (
                 <TouchableOpacity style={{ marginTop: UI_SIZES.spacing.big }} onPress={this.doRefuseTerms}>
-                  <SmallBoldText style={styles.refuse}>{I18n.t('user.revalidateTermsScreen.refuseAndDisconnect')}</SmallBoldText>
+                  <SmallBoldText style={styles.refuse}>{I18n.get('user-revalidateterms-refuseanddisconnect')}</SmallBoldText>
                 </TouchableOpacity>
               ) : null}
               <MiniSpacer />

@@ -84,8 +84,11 @@ interface IBackendQuestionChoice {
   value: string;
   type: string;
   position: number;
-  next_section_id: number | null;
+  next_form_element_id: number | null;
   is_custom: boolean;
+  next_form_element_type: 'QUESTION' | 'SECTION' | null;
+  is_next_form_element_default: boolean;
+  image: string | null;
 }
 
 interface IBackendQuestionResponse {
@@ -124,7 +127,7 @@ type IBackendQuestionResponseList = IBackendQuestionResponse[];
 type IBackendResponseFileList = IBackendResponseFile[];
 type IBackendSectionList = IBackendSection[];
 
-const distributionAdapter: (data: IBackendDistribution) => IDistribution = data => {
+const distributionAdapter = (data: IBackendDistribution): IDistribution => {
   return {
     id: data.id,
     formId: data.form_id,
@@ -138,10 +141,10 @@ const distributionAdapter: (data: IBackendDistribution) => IDistribution = data 
     active: data.active,
     structure: data.structure,
     originalId: data.original_id,
-  } as IDistribution;
+  };
 };
 
-const formAdapter: (data: IBackendForm) => IForm = data => {
+const formAdapter = (data: IBackendForm): IForm => {
   return {
     id: data.id,
     title: data.title,
@@ -151,10 +154,10 @@ const formAdapter: (data: IBackendForm) => IForm = data => {
     archived: data.archived,
     multiple: data.multiple,
     editable: data.editable,
-  } as IForm;
+  };
 };
 
-const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
+const questionAdapter = (data: IBackendQuestion): IQuestion => {
   return {
     id: data.id,
     formId: data.form_id,
@@ -171,35 +174,39 @@ const questionAdapter: (data: IBackendQuestion) => IQuestion = data => {
     cursorStep: data.cursor_step,
     cursorMinLabel: data.cursor_min_label,
     cursorMaxLabel: data.cursor_max_label,
-  } as IQuestion;
+    choices: [],
+  };
 };
 
-const compareSectionQuestions: (a: IBackendQuestion, b: IBackendQuestion) => number = (a, b) => {
+const compareSectionQuestions = (a: IBackendQuestion, b: IBackendQuestion): number => {
   if (!a.section_position || !b.section_position) return 0;
   return a.section_position - b.section_position;
 };
 
-const compareMatrixChildren: (a: IBackendQuestion, b: IBackendQuestion) => number = (a, b) => {
+const compareMatrixChildren = (a: IBackendQuestion, b: IBackendQuestion): number => {
   if (!a.matrix_position || !b.matrix_position) return 0;
   return a.matrix_position - b.matrix_position;
 };
 
-const questionChoiceAdapter: (data: IBackendQuestionChoice) => IQuestionChoice = data => {
+const questionChoiceAdapter = (data: IBackendQuestionChoice, platformUrl: string): IQuestionChoice => {
   return {
     id: data.id,
     questionId: data.question_id,
     value: data.value,
     type: data.type,
-    nextSectionId: data.next_section_id,
+    nextFormElementId: data.next_form_element_id,
+    nextFormElementType: data.next_form_element_type,
+    isNextFormElementDefault: data.is_next_form_element_default,
     isCustom: data.is_custom,
-  } as IQuestionChoice;
+    image: data.image?.startsWith('/') ? platformUrl + data.image : data.image,
+  };
 };
 
-const compareChoices: (a: IBackendQuestionChoice, b: IBackendQuestionChoice) => number = (a, b) => {
+const compareChoices = (a: IBackendQuestionChoice, b: IBackendQuestionChoice): number => {
   return a.position - b.position;
 };
 
-const questionResponseAdapter: (data: IBackendQuestionResponse) => IQuestionResponse = data => {
+const questionResponseAdapter = (data: IBackendQuestionResponse): IQuestionResponse => {
   return {
     id: data.id,
     questionId: data.question_id,
@@ -207,26 +214,27 @@ const questionResponseAdapter: (data: IBackendQuestionResponse) => IQuestionResp
     choiceId: data.choice_id,
     customAnswer: data.custom_answer,
     choicePosition: data.choice_position,
-  } as IQuestionResponse;
+  };
 };
 
-const responseFileAdapter: (data: IBackendResponseFile) => IResponseFile = data => {
+const responseFileAdapter = (data: IBackendResponseFile): IResponseFile => {
   return {
     id: data.id,
     responseId: data.response_id,
     filename: data.filename,
     type: data.type,
-  } as IResponseFile;
+  };
 };
 
-const sectionAdapter: (data: IBackendSection) => ISection = data => {
+const sectionAdapter = (data: IBackendSection): ISection => {
   return {
     id: data.id,
     formId: data.form_id,
     title: data.title,
     description: data.description,
     position: data.position,
-  } as ISection;
+    questions: [],
+  };
 };
 
 export const formService = {
@@ -234,31 +242,31 @@ export const formService = {
     listMine: async (session: ISession) => {
       const api = '/formulaire/distributions/listMine';
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
-      return distributions.map(distribution => distributionAdapter(distribution)) as IDistribution[];
+      return distributions.map(distributionAdapter);
     },
     getFromForm: async (session: ISession, formId: number) => {
       const api = `/formulaire/distributions/forms/${formId}/list`;
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
-      return distributions.map(distribution => distributionAdapter(distribution)) as IDistribution[];
+      return distributions.map(distributionAdapter);
     },
   },
   distribution: {
     get: async (session: ISession, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}`;
       const distribution = (await fetchJSONWithCache(api)) as IBackendDistribution;
-      return distributionAdapter(distribution) as IDistribution;
+      return distributionAdapter(distribution);
     },
     add: async (session: ISession, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/add`;
       const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',
       })) as IBackendDistribution;
-      return distributionAdapter(distribution) as IDistribution;
+      return distributionAdapter(distribution);
     },
     getResponses: async (session: ISession, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/responses`;
       const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
-      return responses.map(response => questionResponseAdapter(response)) as IQuestionResponse[];
+      return responses.map(questionResponseAdapter);
     },
     deleteQuestionResponses: async (session: ISession, distributionId: number, questionId: number) => {
       const api = `/formulaire/responses/${distributionId}/questions/${questionId}`;
@@ -273,35 +281,35 @@ export const formService = {
         method: 'PUT',
         body,
       })) as IBackendDistribution;
-      return distributionAdapter(distrib) as IDistribution;
+      return distributionAdapter(distrib);
     },
     duplicate: async (session: ISession, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/duplicate`;
       const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',
       })) as IBackendDistribution;
-      return distributionAdapter(distribution) as IDistribution;
+      return distributionAdapter(distribution);
     },
     replace: async (session: ISession, distributionId: number, originalDistributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/replace/${originalDistributionId}`;
       const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'DELETE',
       })) as IBackendDistribution;
-      return distributionAdapter(distribution) as IDistribution;
+      return distributionAdapter(distribution);
     },
   },
   forms: {
     getReceived: async (session: ISession) => {
       const api = '/formulaire/forms/sent';
       const forms = (await fetchJSONWithCache(api)) as IBackendFormList;
-      return forms.map(form => formAdapter(form)) as IForm[];
+      return forms.map(formAdapter);
     },
   },
   form: {
     get: async (session: ISession, id: number) => {
       const api = `/formulaire/forms/${id}`;
       const form = (await fetchJSONWithCache(api)) as IBackendForm;
-      return formAdapter(form) as IForm;
+      return formAdapter(form);
     },
     getElementsCount: async (session: ISession, formId: number) => {
       const api = `/formulaire/forms/${formId}/elements/count`;
@@ -311,12 +319,12 @@ export const formService = {
     getQuestions: async (session: ISession, formId: number) => {
       const api = `/formulaire/forms/${formId}/questions`;
       const questions = (await fetchJSONWithCache(api)) as IBackendQuestionList;
-      return questions.map(question => questionAdapter(question)) as IQuestion[];
+      return questions.map(questionAdapter);
     },
     getSections: async (session: ISession, formId: number) => {
       const api = `/formulaire/forms/${formId}/sections`;
       const sections = (await fetchJSONWithCache(api)) as IBackendSectionList;
-      return sections.map(section => sectionAdapter(section)) as ISection[];
+      return sections.map(sectionAdapter);
     },
     hasResponderRight: async (session: ISession, formId: number) => {
       const api = `/formulaire/forms/${formId}/rights`;
@@ -328,16 +336,19 @@ export const formService = {
     getAllChoices: async (session: ISession, questionIds: number[]) => {
       let api = `/formulaire/questions/choices/all?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
-      const choices = (await fetchJSONWithCache(api)) as IBackendQuestionChoiceList;
+      const headers = {
+        Accept: 'application/json;version=1.9',
+      };
+      const choices = (await fetchJSONWithCache(api, { headers })) as IBackendQuestionChoiceList;
       choices.sort(compareChoices);
-      return choices.map(choice => questionChoiceAdapter(choice)) as IQuestionChoice[];
+      return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
     },
     getChildren: async (session: ISession, questionIds: number[]) => {
       let api = `/formulaire/questions/children?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const children = (await fetchJSONWithCache(api)) as IBackendQuestionList;
       children.sort(compareMatrixChildren);
-      return children.map(child => questionAdapter(child)) as IQuestion[];
+      return children.map(questionAdapter);
     },
   },
   question: {
@@ -364,18 +375,21 @@ export const formService = {
         method: 'POST',
         body,
       })) as IBackendQuestionResponse;
-      return questionResponseAdapter(response) as IQuestionResponse;
+      return questionResponseAdapter(response);
     },
     getChoices: async (session: ISession, questionId: number) => {
       const api = `/formulaire/questions/${questionId}/choices`;
-      const choices = (await fetchJSONWithCache(api)) as IBackendQuestionChoiceList;
+      const headers = {
+        Accept: 'application/json;version=1.9',
+      };
+      const choices = (await fetchJSONWithCache(api, { headers })) as IBackendQuestionChoiceList;
       choices.sort(compareChoices);
-      return choices.map(choice => questionChoiceAdapter(choice)) as IQuestionChoice[];
+      return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
     },
     getDistributionResponses: async (session: ISession, questionId: number, distributionId: number) => {
       const api = `/formulaire/questions/${questionId}/distributions/${distributionId}/responses`;
       const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
-      return responses.map(response => questionResponseAdapter(response)) as IQuestionResponse[];
+      return responses.map(questionResponseAdapter);
     },
   },
   responses: {
@@ -421,12 +435,12 @@ export const formService = {
         method: 'PUT',
         body,
       })) as IBackendQuestionResponse;
-      return questionResponseAdapter(response) as IQuestionResponse;
+      return questionResponseAdapter(response);
     },
     getFiles: async (session: ISession, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files/all`;
       const files = (await fetchJSONWithCache(api)) as IBackendResponseFileList;
-      return files.map(file => responseFileAdapter(file)) as IResponseFile[];
+      return files.map(responseFileAdapter);
     },
     addFile: async (session: ISession, responseId: number, file: LocalFile) => {
       const api = `/formulaire/responses/${responseId}/files`;
@@ -466,7 +480,7 @@ export const formService = {
       const api = `/formulaire/sections/${sectionId}/questions`;
       const questions = (await fetchJSONWithCache(api)) as IBackendQuestionList;
       questions.sort(compareSectionQuestions);
-      return questions.map(question => questionAdapter(question)) as IQuestion[];
+      return questions.map(questionAdapter);
     },
   },
 };

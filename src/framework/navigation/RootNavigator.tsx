@@ -12,7 +12,7 @@ import { Dispatch } from 'redux';
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import Toast from '~/framework/components/toast';
+import { RootToastHandler } from '~/framework/components/toast';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
@@ -95,7 +95,7 @@ function RootNavigator(props: RootNavigatorProps) {
                   {modals}
                 </RootStack.Navigator>
               </AppPushNotificationHandlerComponent>
-              <Toast />
+              <RootToastHandler />
             </NavigationContainer>
           </>
         ) : null}

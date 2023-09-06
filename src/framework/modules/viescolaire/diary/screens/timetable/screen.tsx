@@ -1,21 +1,19 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
-import { fetchCourseListFromTeacherAction } from '~/framework/modules/viescolaire/dashboard/actions/courses';
-import { getCoursesListState } from '~/framework/modules/viescolaire/dashboard/state/courses';
-import { getSelectedStructure } from '~/framework/modules/viescolaire/dashboard/state/structure';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
+  fetchDiaryCoursesAction,
   fetchDiaryHomeworksAction,
   fetchDiarySessionsAction,
   fetchDiarySlotsAction,
@@ -24,13 +22,13 @@ import DiaryTeacherTimetable from '~/framework/modules/viescolaire/diary/compone
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import { DiaryNavigationParams, diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 
-import type { DiaryTimetableScreenPrivateProps } from './types';
+import type { DiaryTimetableScreenDispatchProps, DiaryTimetableScreenPrivateProps } from './types';
 
 export type TimetableState = {
-  startDate: moment.Moment;
-  selectedDate: moment.Moment;
+  startDate: Moment;
+  selectedDate: Moment;
 };
 
 export const computeNavBar = ({
@@ -40,7 +38,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('Homework'),
+    title: I18n.get('diary-timetable-title'),
   }),
 });
 
@@ -55,16 +53,16 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 
   fetchCourses = () => {
     const { startDate } = this.state;
-    const { fetchTeacherCourses, fetchHomeworks, fetchSessions, structureId, userId } = this.props;
-    fetchTeacherCourses(structureId, startDate, startDate.clone().endOf('week'), userId);
-    fetchSessions(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
-    fetchHomeworks(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
+    const { structureId, userId } = this.props;
+    this.props.tryFetchCourses(structureId, userId, startDate, startDate.clone().endOf('week'));
+    this.props.tryFetchSessions(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
+    this.props.tryFetchHomeworks(structureId, startDate.format('YYYY-MM-DD'), startDate.clone().endOf('week').format('YYYY-MM-DD'));
   };
 
   componentDidMount() {
     const { structureId } = this.props;
     this.fetchCourses();
-    this.props.fetchSlots(structureId);
+    this.props.tryFetchSlots(structureId);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -81,7 +79,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
     if (structureId !== prevProps.structureId) fetchSlots(structureId);
   }
 
-  updateSelectedDate = (newDate: moment.Moment) => {
+  updateSelectedDate = (newDate: Moment) => {
     this.setState({
       selectedDate: newDate,
       startDate: newDate.clone().startOf('week'),
@@ -108,40 +106,25 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 export default connect(
   (state: IGlobalState) => {
     const diaryState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
 
     return {
-      courses: getCoursesListState(state),
+      courses: diaryState.courses,
       homeworks: diaryState.homeworks,
       sessions: diaryState.sessions,
       slots: diaryState.slots,
-      structureId: getSelectedStructure(state),
+      structureId: dashboardState.selectedStructureId,
       userId: session?.user.id,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<DiaryTimetableScreenDispatchProps>(
       {
-        fetchHomeworks: tryActionLegacy(
-          fetchDiaryHomeworksAction,
-          undefined,
-          true,
-        ) as unknown as DiaryTimetableScreenPrivateProps['fetchHomeworks'],
-        fetchSessions: tryActionLegacy(
-          fetchDiarySessionsAction,
-          undefined,
-          true,
-        ) as unknown as DiaryTimetableScreenPrivateProps['fetchSessions'],
-        fetchSlots: tryActionLegacy(
-          fetchDiarySlotsAction,
-          undefined,
-          true,
-        ) as unknown as DiaryTimetableScreenPrivateProps['fetchSlots'],
-        fetchTeacherCourses: tryActionLegacy(
-          fetchCourseListFromTeacherAction,
-          undefined,
-          true,
-        ) as unknown as DiaryTimetableScreenPrivateProps['fetchTeacherCourses'],
+        tryFetchCourses: tryAction(fetchDiaryCoursesAction),
+        tryFetchHomeworks: tryAction(fetchDiaryHomeworksAction),
+        tryFetchSessions: tryAction(fetchDiarySessionsAction),
+        tryFetchSlots: tryAction(fetchDiarySlotsAction),
       },
       dispatch,
     ),

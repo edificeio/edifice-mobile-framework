@@ -1,9 +1,9 @@
 import styled from '@emotion/native';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ActivityIndicator, Animated, View } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -97,12 +97,12 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
 
   get text(): string {
     if (this.props.loading) {
-      return 'common-connecting';
+      return 'connectiontrackingbar-connecting';
     }
     if (this.props.connected) {
-      return 'common-connected';
+      return 'connectiontrackingbar-connected';
     }
-    return 'common-disconnected';
+    return 'connectiontrackingbar-disconnected';
   }
 
   get barColor(): string {
@@ -134,7 +134,7 @@ export class DEPRECATED_ConnectionTrackingBar extends React.Component<
                 marginLeft: UI_SIZES.spacing.large,
                 alignSelf: 'center',
               }}>
-              {I18n.t(this.text)}
+              {I18n.get(this.text)}
             </SmallInverseText>
             {this.props.loading ? (
               <ActivityIndicator size="small" color={theme.ui.text.inverse} style={{ marginRight: UI_SIZES.spacing.huge }} />

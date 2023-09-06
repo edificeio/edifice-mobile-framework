@@ -1,8 +1,8 @@
-import I18n from 'i18n-js';
 import moment from 'moment';
 import * as React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
@@ -79,7 +79,7 @@ export default class DisplayListHomework extends React.PureComponent<IDisplayLis
           </View>
 
           <View style={styles.homeworkPart}>
-            <BodyBoldText>{I18n.t('viesco-homework-home')}</BodyBoldText>
+            <BodyBoldText>{I18n.get('diary-homework-homework')}</BodyBoldText>
             <FlatList
               data={homeworkList}
               renderItem={({ item }) => (

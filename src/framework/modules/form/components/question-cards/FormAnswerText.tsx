@@ -1,6 +1,6 @@
-import I18n from 'i18n-js';
 import React from 'react';
 
+import { I18n } from '~/app/i18n';
 import { CaptionItalicText, SmallText } from '~/framework/components/text';
 
 interface IFormAnswerTextProps {
@@ -8,5 +8,9 @@ interface IFormAnswerTextProps {
 }
 
 export const FormAnswerText = ({ answer = '' }: IFormAnswerTextProps) => {
-  return answer !== '' ? <SmallText>{answer}</SmallText> : <CaptionItalicText>{I18n.t('form.notAnswered')}</CaptionItalicText>;
+  return answer !== '' ? (
+    <SmallText>{answer}</SmallText>
+  ) : (
+    <CaptionItalicText>{I18n.get('form-distribution-questioncard-notanswered')}</CaptionItalicText>
+  );
 };

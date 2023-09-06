@@ -166,7 +166,6 @@ export const handleNotificationNavigationAction = (navAction: NavigationAction) 
   while (leafState.routes[leafState.index].state !== undefined) {
     leafState = leafState.routes[leafState.index].state as Pick<typeof navState, 'index' | 'routes'>;
   }
-
   // We try popToTop only if the user is not at the root of its stack.
   if (leafState.index !== undefined && leafState.index !== 0) {
     navigationRef.dispatch(StackActions.popToTop());

@@ -1,30 +1,30 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
 import { EmptyScreen } from '~/framework/components/emptyScreen';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchFormDistributionsAction, fetchFormsReceivedAction } from '~/framework/modules/form/actions';
+import { SearchBar } from '~/framework/components/searchBar';
 import { FormDistributionCard } from '~/framework/modules/form/components/FormDistributionCard';
 import FormDistributionListModal from '~/framework/modules/form/components/FormDistributionListModal';
 import { DistributionStatus, IForm } from '~/framework/modules/form/model';
 import moduleConfig from '~/framework/modules/form/module-config';
 import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-import { FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
+import styles from './styles';
+import { FormDistributionListScreenDispatchProps, FormDistributionListScreenPrivateProps, IFormDistributions } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -33,11 +33,12 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('form.formDistributionListScreen.title'),
+    title: I18n.get('form-distributionlist-title'),
   }),
 });
 
 const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProps) => {
+  const [query, setQuery] = React.useState<string>('');
   const modalBoxRef = React.useRef<ModalBoxHandle>(null);
   const [modalDistributions, setModalDistributions] = React.useState<IFormDistributions | undefined>();
   const [hasOpenedNotificationForm, setOpenedNotificationForm] = React.useState<boolean>(false);
@@ -49,8 +50,8 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
 
   const fetchList = async () => {
     try {
-      await props.fetchDistributions();
-      await props.fetchForms();
+      await props.tryFetchDistributions();
+      await props.tryFetchForms();
     } catch {
       throw new Error();
     }
@@ -106,6 +107,8 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadingState]);
 
+  const updateQuery = (value: string) => setQuery(value);
+
   const openDistribution = (id: number, status: DistributionStatus, form: IForm) => {
     modalBoxRef.current?.doDismissModal();
     setTimeout(() => {
@@ -131,11 +134,13 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
   };
 
   const renderEmpty = () => {
-    return (
+    return query.length ? (
+      <EmptyScreen svgImage="empty-search" title={I18n.get('form-distributionlist-emptyscreen-title-search')} />
+    ) : (
       <EmptyScreen
         svgImage="empty-form"
-        title={I18n.t('form.formDistributionListScreen.emptyScreen.title')}
-        text={I18n.t('form.formDistributionListScreen.emptyScreen.text')}
+        title={I18n.get('form-distributionlist-emptyscreen-title-default')}
+        text={I18n.get('form-distributionlist-emptyscreen-text')}
       />
     );
   };
@@ -152,12 +157,25 @@ const FormDistributionListScreen = (props: FormDistributionListScreenPrivateProp
     return (
       <>
         <FlatList
-          data={props.formDistributions}
+          data={
+            query
+              ? props.formDistributions.filter(form => form.title.toLowerCase().includes(query.toLowerCase()))
+              : props.formDistributions
+          }
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => <FormDistributionCard formDistributions={item} onOpen={onPressItem} />}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-          ListHeaderComponent={<View style={{ height: UI_SIZES.spacing.medium }} />}
+          ListHeaderComponent={
+            props.formDistributions.length > 4 ? (
+              <SearchBar
+                query={query}
+                placeholder={I18n.get('form-distributionlist-searchbar-placeholder')}
+                onChangeQuery={updateQuery}
+              />
+            ) : null
+          }
           ListEmptyComponent={renderEmpty()}
+          contentContainerStyle={styles.listContentContainer}
         />
         <FormDistributionListModal
           ref={modalBoxRef}
@@ -207,19 +225,11 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<FormDistributionListScreenDispatchProps>(
       {
-        fetchDistributions: tryActionLegacy(
-          fetchFormDistributionsAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionListScreenPrivateProps['fetchDistributions'],
-        fetchForms: tryActionLegacy(
-          fetchFormsReceivedAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionListScreenPrivateProps['fetchForms'],
+        tryFetchDistributions: tryAction(fetchFormDistributionsAction),
+        tryFetchForms: tryAction(fetchFormsReceivedAction),
       },
       dispatch,
     ),

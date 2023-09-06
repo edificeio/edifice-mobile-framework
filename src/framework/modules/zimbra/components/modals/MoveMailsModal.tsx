@@ -1,36 +1,29 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { FlatList, StyleSheet, View } from 'react-native';
 
-import theme from '~/app/theme';
+import { I18n } from '~/app/i18n';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
 import ActionButton from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
+import { FolderButton } from '~/framework/modules/zimbra/components/FolderButton';
 import { IFolder } from '~/framework/modules/zimbra/model';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
 
 const styles = StyleSheet.create({
-  androidAdditionalHeight: {
-    height: 200, // workaround to impossible android scroll outside of the modal view
-  },
-  dropdown: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
+  listContainer: {
+    maxHeight: 400,
     marginVertical: UI_SIZES.spacing.medium,
-  },
-  dropdownText: {
-    color: theme.ui.text.regular,
   },
 });
 
 interface IMoveMailsModalProps {
   folderPath: string;
   folders: IFolder[];
+  mailFolders: string[];
   mailIds: string[];
   session?: ISession;
   successCallback: () => any;
@@ -38,8 +31,9 @@ interface IMoveMailsModalProps {
 
 const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((props, ref) => {
   const [selectedFolderId, setSelectedFolderId] = React.useState<string | null>(null);
-  const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [isMoving, setMoving] = React.useState<boolean>(false);
+
+  const selectFolder = (folder: IFolder) => setSelectedFolderId(folder.id);
 
   const moveMails = async () => {
     try {
@@ -51,34 +45,23 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
       props.successCallback();
       setMoving(false);
       setSelectedFolderId(null);
-      Toast.showSuccess(I18n.t(mailIds.length > 1 ? 'zimbra-messages-moved' : 'zimbra-message-moved'));
+      Toast.showSuccess(I18n.get(mailIds.length > 1 ? 'zimbra-movemailsmodal-mails-moved' : 'zimbra-movemailsmodal-mail-moved'));
     } catch {
       setMoving(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('zimbra-movemailsmodal-error-text'));
     }
   };
 
-  const getMainFolderItem = (path: string): { label: string; value: string; path: string } => {
-    const folder = props.folders.find(f => f.path === path) ?? props.folders[0];
-    return { label: getFolderName(folder.name), value: folder.id, path: folder.path };
-  };
+  const getFolders = (): IFolder[] => {
+    const { folderPath, mailFolders } = props;
+    const systemFolders = folderPath !== '/Inbox' && folderPath !== '/Drafts' ? ['/Inbox', '/Trash', '/Junk'] : [];
 
-  const getFolderItems = (): { label: string; value: string }[] => {
-    const { folderPath } = props;
-    const folders =
-      folderPath !== '/Inbox' && folderPath !== '/Drafts'
-        ? [getMainFolderItem('/Inbox'), getMainFolderItem('/Trash'), getMainFolderItem('/Junk')]
-        : [];
-    folders.push(
-      ...(props.folders
-        .find(item => item.path === '/Inbox')
-        ?.folders.map(folder => ({
-          label: folder.name,
-          value: folder.id,
-          path: folder.path,
-        })) ?? []),
-    );
-    return folders.filter(folder => folder.path !== folderPath);
+    if (mailFolders.includes('OUTBOX')) systemFolders.push('/Sent');
+    if (mailFolders.includes('DRAFT')) systemFolders.push('/Drafts');
+    return props.folders
+      .filter(f => systemFolders.includes(f.path))
+      .map(f => ({ ...f, name: getFolderName(f.name), folders: [] }) as IFolder)
+      .concat(props.folders.find(f => f.path === '/Inbox')?.folders ?? []);
   };
 
   return (
@@ -86,25 +69,25 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
       ref={ref}
       content={
         <View>
-          <BodyText>{I18n.t('zimbra-move-to')}</BodyText>
-          <DropDownPicker
-            open={isDropdownOpen}
-            value={selectedFolderId}
-            items={getFolderItems()}
-            setOpen={setDropdownOpen}
-            setValue={setSelectedFolderId}
-            placeholder={I18n.t('conversation.selectDirectory')}
-            style={styles.dropdown}
-            dropDownContainerStyle={styles.dropdown}
-            containerStyle={Platform.OS === 'android' && isDropdownOpen ? styles.androidAdditionalHeight : undefined}
-            textStyle={styles.dropdownText}
+          <BodyText>{I18n.get('zimbra-movemailsmodal-title')}</BodyText>
+          <FlatList
+            data={getFolders()}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <FolderButton
+                folder={item}
+                currentFolderPath={props.folderPath}
+                selectedFolderId={selectedFolderId}
+                onPress={selectFolder}
+              />
+            )}
+            style={styles.listContainer}
           />
           <ActionButton
-            text={I18n.t(props.folderPath === '/Trash' ? 'zimbra-restore' : 'zimbra-move')}
+            text={I18n.get(props.folderPath === '/Trash' ? 'zimbra-movemailsmodal-restore' : 'zimbra-movemailsmodal-move')}
             action={moveMails}
             disabled={!selectedFolderId}
             loading={isMoving}
-            style={{ zIndex: -1 }}
           />
         </View>
       }

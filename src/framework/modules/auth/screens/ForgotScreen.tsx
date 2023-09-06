@@ -1,12 +1,12 @@
 import styled from '@emotion/native';
 import { Picker } from '@react-native-picker/picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -147,10 +147,10 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
     const isError = result && containsKey(result, 'error');
     const errorMsg = isError ? (result as { error: string }).error : null;
     const errorText = hasStructures
-      ? I18n.t('forgot-several-emails')
+      ? I18n.get('auth-forgot-severalemails')
       : errorMsg
-      ? I18n.t(`forgot-${errorMsg.replace(/\./g, '-')}${forgotMode === 'id' ? '-id' : ''}`)
-      : I18n.t('common-ErrorUnknown');
+      ? I18n.get(`auth-forgot-${errorMsg.replace(/\./g, '')}${forgotMode === 'id' ? '-id' : ''}`)
+      : I18n.get('auth-forgot-error-unknown');
     const isSuccess =
       result &&
       !containsKey(result, 'error') &&
@@ -175,16 +175,16 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
               <FormContainer>
                 <LogoWrapper>
                   <HeadingSText style={styles.textColorLight}>
-                    {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}`)}
+                    {I18n.get(`auth-forgot-${forgotMode === 'id' ? 'id' : 'password'}`)}
                   </HeadingSText>
                   <SmallText style={styles.textColorLight}>
-                    {I18n.t(`forgot-${forgotMode === 'id' ? 'id' : 'password'}-instructions`)}
+                    {I18n.get(`auth-forgot-${forgotMode === 'id' ? 'id' : 'password'}-instructions`)}
                   </SmallText>
                 </LogoWrapper>
                 {!isSuccess ? (
                   <TextInputLine
                     inputRef={this.setInputLoginRef}
-                    placeholder={I18n.t(forgotMode === 'id' ? 'Email' : 'Login')}
+                    placeholder={I18n.get(forgotMode === 'id' ? 'auth-forgot-email' : 'auth-forgot-login')}
                     onChange={({ nativeEvent: { text } }) => {
                       this.setState({
                         login: text,
@@ -196,7 +196,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                     keyboardType={forgotMode === 'id' ? 'email-address' : undefined}
                     editable={!hasStructures}
                     // inputStyle={hasStructures ? styles.inputLine : undefined}
-                    returnKeyLabel={I18n.t('forgot-submit')}
+                    returnKeyLabel={I18n.get('auth-forgot-submit')}
                     returnKeyType="done"
                     onSubmitEditing={() => this.doSubmit()}
                     autoCapitalize="none"
@@ -208,13 +208,15 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                   <SmallText style={styles.errorMsg}>{errorText}</SmallText>
                 ) : null}
                 {isSuccess ? (
-                  <SmallText style={styles.infoMsg}>{editing ? '' : isSuccess && I18n.t(`forgot-success-${forgotMode}`)}</SmallText>
+                  <SmallText style={styles.infoMsg}>
+                    {editing ? '' : isSuccess && I18n.get(`auth-forgot-success-${forgotMode}`)}
+                  </SmallText>
                 ) : null}
                 {forgotMode === 'id' && hasStructures && !isSuccess ? (
                   <>
                     <TextInputLine
                       inputRef={this.setInputLoginRef}
-                      placeholder={I18n.t('Firstname')}
+                      placeholder={I18n.get('Firstname')}
                       value={firstName}
                       hasError={(isError && !editing) ?? false}
                       onChange={({ nativeEvent: { text } }) => {
@@ -244,7 +246,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                         editable={false}
                         hasError={false}
                         inputRef={this.setInputLoginRef}
-                        placeholder={I18n.t('School')}
+                        placeholder={I18n.get('auth-forgot-school')}
                         value={structureName}
                         style={{ borderBottomWidth: undefined, borderBottomColor: undefined }}
                         // inputStyle={styles.inputLine}
@@ -287,13 +289,13 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                     <ActionButton
                       action={() => this.doSubmit()}
                       disabled={canSubmit}
-                      text={I18n.t('forgot-submit')}
+                      text={I18n.get('auth-forgot-submit')}
                       loading={this.state.forgotState === 'RUNNING'}
                     />
                   ) : null}
 
                   {hasStructures && errorMsg ? (
-                    <SmallText style={styles.errorMsg}>{I18n.t('forgot-several-emails-no-match')}</SmallText>
+                    <SmallText style={styles.errorMsg}>{I18n.get('auth-forgot-severalemails-nomatch')}</SmallText>
                   ) : null}
                 </View>
               </FormContainer>

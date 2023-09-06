@@ -11,7 +11,7 @@ export default new NavigableModuleConfig<'homeworkAssistance', IHomeworkAssistan
   matchEntcoreApp: '/homework-assistance',
   hasRight: () => !!getHomeworkAssistanceWorkflowInformation(getSession()).send,
 
-  displayI18n: 'homeworkAssistance.tabName',
+  displayI18n: 'homeworkassistance-appname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'homeworkAssistance', fill: theme.palette.complementary.indigo.regular },
 });

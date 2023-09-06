@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 
-import { SupportedLocales } from '~/app/i18n';
+import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { Connection } from '~/infra/Connection';
@@ -16,6 +16,7 @@ import {
   ISession,
   PartialSessionScenario,
   RuntimeAuthErrorCode,
+  SessionType,
   StructureNode,
   UserChild,
   UserChildren,
@@ -105,7 +106,6 @@ export interface IUserInfoBackend {
   login?: string;
   type?: UserType;
   deletePending?: boolean;
-  hasApp?: boolean;
   forceChangePassword?: boolean;
   needRevalidateTerms?: boolean;
   apps?: IEntcoreApp[];
@@ -203,11 +203,23 @@ export async function saveSession() {
   }
 }
 
+export async function forgetPreviousSession() {
+  try {
+    if (!OAuth2RessourceOwnerPasswordClient.connection) {
+      throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
+    }
+    await OAuth2RessourceOwnerPasswordClient.connection.forgetToken();
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Failed to forget previous token', err as Error);
+  }
+}
+
 export function formatSession(
   platform: Platform,
   userinfo: IUserInfoBackend,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
+  rememberMe?: boolean,
 ): ISession {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
@@ -272,6 +284,7 @@ export function formatSession(
     apps: userinfo.apps,
     widgets: userinfo.widgets,
     authorizedActions: userinfo.authorizedActions,
+    type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
     // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
     user,
   };
@@ -466,7 +479,7 @@ export async function removeFirebaseToken(platform: Platform) {
   }
 }
 
-export async function getAuthTranslationKeys(platform: Platform, language: SupportedLocales) {
+export async function getAuthTranslationKeys(platform: Platform, language: I18n.SupportedLocales) {
   try {
     // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)
     const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language, 'X-Device-Id': uniqueId() } });
@@ -515,7 +528,7 @@ export async function getMobileValidationInfos() {
   }
 }
 
-export async function sendMobileVerificationCode(platform: Platform, mobile: string) {
+export async function requestMobileVerificationCode(platform: Platform, mobile: string) {
   await signedFetch(platform.url + '/directory/user/mobilestate', {
     method: 'PUT',
     body: JSON.stringify({ mobile }),
@@ -543,7 +556,7 @@ export async function getEmailValidationInfos() {
   }
 }
 
-export async function sendEmailVerificationCode(platform: Platform, email: string) {
+export async function requestEmailVerificationCode(platform: Platform, email: string) {
   await signedFetch(platform.url + '/directory/user/mailstate', {
     method: 'PUT',
     body: JSON.stringify({ email }),
@@ -626,8 +639,6 @@ export async function fetchUserInfo(platform: Platform) {
 export function ensureUserValidity(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
     throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
-  } else if (!userinfo.hasApp) {
-    throw createAuthError(RuntimeAuthErrorCode.NOT_PREMIUM, '', 'Structure is not premium');
   }
   // else if (userinfo.forceChangePassword) {
   //   const error = createAuthError(RuntimeAuthErrorCode.MUST_CHANGE_PASSWORD, '', 'User must change his password');

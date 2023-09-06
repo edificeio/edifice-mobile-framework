@@ -11,9 +11,9 @@ import { FormAnswerText } from './FormAnswerText';
 import { FormCheckbox } from './FormCheckbox';
 import { FormRadio } from './FormRadio';
 
-const questionCellWidth = 100;
-const choiceCellWidth = 100;
-const cellMinHeight = 50;
+const CELL_MIN_HEIGHT = 50;
+const CHOICE_CELL_WIDTH = 100;
+const QUESTION_CELL_WIDTH = 100;
 
 const styles = StyleSheet.create({
   scrollViewContent: {
@@ -33,46 +33,46 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     flexDirection: 'row',
-    minHeight: cellMinHeight,
+    minHeight: CELL_MIN_HEIGHT,
     backgroundColor: theme.palette.grey.fog,
     borderRadius: UI_SIZES.radius.small,
     marginBottom: UI_SIZES.spacing.tiny,
   },
   hiddenQuestionContainer: {
     textAlign: 'center',
-    width: questionCellWidth,
-    minHeight: cellMinHeight,
+    width: QUESTION_CELL_WIDTH,
+    minHeight: CELL_MIN_HEIGHT,
   },
   choiceContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: choiceCellWidth,
+    width: CHOICE_CELL_WIDTH,
   },
   headerContainer: {
     flexDirection: 'row',
-    minHeight: cellMinHeight,
+    minHeight: CELL_MIN_HEIGHT,
     marginBottom: UI_SIZES.spacing.tiny,
-    marginLeft: questionCellWidth,
+    marginLeft: QUESTION_CELL_WIDTH,
   },
   choiceText: {
     textAlign: 'center',
   },
   hiddenHeaderContainer: {
     position: 'absolute',
-    width: questionCellWidth,
+    width: QUESTION_CELL_WIDTH,
     height: '50%',
     backgroundColor: theme.ui.background.card,
   },
   titlesContainer: {
     position: 'absolute',
     bottom: UI_SIZES.spacing.small,
-    width: questionCellWidth,
+    width: QUESTION_CELL_WIDTH,
     backgroundColor: theme.ui.background.card,
   },
   questionContainer: {
     justifyContent: 'center',
-    width: questionCellWidth,
-    minHeight: cellMinHeight,
+    width: QUESTION_CELL_WIDTH,
+    minHeight: CELL_MIN_HEIGHT,
     backgroundColor: theme.palette.grey.fog,
     borderTopLeftRadius: UI_SIZES.radius.small,
     borderBottomLeftRadius: UI_SIZES.radius.small,
@@ -141,6 +141,7 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
   // Multiple answer
   const onSelectChoice = (child: IQuestion, choice: IQuestionChoice) => {
     let res = responses.filter(r => r.questionId === child.id);
+
     if (values[child.id]?.includes(choice.id)) {
       values[child.id] = values[child.id].filter(id => id !== choice.id);
       res = res.filter(r => r.choiceId !== choice.id);
@@ -157,18 +158,42 @@ export const FormMatrixCard = ({ isDisabled, question, responses, onChangeAnswer
         questionId: child.id,
       });
     }
-    onChangeAnswer(child.id, responses);
+    onChangeAnswer(child.id, res);
+  };
+
+  const clearSingleAnswerMatrix = () => {
+    setValues({});
+    children?.forEach(child => {
+      let response = responses.find(r => r.questionId === child.id);
+
+      if (response) {
+        response.answer = '';
+        response.choiceId = undefined;
+      } else {
+        response = {
+          questionId: child.id,
+          answer: '',
+          choiceId: undefined,
+        };
+      }
+      onChangeAnswer(child.id, [response]);
+    });
   };
 
   const updateShadows = (nativeEvent: NativeScrollEvent) => {
     const { contentOffset, contentSize, layoutMeasurement } = nativeEvent;
+
     setQuestionShadowVisible(contentOffset.x > 0);
     setEndShadowVisible(contentOffset.x + layoutMeasurement.width < contentSize.width);
   };
 
   return (
-    <FormQuestionCard title={title} isMandatory={mandatory} onEditQuestion={onEditQuestion}>
-      {isDisabled && (!responses.length || !responses[0].choiceId) ? (
+    <FormQuestionCard
+      title={title}
+      isMandatory={mandatory}
+      onClearAnswer={isSingleAnswer && responses.some(r => r.choiceId) && !isDisabled ? clearSingleAnswerMatrix : undefined}
+      onEditQuestion={onEditQuestion}>
+      {isDisabled && (!responses.length || responses.every(r => !r.choiceId)) ? (
         <FormAnswerText />
       ) : (
         <>

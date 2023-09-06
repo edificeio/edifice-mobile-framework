@@ -33,7 +33,7 @@ const getFilterDetail = (filter: string, notifTypesToFilter: IEntcoreNotificatio
         type: filter,
         'app-name': matchingNotifType['app-name'],
         'app-address': matchingNotifType['app-address'],
-        i18n: `timeline.appType.${filter}`,
+        i18n: `timeline-apptype-${filter}`.toLowerCase().replaceAll('_', '-'),
       }
     : undefined;
 };

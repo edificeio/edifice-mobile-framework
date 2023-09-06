@@ -1,9 +1,9 @@
-import I18n from 'i18n-js';
 import { Moment } from 'moment';
 import * as React from 'react';
 import { LayoutChangeEvent, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import RoundButton from '~/framework/components/buttons/round';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -12,6 +12,7 @@ import { displayPastDate } from '~/framework/util/date';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import { CaptionBoldText, CaptionItalicText, SmallBoldText } from './text';
+import { isEmpty } from '~/framework/util/object';
 
 // TYPES ==========================================================================================
 
@@ -90,7 +91,8 @@ const CommentField = (props: CommentFieldProps, ref) => {
 
   const publishComment = () => {
     if (inputRef.current) inputRef.current.blur();
-    if (props.onPublishComment) props.onPublishComment(comment, props.commentId?.toString());
+    setComment(comment.trim());
+    if (props.onPublishComment) props.onPublishComment(comment.trim(), props.commentId?.toString());
     if (!props.comment) setComment('');
     if (props.onChangeText)
       props.onChangeText({
@@ -99,6 +101,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
         changed: false,
         value: '',
       });
+    setIsEditing(false);
   };
   const editComment = () => {
     setIsEditing(true);
@@ -116,13 +119,16 @@ const CommentField = (props: CommentFieldProps, ref) => {
       props.onChangeText({
         type: props.isResponse ? 'response' : 'comment',
         isPublication: !props.commentId,
-        changed: (!props.commentId && value !== '') || (props.commentId !== undefined && value !== props.comment),
+        changed: (!props.commentId && value.trim() !== '') || (props.commentId !== undefined && value.trim() !== props.comment),
         value,
       });
     setComment(value);
   };
-  const setIsEditingFalse = () => setIsEditing(false);
-  const isCommentUnchanged = () => comment === props.comment;
+  const setIsEditingFalse = () => {
+    if (props.comment) setComment(props.comment);
+    setIsEditing(false);
+  };
+  const isCommentUnchanged = () => comment.trim() === props.comment;
   const isCommentFieldFocused = () => inputRef.current?.isFocused();
   React.useImperativeHandle(ref, () => ({
     clearCommentField,
@@ -184,7 +190,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
     () => (
       <TextInput
         ref={inputRef}
-        placeholder={I18n.t(`common.${props.isResponse ? 'response' : 'comment'}.add`)}
+        placeholder={I18n.get(`comment-add-${props.isResponse ? 'response' : 'comment'}`)}
         placeholderTextColor={theme.palette.grey.graphite}
         multiline
         scrollEnabled={!(props.isPublishingComment || isIdleExistingComment)}
@@ -228,7 +234,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
             <RoundButton
               iconName={isEditing ? 'pictos-save' : 'pictos-send'}
               action={() => publishComment()}
-              disabled={!comment || isCommentUnchanged()}
+              disabled={isEmpty(comment.trim()) || isCommentUnchanged()}
               loading={props.isPublishingComment}
             />
           </View>
@@ -238,23 +244,23 @@ const CommentField = (props: CommentFieldProps, ref) => {
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onPublishComment ? (
             <TouchableOpacity onPress={() => editComment()}>
-              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.t('common.modify')}</SmallBoldText>
+              <SmallBoldText style={{ color: theme.palette.primary.regular }}>{I18n.get('commentfield-modify')}</SmallBoldText>
             </TouchableOpacity>
           ) : null}
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
               <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.t('common.delete')}
+                {I18n.get('common-delete')}
               </SmallBoldText>
             </TouchableOpacity>
           ) : null}
         </View>
-      ) : props.isManager ? (
+      ) : props.isManager || isUserComment ? (
         <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
           {props.onDeleteComment ? (
             <TouchableOpacity onPress={() => deleteComment()}>
               <SmallBoldText style={{ color: theme.palette.primary.regular, marginLeft: UI_SIZES.spacing.medium }}>
-                {I18n.t('common.delete')}
+                {I18n.get('common-delete')}
               </SmallBoldText>
             </TouchableOpacity>
           ) : null}

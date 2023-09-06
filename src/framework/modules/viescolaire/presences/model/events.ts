@@ -1,29 +1,33 @@
-export interface ICallEvent {
-  id?: number;
-  start_date?: string;
-  end_date?: string;
-  comment?: string;
-  counsellor_input?: string;
-  student_id: string;
-  register_id: number;
-  type_id: number;
-  reason_id?: number;
+import type { Moment } from 'moment';
+
+export enum EventType {
+  ABSENCE = 1,
+  LATENESS = 2,
+  DEPARTURE = 3,
+}
+
+export interface IEvent {
+  id: number;
+  comment: string;
+  typeId: EventType;
+  endDate: Moment;
+  reasonId: number | null;
+  startDate: Moment;
 }
 
 export interface IHistoryEvent {
-  start_date: moment.Moment;
-  end_date: moment.Moment;
-  type_id: number;
-  recovery_method: string;
+  endDate: Moment;
   period: string;
+  startDate: Moment;
+  typeId: number;
 }
 
 export interface IForgottenNotebook {
-  date: moment.Moment;
+  date: Moment;
 }
 
 export interface IIncident {
-  date: moment.Moment;
+  date: Moment;
   protagonist: {
     label: string;
   };
@@ -31,10 +35,10 @@ export interface IIncident {
 }
 
 export interface IPunishment {
-  created_at: moment.Moment;
-  start_date: moment.Moment;
-  end_date: moment.Moment;
-  delay_at: moment.Moment;
+  createdAt: Moment;
+  delayAt: Moment;
+  endDate: Moment;
   label: string;
-  punishment_category_id: number;
+  punishmentCategoryId: number;
+  startDate: Moment;
 }

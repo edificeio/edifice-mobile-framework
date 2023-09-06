@@ -3,11 +3,11 @@
  */
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, Platform, RefreshControl, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { InfoCommentField } from '~/framework/components/commentField';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -53,7 +53,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('schoolbook.appName'),
+    title: I18n.get('schoolbook-worddetails-appname'),
   }),
   headerRight: undefined,
 });
@@ -136,7 +136,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       refreshSilent();
     } catch {
       setIsAcknowledgingWord(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
     }
   };
 
@@ -157,7 +157,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         setTimeout(() => detailsCardRef?.current?.scrollToEnd(), 1000);
       }
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
     } finally {
       setIsPublishingReply(false);
     }
@@ -191,25 +191,21 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
         await schoolbookService.word.delete(session, schoolbookWordId);
         props.navigation.goBack();
       } catch {
-        Toast.showError(I18n.t('common.error.text'));
+        Toast.showError(I18n.get('schoolbook-worddetails-error-text'));
       }
     };
     const showDeleteSchoolbookWordAlert = () =>
-      Alert.alert(
-        I18n.t('schoolbook.schoolbookWordDetailsScreen.deleteAlert.title'),
-        I18n.t('schoolbook.schoolbookWordDetailsScreen.deleteAlert.text'),
-        [
-          {
-            text: I18n.t('common.cancel'),
-            style: 'default',
-          },
-          {
-            text: I18n.t('common.delete'),
-            style: 'destructive',
-            onPress: () => deleteSchoolbookWord(),
-          },
-        ],
-      );
+      Alert.alert(I18n.get('schoolbook-worddetails-deletealert-title'), I18n.get('schoolbook-worddetails-deletealert-text'), [
+        {
+          text: I18n.get('common-cancel'),
+          style: 'default',
+        },
+        {
+          text: I18n.get('common-delete'),
+          style: 'destructive',
+          onPress: () => deleteSchoolbookWord(),
+        },
+      ]);
     const schoolbookWordOwnerId = schoolbookWord?.word?.ownerId;
     const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
     const schoolbookWordResource = { shared: schoolbookWord?.word?.shared, author: { userId: schoolbookWord?.word?.ownerId } };
@@ -237,18 +233,18 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 
   UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
     Alert.alert(
-      I18n.t(`common.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
-      I18n.t(`common.${infoComment.type}.confirmationUnsaved${infoComment.isPublication ? 'Publication' : 'Modification'}`),
+      I18n.get(`schoolbook-worddetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+      I18n.get(`schoolbook-worddetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
       [
         {
-          text: I18n.t('common.quit'),
+          text: I18n.get('common-quit'),
           style: 'destructive',
           onPress: () => {
             handleRemoveConfirmNavigationEvent(data.action, props.navigation);
           },
         },
         {
-          text: I18n.t('common.continue'),
+          text: I18n.get('common-continue'),
           style: 'default',
           onPress: () => {
             clearConfirmNavigationEvent();

@@ -6,7 +6,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { IAverage, IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { ArticleContainer } from '~/ui/ContainerContent';
 
 const styles = StyleSheet.create({
   averageText: {
@@ -38,25 +37,23 @@ export class SubjectAverageCard extends React.PureComponent<ISubjectAverageCardP
     const { average, devoirs } = this.props;
 
     return (
-      <ArticleContainer>
-        <LeftColoredItem shadow color={theme.palette.complementary.blue.regular}>
-          <View style={styles.subjectInformationContainer}>
-            <View>
-              <SmallBoldText numberOfLines={1}>{average.subject}</SmallBoldText>
-              <SmallText numberOfLines={1}>{average.teacher}</SmallText>
-            </View>
-            <HeadingSText style={styles.averageText}>{average.average}</HeadingSText>
+      <LeftColoredItem shadow color={theme.palette.complementary.blue.regular}>
+        <View style={styles.subjectInformationContainer}>
+          <View>
+            <SmallBoldText numberOfLines={1}>{average.subject}</SmallBoldText>
+            <SmallText numberOfLines={1}>{average.teacher}</SmallText>
           </View>
-          {devoirs.map(devoir => (
-            <View style={styles.devoirContainer} key={devoir.id}>
-              <SmallText numberOfLines={1} style={styles.devoirNameText}>
-                {devoir.name}
-              </SmallText>
-              <SmallActionText>{devoir.note ? `${devoir.note}/${devoir.diviseur}` : devoir.libelle}</SmallActionText>
-            </View>
-          ))}
-        </LeftColoredItem>
-      </ArticleContainer>
+          <HeadingSText style={styles.averageText}>{average.average}</HeadingSText>
+        </View>
+        {devoirs.map(devoir => (
+          <View style={styles.devoirContainer} key={devoir.id}>
+            <SmallText numberOfLines={1} style={styles.devoirNameText}>
+              {devoir.name}
+            </SmallText>
+            <SmallActionText>{devoir.note ? `${devoir.note}/${devoir.diviseur}` : devoir.libelle}</SmallActionText>
+          </View>
+        ))}
+      </LeftColoredItem>
     );
   }
 }

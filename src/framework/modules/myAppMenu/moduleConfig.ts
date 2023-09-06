@@ -10,7 +10,7 @@ export default new NavigableModuleConfig<'myapps', null>({
     return modules.length > 0;
   },
 
-  displayI18n: 'MyApplications',
+  displayI18n: 'myapp-appname',
   displayAs: 'tabModule',
   displayOrder: 4,
   displayPicture: { type: 'Icon', name: 'icon-apps-off' },

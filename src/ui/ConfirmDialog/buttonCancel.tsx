@@ -1,7 +1,7 @@
-import I18n from 'i18n-js';
 import React from 'react';
 import { StyleSheet, TextStyle, TouchableOpacity, ViewStyle } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
@@ -29,6 +29,6 @@ interface IDialogButtonCancelProps {
 
 export const DialogButtonCancel = ({ style, textStyle, onPress }: IDialogButtonCancelProps) => (
   <TouchableOpacity style={[styles.buttonContainer, style]} onPress={onPress}>
-    <SmallText style={[styles.text, textStyle]}>{I18n.t('Cancel')}</SmallText>
+    <SmallText style={[styles.text, textStyle]}>{I18n.get('common-cancel')}</SmallText>
   </TouchableOpacity>
 );

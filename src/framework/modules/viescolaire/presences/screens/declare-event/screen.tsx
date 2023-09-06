@@ -1,13 +1,14 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
@@ -19,10 +20,9 @@ import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import styles from './styles';
-import { PresencesDeclareEventScreenPrivateProps } from './types';
+import type { PresencesDeclareEventScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -31,14 +31,16 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t(route.params.type === EventType.LATENESS ? 'viesco-lateness' : 'viesco-leaving'),
+    title: I18n.get(
+      route.params.type === EventType.LATENESS ? 'presences-declareevent-lateness-title' : 'presences-declareevent-departure-title',
+    ),
   }),
 });
 
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
   const [date, setDate] = React.useState<Moment>(moment());
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
-  const [reason, setReason] = React.useState<number | null>(props.route.params.event?.reason_id ?? null);
+  const [reason, setReason] = React.useState<number | null>(props.route.params.event?.reasonId ?? null);
   const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
   const [isCreating, setCreating] = React.useState<boolean>(false);
   const [isDeleting, setDeleting] = React.useState<boolean>(false);
@@ -47,7 +49,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { event, type } = props.route.params;
 
     if (event) {
-      setDate(moment(type === EventType.LATENESS ? event.end_date : event.start_date));
+      setDate(type === EventType.LATENESS ? event.endDate : event.startDate);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -61,7 +63,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
 
       setCreating(true);
       if (!session) throw new Error();
-      const absence = student.events.find(i => i.type_id === 1);
+      const absence = student.events.find(e => e.typeId === EventType.ABSENCE);
       if (type === EventType.LATENESS && absence) {
         await presencesService.event.delete(session, absence.id);
       }
@@ -74,7 +76,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       navigation.goBack();
     } catch {
       setCreating(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-declareevent-error-text'));
     }
   };
 
@@ -90,7 +92,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       navigation.goBack();
     } catch {
       setDeleting(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-declareevent-error-text'));
     }
   };
 
@@ -98,8 +100,12 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { endDate, event, reasons, startDate, student, type } = props.route.params;
     const mainColor =
       type === EventType.LATENESS ? viescoTheme.palette.presencesEvents.lateness : viescoTheme.palette.presencesEvents.departure;
-    const mainText = I18n.t(type === EventType.LATENESS ? 'viesco-arrived' : 'viesco-left');
-    const inputLabel = I18n.t(type === EventType.LATENESS ? 'viesco-arrived-motive' : 'viesco-left-motive');
+    const mainText = I18n.get(
+      type === EventType.LATENESS ? 'presences-declareevent-lateness-arrived' : 'presences-declareevent-departure-left',
+    );
+    const inputLabel = I18n.get(
+      type === EventType.LATENESS ? 'presences-declareevent-lateness-reason' : 'presences-declareevent-departure-reason',
+    );
 
     return (
       <ScrollView contentContainerStyle={styles.container}>
@@ -113,7 +119,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
           </LeftColoredItem>
           <View style={styles.timePickerRowContainer}>
             <SmallText style={[styles.timePickerText, { color: mainColor }]}>{mainText}</SmallText>
-            <DateTimePicker mode="time" value={date} onChange={value => setDate(value)} color={mainColor} />
+            <DateTimePicker mode="time" value={date} onChangeValue={value => setDate(value)} iconColor={mainColor} />
           </View>
           <SmallText style={styles.commentText}>{inputLabel}</SmallText>
           {type === EventType.LATENESS ? (
@@ -128,7 +134,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
               }
               setOpen={setDropdownOpen}
               setValue={setReason}
-              placeholder={I18n.t('viesco-no-reason')}
+              placeholder={I18n.get('presences-declareevent-lateness-noreason')}
               style={styles.dropdown}
               dropDownContainerStyle={styles.dropdown}
               textStyle={styles.dropdownText}
@@ -146,7 +152,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
         <View style={styles.actionsContainer}>
           {event !== undefined ? (
             <ActionButton
-              text={I18n.t('delete')}
+              text={I18n.get('presences-declareevent-delete')}
               type="secondary"
               action={deleteEvent}
               loading={isDeleting}
@@ -154,7 +160,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             />
           ) : null}
           <ActionButton
-            text={I18n.t('viesco-confirm')}
+            text={I18n.get('presences-declareevent-action')}
             action={createEvent}
             disabled={!date.isBetween(startDate, endDate)}
             loading={isCreating}

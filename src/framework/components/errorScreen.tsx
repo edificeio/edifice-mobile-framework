@@ -1,5 +1,6 @@
-import I18n from 'i18n-js';
 import * as React from 'react';
+
+import { I18n } from '~/app/i18n';
 
 import { EmptyScreen } from './emptyScreen';
 
@@ -16,21 +17,29 @@ export const errorScreens = {
   server_unreachable: () => (
     <EmptyScreen
       svgImage="empty-light"
-      title={I18n.t('common.error.connection.title')}
-      text={I18n.t('common.error.connection.text')}
+      title={I18n.get('error-error-connection-title')}
+      text={I18n.get('error-error-connection-text')}
     />
   ),
   http_error: () => (
-    <EmptyScreen svgImage="empty-content" title={I18n.t('common.error.content.title')} text={I18n.t('common.error.content.text')} />
+    <EmptyScreen
+      svgImage="empty-content"
+      title={I18n.get('error-error-content-title')}
+      text={I18n.get('error-error-content-text')}
+    />
   ),
   data_error: () => (
-    <EmptyScreen svgImage="empty-content" title={I18n.t('common.error.content.title')} text={I18n.t('common.error.content.text')} />
+    <EmptyScreen
+      svgImage="empty-content"
+      title={I18n.get('error-error-content-title')}
+      text={I18n.get('error-error-content-text')}
+    />
   ),
   runtime_error: () => (
     <EmptyScreen
       svgImage="empty-light"
-      title={I18n.t('common.error.connection.title')}
-      text={I18n.t('common.error.connection.text')}
+      title={I18n.get('error-error-connection-title')}
+      text={I18n.get('error-error-connection-text')}
     />
   ),
 };

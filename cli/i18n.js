@@ -100,7 +100,6 @@ const getTranslationActions = () => {
     localEsContent = JSON.parse(fs.readFileSync(getLocalFile('es'), 'utf-8'));
   } catch (error) {
     console.error('!!! Unable to read fr.json, en.json or es.json !!!');
-    console.log(error);
     process.exit(2);
   }
 
@@ -128,7 +127,6 @@ const getTranslationActions = () => {
         },
     mobileappConfigRepository: '🔎 Verify & update manually',
   };
-
   console.log(translationActions);
 };
 
@@ -240,6 +238,29 @@ const mergeNewTranslations = (language, newTranslationsFile) => {
   }
 };
 
+/**
+ * Display unsused keys
+ */
+const getUnusedKeys = () => {
+  try {
+    console.info('==> Unused keys:');
+    const keys = Object.keys(JSON.parse(fs.readFileSync(getLocalFile('fr'), 'utf-8')));
+    let unused = 0;
+    keys.forEach(key => {
+      const result = execSync(`grep --recursive "${key}" ./src | wc -l`).toString().trim();
+      if (result === '0') {
+        unused++;
+        console.log(key);
+      }
+    });
+    console.info(`==> Unused : ${unused} / ${keys.length}`);
+  } catch (error) {
+    console.error(`!!! Unable display unused keys !!!`);
+    console.log(error);
+    process.exit(11);
+  }
+};
+
 //
 // Launch translations process
 //
@@ -269,8 +290,13 @@ switch (actionType) {
     mergeNewTranslations(language, newTranslationsFile);
     break;
 
+  case 'unused':
+    // Get unused keys
+    getUnusedKeys();
+    break;
+
   // Display error message
   default:
-    console.error('!!! First argument should be "diff" or "merge" !!!');
+    console.error('!!! First argument should be "diff", "merge" or "unused" !!!');
     process.exit(1);
 }

@@ -24,6 +24,10 @@ export default class Feedback {
     this.feedback(FeedbackType.ERROR_DISPLAYED);
   }
 
+  static warningDisplayed() {
+    this.feedback(FeedbackType.ERROR_DISPLAYED);
+  }
+
   static tabPressed() {
     this.feedback(FeedbackType.TAB_PRESSED);
   }

@@ -1,12 +1,10 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
-import moment from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ActionButton } from '~/framework/components/buttons/action';
 import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
@@ -21,16 +19,16 @@ import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
 import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
 import StudentRow from '~/framework/modules/viescolaire/presences/components/StudentRow';
-import { EventType, IStudent } from '~/framework/modules/viescolaire/presences/model';
+import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { PresencesCallScreenPrivateProps } from './types';
+import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -39,7 +37,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('viesco-register'),
+    title: I18n.get('presences-call-title'),
   }),
 });
 
@@ -55,7 +53,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       const { id } = props.route.params;
 
       if (!id) throw new Error();
-      await props.fetchClassCall(id);
+      await props.tryFetchClassCall(id);
     } catch {
       throw new Error();
     }
@@ -104,19 +102,11 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       const { id } = props.route.params;
 
       if (!classCall || !session) throw new Error();
-      await presencesService.event.create(
-        session,
-        studentId,
-        id,
-        EventType.ABSENCE,
-        classCall.start_date,
-        classCall.end_date,
-        null,
-      );
+      await presencesService.event.create(session, studentId, id, EventType.ABSENCE, classCall.startDate, classCall.endDate, null);
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
@@ -130,7 +120,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       await presencesService.classCall.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
@@ -143,10 +133,10 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       if (!session) throw new Error();
       await presencesService.classCall.updateStatus(session, id, 3);
       navigation.goBack();
-      Toast.showSuccess(I18n.t('viesco-register-validated'));
+      Toast.showSuccess(I18n.get('presences-call-successmessage'));
     } catch {
       setValidating(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
@@ -161,14 +151,18 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   const renderStudentsList = () => {
     const { classCall, eventReasons, navigation } = props;
     const { id } = props.route.params;
-    const students = classCall!.students.sort((a, b) => a.name.localeCompare(b.name));
-    students.forEach(student => (student.key = student.id));
+    const students = classCall!.students
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(student => ({
+        key: student.id,
+        ...student,
+      }));
 
     return classCall && students.length > 0 ? (
       <>
-        <SwipeableList<IStudent & { key: string }>
+        <SwipeableList<IClassCallStudent & { key: string }>
           data={students}
-          keyExtractor={(item: IStudent) => item.id}
+          keyExtractor={(item: IClassCallStudent) => item.id}
           renderItem={({ item }) => (
             <StudentRow
               student={item}
@@ -180,9 +174,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                   type: EventType.LATENESS,
                   callId: id,
                   student: item,
-                  startDate: classCall.start_date,
-                  endDate: classCall.end_date,
-                  event: item.events.find(e => e.type_id === 2),
+                  startDate: classCall.startDate,
+                  endDate: classCall.endDate,
+                  event: item.events.find(event => event.typeId === EventType.LATENESS),
                 });
               }}
               openDeparture={() => {
@@ -190,9 +184,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                   type: EventType.DEPARTURE,
                   callId: id,
                   student: item,
-                  startDate: classCall.start_date,
-                  endDate: classCall.end_date,
-                  event: item.events.find(e => e.type_id === 3),
+                  startDate: classCall.startDate,
+                  endDate: classCall.endDate,
+                  event: item.events.find(event => event.typeId === EventType.DEPARTURE),
                 });
               }}
             />
@@ -208,9 +202,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                     type: EventType.DEPARTURE,
                     callId: id,
                     student: item,
-                    startDate: classCall.start_date,
-                    endDate: classCall.end_date,
-                    event: item.events.find(e => e.type_id === 3),
+                    startDate: classCall.startDate,
+                    endDate: classCall.endDate,
+                    event: item.events.find(e => e.typeId === EventType.DEPARTURE),
                   });
                   row[item.key]?.closeRow();
                 },
@@ -224,9 +218,9 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
                     type: EventType.LATENESS,
                     callId: id,
                     student: item,
-                    startDate: classCall.start_date,
-                    endDate: classCall.end_date,
-                    event: item.events.find(e => e.type_id === 2),
+                    startDate: classCall.startDate,
+                    endDate: classCall.endDate,
+                    event: item.events.find(e => e.typeId === EventType.LATENESS),
                     reasons: eventReasons.filter(reason => reason.reasonTypeId === 2),
                   });
                   row[item.key]?.closeRow();
@@ -238,7 +232,12 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
             ],
           })}
         />
-        <ActionButton text={I18n.t('viesco-validate')} action={validateCall} loading={isValidating} style={styles.validateButton} />
+        <ActionButton
+          text={I18n.get('presences-call-action')}
+          action={validateCall}
+          loading={isValidating}
+          style={styles.validateButton}
+        />
       </>
     ) : null;
   };
@@ -251,12 +250,12 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       <>
         <LeftColoredItem shadow style={styles.headerCard} color={viescoTheme.palette.presences}>
           <SmallText>
-            {moment(classCall.start_date).format('LT')} - {moment(classCall.end_date).format('LT')}
+            {classCall.startDate.format('LT')} - {classCall.endDate.format('LT')}
           </SmallText>
           {classroom ? (
             <View style={styles.classroomContainer}>
               <Icon name="pin_drop" size={18} />
-              <SmallText style={styles.classroomText}>{I18n.t('viesco-room') + ' ' + classroom}</SmallText>
+              <SmallText style={styles.classroomText}>{I18n.get('presences-call-room', { name: classroom })}</SmallText>
             </View>
           ) : null}
           <SmallBoldText style={styles.nameText}>{name}</SmallBoldText>
@@ -297,14 +296,10 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<PresencesCallScreenDispatchProps>(
       {
-        fetchClassCall: tryActionLegacy(
-          fetchPresencesClassCallAction,
-          undefined,
-          true,
-        ) as unknown as PresencesCallScreenPrivateProps['fetchClassCall'],
+        tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
       },
       dispatch,
     ),

@@ -1,17 +1,42 @@
 /**
  * Diary actions
  */
+import { Moment } from 'moment';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { IUser } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
-import { IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
+import { IDiaryCourse, IDiarySession, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { actionTypes } from '~/framework/modules/viescolaire/diary/reducer';
 import { diaryService } from '~/framework/modules/viescolaire/diary/service';
 import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 import { edtService } from '~/framework/modules/viescolaire/edt/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+
+/**
+ * Fetch the teacher courses.
+ */
+export const diaryCoursesActionsCreators = createAsyncActionCreators(actionTypes.courses);
+export const fetchDiaryCoursesAction =
+  (
+    structureId: string,
+    teacherId: string,
+    startDate: Moment,
+    endDate: Moment,
+  ): ThunkAction<Promise<IDiaryCourse[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(diaryCoursesActionsCreators.request());
+      const courses = await diaryService.courses.get(session, structureId, teacherId, startDate, endDate);
+      dispatch(diaryCoursesActionsCreators.receipt(courses));
+      return courses;
+    } catch (e) {
+      dispatch(diaryCoursesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Fetch the homeworks from a structure.

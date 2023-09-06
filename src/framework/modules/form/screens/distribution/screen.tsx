@@ -1,13 +1,12 @@
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import React from 'react';
 import { Alert, FlatList, Platform, RefreshControl, ScrollView, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { ActionButton } from '~/framework/components/buttons/action';
@@ -20,6 +19,7 @@ import { HeadingSText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
+import { ProgressBar } from '~/framework/modules/form/components/DistributionProgressBar';
 import { FormSectionCard } from '~/framework/modules/form/components/FormSectionCard';
 import FormSubmissionModal from '~/framework/modules/form/components/FormSubmissionModal';
 import { getQuestionCard } from '~/framework/modules/form/components/question-cards';
@@ -29,6 +29,7 @@ import {
   IQuestion,
   IQuestionResponse,
   QuestionType,
+  findLongestPathInFormElement,
   formatElement,
   formatSummary,
   getIsElementSection,
@@ -40,11 +41,11 @@ import { FormNavigationParams, formRouteNames } from '~/framework/modules/form/n
 import { formService } from '~/framework/modules/form/service';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import { FormDistributionScreenPrivateProps } from './types';
+import { FormDistributionScreenDispatchProps, FormDistributionScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -86,8 +87,8 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         setHasResponderRight(false);
         return;
       }
-      const content = await props.fetchFormContent(formId);
-      const res = await props.fetchDistributionResponses(distributionId);
+      const content = await props.tryFetchFormContent(formId);
+      const res = await props.tryFetchDistributionResponses(distributionId);
       setResponses(res);
       if (content.elementsCount && status !== DistributionStatus.TO_DO) {
         setPosition(content.elementsCount);
@@ -157,19 +158,13 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         let res = responses.filter(r => r.questionId === question.id);
         // Delete responses of multiple answer and matrix questions
         if (question.type === QuestionType.MULTIPLEANSWER) {
-          // AMV2-465 temporary fix until form web 1.6.0
-          const unselectedResponses = res.filter(r => r.toDelete);
-          await formService.responses.delete(session, formId, unselectedResponses);
-          res = res.filter(r => !r.toDelete);
-          updateQuestionResponses(question.id, res);
-          //await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
-          //res.map(r => (r.id = undefined));
+          await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
+          res.map(r => (r.id = undefined));
         } else if (question.type === QuestionType.MATRIX) {
-          // AMV2-465 temporary fix until form web 1.6.0
           const questionIds = question.children!.map(q => q.id);
-          //await Promise.all(questionIds.map(id => formService.distribution.deleteQuestionResponses(session, distributionId, id)));
+          await Promise.all(questionIds.map(id => formService.distribution.deleteQuestionResponses(session, distributionId, id)));
           res = responses.filter(r => questionIds?.includes(r.questionId));
-          //res.map(r => (r.id = undefined));
+          res.map(r => (r.id = undefined));
         } else if (question.type === QuestionType.ORDER) {
           await formService.distribution.deleteQuestionResponses(session, distributionId, question.id);
           res.map(r => (r.id = undefined));
@@ -249,13 +244,13 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       setLoadingPrevious(true);
       await postResponsesChanges();
       setLoadingPrevious(false);
-      const history = positionHistory;
+      const history = positionHistory.slice(0);
       setPosition(history[history.length - 1]);
       history.pop();
       setPositionHistory(history);
     } catch {
       setLoadingPrevious(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('form-distribution-error-text'));
     }
   };
 
@@ -272,19 +267,19 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       const conditionalQuestion = listElements.find(e => !getIsElementSection(e) && (e as IQuestion).conditional) as IQuestion;
       if (conditionalQuestion) {
         const res = responses.find(r => r.questionId === conditionalQuestion.id);
-        const sectionId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextSectionId;
-        if (sectionId === null) {
+        const nextFormElementId = conditionalQuestion.choices.find(c => c.id === res?.choiceId)?.nextFormElementId;
+        if (nextFormElementId === null) {
           return updatePosition(props.elementsCount);
         }
-        const sectionPosition = props.elements.find(e => getIsElementSection(e) && e.id === sectionId)?.position;
-        if (sectionPosition) {
-          return updatePosition(sectionPosition - 1);
+        const formElementPosition = props.elements.find(e => e.id === nextFormElementId)?.position;
+        if (formElementPosition) {
+          return updatePosition(formElementPosition - 1);
         }
       }
       updatePosition(position + 1);
     } catch {
       setLoadingNext(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('form-distribution-error-text'));
     }
   };
 
@@ -305,15 +300,15 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
       }
       modalBoxRef.current?.doDismissModal();
       props.navigation.goBack();
-      Toast.showSuccess(I18n.t('form.answersSent'));
+      Toast.showSuccess(I18n.get('form-distribution-submissionmodal-successmessage'));
     } catch {
       setSubmitting(false);
-      Toast.showError(I18n.t('common.error.text'));
+      Toast.showError(I18n.get('form-distribution-error-text'));
     }
   };
 
   const renderEmpty = () => {
-    return <EmptyScreen svgImage="empty-form-access" title={I18n.t('form.formDistributionScreen.emptyScreen.title')} />;
+    return <EmptyScreen svgImage="empty-form-access" title={I18n.get('form-distribution-emptyscreen-title')} />;
   };
 
   const renderError = () => {
@@ -322,10 +317,6 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
         <EmptyContentScreen />
       </ScrollView>
     );
-  };
-
-  const renderSummaryHeading = () => {
-    return isPositionAtSummary ? <HeadingSText style={styles.summaryText}>{I18n.t('form.summary')}</HeadingSText> : null;
   };
 
   const renderElement = (item: IFormElement) => {
@@ -354,18 +345,38 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
     );
   };
 
+  const renderHeader = () => {
+    if (isPositionAtSummary) return <HeadingSText style={styles.summaryText}>{I18n.get('form-distribution-summary')}</HeadingSText>;
+    return props.elements.length > 1 ? (
+      <ProgressBar
+        formElementCount={positionHistory.length + findLongestPathInFormElement(listElements[0].id, props.elements)}
+        position={positionHistory.length + 1}
+      />
+    ) : null;
+  };
+
   const renderPositionActions = () => {
     if (isPositionAtSummary) {
       return status !== DistributionStatus.FINISHED || editable ? (
-        <ActionButton text={I18n.t('form.finishAndSend')} action={() => modalBoxRef.current?.doShowModal()} />
+        <ActionButton text={I18n.get('form-distribution-submit')} action={() => modalBoxRef.current?.doShowModal()} />
       ) : null;
     }
     return (
       <View style={styles.actionsContainer}>
         {positionHistory.length ? (
-          <ActionButton text={I18n.t('previous')} type="secondary" action={goToPreviousPosition} loading={isLoadingPrevious} />
+          <ActionButton
+            text={I18n.get('form-distribution-previous')}
+            type="secondary"
+            action={goToPreviousPosition}
+            loading={isLoadingPrevious}
+          />
         ) : null}
-        <ActionButton text={I18n.t('next')} action={goToNextPosition} disabled={isMandatoryAnswerMissing} loading={isLoadingNext} />
+        <ActionButton
+          text={I18n.get('form-distribution-next')}
+          action={goToNextPosition}
+          disabled={isMandatoryAnswerMissing}
+          loading={isLoadingNext}
+        />
       </View>
     );
   };
@@ -380,7 +391,7 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
           data={listElements}
           keyExtractor={element => (getIsElementSection(element) ? 's' : 'q') + element.id.toString()}
           renderItem={({ item }) => renderElement(item)}
-          ListHeaderComponent={renderSummaryHeading()}
+          ListHeaderComponent={renderHeader()}
           ListFooterComponent={renderPositionActions()}
           ListFooterComponentStyle={styles.listFooterContainer}
           contentContainerStyle={styles.listContainer}
@@ -415,32 +426,28 @@ const FormDistributionScreen = (props: FormDistributionScreenPrivateProps) => {
   UNSTABLE_usePreventRemove(
     status !== DistributionStatus.FINISHED && loadingState === AsyncPagedLoadingState.DONE && !isSubmitting,
     ({ data }) => {
-      Alert.alert(
-        I18n.t('form.formDistributionScreen.leaveAlert.title'),
-        I18n.t('form.formDistributionScreen.leaveAlert.message'),
-        [
-          {
-            text: I18n.t('common.cancel'),
-            style: 'cancel',
-            onPress: () => {
-              clearConfirmNavigationEvent();
-            },
+      Alert.alert(I18n.get('form-distribution-leavealert-title'), I18n.get('form-distribution-leavealert-message'), [
+        {
+          text: I18n.get('common-cancel'),
+          style: 'cancel',
+          onPress: () => {
+            clearConfirmNavigationEvent();
           },
-          {
-            text: I18n.t('common.quit'),
-            onPress: async () => {
-              try {
-                await postResponsesChanges();
-                handleRemoveConfirmNavigationEvent(data.action, props.navigation);
-                Toast.showSuccess(I18n.t('form.answersWellSaved'));
-              } catch {
-                Toast.showError(I18n.t('common.error.text'));
-              }
-            },
-            style: 'destructive',
+        },
+        {
+          text: I18n.get('common-quit'),
+          onPress: async () => {
+            try {
+              await postResponsesChanges();
+              handleRemoveConfirmNavigationEvent(data.action, props.navigation);
+              Toast.showSuccess(I18n.get('form-distribution-leavealert-successmessage'));
+            } catch {
+              Toast.showError(I18n.get('form-distribution-error-text'));
+            }
           },
-        ],
-      );
+          style: 'destructive',
+        },
+      ]);
     },
   );
 
@@ -472,19 +479,11 @@ export default connect(
         }) ?? [],
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<FormDistributionScreenDispatchProps>(
       {
-        fetchDistributionResponses: tryActionLegacy(
-          fetchDistributionResponsesAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionScreenPrivateProps['fetchDistributionResponses'],
-        fetchFormContent: tryActionLegacy(
-          fetchFormContentAction,
-          undefined,
-          true,
-        ) as unknown as FormDistributionScreenPrivateProps['fetchFormContent'],
+        tryFetchDistributionResponses: tryAction(fetchDistributionResponsesAction),
+        tryFetchFormContent: tryAction(fetchFormContentAction),
       },
       dispatch,
     ),

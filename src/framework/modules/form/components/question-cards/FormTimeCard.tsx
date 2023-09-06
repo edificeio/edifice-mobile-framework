@@ -1,12 +1,12 @@
-import I18n from 'i18n-js';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
+import { I18n } from '~/app/i18n';
+import DateTimePicker from '~/framework/components/dateTimePicker';
 import { SmallActionText } from '~/framework/components/text';
 import { FormQuestionCard } from '~/framework/modules/form/components/FormQuestionCard';
 import { IQuestion, IQuestionResponse } from '~/framework/modules/form/model';
-import DateTimePicker from '~/ui/DateTimePicker';
 
 import { FormAnswerText } from './FormAnswerText';
 
@@ -29,7 +29,7 @@ export const FormTimeCard = ({ isDisabled, question, responses, onChangeAnswer, 
   const [time, setTime] = React.useState(responses[0]?.answer ? moment(responses[0].answer, backendFormat) : moment());
   const { title, mandatory } = question;
 
-  const onChangeTime = (value: moment.Moment) => {
+  const onChangeTime = (value: Moment) => {
     setTime(value);
     if (responses.length) {
       responses[0].answer = value.format(backendFormat);
@@ -56,10 +56,10 @@ export const FormTimeCard = ({ isDisabled, question, responses, onChangeAnswer, 
       {isDisabled ? (
         <FormAnswerText answer={responses[0]?.answer} />
       ) : responses[0]?.answer ? (
-        <DateTimePicker mode="time" value={time} onChange={value => onChangeTime(value)} style={styles.timePicker} />
+        <DateTimePicker mode="time" value={time} onChangeValue={value => onChangeTime(value)} style={styles.timePicker} />
       ) : (
         <TouchableOpacity onPress={() => onChangeTime(moment())}>
-          <SmallActionText>{I18n.t('common.enterTime')}</SmallActionText>
+          <SmallActionText>{I18n.get('form-distribution-timecard-entertime')}</SmallActionText>
         </TouchableOpacity>
       )}
     </FormQuestionCard>

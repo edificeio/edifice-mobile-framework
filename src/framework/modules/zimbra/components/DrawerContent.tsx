@@ -1,11 +1,10 @@
 import { DrawerContentComponentProps, DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
@@ -15,11 +14,12 @@ import { CaptionBoldText, HeadingXSText } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framework/modules/zimbra/actions';
-import { DefaultFolder, IFolder, IQuota } from '~/framework/modules/zimbra/model';
+import { IFolder, IQuota, SystemFolder } from '~/framework/modules/zimbra/model';
 import moduleConfig from '~/framework/modules/zimbra/module-config';
 import { getFolderName } from '~/framework/modules/zimbra/utils/folderName';
-import { tryActionLegacy } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 
+import { FolderButton } from './FolderButton';
 import CreateFolderModal from './modals/CreateFolderModal';
 
 const styles = StyleSheet.create({
@@ -62,37 +62,42 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CustomDrawerContentProps extends DrawerContentComponentProps {
+interface CustomDrawerContentStoreProps {
   folders: IFolder[];
   quota: IQuota;
   session?: ISession;
-  fetchQuota: () => Promise<IQuota>;
-  fetchRootFolders: () => Promise<IFolder[]>;
 }
+
+interface CustomDrawerContentDispatchProps {
+  tryFetchQuota: (...args: Parameters<typeof fetchZimbraQuotaAction>) => Promise<IQuota>;
+  tryFetchRootFolders: (...args: Parameters<typeof fetchZimbraRootFoldersAction>) => Promise<IFolder[]>;
+}
+
+type CustomDrawerContentProps = DrawerContentComponentProps & CustomDrawerContentStoreProps & CustomDrawerContentDispatchProps;
 
 const DrawerContent = (props: CustomDrawerContentProps) => {
   const [selectedFolder, setSelectedFolder] = React.useState<string>('/Inbox');
   const modalBoxRef = React.useRef<ModalBoxHandle>(null);
   const defaultFolders = [
-    { name: DefaultFolder.INBOX, path: '/Inbox' },
-    { name: DefaultFolder.SENT, path: '/Sent' },
-    { name: DefaultFolder.DRAFTS, path: '/Drafts' },
-    { name: DefaultFolder.TRASH, path: '/Trash' },
-    { name: DefaultFolder.JUNK, path: '/Junk' },
+    { name: SystemFolder.INBOX, path: '/Inbox' },
+    { name: SystemFolder.SENT, path: '/Sent' },
+    { name: SystemFolder.DRAFTS, path: '/Drafts' },
+    { name: SystemFolder.TRASH, path: '/Trash' },
+    { name: SystemFolder.JUNK, path: '/Junk' },
   ];
 
   React.useEffect(() => {
-    props.fetchQuota();
-    props.fetchRootFolders();
+    props.tryFetchQuota();
+    props.tryFetchRootFolders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const changeFolder = (name: string, path: string) => {
-    if (path !== selectedFolder) {
+  const changeFolder = (folder: IFolder) => {
+    if (folder.path !== selectedFolder) {
       const { navigation } = props;
 
-      setSelectedFolder(path);
-      navigation.setParams({ folderName: name, folderPath: path });
+      setSelectedFolder(folder.path);
+      navigation.setParams({ folderName: folder.name, folderPath: folder.path });
       navigation.closeDrawer();
     }
   };
@@ -103,7 +108,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
   };
 
   const refreshDrawer = () => {
-    props.fetchRootFolders();
+    props.tryFetchRootFolders();
     modalBoxRef.current?.doDismissModal();
     props.navigation.openDrawer();
   };
@@ -126,7 +131,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
 
     return (
       <View>
-        <HeadingXSText style={styles.categoryText}>{I18n.t('zimbra-storage')}</HeadingXSText>
+        <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-maillist-drawercontent-storage')}</HeadingXSText>
         <View style={styles.storageBar}>
           <View style={[styles.storageBarUsed, { width: `${storagePercent}%` }]}>
             <CaptionBoldText style={styles.storageText}>
@@ -142,14 +147,14 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
     <>
       <DrawerContentScrollView {...props} contentContainerStyle={styles.contentContainer}>
         <View>
-          <HeadingXSText style={styles.categoryText}>{I18n.t('zimbra-messages')}</HeadingXSText>
+          <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-maillist-drawercontent-messages')}</HeadingXSText>
           <FlatList
             data={defaultFolders}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <DrawerItem
                 label={getFolderName(item.name)}
-                onPress={() => changeFolder(item.name, item.path)}
+                onPress={() => changeFolder(item as IFolder)}
                 focused={item.path === selectedFolder}
                 activeTintColor={theme.palette.primary.regular.toString()}
                 activeBackgroundColor={theme.palette.primary.pale.toString()}
@@ -158,7 +163,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
             )}
           />
           <View style={styles.foldersHeaderContainer}>
-            <HeadingXSText style={styles.categoryText}>{I18n.t('zimbra-directories')}</HeadingXSText>
+            <HeadingXSText style={styles.categoryText}>{I18n.get('zimbra-maillist-drawercontent-folders')}</HeadingXSText>
             <TouchableOpacity onPress={openFolderCreationModal} style={styles.createFolderContainer}>
               <Picture type="NamedSvg" name="ui-plus" width={24} height={24} fill={theme.palette.primary.regular} />
             </TouchableOpacity>
@@ -166,16 +171,7 @@ const DrawerContent = (props: CustomDrawerContentProps) => {
           <FlatList
             data={props.folders}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-              <DrawerItem
-                label={item.name}
-                onPress={() => changeFolder(item.name, item.path)}
-                focused={item.path === selectedFolder}
-                activeTintColor={theme.palette.primary.regular.toString()}
-                activeBackgroundColor={theme.palette.primary.pale.toString()}
-                inactiveTintColor={theme.ui.text.regular.toString()}
-              />
-            )}
+            renderItem={({ item }) => <FolderButton folder={item} selectedFolderPath={selectedFolder} onPress={changeFolder} />}
           />
         </View>
         {renderStorage()}
@@ -197,15 +193,11 @@ export default connect(
       session,
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) =>
-    bindActionCreators(
+  dispatch =>
+    bindActionCreators<CustomDrawerContentDispatchProps>(
       {
-        fetchQuota: tryActionLegacy(fetchZimbraQuotaAction, undefined, true) as unknown as CustomDrawerContentProps['fetchQuota'],
-        fetchRootFolders: tryActionLegacy(
-          fetchZimbraRootFoldersAction,
-          undefined,
-          true,
-        ) as unknown as CustomDrawerContentProps['fetchRootFolders'],
+        tryFetchQuota: tryAction(fetchZimbraQuotaAction),
+        tryFetchRootFolders: tryAction(fetchZimbraRootFoldersAction),
       },
       dispatch,
     ),

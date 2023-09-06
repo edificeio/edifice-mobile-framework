@@ -1,6 +1,5 @@
 import { CommonActions, UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import I18n from 'i18n-js';
 import * as React from 'react';
 import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -8,6 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import ActionButton from '~/framework/components/buttons/action';
@@ -38,7 +38,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.t('support.tabName'),
+    title: I18n.get('support-createticket-title'),
   }),
 });
 
@@ -70,10 +70,10 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
       }
       const ticketId = await props.postTicket(category, structure, subject, description, uploadedAttachments);
       props.navigation.dispatch(CommonActions.goBack());
-      Toast.showSuccess(I18n.t('support.supportCreateTicketScreen.successCreationId', { id: ticketId }));
+      Toast.showSuccess(I18n.get('support-createticket-successmessage', { id: ticketId }));
     } catch {
       setSending(false);
-      Toast.showError(I18n.t('support.supportCreateTicketScreen.failure'));
+      Toast.showError(I18n.get('support-createticket-errormessage'));
     }
   };
 
@@ -94,8 +94,8 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
     return hasTicketCreationRights ? (
       <ScrollView contentContainerStyle={styles.container}>
         <View>
-          <BodyBoldText style={styles.titleText}>{I18n.t('support.supportCreateTicketScreen.reportIncident')}</BodyBoldText>
-          <SmallText style={styles.informationText}>{I18n.t('support.supportCreateTicketScreen.mobileOnly')}</SmallText>
+          <BodyBoldText style={styles.titleText}>{I18n.get('support-createticket-reportincident')}</BodyBoldText>
+          <SmallText style={styles.informationText}>{I18n.get('support-createticket-mobileonly')}</SmallText>
           <DropDownPicker
             open={isCategoryDropdownOpen}
             value={category}
@@ -125,12 +125,12 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
           ) : null}
           <View style={{ zIndex: -2 }}>
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.t('support.supportCreateTicketScreen.subject')}
+              {I18n.get('support-createticket-subject')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput value={subject} onChangeText={text => setSubject(text)} style={styles.subjectInput} />
             <SmallBoldText style={styles.inputLabelText}>
-              {I18n.t('support.supportCreateTicketScreen.description')}
+              {I18n.get('support-createticket-description')}
               <NestedBoldText style={styles.mandatoryText}>{mandatoryText}</NestedBoldText>
             </SmallBoldText>
             <TextInput
@@ -142,14 +142,14 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             />
             <View style={styles.attachmentsContainer}>
               <BottomMenu
-                title={I18n.t('common.addFiles')}
+                title={I18n.get('support-createticket-addfiles')}
                 actions={[
                   cameraAction({ callback: addAttachment }),
                   galleryAction({ callback: addAttachment, multiple: true }),
                   documentAction({ callback: addAttachment }),
                 ]}>
                 <View style={[styles.textIconContainer, filesAdded && styles.textIconContainerSmallerMargin]}>
-                  <SmallActionText style={styles.actionText}>{I18n.t('common.addFiles')}</SmallActionText>
+                  <SmallActionText style={styles.actionText}>{I18n.get('support-createticket-addfiles')}</SmallActionText>
                   <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.palette.primary.regular} />
                 </View>
               </BottomMenu>
@@ -164,24 +164,29 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
             </View>
           </View>
         </View>
-        <ActionButton text={I18n.t('common.send')} action={sendTicket} disabled={isActionDisabled} loading={isSending} />
+        <ActionButton
+          text={I18n.get('support-createticket-sendaction')}
+          action={sendTicket}
+          disabled={isActionDisabled}
+          loading={isSending}
+        />
       </ScrollView>
     ) : (
-      <EmptyScreen svgImage="empty-support" title={I18n.t('support.supportCreateTicketScreen.emptyScreen.title')} />
+      <EmptyScreen svgImage="empty-support" title={I18n.get('support-createticket-emptyscreen-title')} />
     );
   };
 
   UNSTABLE_usePreventRemove(!!(subject || description) && !isSending, ({ data }) => {
-    Alert.alert(I18n.t('common.confirmationLeaveAlert.title'), I18n.t('common.confirmationLeaveAlert.message'), [
+    Alert.alert(I18n.get('support-createticket-leavealert-title'), I18n.get('support-createticket-leavealert-text'), [
       {
-        text: I18n.t('common.cancel'),
+        text: I18n.get('common-cancel'),
         style: 'cancel',
         onPress: () => {
           clearConfirmNavigationEvent();
         },
       },
       {
-        text: I18n.t('common.quit'),
+        text: I18n.get('common-quit'),
         onPress: () => {
           handleRemoveConfirmNavigationEvent(data.action, props.navigation);
         },
@@ -196,38 +201,31 @@ const SupportCreateTicketScreen = (props: ISupportCreateTicketScreenProps) => {
 };
 
 export default connect(
-  (gs: IGlobalState) => {
-    const apps = [] as any[];
-    for (const app of gs.auth.session.apps) {
-      if (app.address && app.name && app.address.length > 0 && app.name.length > 0) {
-        const translation = I18n.t('modules-names.' + app.displayName.toLowerCase());
-        if (translation.substring(0, 9) !== '[missing ') {
-          apps.push({ ...app, name: translation });
-        } else if (/^[A-Z]/.test(app.displayName)) {
-          apps.push({ ...app, name: app.displayName });
-        }
-      }
-    }
+  (state: IGlobalState) => {
+    const session = getSession();
+    const apps =
+      session?.apps
+        ?.filter(app => app.address && app.name)
+        .map(app => {
+          const translation = I18n.get('support-createticket-category-' + app.displayName.toLowerCase());
+          return {
+            label: translation.startsWith('support-') ? app.displayName : translation,
+            value: app.address,
+          };
+        }) ?? [];
     apps.push({
-      address: 'modules-names.other',
-      name: I18n.t('modules-names.other'),
+      label: I18n.get('support-createticket-category-other'),
+      value: 'other',
     });
-    apps.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
     return {
-      apps: apps.map(app => {
-        return {
-          label: app.name,
-          value: app.address,
-        };
-      }),
-      structures: gs.auth.session.user.structures.map(school => {
-        return {
-          label: school.name,
-          value: school.id,
-        };
-      }),
-      session: getSession(),
+      apps: apps.sort((a, b) => a.label.toLowerCase().localeCompare(b.label.toLowerCase())),
+      session,
+      structures:
+        session?.user.structures?.map(structure => ({
+          label: structure.name,
+          value: structure.id,
+        })) ?? [],
     };
   },
   (dispatch: ThunkDispatch<any, any, any>) =>
