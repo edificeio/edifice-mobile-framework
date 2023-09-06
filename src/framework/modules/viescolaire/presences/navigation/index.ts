@@ -6,7 +6,6 @@ import type { PresencesCourseListScreenNavParams } from '~/framework/modules/vie
 import type { PresencesDeclareAbsenceScreenNavParams } from '~/framework/modules/viescolaire/presences/screens/declare-absence';
 import type { PresencesDeclareEventScreenNavParams } from '~/framework/modules/viescolaire/presences/screens/declare-event';
 import type { PresencesHistoryScreenNavParams } from '~/framework/modules/viescolaire/presences/screens/history';
-import type { PresencesMementoScreenNavParams } from '~/framework/modules/viescolaire/presences/screens/memento';
 
 export const presencesRouteNames = {
   call: `${moduleConfig.routeName}/call` as 'call',
@@ -14,7 +13,6 @@ export const presencesRouteNames = {
   declareAbsence: `${moduleConfig.routeName}/declare-absence` as 'declareAbsence',
   declareEvent: `${moduleConfig.routeName}/declare-event` as 'declareEvent',
   history: `${moduleConfig.routeName}/history` as 'history',
-  memento: `${moduleConfig.routeName}/memento` as 'memento',
 };
 export interface PresencesNavigationParams extends ParamListBase {
   call: PresencesCallScreenNavParams;
@@ -22,5 +20,4 @@ export interface PresencesNavigationParams extends ParamListBase {
   declareAbsence: PresencesDeclareAbsenceScreenNavParams;
   declareEvent: PresencesDeclareEventScreenNavParams;
   history: PresencesHistoryScreenNavParams;
-  memento: PresencesMementoScreenNavParams;
 }

@@ -14,7 +14,6 @@ import PresencesDeclareEventScreen, {
   computeNavBar as declareEventNavBar,
 } from '~/framework/modules/viescolaire/presences/screens/declare-event';
 import PresencesHistoryScreen, { computeNavBar as historyNavBar } from '~/framework/modules/viescolaire/presences/screens/history';
-import PresencesMementoScreen, { computeNavBar as mementoNavBar } from '~/framework/modules/viescolaire/presences/screens/memento';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -55,13 +54,6 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             initialParams={{}}
           />
         </Stack.Group>,
-        <Stack.Screen
-          key={presencesRouteNames.memento}
-          name={presencesRouteNames.memento}
-          component={PresencesMementoScreen}
-          options={mementoNavBar}
-          initialParams={{}}
-        />,
       );
       moduleConfig.routeName = presencesRouteNames.courseList;
     } else {

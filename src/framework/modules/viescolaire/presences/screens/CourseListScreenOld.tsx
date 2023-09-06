@@ -44,7 +44,7 @@ type PresencesCourseListScreenOldProps = {
   structureId?: string;
   teacherId?: string;
 } & PresencesCourseListScreenOldDispatchProps &
-  NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.memento>;
+  NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.courseList>;
 
 const PresencesCourseListScreenOld = (props: PresencesCourseListScreenOldProps) => {
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
@@ -65,7 +65,7 @@ const PresencesCourseListScreenOld = (props: PresencesCourseListScreenOldProps) 
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }
-      await props.tryFetchCourses(teacherId, structureId, today, today, multipleSlot);
+      await props.tryFetchCourses(teacherId, [structureId], today, multipleSlot);
     } catch {
       throw new Error();
     }
@@ -123,9 +123,8 @@ const PresencesCourseListScreenOld = (props: PresencesCourseListScreenOldProps) 
         callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
       }
       props.navigation.navigate(presencesRouteNames.call, {
-        classroom: course.roomLabels[0],
+        course,
         id: callId,
-        name: course.classes[0] ?? course.groups[0],
       });
     } catch {
       Toast.showError(I18n.get('presences-courselistold-error-text'));
