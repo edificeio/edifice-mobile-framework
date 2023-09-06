@@ -63,7 +63,7 @@ export const DropdownPicker = <T extends ValueType>(props: DropdownPickerProps<T
         style: styles.dropdownListContainer,
         contentContainerStyle: styles.dropdownListContentContainer,
       }}
-      {...getToggleStyle(type, size, open, style)}
+      {...getToggleStyle(type, size, open, value !== null, style)}
     />
   );
 };
