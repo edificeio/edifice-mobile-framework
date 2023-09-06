@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { Platform, ScrollView, View } from 'react-native';
+import { Platform, Pressable, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -69,6 +69,8 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
   const [comment, setComment] = React.useState<string>(props.route.params.event?.comment ?? '');
   const [isCreating, setCreating] = React.useState<boolean>(false);
   const [isDeleting, setDeleting] = React.useState<boolean>(false);
+
+  const closeDropdown = () => setDropdownOpen(false);
 
   const getIsEventEdited = (): boolean => {
     const { event, type } = props.route.params;
@@ -183,7 +185,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { deleteActionText, reasonText, timeText } = getStatusTexts();
 
     return (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.container}>
         {renderHeading()}
         <CallCard course={course} disabled />
         {type !== EventType.ABSENCE ? (
@@ -199,8 +201,9 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             />
           </View>
         ) : null}
+        {isDropdownOpen ? <Pressable onPress={closeDropdown} style={styles.backdropContainer} /> : null}
         {(type === EventType.ABSENCE || type === EventType.LATENESS) && reasons.length ? (
-          <View style={styles.fieldContainer}>
+          <Pressable onPress={closeDropdown} style={styles.fieldContainer}>
             <SmallBoldText>{reasonText}</SmallBoldText>
             <DropdownPicker
               open={isDropdownOpen}
@@ -215,7 +218,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
               setOpen={setDropdownOpen}
               setValue={value => setReasonId(value || null)}
             />
-          </View>
+          </Pressable>
         ) : null}
         {type === EventType.DEPARTURE ? (
           <View style={styles.fieldContainer}>
