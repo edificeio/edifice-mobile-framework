@@ -30,8 +30,6 @@ export default function CourseListPlaceholder(props: CourseListPlaceholderProps)
       <View style={styles.listContainer}>
         <CallCardPlaceholder />
         <CallCardPlaceholder />
-        <CallCardPlaceholder />
-        <CallCardPlaceholder />
       </View>
     </Placeholder>
   );
