@@ -12,6 +12,7 @@ import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
 import { fetchHomeworkDiaryList } from './actions/diaryList';
+import { homeworkDiarySelected } from './actions/selectedDiary';
 import { homeworkRouteNames } from './navigation';
 import { IHomeworkDiary } from './reducers/diaryList';
 
@@ -55,6 +56,7 @@ export default () =>
             const hasOneDiary = diaryListWithCreationRight?.length === 1;
 
             if (hasOneDiary) {
+              (getStore().dispatch as ThunkDispatch<any, any, any>)(homeworkDiarySelected(diaryListWithCreationRight[0].id));
               navigate(homeworkRouteNames.homeworkCreate);
             } else navigate(homeworkRouteNames.homeworkSelect);
           } catch {

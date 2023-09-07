@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
-import Explorer from '~/framework/components/explorer';
+import Explorer from '~/framework/components/explorer/explorer';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import config from '~/framework/modules/homework/module-config';
