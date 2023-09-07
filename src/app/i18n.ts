@@ -5,7 +5,7 @@
  * Then, import and use the native i18next and moment modules.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { unflatten } from 'flat';
+import { flatten, unflatten } from 'flat';
 import i18n, { TOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
 import resourcesToBackend from 'i18next-resources-to-backend';
@@ -27,22 +27,38 @@ export namespace I18n {
   const supportedLanguages = ['fr', 'en', 'es'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
 
-  // Transform local translations (in a given language) by applying the override keys
+  // Transform local translations (in a given language)
+  //   - by applying the current override keys
+  //   - and removing all overriden keys
   const getOverridenTranslations = (translations: object) => {
+    // Get Overriden keys for this override
     const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
-    const overrideKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
+    const overridenKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
+    // Get all overriden keys
+    const overrides = ['leducdenormandie', 'lyceeconnecte', 'monlyceenet', 'neo', 'one', 'openent'];
+    const overridesKeys: string[] = [];
+    overrides.forEach(override => {
+      const keys = Object.keys(translations).filter(key => key.endsWith(`-${override}`));
+      if (keys) overridesKeys.push(...keys);
+    });
+    // Replace current override keys
     const overridenTranslations = translations;
-    overrideKeys.forEach(overrideKey => {
+    overridenKeys.forEach(overrideKey => {
       overridenTranslations[overrideKey.replace(`-${overrideName}`, '')] = overridenTranslations[overrideKey];
     });
-    return overridenTranslations;
+    // Remove all overrides keys
+    overridesKeys.forEach(key => {
+      delete overridenTranslations[`${key}`];
+    });
+    // Return unflatten translations
+    return unflatten(overridenTranslations);
   };
 
   // Final translations
   const localResources = {
-    fr: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/fr.json'))) },
-    en: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/en.json'))) },
-    es: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/es.json'))) },
+    fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
+    en: { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
+    es: { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
   };
 
   // App language management
@@ -56,7 +72,9 @@ export namespace I18n {
 
   // Phrase stuff
   const phraseId = phraseSecrets?.distributionId;
-  const phraseSecret = __DEV__ ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
+  const phraseSecret = phraseSecrets?.prodSecret;
+  // We don't have dev/prod Phrase releases for now
+  //const phraseSecret = __DEV__ ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
   const phrase = new Phrase(phraseId, phraseSecret, DeviceInfo.getVersion(), 'i18next');
 
@@ -64,8 +82,7 @@ export namespace I18n {
     phrase
       .requestTranslation(language)
       .then(remoteResources => {
-        // Todo Call getOverridenTranslations
-        callback(null, remoteResources);
+        callback(null, getOverridenTranslations(flatten(remoteResources)));
       })
       .catch(error => {
         callback(error, null);
