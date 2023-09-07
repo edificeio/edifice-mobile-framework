@@ -5,9 +5,9 @@ import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeho
 import CallCardPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-card';
 
 import styles from './styles';
-import type { CourseListPlaceholderProps } from './types';
+import type { CallListPlaceholderProps } from './types';
 
-export default function CourseListPlaceholder(props: CourseListPlaceholderProps) {
+export default function CallListPlaceholder(props: CallListPlaceholderProps) {
   return (
     <Placeholder Animation={Fade}>
       {props.showDayPicker ? (

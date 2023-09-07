@@ -4,9 +4,9 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import PresencesCallScreen, { computeNavBar as callNavBar } from '~/framework/modules/viescolaire/presences/screens/call';
-import PresencesCourseListScreen, {
-  computeNavBar as courseListNavBar,
-} from '~/framework/modules/viescolaire/presences/screens/course-list';
+import PresencesCallListScreen, {
+  computeNavBar as callListNavBar,
+} from '~/framework/modules/viescolaire/presences/screens/call-list';
 import PresencesDeclareAbsenceScreen, {
   computeNavBar as declareAbsenceNavBar,
 } from '~/framework/modules/viescolaire/presences/screens/declare-absence';
@@ -32,10 +32,10 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     if (session?.user.type === UserType.Teacher) {
       screens.push(
         <Stack.Screen
-          key={presencesRouteNames.courseList}
-          name={presencesRouteNames.courseList}
-          component={PresencesCourseListScreen}
-          options={courseListNavBar}
+          key={presencesRouteNames.callList}
+          name={presencesRouteNames.callList}
+          component={PresencesCallListScreen}
+          options={callListNavBar}
           initialParams={{}}
         />,
         <Stack.Screen
@@ -55,7 +55,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           />
         </Stack.Group>,
       );
-      moduleConfig.routeName = presencesRouteNames.courseList;
+      moduleConfig.routeName = presencesRouteNames.callList;
     } else {
       screens.push(
         <Stack.Screen
