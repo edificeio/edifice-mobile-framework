@@ -6,7 +6,7 @@ export interface ResourcePickerProps {
   defaultThumbnail: { name: string; fill: ColorValue; background: ColorValue };
   emptyComponent: React.ComponentType;
   onPressItem: (item) => void;
-  onRefresh: () => void;
+  onRefresh: () => Promise<void>;
 }
 
 export interface ResourcePickerState {

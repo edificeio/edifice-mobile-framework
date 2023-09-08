@@ -31,7 +31,7 @@ export interface HomeworkSelectScreenDataProps {
   session?: ISession;
 }
 export interface HomeworkSelectScreenEventProps {
-  onRefresh: () => void;
+  onRefresh: () => Promise<void>;
   onSelect: (diaryId: string) => void;
   dispatch: ThunkDispatch<any, any, any>;
 }

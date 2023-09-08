@@ -31,16 +31,19 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
     }
   };
 
-  const renderItem = item => {
+  const getKeyExtractor = item => item.id.toString();
+
+  const renderItem = ({ item }) => {
     const shareNumber = item.shared?.length;
     const numberOfLines = 1;
     const shareText = I18n.get(`resourcepicker-sharedtonbperson${shareNumber === 1 ? '' : 's'}`, {
       nb: shareNumber || 0,
     });
     const defaultBackground = { backgroundColor: defaultThumbnail.background };
+    const handleOnPress = () => onPressItem(item);
 
     return (
-      <TouchableOpacity onPress={() => onPressItem(item)}>
+      <TouchableOpacity onPress={handleOnPress}>
         <ListItem
           leftElement={
             <View style={styles.item}>
@@ -79,11 +82,11 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
     <PageView>
       <FlatList
         data={data}
-        renderItem={({ item }) => renderItem(item)}
-        keyExtractor={item => item.id.toString()}
+        renderItem={renderItem}
+        keyExtractor={getKeyExtractor}
         contentContainerStyle={[styles.list, listAdditionalStyle]}
         ListEmptyComponent={emptyComponent}
-        refreshControl={<RefreshControl onRefresh={() => handleRefresh()} refreshing={isRefreshing} />}
+        refreshControl={<RefreshControl onRefresh={handleRefresh} refreshing={isRefreshing} />}
       />
     </PageView>
   );
