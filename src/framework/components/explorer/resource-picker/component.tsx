@@ -20,7 +20,7 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
 
   const [isRefreshing, setIsRefreshing] = React.useState(false);
 
-  const doRefresh = async () => {
+  const handleRefresh = async () => {
     try {
       setIsRefreshing(true);
       await onRefresh();
@@ -83,7 +83,7 @@ const ResourcePicker = ({ data, defaultThumbnail, emptyComponent, onPressItem, o
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={[styles.list, listAdditionalStyle]}
         ListEmptyComponent={emptyComponent}
-        refreshControl={<RefreshControl onRefresh={() => doRefresh()} refreshing={isRefreshing} />}
+        refreshControl={<RefreshControl onRefresh={() => handleRefresh()} refreshing={isRefreshing} />}
       />
     </PageView>
   );
