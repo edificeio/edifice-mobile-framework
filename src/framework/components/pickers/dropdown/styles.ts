@@ -74,22 +74,31 @@ const styles = StyleSheet.create({
   selectedContainerGhost: {
     backgroundColor: theme.palette.primary.pale,
   },
-  selectedContainerOutline: {
-    borderColor: theme.palette.primary.light,
-  },
   text: {
     ...TextFontStyle.Regular,
     ...TextSizeStyle.Medium,
   },
 });
 
-export const getToggleStyle = (type: DropdownType, size: DropdownSize, isOpened: boolean, style?: StyleProp<ViewStyle>) => {
+export const getToggleStyle = (
+  type: DropdownType,
+  size: DropdownSize,
+  isOpened: boolean,
+  isItemSelected: boolean,
+  style?: StyleProp<ViewStyle>,
+) => {
   if (type === 'outline') {
     return {
       style: [
         styles.containerOutline,
         size === 'big' ? styles.bigPaddingOutline : styles.mediumPaddingOutline,
-        isOpened && styles.selectedContainerOutline,
+        {
+          borderColor: isOpened
+            ? theme.palette.primary.light
+            : isItemSelected
+            ? theme.palette.grey.graphite
+            : theme.palette.grey.cloudy,
+        },
         style,
       ],
       disabledStyle: styles.disabledContainerOutline,

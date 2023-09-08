@@ -17,7 +17,7 @@ import Explorer, {
   IExplorerFolderItem,
   IExplorerResourceItemWithIcon,
   IExplorerResourceItemWithImage,
-} from '~/framework/components/explorer';
+} from '~/framework/components/explorer/explorer';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
 import { ISession } from '~/framework/modules/auth/model';

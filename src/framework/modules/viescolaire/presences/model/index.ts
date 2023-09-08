@@ -4,23 +4,21 @@ import { ICourse } from './course';
 import { IEventReason } from './event-reason';
 import { EventType, IEvent, IForgottenNotebook, IHistoryEvent, IIncident, IPunishment } from './events';
 import { IHistory } from './history';
-import { IMemento } from './memento';
 import { IUserChild } from './user-child';
 
 export {
+  EventType,
   IChildEvents,
   IChildrenEvents,
   IClassCall,
   IClassCallStudent,
   ICourse,
-  IEventReason,
-  EventType,
   IEvent,
+  IEventReason,
   IForgottenNotebook,
+  IHistory,
   IHistoryEvent,
   IIncident,
   IPunishment,
-  IHistory,
-  IMemento,
   IUserChild,
 };

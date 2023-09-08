@@ -4,6 +4,13 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  backdropContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: UI_SIZES.screen.width,
+    height: UI_SIZES.screen.height,
+  },
   container: {
     flexGrow: 1,
     padding: UI_SIZES.spacing.big,

@@ -31,10 +31,10 @@ import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
 
-import { UI_SIZES } from './constants';
-import { Picture, PictureProps } from './picture';
+import { UI_SIZES } from '../constants';
+import { Picture, PictureProps } from '../picture';
 
-export interface IExplorerProps<FolderType extends {}, ResourceType extends {}>
+export interface IExplorerProps<FolderType extends object, ResourceType extends object>
   extends Omit<
     FlatListProps<
       | (IExplorerFolderItem & FolderType)
@@ -91,7 +91,7 @@ export interface IExplorerResourceItemWithIcon extends IExplorerResourceItemBase
   icon: string | PictureProps;
 }
 
-export default <FolderType extends {}, ResourceType extends {}>(props: IExplorerProps<FolderType, ResourceType>) => {
+export default <FolderType extends object, ResourceType extends object>(props: IExplorerProps<FolderType, ResourceType>) => {
   const { data, folders, resources, keyExtractor, contentContainerStyle, ...otherProps } = props;
   const explorerData: (
     | (IExplorerFolderItem & FolderType)
@@ -99,12 +99,12 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
     | (IExplorerResourceItemWithIcon & ResourceType)
     | IExplorerEmptyItem
   )[] = [
-    ...(folders ?? []).map(f => ({ ...f, type: 'folder' } as IExplorerFolderItem & FolderType)),
+    ...(folders ?? []).map(f => ({ ...f, type: 'folder' }) as IExplorerFolderItem & FolderType),
     ...(resources ?? []).map(
       f =>
-        ({ ...f, type: 'resource' } as
+        ({ ...f, type: 'resource' }) as
           | (IExplorerResourceItemWithImage & ResourceType)
-          | (IExplorerResourceItemWithIcon & ResourceType)),
+          | (IExplorerResourceItemWithIcon & ResourceType),
     ),
     ...(data ?? []),
   ];
@@ -139,7 +139,7 @@ export default <FolderType extends {}, ResourceType extends {}>(props: IExplorer
   );
 };
 
-const renderItem = <FolderType extends {}, ResourceType extends {}>(
+const renderItem = <FolderType extends object, ResourceType extends object>(
   item:
     | (IExplorerFolderItem & FolderType)
     | (IExplorerResourceItemWithImage & ResourceType)

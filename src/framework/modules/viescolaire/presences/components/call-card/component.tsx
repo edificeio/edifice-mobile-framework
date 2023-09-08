@@ -62,9 +62,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
 
   private getHoursLabel(startDate: Moment, endDate: Moment): string {
     if (appConf.is1d) {
-      return I18n.get(
-        startDate.get('h') < 12 ? 'presences-courselist-callcard-morning' : 'presences-courselist-callcard-afternoon',
-      );
+      return I18n.get(startDate.get('h') < 12 ? 'presences-calllist-callcard-morning' : 'presences-calllist-callcard-afternoon');
     } else {
       return `${startDate.format('LT')} - ${endDate.format('LT')}`;
     }
@@ -89,7 +87,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
               <View style={styles.roomContainer}>
                 <BodyText style={styles.roomText}>-</BodyText>
                 <BodyText numberOfLines={1} style={styles.roomText}>
-                  {I18n.get('presences-courselist-callcard-room', { name: roomLabel })}
+                  {I18n.get('presences-calllist-callcard-room', { name: roomLabel })}
                 </BodyText>
               </View>
             ) : null}

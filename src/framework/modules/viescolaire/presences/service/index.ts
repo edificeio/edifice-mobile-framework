@@ -10,7 +10,6 @@ import {
   IEvent,
   IEventReason,
   IHistoryEvent,
-  IMemento,
   IUserChild,
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -204,29 +203,6 @@ type IBackendHistoryIncidents = {
   };
 };
 
-type IBackendMemento = {
-  id: string;
-  name: string;
-  birth_date: string;
-  accommodation: string | null;
-  transport: string | null;
-  groups: string[];
-  classes: string[];
-  class_id: string[];
-  relatives: {
-    id: string;
-    name: string;
-    title: string | null;
-    mobile: string;
-    phone: string;
-    address: string | null;
-    email: string;
-    activated: boolean;
-    primary: boolean;
-  }[];
-  comment: string;
-};
-
 type IBackendStudentEvents = {
   all: {
     DEPARTURE: IBackendEvent[];
@@ -393,18 +369,6 @@ const historyIncidentsAdapter = (data: IBackendHistoryIncidents) => {
       })),
       total: data.totals.PUNISHMENT,
     },
-  };
-};
-
-const mementoAdapter = (data: IBackendMemento): IMemento => {
-  return {
-    accommodation: data.accommodation,
-    birthDate: data.birth_date ? moment(data.birth_date) : null,
-    classes: data.classes,
-    groups: data.groups,
-    id: data.id,
-    name: data.name,
-    relatives: data.relatives,
   };
 };
 
@@ -679,13 +643,6 @@ export const presencesService = {
       const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
       const incidents = (await fetchJSONWithCache(api)) as IBackendHistoryIncidents;
       return historyIncidentsAdapter(incidents);
-    },
-  },
-  memento: {
-    get: async (session: ISession, studentId: string) => {
-      const api = `/viescolaire/memento/students/${studentId}`;
-      const memento = (await fetchJSONWithCache(api)) as IBackendMemento;
-      return mementoAdapter(memento);
     },
   },
   preferences: {

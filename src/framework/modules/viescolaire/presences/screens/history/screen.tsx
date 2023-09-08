@@ -1,23 +1,23 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import UserList from '~/framework/components/UserList';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { SmallBoldText } from '~/framework/components/text';
+import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
-import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
-import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
   fetchPresencesHistoryAction,
   fetchPresencesSchoolYearAction,
@@ -54,6 +54,7 @@ export const computeNavBar = ({
 });
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
+  const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
 
@@ -64,7 +65,9 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
   const fetchEvents = async () => {
     try {
-      const { classes, structureId, studentId, userId, userType } = props;
+      const { classes, session, userId, userType } = props;
+      const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
+      const studentId = userType === UserType.Student ? userId : selectedChildId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       let groupId = classes?.[0];
@@ -135,10 +138,10 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (loadingRef.current === AsyncPagedLoadingState.DONE) init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.studentId]);
+  }, [props.studentId]);*/
 
   React.useEffect(() => {
     if (loadingState === AsyncPagedLoadingState.DONE) refresh();
@@ -150,6 +153,30 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
         <EmptyContentScreen />
       </ScrollView>
+    );
+  };
+
+  const renderHeader = () => {
+    return (
+      <>
+        {props.children?.length ? (
+          <UserList
+            horizontal
+            data={props.children!}
+            selectedId={selectedChildId}
+            onSelect={id => setSelectedChildId(id)}
+            style={styles.childrenListContainer}
+          />
+        ) : null}
+        {props.hasPresencesCreateAbsenceRight ? (
+          <PrimaryButton
+            text={I18n.get('presences-history-reportabsence')}
+            iconLeft="ui-plus"
+            action={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
+            style={styles.absenceActionContainer}
+          />
+        ) : null}
+      </>
     );
   };
 
@@ -217,29 +244,32 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         : [];
 
     return (
-      <ScrollView contentContainerStyle={styles.listContentContainer}>
-        {dropdownTerms.length > 1 ? (
-          <DropDownPicker
-            open={isDropdownOpen}
-            value={selectedTerm}
-            items={dropdownTerms}
-            setOpen={setDropdownOpen}
-            setValue={setSelectedTerm}
-            style={[styles.dropdown, styles.dropdownMargin]}
-            dropDownContainerStyle={styles.dropdown}
-            textStyle={styles.dropdownText}
-          />
-        ) : null}
-        {loadingState === AsyncPagedLoadingState.REFRESH ? (
-          <LoadingIndicator />
-        ) : (
-          <View style={{ zIndex: -1 }}>
-            {categories.map(category => (
-              <HistoryCategoryCard {...category} />
-            ))}
-          </View>
-        )}
-      </ScrollView>
+      <>
+        {props.userType === UserType.Relative ? renderHeader() : null}
+        <ScrollView contentContainerStyle={styles.listContentContainer}>
+          {dropdownTerms.length > 1 ? (
+            <DropDownPicker
+              open={isDropdownOpen}
+              value={selectedTerm}
+              items={dropdownTerms}
+              setOpen={setDropdownOpen}
+              setValue={setSelectedTerm}
+              style={[styles.dropdown, styles.dropdownMargin]}
+              dropDownContainerStyle={styles.dropdown}
+              textStyle={styles.dropdownText}
+            />
+          ) : null}
+          {loadingState === AsyncPagedLoadingState.REFRESH ? (
+            <LoadingIndicator />
+          ) : (
+            <View style={{ zIndex: -1 }}>
+              {categories.map(category => (
+                <HistoryCategoryCard {...category} />
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </>
     );
   };
 
@@ -259,41 +289,29 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     }
   };
 
-  return (
-    <PageView>
-      {props.userType === UserType.Relative ? (
-        <ChildPicker redirectedChildName={props.route.params.notification?.backupData.params.studentName}>
-          {props.hasPresencesCreateAbsenceRight ? (
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
-              style={styles.declareAbsenceButton}>
-              <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('presences-history-reportabsence')}</SmallBoldText>
-            </TouchableOpacity>
-          ) : null}
-        </ChildPicker>
-      ) : null}
-      {renderPage()}
-    </PageView>
-  );
+  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
 };
 
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
-    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
 
     return {
+      children:
+        userType === UserType.Relative
+          ? getFlattenedChildren(session?.user.children)
+              ?.filter(child => child.classesNames.length)
+              .map(child => ({ id: child.id, name: child.firstName })) ?? []
+          : undefined,
       classes: session?.user.classes,
       hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       history: presencesState.history.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
-      structureId:
-        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
-      studentId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
+      session,
       terms: presencesState.terms.data,
       userId,
       userType,

@@ -13,6 +13,8 @@ const PasswordInput = React.forwardRef<RNTextInput, TextInputProps>((props: Text
       onToggle={() => setShowPassword(!showPassword)}
       secureTextEntry={!showPassword}
       ref={ref}
+      autoCapitalize="none"
+      autoComplete="off"
     />
   );
 });

@@ -1,9 +1,14 @@
+import { ThunkDispatch } from 'redux-thunk';
+
 import { I18n } from '~/app/i18n';
+import { getStore } from '~/app/store';
+import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 
+import { getPublishableBlogListAction } from './actions';
 import { blogRouteNames } from './navigation';
 import { Blog } from './reducer';
 
@@ -66,8 +71,17 @@ export default () =>
     return (
       wk.blog.create && {
         title: I18n.get('blog-resourcename'),
-        action: () => {
-          navigate(blogRouteNames.home);
+        action: async () => {
+          try {
+            const blogsData = await (getStore().dispatch as ThunkDispatch<any, any, any>)(getPublishableBlogListAction());
+            const hasOneBlog = blogsData?.length === 1;
+
+            if (hasOneBlog) {
+              navigate(blogRouteNames.blogCreatePost, { blog: blogsData[0] });
+            } else navigate(blogRouteNames.home, { blogsData });
+          } catch {
+            Toast.showError(I18n.get('blog-rights-error-text'));
+          }
         },
       }
     );

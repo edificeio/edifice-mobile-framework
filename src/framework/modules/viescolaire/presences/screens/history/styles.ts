@@ -6,6 +6,14 @@ import { pageGutterSize } from '~/framework/components/page';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 
 export default StyleSheet.create({
+  absenceActionContainer: {
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  childrenListContainer: {
+    padding: UI_SIZES.spacing.medium,
+    borderBottomWidth: UI_SIZES.border.thin,
+    borderBottomColor: theme.palette.grey.cloudy,
+  },
   declareAbsenceButton: {
     backgroundColor: viescoTheme.palette.presences,
     marginLeft: UI_SIZES.spacing.small,
@@ -34,5 +42,8 @@ export default StyleSheet.create({
   },
   listHeaderContainer: {
     zIndex: 1,
+  },
+  pageContainer: {
+    backgroundColor: theme.palette.grey.white,
   },
 });

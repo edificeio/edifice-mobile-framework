@@ -9,8 +9,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import CourseComponent from '~/framework/modules/viescolaire/presences/components/CourseComponent';
 import { ICourse } from '~/framework/modules/viescolaire/presences/model';
+
+import CallCard from './call-card';
 
 const styles = StyleSheet.create({
   dateText: {
@@ -110,13 +111,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
               paginationStyle={styles.carouselPagination}
               containerStyle={styles.carouselFooter}>
               {courses.map(item => (
-                <CourseComponent
-                  key={item.id}
-                  item={item}
-                  isCourseEditable={!item.startDate.clone().subtract(15, 'minutes').isAfter(moment())}
-                  isCourseNow={moment().isBetween(item.startDate.clone().subtract(15, 'minutes'), item.endDate)}
-                  onPress={() => this.props.onCoursePress(item)}
-                />
+                <CallCard key={item.id} course={item} showStatus onPress={() => this.props.onCoursePress(item)} />
               ))}
             </Swiper>
           ) : (

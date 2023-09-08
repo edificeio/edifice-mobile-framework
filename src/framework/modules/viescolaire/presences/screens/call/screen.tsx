@@ -236,7 +236,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
           )}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={<CallCard course={course} showStatus disabled />}
-          ListFooterComponent={renderFooter}
+          ListFooterComponent={renderFooter()}
           ListHeaderComponentStyle={styles.listHeaderContainer}
         />
         {renderBottomSheet()}
