@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-06 18:28:36",
-  "notes": "feat(presences): MB-1959, timline notifications\nfix(blog) remove background white on skeleton blog list screen\nfeat(presences): MB-1943 close dropdown on tap outside, disable declare event scrollview always bouncing\nfeat(viescolaire): MB-1932 delete old assets, delete memento screen, replace teacher dashboard course component with call card\nfeat(i18n): MB-1971 add presences notiftypes keys\nfix(presences): MB-1938 edit course list placeholder\nfix(dropdown): MB-1911 set border color to graphite when item is selected\nrelease: 1.11.0-alpha.13(1110013)",
-  "version": "1.11.0-alpha.14(1110014)",
+  "last": "2023-09-08 17:13:09",
+  "notes": "feat(i18n): MB-1972, Make i18n OTA available only for NEO && ONE\nchore(resource-picker): rename doRefresh into handleRefresh\nchore: MB-1949, create ressource-picker component\nchore(i18n): Fix OTA and overrides replacement.\nchore(presences): rename course list screen to call list\nfeat(presences): MB-1980 replace child picker and declare absence action custom components with framework components\nrelease: 1.11.0-alpha.14(1110014)",
+  "version": "1.11.0-alpha.15(1110015)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
