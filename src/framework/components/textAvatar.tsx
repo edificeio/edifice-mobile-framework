@@ -66,7 +66,7 @@ export const TextAvatar = ({
             marginHorizontal: isHorizontal ? UI_SIZES.spacing.minor : -UI_SIZES.spacing.minor,
             textAlign: isHorizontal ? 'auto' : 'center',
             marginTop: isHorizontal ? undefined : UI_SIZES.spacing.tiny,
-            flex: 1,
+            flexShrink: 1,
           },
           textStyle,
         ]}>

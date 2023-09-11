@@ -184,9 +184,10 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
   const renderHistory = () => {
     const { userType } = props;
+
     return (
       <>
-        {userType === UserType.Relative && props.children?.length ? (
+        {userType === UserType.Relative && props.children!.length > 1 ? (
           <UserList
             horizontal
             data={props.children!}

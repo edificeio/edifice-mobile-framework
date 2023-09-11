@@ -82,11 +82,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
             <Picture type="NamedSvg" name="ui-clock" width={22} height={22} fill={textColor} />
             <BodyText numberOfLines={1} style={[UI_STYLES.flexShrink1, { color: textColor }]}>
               {appConf.is1d ? classLabel : hoursLabel}
-              {roomLabel ? (
-                <NestedText style={styles.roomText}>
-                  {'  -  ' + I18n.get('presences-calllist-callcard-room', { name: roomLabel })}
-                </NestedText>
-              ) : null}
+              {roomLabel ? <NestedText style={styles.roomText}>{`  -  ${roomLabel}`}</NestedText> : null}
             </BodyText>
           </View>
           <HeadingSText numberOfLines={1} style={{ color: textColor }}>
