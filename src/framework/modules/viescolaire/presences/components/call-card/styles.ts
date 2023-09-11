@@ -23,12 +23,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
   },
-  roomContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    flexShrink: 1,
-    columnGap: UI_SIZES.spacing.minor,
-  },
   roomText: {
     color: theme.ui.text.light,
   },
