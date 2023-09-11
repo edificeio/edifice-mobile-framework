@@ -24,8 +24,8 @@ export default function CallSummary(props: CallSummaryProps) {
   return (
     <View style={styles.container}>
       <HeadingSText>{I18n.get('presences-call-summary-heading')}</HeadingSText>
-      <View style={[styles.rowContainer, styles.eventTypeGap]}>
-        <View style={styles.rowContainer}>
+      <View style={[styles.rowContainer, styles.wrap, styles.eventTypeGap]}>
+        <View style={[styles.rowContainer, styles.presentCountContainer]}>
           <Picture type="NamedSvg" name="presences" width={22} height={22} fill={theme.palette.status.success.regular} />
           <BodyText style={styles.eventTypeText}>{I18n.get('presences-call-summary-present')}</BodyText>
           <BodyBoldText>{`${studentCount - absentCount}/${studentCount}`}</BodyBoldText>

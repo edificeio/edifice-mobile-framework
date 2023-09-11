@@ -7,6 +7,9 @@ export default StyleSheet.create({
   container: {
     rowGap: UI_SIZES.spacing.medium,
   },
+  eventTypeGap: {
+    columnGap: UI_SIZES.spacing.medium,
+  },
   eventTypeText: {
     marginLeft: UI_SIZES.spacing.minor,
     marginRight: UI_SIZES.spacing.tiny,
@@ -14,8 +17,10 @@ export default StyleSheet.create({
   lightText: {
     color: theme.ui.text.light,
   },
+  presentCountContainer: {
+    minWidth: '50%',
+  },
   rowContainer: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -27,7 +32,7 @@ export default StyleSheet.create({
   secondaryEventText: {
     color: theme.palette.status.warning.regular,
   },
-  eventTypeGap: {
-    columnGap: UI_SIZES.spacing.medium,
+  wrap: {
+    flexWrap: 'wrap',
   },
 });

@@ -170,7 +170,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     return (
       <View style={styles.headingContainer}>
         <View style={styles.headingNameContainer}>
-          <SingleAvatar size={36} userId={student.id} status={2} />
+          <SingleAvatar size={48} userId={student.id} status={2} />
           <BodyText numberOfLines={1} style={[styles.headingNameText, { color }]}>
             {student.name}
           </BodyText>

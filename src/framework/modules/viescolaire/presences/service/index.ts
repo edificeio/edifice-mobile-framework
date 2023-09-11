@@ -4,6 +4,8 @@ import querystring from 'querystring';
 import { ISession } from '~/framework/modules/auth/model';
 import {
   EventType,
+  HistoryEventType,
+  IAbsence,
   IChildrenEvents,
   IClassCall,
   ICourse,
@@ -140,12 +142,61 @@ type IBackendEventReason = {
   used: boolean;
 };
 
+type IBackendHistoryAbsences = {
+  all: {
+    id: number;
+    start_at: string;
+    end_at: string;
+    structure_id: string;
+    description: string;
+    treated_at: string | null;
+    validator_id: string | null;
+    attachment_id: string | null;
+    created_at: string;
+    parent_id: string;
+    metadata: string | null;
+    student: {
+      id: string;
+      name: string;
+      lastName: string;
+      firstName: string;
+      className: string;
+      structure_id: string;
+    };
+  }[];
+  page_count: number;
+};
+
 type IBackendHistoryEvent = {
+  id: number;
   start_date: string;
   end_date: string;
+  comment: string;
+  counsellor_input: boolean;
+  student_id: string;
+  register_id: number;
   type_id: number;
-  recovery_method: string;
-  period: string;
+  reason_id: number | null;
+  owner: string;
+  created: string;
+  counsellor_regularisation: boolean;
+  followed: boolean;
+  massmailed: boolean;
+  display_start_date: string;
+  display_end_date: string;
+  reason: {
+    id: number;
+    structure_id: string;
+    label: string;
+    proving: boolean;
+    comment: string;
+    default: boolean;
+    group: boolean;
+    hidden: boolean;
+    absence_compliance: boolean;
+    created: string;
+    reason_type_id: number;
+  } | null;
 };
 
 type IBackendHistoryEvents = {
@@ -168,6 +219,9 @@ type IBackendHistoryEvents = {
 
 type IBackendHistoryForgottenNotebooks = {
   all: {
+    id: number;
+    student_id: string;
+    structure_id: string;
     date: string;
   }[];
   totals: number;
@@ -176,24 +230,78 @@ type IBackendHistoryForgottenNotebooks = {
 type IBackendHistoryIncidents = {
   all: {
     INCIDENT: {
+      id: number;
+      owner: string;
+      structure_id: string;
       date: string;
+      selected_hour: boolean;
+      description: string;
+      created: string;
+      processed: boolean;
+      place_id: number;
+      partner_id: number;
+      type_id: number;
+      seriousness_id: number;
+      place: string;
+      incident_type: string;
+      student_id: string;
+      protagonist_type: string;
+      protagonist_type_id: number;
       protagonist: {
+        id: number;
+        structure_id: string;
         label: string;
+        hidden: boolean;
+        created: string;
+        used: boolean;
       };
       type: {
+        id: number;
+        structure_id: string;
         label: string;
+        hidden: boolean;
+        created: string;
+        used: boolean;
       };
     }[];
     PUNISHMENT: {
-      created_at: string;
+      _id: string;
+      type_id: number;
+      owner_id: string;
+      description: string;
+      student_id: string;
+      structure_id: string;
+      processed: boolean;
+      incident_id: number | null;
       fields: {
         start_at: string;
         end_at: string;
-        delay_at: string;
+      };
+      id: string;
+      created_at: string;
+      updated_at: string | null;
+      owner: {
+        id: string;
+        firstName: string;
+        lastName: string;
+        displayName: string;
+      };
+      student: {
+        id: string;
+        name: string;
+        lastName: string;
+        firstName: string;
+        className: string;
+        structure_id: string;
       };
       type: {
+        id: number;
+        structure_id: string;
         label: string;
+        type: string;
         punishment_category_id: number;
+        hidden: boolean;
+        created: string;
       };
     }[];
   };
@@ -304,11 +412,25 @@ const eventReasonAdapter = (data: IBackendEventReason): IEventReason => {
   };
 };
 
-const historyEventAdapter = (data: IBackendHistoryEvent): IHistoryEvent => {
+const historyAbsencesAdapter = (data: IBackendHistoryAbsences): IAbsence[] => {
+  return data.all.map(absence => ({
+    description: absence.description,
+    endDate: moment(absence.end_at),
+    id: absence.id.toString(),
+    startDate: moment(absence.start_at),
+    studentFirstName: absence.student.firstName,
+    type: HistoryEventType.STATEMENT_ABSENCE,
+  }));
+};
+
+const historyEventAdapter = (data: IBackendHistoryEvent, type: HistoryEventType): IHistoryEvent => {
   return {
+    comment: data.comment,
     endDate: moment(data.end_date),
-    period: data.period,
+    id: data.id.toString(),
+    reasonLabel: data.reason?.label,
     startDate: moment(data.start_date),
+    type,
     typeId: data.type_id,
   };
 };
@@ -316,23 +438,23 @@ const historyEventAdapter = (data: IBackendHistoryEvent): IHistoryEvent => {
 const historyEventsAdapter = (data: IBackendHistoryEvents) => {
   return {
     DEPARTURE: {
-      events: data.all.DEPARTURE.map(historyEventAdapter),
+      events: data.all.DEPARTURE.map(event => historyEventAdapter(event, HistoryEventType.DEPARTURE)),
       total: data.totals.DEPARTURE,
     },
     LATENESS: {
-      events: data.all.LATENESS.map(historyEventAdapter),
+      events: data.all.LATENESS.map(event => historyEventAdapter(event, HistoryEventType.LATENESS)),
       total: data.totals.LATENESS,
     },
     NO_REASON: {
-      events: data.all.NO_REASON.map(historyEventAdapter),
+      events: data.all.NO_REASON.map(event => historyEventAdapter(event, HistoryEventType.NO_REASON)),
       total: data.totals.NO_REASON,
     },
     REGULARIZED: {
-      events: data.all.REGULARIZED.map(historyEventAdapter),
+      events: data.all.REGULARIZED.map(event => historyEventAdapter(event, HistoryEventType.REGULARIZED)),
       total: data.totals.REGULARIZED,
     },
     UNREGULARIZED: {
-      events: data.all.UNREGULARIZED.map(historyEventAdapter),
+      events: data.all.UNREGULARIZED.map(event => historyEventAdapter(event, HistoryEventType.UNREGULARIZED)),
       total: data.totals.UNREGULARIZED,
     },
     recoveryMethod: data.recovery_method,
@@ -343,6 +465,8 @@ const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebook
   return {
     events: data.all.map(event => ({
       date: moment(event.date),
+      id: event.id.toString(),
+      type: HistoryEventType.FORGOTTEN_NOTEBOOK,
     })),
     total: data.totals,
   };
@@ -353,19 +477,23 @@ const historyIncidentsAdapter = (data: IBackendHistoryIncidents) => {
     INCIDENT: {
       events: data.all.INCIDENT.map(i => ({
         date: moment(i.date),
+        description: i.description,
+        id: i.id.toString(),
         protagonist: i.protagonist,
-        label: i.type.label,
+        type: HistoryEventType.INCIDENT,
+        typeLabel: i.type.label,
       })),
       total: data.totals.INCIDENT,
     },
     PUNISHMENT: {
       events: data.all.PUNISHMENT.map(p => ({
         createdAt: moment(p.created_at),
-        delayAt: moment(p.fields.delay_at),
         endDate: moment(p.fields.end_at),
-        label: p.type.label,
+        id: p.id,
         punishmentCategoryId: p.type.punishment_category_id,
         startDate: moment(p.fields.start_at),
+        type: HistoryEventType.PUNISHMENT,
+        typeLabel: p.type.label,
       })),
       total: data.totals.PUNISHMENT,
     },
@@ -411,6 +539,13 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
 };
 
 export const presencesService = {
+  absences: {
+    get: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/presences/statements/absences?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&student_id=${studentId}`;
+      const absences = (await fetchJSONWithCache(api)) as IBackendHistoryAbsences;
+      return historyAbsencesAdapter(absences);
+    },
+  },
   absence: {
     create: async (
       session: ISession,

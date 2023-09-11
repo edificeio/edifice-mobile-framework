@@ -2,46 +2,36 @@ import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { pageGutterSize } from '~/framework/components/page';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 
 export default StyleSheet.create({
   absenceActionContainer: {
-    marginTop: UI_SIZES.spacing.medium,
+    marginBottom: UI_SIZES.spacing.big,
   },
   childrenListContainer: {
     padding: UI_SIZES.spacing.medium,
     borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
   },
-  declareAbsenceButton: {
-    backgroundColor: viescoTheme.palette.presences,
-    marginLeft: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.tiny,
-    justifyContent: 'center',
-    alignSelf: 'stretch',
-    borderRadius: 5,
+  detailsActionContainer: {
+    alignSelf: 'flex-end',
   },
-  declareAbscenceText: {
-    color: theme.ui.text.inverse,
+  emptyScreenContainer: {
+    paddingTop: 0,
+    backgroundColor: theme.palette.grey.white,
   },
-  dropdown: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
+  emptyScreenTitle: {
+    marginTop: UI_SIZES.spacing.small,
   },
-  dropdownMargin: {
-    marginBottom: pageGutterSize,
-  },
-  dropdownText: {
-    color: theme.ui.text.regular,
+  informationText: {
+    marginTop: UI_SIZES.spacing.tiny,
+    marginBottom: UI_SIZES.spacing.minor,
+    color: theme.ui.text.light,
   },
   listContentContainer: {
-    flexGrow: 1,
-    paddingHorizontal: pageGutterSize,
-    paddingTop: pageGutterSize,
-  },
-  listHeaderContainer: {
-    zIndex: 1,
+    rowGap: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+    paddingBottom: UI_SIZES.spacing.big,
   },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,

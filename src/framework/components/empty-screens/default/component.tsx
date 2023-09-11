@@ -5,7 +5,7 @@
  * Shows a large image (svg) with a title, an optional paragraph and an optional action button.
  */
 import * as React from 'react';
-import { ColorValue, View, ViewStyle } from 'react-native';
+import { ColorValue, TextStyle, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -25,6 +25,7 @@ const EmptyScreen = ({
   buttonAction,
   buttonIcon,
   customStyle,
+  customTitleStyle,
   svgFillColor,
   textColor,
 }: {
@@ -36,6 +37,7 @@ const EmptyScreen = ({
   buttonAction?: () => void;
   buttonIcon?: string;
   customStyle?: ViewStyle;
+  customTitleStyle?: TextStyle;
   svgFillColor?: ColorValue;
   textColor?: ColorValue;
 }) => {
@@ -53,7 +55,9 @@ const EmptyScreen = ({
       ]}>
       <NamedSVG style={styles.icon} name={svgImage} width={imageWidth} height={imageHeight} fill={svgFillColor} />
       {title ? (
-        <HeadingSText numberOfLines={2} style={[styles.title, { color: textColor ?? theme.palette.primary.regular }]}>
+        <HeadingSText
+          numberOfLines={2}
+          style={[styles.title, { color: textColor ?? theme.palette.primary.regular }, customTitleStyle]}>
           {title}
         </HeadingSText>
       ) : null}

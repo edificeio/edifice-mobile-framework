@@ -229,7 +229,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
                 customStyle={styles.emptyScreenContainer}
               />
             }
-            contentContainerStyle={props.courses.length ? styles.listContentContainer : undefined}
+            contentContainerStyle={props.courses.length ? styles.listContentContainer : UI_STYLES.flexGrow1}
           />
         )}
         {renderBottomSheet()}
