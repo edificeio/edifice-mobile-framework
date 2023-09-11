@@ -1,8 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -10,28 +9,34 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import UserList from '~/framework/components/UserList';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
+import { fetchPresencesAbsencesAction, fetchPresencesHistoryAction } from '~/framework/modules/viescolaire/presences/actions';
 import {
-  fetchPresencesHistoryAction,
-  fetchPresencesSchoolYearAction,
-  fetchPresencesTermsAction,
-  fetchPresencesUserChildrenAction,
-} from '~/framework/modules/viescolaire/presences/actions';
+  AbsenceCard,
+  DepartureCard,
+  ForgottenNotebookCard,
+  IncidentCard,
+  LatenessCard,
+  PunishmentCard,
+  StatementAbsenceCard,
+} from '~/framework/modules/viescolaire/presences/components/history-event-card/variants';
 import {
-  HistoryCategoryCard,
-  renderDeparture,
-  renderForgottenNotebook,
-  renderIncident,
-  renderLateness,
-  renderPunishment,
-} from '~/framework/modules/viescolaire/presences/components/HistoryCategoryCard';
+  HistoryEventType,
+  IAbsence,
+  IForgottenNotebook,
+  IHistoryEvent,
+  IIncident,
+  IPunishment,
+  compareEvents,
+} from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
@@ -55,8 +60,6 @@ export const computeNavBar = ({
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
-  const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
-  const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -65,37 +68,15 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
   const fetchEvents = async () => {
     try {
-      const { classes, session, userId, userType } = props;
+      const { session, userId, userType } = props;
       const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
       const studentId = userType === UserType.Student ? userId : selectedChildId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
-      let groupId = classes?.[0];
-      if (userType === UserType.Relative) {
-        const children = await props.tryFetchUserChildren(userId);
-        groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
-      }
-      const terms = await props.tryFetchTerms(structureId, groupId ?? '');
-      const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
-      if (currentTerm && selectedTerm === 'year') setSelectedTerm(currentTerm.order.toString());
-      const schoolYear = await props.tryFetchSchoolYear(structureId);
-      const startDate = currentTerm?.startDate ?? schoolYear.startDate;
-      const endDate = currentTerm?.endDate ?? schoolYear.endDate;
-      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
-    } catch {
-      throw new Error();
-    }
-  };
-
-  const refreshEvents = async () => {
-    try {
-      const { schoolYear, structureId, studentId, terms } = props;
-
-      if (!schoolYear || !structureId || !studentId) throw new Error();
-      const term = selectedTerm !== 'year' ? terms.find(t => t.order.toString() === selectedTerm) : undefined;
-      const startDate = term?.startDate ?? schoolYear.startDate;
-      const endDate = term?.endDate ?? schoolYear.endDate;
-      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
+      const startDate = moment().subtract(1, 'month').format('YYYY-MM-DD');
+      const endDate = moment().format('YYYY-MM-DD');
+      await props.tryFetchAbsences(studentId, structureId, startDate, endDate);
+      await props.tryFetchHistory(studentId, structureId, startDate, endDate);
     } catch {
       throw new Error();
     }
@@ -117,7 +98,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
   const refresh = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH);
-    refreshEvents()
+    fetchEvents()
       .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
       .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
   };
@@ -138,15 +119,10 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
-  /*React.useEffect(() => {
-    if (loadingRef.current === AsyncPagedLoadingState.DONE) init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.studentId]);*/
-
   React.useEffect(() => {
-    if (loadingState === AsyncPagedLoadingState.DONE) refresh();
+    if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTerm]);
+  }, [selectedChildId]);
 
   const renderError = () => {
     return (
@@ -157,9 +133,60 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   };
 
   const renderHeader = () => {
+    const { userType } = props;
+
     return (
       <>
-        {props.children?.length ? (
+        {userType === UserType.Relative && props.hasPresencesCreateAbsenceRight ? (
+          <PrimaryButton
+            text={I18n.get('presences-history-reportabsence')}
+            iconLeft="ui-plus"
+            action={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
+            style={styles.absenceActionContainer}
+          />
+        ) : null}
+        <HeadingXSText>{I18n.get('presences-history-heading')}</HeadingXSText>
+        {props.events.length ? (
+          <SmallText style={styles.informationText}>
+            {I18n.get(
+              userType === UserType.Relative ? 'presences-history-description-relative' : 'presences-history-description-student',
+            )}
+          </SmallText>
+        ) : null}
+      </>
+    );
+  };
+
+  const renderHistoryEventListItem = ({
+    item,
+  }: {
+    item: IAbsence | IHistoryEvent | IIncident | IPunishment | IForgottenNotebook;
+  }) => {
+    switch (item.type) {
+      case HistoryEventType.NO_REASON:
+      case HistoryEventType.REGULARIZED:
+      case HistoryEventType.UNREGULARIZED:
+        return <AbsenceCard event={item as IHistoryEvent} />;
+      case HistoryEventType.DEPARTURE:
+        return <DepartureCard event={item as IHistoryEvent} />;
+      case HistoryEventType.FORGOTTEN_NOTEBOOK:
+        return <ForgottenNotebookCard event={item as IForgottenNotebook} />;
+      case HistoryEventType.INCIDENT:
+        return <IncidentCard event={item as IIncident} />;
+      case HistoryEventType.LATENESS:
+        return <LatenessCard event={item as IHistoryEvent} />;
+      case HistoryEventType.PUNISHMENT:
+        return <PunishmentCard event={item as IPunishment} />;
+      case HistoryEventType.STATEMENT_ABSENCE:
+        return <StatementAbsenceCard event={item as IAbsence} userType={props.userType} />;
+    }
+  };
+
+  const renderHistory = () => {
+    const { userType } = props;
+    return (
+      <>
+        {userType === UserType.Relative && props.children?.length ? (
           <UserList
             horizontal
             data={props.children!}
@@ -168,107 +195,35 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             style={styles.childrenListContainer}
           />
         ) : null}
-        {props.hasPresencesCreateAbsenceRight ? (
-          <PrimaryButton
-            text={I18n.get('presences-history-reportabsence')}
-            iconLeft="ui-plus"
-            action={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
-            style={styles.absenceActionContainer}
-          />
-        ) : null}
-      </>
-    );
-  };
-
-  const renderHistory = () => {
-    const { history, terms } = props;
-    const dropdownTerms = [
-      { label: I18n.get('presences-history-year'), value: 'year' },
-      ...terms.map(term => ({
-        label: `${I18n.get('presences-history-trimester')} ${term.order}`,
-        value: term.order.toString(),
-      })),
-    ];
-    const categories =
-      loadingState !== AsyncPagedLoadingState.REFRESH
-        ? [
-            {
-              title: I18n.get('presences-history-category-noreason'),
-              color: viescoTheme.palette.presencesEvents.noReason,
-              ...history.NO_REASON,
-              recoveryMethod: history.recoveryMethod,
-            },
-            {
-              title: I18n.get('presences-history-category-unregularized'),
-              color: viescoTheme.palette.presencesEvents.unregularized,
-              ...history.UNREGULARIZED,
-              recoveryMethod: history.recoveryMethod,
-            },
-            {
-              title: I18n.get('presences-history-category-regularized'),
-              color: viescoTheme.palette.presencesEvents.regularized,
-              ...history.REGULARIZED,
-              recoveryMethod: history.recoveryMethod,
-            },
-            {
-              title: I18n.get('presences-history-category-latenesses'),
-              color: viescoTheme.palette.presencesEvents.lateness,
-              ...history.LATENESS,
-              renderEvent: renderLateness,
-            },
-            {
-              title: I18n.get('presences-history-category-departures'),
-              color: viescoTheme.palette.presencesEvents.departure,
-              ...history.DEPARTURE,
-              renderEvent: renderDeparture,
-            },
-            {
-              title: I18n.get('presences-history-category-forgottennotebooks'),
-              color: viescoTheme.palette.presencesEvents.forgotNotebook,
-              ...history.FORGOTTEN_NOTEBOOK,
-              renderEvent: renderForgottenNotebook,
-            },
-            {
-              title: I18n.get('presences-history-category-incidents'),
-              color: viescoTheme.palette.presencesEvents.incident,
-              ...history.INCIDENT,
-              renderEvent: renderIncident,
-            },
-            {
-              title: I18n.get('presences-history-category-punishments'),
-              color: viescoTheme.palette.presences,
-              ...history.PUNISHMENT,
-              renderEvent: renderPunishment,
-            },
-          ]
-        : [];
-
-    return (
-      <>
-        {props.userType === UserType.Relative ? renderHeader() : null}
-        <ScrollView contentContainerStyle={styles.listContentContainer}>
-          {dropdownTerms.length > 1 ? (
-            <DropDownPicker
-              open={isDropdownOpen}
-              value={selectedTerm}
-              items={dropdownTerms}
-              setOpen={setDropdownOpen}
-              setValue={setSelectedTerm}
-              style={[styles.dropdown, styles.dropdownMargin]}
-              dropDownContainerStyle={styles.dropdown}
-              textStyle={styles.dropdownText}
+        <FlatList
+          data={props.events}
+          keyExtractor={item => item.type + item.id}
+          renderItem={renderHistoryEventListItem}
+          ListHeaderComponent={renderHeader()}
+          ListFooterComponent={
+            <TertiaryButton
+              text={I18n.get('presences-history-bottomaction')}
+              iconRight="ui-arrowRight"
+              action={() => props.navigation.navigate(presencesRouteNames.historyDetails)}
+              style={styles.detailsActionContainer}
             />
-          ) : null}
-          {loadingState === AsyncPagedLoadingState.REFRESH ? (
-            <LoadingIndicator />
-          ) : (
-            <View style={{ zIndex: -1 }}>
-              {categories.map(category => (
-                <HistoryCategoryCard {...category} />
-              ))}
-            </View>
-          )}
-        </ScrollView>
+          }
+          ListEmptyComponent={
+            <EmptyScreen
+              svgImage="empty-zimbra"
+              title={I18n.get('presences-history-emptyscreen-title')}
+              text={I18n.get(
+                userType === UserType.Relative
+                  ? 'presences-history-emptyscreen-text-relative'
+                  : 'presences-history-emptyscreen-text-student',
+              )}
+              customStyle={styles.emptyScreenContainer}
+              customTitleStyle={styles.emptyScreenTitle}
+            />
+          }
+          alwaysBounceVertical={false}
+          contentContainerStyle={styles.listContentContainer}
+        />
       </>
     );
   };
@@ -298,6 +253,7 @@ export default connect(
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
+    const history = presencesState.history.data;
 
     return {
       children:
@@ -306,13 +262,21 @@ export default connect(
               ?.filter(child => child.classesNames.length)
               .map(child => ({ id: child.id, name: child.firstName })) ?? []
           : undefined,
-      classes: session?.user.classes,
+      events: [
+        ...presencesState.absences.data,
+        ...history.DEPARTURE.events,
+        ...history.FORGOTTEN_NOTEBOOK.events,
+        ...history.INCIDENT.events,
+        ...history.LATENESS.events,
+        ...history.NO_REASON.events,
+        ...history.PUNISHMENT.events,
+        ...history.REGULARIZED.events,
+        ...history.UNREGULARIZED.events,
+      ].sort(compareEvents),
       hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       history: presencesState.history.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
-      schoolYear: presencesState.schoolYear.data,
       session,
-      terms: presencesState.terms.data,
       userId,
       userType,
     };
@@ -320,10 +284,8 @@ export default connect(
   dispatch =>
     bindActionCreators<PresencesHistoryScreenDispatchProps>(
       {
+        tryFetchAbsences: tryAction(fetchPresencesAbsencesAction),
         tryFetchHistory: tryAction(fetchPresencesHistoryAction),
-        tryFetchSchoolYear: tryAction(fetchPresencesSchoolYearAction),
-        tryFetchTerms: tryAction(fetchPresencesTermsAction),
-        tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
       dispatch,
     ),

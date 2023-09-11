@@ -7,6 +7,7 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import {
+  IAbsence,
   IChildrenEvents,
   IClassCall,
   ICourse,
@@ -17,6 +18,22 @@ import {
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+
+export const presencesAbsencesActionsCreators = createAsyncActionCreators(actionTypes.absences);
+export const fetchPresencesAbsencesAction =
+  (studentId: string, structureId: string, startDate: string, endDate: string): ThunkAction<Promise<IAbsence[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesAbsencesActionsCreators.request());
+      const absences = await presencesService.absences.get(session, studentId, structureId, startDate, endDate);
+      dispatch(presencesAbsencesActionsCreators.receipt(absences));
+      return absences;
+    } catch (e) {
+      dispatch(presencesAbsencesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 /**
  * Fetch children events.

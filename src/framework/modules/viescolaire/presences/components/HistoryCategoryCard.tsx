@@ -171,10 +171,7 @@ export const renderPunishment = (event: IPunishment) => {
     switch (punishment.punishmentCategoryId) {
       case 1: {
         //DUTY
-        let dutyDate: string = createdDate;
-        if (punishment.delayAt) {
-          dutyDate = punishment.delayAt.format('DD/MM/YY');
-        }
+        const dutyDate: string = createdDate;
         return I18n.get('presences-history-categorycard-for', { date: dutyDate });
       }
       case 2: {

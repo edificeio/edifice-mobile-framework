@@ -2,14 +2,15 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { IUserListItem } from '~/framework/components/UserList';
 import type { ISession } from '~/framework/modules/auth/model';
-import type { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
+import type { UserType } from '~/framework/modules/auth/service';
+import type { fetchPresencesAbsencesAction, fetchPresencesHistoryAction } from '~/framework/modules/viescolaire/presences/actions';
 import type {
-  fetchPresencesHistoryAction,
-  fetchPresencesSchoolYearAction,
-  fetchPresencesTermsAction,
-  fetchPresencesUserChildrenAction,
-} from '~/framework/modules/viescolaire/presences/actions';
-import type { IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+  IAbsence,
+  IForgottenNotebook,
+  IHistory,
+  IHistoryEvent,
+  IPunishment,
+} from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import type { IPresencesNotification } from '~/framework/modules/viescolaire/presences/notif-handler';
 import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -23,22 +24,17 @@ export interface PresencesHistoryScreenNavParams {
 }
 
 export interface PresencesHistoryScreenStoreProps {
-  history: IHistory;
-  schoolYear: ISchoolYear | undefined;
-  terms: ITerm[];
+  events: (IAbsence | IHistoryEvent | IPunishment | IForgottenNotebook)[];
   children?: IUserListItem[];
-  classes?: string[];
   hasPresencesCreateAbsenceRight?: boolean;
   session?: ISession;
   userId?: string;
-  userType?: string;
+  userType?: UserType;
 }
 
 export interface PresencesHistoryScreenDispatchProps {
+  tryFetchAbsences: (...args: Parameters<typeof fetchPresencesAbsencesAction>) => Promise<IAbsence[]>;
   tryFetchHistory: (...args: Parameters<typeof fetchPresencesHistoryAction>) => Promise<IHistory>;
-  tryFetchSchoolYear: (...args: Parameters<typeof fetchPresencesSchoolYearAction>) => Promise<ISchoolYear>;
-  tryFetchTerms: (...args: Parameters<typeof fetchPresencesTermsAction>) => Promise<ITerm[]>;
-  tryFetchUserChildren: (...args: Parameters<typeof fetchPresencesUserChildrenAction>) => Promise<IUserChild[]>;
 }
 
 export type PresencesHistoryScreenPrivateProps = PresencesHistoryScreenProps &
