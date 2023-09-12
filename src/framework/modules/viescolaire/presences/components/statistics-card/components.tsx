@@ -41,6 +41,11 @@ export default function StatisticsCard(props: StatisticsCardProps) {
   const renderEvent = (color: ColorValue, startDate: Moment, endDate: Moment) => {
     const isSingleDay = startDate.isSame(endDate, 'day');
     const format = moment().isSame(startDate, 'year') ? 'D MMMM' : 'D MMM YYYY';
+    const time = isSingleDay
+      ? appConf.is1d
+        ? I18n.get(startDate.get('hour') < 12 ? 'presences-statistics-card-morning' : 'presences-statistics-card-afternoon')
+        : startDate.format('H[h]mm') + ' - ' + endDate.format('H[h]mm')
+      : null;
 
     return (
       <View style={styles.eventContainer}>
@@ -51,11 +56,7 @@ export default function StatisticsCard(props: StatisticsCardProps) {
               ? startDate.format(format)
               : I18n.get('presences-statistics-card-dates', { start: startDate.format('D'), end: endDate.format(format) })}
           </NestedBoldText>
-          {isSingleDay
-            ? appConf.is1d
-              ? I18n.get(startDate.get('hour') < 12 ? 'presences-statistics-card-morning' : 'presences-statistics-card-afternoon')
-              : ` (${startDate.format('H[h]mm')} - ${endDate.format('H[h]mm')})`
-            : null}
+          {time ? ` (${time})` : null}
         </SmallText>
       </View>
     );
