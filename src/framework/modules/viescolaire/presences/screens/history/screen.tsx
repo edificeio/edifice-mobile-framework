@@ -60,7 +60,6 @@ export const computeNavBar = ({
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
-
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -205,7 +204,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             <TertiaryButton
               text={I18n.get('presences-history-bottomaction')}
               iconRight="ui-arrowRight"
-              action={() => props.navigation.navigate(presencesRouteNames.historyDetails)}
+              action={() => props.navigation.navigate(presencesRouteNames.statistics, { studentId: selectedChildId })}
               style={styles.detailsActionContainer}
             />
           }

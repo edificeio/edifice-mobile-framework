@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Keyboard, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -72,6 +72,7 @@ export interface BlogCreatePostScreenState {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
+    marginBottom: Platform.select({ ios: -UI_SIZES.screen.bottomInset, default: 0 }),
   },
   scrollView: {
     flexGrow: 1,

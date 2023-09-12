@@ -10,9 +10,7 @@ import type { HistoryEventCardProps, HistoryEventCardStyle } from './types';
 
 export default class HistoryEventCard extends React.PureComponent<HistoryEventCardProps> {
   private getStyle(): HistoryEventCardStyle {
-    const { event } = this.props;
-
-    switch (event.type) {
+    switch (this.props.type) {
       case HistoryEventType.DEPARTURE:
         return {
           backgroundColor: theme.palette.complementary.pink.pale,
@@ -78,7 +76,7 @@ export default class HistoryEventCard extends React.PureComponent<HistoryEventCa
         <View style={[styles.iconContainer, { backgroundColor }]}>
           <Picture type="NamedSvg" name={iconName} width={24} height={24} fill={iconColor} />
         </View>
-        <View style={styles.contentContainer}>{this.props.children}</View>
+        <View style={[styles.contentContainer, this.props.style]}>{this.props.children}</View>
       </View>
     );
   }

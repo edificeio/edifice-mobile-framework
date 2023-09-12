@@ -51,7 +51,7 @@ export const AbsenceCard = ({ event }: { event: IHistoryEvent }) => {
   };
 
   return (
-    <HistoryEventCard event={event}>
+    <HistoryEventCard type={event.type}>
       <BodyText>
         {getEventLabel()}
         {event.type !== HistoryEventType.REGULARIZED
@@ -72,7 +72,7 @@ export const DepartureCard = ({ event }: { event: IHistoryEvent }) => {
   const duration = event.endDate.diff(event.startDate, 'minutes');
 
   return (
-    <HistoryEventCard event={event}>
+    <HistoryEventCard type={event.type}>
       <BodyText>
         {I18n.get('presences-history-eventcard-departure-start')}
         <NestedBoldText>{I18n.get('presences-history-eventcard-departure-duration', { duration })}</NestedBoldText>
@@ -95,7 +95,7 @@ export const DepartureCard = ({ event }: { event: IHistoryEvent }) => {
 
 export const ForgottenNotebookCard = ({ event }: { event: IForgottenNotebook }) => {
   return (
-    <HistoryEventCard event={event}>
+    <HistoryEventCard type={event.type}>
       <BodyText>
         {I18n.get('presences-history-eventcard-forgottennotebook')}
         <NestedBoldText>{event.date.format('D MMMM')}</NestedBoldText>
@@ -106,7 +106,7 @@ export const ForgottenNotebookCard = ({ event }: { event: IForgottenNotebook }) 
 
 export const IncidentCard = ({ event }: { event: IIncident }) => {
   return (
-    <HistoryEventCard event={event}>
+    <HistoryEventCard type={event.type}>
       <BodyText>
         {I18n.get('presences-history-eventcard-incident', { level: event.description })}
         <NestedBoldText>{event.date.format('D MMMM (H[h]mm)')}</NestedBoldText>
@@ -124,7 +124,7 @@ export const LatenessCard = ({ event }: { event: IHistoryEvent }) => {
   const duration = event.endDate.diff(event.startDate, 'minutes');
 
   return (
-    <HistoryEventCard event={event}>
+    <HistoryEventCard type={event.type}>
       <BodyText>
         {I18n.get('presences-history-eventcard-lateness-start')}
         <NestedBoldText>{I18n.get('presences-history-eventcard-lateness-duration', { duration })}</NestedBoldText>
@@ -142,7 +142,7 @@ export const LatenessCard = ({ event }: { event: IHistoryEvent }) => {
 
 export const PunishmentCard = ({ event }: { event: IPunishment }) => {
   return (
-    <HistoryEventCard event={event}>
+    <HistoryEventCard type={event.type}>
       <BodyText>
         {I18n.get('presences-history-eventcard-punishment')}
         <NestedBoldText>{event.createdAt.format('D MMMM (H[h]mm)')}</NestedBoldText>
@@ -160,7 +160,7 @@ export const StatementAbsenceCard = ({ event, userType }: { event: IAbsence; use
   const isSingleDay = event.endDate.isSame(event.startDate, 'day');
 
   return (
-    <HistoryEventCard event={event}>
+    <HistoryEventCard type={event.type}>
       <BodyText>
         {userType === UserType.Relative
           ? I18n.get('presences-history-eventcard-statementabsence-relative', { childName: event.studentFirstName })
