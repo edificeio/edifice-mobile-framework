@@ -6,7 +6,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 export default StyleSheet.create({
   container: {
     flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.minor,
     backgroundColor: theme.ui.background.card,
     borderWidth: UI_SIZES.border.thin,
     borderColor: theme.palette.grey.cloudy,
@@ -15,8 +14,7 @@ export default StyleSheet.create({
   },
   contentContainer: {
     flexShrink: 1,
-    paddingRight: UI_SIZES.spacing.minor,
-    paddingVertical: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.minor,
   },
   iconContainer: {
     justifyContent: 'center',

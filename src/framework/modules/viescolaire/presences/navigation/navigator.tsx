@@ -14,9 +14,9 @@ import PresencesDeclareEventScreen, {
   computeNavBar as declareEventNavBar,
 } from '~/framework/modules/viescolaire/presences/screens/declare-event';
 import PresencesHistoryScreen, { computeNavBar as historyNavBar } from '~/framework/modules/viescolaire/presences/screens/history';
-import PresencesHistoryDetailsScreen, {
-  computeNavBar as historyDetailsNavBar,
-} from '~/framework/modules/viescolaire/presences/screens/history-details';
+import PresencesStatisticsScreen, {
+  computeNavBar as statisticsNavBar,
+} from '~/framework/modules/viescolaire/presences/screens/statistics';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -68,13 +68,15 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={historyNavBar}
           initialParams={{}}
         />,
-        <Stack.Screen
-          key={presencesRouteNames.historyDetails}
-          name={presencesRouteNames.historyDetails}
-          component={PresencesHistoryDetailsScreen}
-          options={historyDetailsNavBar}
-          initialParams={{}}
-        />,
+        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+          <Stack.Screen
+            key={presencesRouteNames.statistics}
+            name={presencesRouteNames.statistics}
+            component={PresencesStatisticsScreen}
+            options={statisticsNavBar}
+            initialParams={{}}
+          />
+        </Stack.Group>,
       );
       if (session?.user.type === UserType.Relative) {
         screens.push(
@@ -92,4 +94,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     return <>{screens}</>;
   });
 
-setModalModeForRoutes([presencesRouteNames.declareEvent]);
+setModalModeForRoutes([presencesRouteNames.declareEvent, presencesRouteNames.statistics]);

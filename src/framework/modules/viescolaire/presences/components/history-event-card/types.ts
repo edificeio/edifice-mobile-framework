@@ -1,16 +1,11 @@
 import * as React from 'react';
-import type { ColorValue } from 'react-native';
+import type { ColorValue, ViewStyle } from 'react-native';
 
-import type {
-  IAbsence,
-  IForgottenNotebook,
-  IHistoryEvent,
-  IIncident,
-  IPunishment,
-} from '~/framework/modules/viescolaire/presences/model';
+import type { HistoryEventType } from '~/framework/modules/viescolaire/presences/model';
 
 export interface HistoryEventCardProps extends React.PropsWithChildren {
-  event: IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment;
+  type: HistoryEventType;
+  style?: ViewStyle;
 }
 
 export interface HistoryEventCardStyle {
