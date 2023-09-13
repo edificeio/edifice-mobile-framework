@@ -140,7 +140,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
           <PrimaryButton
             text={I18n.get('presences-history-reportabsence')}
             iconLeft="ui-plus"
-            action={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
+            action={() => props.navigation.navigate(presencesRouteNames.declareAbsence, { childId: selectedChildId })}
             style={styles.absenceActionContainer}
           />
         ) : null}
