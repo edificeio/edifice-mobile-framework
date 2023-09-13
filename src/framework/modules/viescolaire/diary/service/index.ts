@@ -69,7 +69,7 @@ type IBackendHomework = {
   color: string;
   description: string;
   is_published: boolean;
-  session_id: number;
+  session_id: number | null;
   due_date: string; // YYYY-MM-DD
   type_id: number;
   workload: number;
@@ -146,7 +146,7 @@ const homeworkAdapter = (data: IBackendHomework): IHomework => {
     description: data.description,
     created_date: moment(data.created),
     audience: data.audience,
-    session_id: data.session_id.toString(),
+    session_id: data.session_id?.toString() ?? null,
   };
 };
 
