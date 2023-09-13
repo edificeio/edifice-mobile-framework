@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-05 18:59:12",
-  "notes": "fix(zimbra): MB-1968 prevent crash due to body images without source\nrelease: 1.10.3-rc.1(1100301)",
-  "version": "1.10.3-rc.2(1100302)",
+  "last": "2023-09-13 19:14:17",
+  "notes": "fix(diary): AMVS-381 handle homeworks with null session_id\nrelease: 1.10.4(1100400)\nrelease: 1.10.3-rc.2(1100302)",
+  "version": "1.10.4-rc.1(1100401)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
