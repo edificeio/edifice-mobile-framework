@@ -3,17 +3,17 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
 import { HeadingXSText, SmallBoldText } from '~/framework/components/text';
+import { colorType } from '~/framework/modules/user/screens/home';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
 import styles from './styles';
 import { IUserCardProps } from './types';
-import { colorType } from '~/framework/modules/user/screens/home';
-import TertiaryButton from '~/framework/components/buttons/tertiary';
 
 export const UserCard = ({
   id,

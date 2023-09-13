@@ -13,6 +13,7 @@ import usePreventBack from '~/framework/hooks/usePreventBack';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { UserEditDescriptionScreenProps } from './types';
@@ -46,6 +47,7 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
       const body = JSON.stringify({ health: description?.trim() });
       await userService.person.put(route.params.userId, body);
       navigation.navigate(userRouteNames.profile, { newDescription: description?.trim() });
+      Trackers.trackEvent('Profile', 'EDIT_DESCRIPTION');
       Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));
@@ -69,6 +71,7 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
 
   React.useEffect(() => {
     setDescription(route.params.description);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
