@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Lottie from 'lottie-react-native';
 import * as React from 'react';
-import { BackHandler, Platform, StatusBar, View } from 'react-native';
+import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
@@ -150,7 +150,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const onPlay = React.useCallback(() => {
-    animationRef.current?.play();
+    animationRef.current?.resume();
   }, []);
 
   const onPause = React.useCallback(() => {
@@ -216,6 +216,17 @@ function MediaPlayer(props: MediaPlayerProps) {
     isAudio,
     platform,
   ]);
+
+  // Manage Lottie after passed app in background
+  React.useEffect(() => {
+    if (type === 'audio') {
+      const subscription = AppState.addEventListener('change', event => {
+        if (event === 'active') animationRef.current?.resume();
+      });
+      return () => subscription.remove();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Manage Android back button
   React.useEffect(() => {
