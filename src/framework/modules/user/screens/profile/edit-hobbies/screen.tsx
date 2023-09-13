@@ -129,6 +129,7 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
             onSubmitEditing={() => onSubmitEditingInput(index)}
             onFocus={() => onFocusInput(index)}
             ref={element => (inputRefs[index] = element)}
+            returnKeyType={index + 1 === route.params.hobbies.length ? 'done' : 'next'}
           />
         }
       />
