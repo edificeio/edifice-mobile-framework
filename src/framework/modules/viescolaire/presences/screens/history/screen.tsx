@@ -191,7 +191,6 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             data={props.children!}
             selectedId={selectedChildId}
             onSelect={id => setSelectedChildId(id)}
-            customItemStyle={styles.childListItemContainer}
             style={styles.childListContainer}
             contentContainerStyle={styles.childListContentContainer}
           />
