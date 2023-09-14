@@ -15,8 +15,8 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
-  fetchPresencesHistoryAction,
   fetchPresencesSchoolYearAction,
+  fetchPresencesStatisticsAction,
   fetchPresencesTermsAction,
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
@@ -46,7 +46,6 @@ export const computeNavBar = ({
 const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps) => {
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
-
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -65,30 +64,11 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
+      const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
+      await props.tryFetchStatistics(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
       const terms = await props.tryFetchTerms(structureId, groupId ?? '');
       const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
       if (currentTerm && selectedTerm === 'year') setSelectedTerm(currentTerm.order.toString());
-      const schoolYear = await props.tryFetchSchoolYear(structureId);
-      const startDate = currentTerm?.startDate ?? schoolYear.startDate;
-      const endDate = currentTerm?.endDate ?? schoolYear.endDate;
-      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
-    } catch {
-      throw new Error();
-    }
-  };
-
-  const refreshEvents = async () => {
-    try {
-      const { schoolYear, session, terms, userId, userType } = props;
-      const structureId =
-        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(props.route.params.studentId);
-      const studentId = userType === UserType.Student ? userId : props.route.params.studentId;
-
-      if (!schoolYear || !structureId || !studentId) throw new Error();
-      const term = selectedTerm !== 'year' ? terms.find(t => t.order.toString() === selectedTerm) : undefined;
-      const startDate = term?.startDate ?? schoolYear.startDate;
-      const endDate = term?.endDate ?? schoolYear.endDate;
-      await props.tryFetchHistory(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
     } catch {
       throw new Error();
     }
@@ -108,13 +88,6 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
       .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
   };
 
-  const refresh = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH);
-    refreshEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
   const refreshSilent = () => {
     setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
     fetchEvents()
@@ -131,11 +104,6 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
-  React.useEffect(() => {
-    if (loadingState === AsyncPagedLoadingState.DONE) refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedTerm]);
-
   const renderError = () => {
     return (
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
@@ -144,8 +112,56 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     );
   };
 
+  const filterStatistics = () => {
+    const { statistics, terms } = props;
+    const term = selectedTerm !== 'year' ? terms.find(t => t.order.toString() === selectedTerm) : undefined;
+
+    if (!term) return statistics;
+    return {
+      DEPARTURE: {
+        events: statistics.DEPARTURE.events.filter(
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+        ),
+      },
+      FORGOTTEN_NOTEBOOK: {
+        events: statistics.FORGOTTEN_NOTEBOOK.events.filter(
+          e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate),
+        ),
+      },
+      INCIDENT: {
+        events: statistics.INCIDENT.events.filter(e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate)),
+      },
+      LATENESS: {
+        events: statistics.LATENESS.events.filter(
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+        ),
+      },
+      NO_REASON: {
+        events: statistics.NO_REASON.events.filter(
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+        ),
+      },
+      PUNISHMENT: {
+        events: statistics.PUNISHMENT.events.filter(
+          e => e.createdAt.isSameOrAfter(term.startDate) && e.createdAt.isSameOrBefore(term.endDate),
+        ),
+      },
+      REGULARIZED: {
+        events: statistics.REGULARIZED.events.filter(
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+        ),
+      },
+      UNREGULARIZED: {
+        events: statistics.UNREGULARIZED.events.filter(
+          e => e.startDate.isSameOrAfter(term.startDate) && e.startDate.isSameOrBefore(term.endDate),
+        ),
+      },
+    };
+  };
+
   const renderHistory = () => {
-    const { history, terms } = props;
+    const { terms } = props;
+    const statistics = filterStatistics();
     const dropdownTerms = [
       { label: I18n.get('presences-statistics-year'), value: 'year' },
       ...terms.map(term => ({
@@ -168,16 +184,16 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
             />
           </View>
         ) : null}
-        <StatisticsCard type={HistoryEventType.NO_REASON} {...history.NO_REASON} />
-        <StatisticsCard type={HistoryEventType.UNREGULARIZED} {...history.UNREGULARIZED} />
-        <StatisticsCard type={HistoryEventType.REGULARIZED} {...history.REGULARIZED} />
-        <StatisticsCard type={HistoryEventType.LATENESS} {...history.LATENESS} />
-        <StatisticsCard type={HistoryEventType.DEPARTURE} {...history.DEPARTURE} />
+        <StatisticsCard type={HistoryEventType.NO_REASON} {...statistics.NO_REASON} />
+        <StatisticsCard type={HistoryEventType.UNREGULARIZED} {...statistics.UNREGULARIZED} />
+        <StatisticsCard type={HistoryEventType.REGULARIZED} {...statistics.REGULARIZED} />
+        <StatisticsCard type={HistoryEventType.LATENESS} {...statistics.LATENESS} />
+        <StatisticsCard type={HistoryEventType.DEPARTURE} {...statistics.DEPARTURE} />
         {appConf.is2d ? (
           <>
-            <StatisticsCard type={HistoryEventType.FORGOTTEN_NOTEBOOK} {...history.FORGOTTEN_NOTEBOOK} />
-            <StatisticsCard type={HistoryEventType.INCIDENT} {...history.INCIDENT} />
-            <StatisticsCard type={HistoryEventType.PUNISHMENT} {...history.PUNISHMENT} />
+            <StatisticsCard type={HistoryEventType.FORGOTTEN_NOTEBOOK} {...statistics.FORGOTTEN_NOTEBOOK} />
+            <StatisticsCard type={HistoryEventType.INCIDENT} {...statistics.INCIDENT} />
+            <StatisticsCard type={HistoryEventType.PUNISHMENT} {...statistics.PUNISHMENT} />
           </>
         ) : null}
       </ScrollView>
@@ -212,10 +228,10 @@ export default connect(
 
     return {
       classes: session?.user.classes,
-      history: presencesState.history.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
       session,
+      statistics: presencesState.statistics.data,
       terms: presencesState.terms.data,
       userId,
       userType,
@@ -224,8 +240,8 @@ export default connect(
   dispatch =>
     bindActionCreators<PresencesStatisticsScreenDispatchProps>(
       {
-        tryFetchHistory: tryAction(fetchPresencesHistoryAction),
         tryFetchSchoolYear: tryAction(fetchPresencesSchoolYearAction),
+        tryFetchStatistics: tryAction(fetchPresencesStatisticsAction),
         tryFetchTerms: tryAction(fetchPresencesTermsAction),
         tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },

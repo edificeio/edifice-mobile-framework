@@ -11,6 +11,7 @@ import {
   ICourse,
   IEvent,
   IEventReason,
+  IHistory,
   IHistoryEvent,
   IUserChild,
 } from '~/framework/modules/viescolaire/presences/model';
@@ -390,7 +391,6 @@ const classCallAdapter = (data: IBackendClassCall): IClassCall => {
 
 const courseAdapter = (data: IBackendCourse): ICourse => {
   return {
-    allowRegister: data.allowRegister,
     callId: data.registerId,
     classes: data.classes,
     groups: data.groups,
@@ -435,7 +435,7 @@ const historyEventAdapter = (data: IBackendHistoryEvent, type: HistoryEventType)
   };
 };
 
-const historyEventsAdapter = (data: IBackendHistoryEvents) => {
+const historyEventsAdapter = (data: IBackendHistoryEvents): Omit<IHistory, 'FORGOTTEN_NOTEBOOK' | 'INCIDENT' | 'PUNISHMENT'> => {
   return {
     DEPARTURE: {
       events: data.all.DEPARTURE.map(event => historyEventAdapter(event, HistoryEventType.DEPARTURE)),
@@ -461,18 +461,20 @@ const historyEventsAdapter = (data: IBackendHistoryEvents) => {
   };
 };
 
-const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks) => {
+const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks): Pick<IHistory, 'FORGOTTEN_NOTEBOOK'> => {
   return {
-    events: data.all.map(event => ({
-      date: moment(event.date),
-      id: event.id.toString(),
-      type: HistoryEventType.FORGOTTEN_NOTEBOOK,
-    })),
-    total: data.totals,
+    FORGOTTEN_NOTEBOOK: {
+      events: data.all.map(event => ({
+        date: moment(event.date),
+        id: event.id.toString(),
+        type: HistoryEventType.FORGOTTEN_NOTEBOOK,
+      })),
+      total: data.totals,
+    },
   };
 };
 
-const historyIncidentsAdapter = (data: IBackendHistoryIncidents) => {
+const historyIncidentsAdapter = (data: IBackendHistoryIncidents): Pick<IHistory, 'INCIDENT' | 'PUNISHMENT'> => {
   return {
     INCIDENT: {
       events: data.all.INCIDENT.map(i => ({
@@ -651,7 +653,10 @@ export const presencesService = {
         multiple_slot: allowMultipleSlots,
       })}`;
       const courses = (await fetchJSONWithCache(api)) as IBackendCourseList;
-      return courses.map(courseAdapter).sort((a, b) => a.startDate.diff(b.startDate));
+      return courses
+        .filter(course => course.allowRegister)
+        .map(courseAdapter)
+        .sort((a, b) => a.startDate.diff(b.startDate));
     },
   },
   event: {

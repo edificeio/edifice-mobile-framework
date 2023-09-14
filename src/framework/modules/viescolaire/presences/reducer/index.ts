@@ -11,7 +11,11 @@ import {
   IClassCall,
   ICourse,
   IEventReason,
+  IForgottenNotebook,
   IHistory,
+  IHistoryEvent,
+  IIncident,
+  IPunishment,
   IUserChild,
 } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
@@ -22,11 +26,12 @@ interface IPresencesReduxStateData {
   allowMultipleSlots: boolean;
   childrenEvents: IChildrenEvents;
   classCall?: IClassCall;
-  courses: ICourse[];
+  courses: { [key: string]: ICourse[] };
   eventReasons: IEventReason[];
-  history: IHistory;
+  history: (IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[];
   registerPreference: string;
   schoolYear?: ISchoolYear;
+  statistics: IHistory;
   terms: ITerm[];
   userChildren: IUserChild[];
 }
@@ -36,11 +41,12 @@ export interface IPresencesReduxState {
   allowMultipleSlots: AsyncState<boolean>;
   childrenEvents: AsyncState<IChildrenEvents>;
   classCall: AsyncState<IClassCall | undefined>;
-  courses: AsyncState<ICourse[]>;
+  courses: AsyncState<{ [key: string]: ICourse[] }>;
   eventReasons: AsyncState<IEventReason[]>;
-  history: AsyncState<IHistory>;
+  history: AsyncState<(IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[]>;
   registerPreference: AsyncState<string>;
   schoolYear: AsyncState<ISchoolYear | undefined>;
+  statistics: AsyncState<IHistory>;
   terms: AsyncState<ITerm[]>;
   userChildren: AsyncState<IUserChild[]>;
 }
@@ -49,9 +55,11 @@ const initialState: IPresencesReduxStateData = {
   absences: [],
   allowMultipleSlots: true,
   childrenEvents: {},
-  courses: [],
+  courses: {},
   eventReasons: [],
-  history: {
+  history: [],
+  registerPreference: '',
+  statistics: {
     DEPARTURE: {
       events: [],
       total: 0,
@@ -86,7 +94,6 @@ const initialState: IPresencesReduxStateData = {
     },
     recoveryMethod: null,
   },
-  registerPreference: '',
   terms: [],
   userChildren: [],
 };
@@ -102,6 +109,7 @@ export const actionTypes = {
   multipleSlotsSetting: createAsyncActionTypes(moduleConfig.namespaceActionType('MULTIPLE_SLOTS_SETTING')),
   registerPreference: createAsyncActionTypes(moduleConfig.namespaceActionType('REGISTER_PREFERENCE')),
   schoolYear: createAsyncActionTypes(moduleConfig.namespaceActionType('SCHOOL_YEAR')),
+  statistics: createAsyncActionTypes(moduleConfig.namespaceActionType('STATISTICS')),
   terms: createAsyncActionTypes(moduleConfig.namespaceActionType('TERMS')),
   userChildren: createAsyncActionTypes(moduleConfig.namespaceActionType('USER_CHILDREN')),
 };
@@ -116,6 +124,7 @@ const reducer = combineReducers({
   history: createSessionAsyncReducer(initialState.history, actionTypes.history),
   registerPreference: createSessionAsyncReducer(initialState.registerPreference, actionTypes.registerPreference),
   schoolYear: createSessionAsyncReducer(initialState.schoolYear, actionTypes.schoolYear),
+  statistics: createSessionAsyncReducer(initialState.statistics, actionTypes.statistics),
   terms: createSessionAsyncReducer(initialState.terms, actionTypes.terms),
   userChildren: createSessionAsyncReducer(initialState.userChildren, actionTypes.userChildren),
 });

@@ -7,8 +7,8 @@ import type { fetchPresencesAbsencesAction, fetchPresencesHistoryAction } from '
 import type {
   IAbsence,
   IForgottenNotebook,
-  IHistory,
   IHistoryEvent,
+  IIncident,
   IPunishment,
 } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -24,7 +24,7 @@ export interface PresencesHistoryScreenNavParams {
 }
 
 export interface PresencesHistoryScreenStoreProps {
-  events: (IAbsence | IHistoryEvent | IPunishment | IForgottenNotebook)[];
+  events: (IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[];
   children?: IUserListItem[];
   hasPresencesCreateAbsenceRight?: boolean;
   session?: ISession;
@@ -34,7 +34,9 @@ export interface PresencesHistoryScreenStoreProps {
 
 export interface PresencesHistoryScreenDispatchProps {
   tryFetchAbsences: (...args: Parameters<typeof fetchPresencesAbsencesAction>) => Promise<IAbsence[]>;
-  tryFetchHistory: (...args: Parameters<typeof fetchPresencesHistoryAction>) => Promise<IHistory>;
+  tryFetchHistory: (
+    ...args: Parameters<typeof fetchPresencesHistoryAction>
+  ) => Promise<(IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[]>;
 }
 
 export type PresencesHistoryScreenPrivateProps = PresencesHistoryScreenProps &

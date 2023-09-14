@@ -59,6 +59,8 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
+  const courses = props.courses[date.format('YYYY-MM-DD')] ?? [];
+
   const fetchCourses = async () => {
     try {
       const { structureIds, teacherId } = props;
@@ -70,7 +72,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }*/
-      await props.tryFetchCourses(teacherId, structureIds, date.format('YYYY-MM-DD'), false);
+      await props.tryFetchCourses(teacherId, structureIds, date, false);
     } catch {
       throw new Error();
     }
@@ -121,7 +123,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   }, [props.navigation, date]);
 
   React.useEffect(() => {
-    if (loadingRef.current === AsyncPagedLoadingState.DONE) fetchNext();
+    if (!props.courses[date.format('YYYY-MM-DD')] && loadingRef.current === AsyncPagedLoadingState.DONE) fetchNext();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
@@ -174,7 +176,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   };
 
   const renderBottomSheet = () => {
-    const course = props.courses.find(c => c.id === selectedCourseId);
+    const course = courses.find(c => c.id === selectedCourseId);
     const isValidated = course?.registerStateId === 3;
 
     return (
@@ -210,28 +212,28 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
     return (
       <View style={UI_STYLES.flex1}>
         <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
-        {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (
-          <CallListPlaceholder />
-        ) : (
-          <FlatList
-            data={props.courses}
-            renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
-            keyExtractor={item => item.id + item.startDate}
-            refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-            ListHeaderComponent={
-              appConf.is2d && props.courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
-            }
-            ListEmptyComponent={
+        <FlatList
+          data={courses}
+          renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
+          keyExtractor={item => item.id + item.startDate}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          ListHeaderComponent={
+            appConf.is2d && courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
+          }
+          ListEmptyComponent={
+            loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (
+              <CallListPlaceholder />
+            ) : (
               <EmptyScreen
                 svgImage="empty-presences"
                 title={I18n.get('presences-calllist-emptyscreen-title')}
                 text={I18n.get('presences-calllist-emptyscreen-text')}
                 customStyle={styles.emptyScreenContainer}
               />
-            }
-            contentContainerStyle={props.courses.length ? styles.listContentContainer : UI_STYLES.flexGrow1}
-          />
-        )}
+            )
+          }
+          contentContainerStyle={courses.length ? styles.listContentContainer : UI_STYLES.flexGrow1}
+        />
         {renderBottomSheet()}
       </View>
     );

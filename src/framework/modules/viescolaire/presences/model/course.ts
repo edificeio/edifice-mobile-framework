@@ -1,7 +1,6 @@
 import type { Moment } from 'moment';
 
 export interface ICourse {
-  allowRegister: boolean;
   callId: number;
   classes: string[];
   endDate: Moment;

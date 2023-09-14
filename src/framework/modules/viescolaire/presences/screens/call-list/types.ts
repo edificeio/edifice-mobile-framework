@@ -19,7 +19,7 @@ export interface PresencesCallListScreenNavParams {}
 
 export interface PresencesCallListScreenStoreProps {
   allowMultipleSlots: boolean;
-  courses: ICourse[];
+  courses: { [key: string]: ICourse[] };
   registerId: string;
   registerPreference: string;
   structureIds: string[];

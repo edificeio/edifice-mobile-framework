@@ -35,7 +35,6 @@ import {
   IHistoryEvent,
   IIncident,
   IPunishment,
-  compareEvents,
 } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -255,7 +254,6 @@ export default connect(
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
-    const history = presencesState.history.data;
 
     return {
       children:
@@ -264,17 +262,7 @@ export default connect(
               ?.filter(child => child.classesNames.length)
               .map(child => ({ id: child.id, name: child.firstName })) ?? []
           : undefined,
-      events: [
-        ...presencesState.absences.data,
-        ...history.DEPARTURE.events,
-        ...history.FORGOTTEN_NOTEBOOK.events,
-        ...history.INCIDENT.events,
-        ...history.LATENESS.events,
-        ...history.NO_REASON.events,
-        ...history.PUNISHMENT.events,
-        ...history.REGULARIZED.events,
-        ...history.UNREGULARIZED.events,
-      ].sort(compareEvents),
+      events: presencesState.history.data,
       hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
       history: presencesState.history.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,

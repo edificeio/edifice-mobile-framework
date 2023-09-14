@@ -172,7 +172,7 @@ export default connect(
 
     return {
       allowMultipleSlots: presencesState.allowMultipleSlots.data,
-      courses: presencesState.courses.data.filter(course => course.allowRegister === true),
+      courses: presencesState.courses.data,
       initialLoadingState: presencesState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       registerPreference: presencesState.registerPreference.data,
       session,
