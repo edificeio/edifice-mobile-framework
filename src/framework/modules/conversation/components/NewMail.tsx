@@ -1,4 +1,4 @@
-import React, { ReactChild, ReactElement } from 'react';
+import React, { ReactChild, ReactElement, forwardRef } from 'react';
 import { Alert, Keyboard, Platform, SafeAreaView, StyleSheet, TextInput, View, ViewStyle } from 'react-native';
 import { KeyboardAvoidingScrollView } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
@@ -88,128 +88,134 @@ const styles = StyleSheet.create({
 
 const MailContactField = connect((state: IGlobalState) => ({
   visibles: getVisiblesState(state),
-}))(
-  ({
-    style,
-    title,
-    value,
-    onChange,
-    children,
-    autoFocus,
-    rightComponent,
-    onOpenSearch,
-    visibles,
-    key,
-  }: {
-    style?: ViewStyle;
-    title: string;
-    value?: IUser[];
-    onChange?: (value: IUser[]) => void;
-    children?: ReactChild;
-    autoFocus?: boolean;
-    rightComponent?: ReactElement;
-    onOpenSearch?: (searchIsOpen: boolean) => void;
-    visibles: IVisiblesState;
-    key: React.Key;
-  }) => {
-    const selectedUsersOrGroups = value || [];
-    const [search, updateSearch] = React.useState('');
-    const previousVisibles = React.useRef<IVisiblesState>();
-    const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<(IVisibleUser | IVisibleGroup)[]>([]);
-    const searchTimeout = React.useRef<NodeJS.Timeout>();
-    const inputRef: { current: TextInput | undefined } = { current: undefined };
+}))(({
+  style,
+  title,
+  value,
+  onChange,
+  children,
+  autoFocus,
+  rightComponent,
+  onOpenSearch,
+  visibles,
+  key,
+}: {
+  style?: ViewStyle;
+  title: string;
+  value?: IUser[];
+  onChange?: (value: IUser[]) => void;
+  children?: ReactChild;
+  autoFocus?: boolean;
+  rightComponent?: ReactElement;
+  onOpenSearch?: (searchIsOpen: boolean) => void;
+  visibles: IVisiblesState;
+  key: React.Key;
+}) => {
+  const selectedUsersOrGroups = value || [];
+  const [search, updateSearch] = React.useState('');
+  const previousVisibles = React.useRef<IVisiblesState>();
+  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<(IVisibleUser | IVisibleGroup)[]>([]);
+  const searchTimeout = React.useRef<NodeJS.Timeout>();
+  const inputRef: { current: TextInput | undefined } = { current: undefined };
 
-    const onUserType = (s: string) => {
-      updateSearch(s);
-      if (s.length >= 3) {
-        updateFoundUsersOrGroups([]);
-        onOpenSearch?.(true);
-        if (searchTimeout.current) clearTimeout(searchTimeout.current);
-        searchTimeout.current = setTimeout(() => {
-          const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
-          updateFoundUsersOrGroups(searchResults);
-        }, 500);
-      } else {
-        updateFoundUsersOrGroups([]);
-        onOpenSearch?.(false);
-        clearTimeout(searchTimeout.current);
-      }
-    };
+  const onUserType = (s: string) => {
+    updateSearch(s);
+    if (s.length >= 3) {
+      updateFoundUsersOrGroups([]);
+      onOpenSearch?.(true);
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+      searchTimeout.current = setTimeout(() => {
+        const searchResults = visibles.lastSuccess ? searchVisibles(visibles.data, s, value) : [];
+        updateFoundUsersOrGroups(searchResults);
+      }, 500);
+    } else {
+      updateFoundUsersOrGroups([]);
+      onOpenSearch?.(false);
+      clearTimeout(searchTimeout.current);
+    }
+  };
 
-    // Update search results whenever visibles are loaded
-    React.useEffect(() => {
-      previousVisibles.current = visibles;
-      if (
-        previousVisibles.current.lastSuccess &&
-        visibles.lastSuccess &&
-        !previousVisibles.current.lastSuccess.isSame(visibles.lastSuccess)
-      ) {
-        onUserType(search);
-      }
-    });
+  // Update search results whenever visibles are loaded
+  React.useEffect(() => {
+    previousVisibles.current = visibles;
+    if (
+      previousVisibles.current.lastSuccess &&
+      visibles.lastSuccess &&
+      !previousVisibles.current.lastSuccess.isSame(visibles.lastSuccess)
+    ) {
+      onUserType(search);
+    }
+  });
 
-    const removeUser = (id: string) => onChange?.(selectedUsersOrGroups.filter(user => user.id !== id));
-    const addUser = userOrGroup => {
-      onChange?.([
-        ...selectedUsersOrGroups,
-        { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
-      ]);
-      onUserType('');
-      inputRef.current?.focus();
-    };
+  const removeUser = (id: string) => onChange?.(selectedUsersOrGroups.filter(user => user.id !== id));
+  const addUser = userOrGroup => {
+    onChange?.([
+      ...selectedUsersOrGroups,
+      { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
+    ]);
+    onUserType('');
+    inputRef.current?.focus();
+  };
 
-    const noUserFound = text => {
-      if (text) {
-        Alert.alert(
-          I18n.get('conversation-newmail-erroruser-title', { user: text }),
-          I18n.get('conversation-newmail-erroruser-text'),
-        );
-      }
-      onUserType('');
-      inputRef.current?.focus();
-    };
+  const noUserFound = text => {
+    if (text) {
+      Alert.alert(
+        I18n.get('conversation-newmail-erroruser-title', { user: text }),
+        I18n.get('conversation-newmail-erroruser-text'),
+      );
+    }
+    onUserType('');
+    inputRef.current?.focus();
+  };
 
-    return (
-      <View style={styles.mailContactFieldContainer}>
-        <View style={styles.mailContactFieldInputWrapper}>
-          <View style={[styles.mailContactFieldInputSubWrapper, style]}>
-            <SmallText style={styles.mailContactFieldTitle}>{title} : </SmallText>
-            <View style={styles.mailContactFieldInputContainer}>
-              <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-              <Input
-                inputRef={inputRef}
-                autoFocus={autoFocus}
-                value={search}
-                onChangeText={onUserType}
-                onSubmit={() => noUserFound(search)}
-                onEndEditing={() => {
-                  onOpenSearch?.(false);
-                  clearTimeout(searchTimeout.current);
-                  if (foundUsersOrGroups.length === 0) {
-                    updateFoundUsersOrGroups([]);
-                    updateSearch('');
-                  }
-                }}
-                key={key}
-              />
-            </View>
-            {rightComponent}
+  return (
+    <View style={styles.mailContactFieldContainer}>
+      <View style={styles.mailContactFieldInputWrapper}>
+        <View style={[styles.mailContactFieldInputSubWrapper, style]}>
+          <SmallText style={styles.mailContactFieldTitle}>{title} : </SmallText>
+          <View style={styles.mailContactFieldInputContainer}>
+            <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
+            <Input
+              inputRef={inputRef}
+              autoFocus={autoFocus}
+              value={search}
+              onChangeText={onUserType}
+              onSubmit={() => noUserFound(search)}
+              onEndEditing={() => {
+                onOpenSearch?.(false);
+                clearTimeout(searchTimeout.current);
+                if (foundUsersOrGroups.length === 0) {
+                  updateFoundUsersOrGroups([]);
+                  updateSearch('');
+                }
+              }}
+              key={key}
+            />
           </View>
-        </View>
-        <View style={styles.foundListContainer}>
-          {foundUsersOrGroups.length ? <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} /> : children}
+          {rightComponent}
         </View>
       </View>
-    );
-  },
-);
+      <View style={styles.foundListContainer}>
+        {foundUsersOrGroups.length ? <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} /> : children}
+      </View>
+    </View>
+  );
+});
 
 const HeaderSubject = ({
   style,
   title,
   onChange,
   value,
-}: React.PropsWithChildren<{ style?: ViewStyle; title: string; onChange; forUsers?: boolean; value: any }>) => {
+  onEndEditing,
+}: React.PropsWithChildren<{
+  style?: ViewStyle;
+  title: string;
+  onChange;
+  forUsers?: boolean;
+  value: any;
+  onEndEditing?: () => void;
+}>) => {
   const headerStyle = {
     flexDirection: 'row',
     alignItems: 'center',
@@ -238,6 +244,8 @@ const HeaderSubject = ({
           onChange(text);
           updateCurrentValue(text);
         }}
+        onEndEditing={onEndEditing}
+        returnKeyType="next"
       />
     </View>
   );
@@ -279,7 +287,7 @@ const Attachments = ({
   );
 };
 
-const Body = ({ style, value, onChange, autofocus }) => {
+const Body = forwardRef<TextInput>(({ style, value, onChange, autofocus }, ref) => {
   const br2nl = (text: string) => {
     return text?.replace(/<br\/?>/gm, '\n').replace(/<div>\s*?<\/div>/gm, '\n');
   };
@@ -300,7 +308,7 @@ const Body = ({ style, value, onChange, autofocus }) => {
     };
   }, []);
 
-  const textInputRef = React.createRef<TextInput>();
+  const textInputRef = ref ?? React.createRef<TextInput>();
   React.useEffect(() => {
     if (autofocus) textInputRef.current?.focus();
     // We want to call this only once
@@ -327,7 +335,7 @@ const Body = ({ style, value, onChange, autofocus }) => {
       />
     </View>
   );
-};
+});
 
 const PrevBody = ({ prevBody }) => {
   return (
@@ -368,6 +376,8 @@ const Fields = ({
   body: string;
   onBodyChange: (body: string) => void;
 }) => {
+  const bodyFielRef: { current: any } = React.useRef<TextInput>();
+
   const commonFields = (
     <SafeAreaView style={styles.commonFieldsContainer}>
       <HeaderSubject
@@ -375,6 +385,7 @@ const Fields = ({
         value={headers.subject}
         onChange={subject => onHeaderChange({ ...headers, subject })}
         key="subject"
+        onEndEditing={() => bodyFielRef.current.focus()}
       />
       <Attachments
         style={styles.attachments}
@@ -384,7 +395,7 @@ const Fields = ({
         onSave={onDraftSave}
         key="attachments"
       />
-      <Body style={styles.body} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" />
+      <Body style={styles.body} value={body} onChange={onBodyChange} autofocus={isReplyDraft} key="body" ref={bodyFielRef} />
       {!!prevBody && <PrevBody prevBody={prevBody} key="prevBody" />}
     </SafeAreaView>
   );
