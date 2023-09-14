@@ -5,7 +5,7 @@
  * Then, import and use the native i18next and moment modules.
  */
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { unflatten } from 'flat';
+import { flatten, unflatten } from 'flat';
 import i18n, { TOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
 import resourcesToBackend from 'i18next-resources-to-backend';
@@ -19,44 +19,65 @@ import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 
+import appConf from '~/framework/util/appConf';
+
 // Read Phrase ID && Secrets
 const phraseSecrets = require('ROOT/phrase.json');
 
 export namespace I18n {
+  // Transform local translations (in a given language)
+  //   - by applying the current override keys
+  //   - and removing all overriden keys
+  const getOverridenTranslations = (translations: object) => {
+    // Get Overriden keys for this override
+    const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
+    const overridenKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
+    // Get all overriden keys
+    const overrides = ['leducdenormandie', 'lyceeconnecte', 'monlyceenet', 'neo', 'one', 'openent'];
+    const overridesKeys: string[] = [];
+    overrides.forEach(override => {
+      const keys = Object.keys(translations).filter(key => key.endsWith(`-${override}`));
+      if (keys) overridesKeys.push(...keys);
+    });
+    // Replace current override keys
+    const overridenTranslations = translations;
+    overridenKeys.forEach(overrideKey => {
+      overridenTranslations[overrideKey.replace(`-${overrideName}`, '')] = overridenTranslations[overrideKey];
+    });
+    // Remove all overrides keys
+    overridesKeys.forEach(key => {
+      delete overridenTranslations[`${key}`];
+    });
+    // Return unflatten translations
+    return unflatten(overridenTranslations);
+  };
+
+  // Determine wether the app is in dev mode or alpha
+  const isDevOrAlpha = __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
+
+  // i18n Keys toggling management (dev && alpha only)
+  // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
+  const I18N_SHOW_KEYS_KEY = 'showKeys';
+  let showKeys = false;
+  export const canShowKeys = isDevOrAlpha;
+
+  // Define fallback locale
+  const fallbackLng = 'en';
+
   // Supported locales
   const supportedLanguages = ['fr', 'en', 'es'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
 
-  // Transform local translations (in a given language) by applying the override keys
-  const getOverridenTranslations = (translations: object) => {
-    const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
-    const overrideKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
-    const overridenTranslations = translations;
-    overrideKeys.forEach(overrideKey => {
-      overridenTranslations[overrideKey.replace(`-${overrideName}`, '')] = overridenTranslations[overrideKey];
-    });
-    return overridenTranslations;
-  };
-
-  // Final translations
+  // Transform translations for all embeded locales
   const localResources = {
-    fr: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/fr.json'))) },
-    en: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/en.json'))) },
-    es: { translation: getOverridenTranslations(unflatten(require('ASSETS/i18n/es.json'))) },
+    fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
+    en: { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
+    es: { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
   };
-
-  // App language management
-  const fallbackLng = 'en';
-
-  // Keys toggling management
-  const I18N_SHOW_KEYS_KEY = 'showKeys';
-  let showKeys = false;
-
-  export const canShowKeys = __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
 
   // Phrase stuff
   const phraseId = phraseSecrets?.distributionId;
-  const phraseSecret = __DEV__ ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
+  const phraseSecret = isDevOrAlpha ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
   const phrase = new Phrase(phraseId, phraseSecret, DeviceInfo.getVersion(), 'i18next');
 
@@ -64,8 +85,7 @@ export namespace I18n {
     phrase
       .requestTranslation(language)
       .then(remoteResources => {
-        // Todo Call getOverridenTranslations
-        callback(null, remoteResources);
+        callback(null, getOverridenTranslations(flatten(remoteResources)));
       })
       .catch(error => {
         callback(error, null);
@@ -90,11 +110,13 @@ export namespace I18n {
     return values;
   }
 
+  // Get current language
   export function getLanguage() {
     return i18n.language;
   }
 
-  export function updateLanguage() {
+  // Set language to device one
+  export function setLanguage() {
     const bestAvailableLanguage = RNLocalize.findBestLanguageTag(supportedLanguages) as {
       languageTag: string;
       isRTL: boolean;
@@ -104,6 +126,8 @@ export namespace I18n {
     return i18n.language;
   }
 
+  // Toggle i18n Keys (dev && alpha only)
+  // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
   export const toggleShowKeys = async () => {
     if (canShowKeys) {
       showKeys = !showKeys;
@@ -114,20 +138,32 @@ export namespace I18n {
 
   export async function init() {
     // Initalize language
-    updateLanguage();
+    setLanguage();
     // Initialize keys toggling
     if (canShowKeys) {
       const stored = await AsyncStorage.getItem(I18N_SHOW_KEYS_KEY);
       if (stored) showKeys = JSON.parse(stored);
     }
-    // Initialize i18next
-    await i18n
-      .use(ChainedBackend)
-      .use(initReactI18next)
-      .init({
-        backend: {
-          backends: [backendPhrase, backendFallback],
-        },
+    // Initialize i18n depending on i18n OTA enabled or not
+    if (appConf.i18nOTAEnabled) {
+      await i18n
+        .use(ChainedBackend)
+        .use(initReactI18next)
+        .init({
+          backend: {
+            backends: [backendPhrase, backendFallback],
+          },
+          compatibilityJSON: 'v3',
+          debug: __DEV__,
+          fallbackLng,
+          interpolation: {
+            escapeValue: false,
+          },
+          lng: i18n.language,
+          returnObjects: true,
+        });
+    } else {
+      await i18n.use(initReactI18next).init({
         compatibilityJSON: 'v3',
         debug: __DEV__,
         fallbackLng,
@@ -135,7 +171,9 @@ export namespace I18n {
           escapeValue: false,
         },
         lng: i18n.language,
+        resources: localResources,
         returnObjects: true,
       });
+    }
   }
 }

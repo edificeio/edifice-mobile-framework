@@ -87,31 +87,54 @@ export class Platform {
 // App Conf =======================================================================================
 
 export interface IAppConfDeclaration {
+  i18nOTA?: boolean;
+  level?: '1d' | '2d';
   matomo: {
     url: string;
     siteId: number;
   };
-  webviewIdentifier: string;
-  platforms: IPlatformAccessDeclaration[];
-  level?: '1d' | '2d';
   onboarding?: {
     showDiscoverLink?: PlatformOSType[];
     showAppName?: boolean;
   };
+  platforms: IPlatformAccessDeclaration[];
+  webviewIdentifier: string;
 }
 
 export class AppConf {
+  i18nOTA = false;
+
+  level: '1d' | '2d' = '2d'; // 2d by default
+
   matomo: { url: string; siteId: number };
 
-  webviewIdentifier: string;
+  onboarding: {
+    showDiscoverLink: { [p in PlatformOSType]?: boolean };
+    showAppName: boolean;
+  };
 
   platforms: Platform[];
 
+  webviewIdentifier: string;
+
+  get i18nOTAEnabled() {
+    return this.i18nOTA;
+  }
+
+  get is1d() {
+    return this.level === '1d';
+  }
+
+  get is2d() {
+    return this.level === '2d';
+  }
+
   constructor(opts: IAppConfDeclaration) {
-    this.matomo = opts.matomo;
-    this.webviewIdentifier = opts.webviewIdentifier;
-    this.platforms = opts.platforms.map(pfd => new Platform(pfd));
+    this.i18nOTA = opts?.i18nOTA || false;
+
     if (opts.level) this.level = opts.level;
+
+    this.matomo = opts.matomo;
 
     const onboarding: Partial<AppConf['onboarding']> = {};
     if (opts.onboarding?.showDiscoverLink) {
@@ -124,22 +147,11 @@ export class AppConf {
     }
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
     this.onboarding = onboarding as AppConf['onboarding'];
+
+    this.platforms = opts.platforms.map(pfd => new Platform(pfd));
+
+    this.webviewIdentifier = opts.webviewIdentifier;
   }
-
-  level: '1d' | '2d' = '2d'; // 2d by default
-
-  get is1d() {
-    return this.level === '1d';
-  }
-
-  get is2d() {
-    return this.level === '2d';
-  }
-
-  onboarding: {
-    showDiscoverLink: { [p in PlatformOSType]?: boolean };
-    showAppName: boolean;
-  };
 }
 
 const appConf = new AppConf(AppConfValues as IAppConfDeclaration);

@@ -39,7 +39,7 @@ function useAppState() {
         // Change locale if needed
         const locales = RNLocalize.getLocales();
         const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
-        if (newLocale !== currentLocale) setCurrentLocale(I18n.updateLanguage());
+        if (newLocale !== currentLocale) setCurrentLocale(I18n.setLanguage());
       } else if (nextAppState === 'background') {
         // Track background state
       }
