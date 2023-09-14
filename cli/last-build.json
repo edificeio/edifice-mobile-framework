@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-12 20:19:56",
-  "notes": "fix(presences): set correct event time format\nfeat(presences): MB-1982 rework statistics screen\nfix(blog): MB-1979, remove bottom-inset in creation screen\nfix(blog): MB-1941 fix skeleton blog\nfix(profile): MB-1992 fix title on navbar\nfix(presences): MB-1943 improve call summary style\nfix(presences): MB-1896 fix call card room text shrinking\nfix(presences): MB-1901 center call list empty state\nfeat(presences): MB-1981 rework history screen, add history event card component and variant for each event type\nchore: resource-picker improvements\nrelease: 1.11.0-alpha.15(1110015)",
-  "version": "1.11.0-alpha.16(1110016)",
+  "last": "2023-09-14 19:26:09",
+  "notes": "fix(presences): MB-1980 remove grow and shrink from child list\nfeat(presences): MB-2003 improve courses, history and statistics fetch, prevent unnecessary api calls\nchore: MB-1984, explorer refacto\nfeat(conversation): MB-1995 , change return keyboard type\nfix(presences): MB-1980 improve userlist item sizing\nfix(flash-message): MB-1953 , fix visibility flash message\nSquashed commit of the following:\nfeat(change-password): MB-1996, change return keyboard\nfeat(change-email): MB-1987, change return keyboard\nfeat(presences): MB-1983 transform declare absence screen into fullscreenmodal, use framework components\nfeat(profile): MB-1994, change return keyboard\nfeat(blog): MB-1993, change return keyboard\nfeat(profile): MB-1616 tracking plan\nfix(navbar) MB-1988 , fix ellipsis navbar\nfix(media-player): MB-1491, fix some bugs with lottie\nfeat(auth): MB-1989, keyboard submit condition\nfix(media-player): change class component to functionnal component\nrelease: 1.11.0-alpha.16(1110016)",
+  "version": "1.11.0-alpha.17(1110017)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
