@@ -7,10 +7,15 @@ export default StyleSheet.create({
   absenceActionContainer: {
     marginBottom: UI_SIZES.spacing.big,
   },
-  childrenListContainer: {
-    padding: UI_SIZES.spacing.medium,
+  childListContainer: {
     borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
+  },
+  childListContentContainer: {
+    padding: UI_SIZES.spacing.medium,
+  },
+  childListItemContainer: {
+    paddingBottom: UI_SIZES.spacing.minor, // fix to UserList item auto sizing being wrong
   },
   detailsActionContainer: {
     alignSelf: 'flex-end',
