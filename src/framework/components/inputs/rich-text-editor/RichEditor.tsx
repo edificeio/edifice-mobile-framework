@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default class RichTextEditor extends Component {
+export default class RichEditor extends Component {
   static defaultProps = {
     contentInset: {},
     style: {},

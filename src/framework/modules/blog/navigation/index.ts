@@ -13,7 +13,6 @@ export interface BlogNavigationParams extends ParamListBase {
   blogPostList: BlogPostListScreenNavigationParams;
   blogPostDetails: BlogPostDetailsScreenNavParams;
   blogCreatePost: BlogCreatePostScreenNavParams;
-  blogEditContentPost;
 }
 
 export const blogRouteNames = {
@@ -22,5 +21,4 @@ export const blogRouteNames = {
   blogPostList: `${moduleConfig.routeName}/posts` as 'blogPostList',
   blogPostDetails: `${moduleConfig.routeName}/details` as 'blogPostDetails',
   blogCreatePost: `${moduleConfig.routeName}/create` as 'blogCreatePost',
-  blogEditContentPost: `${moduleConfig.routeName}/edit-content` as 'blogEditContentPost',
 };

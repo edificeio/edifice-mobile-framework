@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { EditorEditScreen, EditorNavBar } from '~/framework/components/inputs/rich-text-editor';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import BlogCreatePostScreen, { computeNavBar as blogCreatePostNavBar } from '~/framework/modules/blog/screens/BlogCreatePostScreen';
 import BlogExplorerScreen, { computeNavBar as blogExplorerNavBar } from '~/framework/modules/blog/screens/BlogExplorerScreen';
@@ -40,12 +39,6 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={blogRouteNames.blogCreatePost}
           component={BlogCreatePostScreen}
           options={blogCreatePostNavBar}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name={blogRouteNames.blogEditContentPost}
-          component={EditorEditScreen}
-          options={EditorNavBar}
           initialParams={{}}
         />
       </Stack.Group>

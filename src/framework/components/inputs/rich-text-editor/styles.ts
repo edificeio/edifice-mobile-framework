@@ -4,12 +4,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
   container: {
-    height: 400,
-    borderWidth: 1,
-    borderColor: 'red',
     marginBottom: UI_SIZES.screen.bottomInset,
     flex: 1,
-    overflow: 'hidden',
+    backgroundColor: 'white',
   },
   content: {
     backgroundColor: 'white',
@@ -33,6 +30,10 @@ const styles = StyleSheet.create({
   scroll: {
     backgroundColor: '#ffffff',
     flexGrow: 1,
+  },
+  tib: {
+    textAlign: 'center',
+    color: 'green',
   },
 });
 

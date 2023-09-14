@@ -1,14 +1,15 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text } from 'react-native';
+import { Animated, Dimensions, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text } from 'react-native';
 
-import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { RichEditor, RichToolbar, actions } from '~/framework/components/inputs/rich-text-editor';
 import { PageView } from '~/framework/components/page';
-import { BodyBoldText, BodyText } from '~/framework/components/text';
 import { navBarOptions } from '~/framework/navigation/navBar';
+
+import styles from './styles';
+import { RichTextEditorMode, RichTextEditorScreenProps } from './types';
 
 type FontSize = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
@@ -29,41 +30,6 @@ const imageList = [
 //const htmlIcon = require('~/framework/components/inputs/rich-text/img/html.png');
 const phizIcon = require('~/framework/components/inputs/rich-text-editor/img/indent.png');
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: UI_SIZES.screen.bottomInset,
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  content: {
-    backgroundColor: 'white',
-    color: 'black',
-    caretColor: 'red',
-    placeholderColor: 'gray',
-    contentCSSText: 'font-size: 16px; min-height: 200px;',
-  },
-  flatStyle: {
-    paddingHorizontal: 12,
-  },
-  rich: {
-    minHeight: 300,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#e3e3e3',
-  },
-  richBar: {
-    borderColor: '#efefef',
-    borderTopWidth: StyleSheet.hairlineWidth,
-  },
-  scroll: {
-    backgroundColor: '#ffffff',
-    flexGrow: 1,
-  },
-  tib: {
-    textAlign: 'center',
-    color: 'green',
-  },
-});
-
 export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<any>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
@@ -72,13 +38,10 @@ export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<any>
   }),
 });
 
-export default function EditorEditScreen(props) {
-  const [data, setData] = useState('');
-  const [disabled, setDisabled] = useState(false);
+export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   const [emojiDuration, setEmojiDuration] = useState(240); // iOS Default
   const [pageHeight, setPageHeight] = useState(291); // iOS Default
   const [emojiVisible, setEmojiVisible] = useState(false);
-  const [error, setError] = useState(false);
 
   const contentRef = useRef('');
   const headerHeight = useHeaderHeight();
@@ -89,7 +52,6 @@ export default function EditorEditScreen(props) {
   const [showToolbarPage, setShowToolbarPage] = useState(false);
 
   useEffect(() => {
-    console.log('showToolbarPage', showToolbarPage);
     if (showToolbarPage) {
       Animated.timing(translateAnim, {
         toValue: 0,
@@ -110,6 +72,8 @@ export default function EditorEditScreen(props) {
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
   }
+
+  const getContent = () => contentRef.current;
 
   //
   // Rich text editor states, events && callbacks
@@ -163,12 +127,6 @@ export default function EditorEditScreen(props) {
 
   const handleInput = useCallback(() => {
     // console.log(inputType, data)
-  }, []);
-
-  const handleInsertEmoji = useCallback((emoji: string) => {
-    richText.current?.insertText(emoji);
-    richText.current?.blurContentEditor();
-    setEmojiVisible(false);
   }, []);
 
   const handleMessage = useCallback(({ type, id, msg }: { type: string; id: string; msg?: any }) => {
@@ -235,31 +193,7 @@ export default function EditorEditScreen(props) {
     };
   }, [handleKeyboardHide, handleKeyboardShow]);
 
-  //
-  // Display error screen
-  //
-
-  if (error)
-    return (
-      <PageView style={{ alignItems: 'center' }}>
-        <BodyBoldText style={{ marginTop: 20, textAlign: 'center' }}>¡¡¡ ERROR FETCHING DATA !!!</BodyBoldText>
-        <BodyText style={{ marginTop: 20, textAlign: 'center' }}>
-          Make sure that the VPN is connected and check Your connection.
-        </BodyText>
-        <PrimaryButton
-          action={() => {
-            contentRef.current = '';
-            setData('');
-            setError(false);
-          }}
-          style={{ marginTop: 20 }}
-          text="RETRY"
-        />
-      </PageView>
-    );
-
   const renderToolbar = () => {
-    if (disabled) return null;
     return (
       <Animated.View
         style={{
@@ -295,7 +229,6 @@ export default function EditorEditScreen(props) {
             actions.insertOrderedList,
             actions.blockquote,
           ]}
-          disabled={false}
           disabledIconTint="#bfbfbf"
           editor={richText}
           flatContainerStyle={styles.flatStyle}
@@ -319,6 +252,7 @@ export default function EditorEditScreen(props) {
           onPressAddImage={onPressAddImage}
           onSelectItem={onSelectItemToolbar}
           heightPageToolbar={pageHeight}
+          disabled={props.route.params.mode !== RichTextEditorMode.ENABLED}
         />
       </Animated.View>
     );
@@ -328,11 +262,11 @@ export default function EditorEditScreen(props) {
     <PageView>
       <KeyboardAvoidingView
         keyboardVerticalOffset={headerHeight}
-        style={[styles.container, { backgroundColor: disabled ? 'white' : '#bfbfbf' }]}
+        style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView keyboardDismissMode="none" nestedScrollEnabled ref={scrollRef} scrollEventThrottle={20} style={styles.scroll}>
           <RichEditor
-            disabled={disabled}
+            disabled={props.route.params.mode !== RichTextEditorMode.ENABLED}
             enterKeyHint="done"
             editorStyle={styles.content}
             firstFocusEnd={false}
@@ -354,7 +288,7 @@ export default function EditorEditScreen(props) {
             onPaste={handlePaste}
           />
         </ScrollView>
-        {renderToolbar()}
+        {props.route.params.mode !== RichTextEditorMode.PREVIEW ? renderToolbar() : null}
       </KeyboardAvoidingView>
     </PageView>
   );
