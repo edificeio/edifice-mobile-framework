@@ -15,9 +15,6 @@ const styles = StyleSheet.create({
     placeholderColor: 'gray',
     contentCSSText: 'font-size: 16px; min-height: 200px;',
   },
-  flatStyle: {
-    paddingHorizontal: 12,
-  },
   rich: {
     minHeight: 300,
     borderBottomWidth: StyleSheet.hairlineWidth,

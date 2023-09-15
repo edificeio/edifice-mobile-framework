@@ -1,20 +1,18 @@
 import React, { Component } from 'react';
-import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
 
+import { UI_SIZES } from '../../constants';
+import HorizontalList from '../../list/horizontal';
 import { actions } from './const';
+import { RichToolbarItem } from './rich-toolbar-item';
 import { RichToolbarPage } from './rich-toolbar-page';
 
 const styles = StyleSheet.create({
   barContainer: {
-    height: 44,
-    backgroundColor: '#efefef',
-    alignItems: 'center',
-  },
-  item: {
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.tiny,
   },
 });
 
@@ -29,39 +27,6 @@ export const defaultActions = [
   actions.outdent,
   actions.insertLink,
 ];
-
-function getDefaultIcon() {
-  const texts = {};
-  // new icon styles of experiment
-  texts[actions.insertImage] = require('./img/image.png');
-  texts[actions.keyboard] = require('./img/keyboard.png');
-  texts[actions.setBold] = require('./img/bold.png');
-  texts[actions.setItalic] = require('./img/italic.png');
-  texts[actions.setSubscript] = require('./img/subscript.png');
-  texts[actions.setSuperscript] = require('./img/superscript.png');
-  texts[actions.insertBulletsList] = require('./img/ul.png');
-  texts[actions.insertOrderedList] = require('./img/ol.png');
-  texts[actions.insertLink] = require('./img/link.png');
-  texts[actions.setStrikethrough] = require('./img/strikethrough.png');
-  texts[actions.setUnderline] = require('./img/underline.png');
-  texts[actions.insertVideo] = require('./img/video.png');
-  texts[actions.removeFormat] = require('./img/remove_format.png');
-  texts[actions.undo] = require('./img/undo.png');
-  texts[actions.redo] = require('./img/redo.png');
-  texts[actions.checkboxList] = require('./img/checkbox.png');
-  texts[actions.table] = require('./img/table.png');
-  texts[actions.code] = require('./img/code.png');
-  texts[actions.outdent] = require('./img/outdent.png');
-  texts[actions.indent] = require('./img/indent.png');
-  texts[actions.alignLeft] = require('./img/justify_left.png');
-  texts[actions.alignCenter] = require('./img/justify_center.png');
-  texts[actions.alignRight] = require('./img/justify_right.png');
-  texts[actions.alignFull] = require('./img/justify_full.png');
-  texts[actions.blockquote] = require('./img/blockquote.png');
-  texts[actions.line] = require('./img/line.png');
-  texts[actions.fontSize] = require('./img/fontSize.png');
-  return texts;
-}
 
 // noinspection FallThroughInSwitchStatementJS
 export default class RichToolbar extends Component {
@@ -133,32 +98,15 @@ export default class RichToolbar extends Component {
     }
   }
 
-  _getButtonSelectedStyle() {
-    return this.props.selectedButtonStyle && this.props.selectedButtonStyle;
-  }
-
-  _getButtonUnselectedStyle() {
-    return this.props.unselectedButtonStyle && this.props.unselectedButtonStyle;
-  }
-
   _getButtonDisabledStyle() {
     return this.props.disabledButtonStyle && this.props.disabledButtonStyle;
-  }
-
-  _getButtonIcon(action) {
-    const { iconMap } = this.props;
-    if (iconMap && iconMap[action]) {
-      return iconMap[action];
-    } else {
-      return getDefaultIcon()[action];
-    }
   }
 
   _onPress(action) {
     const { onPressAddImage, onInsertLink, insertVideo } = this.props;
     const editor = this.editor;
 
-    if (this.props.onSelectItem) this.props.onSelectItem();
+    //if (this.props.onSelectItem) this.props.onSelectItem();
 
     if (!editor) {
       this._mount();
@@ -214,32 +162,7 @@ export default class RichToolbar extends Component {
 
   _defaultRenderAction(action, selected) {
     const that = this;
-    const icon = that._getButtonIcon(action);
-    const { iconSize, iconGap, disabled, itemStyle } = that.props;
-    const style = selected ? that._getButtonSelectedStyle() : that._getButtonUnselectedStyle();
-    const tintColor = disabled ? that.props.disabledIconTint : selected ? that.props.selectedIconTint : that.props.iconTint;
-    return (
-      <TouchableOpacity
-        key={action}
-        disabled={disabled}
-        style={[{ width: iconGap + iconSize }, styles.item, itemStyle, style]}
-        onPress={() => that._onPress(action)}>
-        {icon ? (
-          typeof icon === 'function' ? (
-            icon({ selected, disabled, tintColor, iconSize, iconGap })
-          ) : (
-            <Image
-              source={icon}
-              style={{
-                tintColor,
-                height: iconSize,
-                width: iconSize,
-              }}
-            />
-          )
-        ) : null}
-      </TouchableOpacity>
-    );
+    return <RichToolbarItem icon={`ui-${action}`} onSelected={() => that._onPress(action)} selected={selected} />;
   }
 
   _renderAction(action, selected) {
@@ -247,20 +170,19 @@ export default class RichToolbar extends Component {
   }
 
   render() {
-    const { style, disabled, children, flatContainerStyle } = this.props;
+    const { style, disabled, children } = this.props;
     const vStyle = [styles.barContainer, style, disabled && this._getButtonDisabledStyle()];
     return (
       <View>
         <View style={vStyle}>
-          <FlatList
-            horizontal
+          <HorizontalList
             keyboardShouldPersistTaps="always"
             keyExtractor={(item, index) => item.action + '-' + index}
             data={this.state.data}
             alwaysBounceHorizontal={false}
             showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => this._renderAction(item.action, item.selected)}
-            contentContainerStyle={flatContainerStyle}
+            ItemSeparatorComponent={() => <View style={{ width: UI_SIZES.spacing.tiny }} />} // add this line
           />
           {children}
         </View>

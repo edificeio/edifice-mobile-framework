@@ -203,35 +203,9 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
           marginTop: -pageHeight,
         }}>
         <RichToolbar
-          actions={[
-            actions.undo,
-            actions.redo,
-            'insertEmoji',
-            actions.setBold,
-            actions.setItalic,
-            actions.setUnderline,
-            'fontSize',
-            actions.alignLeft,
-            actions.alignCenter,
-            actions.alignRight,
-            actions.removeFormat,
-            actions.insertBulletsList,
-            actions.indent,
-            actions.outdent,
-            actions.insertLink,
-            actions.line,
-            actions.foreColor,
-            actions.hiliteColor,
-            actions.heading1,
-            actions.heading4,
-            actions.code,
-            actions.setStrikethrough,
-            actions.insertOrderedList,
-            actions.blockquote,
-          ]}
+          actions={[actions.setBold, actions.setItalic]}
           disabledIconTint="#bfbfbf"
           editor={richText}
-          flatContainerStyle={styles.flatStyle}
           iconMap={{
             insertEmoji: phizIcon,
             [actions.foreColor]: () => <Text style={[styles.tib, { color: 'blue' }]}>FC</Text>,
