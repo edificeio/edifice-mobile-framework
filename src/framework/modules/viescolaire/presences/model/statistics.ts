@@ -1,15 +1,15 @@
 import { IForgottenNotebook, IHistoryEvent, IIncident, IPunishment } from './events';
 
-export interface IHistory {
+export interface IStatistics {
   DEPARTURE: {
     events: IHistoryEvent[];
     total: number;
   };
-  FORGOTTEN_NOTEBOOK: {
+  FORGOTTEN_NOTEBOOK?: {
     events: IForgottenNotebook[];
     total: number;
   };
-  INCIDENT: {
+  INCIDENT?: {
     events: IIncident[];
     total: number;
   };
@@ -21,7 +21,7 @@ export interface IHistory {
     events: IHistoryEvent[];
     total: number;
   };
-  PUNISHMENT: {
+  PUNISHMENT?: {
     events: IPunishment[];
     total: number;
   };

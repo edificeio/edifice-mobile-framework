@@ -8,7 +8,7 @@ import type {
   fetchPresencesTermsAction,
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import type { IHistory, IUserChild } from '~/framework/modules/viescolaire/presences/model';
+import type { IStatistics, IUserChild } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -22,7 +22,7 @@ export interface PresencesStatisticsScreenNavParams {
 
 export interface PresencesStatisticsScreenStoreProps {
   schoolYear: ISchoolYear | undefined;
-  statistics: IHistory;
+  statistics: IStatistics;
   terms: ITerm[];
   classes?: string[];
   session?: ISession;
@@ -32,7 +32,7 @@ export interface PresencesStatisticsScreenStoreProps {
 
 export interface PresencesStatisticsScreenDispatchProps {
   tryFetchSchoolYear: (...args: Parameters<typeof fetchPresencesSchoolYearAction>) => Promise<ISchoolYear>;
-  tryFetchStatistics: (...args: Parameters<typeof fetchPresencesStatisticsAction>) => Promise<IHistory>;
+  tryFetchStatistics: (...args: Parameters<typeof fetchPresencesStatisticsAction>) => Promise<IStatistics>;
   tryFetchTerms: (...args: Parameters<typeof fetchPresencesTermsAction>) => Promise<ITerm[]>;
   tryFetchUserChildren: (...args: Parameters<typeof fetchPresencesUserChildrenAction>) => Promise<IUserChild[]>;
 }

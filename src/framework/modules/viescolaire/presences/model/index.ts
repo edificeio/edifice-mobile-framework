@@ -13,7 +13,7 @@ import {
   IPunishment,
   compareEvents,
 } from './events';
-import { IHistory } from './history';
+import { IStatistics } from './statistics';
 import { IUserChild } from './user-child';
 
 export {
@@ -28,10 +28,10 @@ export {
   IEvent,
   IEventReason,
   IForgottenNotebook,
-  IHistory,
   IHistoryEvent,
   IIncident,
   IPunishment,
+  IStatistics,
   IUserChild,
   compareEvents,
 };

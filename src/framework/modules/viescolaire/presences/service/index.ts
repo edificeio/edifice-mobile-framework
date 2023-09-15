@@ -11,8 +11,8 @@ import {
   ICourse,
   IEvent,
   IEventReason,
-  IHistory,
   IHistoryEvent,
+  IStatistics,
   IUserChild,
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
@@ -435,7 +435,7 @@ const historyEventAdapter = (data: IBackendHistoryEvent, type: HistoryEventType)
   };
 };
 
-const historyEventsAdapter = (data: IBackendHistoryEvents): Omit<IHistory, 'FORGOTTEN_NOTEBOOK' | 'INCIDENT' | 'PUNISHMENT'> => {
+const historyEventsAdapter = (data: IBackendHistoryEvents): Omit<IStatistics, 'FORGOTTEN_NOTEBOOK' | 'INCIDENT' | 'PUNISHMENT'> => {
   return {
     DEPARTURE: {
       events: data.all.DEPARTURE.map(event => historyEventAdapter(event, HistoryEventType.DEPARTURE)),
@@ -461,7 +461,7 @@ const historyEventsAdapter = (data: IBackendHistoryEvents): Omit<IHistory, 'FORG
   };
 };
 
-const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks): Pick<IHistory, 'FORGOTTEN_NOTEBOOK'> => {
+const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks): Pick<IStatistics, 'FORGOTTEN_NOTEBOOK'> => {
   return {
     FORGOTTEN_NOTEBOOK: {
       events: data.all.map(event => ({
@@ -474,7 +474,7 @@ const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebook
   };
 };
 
-const historyIncidentsAdapter = (data: IBackendHistoryIncidents): Pick<IHistory, 'INCIDENT' | 'PUNISHMENT'> => {
+const historyIncidentsAdapter = (data: IBackendHistoryIncidents): Pick<IStatistics, 'INCIDENT' | 'PUNISHMENT'> => {
   return {
     INCIDENT: {
       events: data.all.INCIDENT.map(i => ({

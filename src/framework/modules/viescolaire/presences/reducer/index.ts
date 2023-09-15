@@ -12,10 +12,10 @@ import {
   ICourse,
   IEventReason,
   IForgottenNotebook,
-  IHistory,
   IHistoryEvent,
   IIncident,
   IPunishment,
+  IStatistics,
   IUserChild,
 } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
@@ -30,7 +30,7 @@ interface IPresencesReduxStateData {
   history: (IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[];
   registerPreference: string;
   schoolYear?: ISchoolYear;
-  statistics: IHistory;
+  statistics: IStatistics;
   terms: ITerm[];
   userChildren: IUserChild[];
 }
@@ -44,7 +44,7 @@ export interface IPresencesReduxState {
   history: AsyncState<(IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[]>;
   registerPreference: AsyncState<string>;
   schoolYear: AsyncState<ISchoolYear | undefined>;
-  statistics: AsyncState<IHistory>;
+  statistics: AsyncState<IStatistics>;
   terms: AsyncState<ITerm[]>;
   userChildren: AsyncState<IUserChild[]>;
 }

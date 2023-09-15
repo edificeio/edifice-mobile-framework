@@ -24,8 +24,8 @@ import StatisticsCard from '~/framework/modules/viescolaire/presences/components
 import { HistoryEventType } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import appConf from '~/framework/util/appConf';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -124,12 +124,15 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
         ),
       },
       FORGOTTEN_NOTEBOOK: {
-        events: statistics.FORGOTTEN_NOTEBOOK.events.filter(
-          e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate),
-        ),
+        events:
+          statistics.FORGOTTEN_NOTEBOOK?.events.filter(
+            e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate),
+          ) ?? [],
       },
       INCIDENT: {
-        events: statistics.INCIDENT.events.filter(e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate)),
+        events:
+          statistics.INCIDENT?.events.filter(e => e.date.isSameOrAfter(term.startDate) && e.date.isSameOrBefore(term.endDate)) ??
+          [],
       },
       LATENESS: {
         events: statistics.LATENESS.events.filter(
@@ -142,9 +145,10 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
         ),
       },
       PUNISHMENT: {
-        events: statistics.PUNISHMENT.events.filter(
-          e => e.createdAt.isSameOrAfter(term.startDate) && e.createdAt.isSameOrBefore(term.endDate),
-        ),
+        events:
+          statistics.PUNISHMENT?.events.filter(
+            e => e.createdAt.isSameOrAfter(term.startDate) && e.createdAt.isSameOrBefore(term.endDate),
+          ) ?? [],
       },
       REGULARIZED: {
         events: statistics.REGULARIZED.events.filter(
@@ -160,7 +164,7 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
   };
 
   const renderHistory = () => {
-    const { terms } = props;
+    const { session, terms } = props;
     const statistics = filterStatistics();
     const dropdownTerms = [
       { label: I18n.get('presences-statistics-year'), value: 'year' },
@@ -189,11 +193,11 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
         <StatisticsCard type={HistoryEventType.REGULARIZED} {...statistics.REGULARIZED} />
         <StatisticsCard type={HistoryEventType.LATENESS} {...statistics.LATENESS} />
         <StatisticsCard type={HistoryEventType.DEPARTURE} {...statistics.DEPARTURE} />
-        {appConf.is2d ? (
+        {session && getPresencesWorkflowInformation(session).presences2d ? (
           <>
-            <StatisticsCard type={HistoryEventType.FORGOTTEN_NOTEBOOK} {...statistics.FORGOTTEN_NOTEBOOK} />
-            <StatisticsCard type={HistoryEventType.INCIDENT} {...statistics.INCIDENT} />
-            <StatisticsCard type={HistoryEventType.PUNISHMENT} {...statistics.PUNISHMENT} />
+            <StatisticsCard type={HistoryEventType.FORGOTTEN_NOTEBOOK} {...statistics.FORGOTTEN_NOTEBOOK!} />
+            <StatisticsCard type={HistoryEventType.INCIDENT} {...statistics.INCIDENT!} />
+            <StatisticsCard type={HistoryEventType.PUNISHMENT} {...statistics.PUNISHMENT!} />
           </>
         ) : null}
       </ScrollView>
