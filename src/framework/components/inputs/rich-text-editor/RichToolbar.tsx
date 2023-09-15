@@ -183,6 +183,7 @@ export default class RichToolbar extends Component {
             showsHorizontalScrollIndicator={false}
             renderItem={({ item }) => this._renderAction(item.action, item.selected)}
             ItemSeparatorComponent={() => <View style={{ width: UI_SIZES.spacing.tiny }} />} // add this line
+            contentContainerStyle={{ alignItems: 'center' }}
           />
           {children}
         </View>
