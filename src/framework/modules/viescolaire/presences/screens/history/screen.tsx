@@ -39,6 +39,7 @@ import {
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
+import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -59,6 +60,7 @@ export const computeNavBar = ({
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
+  const [isInitialized, setInitialized] = React.useState(true);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -70,13 +72,17 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
       const studentId = userType === UserType.Student ? userId : selectedChildId;
 
-      if (!structureId || !studentId || !userId || !userType) throw new Error();
+      if (!session || !structureId || !studentId || !userId || !userType) throw new Error();
+      const initialized = await presencesService.initialization.getStructureStatus(session, structureId);
+      if (!initialized) {
+        setInitialized(false);
+        throw new Error();
+      }
       await props.tryFetchHistory(studentId, structureId, moment().subtract(1, 'month'), moment());
     } catch {
       throw new Error();
     }
   };
-
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
     fetchEvents()
@@ -122,7 +128,16 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const renderError = () => {
     return (
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        <EmptyContentScreen />
+        {isInitialized ? (
+          <EmptyContentScreen />
+        ) : (
+          <EmptyScreen
+            svgImage="empty-light"
+            title={I18n.get('presences-history-emptyscreen-initialization-title')}
+            text={I18n.get('presences-history-emptyscreen-initialization-text')}
+            customStyle={styles.pageContainer}
+          />
+        )}
       </ScrollView>
     );
   };
@@ -208,11 +223,11 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
           ListEmptyComponent={
             <EmptyScreen
               svgImage="empty-zimbra"
-              title={I18n.get('presences-history-emptyscreen-title')}
+              title={I18n.get('presences-history-emptyscreen-default-title')}
               text={I18n.get(
                 userType === UserType.Relative
-                  ? 'presences-history-emptyscreen-text-relative'
-                  : 'presences-history-emptyscreen-text-student',
+                  ? 'presences-history-emptyscreen-default-text-relative'
+                  : 'presences-history-emptyscreen-default-text-student',
               )}
               customStyle={styles.emptyScreenContainer}
               customTitleStyle={styles.emptyScreenTitle}

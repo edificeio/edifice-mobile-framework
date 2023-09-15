@@ -785,6 +785,13 @@ export const presencesService = {
       return historyIncidentsAdapter(incidents);
     },
   },
+  initialization: {
+    getStructureStatus: async (session: ISession, structureId: string) => {
+      const api = `/presences/initialization/structures/${structureId}`;
+      const data = (await fetchJSONWithCache(api)) as { initialized: boolean };
+      return data.initialized;
+    },
+  },
   preferences: {
     getRegister: async (session: ISession) => {
       const api = '/userbook/preference/presences.register';

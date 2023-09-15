@@ -50,6 +50,7 @@ export const computeNavBar = ({
 });
 
 const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => {
+  const [isInitialized, setInitialized] = React.useState(true);
   const [date, setDate] = React.useState<Moment>(moment());
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
@@ -63,16 +64,25 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
 
   const fetchCourses = async () => {
     try {
-      const { structureIds, teacherId } = props;
+      const { session, structureIds, teacherId } = props;
+      const initializedStructureIds: string[] = [];
 
-      if (!structureIds.length || !teacherId) throw new Error();
+      if (!session || !structureIds.length || !teacherId) throw new Error();
       /*const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
       const registerPreference = await props.tryFetchRegisterPreference();
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }*/
-      await props.tryFetchCourses(teacherId, structureIds, date, false);
+      for (const id of structureIds) {
+        const initialized = await presencesService.initialization.getStructureStatus(session, id);
+        if (initialized) initializedStructureIds.push(id);
+      }
+      if (!initializedStructureIds.length) {
+        setInitialized(false);
+        throw new Error();
+      }
+      await props.tryFetchCourses(teacherId, initializedStructureIds, date, false);
     } catch {
       throw new Error();
     }
@@ -170,7 +180,16 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const renderError = () => {
     return (
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        <EmptyContentScreen />
+        {isInitialized ? (
+          <EmptyContentScreen />
+        ) : (
+          <EmptyScreen
+            svgImage="empty-light"
+            title={I18n.get('presences-calllist-emptyscreen-initialization-title')}
+            text={I18n.get('presences-calllist-emptyscreen-initialization-text')}
+            customStyle={styles.pageContainer}
+          />
+        )}
       </ScrollView>
     );
   };
@@ -226,8 +245,8 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
             ) : (
               <EmptyScreen
                 svgImage="empty-presences"
-                title={I18n.get('presences-calllist-emptyscreen-title')}
-                text={I18n.get('presences-calllist-emptyscreen-text')}
+                title={I18n.get('presences-calllist-emptyscreen-default-title')}
+                text={I18n.get('presences-calllist-emptyscreen-default-text')}
                 customStyle={styles.emptyScreenContainer}
               />
             )
