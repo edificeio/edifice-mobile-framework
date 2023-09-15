@@ -8,8 +8,6 @@ export default StyleSheet.create({
     marginBottom: UI_SIZES.spacing.big,
   },
   childListContainer: {
-    flexGrow: 0,
-    flexShrink: 0,
     borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
   },
