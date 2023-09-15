@@ -645,6 +645,8 @@
   "pickfile-title": "Choissisez le type de fichier à ajouter",
   "presences-call-action": "Valider l'appel",
   "presences-call-error-text": "Une erreur est survenue. Veuillez réessayer plus tard.",
+  "presences-call-leavealert-text": "Les modifications des statuts des élèves sont enregistrées. Mais l’appel n’est pas considéré comme validé. Êtes-vous sûr de quitter ?",
+  "presences-call-leavealert-title": "Appel non validé",
   "presences-call-room": "Salle {{name}}",
   "presences-call-studentstatus-absent": "Absent",
   "presences-call-studentstatus-departure": "Départ anticipé",

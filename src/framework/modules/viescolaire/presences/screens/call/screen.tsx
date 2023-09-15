@@ -11,6 +11,7 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesClassCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
@@ -259,6 +260,17 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
         return renderError();
     }
   };
+
+  const isCallLackingValidation =
+    props.classCall !== undefined &&
+    props.classCall.stateId === 1 &&
+    props.classCall.students.some(student => student.events.length);
+
+  usePreventBack({
+    title: I18n.get('presences-call-leavealert-title'),
+    text: I18n.get('presences-call-leavealert-text'),
+    showAlert: isCallLackingValidation && !isValidating,
+  });
 
   return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
 };
