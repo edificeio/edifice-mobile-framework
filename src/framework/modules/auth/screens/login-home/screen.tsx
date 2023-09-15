@@ -209,6 +209,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
               testID="login-identifier"
               showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
               onSubmitEditing={onSubmitEditingLogin}
+              returnKeyType="next"
             />
           }
         />
@@ -224,6 +225,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
               showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
               testID="login-password"
               onSubmitEditing={onSubmitEditingPassword}
+              returnKeyType="send"
               testIDToggle="login-see-password"
             />
           }
