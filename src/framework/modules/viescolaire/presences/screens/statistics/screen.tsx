@@ -65,7 +65,7 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
       const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
-      await props.tryFetchStatistics(studentId, structureId, startDate.format('YYYY-MM-DD'), endDate.format('YYYY-MM-DD'));
+      await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
       const terms = await props.tryFetchTerms(structureId, groupId ?? '');
       const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
       if (currentTerm && selectedTerm === 'year') setSelectedTerm(currentTerm.order.toString());

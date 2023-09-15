@@ -25,22 +25,6 @@ import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
-export const presencesAbsencesActionsCreators = createAsyncActionCreators(actionTypes.absences);
-export const fetchPresencesAbsencesAction =
-  (studentId: string, structureId: string, startDate: string, endDate: string): ThunkAction<Promise<IAbsence[]>, any, any, any> =>
-  async (dispatch, getState) => {
-    try {
-      const session = assertSession();
-      dispatch(presencesAbsencesActionsCreators.request());
-      const absences = await presencesService.absences.get(session, studentId, structureId, startDate, endDate);
-      dispatch(presencesAbsencesActionsCreators.receipt(absences));
-      return absences;
-    } catch (e) {
-      dispatch(presencesAbsencesActionsCreators.error(e as Error));
-      throw e;
-    }
-  };
-
 export const presencesChildrenEventsActionsCreators = createAsyncActionCreators(actionTypes.childrenEvents);
 export const fetchPresencesChildrenEventsAction =
   (structureId: string, studentIds: string[]): ThunkAction<Promise<IChildrenEvents>, any, any, any> =>
@@ -122,29 +106,33 @@ export const fetchPresencesHistoryAction =
   (
     studentId: string,
     structureId: string,
-    startDate: string,
-    endDate: string,
+    startDate: Moment,
+    endDate: Moment,
   ): ThunkAction<Promise<(IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
+      const start = startDate.format('YYYY-MM-DD');
+      const end = endDate.format('YYYY-MM-DD');
       dispatch(presencesHistoryActionsCreators.request());
-      const events = await presencesService.history.getEvents(session, studentId, structureId, startDate, endDate);
+      const absences = await presencesService.absences.get(
+        session,
+        studentId,
+        structureId,
+        start,
+        endDate.add(1, 'month').format('YYYY-MM-DD'),
+      );
+      const events = await presencesService.history.getEvents(session, studentId, structureId, start, end);
       const { FORGOTTEN_NOTEBOOK } = await presencesService.history.getForgottenNotebookEvents(
         session,
         studentId,
         structureId,
-        startDate,
-        endDate,
+        start,
+        end,
       );
-      const { INCIDENT, PUNISHMENT } = await presencesService.history.getIncidents(
-        session,
-        studentId,
-        structureId,
-        startDate,
-        endDate,
-      );
+      const { INCIDENT, PUNISHMENT } = await presencesService.history.getIncidents(session, studentId, structureId, start, end);
       const history = [
+        ...absences,
         ...events.DEPARTURE.events,
         ...events.LATENESS.events,
         ...events.NO_REASON.events,
@@ -211,15 +199,17 @@ export const fetchPresencesSchoolYearAction =
 
 export const presencesStatisticsActionsCreators = createAsyncActionCreators(actionTypes.statistics);
 export const fetchPresencesStatisticsAction =
-  (studentId: string, structureId: string, startDate: string, endDate: string): ThunkAction<Promise<IHistory>, any, any, any> =>
+  (studentId: string, structureId: string, startDate: Moment, endDate: Moment): ThunkAction<Promise<IHistory>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
+      const start = startDate.format('YYYY-MM-DD');
+      const end = endDate.format('YYYY-MM-DD');
       dispatch(presencesStatisticsActionsCreators.request());
       const statistics: IHistory = {
-        ...(await presencesService.history.getEvents(session, studentId, structureId, startDate, endDate)),
-        ...(await presencesService.history.getForgottenNotebookEvents(session, studentId, structureId, startDate, endDate)),
-        ...(await presencesService.history.getIncidents(session, studentId, structureId, startDate, endDate)),
+        ...(await presencesService.history.getEvents(session, studentId, structureId, start, end)),
+        ...(await presencesService.history.getForgottenNotebookEvents(session, studentId, structureId, start, end)),
+        ...(await presencesService.history.getIncidents(session, studentId, structureId, start, end)),
       };
       dispatch(presencesStatisticsActionsCreators.receipt(statistics));
       return statistics;

@@ -18,7 +18,7 @@ import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
-import { fetchPresencesAbsencesAction, fetchPresencesHistoryAction } from '~/framework/modules/viescolaire/presences/actions';
+import { fetchPresencesHistoryAction } from '~/framework/modules/viescolaire/presences/actions';
 import {
   AbsenceCard,
   DepartureCard,
@@ -71,10 +71,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       const studentId = userType === UserType.Student ? userId : selectedChildId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
-      const startDate = moment().subtract(1, 'month').format('YYYY-MM-DD');
-      const endDate = moment().format('YYYY-MM-DD');
-      await props.tryFetchAbsences(studentId, structureId, startDate, endDate);
-      await props.tryFetchHistory(studentId, structureId, startDate, endDate);
+      await props.tryFetchHistory(studentId, structureId, moment().subtract(1, 'month'), moment());
     } catch {
       throw new Error();
     }
@@ -115,7 +112,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [props.navigation, selectedChildId]);
 
   React.useEffect(() => {
     if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
@@ -263,7 +260,6 @@ export default connect(
           : undefined,
       events: presencesState.history.data,
       hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
-      history: presencesState.history.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       session,
       userId,
@@ -273,7 +269,6 @@ export default connect(
   dispatch =>
     bindActionCreators<PresencesHistoryScreenDispatchProps>(
       {
-        tryFetchAbsences: tryAction(fetchPresencesAbsencesAction),
         tryFetchHistory: tryAction(fetchPresencesHistoryAction),
       },
       dispatch,

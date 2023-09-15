@@ -22,7 +22,6 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 interface IPresencesReduxStateData {
-  absences: IAbsence[];
   allowMultipleSlots: boolean;
   childrenEvents: IChildrenEvents;
   classCall?: IClassCall;
@@ -37,7 +36,6 @@ interface IPresencesReduxStateData {
 }
 
 export interface IPresencesReduxState {
-  absences: AsyncState<IAbsence[]>;
   allowMultipleSlots: AsyncState<boolean>;
   childrenEvents: AsyncState<IChildrenEvents>;
   classCall: AsyncState<IClassCall | undefined>;
@@ -52,7 +50,6 @@ export interface IPresencesReduxState {
 }
 
 const initialState: IPresencesReduxStateData = {
-  absences: [],
   allowMultipleSlots: true,
   childrenEvents: {},
   courses: {},
@@ -99,7 +96,6 @@ const initialState: IPresencesReduxStateData = {
 };
 
 export const actionTypes = {
-  absences: createAsyncActionTypes(moduleConfig.namespaceActionType('ABSENCES')),
   childrenEvents: createAsyncActionTypes(moduleConfig.namespaceActionType('CHILDREN_EVENTS')),
   classCall: createAsyncActionTypes(moduleConfig.namespaceActionType('CLASS_CALL')),
   courses: createAsyncActionTypes(moduleConfig.namespaceActionType('COURSES')),
@@ -115,7 +111,6 @@ export const actionTypes = {
 };
 
 const reducer = combineReducers({
-  absences: createSessionAsyncReducer(initialState.absences, actionTypes.absences),
   allowMultipleSlots: createSessionAsyncReducer(initialState.allowMultipleSlots, actionTypes.multipleSlotsSetting),
   childrenEvents: createSessionAsyncReducer(initialState.childrenEvents, actionTypes.childrenEvents),
   classCall: createSessionAsyncReducer(initialState.classCall, actionTypes.classCall),
