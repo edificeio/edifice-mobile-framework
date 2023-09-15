@@ -3,16 +3,15 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { getSession } from '~/framework/modules/auth/reducer';
+import { deleteHomeworkDiaryEntry } from '~/framework/modules/homework/actions/deleteEntry';
+import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
 import {
   HomeworkTaskDetailsScreen,
   HomeworkTaskDetailsScreenDataProps,
   HomeworkTaskDetailsScreenEventProps,
   IHomeworkTaskDetailsScreenProps,
 } from '~/framework/modules/homework/components/HomeworkTaskDetailsScreen';
-
-import { getSession } from '../../auth/reducer';
-import { deleteHomeworkDiaryEntry } from '../actions/deleteEntry';
-import { fetchHomeworkTasks } from '../actions/tasks';
 
 const mapStateToProps: (state: any) => HomeworkTaskDetailsScreenDataProps = state => {
   const session = getSession();

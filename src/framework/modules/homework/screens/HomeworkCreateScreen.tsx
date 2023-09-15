@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
+import { createHomeworkDiaryEntry, uploadHomeworkDiaryEntryImages } from '~/framework/modules/homework/actions/createEntry';
+import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
 import {
   HomeworkCreateScreen,
   HomeworkCreateScreenDataProps,
@@ -13,9 +15,6 @@ import {
 import { homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { getState as getConnectionTrackerState } from '~/infra/reducers/connectionTracker';
-
-import { createHomeworkDiaryEntry, uploadHomeworkDiaryEntryImages } from '../actions/createEntry';
-import { fetchHomeworkTasks } from '../actions/tasks';
 
 const mapStateToProps: (state: any) => HomeworkCreateScreenDataProps = state => {
   const localState = state.homework;

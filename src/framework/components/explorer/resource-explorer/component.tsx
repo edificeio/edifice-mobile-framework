@@ -24,6 +24,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import GridList from '~/framework/components/GridList';
+import { UI_SIZES } from '~/framework/components/constants';
 import styles from '~/framework/components/explorer/resource-explorer/styles';
 import {
   ResourceExplorerEmptyItem,
@@ -38,8 +39,6 @@ import { Icon } from '~/framework/components/icon';
 import { Picture, PictureProps } from '~/framework/components/picture';
 import { displayPastDate } from '~/framework/util/date';
 import { Image } from '~/framework/util/media';
-
-import { UI_SIZES } from '../../constants';
 
 export const resourceItemTouchableStyle = { ...styles.commonItemTouchableStyle, ...styles.itemTouchableStyle };
 export const empyItemTouchableStyle = { ...styles.commonItemTouchableStyle, ...styles.empyItemTouchableStyle };
