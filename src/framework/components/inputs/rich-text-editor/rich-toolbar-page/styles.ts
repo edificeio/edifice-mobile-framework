@@ -15,6 +15,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderRightWidth: 0,
   },
+  headerTitle: {
+    alignSelf: 'flex-start',
+  },
   content: {
     padding: UI_SIZES.spacing.medium,
   },

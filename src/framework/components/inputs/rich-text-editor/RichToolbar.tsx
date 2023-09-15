@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
+import HorizontalList from '~/framework/components/list/horizontal';
 
-import { UI_SIZES } from '../../constants';
-import HorizontalList from '../../list/horizontal';
 import { actions } from './const';
+import { RichToolbarIconButton } from './rich-toolbar-icon-button';
 import { RichToolbarItem } from './rich-toolbar-item';
 import { RichToolbarPage } from './rich-toolbar-page';
+import { RichToolbarTextButton } from './rich-toolbar-text-button';
 
 const styles = StyleSheet.create({
   barContainer: {
@@ -106,7 +108,7 @@ export default class RichToolbar extends Component {
     const { onPressAddImage, onInsertLink, insertVideo } = this.props;
     const editor = this.editor;
 
-    //if (this.props.onSelectItem) this.props.onSelectItem();
+    if (this.props.onSelectItem) this.props.onSelectItem();
 
     if (!editor) {
       this._mount();
@@ -188,7 +190,15 @@ export default class RichToolbar extends Component {
           {children}
         </View>
         <View style={{ height: this.props.heightPageToolbar, backgroundColor: theme.palette.grey.white }}>
-          <RichToolbarPage />
+          <RichToolbarPage
+            title="Style de texte"
+            content={
+              <View>
+                <RichToolbarIconButton icon="ui-mail" selected />
+                <RichToolbarTextButton text="Titre 1" selected />
+              </View>
+            }
+          />
         </View>
       </View>
     );
