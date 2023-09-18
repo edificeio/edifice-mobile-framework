@@ -17,7 +17,7 @@ import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/tex
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
-  fetchPresencesClassCallAction,
+  fetchPresencesCallAction,
   fetchPresencesCoursesAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
@@ -26,7 +26,7 @@ import CallCard from '~/framework/modules/viescolaire/presences/components/call-
 import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
 import CallListPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-list';
 import CallSummaryPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-summary';
-import { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
+import { Call, CallState, Course } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -54,7 +54,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const [date, setDate] = React.useState<Moment>(moment());
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const [bottomSheetCall, setBottomSheetCall] = React.useState<IClassCall | null>(null);
+  const [bottomSheetCall, setBottomSheetCall] = React.useState<Call | null>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -137,7 +137,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
-  const openCall = async (course?: ICourse) => {
+  const openCall = async (course?: Course) => {
     try {
       if (!course) throw new Error();
       let { callId } = course;
@@ -145,7 +145,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
       if (!callId) {
         const { allowMultipleSlots, session, teacherId } = props;
         if (!session || !teacherId) throw new Error();
-        callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
+        callId = await presencesService.call.create(session, course, teacherId, allowMultipleSlots);
       }
       bottomSheetModalRef.current?.dismiss();
       props.navigation.navigate(presencesRouteNames.call, {
@@ -157,14 +157,14 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
     }
   };
 
-  const onPressCourse = async (course: ICourse) => {
+  const onPressCourse = async (course: Course) => {
     if (moment().isBefore(course.startDate)) {
       Alert.alert(I18n.get('presences-calllist-unavailablealert-title'), I18n.get('presences-calllist-unavailablealert-message'));
-    } else if (course.registerStateId === 3 || moment().isAfter(course.endDate)) {
+    } else if (course.callStateId === CallState.DONE || moment().isAfter(course.endDate)) {
       setSelectedCourseId(course.id);
       bottomSheetModalRef.current?.present();
-      if (course.registerStateId === 3 && props.session) {
-        const call = await props.tryFetchClassCall(course.callId);
+      if (course.callStateId === CallState.DONE && props.session) {
+        const call = await props.tryFetchCall(course.callId);
         setBottomSheetCall(call);
       }
     } else {
@@ -196,7 +196,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
 
   const renderBottomSheet = () => {
     const course = courses.find(c => c.id === selectedCourseId);
-    const isValidated = course?.registerStateId === 3;
+    const isValidated = course?.callStateId === CallState.DONE;
 
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={clearBottomSheetContent}>
@@ -297,7 +297,7 @@ export default connect(
   dispatch =>
     bindActionCreators<PresencesCallListScreenDispatchProps>(
       {
-        tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
+        tryFetchCall: tryAction(fetchPresencesCallAction),
         tryFetchCourses: tryAction(fetchPresencesCoursesAction),
         tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
         tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),

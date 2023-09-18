@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import { EventType } from '~/framework/modules/viescolaire/presences/model';
+import { CallEventType } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import styles from './styles';
@@ -14,9 +14,9 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
   constructor(props: StudentListItemProps) {
     super(props);
     this.state = {
-      absentEvent: props.student.events.find(event => event.typeId === EventType.ABSENCE),
-      lateEvent: props.student.events.find(event => event.typeId === EventType.LATENESS),
-      leavingEvent: props.student.events.find(event => event.typeId === EventType.DEPARTURE),
+      absentEvent: props.student.events.find(event => event.typeId === CallEventType.ABSENCE),
+      lateEvent: props.student.events.find(event => event.typeId === CallEventType.LATENESS),
+      leavingEvent: props.student.events.find(event => event.typeId === CallEventType.DEPARTURE),
     };
   }
 
@@ -46,13 +46,13 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
           {!eventTypes.length ? (
             <Picture type="NamedSvg" name="ui-success_outline" width={32} height={32} fill={theme.palette.status.success.regular} />
           ) : null}
-          {eventTypes.includes(EventType.ABSENCE) ? (
+          {eventTypes.includes(CallEventType.ABSENCE) ? (
             <Picture type="NamedSvg" name="ui-error" width={32} height={32} fill={theme.palette.status.failure.regular} />
           ) : null}
-          {eventTypes.includes(EventType.LATENESS) ? (
+          {eventTypes.includes(CallEventType.LATENESS) ? (
             <Picture type="NamedSvg" name="ui-clock-alert" width={32} height={32} fill={theme.palette.status.warning.regular} />
           ) : null}
-          {eventTypes.includes(EventType.DEPARTURE) ? (
+          {eventTypes.includes(CallEventType.DEPARTURE) ? (
             <Picture type="NamedSvg" name="ui-leave" width={32} height={32} fill={theme.palette.status.warning.regular} />
           ) : null}
         </View>

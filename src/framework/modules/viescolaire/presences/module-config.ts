@@ -3,7 +3,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { IPresencesReduxState } from './reducer';
+import { PresencesReduxState } from './reducer';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
@@ -12,7 +12,7 @@ function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   );
 }
 
-export default new NavigableModuleConfig<'presences', IPresencesReduxState>({
+export default new NavigableModuleConfig<'presences', PresencesReduxState>({
   name: 'presences',
   entcoreScope: ['presences'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),

@@ -29,12 +29,13 @@ import {
   StatementAbsenceCard,
 } from '~/framework/modules/viescolaire/presences/components/history-event-card/variants';
 import {
-  HistoryEventType,
-  IAbsence,
-  IForgottenNotebook,
-  IHistoryEvent,
-  IIncident,
-  IPunishment,
+  Absence,
+  CommonEvent,
+  Event,
+  EventType,
+  ForgottenNotebook,
+  Incident,
+  Punishment,
 } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -167,28 +168,24 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     );
   };
 
-  const renderHistoryEventListItem = ({
-    item,
-  }: {
-    item: IAbsence | IHistoryEvent | IIncident | IPunishment | IForgottenNotebook;
-  }) => {
+  const renderHistoryEventListItem = ({ item }: { item: Event }) => {
     switch (item.type) {
-      case HistoryEventType.NO_REASON:
-      case HistoryEventType.REGULARIZED:
-      case HistoryEventType.UNREGULARIZED:
-        return <AbsenceCard event={item as IHistoryEvent} />;
-      case HistoryEventType.DEPARTURE:
-        return <DepartureCard event={item as IHistoryEvent} />;
-      case HistoryEventType.FORGOTTEN_NOTEBOOK:
-        return <ForgottenNotebookCard event={item as IForgottenNotebook} />;
-      case HistoryEventType.INCIDENT:
-        return <IncidentCard event={item as IIncident} />;
-      case HistoryEventType.LATENESS:
-        return <LatenessCard event={item as IHistoryEvent} />;
-      case HistoryEventType.PUNISHMENT:
-        return <PunishmentCard event={item as IPunishment} />;
-      case HistoryEventType.STATEMENT_ABSENCE:
-        return <StatementAbsenceCard event={item as IAbsence} userType={props.userType} />;
+      case EventType.NO_REASON:
+      case EventType.REGULARIZED:
+      case EventType.UNREGULARIZED:
+        return <AbsenceCard event={item as CommonEvent} />;
+      case EventType.DEPARTURE:
+        return <DepartureCard event={item as CommonEvent} />;
+      case EventType.FORGOTTEN_NOTEBOOK:
+        return <ForgottenNotebookCard event={item as ForgottenNotebook} />;
+      case EventType.INCIDENT:
+        return <IncidentCard event={item as Incident} />;
+      case EventType.LATENESS:
+        return <LatenessCard event={item as CommonEvent} />;
+      case EventType.PUNISHMENT:
+        return <PunishmentCard event={item as Punishment} />;
+      case EventType.STATEMENT_ABSENCE:
+        return <StatementAbsenceCard event={item as Absence} userType={props.userType} />;
     }
   };
 

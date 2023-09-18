@@ -8,17 +8,13 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import {
-  IAbsence,
-  IChildrenEvents,
-  IClassCall,
-  ICourse,
-  IEventReason,
-  IForgottenNotebook,
-  IHistoryEvent,
-  IIncident,
-  IPunishment,
-  IStatistics,
-  IUserChild,
+  Call,
+  ChildEvents,
+  Course,
+  Event,
+  EventReason,
+  PresencesUserChild,
+  Statistics,
   compareEvents,
 } from '~/framework/modules/viescolaire/presences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
@@ -29,7 +25,7 @@ import { getPresencesWorkflowInformation } from '../rights';
 
 export const presencesChildrenEventsActionsCreators = createAsyncActionCreators(actionTypes.childrenEvents);
 export const fetchPresencesChildrenEventsAction =
-  (structureId: string, studentIds: string[]): ThunkAction<Promise<IChildrenEvents>, any, any, any> =>
+  (structureId: string, studentIds: string[]): ThunkAction<Promise<{ [key: string]: ChildEvents }>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
@@ -43,18 +39,18 @@ export const fetchPresencesChildrenEventsAction =
     }
   };
 
-export const presencesClassCallActionsCreators = createAsyncActionCreators(actionTypes.classCall);
-export const fetchPresencesClassCallAction =
-  (id: number): ThunkAction<Promise<IClassCall>, any, any, any> =>
+export const presencesCallActionsCreators = createAsyncActionCreators(actionTypes.call);
+export const fetchPresencesCallAction =
+  (id: number): ThunkAction<Promise<Call>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
-      dispatch(presencesClassCallActionsCreators.request());
-      const classCall = await presencesService.classCall.get(session, id);
-      dispatch(presencesClassCallActionsCreators.receipt(classCall));
-      return classCall;
+      dispatch(presencesCallActionsCreators.request());
+      const call = await presencesService.call.get(session, id);
+      dispatch(presencesCallActionsCreators.receipt(call));
+      return call;
     } catch (e) {
-      dispatch(presencesClassCallActionsCreators.error(e as Error));
+      dispatch(presencesCallActionsCreators.error(e as Error));
       throw e;
     }
   };
@@ -66,10 +62,10 @@ export const fetchPresencesCoursesAction =
     structureIds: string[],
     date: Moment,
     allowMultipleSlots?: boolean,
-  ): ThunkAction<Promise<ICourse[]>, any, any, any> =>
+  ): ThunkAction<Promise<Course[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
-      let courses: ICourse[] = [];
+      let courses: Course[] = [];
       const session = assertSession();
       const state = getState();
       const dateStr = date.format('YYYY-MM-DD');
@@ -89,7 +85,7 @@ export const fetchPresencesCoursesAction =
 
 export const presencesEventReasonsActionsCreators = createAsyncActionCreators(actionTypes.eventReasons);
 export const fetchPresencesEventReasonsAction =
-  (structureId: string): ThunkAction<Promise<IEventReason[]>, any, any, any> =>
+  (structureId: string): ThunkAction<Promise<EventReason[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
@@ -105,12 +101,7 @@ export const fetchPresencesEventReasonsAction =
 
 export const presencesHistoryActionsCreators = createAsyncActionCreators(actionTypes.history);
 export const fetchPresencesHistoryAction =
-  (
-    studentId: string,
-    structureId: string,
-    startDate: Moment,
-    endDate: Moment,
-  ): ThunkAction<Promise<(IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[]>, any, any, any> =>
+  (studentId: string, structureId: string, startDate: Moment, endDate: Moment): ThunkAction<Promise<Event[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
@@ -125,7 +116,7 @@ export const fetchPresencesHistoryAction =
         endDate.add(1, 'month').format('YYYY-MM-DD'),
       );
       const events = await presencesService.history.getEvents(session, studentId, structureId, start, end);
-      const history: (IAbsence | IForgottenNotebook | IHistoryEvent | IIncident | IPunishment)[] = [
+      const history: Event[] = [
         ...absences,
         ...events.DEPARTURE.events,
         ...events.NO_REASON.events,
@@ -203,7 +194,7 @@ export const fetchPresencesSchoolYearAction =
 
 export const presencesStatisticsActionsCreators = createAsyncActionCreators(actionTypes.statistics);
 export const fetchPresencesStatisticsAction =
-  (studentId: string, structureId: string, startDate: Moment, endDate: Moment): ThunkAction<Promise<IStatistics>, any, any, any> =>
+  (studentId: string, structureId: string, startDate: Moment, endDate: Moment): ThunkAction<Promise<Statistics>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
@@ -245,7 +236,7 @@ export const fetchPresencesTermsAction =
 
 export const presencesUserChildrenActionsCreators = createAsyncActionCreators(actionTypes.userChildren);
 export const fetchPresencesUserChildrenAction =
-  (relativeId: string): ThunkAction<Promise<IUserChild[]>, any, any, any> =>
+  (relativeId: string): ThunkAction<Promise<PresencesUserChild[]>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();

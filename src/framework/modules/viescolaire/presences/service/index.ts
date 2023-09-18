@@ -3,23 +3,23 @@ import querystring from 'querystring';
 
 import { ISession } from '~/framework/modules/auth/model';
 import {
+  Absence,
+  Call,
+  CallEvent,
+  CallEventType,
+  ChildEvents,
+  CommonEvent,
+  Course,
+  EventReason,
   EventType,
-  HistoryEventType,
-  IAbsence,
-  IChildrenEvents,
-  IClassCall,
-  ICourse,
-  IEvent,
-  IEventReason,
-  IHistoryEvent,
-  IStatistics,
-  IUserChild,
+  PresencesUserChild,
+  Statistics,
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
 
-type IBackendClassCall = {
+type BackendCall = {
   personnel_id: string;
   proof_id: string | null;
   course_id: string;
@@ -41,11 +41,11 @@ type IBackendClassCall = {
     birth_day: string | null;
     group: string;
     group_name: string;
-    events: IBackendEvent[];
+    events: BackendEvent[];
     last_course_absent: boolean;
     forgotten_notebook: boolean;
     day_history: {
-      events: IBackendEvent[];
+      events: BackendEvent[];
       start: string;
       end: string;
       name: string;
@@ -60,7 +60,7 @@ type IBackendClassCall = {
   }[];
 };
 
-type IBackendCourse = {
+type BackendCourse = {
   structureId: string;
   subjectId: string;
   classes: string[];
@@ -105,7 +105,7 @@ type IBackendCourse = {
   id: string;
 };
 
-type IBackendEvent = {
+type BackendEvent = {
   id: number;
   owner: {
     id: string;
@@ -127,7 +127,7 @@ type IBackendEvent = {
   type: string;
 };
 
-type IBackendEventReason = {
+type BackendEventReason = {
   id: number;
   structure_id: string;
   label: string;
@@ -143,7 +143,7 @@ type IBackendEventReason = {
   used: boolean;
 };
 
-type IBackendHistoryAbsences = {
+type BackendAbsences = {
   all: {
     id: number;
     start_at: string;
@@ -168,7 +168,7 @@ type IBackendHistoryAbsences = {
   page_count: number;
 };
 
-type IBackendHistoryEvent = {
+type BackendHistoryEvent = {
   id: number;
   start_date: string;
   end_date: string;
@@ -200,13 +200,13 @@ type IBackendHistoryEvent = {
   } | null;
 };
 
-type IBackendHistoryEvents = {
+type BackendHistoryEvents = {
   all: {
-    DEPARTURE: IBackendHistoryEvent[];
-    NO_REASON: IBackendHistoryEvent[];
-    REGULARIZED: IBackendHistoryEvent[];
-    LATENESS: IBackendHistoryEvent[];
-    UNREGULARIZED: IBackendHistoryEvent[];
+    DEPARTURE: BackendHistoryEvent[];
+    NO_REASON: BackendHistoryEvent[];
+    REGULARIZED: BackendHistoryEvent[];
+    LATENESS: BackendHistoryEvent[];
+    UNREGULARIZED: BackendHistoryEvent[];
   };
   totals: {
     DEPARTURE: number;
@@ -218,7 +218,7 @@ type IBackendHistoryEvents = {
   recovery_method: 'DAY' | 'HALF_DAY' | 'HOUR' | null;
 };
 
-type IBackendHistoryForgottenNotebooks = {
+type BackendForgottenNotebooks = {
   all: {
     id: number;
     student_id: string;
@@ -228,7 +228,7 @@ type IBackendHistoryForgottenNotebooks = {
   totals: number;
 };
 
-type IBackendHistoryIncidents = {
+type BackendIncidents = {
   all: {
     INCIDENT: {
       id: number;
@@ -312,13 +312,13 @@ type IBackendHistoryIncidents = {
   };
 };
 
-type IBackendStudentEvents = {
+type BackendStudentEvents = {
   all: {
-    DEPARTURE: IBackendEvent[];
-    LATENESS: IBackendEvent[];
-    NO_REASON: IBackendEvent[];
-    REGULARIZED: IBackendEvent[];
-    UNREGULARIZED: IBackendEvent[];
+    DEPARTURE: BackendEvent[];
+    LATENESS: BackendEvent[];
+    NO_REASON: BackendEvent[];
+    REGULARIZED: BackendEvent[];
+    UNREGULARIZED: BackendEvent[];
   };
   totals: {
     DEPARTURE: number;
@@ -329,14 +329,14 @@ type IBackendStudentEvents = {
   };
 };
 
-type IBackendStudentsEvents = {
+type BackendStudentsEvents = {
   limit: number | null;
   offset: number | null;
   recovery_method: 'DAY' | 'HALF_DAY' | 'HOUR' | null;
-  students_events: { [studentId: string]: IBackendStudentEvents };
+  students_events: { [studentId: string]: BackendStudentEvents };
 };
 
-type IBackendUserChild = {
+type BackendUserChild = {
   id: string;
   firstName: string;
   lastName: string;
@@ -353,11 +353,11 @@ type IBackendUserChild = {
   }[];
 };
 
-type IBackendCourseList = IBackendCourse[];
-type IBackendEventReasonList = IBackendEventReason[];
-type IBackendUserChildren = IBackendUserChild[];
+type BackendCourseList = BackendCourse[];
+type BackendEventReasonList = BackendEventReason[];
+type BackendUserChildren = BackendUserChild[];
 
-const eventAdapter = (data: IBackendEvent): IEvent => {
+const eventAdapter = (data: BackendEvent): CallEvent => {
   return {
     comment: data.comment,
     endDate: moment(data.end_date),
@@ -368,7 +368,7 @@ const eventAdapter = (data: IBackendEvent): IEvent => {
   };
 };
 
-const classCallAdapter = (data: IBackendClassCall): IClassCall => {
+const classAdapter = (data: BackendCall): Call => {
   return {
     courseId: data.course_id,
     endDate: moment(data.end_date),
@@ -389,14 +389,14 @@ const classCallAdapter = (data: IBackendClassCall): IClassCall => {
   };
 };
 
-const courseAdapter = (data: IBackendCourse): ICourse => {
+const courseAdapter = (data: BackendCourse): Course => {
   return {
     callId: data.registerId,
     classes: data.classes,
     groups: data.groups,
     endDate: moment(data.endDate),
     id: data.id,
-    registerStateId: data.registerStateId,
+    callStateId: data.registerStateId,
     roomLabels: data.roomLabels,
     startDate: moment(data.startDate),
     structureId: data.structureId,
@@ -404,7 +404,7 @@ const courseAdapter = (data: IBackendCourse): ICourse => {
   };
 };
 
-const eventReasonAdapter = (data: IBackendEventReason): IEventReason => {
+const eventReasonAdapter = (data: BackendEventReason): EventReason => {
   return {
     id: data.id,
     label: data.label,
@@ -412,18 +412,18 @@ const eventReasonAdapter = (data: IBackendEventReason): IEventReason => {
   };
 };
 
-const historyAbsencesAdapter = (data: IBackendHistoryAbsences): IAbsence[] => {
+const absencesAdapter = (data: BackendAbsences): Absence[] => {
   return data.all.map(absence => ({
     description: absence.description,
     endDate: moment(absence.end_at),
     id: absence.id.toString(),
     startDate: moment(absence.start_at),
     studentFirstName: absence.student.firstName,
-    type: HistoryEventType.STATEMENT_ABSENCE,
+    type: EventType.STATEMENT_ABSENCE,
   }));
 };
 
-const historyEventAdapter = (data: IBackendHistoryEvent, type: HistoryEventType): IHistoryEvent => {
+const historyEventAdapter = (data: BackendHistoryEvent, type: EventType): CommonEvent => {
   return {
     comment: data.comment,
     endDate: moment(data.end_date),
@@ -435,46 +435,46 @@ const historyEventAdapter = (data: IBackendHistoryEvent, type: HistoryEventType)
   };
 };
 
-const historyEventsAdapter = (data: IBackendHistoryEvents): Omit<IStatistics, 'FORGOTTEN_NOTEBOOK' | 'INCIDENT' | 'PUNISHMENT'> => {
+const historyEventsAdapter = (data: BackendHistoryEvents): Omit<Statistics, 'FORGOTTEN_NOTEBOOK' | 'INCIDENT' | 'PUNISHMENT'> => {
   return {
     DEPARTURE: {
-      events: data.all.DEPARTURE.map(event => historyEventAdapter(event, HistoryEventType.DEPARTURE)),
+      events: data.all.DEPARTURE.map(event => historyEventAdapter(event, EventType.DEPARTURE)),
       total: data.totals.DEPARTURE,
     },
     LATENESS: {
-      events: data.all.LATENESS.map(event => historyEventAdapter(event, HistoryEventType.LATENESS)),
+      events: data.all.LATENESS.map(event => historyEventAdapter(event, EventType.LATENESS)),
       total: data.totals.LATENESS,
     },
     NO_REASON: {
-      events: data.all.NO_REASON.map(event => historyEventAdapter(event, HistoryEventType.NO_REASON)),
+      events: data.all.NO_REASON.map(event => historyEventAdapter(event, EventType.NO_REASON)),
       total: data.totals.NO_REASON,
     },
     REGULARIZED: {
-      events: data.all.REGULARIZED.map(event => historyEventAdapter(event, HistoryEventType.REGULARIZED)),
+      events: data.all.REGULARIZED.map(event => historyEventAdapter(event, EventType.REGULARIZED)),
       total: data.totals.REGULARIZED,
     },
     UNREGULARIZED: {
-      events: data.all.UNREGULARIZED.map(event => historyEventAdapter(event, HistoryEventType.UNREGULARIZED)),
+      events: data.all.UNREGULARIZED.map(event => historyEventAdapter(event, EventType.UNREGULARIZED)),
       total: data.totals.UNREGULARIZED,
     },
     recoveryMethod: data.recovery_method,
   };
 };
 
-const historyForgottenNotebooksAdapter = (data: IBackendHistoryForgottenNotebooks): Pick<IStatistics, 'FORGOTTEN_NOTEBOOK'> => {
+const forgottenNotebooksAdapter = (data: BackendForgottenNotebooks): Pick<Statistics, 'FORGOTTEN_NOTEBOOK'> => {
   return {
     FORGOTTEN_NOTEBOOK: {
       events: data.all.map(event => ({
         date: moment(event.date),
         id: event.id.toString(),
-        type: HistoryEventType.FORGOTTEN_NOTEBOOK,
+        type: EventType.FORGOTTEN_NOTEBOOK,
       })),
       total: data.totals,
     },
   };
 };
 
-const historyIncidentsAdapter = (data: IBackendHistoryIncidents): Pick<IStatistics, 'INCIDENT' | 'PUNISHMENT'> => {
+const incidentsAdapter = (data: BackendIncidents): Pick<Statistics, 'INCIDENT' | 'PUNISHMENT'> => {
   return {
     INCIDENT: {
       events: data.all.INCIDENT.map(i => ({
@@ -482,7 +482,7 @@ const historyIncidentsAdapter = (data: IBackendHistoryIncidents): Pick<IStatisti
         description: i.description,
         id: i.id.toString(),
         protagonist: i.protagonist,
-        type: HistoryEventType.INCIDENT,
+        type: EventType.INCIDENT,
         typeLabel: i.type.label,
       })),
       total: data.totals.INCIDENT,
@@ -494,7 +494,7 @@ const historyIncidentsAdapter = (data: IBackendHistoryIncidents): Pick<IStatisti
         id: p.id,
         punishmentCategoryId: p.type.punishment_category_id,
         startDate: moment(p.fields.start_at),
-        type: HistoryEventType.PUNISHMENT,
+        type: EventType.PUNISHMENT,
         typeLabel: p.type.label,
       })),
       total: data.totals.PUNISHMENT,
@@ -502,7 +502,7 @@ const historyIncidentsAdapter = (data: IBackendHistoryIncidents): Pick<IStatisti
   };
 };
 
-const areEventsListed = (events: IBackendStudentEvents): boolean => {
+const areEventsListed = (events: BackendStudentEvents): boolean => {
   return (
     events.all.DEPARTURE.length > 0 ||
     events.all.LATENESS.length > 0 ||
@@ -512,7 +512,7 @@ const areEventsListed = (events: IBackendStudentEvents): boolean => {
   );
 };
 
-const studentsEventsAdapter = (data: IBackendStudentsEvents): IChildrenEvents => {
+const studentsEventsAdapter = (data: BackendStudentsEvents): { [key: string]: ChildEvents } => {
   return Object.fromEntries(
     Object.entries(data.students_events)
       .filter(([id, events]) => areEventsListed(events))
@@ -529,7 +529,7 @@ const studentsEventsAdapter = (data: IBackendStudentsEvents): IChildrenEvents =>
   );
 };
 
-const userChildAdapter = (data: IBackendUserChild): IUserChild => {
+const userChildAdapter = (data: BackendUserChild): PresencesUserChild => {
   return {
     birth: data.birth,
     displayName: data.displayName,
@@ -544,8 +544,8 @@ export const presencesService = {
   absences: {
     get: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/presences/statements/absences?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&student_id=${studentId}`;
-      const absences = (await fetchJSONWithCache(api)) as IBackendHistoryAbsences;
-      return historyAbsencesAdapter(absences);
+      const absences = (await fetchJSONWithCache(api)) as BackendAbsences;
+      return absencesAdapter(absences);
     },
   },
   absence: {
@@ -599,13 +599,13 @@ export const presencesService = {
       );
     },
   },
-  classCall: {
+  call: {
     get: async (session: ISession, id: number) => {
       const api = `/presences/registers/${id}`;
-      const classCall = (await fetchJSONWithCache(api)) as IBackendClassCall;
-      return classCallAdapter(classCall);
+      const call = (await fetchJSONWithCache(api)) as BackendCall;
+      return classAdapter(call);
     },
-    create: async (session: ISession, course: ICourse, teacherId: string, allowMultipleSlots?: boolean) => {
+    create: async (session: ISession, course: Course, teacherId: string, allowMultipleSlots?: boolean) => {
       const api = '/presences/registers';
       const body = JSON.stringify({
         course_id: course.id,
@@ -618,11 +618,11 @@ export const presencesService = {
         teacherIds: [teacherId],
         split_slot: allowMultipleSlots,
       });
-      const classCall = (await fetchJSONWithCache(api, {
+      const call = (await fetchJSONWithCache(api, {
         method: 'POST',
         body,
       })) as { id: number };
-      return classCall.id;
+      return call.id;
     },
     updateStatus: async (session: ISession, id: number, status: number) => {
       const api = `/presences/registers/${id}/status`;
@@ -652,7 +652,7 @@ export const presencesService = {
         forgotten_registers: false,
         multiple_slot: allowMultipleSlots,
       })}`;
-      const courses = (await fetchJSONWithCache(api)) as IBackendCourseList;
+      const courses = (await fetchJSONWithCache(api)) as BackendCourseList;
       return courses
         .filter(course => course.allowRegister)
         .map(courseAdapter)
@@ -664,7 +664,7 @@ export const presencesService = {
       session: ISession,
       studentId: string,
       callId: number,
-      type: EventType,
+      type: CallEventType,
       startDate: Moment,
       endDate: Moment,
       reasonId: number | null,
@@ -683,7 +683,7 @@ export const presencesService = {
       const event = (await fetchJSONWithCache(api, {
         method: 'POST',
         body,
-      })) as IBackendEvent;
+      })) as BackendEvent;
       return eventAdapter(event);
     },
     delete: async (session: ISession, id: number) => {
@@ -697,7 +697,7 @@ export const presencesService = {
       id: number,
       studentId: string,
       callId: number,
-      type: EventType,
+      type: CallEventType,
       startDate: Moment,
       endDate: Moment,
       reasonId: number | null,
@@ -722,7 +722,7 @@ export const presencesService = {
   eventReasons: {
     get: async (session: ISession, structureId: string) => {
       const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
-      const eventReasons = (await fetchJSONWithCache(api)) as IBackendEventReasonList;
+      const eventReasons = (await fetchJSONWithCache(api)) as BackendEventReasonList;
       return eventReasons.filter(reason => !reason.hidden && reason.id >= 0).map(eventReasonAdapter);
     },
   },
@@ -733,7 +733,7 @@ export const presencesService = {
       studentId: string,
       structureId: string,
       callId: number,
-      type: EventType,
+      type: CallEventType,
       startDate: Moment,
       endDate: Moment,
       reasonId: number | null,
@@ -765,7 +765,7 @@ export const presencesService = {
   history: {
     getEvents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
-      const events = (await fetchJSONWithCache(api)) as IBackendHistoryEvents;
+      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
       return historyEventsAdapter(events);
     },
     getForgottenNotebookEvents: async (
@@ -776,13 +776,13 @@ export const presencesService = {
       endDate: string,
     ) => {
       const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
-      const forgottenNotebooks = (await fetchJSONWithCache(api)) as IBackendHistoryForgottenNotebooks;
-      return historyForgottenNotebooksAdapter(forgottenNotebooks);
+      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
+      return forgottenNotebooksAdapter(forgottenNotebooks);
     },
     getIncidents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
-      const incidents = (await fetchJSONWithCache(api)) as IBackendHistoryIncidents;
-      return historyIncidentsAdapter(incidents);
+      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
+      return incidentsAdapter(incidents);
     },
   },
   initialization: {
@@ -818,14 +818,14 @@ export const presencesService = {
       const events = (await fetchJSONWithCache(api, {
         method: 'POST',
         body,
-      })) as IBackendStudentsEvents;
+      })) as BackendStudentsEvents;
       return studentsEventsAdapter(events);
     },
   },
   userChildren: {
     get: async (session: ISession, relativeId: string) => {
       const api = `/presences/children?relativeId=${relativeId}`;
-      const userChildren = (await fetchJSONWithCache(api)) as IBackendUserChildren;
+      const userChildren = (await fetchJSONWithCache(api)) as BackendUserChildren;
       return userChildren.map(userChildAdapter);
     },
   },

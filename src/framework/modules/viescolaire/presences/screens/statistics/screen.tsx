@@ -21,7 +21,7 @@ import {
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
 import StatisticsCard from '~/framework/modules/viescolaire/presences/components/statistics-card';
-import { HistoryEventType } from '~/framework/modules/viescolaire/presences/model';
+import { EventType } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
@@ -188,16 +188,16 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
             />
           </View>
         ) : null}
-        <StatisticsCard type={HistoryEventType.NO_REASON} {...statistics.NO_REASON} />
-        <StatisticsCard type={HistoryEventType.UNREGULARIZED} {...statistics.UNREGULARIZED} />
-        <StatisticsCard type={HistoryEventType.REGULARIZED} {...statistics.REGULARIZED} />
-        <StatisticsCard type={HistoryEventType.LATENESS} {...statistics.LATENESS} />
-        <StatisticsCard type={HistoryEventType.DEPARTURE} {...statistics.DEPARTURE} />
+        <StatisticsCard type={EventType.NO_REASON} {...statistics.NO_REASON} />
+        <StatisticsCard type={EventType.UNREGULARIZED} {...statistics.UNREGULARIZED} />
+        <StatisticsCard type={EventType.REGULARIZED} {...statistics.REGULARIZED} />
+        <StatisticsCard type={EventType.LATENESS} {...statistics.LATENESS} />
+        <StatisticsCard type={EventType.DEPARTURE} {...statistics.DEPARTURE} />
         {session && getPresencesWorkflowInformation(session).presences2d ? (
           <>
-            <StatisticsCard type={HistoryEventType.FORGOTTEN_NOTEBOOK} {...statistics.FORGOTTEN_NOTEBOOK!} />
-            <StatisticsCard type={HistoryEventType.INCIDENT} {...statistics.INCIDENT!} />
-            <StatisticsCard type={HistoryEventType.PUNISHMENT} {...statistics.PUNISHMENT!} />
+            <StatisticsCard type={EventType.FORGOTTEN_NOTEBOOK} {...statistics.FORGOTTEN_NOTEBOOK!} />
+            <StatisticsCard type={EventType.INCIDENT} {...statistics.INCIDENT!} />
+            <StatisticsCard type={EventType.PUNISHMENT} {...statistics.PUNISHMENT!} />
           </>
         ) : null}
       </ScrollView>

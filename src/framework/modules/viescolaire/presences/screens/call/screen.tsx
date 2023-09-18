@@ -13,13 +13,13 @@ import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { fetchPresencesClassCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
+import { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
 import CallPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call';
 import StudentListItem from '~/framework/modules/viescolaire/presences/components/student-list-item';
 import StudentStatus from '~/framework/modules/viescolaire/presences/components/student-status';
-import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
+import { CallEventType, CallState, CallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -57,7 +57,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       const structureCount = session?.user.structures?.length;
 
       if (!id) throw new Error();
-      const call = await props.tryFetchClassCall(id);
+      const call = await props.tryFetchCall(id);
       if (!eventReasons.length || structureCount !== 1) {
         await props.tryFetchEventReasons(call.structureId);
       }
@@ -105,11 +105,11 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
   const dismissBottomSheet = () => bottomSheetModalRef.current?.dismiss();
 
-  const openEvent = (student: IClassCallStudent, type: EventType) => {
-    const { classCall, eventReasons } = props;
+  const openEvent = (student: CallStudent, type: CallEventType) => {
+    const { call, eventReasons } = props;
     const { course, id } = props.route.params;
 
-    if (!classCall) return Toast.showError(I18n.get('presences-call-error-text'));
+    if (!call) return Toast.showError(I18n.get('presences-call-error-text'));
     dismissBottomSheet();
     props.navigation.navigate(presencesRouteNames.declareEvent, {
       callId: id,
@@ -123,12 +123,12 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
   const createAbsence = async (studentId: string) => {
     try {
-      const { classCall, session } = props;
+      const { call, session } = props;
       const { id } = props.route.params;
 
-      if (!classCall || !session) throw new Error();
-      await presencesService.event.create(session, studentId, id, EventType.ABSENCE, classCall.startDate, classCall.endDate, null);
-      await presencesService.classCall.updateStatus(session, id, 2);
+      if (!call || !session) throw new Error();
+      await presencesService.event.create(session, studentId, id, CallEventType.ABSENCE, call.startDate, call.endDate, null);
+      await presencesService.call.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
       Toast.showError(I18n.get('presences-call-error-text'));
@@ -142,7 +142,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await presencesService.event.delete(session, eventId);
-      await presencesService.classCall.updateStatus(session, id, 2);
+      await presencesService.call.updateStatus(session, id, 2);
       refreshSilent();
     } catch {
       Toast.showError(I18n.get('presences-call-error-text'));
@@ -163,7 +163,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
       setValidating(true);
       if (!session) throw new Error();
-      await presencesService.classCall.updateStatus(session, id, 3);
+      await presencesService.call.updateStatus(session, id, 3);
       navigation.goBack();
       Toast.showSuccess(
         I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),
@@ -183,12 +183,12 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   };
 
   const renderBottomSheet = () => {
-    const student = props.classCall!.students.find(s => s.id === selectedStudentId);
+    const student = props.call!.students.find(s => s.id === selectedStudentId);
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={unselectStudent}>
         <StudentStatus
           student={student}
-          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === EventType.ABSENCE)}
+          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)}
           createAbsence={createAbsence}
           deleteAbsence={deleteAbsence}
           dismissBottomSheet={dismissBottomSheet}
@@ -203,7 +203,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       <View style={styles.listFooterContainer}>
         <View style={styles.separatorContainer} />
         <View style={styles.summaryContainer}>
-          <CallSummary call={props.classCall!} />
+          <CallSummary call={props.call!} />
         </View>
         <View style={styles.separatorContainer} />
         <PrimaryButton
@@ -217,17 +217,17 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     );
   };
 
-  const renderClassCall = () => {
-    const { classCall } = props;
+  const renderCall = () => {
+    const { call } = props;
     const { course } = props.route.params;
-    const students = classCall!.students
+    const students = call!.students
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(student => ({
         key: student.id,
         ...student,
       }));
 
-    return classCall ? (
+    return call ? (
       <>
         <FlatList
           data={students}
@@ -251,7 +251,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       case AsyncPagedLoadingState.REFRESH:
       case AsyncPagedLoadingState.REFRESH_FAILED:
       case AsyncPagedLoadingState.REFRESH_SILENT:
-        return renderClassCall();
+        return renderCall();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
         return <CallPlaceholder />;
@@ -262,9 +262,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   };
 
   const isCallLackingValidation =
-    props.classCall !== undefined &&
-    props.classCall.stateId === 1 &&
-    props.classCall.students.some(student => student.events.length);
+    props.call !== undefined && props.call.stateId !== CallState.DONE && props.call.students.some(student => student.events.length);
 
   usePreventBack({
     title: I18n.get('presences-call-leavealert-title'),
@@ -279,20 +277,20 @@ export default connect(
   (state: IGlobalState, props: PresencesCallScreenPrivateProps) => {
     const presencesState = moduleConfig.getState(state);
     const session = getSession();
-    const classCall = presencesState.classCall.data;
+    const call = presencesState.call.data;
     const { course } = props.route.params;
 
     return {
-      classCall,
+      call,
       eventReasons: presencesState.eventReasons.data,
-      initialLoadingState: classCall?.courseId === course.id ? AsyncPagedLoadingState.DONE : AsyncPagedLoadingState.PRISTINE,
+      initialLoadingState: call?.courseId === course.id ? AsyncPagedLoadingState.DONE : AsyncPagedLoadingState.PRISTINE,
       session,
     };
   },
   dispatch =>
     bindActionCreators<PresencesCallScreenDispatchProps>(
       {
-        tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
+        tryFetchCall: tryAction(fetchPresencesCallAction),
         tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
       },
       dispatch,

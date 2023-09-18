@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components/picture';
-import { HistoryEventType } from '~/framework/modules/viescolaire/presences/model';
+import { EventType } from '~/framework/modules/viescolaire/presences/model';
 
 import styles from './styles';
 import type { HistoryEventCardProps, HistoryEventCardStyle } from './types';
@@ -11,55 +11,55 @@ import type { HistoryEventCardProps, HistoryEventCardStyle } from './types';
 export default class HistoryEventCard extends React.PureComponent<HistoryEventCardProps> {
   private getStyle(): HistoryEventCardStyle {
     switch (this.props.type) {
-      case HistoryEventType.DEPARTURE:
+      case EventType.DEPARTURE:
         return {
           backgroundColor: theme.palette.complementary.pink.pale,
           iconColor: theme.palette.complementary.pink.regular,
           iconName: 'ui-leave',
         };
-      case HistoryEventType.FORGOTTEN_NOTEBOOK:
+      case EventType.FORGOTTEN_NOTEBOOK:
         return {
           backgroundColor: theme.palette.complementary.indigo.pale,
           iconColor: theme.palette.complementary.indigo.regular,
           iconName: 'ui-alert-triangle',
         };
-      case HistoryEventType.INCIDENT:
+      case EventType.INCIDENT:
         return {
           backgroundColor: theme.palette.grey.black,
           iconColor: theme.palette.grey.pearl,
           iconName: 'ui-alert-triangle',
         };
-      case HistoryEventType.LATENESS:
+      case EventType.LATENESS:
         return {
           backgroundColor: theme.palette.complementary.purple.pale,
           iconColor: theme.palette.complementary.purple.regular,
           iconName: 'ui-clock-alert',
         };
-      case HistoryEventType.NO_REASON:
+      case EventType.NO_REASON:
         return {
           backgroundColor: theme.palette.complementary.red.pale,
           iconColor: theme.palette.complementary.red.regular,
           iconName: 'ui-error',
         };
-      case HistoryEventType.PUNISHMENT:
+      case EventType.PUNISHMENT:
         return {
           backgroundColor: theme.palette.complementary.yellow.pale,
           iconColor: theme.palette.complementary.yellow.regular,
           iconName: 'ui-alert-triangle',
         };
-      case HistoryEventType.REGULARIZED:
+      case EventType.REGULARIZED:
         return {
           backgroundColor: theme.palette.complementary.green.pale,
           iconColor: theme.palette.complementary.green.regular,
           iconName: 'ui-success',
         };
-      case HistoryEventType.STATEMENT_ABSENCE:
+      case EventType.STATEMENT_ABSENCE:
         return {
           backgroundColor: theme.palette.grey.pearl,
           iconColor: theme.palette.grey.black,
           iconName: 'ui-write',
         };
-      case HistoryEventType.UNREGULARIZED:
+      case EventType.UNREGULARIZED:
         return {
           backgroundColor: theme.palette.complementary.orange.pale,
           iconColor: theme.palette.complementary.orange.regular,

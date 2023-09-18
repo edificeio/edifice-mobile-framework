@@ -7,6 +7,7 @@ import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, HeadingSText, NestedText } from '~/framework/components/text';
+import { CallState } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
 
 import styles from './styles';
@@ -16,7 +17,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
     const { course, showStatus } = this.props;
     const now = moment();
-    const isValidated = course.registerStateId === 3;
+    const isValidated = course.callStateId === CallState.DONE;
 
     if (!showStatus) {
       return {
