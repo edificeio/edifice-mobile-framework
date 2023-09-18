@@ -7,6 +7,7 @@ import {
   Call,
   CallEvent,
   CallEventType,
+  CallState,
   ChildEvents,
   CommonEvent,
   Course,
@@ -368,7 +369,7 @@ const eventAdapter = (data: BackendEvent): CallEvent => {
   };
 };
 
-const classAdapter = (data: BackendCall): Call => {
+const callAdapter = (data: BackendCall): Call => {
   return {
     courseId: data.course_id,
     endDate: moment(data.end_date),
@@ -603,7 +604,7 @@ export const presencesService = {
     get: async (session: ISession, id: number) => {
       const api = `/presences/registers/${id}`;
       const call = (await fetchJSONWithCache(api)) as BackendCall;
-      return classAdapter(call);
+      return callAdapter(call);
     },
     create: async (session: ISession, course: Course, teacherId: string, allowMultipleSlots?: boolean) => {
       const api = '/presences/registers';
@@ -624,10 +625,10 @@ export const presencesService = {
       })) as { id: number };
       return call.id;
     },
-    updateStatus: async (session: ISession, id: number, status: number) => {
+    updateState: async (session: ISession, id: number, state: CallState) => {
       const api = `/presences/registers/${id}/status`;
       const body = JSON.stringify({
-        state_id: status,
+        state_id: state,
       });
       await fetchWithCache(api, {
         method: 'PUT',

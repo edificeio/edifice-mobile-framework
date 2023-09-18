@@ -19,7 +19,7 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
-import { CallEvent, CallEventType, Course } from '~/framework/modules/viescolaire/presences/model';
+import { CallEvent, CallEventType, CallState, Course } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -113,7 +113,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       } else {
         await presencesService.event.create(session, student.id, callId, type, start, end, reasonId, comment);
       }
-      await presencesService.call.updateStatus(session, callId, 2);
+      await presencesService.call.updateState(session, callId, CallState.IN_PROGRESS);
       navigation.goBack();
       if (isEventAlreadyExisting) Toast.showSuccess(I18n.get('presences-declareevent-eventedited'));
     } catch {
@@ -130,7 +130,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       setDeleting(true);
       if (!session || !event) throw new Error();
       await presencesService.event.delete(session, event.id);
-      await presencesService.call.updateStatus(session, callId, 2);
+      await presencesService.call.updateState(session, callId, CallState.IN_PROGRESS);
       navigation.goBack();
     } catch {
       setDeleting(false);

@@ -10,11 +10,8 @@ import type {
 } from '~/framework/modules/viescolaire/presences/actions';
 import type { PresencesUserChild, Statistics } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
-import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-export interface PresencesStatisticsScreenProps {
-  initialLoadingState: AsyncPagedLoadingState;
-}
+export interface PresencesStatisticsScreenProps {}
 
 export interface PresencesStatisticsScreenNavParams {
   studentId?: string;
