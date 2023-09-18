@@ -40,7 +40,6 @@ import {
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
-import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -74,11 +73,11 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       const studentId = userType === UserType.Student ? userId : selectedChildId;
 
       if (!session || !structureId || !studentId || !userId || !userType) throw new Error();
-      const initialized = await presencesService.initialization.getStructureStatus(session, structureId);
+      /*const initialized = await presencesService.initialization.getStructureStatus(session, structureId);
       if (!initialized) {
         setInitialized(false);
         throw new Error();
-      }
+      }*/
       await props.tryFetchHistory(studentId, structureId, moment().subtract(1, 'month'), moment());
     } catch {
       throw new Error();
