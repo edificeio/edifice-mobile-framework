@@ -37,6 +37,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   const isAudio = type === MediaType.AUDIO;
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
+  const [isPlaying, setIsPlaying] = React.useState(false);
   const isPortrait = React.useMemo(() => orientation === PORTRAIT, [orientation]);
   const animationRef = React.useRef<Lottie>(null);
   const platform = React.useMemo(() => {
@@ -150,10 +151,12 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const onPlay = React.useCallback(() => {
+    setIsPlaying(true);
     animationRef.current?.resume();
   }, []);
 
   const onPause = React.useCallback(() => {
+    setIsPlaying(false);
     animationRef.current?.pause();
   }, []);
 
@@ -221,12 +224,12 @@ function MediaPlayer(props: MediaPlayerProps) {
   React.useEffect(() => {
     if (type === 'audio') {
       const subscription = AppState.addEventListener('change', event => {
-        if (event === 'active') animationRef.current?.resume();
+        if (event === 'active' && isPlaying) animationRef.current?.resume();
       });
       return () => subscription.remove();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isPlaying]);
 
   // Manage Android back button
   React.useEffect(() => {
