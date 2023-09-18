@@ -32,6 +32,7 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import { subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
@@ -158,7 +159,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   };
 
   const onPressCourse = async (course: Course) => {
-    if (moment().isBefore(course.startDate)) {
+    if (subtractTime(course.startDate, 15, 'minutes').isAfter(moment())) {
       Alert.alert(I18n.get('presences-calllist-unavailablealert-title'), I18n.get('presences-calllist-unavailablealert-message'));
     } else if (course.callStateId === CallState.DONE || moment().isAfter(course.endDate)) {
       setSelectedCourseId(course.id);
