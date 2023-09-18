@@ -1,12 +1,12 @@
 import { Moment } from 'moment';
 import * as React from 'react';
-import { View } from 'react-native';
+import { AppState, AppStateStatus, View } from 'react-native';
 
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
-import { genericHitSlop } from '~/framework/components/constants';
+import { deviceFontScale, genericHitSlop } from '~/framework/components/constants';
 import DayCell from '~/framework/components/pickers/day/day-cell';
-import { SmallText } from '~/framework/components/text';
+import { SmallText, TextSizeStyle } from '~/framework/components/text';
 import {
   DayOfTheWeek,
   DayReference,
@@ -56,9 +56,29 @@ const DayPicker = ({ initialSelectedDate = defaultSelectedDate, style, onDateCha
     onSetDate(nextWeek, 0);
   };
 
+  const [currentFontScale, setCurrentFontScale] = React.useState(deviceFontScale());
+  const currentState = React.useRef<AppStateStatus>();
+  const handleAppStateChange = React.useCallback(
+    (nextAppState: AppStateStatus) => {
+      currentState.current = nextAppState;
+      const newFontScale = deviceFontScale();
+      if (nextAppState === 'active' && newFontScale !== currentFontScale) {
+        setCurrentFontScale(newFontScale);
+      }
+    },
+    [currentFontScale],
+  );
+  React.useEffect(() => {
+    const appStateListener = AppState.addEventListener('change', handleAppStateChange);
+    return () => {
+      appStateListener.remove();
+    };
+  }, [handleAppStateChange]);
+  const weekContainerStyle = { height: TextSizeStyle.Normal.lineHeight * currentFontScale * 2 };
+
   return (
     <View style={[styles.container, style]}>
-      <View style={styles.weekContainer}>
+      <View style={[styles.weekContainer, weekContainerStyle]}>
         <IconButton
           icon="ui-rafterLeft"
           color={isPastDisabled ? theme.palette.grey.grey : theme.palette.grey.black}
