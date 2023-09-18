@@ -19,7 +19,7 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
-import { EventType, ICourse, IEvent } from '~/framework/modules/viescolaire/presences/model';
+import { CallEvent, CallEventType, Course } from '~/framework/modules/viescolaire/presences/model';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -29,13 +29,13 @@ import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 import styles from './styles';
 import type { PresencesDeclareEventScreenPrivateProps } from './types';
 
-const getNavBarTitle = (eventType: EventType): string => {
+const getNavBarTitle = (eventType: CallEventType): string => {
   switch (eventType) {
-    case EventType.ABSENCE:
+    case CallEventType.ABSENCE:
       return I18n.get('presences-declareevent-absence');
-    case EventType.LATENESS:
+    case CallEventType.LATENESS:
       return I18n.get('presences-declareevent-lateness');
-    case EventType.DEPARTURE:
+    case CallEventType.DEPARTURE:
       return I18n.get('presences-declareevent-departure');
   }
 };
@@ -51,12 +51,12 @@ export const computeNavBar = ({
   }),
 });
 
-const getInitialDate = (course: ICourse, eventType: EventType, event?: IEvent): Moment => {
+const getInitialDate = (course: Course, eventType: CallEventType, event?: CallEvent): Moment => {
   const now = moment();
 
-  if (event) return eventType === EventType.LATENESS ? event.endDate : event.startDate;
+  if (event) return eventType === CallEventType.LATENESS ? event.endDate : event.startDate;
   if (now.isSameOrAfter(course.startDate) && now.isSameOrBefore(course.endDate)) return now;
-  return eventType === EventType.LATENESS ? addTime(course.startDate, 5, 'm') : subtractTime(course.endDate, 5, 'm');
+  return eventType === CallEventType.LATENESS ? addTime(course.startDate, 5, 'm') : subtractTime(course.endDate, 5, 'm');
 };
 
 const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivateProps) => {
@@ -76,8 +76,8 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { event, type } = props.route.params;
 
     if (!event) return false;
-    if (type === EventType.LATENESS && !date.isSame(event.endDate)) return true;
-    if (type === EventType.DEPARTURE && !date.isSame(event.startDate)) return true;
+    if (type === CallEventType.LATENESS && !date.isSame(event.endDate)) return true;
+    if (type === CallEventType.DEPARTURE && !date.isSame(event.startDate)) return true;
     return reasonId !== event.reasonId || comment !== event.comment;
   };
 
@@ -85,17 +85,17 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     try {
       const { navigation, session } = props;
       const { callId, course, event, student, type } = props.route.params;
-      const start = type === EventType.DEPARTURE ? date : course.startDate;
-      const end = type === EventType.LATENESS ? date : course.endDate;
+      const start = type === CallEventType.DEPARTURE ? date : course.startDate;
+      const end = type === CallEventType.LATENESS ? date : course.endDate;
 
       setCreating(true);
       if (!session) throw new Error();
-      const absence = student.events.find(e => e.typeId === EventType.ABSENCE);
-      if (type === EventType.LATENESS && absence) {
+      const absence = student.events.find(e => e.typeId === CallEventType.ABSENCE);
+      if (type === CallEventType.LATENESS && absence) {
         await presencesService.event.delete(session, absence.id);
       }
       if (event && event.id) {
-        if (type === EventType.ABSENCE) {
+        if (type === CallEventType.ABSENCE) {
           await presencesService.eventReason.update(
             session,
             event.id,
@@ -113,7 +113,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       } else {
         await presencesService.event.create(session, student.id, callId, type, start, end, reasonId, comment);
       }
-      await presencesService.classCall.updateStatus(session, callId, 2);
+      await presencesService.call.updateStatus(session, callId, 2);
       navigation.goBack();
       if (isEventAlreadyExisting) Toast.showSuccess(I18n.get('presences-declareevent-eventedited'));
     } catch {
@@ -130,7 +130,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       setDeleting(true);
       if (!session || !event) throw new Error();
       await presencesService.event.delete(session, event.id);
-      await presencesService.classCall.updateStatus(session, callId, 2);
+      await presencesService.call.updateStatus(session, callId, 2);
       navigation.goBack();
     } catch {
       setDeleting(false);
@@ -142,18 +142,18 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
     const { type } = props.route.params;
 
     switch (type) {
-      case EventType.ABSENCE:
+      case CallEventType.ABSENCE:
         return {
           deleteActionText: I18n.get('presences-declareevent-absence-delete'),
           reasonText: I18n.get('presences-declareevent-absence-reason'),
         };
-      case EventType.LATENESS:
+      case CallEventType.LATENESS:
         return {
           deleteActionText: I18n.get('presences-declareevent-lateness-delete'),
           reasonText: I18n.get('presences-declareevent-lateness-reason'),
           timeText: I18n.get('presences-declareevent-lateness-time'),
         };
-      case EventType.DEPARTURE:
+      case CallEventType.DEPARTURE:
         return {
           deleteActionText: I18n.get('presences-declareevent-departure-delete'),
           reasonText: I18n.get('presences-declareevent-departure-reason'),
@@ -164,8 +164,8 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
 
   const renderHeading = () => {
     const { student, type } = props.route.params;
-    const color = type === EventType.ABSENCE ? theme.palette.status.failure.regular : theme.palette.status.warning.regular;
-    const iconName = type === EventType.ABSENCE ? 'ui-error' : type === EventType.LATENESS ? 'ui-clock-alert' : 'ui-leave';
+    const color = type === CallEventType.ABSENCE ? theme.palette.status.failure.regular : theme.palette.status.warning.regular;
+    const iconName = type === CallEventType.ABSENCE ? 'ui-error' : type === CallEventType.LATENESS ? 'ui-clock-alert' : 'ui-leave';
 
     return (
       <View style={styles.headingContainer}>
@@ -188,7 +188,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       <ScrollView alwaysBounceVertical={false} contentContainerStyle={styles.container}>
         {renderHeading()}
         <CallCard course={course} disabled />
-        {type !== EventType.ABSENCE ? (
+        {type !== CallEventType.ABSENCE ? (
           <View style={styles.fieldContainer}>
             <SmallBoldText>{timeText}</SmallBoldText>
             <DateTimePicker
@@ -202,7 +202,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
           </View>
         ) : null}
         {isDropdownOpen ? <Pressable onPress={closeDropdown} style={styles.backdropContainer} /> : null}
-        {(type === EventType.ABSENCE || type === EventType.LATENESS) && reasons.length ? (
+        {(type === CallEventType.ABSENCE || type === CallEventType.LATENESS) && reasons.length ? (
           <Pressable onPress={closeDropdown} style={styles.fieldContainer}>
             <SmallBoldText>{reasonText}</SmallBoldText>
             <DropdownPicker
@@ -220,7 +220,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             />
           </Pressable>
         ) : null}
-        {type === EventType.DEPARTURE ? (
+        {type === CallEventType.DEPARTURE ? (
           <View style={styles.fieldContainer}>
             <SmallBoldText>{reasonText}</SmallBoldText>
             <TextInput
@@ -234,7 +234,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
           text={I18n.get(isEventAlreadyExisting ? 'presences-declareevent-edit' : 'presences-declareevent-validate')}
           iconLeft="ui-check"
           action={createEvent}
-          disabled={type !== EventType.ABSENCE && (date.isBefore(course.startDate) || date.isAfter(course.endDate))}
+          disabled={type !== CallEventType.ABSENCE && (date.isBefore(course.startDate) || date.isAfter(course.endDate))}
           loading={isCreating}
           style={styles.primaryActionContainer}
         />

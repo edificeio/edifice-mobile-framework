@@ -76,22 +76,20 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
             options={statisticsNavBar}
             initialParams={{}}
           />
+          {session?.user.type === UserType.Relative ? (
+            <Stack.Screen
+              key={presencesRouteNames.declareAbsence}
+              name={presencesRouteNames.declareAbsence}
+              component={PresencesDeclareAbsenceScreen}
+              options={declareAbsenceNavBar}
+              initialParams={{}}
+            />
+          ) : null}
         </Stack.Group>,
       );
-      if (session?.user.type === UserType.Relative) {
-        screens.push(
-          <Stack.Screen
-            key={presencesRouteNames.declareAbsence}
-            name={presencesRouteNames.declareAbsence}
-            component={PresencesDeclareAbsenceScreen}
-            options={declareAbsenceNavBar}
-            initialParams={{}}
-          />,
-        );
-      }
       moduleConfig.routeName = presencesRouteNames.history;
     }
     return <>{screens}</>;
   });
 
-setModalModeForRoutes([presencesRouteNames.declareEvent, presencesRouteNames.statistics]);
+setModalModeForRoutes([presencesRouteNames.declareEvent, presencesRouteNames.statistics, presencesRouteNames.declareAbsence]);

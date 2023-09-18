@@ -7,10 +7,12 @@ export default StyleSheet.create({
   absenceActionContainer: {
     marginBottom: UI_SIZES.spacing.big,
   },
-  childrenListContainer: {
-    padding: UI_SIZES.spacing.medium,
+  childListContainer: {
     borderBottomWidth: UI_SIZES.border.thin,
     borderBottomColor: theme.palette.grey.cloudy,
+  },
+  childListContentContainer: {
+    padding: UI_SIZES.spacing.medium,
   },
   detailsActionContainer: {
     alignSelf: 'flex-end',

@@ -14,15 +14,14 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { HeadingSText, TextSizeStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { ISession } from '~/framework/modules/auth/model';
 import HomeworkDayCheckpoint from '~/framework/modules/homework/components/HomeworkDayCheckpoint';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
+import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
+import { deleteHomeworkEntryResourceRight, hasPermissionManager } from '~/framework/modules/homework/rights';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
-
-import { ISession } from '../../auth/model';
-import { IHomeworkDiary } from '../reducers/diaryList';
-import { deleteHomeworkEntryResourceRight, hasPermissionManager } from '../rights';
 
 const dayImages = {
   monday: 'days-monday',

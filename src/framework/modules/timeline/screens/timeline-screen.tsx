@@ -26,6 +26,7 @@ import {
   loadNotificationsPageAction,
   startLoadNotificationsAction,
 } from '~/framework/modules/timeline/actions';
+import TimelineNotification from '~/framework/modules/timeline/components/notification';
 import { TimelineFlashMessage } from '~/framework/modules/timeline/components/timeline-flash-message';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
@@ -49,8 +50,6 @@ import {
   defaultNotificationActionStack,
   handleNotificationAction,
 } from '~/framework/util/notifications/routing';
-
-import TimelineNotification from '../components/notification';
 
 // TYPES ==========================================================================================
 

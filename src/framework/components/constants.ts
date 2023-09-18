@@ -125,7 +125,6 @@ export const UI_SIZES = {
     input: getScaleWidth(12),
     selector: getScaleWidth(12),
     mediumPlus: getScaleWidth(16),
-    explorer: getScaleWidth(18),
     large: getScaleWidth(21),
     extraLarge: getScaleWidth(24),
     huge: getScaleWidth(48),
@@ -182,8 +181,8 @@ export const UI_STYLES = StyleSheet.create({
 });
 
 export const UI_VALUES = {
-  modalOpacity: 0.4,
   opacity: {
+    explorer: 0.1,
     half: 0.5,
     modal: 0.4,
     opaque: 1,

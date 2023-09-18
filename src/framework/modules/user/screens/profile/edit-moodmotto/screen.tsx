@@ -15,6 +15,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import { Trackers } from '~/framework/util/tracker';
 
 import { renderMoodPicture } from '.';
 import styles from './styles';
@@ -56,6 +57,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
       const body = JSON.stringify({ mood, motto: motto?.trim() });
       await userService.person.put(route.params.userId, body);
       navigation.navigate(userRouteNames.profile, { newMood: mood, newMotto: motto?.trim() });
+      Trackers.trackEvent('Profile', 'EDIT_MOOD_MOTTO');
       Toast.showSuccess(I18n.get('user-profile-toast-editMoodMottoSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));

@@ -60,7 +60,6 @@ export default React.forwardRef(function GridList<ItemT>(props: GridListProps<It
       )}
       numColumns={realNumColumns}
       columnWrapperStyle={realColumnWrapperStyle}
-      scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
       {...otherProps}
     />
   );

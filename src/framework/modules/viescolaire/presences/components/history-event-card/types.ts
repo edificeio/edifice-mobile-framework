@@ -1,10 +1,10 @@
 import * as React from 'react';
 import type { ColorValue, ViewStyle } from 'react-native';
 
-import type { HistoryEventType } from '~/framework/modules/viescolaire/presences/model';
+import type { EventType } from '~/framework/modules/viescolaire/presences/model';
 
 export interface HistoryEventCardProps extends React.PropsWithChildren {
-  type: HistoryEventType;
+  type: EventType;
   style?: ViewStyle;
 }
 

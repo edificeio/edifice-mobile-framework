@@ -262,6 +262,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   renderPostInfos() {
     const { title, content } = this.state;
+    const contentFieldRef: { current: any } = React.createRef();
     return (
       <>
         <InputContainer
@@ -271,6 +272,8 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
               placeholder={I18n.get('blog-createpost-post-title-placeholder')}
               value={title}
               onChangeText={text => this.setState({ title: text })}
+              returnKeyType="next"
+              onSubmitEditing={() => contentFieldRef?.current?.focus()}
             />
           }
           style={styles.input}
@@ -283,6 +286,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
               value={content}
               onChangeText={text => this.setState({ content: text })}
               numberOfLines={5}
+              ref={contentFieldRef}
             />
           }
           style={styles.input}

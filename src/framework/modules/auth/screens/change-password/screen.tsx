@@ -156,6 +156,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 annotation=" "
                 ref={this.inputOldPassword}
                 onSubmitEditing={() => this.inputNewPassword.current.focus()}
+                returnKeyType="next"
               />
             }
           />
@@ -175,6 +176,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 annotation={formModel.showNewPasswordError(newPassword) ? errorText : ' '}
                 ref={this.inputNewPassword}
                 onSubmitEditing={() => this.inputConfirmPassword.current.focus()}
+                returnKeyType="next"
               />
             }
           />
@@ -192,7 +194,8 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 onChangeText={formModel.confirm.changeCallback(this.onChange('confirm'))}
                 annotation={formModel.showPasswordConfirmError(confirm) ? errorText : ' '}
                 ref={this.inputConfirmPassword}
-                onSubmitEditing={() => (isNotValid ? null : this.doSubmit())}
+                returnKeyType="send"
+                onSubmitEditing={isNotValid ? () => {} : () => this.doSubmit()}
               />
             }
           />

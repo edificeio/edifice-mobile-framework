@@ -5,14 +5,13 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
+import { ISession } from '~/framework/modules/auth/model';
+import { moduleColor } from '~/framework/modules/homework/module-config';
+import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
+import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
+import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
-
-import { ISession } from '../../auth/model';
-import { moduleColor } from '../module-config';
-import { HomeworkNavigationParams, homeworkRouteNames } from '../navigation';
-import { IHomeworkDiary } from '../reducers/diaryList';
-import { getHomeworkWorkflowInformation } from '../rights';
 
 export interface HomeworkSelectScreenDataProps {
   diaryList: {

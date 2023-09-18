@@ -16,7 +16,7 @@ import {
 } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { IUserChild } from '~/framework/modules/viescolaire/competences/model';
-import { IChildEvents, IChildrenEvents, IEvent } from '~/framework/modules/viescolaire/presences/model';
+import { CallEvent, ChildEvents } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
   childContainer: {
@@ -47,7 +47,7 @@ const getSectionTitle = (key: string): string => {
   }
 };
 
-const renderEvent = (key: string, event: IEvent) => {
+const renderEvent = (key: string, event: CallEvent) => {
   let color: ColorValue | undefined;
   let duration: number | undefined;
 
@@ -82,21 +82,16 @@ const renderEvent = (key: string, event: IEvent) => {
   );
 };
 
-interface IChildEventsProps {
-  events: IChildEvents;
-  childName?: string;
-}
-
-interface IChildrenEventsModalProps {
-  childrenEvents: IChildrenEvents;
+interface ChildrenEventsModalProps {
+  childrenEvents: { [key: string]: ChildEvents };
   userChildren: IUserChild[];
 }
 
-const ChildEvents = (props: IChildEventsProps) => {
-  const sections = Object.entries(props.events)
+const renderChildEvents = (events: ChildEvents, childName?: string) => {
+  const sections = Object.entries(events)
     .filter(([id, value]) => value.length > 0)
-    .map(([category, events]) => {
-      return { title: category, data: events };
+    .map(([category, e]) => {
+      return { title: category, data: e };
     });
 
   return (
@@ -107,13 +102,13 @@ const ChildEvents = (props: IChildEventsProps) => {
       renderSectionHeader={({ section: { title } }) => (
         <SmallText style={styles.sectionTitleText}>{getSectionTitle(title).toUpperCase()}</SmallText>
       )}
-      ListHeaderComponent={<BodyBoldText>{props.childName}</BodyBoldText>}
+      ListHeaderComponent={<BodyBoldText>{childName}</BodyBoldText>}
       style={styles.childContainer}
     />
   );
 };
 
-const ChildrenEventsModal = React.forwardRef<ModalBoxHandle, IChildrenEventsModalProps>((props, ref) => {
+const ChildrenEventsModal = React.forwardRef<ModalBoxHandle, ChildrenEventsModalProps>((props, ref) => {
   return (
     <ModalBox
       ref={ref}
@@ -121,9 +116,9 @@ const ChildrenEventsModal = React.forwardRef<ModalBoxHandle, IChildrenEventsModa
         <FlatList
           data={Object.entries(props.childrenEvents)}
           keyExtractor={([childId]) => childId}
-          renderItem={({ item: [childId, events] }) => (
-            <ChildEvents childName={props.userChildren.find(child => child.id === childId)?.firstName} events={events} />
-          )}
+          renderItem={({ item: [childId, events] }) =>
+            renderChildEvents(events, props.userChildren.find(child => child.id === childId)?.firstName)
+          }
           ListHeaderComponent={<BodyText>{I18n.get('presences-childreneventsmodal-title')}</BodyText>}
           scrollEnabled={false}
         />

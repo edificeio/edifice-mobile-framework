@@ -170,6 +170,8 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             style={styles.input}
             value={email}
             onChangeText={onChangeEmail}
+            returnKeyType="send"
+            {...(!isEmailEmpty ? { onSubmitEditing: onSendEmail } : {})}
           />
         </View>
         <CaptionItalicText style={styles.errorText}>

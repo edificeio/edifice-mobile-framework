@@ -1,18 +1,18 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ISession } from '~/framework/modules/auth/model';
-import type { EventType, IClassCallStudent, ICourse, IEvent, IEventReason } from '~/framework/modules/viescolaire/presences/model';
+import type { CallEvent, CallEventType, CallStudent, Course, EventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 
 export interface PresencesDeclareEventScreenProps {}
 
 export interface PresencesDeclareEventScreenNavParams {
   callId: number;
-  course: ICourse;
-  reasons: IEventReason[];
-  student: IClassCallStudent;
-  type: EventType;
-  event?: IEvent;
+  course: Course;
+  reasons: EventReason[];
+  student: CallStudent;
+  type: CallEventType;
+  event?: CallEvent;
 }
 
 export interface PresencesDeclareEventScreenStoreProps {

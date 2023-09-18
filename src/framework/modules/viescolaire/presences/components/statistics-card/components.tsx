@@ -8,11 +8,12 @@ import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { BodyText, HeadingXLText, NestedBoldText, SmallText } from '~/framework/components/text';
 import HistoryEventCard from '~/framework/modules/viescolaire/presences/components/history-event-card';
 import {
-  HistoryEventType,
-  IForgottenNotebook,
-  IHistoryEvent,
-  IIncident,
-  IPunishment,
+  CommonEvent,
+  Event,
+  EventType,
+  ForgottenNotebook,
+  Incident,
+  Punishment,
 } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
 
@@ -20,15 +21,15 @@ import styles from './styles';
 import { StatisticsCardProps } from './types';
 
 const i18nCategories = {
-  [HistoryEventType.DEPARTURE]: 'departures',
-  [HistoryEventType.FORGOTTEN_NOTEBOOK]: 'forgottennotebooks',
-  [HistoryEventType.INCIDENT]: 'incidents',
-  [HistoryEventType.LATENESS]: 'latenesses',
-  [HistoryEventType.NO_REASON]: 'noreason',
-  [HistoryEventType.PUNISHMENT]: 'punishments',
-  [HistoryEventType.REGULARIZED]: 'regularized',
-  [HistoryEventType.STATEMENT_ABSENCE]: 'absences',
-  [HistoryEventType.UNREGULARIZED]: 'unregularized',
+  [EventType.DEPARTURE]: 'departures',
+  [EventType.FORGOTTEN_NOTEBOOK]: 'forgottennotebooks',
+  [EventType.INCIDENT]: 'incidents',
+  [EventType.LATENESS]: 'latenesses',
+  [EventType.NO_REASON]: 'noreason',
+  [EventType.PUNISHMENT]: 'punishments',
+  [EventType.REGULARIZED]: 'regularized',
+  [EventType.STATEMENT_ABSENCE]: 'absences',
+  [EventType.UNREGULARIZED]: 'unregularized',
 };
 
 export default function StatisticsCard(props: StatisticsCardProps) {
@@ -76,44 +77,40 @@ export default function StatisticsCard(props: StatisticsCardProps) {
     );
   };
 
-  const renderListItem = (item: IForgottenNotebook | IHistoryEvent | IIncident | IPunishment) => {
+  const renderListItem = (item: Event) => {
     switch (item.type) {
-      case HistoryEventType.DEPARTURE:
+      case EventType.DEPARTURE:
         return renderEvent(
           theme.palette.complementary.pink.regular,
-          (item as IHistoryEvent).startDate,
-          (item as IHistoryEvent).endDate,
+          (item as CommonEvent).startDate,
+          (item as CommonEvent).endDate,
         );
-      case HistoryEventType.FORGOTTEN_NOTEBOOK:
-        return renderSimpleEvent(theme.palette.complementary.indigo.regular, (item as IForgottenNotebook).date);
-      case HistoryEventType.INCIDENT:
-        return renderSimpleEvent(theme.palette.grey.graphite, (item as IIncident).date, true);
-      case HistoryEventType.LATENESS:
+      case EventType.FORGOTTEN_NOTEBOOK:
+        return renderSimpleEvent(theme.palette.complementary.indigo.regular, (item as ForgottenNotebook).date);
+      case EventType.INCIDENT:
+        return renderSimpleEvent(theme.palette.grey.graphite, (item as Incident).date, true);
+      case EventType.LATENESS:
         return renderEvent(
           theme.palette.complementary.purple.regular,
-          (item as IHistoryEvent).startDate,
-          (item as IHistoryEvent).endDate,
+          (item as CommonEvent).startDate,
+          (item as CommonEvent).endDate,
         );
-      case HistoryEventType.NO_REASON:
-        return renderEvent(
-          theme.palette.complementary.red.regular,
-          (item as IHistoryEvent).startDate,
-          (item as IHistoryEvent).endDate,
-        );
-      case HistoryEventType.PUNISHMENT:
-        return renderSimpleEvent(theme.palette.complementary.yellow.regular, (item as IPunishment).createdAt, true);
-      case HistoryEventType.REGULARIZED:
+      case EventType.NO_REASON:
+        return renderEvent(theme.palette.complementary.red.regular, (item as CommonEvent).startDate, (item as CommonEvent).endDate);
+      case EventType.PUNISHMENT:
+        return renderSimpleEvent(theme.palette.complementary.yellow.regular, (item as Punishment).createdAt, true);
+      case EventType.REGULARIZED:
         return renderEvent(
           theme.palette.complementary.green.regular,
-          (item as IHistoryEvent).startDate,
-          (item as IHistoryEvent).endDate,
+          (item as CommonEvent).startDate,
+          (item as CommonEvent).endDate,
         );
-      case HistoryEventType.STATEMENT_ABSENCE:
-      case HistoryEventType.UNREGULARIZED:
+      case EventType.STATEMENT_ABSENCE:
+      case EventType.UNREGULARIZED:
         return renderEvent(
           theme.palette.complementary.orange.regular,
-          (item as IHistoryEvent).startDate,
-          (item as IHistoryEvent).endDate,
+          (item as CommonEvent).startDate,
+          (item as CommonEvent).endDate,
         );
     }
   };

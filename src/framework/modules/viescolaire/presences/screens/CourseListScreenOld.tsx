@@ -20,7 +20,7 @@ import {
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
 import CourseList from '~/framework/modules/viescolaire/presences/components/CourseListOld';
-import { ICourse, IEventReason } from '~/framework/modules/viescolaire/presences/model';
+import { Course, EventReason } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
@@ -28,15 +28,15 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 interface PresencesCourseListScreenOldDispatchProps {
-  tryFetchCourses: (...args: Parameters<typeof fetchPresencesCoursesAction>) => Promise<ICourse[]>;
+  tryFetchCourses: (...args: Parameters<typeof fetchPresencesCoursesAction>) => Promise<Course[]>;
   tryFetchMultipleSlotsSetting: (...args: Parameters<typeof fetchPresencesMultipleSlotSettingAction>) => Promise<boolean>;
   tryFetchRegisterPreference: (...args: Parameters<typeof fetchPresencesRegisterPreferenceAction>) => Promise<string>;
-  tryFetchEventReasons: (...args: Parameters<typeof fetchPresencesEventReasonsAction>) => Promise<IEventReason[]>;
+  tryFetchEventReasons: (...args: Parameters<typeof fetchPresencesEventReasonsAction>) => Promise<EventReason[]>;
 }
 
 type PresencesCourseListScreenOldProps = {
   allowMultipleSlots: boolean;
-  courses: ICourse[];
+  courses: Course[];
   initialLoadingState: AsyncPagedLoadingState;
   registerId: string;
   registerPreference: string;
@@ -113,14 +113,14 @@ const PresencesCourseListScreenOld = (props: PresencesCourseListScreenOldProps) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.structureId]);
 
-  const openCall = async (course: ICourse) => {
+  const openCall = async (course: Course) => {
     try {
       let { callId } = course;
 
       if (!callId) {
         const { allowMultipleSlots, session, teacherId } = props;
         if (!session || !teacherId) throw new Error();
-        callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
+        callId = await presencesService.call.create(session, course, teacherId, allowMultipleSlots);
       }
       props.navigation.navigate(presencesRouteNames.call, {
         course,
@@ -172,7 +172,7 @@ export default connect(
 
     return {
       allowMultipleSlots: presencesState.allowMultipleSlots.data,
-      courses: presencesState.courses.data.filter(course => course.allowRegister === true),
+      courses: presencesState.courses.data,
       initialLoadingState: presencesState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       registerPreference: presencesState.registerPreference.data,
       session,

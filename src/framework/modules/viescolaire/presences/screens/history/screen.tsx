@@ -18,7 +18,7 @@ import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
-import { fetchPresencesAbsencesAction, fetchPresencesHistoryAction } from '~/framework/modules/viescolaire/presences/actions';
+import { fetchPresencesHistoryAction } from '~/framework/modules/viescolaire/presences/actions';
 import {
   AbsenceCard,
   DepartureCard,
@@ -29,13 +29,13 @@ import {
   StatementAbsenceCard,
 } from '~/framework/modules/viescolaire/presences/components/history-event-card/variants';
 import {
-  HistoryEventType,
-  IAbsence,
-  IForgottenNotebook,
-  IHistoryEvent,
-  IIncident,
-  IPunishment,
-  compareEvents,
+  Absence,
+  CommonEvent,
+  Event,
+  EventType,
+  ForgottenNotebook,
+  Incident,
+  Punishment,
 } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -60,6 +60,7 @@ export const computeNavBar = ({
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
+  const [isInitialized, setInitialized] = React.useState(true);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -71,16 +72,17 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
       const studentId = userType === UserType.Student ? userId : selectedChildId;
 
-      if (!structureId || !studentId || !userId || !userType) throw new Error();
-      const startDate = moment().subtract(1, 'month').format('YYYY-MM-DD');
-      const endDate = moment().format('YYYY-MM-DD');
-      await props.tryFetchAbsences(studentId, structureId, startDate, endDate);
-      await props.tryFetchHistory(studentId, structureId, startDate, endDate);
+      if (!session || !structureId || !studentId || !userId || !userType) throw new Error();
+      /*const initialized = await presencesService.initialization.getStructureStatus(session, structureId);
+      if (!initialized) {
+        setInitialized(false);
+        throw new Error();
+      }*/
+      await props.tryFetchHistory(studentId, structureId, moment().subtract(1, 'month'), moment());
     } catch {
       throw new Error();
     }
   };
-
   const init = () => {
     setLoadingState(AsyncPagedLoadingState.INIT);
     fetchEvents()
@@ -116,7 +118,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     });
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
+  }, [props.navigation, selectedChildId]);
 
   React.useEffect(() => {
     if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
@@ -126,7 +128,16 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const renderError = () => {
     return (
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        <EmptyContentScreen />
+        {isInitialized ? (
+          <EmptyContentScreen />
+        ) : (
+          <EmptyScreen
+            svgImage="empty-light"
+            title={I18n.get('presences-history-emptyscreen-initialization-title')}
+            text={I18n.get('presences-history-emptyscreen-initialization-text')}
+            customStyle={styles.pageContainer}
+          />
+        )}
       </ScrollView>
     );
   };
@@ -140,7 +151,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
           <PrimaryButton
             text={I18n.get('presences-history-reportabsence')}
             iconLeft="ui-plus"
-            action={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
+            action={() => props.navigation.navigate(presencesRouteNames.declareAbsence, { childId: selectedChildId })}
             style={styles.absenceActionContainer}
           />
         ) : null}
@@ -156,28 +167,24 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     );
   };
 
-  const renderHistoryEventListItem = ({
-    item,
-  }: {
-    item: IAbsence | IHistoryEvent | IIncident | IPunishment | IForgottenNotebook;
-  }) => {
+  const renderHistoryEventListItem = ({ item }: { item: Event }) => {
     switch (item.type) {
-      case HistoryEventType.NO_REASON:
-      case HistoryEventType.REGULARIZED:
-      case HistoryEventType.UNREGULARIZED:
-        return <AbsenceCard event={item as IHistoryEvent} />;
-      case HistoryEventType.DEPARTURE:
-        return <DepartureCard event={item as IHistoryEvent} />;
-      case HistoryEventType.FORGOTTEN_NOTEBOOK:
-        return <ForgottenNotebookCard event={item as IForgottenNotebook} />;
-      case HistoryEventType.INCIDENT:
-        return <IncidentCard event={item as IIncident} />;
-      case HistoryEventType.LATENESS:
-        return <LatenessCard event={item as IHistoryEvent} />;
-      case HistoryEventType.PUNISHMENT:
-        return <PunishmentCard event={item as IPunishment} />;
-      case HistoryEventType.STATEMENT_ABSENCE:
-        return <StatementAbsenceCard event={item as IAbsence} userType={props.userType} />;
+      case EventType.NO_REASON:
+      case EventType.REGULARIZED:
+      case EventType.UNREGULARIZED:
+        return <AbsenceCard event={item as CommonEvent} />;
+      case EventType.DEPARTURE:
+        return <DepartureCard event={item as CommonEvent} />;
+      case EventType.FORGOTTEN_NOTEBOOK:
+        return <ForgottenNotebookCard event={item as ForgottenNotebook} />;
+      case EventType.INCIDENT:
+        return <IncidentCard event={item as Incident} />;
+      case EventType.LATENESS:
+        return <LatenessCard event={item as CommonEvent} />;
+      case EventType.PUNISHMENT:
+        return <PunishmentCard event={item as Punishment} />;
+      case EventType.STATEMENT_ABSENCE:
+        return <StatementAbsenceCard event={item as Absence} userType={props.userType} />;
     }
   };
 
@@ -192,7 +199,8 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
             data={props.children!}
             selectedId={selectedChildId}
             onSelect={id => setSelectedChildId(id)}
-            style={styles.childrenListContainer}
+            style={styles.childListContainer}
+            contentContainerStyle={styles.childListContentContainer}
           />
         ) : null}
         <FlatList
@@ -211,11 +219,11 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
           ListEmptyComponent={
             <EmptyScreen
               svgImage="empty-zimbra"
-              title={I18n.get('presences-history-emptyscreen-title')}
+              title={I18n.get('presences-history-emptyscreen-default-title')}
               text={I18n.get(
                 userType === UserType.Relative
-                  ? 'presences-history-emptyscreen-text-relative'
-                  : 'presences-history-emptyscreen-text-student',
+                  ? 'presences-history-emptyscreen-default-text-relative'
+                  : 'presences-history-emptyscreen-default-text-student',
               )}
               customStyle={styles.emptyScreenContainer}
               customTitleStyle={styles.emptyScreenTitle}
@@ -253,7 +261,6 @@ export default connect(
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
-    const history = presencesState.history.data;
 
     return {
       children:
@@ -262,19 +269,8 @@ export default connect(
               ?.filter(child => child.classesNames.length)
               .map(child => ({ id: child.id, name: child.firstName })) ?? []
           : undefined,
-      events: [
-        ...presencesState.absences.data,
-        ...history.DEPARTURE.events,
-        ...history.FORGOTTEN_NOTEBOOK.events,
-        ...history.INCIDENT.events,
-        ...history.LATENESS.events,
-        ...history.NO_REASON.events,
-        ...history.PUNISHMENT.events,
-        ...history.REGULARIZED.events,
-        ...history.UNREGULARIZED.events,
-      ].sort(compareEvents),
+      events: presencesState.history.data,
       hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
-      history: presencesState.history.data,
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       session,
       userId,
@@ -284,7 +280,6 @@ export default connect(
   dispatch =>
     bindActionCreators<PresencesHistoryScreenDispatchProps>(
       {
-        tryFetchAbsences: tryAction(fetchPresencesAbsencesAction),
         tryFetchHistory: tryAction(fetchPresencesHistoryAction),
       },
       dispatch,

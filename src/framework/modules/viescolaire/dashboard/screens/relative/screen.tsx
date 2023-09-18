@@ -43,7 +43,7 @@ import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigatio
 import { edtRouteNames } from '~/framework/modules/viescolaire/edt/navigation';
 import { fetchPresencesChildrenEventsAction } from '~/framework/modules/viescolaire/presences/actions';
 import ChildrenEventsModal from '~/framework/modules/viescolaire/presences/components/ChildrenEventsModal';
-import { IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
+import { ChildEvents } from '~/framework/modules/viescolaire/presences/model';
 import presencesConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
@@ -58,7 +58,7 @@ type IHomeworkByDateList = {
   [key: string]: IHomework[];
 };
 
-const getStudentsEventsCount = (data: IChildrenEvents): number => {
+const getStudentsEventsCount = (data: { [key: string]: ChildEvents }): number => {
   let count = 0;
 
   for (const childEvents of Object.values(data)) {

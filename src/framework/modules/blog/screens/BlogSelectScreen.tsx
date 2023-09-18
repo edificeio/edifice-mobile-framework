@@ -10,12 +10,11 @@ import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
+import { moduleColor } from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogList } from '~/framework/modules/blog/reducer';
+import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import { moduleColor } from '../module-config';
-import { getBlogWorkflowInformation } from '../rights';
 
 export interface BlogSelectScreenDataProps {
   session?: ISession;

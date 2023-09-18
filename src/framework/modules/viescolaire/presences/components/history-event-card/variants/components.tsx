@@ -6,12 +6,12 @@ import { BodyText, CaptionBoldText, NestedBoldText } from '~/framework/component
 import { UserType } from '~/framework/modules/auth/service';
 import HistoryEventCard from '~/framework/modules/viescolaire/presences/components/history-event-card';
 import {
-  HistoryEventType,
-  IAbsence,
-  IForgottenNotebook,
-  IHistoryEvent,
-  IIncident,
-  IPunishment,
+  Absence,
+  CommonEvent,
+  EventType,
+  ForgottenNotebook,
+  Incident,
+  Punishment,
 } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
 
@@ -33,16 +33,16 @@ const formatAbsenceDates = (startDate: Moment, endDate: Moment): string => {
   }
 };
 
-export const AbsenceCard = ({ event }: { event: IHistoryEvent }) => {
+export const AbsenceCard = ({ event }: { event: CommonEvent }) => {
   const isSingleDay = event.endDate.isSame(event.startDate, 'day');
 
   const getEventLabel = () => {
     switch (event.type) {
-      case HistoryEventType.NO_REASON:
+      case EventType.NO_REASON:
         return I18n.get(appConf.is1d ? 'presences-history-eventcard-noreason-1d' : 'presences-history-eventcard-noreason-2d');
-      case HistoryEventType.REGULARIZED:
+      case EventType.REGULARIZED:
         return I18n.get(appConf.is1d ? 'presences-history-eventcard-regularized-1d' : 'presences-history-eventcard-regularized-2d');
-      case HistoryEventType.UNREGULARIZED:
+      case EventType.UNREGULARIZED:
       default:
         return I18n.get(
           appConf.is1d ? 'presences-history-eventcard-unregularized-1d' : 'presences-history-eventcard-unregularized-2d',
@@ -54,12 +54,12 @@ export const AbsenceCard = ({ event }: { event: IHistoryEvent }) => {
     <HistoryEventCard type={event.type}>
       <BodyText>
         {getEventLabel()}
-        {event.type !== HistoryEventType.REGULARIZED
+        {event.type !== EventType.REGULARIZED
           ? I18n.get(isSingleDay ? 'presences-history-eventcard-on' : 'presences-history-eventcard-from')
           : null}
         <NestedBoldText>{formatAbsenceDates(event.startDate, event.endDate)}</NestedBoldText>
       </BodyText>
-      {event.type !== HistoryEventType.NO_REASON && event.reasonLabel ? (
+      {event.type !== EventType.NO_REASON && event.reasonLabel ? (
         <CaptionBoldText style={styles.secondaryText}>
           {I18n.get('presences-history-eventcard-reason', { reason: event.reasonLabel })}
         </CaptionBoldText>
@@ -68,7 +68,7 @@ export const AbsenceCard = ({ event }: { event: IHistoryEvent }) => {
   );
 };
 
-export const DepartureCard = ({ event }: { event: IHistoryEvent }) => {
+export const DepartureCard = ({ event }: { event: CommonEvent }) => {
   const duration = event.endDate.diff(event.startDate, 'minutes');
 
   return (
@@ -93,7 +93,7 @@ export const DepartureCard = ({ event }: { event: IHistoryEvent }) => {
   );
 };
 
-export const ForgottenNotebookCard = ({ event }: { event: IForgottenNotebook }) => {
+export const ForgottenNotebookCard = ({ event }: { event: ForgottenNotebook }) => {
   return (
     <HistoryEventCard type={event.type}>
       <BodyText>
@@ -104,7 +104,7 @@ export const ForgottenNotebookCard = ({ event }: { event: IForgottenNotebook }) 
   );
 };
 
-export const IncidentCard = ({ event }: { event: IIncident }) => {
+export const IncidentCard = ({ event }: { event: Incident }) => {
   return (
     <HistoryEventCard type={event.type}>
       <BodyText>
@@ -120,7 +120,7 @@ export const IncidentCard = ({ event }: { event: IIncident }) => {
   );
 };
 
-export const LatenessCard = ({ event }: { event: IHistoryEvent }) => {
+export const LatenessCard = ({ event }: { event: CommonEvent }) => {
   const duration = event.endDate.diff(event.startDate, 'minutes');
 
   return (
@@ -140,7 +140,7 @@ export const LatenessCard = ({ event }: { event: IHistoryEvent }) => {
   );
 };
 
-export const PunishmentCard = ({ event }: { event: IPunishment }) => {
+export const PunishmentCard = ({ event }: { event: Punishment }) => {
   return (
     <HistoryEventCard type={event.type}>
       <BodyText>
@@ -156,7 +156,7 @@ export const PunishmentCard = ({ event }: { event: IPunishment }) => {
   );
 };
 
-export const StatementAbsenceCard = ({ event, userType }: { event: IAbsence; userType?: UserType }) => {
+export const StatementAbsenceCard = ({ event, userType }: { event: Absence; userType?: UserType }) => {
   const isSingleDay = event.endDate.isSame(event.startDate, 'day');
 
   return (

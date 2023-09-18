@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { BodyBoldText, SmallBoldText } from '~/framework/components/text';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { ICourse } from '~/framework/modules/viescolaire/presences/model';
+import { Course } from '~/framework/modules/viescolaire/presences/model';
 
 import CallCard from './call-card';
 
@@ -58,9 +58,9 @@ const styles = StyleSheet.create({
 });
 
 interface ICourseListProps {
-  courses: ICourse[];
+  courses: Course[];
   isFetching: boolean;
-  onCoursePress: (course: ICourse) => void;
+  onCoursePress: (course: Course) => void;
 }
 
 interface ICourseListState {
@@ -84,7 +84,7 @@ export default class CourseList extends React.PureComponent<ICourseListProps, IC
     }
   }
 
-  private getCurrentCourseIndex(courses: ICourse[]): number {
+  private getCurrentCourseIndex(courses: Course[]): number {
     const now = moment();
     let index = courses.findIndex(course => course.startDate.clone().subtract(15, 'minutes').isAfter(now)) - 1;
 
