@@ -195,7 +195,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
                 annotation={formModel.showPasswordConfirmError(confirm) ? errorText : ' '}
                 ref={this.inputConfirmPassword}
                 returnKeyType="send"
-                {...(!isNotValid ? { onSubmitEditing: this.doSubmit } : {})}
+                onSubmitEditing={isNotValid ? () => {} : () => this.doSubmit()}
               />
             }
           />
