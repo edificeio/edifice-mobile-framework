@@ -296,17 +296,6 @@ const Body = forwardRef<TextInput>(({ style, value, onChange, autofocus }, ref) 
   };
   const valueFormated = HtmlToText(nl2br(value), false).render;
   const [currentValue, updateCurrentValue] = React.useState(valueFormated);
-  const [keyboardStatus, setKeyboardStatus] = React.useState(0); // State used just to force-update the component whenever it changes
-
-  React.useEffect(() => {
-    const showSubscription = Keyboard.addListener(Platform.select({ ios: 'keyboardWillHide', android: 'keyboardDidHide' })!, () => {
-      setKeyboardStatus(new Date().getTime());
-    });
-
-    return () => {
-      showSubscription.remove();
-    };
-  }, []);
 
   const textInputRef = ref ?? React.createRef<TextInput>();
   React.useEffect(() => {
@@ -331,7 +320,6 @@ const Body = forwardRef<TextInput>(({ style, value, onChange, autofocus }, ref) 
           onChange(newText);
           updateCurrentValue(newText);
         }}
-        key={keyboardStatus}
       />
     </View>
   );
