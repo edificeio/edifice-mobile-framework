@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-18 13:29:41",
-  "notes": "fix(presences): MB-1978 remove event reasons that are hidden or with negative id\nfeat(presences): MB-1991 show alert when leaving call screen with validation missing\nfeat(presences): MB-1960 show empty screen when presences has not been initialized by the admins\nrefactor: Relative imports removal\nfix(presences): MB-2005 show incidents, punishments and forgotten notebooks depending on presences2d right\nchore(auth): MB-2008, login keyboard return key type\nfeat: MB-2001, improved day-picker\nfix(presences): add back statement absences to history, fetch events for right child on go back from absence declaration\nfix(userlist): remove grow and shrink\nrelease: 1.11.0-alpha.17(1110017)",
-  "version": "1.11.0-alpha.18(1110018)",
+  "last": "2023-09-18 22:30:09",
+  "notes": "fix: MB-1985, day-picker font scale\nfeat(presences): MB-2014 allow teacher to open call starting withing 15 minutes\nfeat(presences): MB-2013 edit student list item, set check icon color to grey when call is not done\nfeat(presences): MB-2010 use ContentLoader hook to render call, history and statistics screens\nfix(new-mail): MB-1995 , fix press next on object input\nfix(change-password): MB-1996 , fix press send on last input\nfix(player): MB-1491 , fix bug when background foreground animation audio\nfix(presences): MB-1960 disable initialization check until api is available\nchore(presences): improve types, use more accurates names, add CallState enum\nrelease: 1.11.0-alpha.18(1110018)",
+  "version": "1.11.0-rc.1(1110019)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
