@@ -8,11 +8,11 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 
 interface ContentLoaderProps {
-  loadContent: () => Promise<any>;
   initialLoadingState?: LoadingState;
-  renderLoading?: () => React.ReactElement;
-  renderError?: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
+  loadContent: () => Promise<any>;
   renderContent: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
+  renderError?: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
+  renderLoading?: () => React.ReactElement;
 }
 
 export interface ContentLoaderHandle {

@@ -192,7 +192,12 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
           data={students}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
-            <StudentListItem student={item} isSelected={item.id === selectedStudentId} onPress={() => openStudentStatus(item.id)} />
+            <StudentListItem
+              student={item}
+              isSelected={item.id === selectedStudentId}
+              callState={call!.stateId}
+              onPress={() => openStudentStatus(item.id)}
+            />
           )}
           refreshControl={refreshControl}
           ListHeaderComponent={<CallCard course={course} showStatus disabled />}
