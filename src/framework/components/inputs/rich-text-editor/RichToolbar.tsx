@@ -6,10 +6,9 @@ import { UI_SIZES } from '~/framework/components/constants';
 import HorizontalList from '~/framework/components/list/horizontal';
 
 import { actions } from './const';
-import { RichToolbarIconButton } from './rich-toolbar-icon-button';
+import { RichToolbarIconButton, RichToolbarTextButton } from './rich-toolbar-button';
 import { RichToolbarItem } from './rich-toolbar-item';
 import { RichToolbarPage } from './rich-toolbar-page';
-import { RichToolbarTextButton } from './rich-toolbar-text-button';
 
 const styles = StyleSheet.create({
   barContainer: {

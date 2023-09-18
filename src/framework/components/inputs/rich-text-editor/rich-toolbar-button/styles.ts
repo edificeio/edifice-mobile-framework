@@ -4,12 +4,12 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
-  item: {
+  button: {
     padding: UI_SIZES.spacing.minor,
     borderRadius: UI_SIZES.radius.medium,
     alignSelf: 'flex-start',
   },
-  itemSelected: {
+  buttonSelected: {
     backgroundColor: theme.palette.primary.pale,
   },
 });
