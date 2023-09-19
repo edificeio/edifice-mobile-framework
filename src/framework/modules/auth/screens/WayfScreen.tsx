@@ -456,7 +456,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.webviewCanGoBack = navigationState.canGoBack;
     // Track new url
     Trackers.trackDebugEvent('Auth', 'WAYF', navigationState.url);
-    console.log('url :' + navigationState.url);
   }
 
   // Called each time WebView url is about to change
@@ -467,7 +466,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     //   - No SAMLResponse has been detected
     //   - WAYF redirects to web standard login page
     const url = request.url;
-    console.log('url :' + url);
     if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
       if (!this.samlResponse)
         this.props.navigation.replace(authRouteNames.loginHome, { platform: this.props.route.params.platform });
