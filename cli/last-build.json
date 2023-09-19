@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-18 22:30:09",
-  "notes": "fix: MB-1985, day-picker font scale\nfeat(presences): MB-2014 allow teacher to open call starting withing 15 minutes\nfeat(presences): MB-2013 edit student list item, set check icon color to grey when call is not done\nfeat(presences): MB-2010 use ContentLoader hook to render call, history and statistics screens\nfix(new-mail): MB-1995 , fix press next on object input\nfix(change-password): MB-1996 , fix press send on last input\nfix(player): MB-1491 , fix bug when background foreground animation audio\nfix(presences): MB-1960 disable initialization check until api is available\nchore(presences): improve types, use more accurates names, add CallState enum\nrelease: 1.11.0-alpha.18(1110018)",
-  "version": "1.11.0-rc.1(1110019)",
+  "last": "2023-09-19 09:36:44",
+  "notes": "release: 1.11.0-rc.1(1110019)",
+  "version": "1.11.0-rc.2(1110020)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
