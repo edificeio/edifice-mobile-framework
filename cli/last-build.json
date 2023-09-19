@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-19 16:08:24",
-  "notes": "release: 1.10.4-rc.2(1100402)",
-  "version": "1.10.4-rc.3(1100403)",
+  "last": "2023-09-19 16:20:09",
+  "notes": "Remove console.log\nrelease: 1.10.4-rc.3(1100403)",
+  "version": "1.10.4-rc.4(1100404)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
