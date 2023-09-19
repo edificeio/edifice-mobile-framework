@@ -27,7 +27,7 @@ export interface IHomework {
   description: string;
   created_date: Moment;
   audience: IAudience;
-  session_id: string;
+  session_id: string | null;
 }
 
 export type IHomeworkMap = {

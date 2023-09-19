@@ -4,7 +4,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import reducer from './reducers';
 
-export const fillName = theme.palette.complementary[appConf.is1d ? 'blue' : 'green'].regular;
+export const moduleColor = theme.palette.complementary[appConf.is1d ? 'blue' : 'green'];
 
 export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>({
   name: 'homework',
@@ -13,5 +13,5 @@ export default new NavigableModuleConfig<'homework', ReturnType<typeof reducer>>
 
   displayI18n: 'homework',
   displayAs: 'myAppsModule',
-  displayPicture: { type: 'NamedSvg', name: 'homework1D', fill: fillName },
+  displayPicture: { type: 'NamedSvg', name: 'homework1D', fill: moduleColor.regular },
 });

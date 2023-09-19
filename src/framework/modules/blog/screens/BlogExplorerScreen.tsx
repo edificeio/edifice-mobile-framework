@@ -11,13 +11,14 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
-import Explorer, {
-  IExplorerFolderItem,
-  IExplorerResourceItemWithIcon,
-  IExplorerResourceItemWithImage,
-} from '~/framework/components/explorer';
+import ResourceExplorer from '~/framework/components/explorer/resource-explorer';
+import {
+  ResourceExplorerFolderItem,
+  ResourceExplorerItemWithIcon,
+  ResourceExplorerItemWithImage,
+} from '~/framework/components/explorer/resource-explorer/types';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
 import { ISession } from '~/framework/modules/auth/model';
@@ -104,9 +105,9 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
 
   const onOpenItem = (
     item:
-      | (IExplorerFolderItem & BlogFolder)
-      | (IExplorerResourceItemWithImage & DisplayedBlog)
-      | (IExplorerResourceItemWithIcon & DisplayedBlog),
+      | (ResourceExplorerFolderItem & BlogFolder)
+      | (ResourceExplorerItemWithImage & DisplayedBlog)
+      | (ResourceExplorerItemWithIcon & DisplayedBlog),
   ) => {
     if (item.type === 'folder') {
       onOpenFolder(item);
@@ -203,14 +204,13 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     })();
 
     return (
-      <Explorer
+      <ResourceExplorer
         folders={displayedFolders}
         resources={displayedblogs}
         onItemPress={onOpenItem}
-        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
+        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         ListEmptyComponent={renderEmpty()}
-        contentContainerStyle={UI_STYLES.flexGrow1}
         keyExtractor={item => item.id}
       />
     );

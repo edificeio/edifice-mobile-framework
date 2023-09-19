@@ -26,11 +26,6 @@ export default function BlogPlaceholderExplorer() {
         {cardExplorer}
         {cardExplorer}
         {cardExplorer}
-        {cardExplorer}
-        {cardExplorer}
-        {cardExplorer}
-        {cardExplorer}
-        {cardExplorer}
       </View>
     </Placeholder>
   );

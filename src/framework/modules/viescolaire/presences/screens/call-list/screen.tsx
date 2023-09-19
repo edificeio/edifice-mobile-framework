@@ -17,60 +17,73 @@ import { BodyBoldText, BodyText, HeadingSText } from '~/framework/components/tex
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
-  fetchPresencesClassCallAction,
+  fetchPresencesCallAction,
   fetchPresencesCoursesAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
+import CallListPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-list';
 import CallSummaryPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call-summary';
-import CourseListPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/course-list';
-import { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
+import { Call, CallState, Course } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import { subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
-import type { PresencesCourseListScreenDispatchProps, PresencesCourseListScreenPrivateProps } from './types';
+import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.courseList>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.callList>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('presences-courselist-title'),
+    title: I18n.get('presences-calllist-title'),
   }),
 });
 
-const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps) => {
+const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => {
+  const [isInitialized, setInitialized] = React.useState(true);
   const [date, setDate] = React.useState<Moment>(moment());
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const [bottomSheetCall, setBottomSheetCall] = React.useState<IClassCall | null>(null);
+  const [bottomSheetCall, setBottomSheetCall] = React.useState<Call | null>(null);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
+  const courses = props.courses[date.format('YYYY-MM-DD')] ?? [];
+
   const fetchCourses = async () => {
     try {
-      const { structureIds, teacherId } = props;
+      const { session, structureIds, teacherId } = props;
+      const initializedStructureIds: string[] = [];
 
-      if (!structureIds.length || !teacherId) throw new Error();
+      if (!session || !structureIds.length || !teacherId) throw new Error();
       /*const allowMultipleSlots = await props.tryFetchMultipleSlotsSetting(structureId);
       const registerPreference = await props.tryFetchRegisterPreference();
       let multipleSlot = true;
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }*/
-      await props.tryFetchCourses(teacherId, structureIds, date.format('YYYY-MM-DD'), false);
+      /*for (const id of structureIds) {
+        const initialized = await presencesService.initialization.getStructureStatus(session, id);
+        if (initialized) initializedStructureIds.push(id);
+      }
+      if (!initializedStructureIds.length) {
+        setInitialized(false);
+        throw new Error();
+      }*/
+      await props.tryFetchCourses(teacherId, structureIds, date, false);
     } catch {
       throw new Error();
     }
@@ -121,11 +134,11 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
   }, [props.navigation, date]);
 
   React.useEffect(() => {
-    if (loadingRef.current === AsyncPagedLoadingState.DONE) fetchNext();
+    if (!props.courses[date.format('YYYY-MM-DD')] && loadingRef.current === AsyncPagedLoadingState.DONE) fetchNext();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date]);
 
-  const openCall = async (course?: ICourse) => {
+  const openCall = async (course?: Course) => {
     try {
       if (!course) throw new Error();
       let { callId } = course;
@@ -133,7 +146,7 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       if (!callId) {
         const { allowMultipleSlots, session, teacherId } = props;
         if (!session || !teacherId) throw new Error();
-        callId = await presencesService.classCall.create(session, course, teacherId, allowMultipleSlots);
+        callId = await presencesService.call.create(session, course, teacherId, allowMultipleSlots);
       }
       bottomSheetModalRef.current?.dismiss();
       props.navigation.navigate(presencesRouteNames.call, {
@@ -141,21 +154,18 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
         id: callId,
       });
     } catch {
-      Toast.showError(I18n.get('presences-courselist-error-text'));
+      Toast.showError(I18n.get('presences-calllist-error-text'));
     }
   };
 
-  const onPressCourse = async (course: ICourse) => {
-    if (moment().isBefore(course.startDate)) {
-      Alert.alert(
-        I18n.get('presences-courselist-unavailablealert-title'),
-        I18n.get('presences-courselist-unavailablealert-message'),
-      );
-    } else if (course.registerStateId === 3 || moment().isAfter(course.endDate)) {
+  const onPressCourse = async (course: Course) => {
+    if (subtractTime(course.startDate, 15, 'minutes').isAfter(moment())) {
+      Alert.alert(I18n.get('presences-calllist-unavailablealert-title'), I18n.get('presences-calllist-unavailablealert-message'));
+    } else if (course.callStateId === CallState.DONE || moment().isAfter(course.endDate)) {
       setSelectedCourseId(course.id);
       bottomSheetModalRef.current?.present();
-      if (course.registerStateId === 3 && props.session) {
-        const call = await props.tryFetchClassCall(course.callId);
+      if (course.callStateId === CallState.DONE && props.session) {
+        const call = await props.tryFetchCall(course.callId);
         setBottomSheetCall(call);
       }
     } else {
@@ -171,14 +181,23 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
   const renderError = () => {
     return (
       <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        <EmptyContentScreen />
+        {isInitialized ? (
+          <EmptyContentScreen />
+        ) : (
+          <EmptyScreen
+            svgImage="empty-light"
+            title={I18n.get('presences-calllist-emptyscreen-initialization-title')}
+            text={I18n.get('presences-calllist-emptyscreen-initialization-text')}
+            customStyle={styles.pageContainer}
+          />
+        )}
       </ScrollView>
     );
   };
 
   const renderBottomSheet = () => {
-    const course = props.courses.find(c => c.id === selectedCourseId);
-    const isValidated = course?.registerStateId === 3;
+    const course = courses.find(c => c.id === selectedCourseId);
+    const isValidated = course?.callStateId === CallState.DONE;
 
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={clearBottomSheetContent}>
@@ -190,15 +209,15 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
               <CallSummary call={bottomSheetCall!} />
             ) : (
               <View style={styles.bottomSheetMissedCallContainer}>
-                <HeadingSText>{I18n.get('presences-courselist-bottomsheet-heading')}</HeadingSText>
+                <HeadingSText>{I18n.get('presences-calllist-bottomsheet-heading')}</HeadingSText>
                 <BodyText style={styles.bottomSheetMissedCallText}>
-                  {I18n.get('presences-courselist-bottomsheet-missedcall')}
+                  {I18n.get('presences-calllist-bottomsheet-missedcall')}
                 </BodyText>
               </View>
             )}
             <PrimaryButton
               text={I18n.get(
-                isValidated ? 'presences-courselist-bottomsheet-action-edit' : 'presences-courselist-bottomsheet-action-new',
+                isValidated ? 'presences-calllist-bottomsheet-action-edit' : 'presences-calllist-bottomsheet-action-new',
               )}
               iconLeft={isValidated ? 'ui-edit' : 'presences'}
               action={() => openCall(course)}
@@ -209,32 +228,32 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
     );
   };
 
-  const renderCourseList = () => {
+  const renderCallList = () => {
     return (
       <View style={UI_STYLES.flex1}>
         <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
-        {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (
-          <CourseListPlaceholder />
-        ) : (
-          <FlatList
-            data={props.courses}
-            renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
-            keyExtractor={item => item.id + item.startDate}
-            refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-            ListHeaderComponent={
-              appConf.is2d && props.courses.length ? <BodyBoldText>{I18n.get('presences-courselist-heading')}</BodyBoldText> : null
-            }
-            ListEmptyComponent={
+        <FlatList
+          data={courses}
+          renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
+          keyExtractor={item => item.id + item.startDate}
+          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          ListHeaderComponent={
+            appConf.is2d && courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
+          }
+          ListEmptyComponent={
+            loadingState === AsyncPagedLoadingState.FETCH_NEXT ? (
+              <CallListPlaceholder />
+            ) : (
               <EmptyScreen
                 svgImage="empty-presences"
-                title={I18n.get('presences-courselist-emptyscreen-title')}
-                text={I18n.get('presences-courselist-emptyscreen-text')}
+                title={I18n.get('presences-calllist-emptyscreen-default-title')}
+                text={I18n.get('presences-calllist-emptyscreen-default-text')}
                 customStyle={styles.emptyScreenContainer}
               />
-            }
-            contentContainerStyle={props.courses.length ? styles.listContentContainer : undefined}
-          />
-        )}
+            )
+          }
+          contentContainerStyle={courses.length ? styles.listContentContainer : UI_STYLES.flexGrow1}
+        />
         {renderBottomSheet()}
       </View>
     );
@@ -248,10 +267,10 @@ const PresencesCourseListScreen = (props: PresencesCourseListScreenPrivateProps)
       case AsyncPagedLoadingState.REFRESH_SILENT:
       case AsyncPagedLoadingState.FETCH_NEXT:
       case AsyncPagedLoadingState.FETCH_NEXT_FAILED:
-        return renderCourseList();
+        return renderCallList();
       case AsyncPagedLoadingState.PRISTINE:
       case AsyncPagedLoadingState.INIT:
-        return <CourseListPlaceholder showDayPicker />;
+        return <CallListPlaceholder showDayPicker />;
       case AsyncPagedLoadingState.INIT_FAILED:
       case AsyncPagedLoadingState.RETRY:
         return renderError();
@@ -277,13 +296,13 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators<PresencesCourseListScreenDispatchProps>(
+    bindActionCreators<PresencesCallListScreenDispatchProps>(
       {
-        tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
+        tryFetchCall: tryAction(fetchPresencesCallAction),
         tryFetchCourses: tryAction(fetchPresencesCoursesAction),
         tryFetchMultipleSlotsSetting: tryAction(fetchPresencesMultipleSlotSettingAction),
         tryFetchRegisterPreference: tryAction(fetchPresencesRegisterPreferenceAction),
       },
       dispatch,
     ),
-)(PresencesCourseListScreen);
+)(PresencesCallListScreen);

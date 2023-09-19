@@ -1,7 +1,8 @@
-import { IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
+import { CallState, CallStudent } from '~/framework/modules/viescolaire/presences/model';
 
 export interface StudentListItemProps {
-  student: IClassCallStudent;
+  callState: CallState;
+  student: CallStudent;
   isSelected?: boolean;
   onPress: () => void;
 }

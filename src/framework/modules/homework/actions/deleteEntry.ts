@@ -5,11 +5,10 @@
 import { Moment } from 'moment';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { assertSession } from '~/framework/modules/auth/reducer';
 import homeworkConfig from '~/framework/modules/homework/module-config';
 import { signedFetch } from '~/infra/fetchWithCache';
 import { asyncActionTypes } from '~/infra/redux/async';
-
-import { assertSession } from '../../auth/reducer';
 
 // ACTION LIST ------------------------------------------------------------------------------------
 

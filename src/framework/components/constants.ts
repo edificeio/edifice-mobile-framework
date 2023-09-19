@@ -1,7 +1,8 @@
-import { Dimensions, Insets, Platform, StyleSheet } from 'react-native';
+import { Dimensions, Insets, PixelRatio, Platform, StyleSheet } from 'react-native';
 import DeviceInfo, { hasNotch } from 'react-native-device-info';
 import { initialWindowMetrics } from 'react-native-safe-area-context';
 
+export const deviceFontScale = () => PixelRatio.getFontScale();
 const screenDimensions = Dimensions.get('window');
 const standardScreenDimensions = { height: 667, width: 375 }; // iPhone 8
 
@@ -125,7 +126,6 @@ export const UI_SIZES = {
     input: getScaleWidth(12),
     selector: getScaleWidth(12),
     mediumPlus: getScaleWidth(16),
-    explorer: getScaleWidth(18),
     large: getScaleWidth(21),
     extraLarge: getScaleWidth(24),
     huge: getScaleWidth(48),
@@ -182,8 +182,8 @@ export const UI_STYLES = StyleSheet.create({
 });
 
 export const UI_VALUES = {
-  modalOpacity: 0.4,
   opacity: {
+    explorer: 0.1,
     half: 0.5,
     modal: 0.4,
     opaque: 1,

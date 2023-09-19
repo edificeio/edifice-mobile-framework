@@ -93,25 +93,6 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
     consumeError();
   });
 
-  const onTextChange = () => {
-    setTyping(true);
-    resetError();
-  };
-
-  const onLoginChanged = value => {
-    setLogin(value.trim().toLowerCase());
-    onTextChange();
-  };
-
-  const onPasswordChanged = value => {
-    setPassword(value);
-    onTextChange();
-  };
-
-  const onSubmitEditingLogin = () => {
-    if (inputPassword.current) inputPassword.current.focus();
-  };
-
   const doLogin = async () => {
     setLoginState(LoginState.RUNNING);
     try {
@@ -146,6 +127,29 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
 
   const goToWeb = () => {
     openUrl(platform.url);
+  };
+
+  const onTextChange = () => {
+    setTyping(true);
+    resetError();
+  };
+
+  const onLoginChanged = value => {
+    setLogin(value.trim().toLowerCase());
+    onTextChange();
+  };
+
+  const onPasswordChanged = value => {
+    setPassword(value);
+    onTextChange();
+  };
+
+  const onSubmitEditingLogin = () => {
+    if (inputPassword.current) inputPassword.current.focus();
+  };
+
+  const onSubmitEditingPassword = () => {
+    if (!isSubmitDisabled) doLogin();
   };
 
   const renderError = React.useCallback(() => {
@@ -205,6 +209,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
               testID="login-identifier"
               showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
               onSubmitEditing={onSubmitEditingLogin}
+              returnKeyType="next"
             />
           }
         />
@@ -219,14 +224,15 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
               value={password}
               showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
               testID="login-password"
-              onSubmitEditing={doLogin}
+              onSubmitEditing={onSubmitEditingPassword}
+              returnKeyType="send"
               testIDToggle="login-see-password"
             />
           }
         />
       </View>
     );
-  }, [onLoginChanged, login, error, onPasswordChanged, password, doLogin]);
+  }, [onLoginChanged, login, error, onPasswordChanged, password, onSubmitEditingPassword]);
 
   const renderLoginButton = React.useCallback(() => {
     if ((error === 'not_premium' || error === 'pre_deleted') && !typing)

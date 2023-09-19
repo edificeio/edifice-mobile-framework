@@ -6,7 +6,8 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
-import { BodyText, HeadingSText } from '~/framework/components/text';
+import { BodyText, HeadingSText, NestedText } from '~/framework/components/text';
+import { CallState } from '~/framework/modules/viescolaire/presences/model';
 import appConf from '~/framework/util/appConf';
 
 import styles from './styles';
@@ -16,7 +17,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
   private getStatusStyle(): CallCardStyle {
     const { course, showStatus } = this.props;
     const now = moment();
-    const isValidated = course.registerStateId === 3;
+    const isValidated = course.callStateId === CallState.DONE;
 
     if (!showStatus) {
       return {
@@ -62,9 +63,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
 
   private getHoursLabel(startDate: Moment, endDate: Moment): string {
     if (appConf.is1d) {
-      return I18n.get(
-        startDate.get('h') < 12 ? 'presences-courselist-callcard-morning' : 'presences-courselist-callcard-afternoon',
-      );
+      return I18n.get(startDate.get('h') < 12 ? 'presences-calllist-callcard-morning' : 'presences-calllist-callcard-afternoon');
     } else {
       return `${startDate.format('LT')} - ${endDate.format('LT')}`;
     }
@@ -84,15 +83,8 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
             <Picture type="NamedSvg" name="ui-clock" width={22} height={22} fill={textColor} />
             <BodyText numberOfLines={1} style={[UI_STYLES.flexShrink1, { color: textColor }]}>
               {appConf.is1d ? classLabel : hoursLabel}
+              {roomLabel ? <NestedText style={styles.roomText}>{`  -  ${roomLabel}`}</NestedText> : null}
             </BodyText>
-            {roomLabel ? (
-              <View style={styles.roomContainer}>
-                <BodyText style={styles.roomText}>-</BodyText>
-                <BodyText numberOfLines={1} style={styles.roomText}>
-                  {I18n.get('presences-courselist-callcard-room', { name: roomLabel })}
-                </BodyText>
-              </View>
-            ) : null}
           </View>
           <HeadingSText numberOfLines={1} style={{ color: textColor }}>
             {appConf.is1d ? hoursLabel : classLabel}

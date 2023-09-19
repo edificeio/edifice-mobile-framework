@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Keyboard, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -74,6 +74,7 @@ export interface BlogCreatePostScreenState {
 const styles = StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
+    marginBottom: Platform.select({ ios: -UI_SIZES.screen.bottomInset, default: 0 }),
   },
   scrollView: {
     flexGrow: 1,
@@ -263,6 +264,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   renderPostInfos() {
     const { title, content } = this.state;
+    const contentFieldRef: { current: any } = React.createRef();
     return (
       <>
         <InputContainer
@@ -272,6 +274,8 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
               placeholder={I18n.get('blog-createpost-post-title-placeholder')}
               value={title}
               onChangeText={text => this.setState({ title: text })}
+              returnKeyType="next"
+              onSubmitEditing={() => contentFieldRef?.current?.focus()}
             />
           }
           style={styles.input}
@@ -291,6 +295,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
               value={content}
               onChangeText={text => this.setState({ content: text })}
               numberOfLines={5}
+              ref={contentFieldRef}
             />
           }
           style={styles.input}

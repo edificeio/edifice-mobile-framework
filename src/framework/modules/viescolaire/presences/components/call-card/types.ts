@@ -1,9 +1,9 @@
 import type { ColorValue } from 'react-native';
 
-import type { ICourse } from '~/framework/modules/viescolaire/presences/model';
+import type { Course } from '~/framework/modules/viescolaire/presences/model';
 
 export interface CallCardProps {
-  course: ICourse;
+  course: Course;
   disabled?: boolean;
   showStatus?: boolean;
   onPress?: () => void;

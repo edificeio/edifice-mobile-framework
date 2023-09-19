@@ -55,7 +55,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
 
   return (
     <ContentCardHeader
-      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/system-avatar.png')]} badge={badgeInfo} />}
+      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/school-avatar.png')]} badge={badgeInfo} />}
       date={date}
       text={
         <HtmlContentView

@@ -5,11 +5,17 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   //GLOBAL
+  h72: {
+    height: 72,
+  },
   h24: {
     height: 24,
   },
   h22: {
     height: 22,
+  },
+  h18: {
+    height: 18,
   },
   mb0: {
     marginBottom: 0,

@@ -41,7 +41,13 @@ export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) 
         </BodyBoldText>
       )
     : () => (
-        <HeaderTitle style={[styles.navBarTitleStyle, style ?? {}]} testID={testID} numberOfLines={1}>
+        <HeaderTitle
+          style={[
+            styles.navBarTitleStyle,
+            { maxWidth: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 4 * UI_SIZES.elements.navbarMargin },
+            style ?? {},
+          ]}
+          testID={testID}>
           {title ?? ''}
         </HeaderTitle>
       );

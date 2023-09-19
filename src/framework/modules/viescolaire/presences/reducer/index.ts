@@ -6,48 +6,53 @@ import { combineReducers } from 'redux';
 import { Reducers } from '~/app/store';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import {
-  IChildrenEvents,
-  IClassCall,
-  ICourse,
-  IEventReason,
-  IHistory,
-  IUserChild,
+  Call,
+  ChildEvents,
+  Course,
+  Event,
+  EventReason,
+  PresencesUserChild,
+  Statistics,
 } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
-interface IPresencesReduxStateData {
+interface PresencesReduxStateData {
   allowMultipleSlots: boolean;
-  childrenEvents: IChildrenEvents;
-  classCall?: IClassCall;
-  courses: ICourse[];
-  eventReasons: IEventReason[];
-  history: IHistory;
+  call?: Call;
+  childrenEvents: { [key: string]: ChildEvents };
+  courses: { [key: string]: Course[] };
+  eventReasons: EventReason[];
+  history: Event[];
   registerPreference: string;
   schoolYear?: ISchoolYear;
+  statistics: Statistics;
   terms: ITerm[];
-  userChildren: IUserChild[];
+  userChildren: PresencesUserChild[];
 }
 
-export interface IPresencesReduxState {
+export interface PresencesReduxState {
   allowMultipleSlots: AsyncState<boolean>;
-  childrenEvents: AsyncState<IChildrenEvents>;
-  classCall: AsyncState<IClassCall | undefined>;
-  courses: AsyncState<ICourse[]>;
-  eventReasons: AsyncState<IEventReason[]>;
-  history: AsyncState<IHistory>;
+  call: AsyncState<Call | undefined>;
+  childrenEvents: AsyncState<{ [key: string]: ChildEvents }>;
+  courses: AsyncState<{ [key: string]: Course[] }>;
+  eventReasons: AsyncState<EventReason[]>;
+  history: AsyncState<Event[]>;
   registerPreference: AsyncState<string>;
   schoolYear: AsyncState<ISchoolYear | undefined>;
+  statistics: AsyncState<Statistics>;
   terms: AsyncState<ITerm[]>;
-  userChildren: AsyncState<IUserChild[]>;
+  userChildren: AsyncState<PresencesUserChild[]>;
 }
 
-const initialState: IPresencesReduxStateData = {
+const initialState: PresencesReduxStateData = {
   allowMultipleSlots: true,
   childrenEvents: {},
-  courses: [],
+  courses: {},
   eventReasons: [],
-  history: {
+  history: [],
+  registerPreference: '',
+  statistics: {
     DEPARTURE: {
       events: [],
       total: 0,
@@ -80,15 +85,15 @@ const initialState: IPresencesReduxStateData = {
       events: [],
       total: 0,
     },
+    recoveryMethod: null,
   },
-  registerPreference: '',
   terms: [],
   userChildren: [],
 };
 
 export const actionTypes = {
+  call: createAsyncActionTypes(moduleConfig.namespaceActionType('CALL')),
   childrenEvents: createAsyncActionTypes(moduleConfig.namespaceActionType('CHILDREN_EVENTS')),
-  classCall: createAsyncActionTypes(moduleConfig.namespaceActionType('CLASS_CALL')),
   courses: createAsyncActionTypes(moduleConfig.namespaceActionType('COURSES')),
   createAbsence: createAsyncActionTypes(moduleConfig.namespaceActionType('CREATE_ABSENCE')),
   eventReasons: createAsyncActionTypes(moduleConfig.namespaceActionType('EVENT_REASONS')),
@@ -96,19 +101,21 @@ export const actionTypes = {
   multipleSlotsSetting: createAsyncActionTypes(moduleConfig.namespaceActionType('MULTIPLE_SLOTS_SETTING')),
   registerPreference: createAsyncActionTypes(moduleConfig.namespaceActionType('REGISTER_PREFERENCE')),
   schoolYear: createAsyncActionTypes(moduleConfig.namespaceActionType('SCHOOL_YEAR')),
+  statistics: createAsyncActionTypes(moduleConfig.namespaceActionType('STATISTICS')),
   terms: createAsyncActionTypes(moduleConfig.namespaceActionType('TERMS')),
   userChildren: createAsyncActionTypes(moduleConfig.namespaceActionType('USER_CHILDREN')),
 };
 
 const reducer = combineReducers({
   allowMultipleSlots: createSessionAsyncReducer(initialState.allowMultipleSlots, actionTypes.multipleSlotsSetting),
+  call: createSessionAsyncReducer(initialState.call, actionTypes.call),
   childrenEvents: createSessionAsyncReducer(initialState.childrenEvents, actionTypes.childrenEvents),
-  classCall: createSessionAsyncReducer(initialState.classCall, actionTypes.classCall),
   courses: createSessionAsyncReducer(initialState.courses, actionTypes.courses),
   eventReasons: createSessionAsyncReducer(initialState.eventReasons, actionTypes.eventReasons),
   history: createSessionAsyncReducer(initialState.history, actionTypes.history),
   registerPreference: createSessionAsyncReducer(initialState.registerPreference, actionTypes.registerPreference),
   schoolYear: createSessionAsyncReducer(initialState.schoolYear, actionTypes.schoolYear),
+  statistics: createSessionAsyncReducer(initialState.statistics, actionTypes.statistics),
   terms: createSessionAsyncReducer(initialState.terms, actionTypes.terms),
   userChildren: createSessionAsyncReducer(initialState.userChildren, actionTypes.userChildren),
 });

@@ -1,32 +1,26 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ISession } from '~/framework/modules/auth/model';
-import type {
-  fetchPresencesClassCallAction,
-  fetchPresencesEventReasonsAction,
-} from '~/framework/modules/viescolaire/presences/actions';
-import type { IClassCall, ICourse, IEventReason } from '~/framework/modules/viescolaire/presences/model';
+import type { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
+import type { Call, Course, EventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
-import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-export interface PresencesCallScreenProps {
-  initialLoadingState: AsyncPagedLoadingState;
-}
+export interface PresencesCallScreenProps {}
 
 export interface PresencesCallScreenNavParams {
-  course: ICourse;
+  course: Course;
   id: number;
 }
 
 export interface PresencesCallScreenStoreProps {
-  eventReasons: IEventReason[];
-  classCall?: IClassCall;
+  eventReasons: EventReason[];
+  call?: Call;
   session?: ISession;
 }
 
 export interface PresencesCallScreenDispatchProps {
-  tryFetchClassCall: (...args: Parameters<typeof fetchPresencesClassCallAction>) => Promise<IClassCall>;
-  tryFetchEventReasons: (...args: Parameters<typeof fetchPresencesEventReasonsAction>) => Promise<IEventReason[]>;
+  tryFetchCall: (...args: Parameters<typeof fetchPresencesCallAction>) => Promise<Call>;
+  tryFetchEventReasons: (...args: Parameters<typeof fetchPresencesEventReasonsAction>) => Promise<EventReason[]>;
 }
 
 export type PresencesCallScreenPrivateProps = PresencesCallScreenProps &

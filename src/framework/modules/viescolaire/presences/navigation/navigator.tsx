@@ -4,9 +4,9 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import PresencesCallScreen, { computeNavBar as callNavBar } from '~/framework/modules/viescolaire/presences/screens/call';
-import PresencesCourseListScreen, {
-  computeNavBar as courseListNavBar,
-} from '~/framework/modules/viescolaire/presences/screens/course-list';
+import PresencesCallListScreen, {
+  computeNavBar as callListNavBar,
+} from '~/framework/modules/viescolaire/presences/screens/call-list';
 import PresencesDeclareAbsenceScreen, {
   computeNavBar as declareAbsenceNavBar,
 } from '~/framework/modules/viescolaire/presences/screens/declare-absence';
@@ -14,6 +14,9 @@ import PresencesDeclareEventScreen, {
   computeNavBar as declareEventNavBar,
 } from '~/framework/modules/viescolaire/presences/screens/declare-event';
 import PresencesHistoryScreen, { computeNavBar as historyNavBar } from '~/framework/modules/viescolaire/presences/screens/history';
+import PresencesStatisticsScreen, {
+  computeNavBar as statisticsNavBar,
+} from '~/framework/modules/viescolaire/presences/screens/statistics';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -32,10 +35,10 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     if (session?.user.type === UserType.Teacher) {
       screens.push(
         <Stack.Screen
-          key={presencesRouteNames.courseList}
-          name={presencesRouteNames.courseList}
-          component={PresencesCourseListScreen}
-          options={courseListNavBar}
+          key={presencesRouteNames.callList}
+          name={presencesRouteNames.callList}
+          component={PresencesCallListScreen}
+          options={callListNavBar}
           initialParams={{}}
         />,
         <Stack.Screen
@@ -55,7 +58,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           />
         </Stack.Group>,
       );
-      moduleConfig.routeName = presencesRouteNames.courseList;
+      moduleConfig.routeName = presencesRouteNames.callList;
     } else {
       screens.push(
         <Stack.Screen
@@ -65,21 +68,28 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={historyNavBar}
           initialParams={{}}
         />,
-      );
-      if (session?.user.type === UserType.Relative) {
-        screens.push(
+        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
           <Stack.Screen
-            key={presencesRouteNames.declareAbsence}
-            name={presencesRouteNames.declareAbsence}
-            component={PresencesDeclareAbsenceScreen}
-            options={declareAbsenceNavBar}
+            key={presencesRouteNames.statistics}
+            name={presencesRouteNames.statistics}
+            component={PresencesStatisticsScreen}
+            options={statisticsNavBar}
             initialParams={{}}
-          />,
-        );
-      }
+          />
+          {session?.user.type === UserType.Relative ? (
+            <Stack.Screen
+              key={presencesRouteNames.declareAbsence}
+              name={presencesRouteNames.declareAbsence}
+              component={PresencesDeclareAbsenceScreen}
+              options={declareAbsenceNavBar}
+              initialParams={{}}
+            />
+          ) : null}
+        </Stack.Group>,
+      );
       moduleConfig.routeName = presencesRouteNames.history;
     }
     return <>{screens}</>;
   });
 
-setModalModeForRoutes([presencesRouteNames.declareEvent]);
+setModalModeForRoutes([presencesRouteNames.declareEvent, presencesRouteNames.statistics, presencesRouteNames.declareAbsence]);

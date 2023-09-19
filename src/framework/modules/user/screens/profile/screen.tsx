@@ -32,11 +32,12 @@ import { getShowMottoMoodRight } from '~/framework/modules/user/rights';
 import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import { userService } from '~/framework/modules/user/service';
 import workspaceService from '~/framework/modules/workspace/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image, formatSource } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
+import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
 import { hobbiesItems, renderEmoji } from '.';
@@ -133,6 +134,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       setUpdatingAvatar(true);
       const sc = await onUploadAvatar(lc);
       await onUpdateAvatar(sc.url);
+      Trackers.trackEvent('Profile', 'EDIT_AVATAR');
     } catch (err: any) {
       if (err.message === 'Error picking image') {
         onPickFileError('profileOne');
@@ -200,6 +202,13 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       toUsers: user,
     });
   };
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerTitle: navBarTitle(isMyProfile ? I18n.get('user-profile-appname') : I18n.get('user-profile-appname-externe')),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderUserCard = () => {
     const avatar = isMyProfile ? session?.user.photo : userInfo?.photo;

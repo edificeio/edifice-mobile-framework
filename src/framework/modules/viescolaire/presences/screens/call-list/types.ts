@@ -2,24 +2,24 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ISession } from '~/framework/modules/auth/model';
 import type {
-  fetchPresencesClassCallAction,
+  fetchPresencesCallAction,
   fetchPresencesCoursesAction,
   fetchPresencesMultipleSlotSettingAction,
   fetchPresencesRegisterPreferenceAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import type { IClassCall, ICourse } from '~/framework/modules/viescolaire/presences/model';
+import type { Call, Course } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-export interface PresencesCourseListScreenProps {
+export interface PresencesCallListScreenProps {
   initialLoadingState: AsyncPagedLoadingState;
 }
 
-export interface PresencesCourseListScreenNavParams {}
+export interface PresencesCallListScreenNavParams {}
 
-export interface PresencesCourseListScreenStoreProps {
+export interface PresencesCallListScreenStoreProps {
   allowMultipleSlots: boolean;
-  courses: ICourse[];
+  courses: { [key: string]: Course[] };
   registerId: string;
   registerPreference: string;
   structureIds: string[];
@@ -27,14 +27,14 @@ export interface PresencesCourseListScreenStoreProps {
   teacherId?: string;
 }
 
-export interface PresencesCourseListScreenDispatchProps {
-  tryFetchClassCall: (...args: Parameters<typeof fetchPresencesClassCallAction>) => Promise<IClassCall>;
-  tryFetchCourses: (...args: Parameters<typeof fetchPresencesCoursesAction>) => Promise<ICourse[]>;
+export interface PresencesCallListScreenDispatchProps {
+  tryFetchCall: (...args: Parameters<typeof fetchPresencesCallAction>) => Promise<Call>;
+  tryFetchCourses: (...args: Parameters<typeof fetchPresencesCoursesAction>) => Promise<Course[]>;
   tryFetchMultipleSlotsSetting: (...args: Parameters<typeof fetchPresencesMultipleSlotSettingAction>) => Promise<boolean>;
   tryFetchRegisterPreference: (...args: Parameters<typeof fetchPresencesRegisterPreferenceAction>) => Promise<string>;
 }
 
-export type PresencesCourseListScreenPrivateProps = PresencesCourseListScreenProps &
-  PresencesCourseListScreenStoreProps &
-  PresencesCourseListScreenDispatchProps &
-  NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.courseList>;
+export type PresencesCallListScreenPrivateProps = PresencesCallListScreenProps &
+  PresencesCallListScreenStoreProps &
+  PresencesCallListScreenDispatchProps &
+  NativeStackScreenProps<PresencesNavigationParams, typeof presencesRouteNames.callList>;

@@ -23,6 +23,8 @@ export default StyleSheet.create({
     borderBottomColor: theme.palette.grey.cloudy,
   },
   emptyScreenContainer: {
+    justifyContent: 'center',
+    paddingTop: 0,
     backgroundColor: theme.palette.grey.white,
   },
   listContentContainer: {

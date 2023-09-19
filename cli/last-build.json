@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-05 18:17:34",
-  "notes": "Squashed commit of the following:\nremove useHeaderHeight on media player\nSquashed commit of the following:\nfix(login): MB-1950 fix autocomplete & autocaps in password inputs\nfix(homework): MB-1915, creation page bottom-inset\nfix(presences): MB-1896 set call card class text to 1 line for 1d platforms\nfeat(presences): MB-1938 add course list and call skeletons\nfeat(blog): MB-1941 , add skeleton on explorer, list and details screen\nfeat(blog): MB-1941 , add skeleton on explorer, list and details screen\nchore(homework): rafactor create & task-list pages\nrelease: 1.11.0-alpha.12(1110012)",
-  "version": "1.11.0-alpha.13(1110013)",
+  "last": "2023-09-18 22:30:09",
+  "notes": "fix: MB-1985, day-picker font scale\nfeat(presences): MB-2014 allow teacher to open call starting withing 15 minutes\nfeat(presences): MB-2013 edit student list item, set check icon color to grey when call is not done\nfeat(presences): MB-2010 use ContentLoader hook to render call, history and statistics screens\nfix(new-mail): MB-1995 , fix press next on object input\nfix(change-password): MB-1996 , fix press send on last input\nfix(player): MB-1491 , fix bug when background foreground animation audio\nfix(presences): MB-1960 disable initialization check until api is available\nchore(presences): improve types, use more accurates names, add CallState enum\nrelease: 1.11.0-alpha.18(1110018)",
+  "version": "1.11.0-rc.1(1110019)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
