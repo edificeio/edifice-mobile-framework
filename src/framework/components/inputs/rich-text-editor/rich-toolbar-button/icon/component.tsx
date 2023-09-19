@@ -2,9 +2,9 @@ import * as React from 'react';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { RichToolbarButton } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-button';
 import { NamedSVG } from '~/framework/components/picture';
 
-import { RichToolbarButton } from '../component';
 import { RichToolbarIconButtonProps } from './types';
 
 export const RichToolbarIconButton = (props: RichToolbarIconButtonProps) => {

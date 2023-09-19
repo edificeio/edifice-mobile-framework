@@ -8,6 +8,7 @@ import HorizontalList from '~/framework/components/list/horizontal';
 import { actions } from './const';
 import { RichToolbarIconButton, RichToolbarTextButton } from './rich-toolbar-button';
 import { RichToolbarItem } from './rich-toolbar-item';
+import { RichToolbarNavigationButton } from './rich-toolbar-navigation-button';
 import { RichToolbarPage } from './rich-toolbar-page';
 
 const styles = StyleSheet.create({
@@ -195,8 +196,10 @@ export default class RichToolbar extends Component {
               <View>
                 <RichToolbarIconButton icon="ui-mail" selected />
                 <RichToolbarTextButton text="Titre 1" selected />
+                <RichToolbarNavigationButton title="Taille de texte" />
               </View>
             }
+            index={2}
           />
         </View>
       </View>

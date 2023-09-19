@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
   header: {
     borderWidth: 1,
-    borderColor: theme.palette.grey.cloudy,
+    borderColor: theme.palette.grey.pearl,
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.minor,
     borderLeftWidth: 0,

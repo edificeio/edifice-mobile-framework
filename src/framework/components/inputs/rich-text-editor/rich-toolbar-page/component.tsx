@@ -12,7 +12,12 @@ export const RichToolbarPage = (props: RichToolbarPageProps) => {
   return (
     <View style={styles.page}>
       <View style={styles.header}>
-        <DefaultButton style={styles.headerTitle} text={props.title} activeOpacity={1} contentColor={theme.palette.grey.black} />
+        <DefaultButton
+          style={styles.headerTitle}
+          text={props.title}
+          contentColor={theme.palette.grey.black}
+          {...(props.index > 0 ? { iconLeft: 'ui-arrowLeft', action: () => {} } : { activeOpacity: 1 })}
+        />
       </View>
       <ScrollView style={styles.content}>{props.content}</ScrollView>
     </View>

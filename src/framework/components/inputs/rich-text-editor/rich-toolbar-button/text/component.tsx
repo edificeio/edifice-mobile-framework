@@ -1,8 +1,7 @@
 import * as React from 'react';
 
+import { RichToolbarButton } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-button';
 import { BodyText } from '~/framework/components/text';
-
-import { RichToolbarButton } from '../component';
 import { RichToolbarTextButtonProps } from './types';
 
 export const RichToolbarTextButton = (props: RichToolbarTextButtonProps) => {
