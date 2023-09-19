@@ -12,7 +12,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen, EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import ResourceExplorer from '~/framework/components/explorer/resource-explorer';
 import {
   ResourceExplorerFolderItem,
@@ -153,7 +153,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     return (
       <ScrollView
         refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.RETRY} onRefresh={() => reload()} />}>
-        <EmptyContentScreen />
+        <EmptyConnectionScreen />
       </ScrollView>
     );
   };

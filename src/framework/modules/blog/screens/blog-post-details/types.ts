@@ -55,7 +55,8 @@ export interface BlogPostDetailsScreenState {
   updateCommentLoadingState: BlogPostCommentLoadingState;
   blogInfos: DisplayedBlog | Blog | undefined;
   blogPostData: BlogPost | undefined;
-  errorState: boolean;
+  fetchError: boolean;
+  htmlError: boolean;
   isCommentFieldFocused: boolean;
   infoComment: InfoCommentField;
 }

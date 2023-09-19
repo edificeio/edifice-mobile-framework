@@ -16,7 +16,7 @@ import { BottomSheet } from '~/framework/components/BottomSheet';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -110,7 +110,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     updateCommentLoadingState: BlogPostCommentLoadingState.PRISTINE,
     blogInfos: undefined,
     blogPostData: undefined,
-    errorState: false,
+    fetchError: false,
+    htmlError: false,
     isCommentFieldFocused: false,
     infoComment: {
       type: '',
@@ -188,7 +189,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       this.setState({ blogPostData });
     } catch {
       // ToDo: Error handling
-      this.setState({ errorState: true });
+      this.setState({ fetchError: true });
     }
   }
 
@@ -276,7 +277,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   setActionNavbar = () => {
     const { route, navigation, session } = this.props;
-    const { blogPostData, blogInfos, errorState, loadingState } = this.state;
+    const { blogPostData, blogInfos, fetchError, htmlError, loadingState } = this.state;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
     const blogId = route.params.blog?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -326,7 +327,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       headerRight: () =>
         resourceUri &&
         (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
-        !errorState ? (
+        !fetchError &&
+        !htmlError ? (
           <PopupMenu actions={menuData}>
             <NavBarAction icon="ui-options" />
           </PopupMenu>
@@ -402,7 +404,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     this.hideSubscription?.remove();
   }
 
-  renderError() {
+  renderFetchError() {
+    return <EmptyConnectionScreen />;
+  }
+
+  renderHtmlError() {
     return <EmptyContentScreen />;
   }
 
@@ -533,7 +539,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             <HeadingSText>{blogPostData?.title}</HeadingSText>
             <HtmlContentView
               html={blogPostContent}
-              onHtmlError={() => this.setState({ errorState: true })}
+              onHtmlError={() => this.setState({ htmlError: true })}
               onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
               onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
               onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
@@ -609,7 +615,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   render() {
     const { route, session } = this.props;
-    const { loadingState, errorState, blogPostData, blogInfos } = this.state;
+    const { loadingState, fetchError, htmlError, blogPostData, blogInfos } = this.state;
 
     const blogId = blogInfos?.id;
     const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
@@ -629,8 +635,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
             <BlogPlaceholderDetails />
-          ) : errorState ? (
-            this.renderError()
+          ) : fetchError ? (
+            this.renderFetchError()
+          ) : htmlError ? (
+            this.renderHtmlError()
           ) : (
             this.renderContent()
           )}
