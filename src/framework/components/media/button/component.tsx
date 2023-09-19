@@ -3,7 +3,6 @@
  */
 import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import WebView from 'react-native-webview';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -46,11 +45,7 @@ const MediaButton = (props: IPlayerProps) => {
       <SmallItalicText>{I18n.get(`mediabutton-${type || 'media'}-notavailable`)}</SmallItalicText>
     ) : (
       <TouchableOpacity onPress={() => showMediaPlayer()} style={[styles.previewVideo, style]}>
-        {type === 'web' ? (
-          <WebView source={source} style={[playerStyle, styles.player]} />
-        ) : posterSource ? (
-          <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" />
-        ) : null}
+        {posterSource ? <Image source={posterSource || {}} style={[playerStyle, styles.player]} resizeMode="contain" /> : null}
         <View style={styles.viewVideo}>
           <MediaIcon icon="ui-play-filled" iconSize={iconSizeVideo} />
         </View>
