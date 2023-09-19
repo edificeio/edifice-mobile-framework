@@ -18,12 +18,12 @@ import { ISession } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
+import tahitiRoutes from '~/framework/modules/test-tahiti/navigation/navigator';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
 import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
-import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
 
@@ -72,9 +72,11 @@ function RootNavigator(props: RootNavigatorProps) {
   // === Auth/Main switch ===
   const mainNavigation = useMainNavigation(session?.apps ?? [], session?.widgets ?? []);
   const authNavigation = useAuthNavigation();
-  const routes = React.useMemo(() => {
+  /*const routes = React.useMemo(() => {
     return isFullyLogged ? mainNavigation : authNavigation;
-  }, [authNavigation, isFullyLogged, mainNavigation]);
+  }, [authNavigation, isFullyLogged, mainNavigation]);*/
+
+  const routes = tahitiRoutes();
 
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 
@@ -90,10 +92,7 @@ function RootNavigator(props: RootNavigatorProps) {
           <>
             <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
               <AppPushNotificationHandlerComponent>
-                <RootStack.Navigator screenOptions={{ headerShown: true }}>
-                  {routes}
-                  {modals}
-                </RootStack.Navigator>
+                <RootStack.Navigator screenOptions={{ headerShown: true }}>{routes}</RootStack.Navigator>
               </AppPushNotificationHandlerComponent>
               <RootToastHandler />
             </NavigationContainer>
