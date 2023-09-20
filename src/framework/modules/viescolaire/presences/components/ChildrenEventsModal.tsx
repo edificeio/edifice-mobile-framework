@@ -14,8 +14,8 @@ import {
   SmallText,
   TextSizeStyle,
 } from '~/framework/components/text';
+import { UserChild } from '~/framework/modules/auth/model';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { IUserChild } from '~/framework/modules/viescolaire/competences/model';
 import { CallEvent, ChildEvents } from '~/framework/modules/viescolaire/presences/model';
 
 const styles = StyleSheet.create({
@@ -84,7 +84,7 @@ const renderEvent = (key: string, event: CallEvent) => {
 
 interface ChildrenEventsModalProps {
   childrenEvents: { [key: string]: ChildEvents };
-  userChildren: IUserChild[];
+  userChildren: UserChild[];
 }
 
 const renderChildEvents = (events: ChildEvents, childName?: string) => {
@@ -117,7 +117,7 @@ const ChildrenEventsModal = React.forwardRef<ModalBoxHandle, ChildrenEventsModal
           data={Object.entries(props.childrenEvents)}
           keyExtractor={([childId]) => childId}
           renderItem={({ item: [childId, events] }) =>
-            renderChildEvents(events, props.userChildren.find(child => child.id === childId)?.firstName)
+            renderChildEvents(events, props.children.find(child => child.id === childId)?.firstName)
           }
           ListHeaderComponent={<BodyText>{I18n.get('presences-childreneventsmodal-title')}</BodyText>}
           scrollEnabled={false}

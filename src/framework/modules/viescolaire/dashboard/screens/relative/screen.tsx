@@ -2,21 +2,23 @@ import { useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
+import UserList from '~/framework/components/UserList';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { BodyBoldText, SmallText } from '~/framework/components/text';
+import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
@@ -33,7 +35,6 @@ import competencesConfig from '~/framework/modules/viescolaire/competences/modul
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
-import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import { fetchDiaryHomeworksFromChildAction, fetchDiaryTeachersAction } from '~/framework/modules/viescolaire/diary/actions';
 import { HomeworkItem } from '~/framework/modules/viescolaire/diary/components/Items';
@@ -71,6 +72,7 @@ const getStudentsEventsCount = (data: { [key: string]: ChildEvents }): number =>
   }
   return count;
 };
+
 export const computeNavBar = ({
   navigation,
   route,
@@ -84,6 +86,7 @@ export const computeNavBar = ({
 
 const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => {
   const scrollRef = React.useRef<typeof ScrollView>();
+  const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
   const eventsModalRef = React.useRef<ModalBoxHandle>(null);
   const isFocused = useIsFocused();
   const [loadingState, setLoadingState] = React.useState(AsyncPagedLoadingState.PRISTINE);
@@ -93,25 +96,26 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   const fetchContent = async () => {
     try {
-      const { childId, structureId, userId } = props;
+      const { userId } = props;
+      const structureId = getChildStructureId(selectedChildId);
 
-      if (!childId || !structureId || !userId) throw new Error();
+      if (!structureId || !userId) throw new Error();
       await props.tryFetchHomeworks(
-        childId,
+        selectedChildId,
         structureId,
         moment().add(1, 'day').format('YYYY-MM-DD'),
         moment().add(1, 'month').format('YYYY-MM-DD'),
       );
       await props.tryFetchTeachers(structureId);
-      await props.tryFetchDevoirs(structureId, childId);
+      await props.tryFetchDevoirs(structureId, selectedChildId);
       await props.tryFetchSubjects(structureId);
       const children = await props.tryFetchUserChildren(structureId, userId);
       await props.tryFetchChildrenEvents(
         structureId,
         children.map(child => child.id),
       );
-      const childClasses = children.find(c => c.id === childId)?.classId;
-      await props.tryFetchCompetences(childId, childClasses ?? '');
+      const childClasses = children.find(c => c.id === selectedChildId)?.classId;
+      await props.tryFetchCompetences(selectedChildId, childClasses ?? '');
     } catch {
       throw new Error();
     }
@@ -119,7 +123,8 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   const fetchEvents = async () => {
     try {
-      const { structureId, userId } = props;
+      const { userId } = props;
+      const structureId = getChildStructureId(selectedChildId);
 
       if (!structureId || !userId) throw new Error();
       const children = await props.tryFetchUserChildren(structureId, userId);
@@ -159,19 +164,21 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
     init();
     props.handleClearLevels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.childId]);
+  }, [selectedChildId]);
 
   React.useEffect(() => {
     if (props.eventCount && isFocused) eventsModalRef.current?.doShowModal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.eventCount]);
 
+  const openAbsenceDeclaration = () => props.navigation.navigate(presencesRouteNames.declareAbsence, { childId: selectedChildId });
+
   const openAssessment = (assessment: IDevoir) => {
-    const { childId, navigation, userChildren } = props;
+    const { competencesChildren, navigation } = props;
 
     navigation.navigate(competencesRouteNames.assessment, {
       assessment,
-      studentClass: userChildren.find(child => child.id === childId)?.classId ?? '',
+      studentClass: competencesChildren.find(child => child.id === selectedChildId)?.classId ?? '',
     });
   };
 
@@ -180,7 +187,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
     const nbModules = Object.values(authorizedViescoApps).filter(x => x).length;
 
     return (
-      <View style={[styles.dashboardPart, nbModules === 4 ? styles.gridAllModules : styles.gridModulesLine]}>
+      <View style={nbModules === 4 ? styles.gridAllModules : styles.gridModulesLine}>
         {authorizedViescoApps.presences ? (
           <ModuleIconButton
             onPress={() => navigation.navigate(presencesRouteNames.history)}
@@ -242,7 +249,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
       }, {});
 
     return (
-      <View style={styles.dashboardPart}>
+      <View>
         <BodyBoldText>{I18n.get('dashboard-relative-homework-recent')}</BodyBoldText>
         {!Object.keys(homeworksByDate).length ? (
           <EmptyScreen svgImage="empty-homework" title={I18n.get('dashboard-relative-homework-emptyscreen-title')} />
@@ -293,44 +300,41 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
           <EmptyScreen svgImage="empty-evaluations" title={I18n.get('dashboard-relative-assessments-emptyscreen-title')} />
         }
         scrollEnabled={false}
-        style={styles.dashboardPart}
       />
     );
   };
 
   const renderDashboard = () => {
-    const { authorizedViescoApps, childrenEvents, userChildren } = props;
+    const { authorizedViescoApps, children, childrenEvents, session } = props;
+    const hasAbsenceStatementCreationRights = session && getPresencesWorkflowInformation(session).createAbsenceStatements;
 
     return (
-      <ScrollView ref={scrollRef}>
+      <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollViewContentContainer}>
         {renderNavigationGrid()}
+        {children.length > 1 ? (
+          <UserList
+            horizontal
+            data={props.children.map(child => ({ id: child.id, name: child.firstName }))}
+            selectedId={selectedChildId}
+            onSelect={id => setSelectedChildId(id)}
+          />
+        ) : null}
+        {hasAbsenceStatementCreationRights ? (
+          <PrimaryButton text={I18n.get('dashboard-relative-reportabsence')} iconLeft="ui-plus" action={openAbsenceDeclaration} />
+        ) : null}
         {authorizedViescoApps.diary ? renderHomework() : null}
         {authorizedViescoApps.competences ? renderAssessments() : null}
-        <ChildrenEventsModal ref={eventsModalRef} childrenEvents={childrenEvents} userChildren={userChildren} />
+        <ChildrenEventsModal ref={eventsModalRef} childrenEvents={childrenEvents} userChildren={children} />
       </ScrollView>
     );
   };
 
-  return (
-    <PageView>
-      <ChildPicker>
-        {props.hasPresencesCreateAbsenceRight ? (
-          <TouchableOpacity
-            onPress={() => props.navigation.navigate(presencesRouteNames.declareAbsence)}
-            style={styles.declareAbsenceButton}>
-            <SmallBoldText style={styles.declareAbscenceText}>{I18n.get('dashboard-relative-reportabsence')}</SmallBoldText>
-          </TouchableOpacity>
-        ) : null}
-      </ChildPicker>
-      {renderDashboard()}
-    </PageView>
-  );
+  return <PageView>{renderDashboard()}</PageView>;
 };
 
 export default connect(
   (state: IGlobalState) => {
     const competencesState = competencesConfig.getState(state);
-    const dashboardState = dashboardConfig.getState(state);
     const presencesState = presencesConfig.getState(state);
     const diaryState = diaryConfig.getState(state);
     const session = getSession();
@@ -342,17 +346,16 @@ export default connect(
         edt: session?.apps.some(app => app.address === '/edt'),
         presences: session?.apps.some(app => app.address === '/presences'),
       },
-      childId: dashboardState.selectedChildId,
+      children: getFlattenedChildren(session?.user.children)?.filter(child => child.classesNames.length) ?? [],
       childrenEvents: presencesState.childrenEvents.data,
       competences: competencesState.competences.data,
+      competencesChildren: competencesState.userChildren.data,
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       eventCount: getStudentsEventsCount(presencesState.childrenEvents.data),
-      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsenceStatements,
       homeworks: diaryState.homeworks,
       isFetchingDevoirs: competencesState.devoirs.isFetching,
-      structureId: getChildStructureId(dashboardState.selectedChildId),
+      session,
       subjects: competencesState.subjects.data,
-      userChildren: competencesState.userChildren.data,
       userId: session?.user.id,
     };
   },
