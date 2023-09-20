@@ -17,7 +17,6 @@ export interface PresencesHistoryScreenNavParams {
 export interface PresencesHistoryScreenStoreProps {
   events: Event[];
   children?: IUserListItem[];
-  hasPresencesCreateAbsenceRight?: boolean;
   session?: ISession;
   userId?: string;
   userType?: UserType;

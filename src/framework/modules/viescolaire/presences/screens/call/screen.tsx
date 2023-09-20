@@ -23,6 +23,7 @@ import StudentStatus from '~/framework/modules/viescolaire/presences/components/
 import { CallEventType, CallState, CallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -142,12 +143,18 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   };
 
   const renderBottomSheet = () => {
+    const { session } = props;
     const student = props.call!.students.find(s => s.id === selectedStudentId);
+    const hasPresencesManagementRights = session && getPresencesWorkflowInformation(session).managePresences;
+
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={unselectStudent}>
         <StudentStatus
           student={student}
-          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)}
+          hasAbsenceViewAccess={
+            hasPresencesManagementRights === true &&
+            props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)
+          }
           createAbsence={createAbsence}
           deleteAbsence={deleteAbsence}
           dismissBottomSheet={dismissBottomSheet}

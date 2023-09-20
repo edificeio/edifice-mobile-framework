@@ -347,7 +347,7 @@ export default connect(
       competences: competencesState.competences.data,
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       eventCount: getStudentsEventsCount(presencesState.childrenEvents.data),
-      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
+      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsenceStatements,
       homeworks: diaryState.homeworks,
       isFetchingDevoirs: competencesState.devoirs.isFetching,
       structureId: getChildStructureId(dashboardState.selectedChildId),
