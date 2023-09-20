@@ -92,11 +92,11 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   }, [selectedChildId]);
 
   const renderHeader = () => {
-    const { session, userType } = props;
+    const { children, session, userType } = props;
 
     return (
       <>
-        {userType === UserType.Relative && session && getPresencesWorkflowInformation(session).createAbsenceStatements ? (
+        {children?.length && session && getPresencesWorkflowInformation(session).createAbsenceStatements ? (
           <PrimaryButton
             text={I18n.get('presences-history-reportabsence')}
             iconLeft="ui-plus"
