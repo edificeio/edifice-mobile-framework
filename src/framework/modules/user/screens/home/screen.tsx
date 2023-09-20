@@ -11,12 +11,14 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import DefaultButton from '~/framework/components/buttons/default';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
-import { HeadingSText, HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext } from '~/framework/modules/auth/model';
@@ -34,11 +36,9 @@ import { handleAction } from '~/framework/util/redux/actions';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
+import { colorType } from '.';
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
-import { colorType } from '.';
-import SecondaryButton from '~/framework/components/buttons/secondary';
-import DefaultButton from '~/framework/components/buttons/default';
 
 export const computeNavBar = ({
   navigation,
@@ -284,6 +284,17 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
    * Displays an Alert to the user that allows logging out
    * Caution: Alert callbacks eats any exception thrown silently.
    */
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+  const logout = React.useCallback(async () => {
+    try {
+      setIsLoggingOut(true);
+      await handleLogout();
+    } catch {
+      Toast.showError(I18n.get('user-page-error-text'));
+    } finally {
+      setIsLoggingOut(false);
+    }
+  }, [handleLogout]);
   const doLogout = React.useCallback(() => {
     Alert.alert('', I18n.get('auth-disconnect-confirm'), [
       {
@@ -293,10 +304,10 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
       {
         text: I18n.get('user-page-disconnect'),
         style: 'destructive',
-        onPress: () => handleLogout(),
+        onPress: logout,
       },
     ]);
-  }, [handleLogout]);
+  }, [logout]);
   /**
    * renders the logout button
    */
@@ -306,9 +317,10 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
         text={I18n.get('user-page-disconnect')}
         contentColor={theme.palette.status.failure.regular}
         action={doLogout}
+        loading={isLoggingOut}
       />
     );
-  }, [doLogout]);
+  }, [doLogout, isLoggingOut]);
 }
 
 /**
