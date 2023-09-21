@@ -48,13 +48,15 @@ export const useLoadingState = (load: () => Promise<void>, initialLoadingState =
       .catch(() => setLoadingState(LoadingState.INIT_FAILED));
   };
   const refresh = () => {
-    setLoadingState(LoadingState.REFRESH);
-    load()
-      .then(() => setLoadingState(LoadingState.DONE))
-      .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
+    if (loadingState === LoadingState.DONE) {
+      setLoadingState(LoadingState.REFRESH);
+      load()
+        .then(() => setLoadingState(LoadingState.DONE))
+        .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
+    }
   };
   const refreshSilent = () => {
-    if (loadingState !== LoadingState.PRISTINE) {
+    if (loadingState === LoadingState.DONE) {
       setLoadingState(LoadingState.REFRESH_SILENT);
       load()
         .then(() => setLoadingState(LoadingState.DONE))
