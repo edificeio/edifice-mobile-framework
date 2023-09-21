@@ -42,6 +42,7 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   const [emojiDuration, setEmojiDuration] = useState(240); // iOS Default
   const [pageHeight, setPageHeight] = useState(291); // iOS Default
   const [emojiVisible, setEmojiVisible] = useState(false);
+  const [itemsSelected, setItemsSelected] = useState([]);
 
   const contentRef = useRef('');
   const headerHeight = useHeaderHeight();
@@ -104,8 +105,11 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
 
   const handleFocus = useCallback(() => {
     console.log('editor focus');
+    if (itemsSelected.length > 0) {
+      itemsSelected.forEach(action => richText.current?.sendAction(action, 'result'));
+    }
     setShowToolbarPage(false);
-  }, []);
+  }, [itemsSelected]);
 
   const handleFontSize = useCallback(() => {
     // 1=  10px, 2 = 13px, 3 = 16px, 4 = 18px, 5 = 24px, 6 = 32px, 7 = 48px;
@@ -160,13 +164,26 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
     );
   }, []);
 
-  const onSelectItemToolbar = useCallback(() => {
-    Keyboard.dismiss();
-    setTimeout(() => {
-      richText.current?.blurContentEditor();
-      setShowToolbarPage(true);
-    }, 200);
-  }, []);
+  const onSelectItemToolbar = useCallback(
+    action => {
+      if (itemsSelected.includes(action)) {
+        const index = itemsSelected.indexOf(action);
+        const newArray = itemsSelected.slice(index, 1);
+
+        console.log(newArray, index);
+        setItemsSelected(newArray);
+      } else {
+        setItemsSelected([...itemsSelected, action]);
+      }
+
+      Keyboard.dismiss();
+      setTimeout(() => {
+        richText.current?.blurContentEditor();
+        setShowToolbarPage(true);
+      }, 200);
+    },
+    [itemsSelected],
+  );
 
   //
   // Keyboard Management
@@ -204,6 +221,7 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
         }}>
         <RichToolbar
           actions={[actions.setBold, actions.setItalic]}
+          memoActionSelected={itemsSelected}
           disabledIconTint="#bfbfbf"
           editor={richText}
           iconMap={{

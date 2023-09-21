@@ -1,4 +1,4 @@
-import RichToolbar from '../RichToolbar';
+import { RichToolbar } from '../rich-toolbar';
 
 export interface RichToolbarNavigationButtonProps {
   page: number;

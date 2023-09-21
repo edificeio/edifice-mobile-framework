@@ -1,22 +1,16 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { actions } from '~/framework/components/inputs/rich-text-editor/const';
+import { RichToolbarIconButton, RichToolbarTextButton } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-button';
+import { RichToolbarItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item';
+import { RichToolbarNavigationButton } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-navigation-button';
+import { RichToolbarPage } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-page';
 import HorizontalList from '~/framework/components/list/horizontal';
 
-import { actions } from './const';
-import { RichToolbarIconButton, RichToolbarTextButton } from './rich-toolbar-button';
-import { RichToolbarItem } from './rich-toolbar-item';
-import { RichToolbarNavigationButton } from './rich-toolbar-navigation-button';
-import { RichToolbarPage } from './rich-toolbar-page';
-
-const styles = StyleSheet.create({
-  barContainer: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.tiny,
-  },
-});
+import styles from './styles';
 
 export const defaultActions = [
   actions.keyboard,
@@ -64,7 +58,10 @@ export default class RichToolbar extends Component {
       const { items = [] } = prevState;
       return {
         actions,
-        data: actions.map(action => ({ action, selected: items.includes(action) })),
+        data: actions.map(action => ({
+          action,
+          selected: items.includes(action) || nextProps.memoActionSelected.includes(action),
+        })),
       };
     }
     return null;
@@ -95,7 +92,10 @@ export default class RichToolbar extends Component {
     if (this.editor && items !== selectedItems) {
       this.setState({
         items,
-        data: this.state.actions.map(action => ({ action, selected: items.includes(action) })),
+        data: this.state.actions.map(action => ({
+          action,
+          selected: items.includes(action) || this.props.memoActionSelected.includes(action),
+        })),
       });
     }
   }
@@ -108,7 +108,7 @@ export default class RichToolbar extends Component {
     const { onPressAddImage, onInsertLink, insertVideo } = this.props;
     const editor = this.editor;
 
-    if (this.props.onSelectItem) this.props.onSelectItem();
+    if (this.props.onSelectItem) this.props.onSelectItem(action);
 
     if (!editor) {
       this._mount();
