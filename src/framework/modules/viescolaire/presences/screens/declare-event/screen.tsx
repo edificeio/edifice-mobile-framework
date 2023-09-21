@@ -91,7 +91,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       setCreating(true);
       if (!session) throw new Error();
       const absence = student.events.find(e => e.typeId === CallEventType.ABSENCE);
-      if (type === CallEventType.LATENESS && absence) {
+      if (type !== CallEventType.ABSENCE && absence) {
         await presencesService.event.delete(session, absence.id);
       }
       if (event && event.id) {
