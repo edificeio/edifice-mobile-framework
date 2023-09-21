@@ -7,6 +7,19 @@ import { RefreshControl, ScrollView, ScrollViewProps } from 'react-native';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 
+interface ContentLoaderProps {
+  initialLoadingState?: LoadingState;
+  loadContent: () => Promise<any>;
+  renderContent: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
+  renderError?: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
+  renderLoading?: () => React.ReactElement;
+}
+
+export interface ContentLoaderHandle {
+  refresh: () => void;
+  refreshSilent: () => void;
+}
+
 export enum LoadingState {
   PRISTINE, // When no data has been fetched yet
   INIT, // When data is fetching for the first time
@@ -40,43 +53,43 @@ export const useLoadingState = (load: () => Promise<void>, initialLoadingState =
       .then(() => setLoadingState(LoadingState.DONE))
       .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
   };
-  return { loadingState, reload, refresh };
+  const refreshSilent = () => {
+    if (loadingState !== LoadingState.PRISTINE) {
+      setLoadingState(LoadingState.REFRESH_SILENT);
+      load()
+        .then(() => setLoadingState(LoadingState.DONE))
+        .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
+    }
+  };
+  return { loadingState, reload, refresh, refreshSilent };
 };
 
-export function ContentLoader({
-  loadContent,
-  initialLoadingState,
-  renderLoading,
-  renderError,
-  renderContent,
-}: {
-  loadContent: () => Promise<any>;
-  initialLoadingState?: LoadingState;
-  renderLoading?: () => React.ReactElement;
-  renderError?: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
-  renderContent: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;
-}) {
-  const { loadingState, reload, refresh } = useLoadingState(loadContent, initialLoadingState);
-  switch (loadingState) {
-    case LoadingState.DONE:
-    case LoadingState.REFRESH:
-    case LoadingState.REFRESH_FAILED:
-    case LoadingState.REFRESH_SILENT:
-      return renderContent(<RefreshControl refreshing={loadingState === LoadingState.REFRESH} onRefresh={() => refresh()} />);
+export const ContentLoader = React.forwardRef<ContentLoaderHandle, ContentLoaderProps>(
+  ({ initialLoadingState, loadContent, renderContent, renderError, renderLoading }, ref) => {
+    const { loadingState, reload, refresh, refreshSilent } = useLoadingState(loadContent, initialLoadingState);
+    React.useImperativeHandle(ref, () => ({ refresh, refreshSilent }));
 
-    case LoadingState.PRISTINE:
-    case LoadingState.INIT:
-      return renderLoading ? renderLoading() : <LoadingIndicator />;
+    switch (loadingState) {
+      case LoadingState.DONE:
+      case LoadingState.REFRESH:
+      case LoadingState.REFRESH_FAILED:
+      case LoadingState.REFRESH_SILENT:
+        return renderContent(<RefreshControl refreshing={loadingState === LoadingState.REFRESH} onRefresh={() => refresh()} />);
 
-    case LoadingState.INIT_FAILED:
-    case LoadingState.RETRY:
-      return (
-        renderError ??
-        (refreshControl => (
-          <ScrollView refreshControl={refreshControl}>
-            <EmptyConnectionScreen />
-          </ScrollView>
-        ))
-      )(<RefreshControl refreshing={loadingState === LoadingState.RETRY} onRefresh={() => reload()} />);
-  }
-}
+      case LoadingState.PRISTINE:
+      case LoadingState.INIT:
+        return renderLoading ? renderLoading() : <LoadingIndicator />;
+
+      case LoadingState.INIT_FAILED:
+      case LoadingState.RETRY:
+        return (
+          renderError ??
+          (refreshControl => (
+            <ScrollView refreshControl={refreshControl}>
+              <EmptyConnectionScreen />
+            </ScrollView>
+          ))
+        )(<RefreshControl refreshing={loadingState === LoadingState.RETRY} onRefresh={() => reload()} />);
+    }
+  },
+);

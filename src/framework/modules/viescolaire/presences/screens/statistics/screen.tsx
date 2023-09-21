@@ -1,16 +1,16 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
+import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
@@ -27,7 +27,6 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesStatisticsScreenDispatchProps, PresencesStatisticsScreenPrivateProps } from './types';
@@ -46,12 +45,8 @@ export const computeNavBar = ({
 const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps) => {
   const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
-  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
-  const loadingRef = React.useRef<AsyncPagedLoadingState>();
-  loadingRef.current = loadingState;
-  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
-  const fetchEvents = async () => {
+  const fetchStatistics = async () => {
     try {
       const { classes, session, userId, userType } = props;
       const structureId =
@@ -72,44 +67,6 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     } catch {
       throw new Error();
     }
-  };
-
-  const init = () => {
-    setLoadingState(AsyncPagedLoadingState.INIT);
-    fetchEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const reload = () => {
-    setLoadingState(AsyncPagedLoadingState.RETRY);
-    fetchEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const refreshSilent = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    fetchEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
-  React.useEffect(() => {
-    const unsubscribe = props.navigation.addListener('focus', () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
-    });
-    return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation]);
-
-  const renderError = () => {
-    return (
-      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        <EmptyContentScreen />
-      </ScrollView>
-    );
   };
 
   const filterStatistics = () => {
@@ -163,7 +120,7 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     };
   };
 
-  const renderHistory = () => {
+  const renderStatistics = () => {
     const { session, terms } = props;
     const statistics = filterStatistics();
     const dropdownTerms = [
@@ -204,23 +161,19 @@ const PresencesStatisticsScreen = (props: PresencesStatisticsScreenPrivateProps)
     );
   };
 
-  const renderPage = () => {
-    switch (loadingState) {
-      case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
-        return renderHistory();
-      case AsyncPagedLoadingState.PRISTINE:
-      case AsyncPagedLoadingState.INIT:
-        return <LoadingIndicator />;
-      case AsyncPagedLoadingState.INIT_FAILED:
-      case AsyncPagedLoadingState.RETRY:
-        return renderError();
-    }
-  };
-
-  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
+  return (
+    <PageView style={styles.pageContainer}>
+      <ContentLoader
+        loadContent={fetchStatistics}
+        renderContent={renderStatistics}
+        renderError={refreshControl => (
+          <ScrollView refreshControl={refreshControl}>
+            <EmptyContentScreen />
+          </ScrollView>
+        )}
+      />
+    </PageView>
+  );
 };
 
 export default connect(
@@ -232,7 +185,6 @@ export default connect(
 
     return {
       classes: session?.user.classes,
-      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
       session,
       statistics: presencesState.statistics.data,

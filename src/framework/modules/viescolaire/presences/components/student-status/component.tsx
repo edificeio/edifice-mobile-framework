@@ -12,7 +12,7 @@ import styles from './styles';
 import type { StudentStatusProps } from './types';
 
 export default function StudentStatus({
-  hasAbsenceReasons,
+  hasAbsenceViewAccess,
   student,
   style,
   createAbsence,
@@ -36,13 +36,14 @@ export default function StudentStatus({
   };
 
   const onPressAbsent = () => {
-    if (hasAbsenceReasons) {
+    if (hasAbsenceViewAccess) {
       openEvent(student, CallEventType.ABSENCE);
-    } else if (isAbsent) {
-      deleteAbsence(student.events.find(event => event.typeId === CallEventType.ABSENCE)!.id);
-      dismissBottomSheet();
     } else {
-      createAbsence(student.id);
+      if (isAbsent) {
+        deleteAbsence(student.events.find(event => event.typeId === CallEventType.ABSENCE)!.id);
+      } else {
+        createAbsence(student.id);
+      }
       dismissBottomSheet();
     }
   };

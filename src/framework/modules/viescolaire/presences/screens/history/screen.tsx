@@ -1,7 +1,7 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView } from 'react-native';
+import { FlatList, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -11,9 +11,9 @@ import UserList from '~/framework/components/UserList';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
+import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
@@ -42,7 +42,6 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
@@ -59,12 +58,9 @@ export const computeNavBar = ({
 });
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
+  const contentLoaderRef = React.useRef<ContentLoaderHandle>(null);
   const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
   const [isInitialized, setInitialized] = React.useState(true);
-  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
-  const loadingRef = React.useRef<AsyncPagedLoadingState>();
-  loadingRef.current = loadingState;
-  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
   const fetchEvents = async () => {
     try {
@@ -83,71 +79,24 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       throw new Error();
     }
   };
-  const init = () => {
-    setLoadingState(AsyncPagedLoadingState.INIT);
-    fetchEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const reload = () => {
-    setLoadingState(AsyncPagedLoadingState.RETRY);
-    fetchEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const refresh = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH);
-    fetchEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
-  const refreshSilent = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    fetchEvents()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
+      contentLoaderRef.current?.refreshSilent();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation, selectedChildId]);
 
   React.useEffect(() => {
-    if (loadingRef.current === AsyncPagedLoadingState.DONE) refresh();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    contentLoaderRef.current?.refresh();
   }, [selectedChildId]);
 
-  const renderError = () => {
-    return (
-      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        {isInitialized ? (
-          <EmptyContentScreen />
-        ) : (
-          <EmptyScreen
-            svgImage="empty-light"
-            title={I18n.get('presences-history-emptyscreen-initialization-title')}
-            text={I18n.get('presences-history-emptyscreen-initialization-text')}
-            customStyle={styles.pageContainer}
-          />
-        )}
-      </ScrollView>
-    );
-  };
-
   const renderHeader = () => {
-    const { userType } = props;
+    const { children, session, userType } = props;
 
     return (
       <>
-        {userType === UserType.Relative && props.hasPresencesCreateAbsenceRight ? (
+        {children?.length && session && getPresencesWorkflowInformation(session).createAbsenceStatements ? (
           <PrimaryButton
             text={I18n.get('presences-history-reportabsence')}
             iconLeft="ui-plus"
@@ -236,23 +185,29 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     );
   };
 
-  const renderPage = () => {
-    switch (loadingState) {
-      case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
-        return renderHistory();
-      case AsyncPagedLoadingState.PRISTINE:
-      case AsyncPagedLoadingState.INIT:
-        return <LoadingIndicator />;
-      case AsyncPagedLoadingState.INIT_FAILED:
-      case AsyncPagedLoadingState.RETRY:
-        return renderError();
-    }
-  };
-
-  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
+  return (
+    <PageView style={styles.pageContainer}>
+      <ContentLoader
+        ref={contentLoaderRef}
+        loadContent={fetchEvents}
+        renderContent={renderHistory}
+        renderError={refreshControl => (
+          <ScrollView refreshControl={refreshControl}>
+            {isInitialized ? (
+              <EmptyContentScreen />
+            ) : (
+              <EmptyScreen
+                svgImage="empty-light"
+                title={I18n.get('presences-history-emptyscreen-initialization-title')}
+                text={I18n.get('presences-history-emptyscreen-initialization-text')}
+                customStyle={styles.pageContainer}
+              />
+            )}
+          </ScrollView>
+        )}
+      />
+    </PageView>
+  );
 };
 
 export default connect(
@@ -270,8 +225,6 @@ export default connect(
               .map(child => ({ id: child.id, name: child.firstName })) ?? []
           : undefined,
       events: presencesState.history.data,
-      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
-      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       session,
       userId,
       userType,

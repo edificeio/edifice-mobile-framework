@@ -1,7 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { TextSizeStyle } from '~/framework/components/text';
 
 export default StyleSheet.create({
   container: {
@@ -21,6 +20,5 @@ export default StyleSheet.create({
   },
   weekContainer: {
     flexDirection: 'row',
-    height: 2 * TextSizeStyle.Normal.lineHeight,
   },
 });

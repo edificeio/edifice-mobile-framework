@@ -3,7 +3,7 @@ import { ViewStyle } from 'react-native';
 import { CallEventType, CallStudent } from '~/framework/modules/viescolaire/presences/model';
 
 export interface StudentStatusProps {
-  hasAbsenceReasons: boolean;
+  hasAbsenceViewAccess: boolean;
   student?: CallStudent;
   style?: ViewStyle;
   createAbsence: (studentId: string) => Promise<void>;

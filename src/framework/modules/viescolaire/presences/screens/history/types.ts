@@ -7,11 +7,8 @@ import type { fetchPresencesHistoryAction } from '~/framework/modules/viescolair
 import type { Event } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import type { IPresencesNotification } from '~/framework/modules/viescolaire/presences/notif-handler';
-import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-export interface PresencesHistoryScreenProps {
-  initialLoadingState: AsyncPagedLoadingState;
-}
+export interface PresencesHistoryScreenProps {}
 
 export interface PresencesHistoryScreenNavParams {
   notification?: IPresencesNotification;
@@ -20,7 +17,6 @@ export interface PresencesHistoryScreenNavParams {
 export interface PresencesHistoryScreenStoreProps {
   events: Event[];
   children?: IUserListItem[];
-  hasPresencesCreateAbsenceRight?: boolean;
   session?: ISession;
   userId?: string;
   userType?: UserType;

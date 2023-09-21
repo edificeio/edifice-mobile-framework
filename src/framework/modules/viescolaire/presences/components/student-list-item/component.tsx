@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import { Picture } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
-import { CallEventType } from '~/framework/modules/viescolaire/presences/model';
+import { CallEventType, CallState } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import styles from './styles';
@@ -21,7 +21,7 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
   }
 
   public render() {
-    const { isSelected, student, onPress } = this.props;
+    const { callState, isSelected, student, onPress } = this.props;
     const eventTypes = student.events.map(event => event.typeId);
 
     return (
@@ -44,7 +44,13 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
         </View>
         <View style={styles.statusesContainer}>
           {!eventTypes.length ? (
-            <Picture type="NamedSvg" name="ui-success_outline" width={32} height={32} fill={theme.palette.status.success.regular} />
+            <Picture
+              type="NamedSvg"
+              name="ui-success_outline"
+              width={32}
+              height={32}
+              fill={callState === CallState.DONE ? theme.palette.status.success.regular : theme.palette.grey.cloudy}
+            />
           ) : null}
           {eventTypes.includes(CallEventType.ABSENCE) ? (
             <Picture type="NamedSvg" name="ui-error" width={32} height={32} fill={theme.palette.status.failure.regular} />

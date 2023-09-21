@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { FlatList, RefreshControl, ScrollView, View } from 'react-native';
+import { FlatList, ScrollView, ScrollViewProps, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -11,6 +11,7 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
+import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
 import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
@@ -22,10 +23,10 @@ import StudentStatus from '~/framework/modules/viescolaire/presences/components/
 import { CallEventType, CallState, CallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
@@ -42,23 +43,20 @@ export const computeNavBar = ({
 });
 
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
+  const contentLoaderRef = React.useRef<ContentLoaderHandle>(null);
   const [selectedStudentId, setSelectedStudentId] = React.useState<string | null>(null);
   const [isValidating, setValidating] = React.useState<boolean>(false);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
-  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
-  const loadingRef = React.useRef<AsyncPagedLoadingState>();
-  loadingRef.current = loadingState;
-  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
   const fetchCall = async () => {
     try {
       const { eventReasons, session } = props;
       const { id } = props.route.params;
-      const structureCount = session?.user.structures?.length;
+      const structureCount = session?.user.structures?.length ?? 1;
 
       if (!id) throw new Error();
       const call = await props.tryFetchCall(id);
-      if (!eventReasons.length || structureCount !== 1) {
+      if (!eventReasons.length || structureCount > 1) {
         await props.tryFetchEventReasons(call.structureId);
       }
     } catch {
@@ -66,41 +64,11 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     }
   };
 
-  const init = () => {
-    setLoadingState(AsyncPagedLoadingState.INIT);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const reload = () => {
-    setLoadingState(AsyncPagedLoadingState.RETRY);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const refresh = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
-  const refreshSilent = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
+      contentLoaderRef.current?.refreshSilent();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
 
   const dismissBottomSheet = () => bottomSheetModalRef.current?.dismiss();
@@ -128,8 +96,8 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
       if (!call || !session) throw new Error();
       await presencesService.event.create(session, studentId, id, CallEventType.ABSENCE, call.startDate, call.endDate, null);
-      await presencesService.call.updateStatus(session, id, 2);
-      refreshSilent();
+      await presencesService.call.updateState(session, id, CallState.IN_PROGRESS);
+      contentLoaderRef.current?.refreshSilent();
     } catch {
       Toast.showError(I18n.get('presences-call-error-text'));
     }
@@ -142,8 +110,8 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
       if (!session) throw new Error();
       await presencesService.event.delete(session, eventId);
-      await presencesService.call.updateStatus(session, id, 2);
-      refreshSilent();
+      await presencesService.call.updateState(session, id, CallState.IN_PROGRESS);
+      contentLoaderRef.current?.refreshSilent();
     } catch {
       Toast.showError(I18n.get('presences-call-error-text'));
     }
@@ -163,7 +131,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
 
       setValidating(true);
       if (!session) throw new Error();
-      await presencesService.call.updateStatus(session, id, 3);
+      await presencesService.call.updateState(session, id, CallState.DONE);
       navigation.goBack();
       Toast.showSuccess(
         I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),
@@ -174,21 +142,19 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     }
   };
 
-  const renderError = () => {
-    return (
-      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        <EmptyContentScreen />
-      </ScrollView>
-    );
-  };
-
   const renderBottomSheet = () => {
+    const { session } = props;
     const student = props.call!.students.find(s => s.id === selectedStudentId);
+    const hasPresencesManagementRights = session && getPresencesWorkflowInformation(session).managePresences;
+
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={unselectStudent}>
         <StudentStatus
           student={student}
-          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)}
+          hasAbsenceViewAccess={
+            hasPresencesManagementRights === true &&
+            props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)
+          }
           createAbsence={createAbsence}
           deleteAbsence={deleteAbsence}
           dismissBottomSheet={dismissBottomSheet}
@@ -217,7 +183,7 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     );
   };
 
-  const renderCall = () => {
+  const renderCall = (refreshControl: ScrollViewProps['refreshControl']) => {
     const { call } = props;
     const { course } = props.route.params;
     const students = call!.students
@@ -227,38 +193,27 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
         ...student,
       }));
 
-    return call ? (
+    return (
       <>
         <FlatList
           data={students}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
-            <StudentListItem student={item} isSelected={item.id === selectedStudentId} onPress={() => openStudentStatus(item.id)} />
+            <StudentListItem
+              student={item}
+              isSelected={item.id === selectedStudentId}
+              callState={call!.stateId}
+              onPress={() => openStudentStatus(item.id)}
+            />
           )}
-          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
+          refreshControl={refreshControl}
           ListHeaderComponent={<CallCard course={course} showStatus disabled />}
           ListFooterComponent={renderFooter()}
           ListHeaderComponentStyle={styles.listHeaderContainer}
         />
         {renderBottomSheet()}
       </>
-    ) : null;
-  };
-
-  const renderPage = () => {
-    switch (loadingState) {
-      case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
-        return renderCall();
-      case AsyncPagedLoadingState.PRISTINE:
-      case AsyncPagedLoadingState.INIT:
-        return <CallPlaceholder />;
-      case AsyncPagedLoadingState.INIT_FAILED:
-      case AsyncPagedLoadingState.RETRY:
-        return renderError();
-    }
+    );
   };
 
   const isCallLackingValidation =
@@ -270,20 +225,32 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
     showAlert: isCallLackingValidation && !isValidating,
   });
 
-  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
+  return (
+    <PageView style={styles.pageContainer}>
+      <ContentLoader
+        ref={contentLoaderRef}
+        loadContent={fetchCall}
+        renderContent={renderCall}
+        renderError={refreshControl => (
+          <ScrollView refreshControl={refreshControl}>
+            <EmptyContentScreen />
+          </ScrollView>
+        )}
+        renderLoading={() => <CallPlaceholder />}
+      />
+    </PageView>
+  );
 };
 
 export default connect(
-  (state: IGlobalState, props: PresencesCallScreenPrivateProps) => {
+  (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
     const session = getSession();
     const call = presencesState.call.data;
-    const { course } = props.route.params;
 
     return {
       call,
       eventReasons: presencesState.eventReasons.data,
-      initialLoadingState: call?.courseId === course.id ? AsyncPagedLoadingState.DONE : AsyncPagedLoadingState.PRISTINE,
       session,
     };
   },

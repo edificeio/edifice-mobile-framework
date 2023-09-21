@@ -4,11 +4,8 @@ import type { ISession } from '~/framework/modules/auth/model';
 import type { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
 import type { Call, Course, EventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
-import type { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-export interface PresencesCallScreenProps {
-  initialLoadingState: AsyncPagedLoadingState;
-}
+export interface PresencesCallScreenProps {}
 
 export interface PresencesCallScreenNavParams {
   course: Course;
