@@ -54,7 +54,7 @@ export const useLoadingState = (load: () => Promise<void>, initialLoadingState =
       .catch(() => setLoadingState(LoadingState.REFRESH_FAILED));
   };
   const refreshSilent = () => {
-    if (loadingState !== LoadingState.PRISTINE) {
+    if (loadingState === LoadingState.DONE) {
       setLoadingState(LoadingState.REFRESH_SILENT);
       load()
         .then(() => setLoadingState(LoadingState.DONE))

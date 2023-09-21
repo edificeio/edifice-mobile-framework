@@ -88,7 +88,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   }, [props.navigation, selectedChildId]);
 
   React.useEffect(() => {
-    contentLoaderRef.current?.refresh();
+    if (selectedChildId) contentLoaderRef.current?.refresh();
   }, [selectedChildId]);
 
   const renderHeader = () => {
