@@ -52,7 +52,7 @@ export const computeNavBar = ({
 
 const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => {
   const [isInitialized, setInitialized] = React.useState(true);
-  const [date, setDate] = React.useState<Moment>(moment());
+  const [date, setDate] = React.useState<Moment>(moment().startOf('day'));
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [bottomSheetCall, setBottomSheetCall] = React.useState<Call | null>(null);
@@ -235,7 +235,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
         <FlatList
           data={courses}
           renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
-          keyExtractor={item => item.id + item.startDate}
+          keyExtractor={item => item.callId?.toString() ?? item.id + item.startDate.format()}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={
             appConf.is2d && courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
