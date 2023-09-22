@@ -66,7 +66,7 @@ export interface CommonEvent extends EventBase {
 }
 
 export interface Course {
-  callId: number;
+  callId: number | null;
   callStateId: CallState;
   classes: string[];
   endDate: Moment;

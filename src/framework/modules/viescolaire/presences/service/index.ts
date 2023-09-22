@@ -87,7 +87,7 @@ type BackendCourse = {
     id: string;
     displayName: string;
   }[];
-  registerId: number;
+  registerId: number | null;
   registerStateId: number;
   notified: boolean;
   splitSlot: boolean;

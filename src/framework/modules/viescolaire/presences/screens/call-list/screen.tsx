@@ -231,11 +231,16 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const renderCallList = () => {
     return (
       <View style={UI_STYLES.flex1}>
-        <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
+        <DayPicker
+          initialSelectedDate={moment().startOf('week')}
+          maximumWeeks={4}
+          onDateChange={setDate}
+          style={styles.dayPickerContainer}
+        />
         <FlatList
           data={courses}
           renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
-          keyExtractor={item => item.id + item.startDate}
+          keyExtractor={item => item.callId?.toString() ?? item.id + item.startDate.format()}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={
             appConf.is2d && courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
