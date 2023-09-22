@@ -40,7 +40,7 @@ export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<any>
 
 export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   const [emojiDuration, setEmojiDuration] = useState(240); // iOS Default
-  const [pageHeight, setPageHeight] = useState(291); // iOS Default
+  const [pageHeight, setPageHeight] = useState(257); // iOS Default
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [itemsSelected, setItemsSelected] = useState([]);
 
@@ -167,20 +167,19 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   const onSelectItemToolbar = useCallback(
     action => {
       if (itemsSelected.includes(action)) {
-        const index = itemsSelected.indexOf(action);
-        const newArray = itemsSelected.slice(index, 1);
-
-        console.log(newArray, index);
+        const newArray = itemsSelected.filter(act => act !== action);
+        console.log('del action', action, newArray);
         setItemsSelected(newArray);
       } else {
+        console.log('add action', action);
         setItemsSelected([...itemsSelected, action]);
       }
 
-      Keyboard.dismiss();
       setTimeout(() => {
+        Keyboard.dismiss();
         richText.current?.blurContentEditor();
         setShowToolbarPage(true);
-      }, 200);
+      }, 300);
     },
     [itemsSelected],
   );
