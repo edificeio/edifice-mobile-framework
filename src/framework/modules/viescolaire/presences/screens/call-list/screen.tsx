@@ -60,7 +60,6 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
-
   const courses = props.courses[date.format('YYYY-MM-DD')] ?? [];
 
   const fetchCourses = async () => {
