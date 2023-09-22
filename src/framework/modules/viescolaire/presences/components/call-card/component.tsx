@@ -37,7 +37,7 @@ export default class CallCard extends React.PureComponent<CallCardProps> {
         },
         textColor: theme.ui.text.regular,
       };
-    } else if (now.isBetween(course.startDate, course.endDate)) {
+    } else if (now.isBetween(course.startDate, course.endDate) || course.callStateId === CallState.DONE) {
       return {
         borderColor: isValidated ? theme.palette.status.success.regular : theme.palette.status.info.regular,
         borderWidth: UI_SIZES.border.small,
