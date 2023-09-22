@@ -232,7 +232,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
     return (
       <View style={UI_STYLES.flex1}>
         <DayPicker
-          initialSelectedDate={moment().startOf('week')}
+          initialSelectedDate={moment().startOf('day')}
           maximumWeeks={4}
           onDateChange={setDate}
           style={styles.dayPickerContainer}
