@@ -1,7 +1,7 @@
 /**
  * Presences actions
  */
-import { Moment } from 'moment';
+import moment, { Moment } from 'moment';
 import { ThunkAction } from 'redux-thunk';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
@@ -76,6 +76,7 @@ export const fetchPresencesCoursesAction =
         );
       }
       dispatch(presencesCoursesActionsCreators.receipt({ ...state.presences.courses.data, [dateStr]: courses }));
+      courses = courses.sort((a, b) => moment(a.startDate).diff(b.startDate));
       return courses;
     } catch (e) {
       dispatch(presencesCoursesActionsCreators.error(e as Error));
