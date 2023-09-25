@@ -8,20 +8,40 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { viescoService } from '~/framework/modules/viescolaire/common/service';
 import {
+  Absence,
   Call,
   ChildEvents,
   Course,
-  Event,
   EventReason,
   PresencesUserChild,
   Statistics,
-  compareEvents,
 } from '~/framework/modules/viescolaire/presences/model';
 import { actionTypes } from '~/framework/modules/viescolaire/presences/reducer';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
-import { getPresencesWorkflowInformation } from '../rights';
+export const presencesAbsenceStatementsActionsCreators = createAsyncActionCreators(actionTypes.absenceStatements);
+export const fetchPresencesAbsenceStatementsAction =
+  (studentId: string, structureId: string, startDate: Moment, endDate: Moment): ThunkAction<Promise<Absence[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(presencesAbsenceStatementsActionsCreators.request());
+      const absences = await presencesService.absences.get(
+        session,
+        studentId,
+        structureId,
+        startDate.format('YYYY-MM-DD'),
+        endDate.format('YYYY-MM-DD'),
+      );
+      dispatch(presencesAbsenceStatementsActionsCreators.receipt(absences));
+      return absences;
+    } catch (e) {
+      dispatch(presencesAbsenceStatementsActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 export const presencesChildrenEventsActionsCreators = createAsyncActionCreators(actionTypes.childrenEvents);
 export const fetchPresencesChildrenEventsAction =
@@ -100,52 +120,6 @@ export const fetchPresencesEventReasonsAction =
     }
   };
 
-export const presencesHistoryActionsCreators = createAsyncActionCreators(actionTypes.history);
-export const fetchPresencesHistoryAction =
-  (studentId: string, structureId: string, startDate: Moment, endDate: Moment): ThunkAction<Promise<Event[]>, any, any, any> =>
-  async (dispatch, getState) => {
-    try {
-      const session = assertSession();
-      const start = startDate.format('YYYY-MM-DD');
-      const end = endDate.format('YYYY-MM-DD');
-      dispatch(presencesHistoryActionsCreators.request());
-      const absences = await presencesService.absences.get(
-        session,
-        studentId,
-        structureId,
-        start,
-        endDate.add(1, 'month').format('YYYY-MM-DD'),
-      );
-      const events = await presencesService.history.getEvents(session, studentId, structureId, start, end);
-      const history: Event[] = [
-        ...absences,
-        ...events.DEPARTURE.events,
-        ...events.NO_REASON.events,
-        ...events.LATENESS.events,
-        ...events.REGULARIZED.events,
-        ...events.UNREGULARIZED.events,
-      ].sort(compareEvents);
-
-      if (getPresencesWorkflowInformation(session).presences2d) {
-        const { FORGOTTEN_NOTEBOOK } = await presencesService.history.getForgottenNotebookEvents(
-          session,
-          studentId,
-          structureId,
-          start,
-          end,
-        );
-        const { INCIDENT, PUNISHMENT } = await presencesService.history.getIncidents(session, studentId, structureId, start, end);
-        history.push(...FORGOTTEN_NOTEBOOK!.events, ...INCIDENT!.events, ...PUNISHMENT!.events);
-      }
-      history.sort(compareEvents);
-      dispatch(presencesHistoryActionsCreators.receipt(history));
-      return history;
-    } catch (e) {
-      dispatch(presencesHistoryActionsCreators.error(e as Error));
-      throw e;
-    }
-  };
-
 export const presencesMultipleSlotActionsCreators = createAsyncActionCreators(actionTypes.multipleSlotsSetting);
 export const fetchPresencesMultipleSlotSettingAction =
   (structureId: string): ThunkAction<Promise<boolean>, any, any, any> =>
@@ -203,11 +177,11 @@ export const fetchPresencesStatisticsAction =
       const end = endDate.format('YYYY-MM-DD');
       dispatch(presencesStatisticsActionsCreators.request());
       const statistics = {
-        ...(await presencesService.history.getEvents(session, studentId, structureId, start, end)),
+        ...(await presencesService.events.get(session, studentId, structureId, start, end)),
         ...(getPresencesWorkflowInformation(session).presences2d
           ? {
-              ...(await presencesService.history.getForgottenNotebookEvents(session, studentId, structureId, start, end)),
-              ...(await presencesService.history.getIncidents(session, studentId, structureId, start, end)),
+              ...(await presencesService.events.getForgottenNotebooks(session, studentId, structureId, start, end)),
+              ...(await presencesService.events.getIncidents(session, studentId, structureId, start, end)),
             }
           : {}),
       };

@@ -16,8 +16,4 @@ export default StyleSheet.create({
     flexShrink: 1,
     padding: UI_SIZES.spacing.minor,
   },
-  iconContainer: {
-    justifyContent: 'center',
-    padding: UI_SIZES.spacing.minor,
-  },
 });

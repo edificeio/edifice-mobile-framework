@@ -6,10 +6,10 @@ import { combineReducers } from 'redux';
 import { Reducers } from '~/app/store';
 import { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import {
+  Absence,
   Call,
   ChildEvents,
   Course,
-  Event,
   EventReason,
   PresencesUserChild,
   Statistics,
@@ -18,12 +18,12 @@ import moduleConfig from '~/framework/modules/viescolaire/presences/module-confi
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 interface PresencesReduxStateData {
+  absenceStatements: Absence[];
   allowMultipleSlots: boolean;
   call?: Call;
   childrenEvents: { [key: string]: ChildEvents };
   courses: { [key: string]: Course[] };
   eventReasons: EventReason[];
-  history: Event[];
   registerPreference: string;
   schoolYear?: ISchoolYear;
   statistics: Statistics;
@@ -32,12 +32,12 @@ interface PresencesReduxStateData {
 }
 
 export interface PresencesReduxState {
+  absenceStatements: AsyncState<Absence[]>;
   allowMultipleSlots: AsyncState<boolean>;
   call: AsyncState<Call | undefined>;
   childrenEvents: AsyncState<{ [key: string]: ChildEvents }>;
   courses: AsyncState<{ [key: string]: Course[] }>;
   eventReasons: AsyncState<EventReason[]>;
-  history: AsyncState<Event[]>;
   registerPreference: AsyncState<string>;
   schoolYear: AsyncState<ISchoolYear | undefined>;
   statistics: AsyncState<Statistics>;
@@ -46,11 +46,11 @@ export interface PresencesReduxState {
 }
 
 const initialState: PresencesReduxStateData = {
+  absenceStatements: [],
   allowMultipleSlots: true,
   childrenEvents: {},
   courses: {},
   eventReasons: [],
-  history: [],
   registerPreference: '',
   statistics: {
     DEPARTURE: {
@@ -92,12 +92,12 @@ const initialState: PresencesReduxStateData = {
 };
 
 export const actionTypes = {
+  absenceStatements: createAsyncActionTypes(moduleConfig.namespaceActionType('ABSENCE_STATEMENTS')),
   call: createAsyncActionTypes(moduleConfig.namespaceActionType('CALL')),
   childrenEvents: createAsyncActionTypes(moduleConfig.namespaceActionType('CHILDREN_EVENTS')),
   courses: createAsyncActionTypes(moduleConfig.namespaceActionType('COURSES')),
   createAbsence: createAsyncActionTypes(moduleConfig.namespaceActionType('CREATE_ABSENCE')),
   eventReasons: createAsyncActionTypes(moduleConfig.namespaceActionType('EVENT_REASONS')),
-  history: createAsyncActionTypes(moduleConfig.namespaceActionType('HISTORY')),
   multipleSlotsSetting: createAsyncActionTypes(moduleConfig.namespaceActionType('MULTIPLE_SLOTS_SETTING')),
   registerPreference: createAsyncActionTypes(moduleConfig.namespaceActionType('REGISTER_PREFERENCE')),
   schoolYear: createAsyncActionTypes(moduleConfig.namespaceActionType('SCHOOL_YEAR')),
@@ -107,12 +107,12 @@ export const actionTypes = {
 };
 
 const reducer = combineReducers({
+  absenceStatements: createSessionAsyncReducer(initialState.absenceStatements, actionTypes.absenceStatements),
   allowMultipleSlots: createSessionAsyncReducer(initialState.allowMultipleSlots, actionTypes.multipleSlotsSetting),
   call: createSessionAsyncReducer(initialState.call, actionTypes.call),
   childrenEvents: createSessionAsyncReducer(initialState.childrenEvents, actionTypes.childrenEvents),
   courses: createSessionAsyncReducer(initialState.courses, actionTypes.courses),
   eventReasons: createSessionAsyncReducer(initialState.eventReasons, actionTypes.eventReasons),
-  history: createSessionAsyncReducer(initialState.history, actionTypes.history),
   registerPreference: createSessionAsyncReducer(initialState.registerPreference, actionTypes.registerPreference),
   schoolYear: createSessionAsyncReducer(initialState.schoolYear, actionTypes.schoolYear),
   statistics: createSessionAsyncReducer(initialState.statistics, actionTypes.statistics),

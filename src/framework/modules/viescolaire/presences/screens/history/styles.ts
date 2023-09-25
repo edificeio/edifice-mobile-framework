@@ -5,17 +5,22 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   absenceActionContainer: {
-    marginBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.medium,
   },
-  childListContainer: {
-    borderBottomWidth: UI_SIZES.border.thin,
-    borderBottomColor: theme.palette.grey.cloudy,
+  absenceActionTopMargin: {
+    marginTop: UI_SIZES.spacing.medium,
   },
   childListContentContainer: {
     padding: UI_SIZES.spacing.medium,
   },
   detailsActionContainer: {
     alignSelf: 'flex-end',
+  },
+  dropdownContainer: {
+    zIndex: 10,
+  },
+  dropdownMargin: {
+    marginBottom: UI_SIZES.spacing.tiny,
   },
   emptyScreenContainer: {
     paddingTop: 0,
@@ -24,18 +29,42 @@ export default StyleSheet.create({
   emptyScreenTitle: {
     marginTop: UI_SIZES.spacing.small,
   },
-  informationText: {
-    marginTop: UI_SIZES.spacing.tiny,
+  eventListContentContainer: {
+    rowGap: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.big,
+  },
+  historyHeadingText: {
     marginBottom: UI_SIZES.spacing.minor,
     color: theme.ui.text.light,
   },
-  listContentContainer: {
-    rowGap: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingTop: UI_SIZES.spacing.medium,
-    paddingBottom: UI_SIZES.spacing.big,
-  },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,
+  },
+  statisticsContentContainer: {
+    rowGap: UI_SIZES.spacing.small,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingVertical: UI_SIZES.spacing.big,
+  },
+  tabBarContainer: {
+    backgroundColor: theme.palette.grey.white,
+    borderBottomWidth: UI_SIZES.border.thin,
+    borderBottomColor: theme.palette.grey.cloudy,
+    elevation: 0,
+  },
+  tabBarIndicatorContainer: {
+    height: 2,
+    backgroundColor: theme.palette.primary.regular,
+  },
+  tabBarLabel: {
+    paddingRight: UI_SIZES.spacing.minor, // fix to android trimming last character
+  },
+  tabBarLabelFocused: {
+    color: theme.palette.primary.regular,
+  },
+  tabBarTabContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.minor,
   },
 });

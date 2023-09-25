@@ -660,6 +660,29 @@ export const presencesService = {
         .sort((a, b) => a.startDate.diff(b.startDate));
     },
   },
+  events: {
+    get: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
+      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
+      return historyEventsAdapter(events);
+    },
+    getForgottenNotebooks: async (
+      session: ISession,
+      studentId: string,
+      structureId: string,
+      startDate: string,
+      endDate: string,
+    ) => {
+      const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
+      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
+      return forgottenNotebooksAdapter(forgottenNotebooks);
+    },
+    getIncidents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
+      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
+      return incidentsAdapter(incidents);
+    },
+  },
   event: {
     create: async (
       session: ISession,
@@ -761,29 +784,6 @@ export const presencesService = {
         method: 'PUT',
         body,
       });
-    },
-  },
-  history: {
-    getEvents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
-      const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
-      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
-      return historyEventsAdapter(events);
-    },
-    getForgottenNotebookEvents: async (
-      session: ISession,
-      studentId: string,
-      structureId: string,
-      startDate: string,
-      endDate: string,
-    ) => {
-      const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
-      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
-      return forgottenNotebooksAdapter(forgottenNotebooks);
-    },
-    getIncidents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
-      const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
-      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
-      return incidentsAdapter(incidents);
     },
   },
   initialization: {
