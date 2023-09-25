@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-19 09:36:44",
-  "notes": "release: 1.11.0-rc.1(1110019)",
-  "version": "1.11.0-rc.2(1110020)",
+  "last": "2023-09-25 19:02:15",
+  "notes": "feat(presences): MB-2051 add tab view to history screen, allowing to switch between statistics and recent events\nchore(build): poc build type addition\nfix(presence): MB-2050 : sort courses by data\nfix(presences): set call list initial selected date to today\nfix(presences): MB-2055 edit call card, show validated style for courses starting within 15 minutes with validated call\nfix(presences): MB-2028 allow teacher to see calls 4 weeks before and after maximum\nfix(presences): MB-2052 fix possible duplicated ids in call list flatlist\nfix(presences): MB-2046 prevent calling a content refresh when loading is not done\nfix(presences): MB-2041 prevent unwanted history refresh as student\nfix(presences): MB-2030 delete existing absence when creating departure\nfix(presences): show history declare absence action only when user has children\nfeat(dashboard): replace teacher call carrousel with current call card, replace relative child picker and absence action with framework components\nfeat(presences): MB-2015 prevent teachers without presences management rights to access absence declaration screen\nfix(blog): MB-1986 , fix crash on blog with lot of webview\nrelease: 1.11.0-rc.2(1110020)",
+  "version": "1.11.0-rc.3(1110021)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
