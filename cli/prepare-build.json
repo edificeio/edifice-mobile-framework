@@ -4,6 +4,7 @@
   "rev": 0,
   "build": 20,
   "alpha": 18,
+  "poc": 0,
   "rc": 2,
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

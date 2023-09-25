@@ -32,6 +32,7 @@
     "patch": "npx patch-package --exclude 'nothing'",
     "postinstall": "npx react-native-jetifier; npx patch-package;",
     "prepare-alpha": "node cli/prepare-build.js alpha",
+    "prepare-poc": "node cli/prepare-build.js poc",
     "prepare-rc": "node cli/prepare-build.js rc",
     "prepare-major": "node cli/prepare-build.js major",
     "prepare-minor": "node cli/prepare-build.js minor",
