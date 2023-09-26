@@ -120,6 +120,12 @@ async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, p
   return { defaultMobile, defaultEmail };
 }
 
+/**
+ * Get token
+ * - Create new session and token if credentials are provided
+ * - Otherwise restore an existing session and token
+ * - Track & throw appropiate error if needed (in case of bad credentials, verify if it's an account activation process)
+ */
 async function getToken(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   try {
     if (credentials) {
@@ -134,7 +140,6 @@ async function getToken(platform: Platform, credentials?: IAuthCredentials, reme
     Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getToken');
     const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
     if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
-      // If error is bad credentials, it may be an account activation process
       await ensureCredentialsMatchActivationCode(platform, credentials);
       const context = await getAuthContext(platform);
       return { action: 'activate', context, credentials, rememberMe } as ILoginActionResultActivation;
@@ -143,6 +148,13 @@ async function getToken(platform: Platform, credentials?: IAuthCredentials, reme
   }
 }
 
+/**
+ * Get user data
+ * - Fetch user infos & verify data validity (no pending deletion, etc.)
+ * - Add unique device id
+ * - Fetch user public infos
+ * - Track & throw appropiate error if needed
+ */
 async function getUserData(platform: Platform) {
   try {
     const infos = await fetchUserInfo(platform);
@@ -158,6 +170,14 @@ async function getUserData(platform: Platform) {
   }
 }
 
+/**
+ * Handle session
+ * - Initialize firebase token
+ * - Save selected platform
+ * - Forget previous session
+ * - Save session if needed
+ * - Track & throw appropiate error if needed
+ */
 async function handleSession(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   try {
     await initFirebaseToken(platform);
@@ -172,6 +192,13 @@ async function handleSession(platform: Platform, credentials?: IAuthCredentials,
   }
 }
 
+/**
+ * Get user conditions
+ * - Fetch legal url's
+ * - Fetch user requirements
+ * - Return partial session scenario if needed (terms validation, mobile verification, etc.)
+ * - Track & throw appropiate error if needed
+ */
 async function getUserConditions(platform: Platform, dispatch: ThunkDispatch<any, any, any>) {
   try {
     await dispatch(getLegalUrlsAction(platform));
@@ -184,6 +211,12 @@ async function getUserConditions(platform: Platform, dispatch: ThunkDispatch<any
   }
 }
 
+/**
+ * Handle login redirection
+ * - Fetch default data (email or mobile validation infos) and auth context in case of partial session scenario
+ * - Dispatch and return login redirection infos
+ * - Track & throw appropiate error if needed
+ */
 function handleLoginRedirection(
   platform: Platform,
   userInfo: IUserInfoBackend,
@@ -212,6 +245,11 @@ function handleLoginRedirection(
   };
 }
 
+/**
+ * Track login
+ * - Track login completion (including login type and partial session scenario)
+ * - Track & throw appropiate error if needed
+ */
 async function trackLogin(credentials?: IAuthCredentials, partialSessionScenario?: PartialSessionScenario) {
   try {
     await Trackers.trackEvent('Auth', credentials ? 'LOGIN' : 'RESTORE', partialSessionScenario);
