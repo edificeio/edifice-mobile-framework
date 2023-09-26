@@ -17,7 +17,7 @@ import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
-import { getFlattenedChildren } from '~/framework/modules/auth/model';
+import { UserChild, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
@@ -49,6 +49,7 @@ import {
 } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { IPresencesNotification } from '~/framework/modules/viescolaire/presences/notif-handler';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { getRecentEvents } from '~/framework/modules/viescolaire/presences/utils/events';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -57,6 +58,14 @@ import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
 import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
+
+const getInitialSelectedChildId = (children?: UserChild[], notification?: IPresencesNotification): string | undefined => {
+  if (!children || !children.length) return;
+  const childName = notification?.backupData.params.studentName as string | undefined;
+  const childId = childName ? children.find(child => child.displayName === childName)?.id : undefined;
+
+  return childId ?? children[0].id;
+};
 
 export const computeNavBar = ({
   navigation,
@@ -71,7 +80,9 @@ export const computeNavBar = ({
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const contentLoaderRef = React.useRef<ContentLoaderHandle>(null);
-  const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
+  const [selectedChildId, setSelectedChildId] = React.useState(
+    getInitialSelectedChildId(props.children, props.route.params.notification),
+  );
   const [isInitialized, setInitialized] = React.useState(true);
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
@@ -297,7 +308,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   };
 
   const renderTabView = () => {
-    const { children, session, userType } = props;
+    const { session, userType } = props;
     const isChildPickerShown = userType === UserType.Relative && props.children!.length > 1;
 
     return (
@@ -305,13 +316,13 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         {isChildPickerShown ? (
           <UserList
             horizontal
-            data={props.children!}
+            data={props.children!.map(child => ({ id: child.id, name: child.firstName }))}
             selectedId={selectedChildId}
             onSelect={setSelectedChildId}
             contentContainerStyle={styles.childListContentContainer}
           />
         ) : null}
-        {children?.length && session && getPresencesWorkflowInformation(session).createAbsenceStatements ? (
+        {selectedChildId && session && getPresencesWorkflowInformation(session).createAbsenceStatements ? (
           <PrimaryButton
             text={I18n.get('presences-history-reportabsence')}
             iconLeft="ui-plus"
@@ -367,9 +378,7 @@ export default connect(
     return {
       children:
         userType === UserType.Relative
-          ? getFlattenedChildren(session?.user.children)
-              ?.filter(child => child.classesNames.length)
-              .map(child => ({ id: child.id, name: child.firstName })) ?? []
+          ? getFlattenedChildren(session?.user.children)?.filter(child => child.classesNames.length) ?? []
           : undefined,
       classes: session?.user.classes,
       events: getRecentEvents(presencesState.statistics.data, presencesState.absenceStatements.data),

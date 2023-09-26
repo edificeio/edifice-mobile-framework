@@ -1,7 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { IUserListItem } from '~/framework/components/UserList';
-import type { ISession } from '~/framework/modules/auth/model';
+import type { ISession, UserChild } from '~/framework/modules/auth/model';
 import type { UserType } from '~/framework/modules/auth/service';
 import type { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import type {
@@ -26,7 +25,7 @@ export interface PresencesHistoryScreenStoreProps {
   schoolYear: ISchoolYear | undefined;
   statistics: Statistics;
   terms: ITerm[];
-  children?: IUserListItem[];
+  children?: UserChild[];
   classes?: string[];
   session?: ISession;
   userId?: string;
