@@ -120,41 +120,68 @@ async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, p
   return { defaultMobile, defaultEmail };
 }
 
-async function getToken(platform: Platform, credentials?: IAuthCredentials) {
-  if (credentials) {
-    await createSession(platform, credentials);
-  } else {
-    const tokenData = await restoreSessionAvailable();
-    if (tokenData) {
-      await restoreSession(platform);
+async function getToken(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
+  try {
+    if (credentials) {
+      await createSession(platform, credentials);
+    } else {
+      const tokenData = await restoreSessionAvailable();
+      if (tokenData) {
+        await restoreSession(platform);
+      }
     }
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getToken');
+    const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+    if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
+      // If error is bad credentials, it may be an account activation process
+      await ensureCredentialsMatchActivationCode(platform, credentials);
+      const context = await getAuthContext(platform);
+      return { action: 'activate', context, credentials, rememberMe } as ILoginActionResultActivation;
+    }
+    throw e;
   }
 }
 
 async function getUserData(platform: Platform) {
-  const infos = await fetchUserInfo(platform);
-  ensureUserValidity(infos);
-  DeviceInfo.getUniqueId().then(uniqueID => {
-    infos.uniqueId = uniqueID;
-  });
-  const { userdata, userPublicInfo } = await fetchUserPublicInfo(infos, platform);
-  return { infos, publicInfos: { userData: userdata, userPublicInfo } };
+  try {
+    const infos = await fetchUserInfo(platform);
+    ensureUserValidity(infos);
+    DeviceInfo.getUniqueId().then(uniqueID => {
+      infos.uniqueId = uniqueID;
+    });
+    const { userdata, userPublicInfo } = await fetchUserPublicInfo(infos, platform);
+    return { infos, publicInfos: { userData: userdata, userPublicInfo } };
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getUserData');
+    throw e;
+  }
 }
 
 async function handleSession(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
-  await initFirebaseToken(platform);
-  await savePlatform(platform);
-  await forgetPreviousSession();
-  const mustSaveSession = !credentials || rememberMe || platform.wayf;
-  if (mustSaveSession) await saveSession();
-  return mustSaveSession;
+  try {
+    await initFirebaseToken(platform);
+    await savePlatform(platform);
+    await forgetPreviousSession();
+    const mustSaveSession = !credentials || rememberMe || platform.wayf;
+    if (mustSaveSession) await saveSession();
+    return mustSaveSession;
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'handleSession');
+    throw e;
+  }
 }
 
 async function getUserConditions(platform: Platform, dispatch: ThunkDispatch<any, any, any>) {
-  await dispatch(getLegalUrlsAction(platform));
-  const userRequirements = await fetchUserRequirements(platform);
-  const partialSessionScenario = getPartialSessionScenario(userRequirements);
-  return partialSessionScenario;
+  try {
+    await dispatch(getLegalUrlsAction(platform));
+    const userRequirements = await fetchUserRequirements(platform);
+    const partialSessionScenario = getPartialSessionScenario(userRequirements);
+    return partialSessionScenario;
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getUserConditions');
+    throw e;
+  }
 }
 
 function handleLoginRedirection(
@@ -167,102 +194,70 @@ function handleLoginRedirection(
   rememberMe?: boolean,
 ) {
   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any) {
-    const { userData, userPublicInfo } = publicInfo;
-    const sessionInfo = formatSession(platform, userInfo, userData, userPublicInfo, !!mustSaveSession);
-    if (partialSessionScenario) {
-      const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario, platform.url);
-      const context = await getAuthContext(platform);
-      dispatch(authActions.sessionPartial(sessionInfo));
-      return { action: partialSessionScenario, defaultEmail, defaultMobile, context, credentials, rememberMe };
-    } else {
-      dispatch(authActions.sessionCreate(sessionInfo));
+    try {
+      const { userData, userPublicInfo } = publicInfo;
+      const sessionInfo = formatSession(platform, userInfo, userData, userPublicInfo, !!mustSaveSession);
+      if (partialSessionScenario) {
+        const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario, platform.url);
+        const context = await getAuthContext(platform);
+        dispatch(authActions.sessionPartial(sessionInfo));
+        return { action: partialSessionScenario, defaultEmail, defaultMobile, context, credentials, rememberMe };
+      } else {
+        dispatch(authActions.sessionCreate(sessionInfo));
+      }
+    } catch (e) {
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'handleLoginRedirection');
+      throw e;
     }
   };
 }
 
-async function trackLogin(errorCategory: string, loginType: string, partialSessionScenario?: PartialSessionScenario) {
-  await Trackers.trackEvent(errorCategory, loginType, partialSessionScenario);
+async function trackLogin(credentials?: IAuthCredentials, partialSessionScenario?: PartialSessionScenario) {
+  try {
+    await Trackers.trackEvent('Auth', credentials ? 'LOGIN' : 'RESTORE', partialSessionScenario);
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'trackLogin');
+    throw e;
+  }
 }
 
 export function loginAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   return async function (dispatch: ThunkDispatch<any, any, any>): Promise<ILoginResult> {
-    const loginType = credentials ? 'LOGIN' : 'RESTORE';
-    const errorAction = `${loginType} ERROR`;
-    const errorCategory = 'Auth';
-
     try {
       // 1. Get token from session (created/restored)
-      try {
-        await getToken(platform, credentials);
-      } catch (e) {
-        Trackers.trackDebugEvent(errorCategory, errorAction, 'getToken');
-        const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
-        if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
-          // If error is bad credentials, it may be an account activation process
-          await ensureCredentialsMatchActivationCode(platform, credentials);
-          const context = await getAuthContext(platform);
-          return { action: 'activate', context, credentials, rememberMe };
-        }
-        throw e;
-      }
+      // (exit loginAction and redirect to activation if needed)
+      const activationScenario = await getToken(platform, credentials, rememberMe);
+      if (activationScenario) return activationScenario;
 
       // 2. Get user data (personal infos, validity, device id, public infos)
-      let user: { infos: IUserInfoBackend; publicInfos: { userdata?: UserPrivateData; userPublicInfo?: UserPersonDataBackend } };
-      try {
-        user = await getUserData(platform);
-      } catch (e) {
-        Trackers.trackDebugEvent(errorCategory, errorAction, 'getUserData');
-        throw e;
-      }
+      const user = await getUserData(platform);
 
       // 3. Handle session (firebase, platform, save)
-      let mustSaveSession: string | boolean | undefined;
-      try {
-        mustSaveSession = await handleSession(platform, credentials, rememberMe);
-      } catch (e) {
-        Trackers.trackDebugEvent(errorCategory, errorAction, 'handleSession');
-        throw e;
-      }
+      const mustSaveSession = await handleSession(platform, credentials, rememberMe);
 
       // 4. Get user conditions (legal urls, requirements)
-      let partialSessionScenario: PartialSessionScenario | undefined;
-      try {
-        partialSessionScenario = await getUserConditions(platform, dispatch);
-      } catch (e) {
-        Trackers.trackDebugEvent(errorCategory, errorAction, 'getUserConditions');
-        throw e;
-      }
+      const partialSessionScenario = await getUserConditions(platform, dispatch);
 
       // 5. Handle login redirection (partial/complete)
-      let redirectScenario;
-      try {
-        redirectScenario = await dispatch(
-          handleLoginRedirection(
-            platform,
-            user.infos,
-            user.publicInfos,
-            mustSaveSession,
-            partialSessionScenario,
-            credentials,
-            rememberMe,
-          ),
-        );
-      } catch (e) {
-        Trackers.trackDebugEvent(errorCategory, errorAction, 'handleLoginRedirection');
-        throw e;
-      }
+      const redirectScenario = await dispatch(
+        handleLoginRedirection(
+          platform,
+          user.infos,
+          user.publicInfos,
+          mustSaveSession,
+          partialSessionScenario,
+          credentials,
+          rememberMe,
+        ),
+      );
 
       // 6. Track login (initial/restored)
-      try {
-        await trackLogin(errorCategory, loginType, partialSessionScenario);
-      } catch (e) {
-        Trackers.trackDebugEvent(errorCategory, errorAction, 'trackLogin');
-        throw e;
-      }
+      await trackLogin(credentials, partialSessionScenario);
+
       return redirectScenario;
     } catch (e) {
       const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
-      await Trackers.trackEvent(errorCategory, errorAction, authError?.type);
+      await Trackers.trackEvent('Auth', 'LOGIN ERROR', authError?.type);
       dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
       throw e;
     }
