@@ -184,6 +184,18 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     );
   };
 
+  const getCountMethodText = (recoveryMethod: 'DAY' | 'HALF_DAY' | 'HOUR' | null): string => {
+    switch (recoveryMethod) {
+      case 'DAY':
+        return I18n.get('presences-statistics-count-day');
+      case 'HALF_DAY':
+        return I18n.get('presences-statistics-count-halfday');
+      case 'HOUR':
+      default:
+        return I18n.get('presences-statistics-count-hour');
+    }
+  };
+
   const filterEvents = (stats: { events: Event[] }) => {
     const term = selectedTerm !== 'year' ? props.terms.find(t => t.order.toString() === selectedTerm) : undefined;
 
@@ -218,10 +230,10 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
               items={dropdownTerms}
               setOpen={setDropdownOpen}
               setValue={setSelectedTerm}
-              style={styles.dropdownMargin}
             />
           </View>
         ) : null}
+        <SmallText style={styles.countMethodText}>{getCountMethodText(statistics.recoveryMethod)}</SmallText>
         <StatisticsCard type={EventType.NO_REASON} {...filterEvents(statistics.NO_REASON)} navigateToEventList={openEventList} />
         <StatisticsCard
           type={EventType.UNREGULARIZED}
@@ -233,6 +245,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
           {...filterEvents(statistics.REGULARIZED)}
           navigateToEventList={openEventList}
         />
+        <SmallText style={styles.countMethodText}>{I18n.get('presences-statistics-count-occurence')}</SmallText>
         <StatisticsCard type={EventType.LATENESS} {...filterEvents(statistics.LATENESS)} navigateToEventList={openEventList} />
         <StatisticsCard type={EventType.DEPARTURE} {...filterEvents(statistics.DEPARTURE)} navigateToEventList={openEventList} />
         {session && getPresencesWorkflowInformation(session).presences2d ? (
