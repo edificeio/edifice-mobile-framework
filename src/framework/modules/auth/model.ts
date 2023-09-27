@@ -1,3 +1,6 @@
+import DeviceInfo from 'react-native-device-info';
+
+import { I18n } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
@@ -156,6 +159,19 @@ export function createAuthError<T extends object>(
   err.error = error;
   err.description = description;
   return { ...err, ...additionalData } as AuthError & T;
+}
+
+export function getAuthErrorCode(error: AuthErrorCode, platform: Platform) {
+  return I18n.get('auth-error-' + error.replaceAll('_', ''), {
+    version: DeviceInfo.getVersion(),
+    errorcode: error,
+    currentplatform: platform.url,
+    defaultValue: I18n.get('auth-error-other', {
+      version: DeviceInfo.getVersion(),
+      errorcode: error,
+      currentplatform: platform.url,
+    }),
+  });
 }
 
 export enum PartialSessionScenario {

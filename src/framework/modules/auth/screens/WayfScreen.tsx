@@ -2,7 +2,6 @@ import CookieManager from '@react-native-cookies/cookies';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent, WebViewNavigation } from 'react-native-webview';
 import { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
@@ -18,6 +17,7 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
+import { getAuthErrorCode } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarTitle } from '~/framework/navigation/navBar';
@@ -154,18 +154,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={STYLES.errorMsg}>
-            {this.error
-              ? I18n.get('auth-error-' + this.error.replaceAll('_', ''), {
-                  version: DeviceInfo.getVersion(),
-                  errorcode: this.error,
-                  currentplatform: this.props.route.params.platform.url,
-                  defaultValue: I18n.get('auth-error-other', {
-                    version: DeviceInfo.getVersion(),
-                    errorcode: this.error,
-                    currentplatform: this.props.route.params.platform.url,
-                  }),
-                })
-              : ''}
+            {this.error ? getAuthErrorCode(this.error, this.props.route.params.platform) : ''}
           </SmallText>
           <PrimaryButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
