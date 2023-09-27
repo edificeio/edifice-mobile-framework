@@ -103,9 +103,9 @@ export function getLegalUrlsAction(platform: Platform) {
 }
 
 /**
- *
- * @param partialSessionScenario
- * @returns
+ * Get default infos
+ * - Fetch appropriate validation infos if must be verified
+ * - Return default mobile or email
  */
 async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, platformUrl: string) {
   let defaultMobile: string | undefined;
