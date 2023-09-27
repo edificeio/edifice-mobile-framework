@@ -21,7 +21,6 @@ import { ISession } from '~/framework/modules/auth/model';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
-import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
@@ -129,10 +128,11 @@ export class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskLis
   }
 
   canCreateHomework() {
-    const { session } = this.props;
+    /*const { session } = this.props;
     const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCreateHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.create;
-    return hasCreateHomeworkResourceRight;
+    return hasCreateHomeworkResourceRight;*/
+    return false;
   }
 
   updateNavBarTitle() {
