@@ -684,6 +684,8 @@
   "presences-declareabsence-dates-on": "Le",
   "presences-declareabsence-dates-to": "Au",
   "presences-declareabsence-error-text": "Une erreur est survenue. Veuillez réessayer plus tard.",
+  "presences-declareabsence-leavealert-text": "Les informations que vous avez renseignées seront perdues.",
+  "presences-declareabsence-leavealert-title": "Êtes-vous sûr de vouloir quitter ?",
   "presences-declareabsence-reasoninput-label": "Motif de l'absence",
   "presences-declareabsence-reasoninput-placeholder": "Écrivez la raison de l’absence...",
   "presences-declareabsence-successmessage": "Absence déclarée avec succès",

@@ -19,6 +19,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallActionText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
@@ -140,6 +141,12 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
       </ScrollView>
     );
   };
+
+  usePreventBack({
+    title: I18n.get('presences-declareabsence-leavealert-title'),
+    text: I18n.get('presences-declareabsence-leavealert-text'),
+    showAlert: !!(reason || attachment) && !isCreating,
+  });
 
   const PageComponent = Platform.select<typeof KeyboardPageView | typeof PageView>({ ios: KeyboardPageView, android: PageView })!;
 
