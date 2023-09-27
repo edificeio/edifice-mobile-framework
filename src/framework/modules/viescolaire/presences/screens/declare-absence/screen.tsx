@@ -11,6 +11,7 @@ import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_STYLES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
+import { LabelIndicator } from '~/framework/components/inputs/container/label';
 import TextInput from '~/framework/components/inputs/text';
 import { DocumentPicked, ImagePicked, cameraAction, documentAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
@@ -46,7 +47,7 @@ export const computeNavBar = ({
 const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPrivateProps) => {
   const [startDate, setStartDate] = React.useState<Moment>(moment().startOf('day').hour(7));
   const [endDate, setEndDate] = React.useState<Moment>(moment().startOf('day').hour(18));
-  const [comment, setComment] = React.useState<string>('');
+  const [reason, setReason] = React.useState<string>('');
   const [attachment, setAttachment] = React.useState<LocalFile | undefined>();
   const [isCreating, setCreating] = React.useState<boolean>(false);
 
@@ -63,9 +64,9 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
       setCreating(true);
       if (!childId || !session || !structureId) throw new Error();
       if (attachment) {
-        await presencesService.absence.createWithFile(session, structureId, childId, startDate, endDate, comment, attachment);
+        await presencesService.absence.createWithFile(session, structureId, childId, startDate, endDate, reason, attachment);
       } else {
-        await presencesService.absence.create(session, structureId, childId, startDate, endDate, comment);
+        await presencesService.absence.create(session, structureId, childId, startDate, endDate, reason);
       }
       navigation.goBack();
       Toast.showSuccess(I18n.get('presences-declareabsence-successmessage'));
@@ -97,11 +98,12 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
           label={{
             text: I18n.get('presences-declareabsence-reasoninput-label'),
             icon: 'ui-textPage',
+            indicator: LabelIndicator.REQUIRED,
           }}
           input={
             <TextInput
-              value={comment}
-              onChangeText={setComment}
+              value={reason}
+              onChangeText={setReason}
               placeholder={I18n.get('presences-declareabsence-reasoninput-placeholder')}
             />
           }
@@ -132,7 +134,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         <PrimaryButton
           text={I18n.get('presences-declareabsence-action')}
           action={createAbsence}
-          disabled={!areDatesValid}
+          disabled={!reason || !areDatesValid}
           loading={isCreating}
         />
       </ScrollView>
