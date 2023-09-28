@@ -124,8 +124,10 @@ export interface ISession {
 /** Error codes as an enum, values can be string that backend returns */
 export enum RuntimeAuthErrorCode {
   ACTIVATION_ERROR = 'activation_error',
+  EMAILVALIDATIONINFOS_FAIL = 'emailvalidationinfos_fail',
   FIREBASE_ERROR = 'firebase_error',
   LOAD_I18N_ERROR = 'loadi18nerror',
+  MOBILEVALIDATIONINFOS_FAIL = 'mobilevalidationinfos_fail',
   NETWORK_ERROR = 'network_error',
   NOT_PREMIUM = 'not_premium',
   PLATFORM_NOT_EXISTS = 'platform_not_exists',

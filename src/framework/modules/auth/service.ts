@@ -526,8 +526,13 @@ export async function getMobileValidationInfos(platformUrl: string) {
   try {
     const mobileValidationInfos = await fetchJSONWithCache('/directory/user/mobilestate', {}, true, platformUrl);
     return mobileValidationInfos;
-  } catch (e) {
-    console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
+  } catch (err) {
+    throw createAuthError(
+      RuntimeAuthErrorCode.MOBILEVALIDATIONINFOS_FAIL,
+      'Failed to fetch mobile validation infos',
+      '',
+      err as Error,
+    );
   }
 }
 
@@ -554,8 +559,13 @@ export async function getEmailValidationInfos() {
   try {
     const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
     return emailValidationInfos;
-  } catch {
-    // console.warn('[UserService] getEmailValidationInfos: could not get email validation infos', e);
+  } catch (err) {
+    throw createAuthError(
+      RuntimeAuthErrorCode.EMAILVALIDATIONINFOS_FAIL,
+      'Failed to fetch email validation infos',
+      '',
+      err as Error,
+    );
   }
 }
 
