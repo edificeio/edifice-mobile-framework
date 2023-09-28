@@ -291,7 +291,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   return (
     <PageView>
-      {props.userType === UserType.Relative ? <ChildPicker /> : null}
+      {props.userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
       {renderPage()}
     </PageView>
   );
