@@ -21,11 +21,11 @@
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.10.4</string>
+		<string>1.10.7</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleVersion</key>
-		<string>1100402</string>
+		<string>1100702</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>http</string>
