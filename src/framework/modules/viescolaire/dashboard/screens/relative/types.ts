@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession, IUser, UserChild } from '~/framework/modules/auth/model';
+import type { ISession, IUser } from '~/framework/modules/auth/model';
 import type {
   fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
@@ -22,17 +22,18 @@ export interface DashboardRelativeScreenNavParams {}
 
 export interface DashboardRelativeScreenStoreProps {
   authorizedViescoApps: IAuthorizedViescoApps;
-  children: UserChild[];
   childrenEvents: { [key: string]: ChildEvents };
   competences: ICompetence[];
-  competencesChildren: IUserChild[];
   devoirs: IDevoir[];
   eventCount: number;
   homeworks: AsyncState<IHomeworkMap>;
   isFetchingDevoirs: boolean;
+  selectedChildId: string;
   subjects: ISubject[];
+  userChildren: IUserChild[];
   childId?: string;
   session?: ISession;
+  structureId?: string;
   userId?: string;
 }
 

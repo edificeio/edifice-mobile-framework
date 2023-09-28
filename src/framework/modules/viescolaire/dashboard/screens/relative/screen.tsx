@@ -9,7 +9,6 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ModalBoxHandle } from '~/framework/components/ModalBox';
-import UserList from '~/framework/components/UserList';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
@@ -17,8 +16,8 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyBoldText, SmallText } from '~/framework/components/text';
-import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import { homeworkListDetailsAdapter, isHomeworkDone } from '~/framework/modules/viescolaire/common/utils/diary';
@@ -35,6 +34,7 @@ import competencesConfig from '~/framework/modules/viescolaire/competences/modul
 import { competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
 import { ModuleIconButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleIconButton';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import { fetchDiaryHomeworksFromChildAction, fetchDiaryTeachersAction } from '~/framework/modules/viescolaire/diary/actions';
 import { HomeworkItem } from '~/framework/modules/viescolaire/diary/components/Items';
@@ -86,7 +86,6 @@ export const computeNavBar = ({
 
 const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => {
   const scrollRef = React.useRef<typeof ScrollView>();
-  const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
   const eventsModalRef = React.useRef<ModalBoxHandle>(null);
   const isFocused = useIsFocused();
   const [loadingState, setLoadingState] = React.useState(AsyncPagedLoadingState.PRISTINE);
@@ -96,8 +95,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   const fetchContent = async () => {
     try {
-      const { userId } = props;
-      const structureId = getChildStructureId(selectedChildId);
+      const { selectedChildId, structureId, userId } = props;
 
       if (!structureId || !userId) throw new Error();
       await props.tryFetchHomeworks(
@@ -123,8 +121,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 
   const fetchEvents = async () => {
     try {
-      const { userId } = props;
-      const structureId = getChildStructureId(selectedChildId);
+      const { structureId, userId } = props;
 
       if (!structureId || !userId) throw new Error();
       const children = await props.tryFetchUserChildren(structureId, userId);
@@ -164,21 +161,22 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
     init();
     props.handleClearLevels();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedChildId]);
+  }, [props.selectedChildId]);
 
   React.useEffect(() => {
     if (props.eventCount && isFocused) eventsModalRef.current?.doShowModal();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.eventCount]);
 
-  const openAbsenceDeclaration = () => props.navigation.navigate(presencesRouteNames.declareAbsence, { childId: selectedChildId });
+  const openAbsenceDeclaration = () =>
+    props.navigation.navigate(presencesRouteNames.declareAbsence, { childId: props.selectedChildId });
 
   const openAssessment = (assessment: IDevoir) => {
-    const { competencesChildren, navigation } = props;
+    const { navigation, selectedChildId, userChildren } = props;
 
     navigation.navigate(competencesRouteNames.assessment, {
       assessment,
-      studentClass: competencesChildren.find(child => child.id === selectedChildId)?.classId ?? '',
+      studentClass: userChildren.find(child => child.id === selectedChildId)?.classId ?? '',
     });
   };
 
@@ -305,26 +303,19 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
   };
 
   const renderDashboard = () => {
-    const { authorizedViescoApps, children, childrenEvents, session } = props;
+    const { authorizedViescoApps, childrenEvents, session, userChildren } = props;
     const hasAbsenceStatementCreationRights = session && getPresencesWorkflowInformation(session).createAbsenceStatements;
 
     return (
       <ScrollView ref={scrollRef} contentContainerStyle={styles.scrollViewContentContainer}>
         {renderNavigationGrid()}
-        {children.length > 1 ? (
-          <UserList
-            horizontal
-            data={props.children.map(child => ({ id: child.id, name: child.firstName }))}
-            selectedId={selectedChildId}
-            onSelect={id => setSelectedChildId(id)}
-          />
-        ) : null}
+        <ChildPicker />
         {hasAbsenceStatementCreationRights ? (
           <PrimaryButton text={I18n.get('dashboard-relative-reportabsence')} iconLeft="ui-plus" action={openAbsenceDeclaration} />
         ) : null}
         {authorizedViescoApps.diary ? renderHomework() : null}
         {authorizedViescoApps.competences ? renderAssessments() : null}
-        <ChildrenEventsModal ref={eventsModalRef} childrenEvents={childrenEvents} userChildren={children} />
+        <ChildrenEventsModal ref={eventsModalRef} childrenEvents={childrenEvents} userChildren={userChildren} />
       </ScrollView>
     );
   };
@@ -335,6 +326,7 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
 export default connect(
   (state: IGlobalState) => {
     const competencesState = competencesConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const presencesState = presencesConfig.getState(state);
     const diaryState = diaryConfig.getState(state);
     const session = getSession();
@@ -346,16 +338,17 @@ export default connect(
         edt: session?.apps.some(app => app.address === '/edt'),
         presences: session?.apps.some(app => app.address === '/presences'),
       },
-      children: getFlattenedChildren(session?.user.children)?.filter(child => child.classesNames.length) ?? [],
       childrenEvents: presencesState.childrenEvents.data,
       competences: competencesState.competences.data,
-      competencesChildren: competencesState.userChildren.data,
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       eventCount: getStudentsEventsCount(presencesState.childrenEvents.data),
       homeworks: diaryState.homeworks,
       isFetchingDevoirs: competencesState.devoirs.isFetching,
+      selectedChildId: dashboardState.selectedChildId,
       session,
+      structureId: getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,
+      userChildren: competencesState.userChildren.data,
       userId: session?.user.id,
     };
   },

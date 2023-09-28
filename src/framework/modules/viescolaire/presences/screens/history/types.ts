@@ -27,6 +27,7 @@ export interface PresencesHistoryScreenStoreProps {
   terms: ITerm[];
   children?: UserChild[];
   classes?: string[];
+  selectedChildId?: string;
   session?: ISession;
   userId?: string;
   userType?: UserType;

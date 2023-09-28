@@ -248,7 +248,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   return (
     <PageView>
       {props.userType === UserType.Teacher ? <StructurePicker /> : null}
-      {props.userType === UserType.Relative ? <ChildPicker /> : null}
+      {props.userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
       {renderPage()}
     </PageView>
   );
