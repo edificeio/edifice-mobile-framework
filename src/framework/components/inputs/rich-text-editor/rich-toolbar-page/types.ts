@@ -10,4 +10,5 @@ export interface RichToolbarPageProps {
   item: typeof RichToolbarItem;
   title: string;
   toolbar: RichToolbar;
+  handleBack: () => void;
 }

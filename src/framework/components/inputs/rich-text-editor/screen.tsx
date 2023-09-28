@@ -1,12 +1,13 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Keyboard, KeyboardAvoidingView, Platform, ScrollView, Text } from 'react-native';
+import { Animated, Dimensions, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
 import { UI_SIZES } from '~/framework/components/constants';
-import { RichEditor, RichToolbar, actions } from '~/framework/components/inputs/rich-text-editor';
+import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
 import { PageView } from '~/framework/components/page';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { isEmpty } from '~/framework/util/object';
 
 import styles from './styles';
 import { RichTextEditorMode, RichTextEditorScreenProps } from './types';
@@ -54,18 +55,22 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
 
   useEffect(() => {
     if (showToolbarPage) {
-      Animated.timing(translateAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      setTimeout(() => {
+        Animated.timing(translateAnim, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }, 50);
     }
     if (!showToolbarPage) {
-      Animated.timing(translateAnim, {
-        toValue: pageHeight,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
+      setTimeout(() => {
+        Animated.timing(translateAnim, {
+          toValue: pageHeight,
+          duration: 300,
+          useNativeDriver: true,
+        }).start();
+      }, 50);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showToolbarPage]);
@@ -104,12 +109,12 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   }, []);
 
   const handleFocus = useCallback(() => {
-    console.log('editor focus');
-    if (itemsSelected.length > 0) {
+    console.log('editor focus', itemsSelected);
+    if (!isEmpty(itemsSelected)) {
       itemsSelected.forEach(action => richText.current?.sendAction(action, 'result'));
     }
-    setShowToolbarPage(false);
-  }, [itemsSelected]);
+    if (showToolbarPage) setShowToolbarPage(false);
+  }, [itemsSelected, showToolbarPage]);
 
   const handleFontSize = useCallback(() => {
     // 1=  10px, 2 = 13px, 3 = 16px, 4 = 18px, 5 = 24px, 6 = 32px, 7 = 48px;
@@ -164,22 +169,19 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
     );
   }, []);
 
-  const onSelectItemToolbar = useCallback(
+  const onSelectAction = useCallback(
     action => {
       if (itemsSelected.includes(action)) {
         const newArray = itemsSelected.filter(act => act !== action);
-        console.log('del action', action, newArray);
         setItemsSelected(newArray);
       } else {
-        console.log('add action', action);
         setItemsSelected([...itemsSelected, action]);
+        setTimeout(() => {
+          Keyboard.dismiss();
+          richText.current?.blurContentEditor();
+          setShowToolbarPage(true);
+        }, 300);
       }
-
-      setTimeout(() => {
-        Keyboard.dismiss();
-        richText.current?.blurContentEditor();
-        setShowToolbarPage(true);
-      }, 300);
     },
     [itemsSelected],
   );
@@ -213,26 +215,16 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
     return (
       <Animated.View
         style={{
-          borderColor: 'blue',
-          borderWidth: 1,
+          // borderColor: 'blue',
+          // borderWidth: 1,
           transform: [{ translateY: translateAnim }],
           marginTop: -pageHeight,
         }}>
         <RichToolbar
-          actions={[actions.setBold, actions.setItalic]}
-          memoActionSelected={itemsSelected}
+          actions={['text-size']}
+          memoActionsSelected={itemsSelected}
           disabledIconTint="#bfbfbf"
           editor={richText}
-          iconMap={{
-            insertEmoji: phizIcon,
-            [actions.foreColor]: () => <Text style={[styles.tib, { color: 'blue' }]}>FC</Text>,
-            [actions.hiliteColor]: ({ tintColor }: IconRecord) => (
-              <Text style={[styles.tib, { color: tintColor, backgroundColor: 'red' }]}>BC</Text>
-            ),
-            [actions.heading1]: ({ tintColor }: IconRecord) => <Text style={[styles.tib, { color: tintColor }]}>H1</Text>,
-            [actions.heading4]: ({ tintColor }: IconRecord) => <Text style={[styles.tib, { color: tintColor }]}>H4</Text>,
-            //insertHTML: htmlIcon,
-          }}
           selectedIconTint="#2095F2"
           style={styles.richBar}
           foreColor={handleForeColor}
@@ -241,7 +233,7 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
           insertEmoji={handleEmoji}
           onInsertLink={onInsertLink}
           onPressAddImage={onPressAddImage}
-          onSelectItem={onSelectItemToolbar}
+          onSelectAction={onSelectAction}
           heightPageToolbar={pageHeight}
           disabled={props.route.params.mode !== RichTextEditorMode.ENABLED}
         />

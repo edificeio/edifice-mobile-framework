@@ -2,15 +2,17 @@ import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText } from '~/framework/components/text';
+
+import styles from './styles';
 import { RichToolbarNavigationButtonProps } from './types';
 
-import { UI_SIZES } from '~/framework/components/constants';
-import styles from './styles';
-
 export const RichToolbarNavigationButton = (props: RichToolbarNavigationButtonProps) => {
-  const handlePress = () => {};
+  const handlePress = () => {
+    props.action();
+  };
 
   return (
     <TouchableOpacity style={styles.button} onPress={handlePress}>

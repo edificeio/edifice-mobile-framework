@@ -6,6 +6,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 const styles = StyleSheet.create({
   page: {
     flex: 1,
+    width: UI_SIZES.screen.width,
   },
   header: {
     borderWidth: 1,

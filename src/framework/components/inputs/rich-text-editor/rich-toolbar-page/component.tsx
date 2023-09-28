@@ -16,7 +16,14 @@ export const RichToolbarPage = (props: RichToolbarPageProps) => {
           style={styles.headerTitle}
           text={props.title}
           contentColor={theme.palette.grey.black}
-          {...(props.index > 0 ? { iconLeft: 'ui-arrowLeft', action: () => {} } : { activeOpacity: 1 })}
+          {...(props.index > 0
+            ? {
+                iconLeft: 'ui-arrowLeft',
+                action: () => {
+                  props.handleBack();
+                },
+              }
+            : { activeOpacity: 1 })}
         />
       </View>
       <ScrollView style={styles.content}>{props.content}</ScrollView>
