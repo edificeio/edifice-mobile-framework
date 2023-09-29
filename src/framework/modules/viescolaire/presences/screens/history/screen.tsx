@@ -1,8 +1,8 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, ScrollView, View } from 'react-native';
-import { NavigationState, SceneMap, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
+import { RefreshControl, ScrollView } from 'react-native';
+import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -11,11 +11,10 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
@@ -29,25 +28,9 @@ import {
   fetchPresencesTermsAction,
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import {
-  AbsenceCard,
-  DepartureCard,
-  ForgottenNotebookCard,
-  IncidentCard,
-  LatenessCard,
-  PunishmentCard,
-  StatementAbsenceCard,
-} from '~/framework/modules/viescolaire/presences/components/history-event-card/variants';
-import StatisticsCard from '~/framework/modules/viescolaire/presences/components/statistics-card';
-import {
-  Absence,
-  CommonEvent,
-  Event,
-  EventType,
-  ForgottenNotebook,
-  Incident,
-  Punishment,
-} from '~/framework/modules/viescolaire/presences/model';
+import History from '~/framework/modules/viescolaire/presences/components/history';
+import Statistics from '~/framework/modules/viescolaire/presences/components/statistics';
+import { Event } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
@@ -55,6 +38,7 @@ import { getRecentEvents } from '~/framework/modules/viescolaire/presences/utils
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { addTime, subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
@@ -71,15 +55,16 @@ export const computeNavBar = ({
 });
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
-  const contentLoaderRef = React.useRef<ContentLoaderHandle>(null);
   const [isInitialized, setInitialized] = React.useState(true);
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'statistics', title: I18n.get('presences-history-tab-statistics'), icon: 'ui-trending-up' },
     { key: 'history', title: I18n.get('presences-history-tab-history'), icon: 'ui-upcoming' },
   ]);
-  const [isDropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
-  const [selectedTerm, setSelectedTerm] = React.useState<string>('year');
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
   const fetchEvents = async () => {
     try {
@@ -88,11 +73,6 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       const studentId = userType === UserType.Student ? userId : selectedChildId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
-      let groupId = classes?.[0];
-      if (userType === UserType.Relative) {
-        const children = await props.tryFetchUserChildren(userId);
-        groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
-      }
       const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
       await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
       await props.tryFetchAbsenceStatements(
@@ -101,23 +81,57 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         subtractTime(moment(), 1, 'month'),
         addTime(moment(), 1, 'month'),
       );
-      const terms = await props.tryFetchTerms(structureId, groupId ?? '');
-      const currentTerm = terms.find(term => moment().isBetween(term.startDate, term.endDate));
-      if (currentTerm && selectedTerm === 'year') setSelectedTerm(currentTerm.order.toString());
+      let groupId = classes?.[0];
+      if (userType === UserType.Relative) {
+        const children = await props.tryFetchUserChildren(userId);
+        groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
+      }
+      await props.tryFetchTerms(structureId, groupId ?? '');
     } catch {
       throw new Error();
     }
   };
 
+  const init = () => {
+    setLoadingState(AsyncPagedLoadingState.INIT);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      contentLoaderRef.current?.refreshSilent();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation, props.selectedChildId]);
 
   React.useEffect(() => {
-    if (props.selectedChildId) contentLoaderRef.current?.refresh();
+    if (props.selectedChildId && loadingState === AsyncPagedLoadingState.DONE) refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedChildId]);
 
   const openEventList = (events: Event[], key: string) => {
@@ -127,144 +141,42 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     });
   };
 
-  const renderHistoryEventListItem = ({ item }: { item: Event }) => {
-    switch (item.type) {
-      case EventType.NO_REASON:
-      case EventType.REGULARIZED:
-      case EventType.UNREGULARIZED:
-        return <AbsenceCard event={item as CommonEvent} />;
-      case EventType.DEPARTURE:
-        return <DepartureCard event={item as CommonEvent} />;
-      case EventType.FORGOTTEN_NOTEBOOK:
-        return <ForgottenNotebookCard event={item as ForgottenNotebook} />;
-      case EventType.INCIDENT:
-        return <IncidentCard event={item as Incident} />;
-      case EventType.LATENESS:
-        return <LatenessCard event={item as CommonEvent} />;
-      case EventType.PUNISHMENT:
-        return <PunishmentCard event={item as Punishment} />;
-      case EventType.STATEMENT_ABSENCE:
-        return <StatementAbsenceCard event={item as Absence} userType={props.userType} />;
-    }
-  };
-
-  const renderHistory = () => {
-    const { userType } = props;
-
+  const renderError = () => {
     return (
-      <FlatList
-        data={props.events}
-        keyExtractor={item => `${item.id}-${item.type}`}
-        renderItem={renderHistoryEventListItem}
-        ListHeaderComponent={
-          props.events.length ? (
-            <SmallText style={styles.historyHeadingText}>
-              {I18n.get(
-                userType === UserType.Relative ? 'presences-history-description-relative' : 'presences-history-description-student',
-              )}
-            </SmallText>
-          ) : null
-        }
-        ListEmptyComponent={
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
+        {isInitialized ? (
+          <EmptyContentScreen />
+        ) : (
           <EmptyScreen
-            svgImage="empty-zimbra"
-            title={I18n.get('presences-history-emptyscreen-default-title')}
-            text={I18n.get(
-              userType === UserType.Relative
-                ? 'presences-history-emptyscreen-default-text-relative'
-                : 'presences-history-emptyscreen-default-text-student',
-            )}
-            customStyle={styles.emptyScreenContainer}
-            customTitleStyle={styles.emptyScreenTitle}
+            svgImage="empty-light"
+            title={I18n.get('presences-history-emptyscreen-initialization-title')}
+            text={I18n.get('presences-history-emptyscreen-initialization-text')}
+            customStyle={styles.pageContainer}
           />
-        }
-        alwaysBounceVertical={false}
-        contentContainerStyle={styles.eventListContentContainer}
-      />
-    );
-  };
-
-  const getCountMethodText = (recoveryMethod: 'DAY' | 'HALF_DAY' | 'HOUR' | null): string => {
-    switch (recoveryMethod) {
-      case 'DAY':
-        return I18n.get('presences-statistics-count-day');
-      case 'HALF_DAY':
-        return I18n.get('presences-statistics-count-halfday');
-      case 'HOUR':
-      default:
-        return I18n.get('presences-statistics-count-hour');
-    }
-  };
-
-  const filterEvents = (stats: { events: Event[] }) => {
-    const term = selectedTerm !== 'year' ? props.terms.find(t => t.order.toString() === selectedTerm) : undefined;
-
-    return {
-      events: term
-        ? stats.events.filter(e => {
-            const date = 'startDate' in e ? e.startDate : e.date;
-            return date.isSameOrAfter(term.startDate) && date.isSameOrBefore(term.endDate);
-          })
-        : stats.events,
-      recoveryMethod: props.statistics.recoveryMethod,
-    };
-  };
-
-  const renderStatistics = () => {
-    const { session, statistics, terms } = props;
-    const dropdownTerms = [
-      { label: I18n.get('presences-statistics-year'), value: 'year' },
-      ...terms.map(term => ({
-        label: `${I18n.get('presences-statistics-trimester')} ${term.order}`,
-        value: term.order.toString(),
-      })),
-    ];
-
-    return (
-      <ScrollView contentContainerStyle={styles.statisticsContentContainer}>
-        {dropdownTerms.length > 1 ? (
-          <View style={styles.dropdownContainer}>
-            <DropdownPicker
-              open={isDropdownOpen}
-              value={selectedTerm}
-              items={dropdownTerms}
-              setOpen={setDropdownOpen}
-              setValue={setSelectedTerm}
-            />
-          </View>
-        ) : null}
-        <SmallText style={styles.countMethodText}>{getCountMethodText(statistics.recoveryMethod)}</SmallText>
-        <StatisticsCard type={EventType.NO_REASON} {...filterEvents(statistics.NO_REASON)} navigateToEventList={openEventList} />
-        <StatisticsCard
-          type={EventType.UNREGULARIZED}
-          {...filterEvents(statistics.UNREGULARIZED)}
-          navigateToEventList={openEventList}
-        />
-        <StatisticsCard
-          type={EventType.REGULARIZED}
-          {...filterEvents(statistics.REGULARIZED)}
-          navigateToEventList={openEventList}
-        />
-        <SmallText style={styles.countMethodText}>{I18n.get('presences-statistics-count-occurence')}</SmallText>
-        <StatisticsCard type={EventType.LATENESS} {...filterEvents(statistics.LATENESS)} navigateToEventList={openEventList} />
-        <StatisticsCard type={EventType.DEPARTURE} {...filterEvents(statistics.DEPARTURE)} navigateToEventList={openEventList} />
-        {session && getPresencesWorkflowInformation(session).presences2d ? (
-          <>
-            <StatisticsCard
-              type={EventType.FORGOTTEN_NOTEBOOK}
-              {...filterEvents(statistics.FORGOTTEN_NOTEBOOK!)}
-              navigateToEventList={openEventList}
-            />
-            <StatisticsCard type={EventType.INCIDENT} {...filterEvents(statistics.INCIDENT!)} navigateToEventList={openEventList} />
-            <StatisticsCard
-              type={EventType.PUNISHMENT}
-              {...filterEvents(statistics.PUNISHMENT!)}
-              navigateToEventList={openEventList}
-            />
-          </>
-        ) : null}
+        )}
       </ScrollView>
     );
+  };
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'statistics':
+        return (
+          <Statistics
+            isRefreshing={loadingState === AsyncPagedLoadingState.REFRESH}
+            statistics={props.statistics}
+            terms={props.terms}
+            session={props.session}
+            openEventList={openEventList}
+          />
+        );
+      case 'history':
+        return (
+          <History isRefreshing={loadingState === AsyncPagedLoadingState.REFRESH} events={props.events} userType={props.userType} />
+        );
+      default:
+        return null;
+    }
   };
 
   const renderTabBar = (
@@ -298,7 +210,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
   const renderTabView = () => {
     const { selectedChildId, session, userType } = props;
-    const isChildPickerShown = userType === UserType.Relative;
+    const isChildPickerShown = userType === UserType.Relative && props.children!.length > 1;
 
     return (
       <>
@@ -314,39 +226,30 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         <TabView
           navigationState={{ index, routes }}
           onIndexChange={setIndex}
-          renderScene={SceneMap({
-            statistics: renderStatistics,
-            history: renderHistory,
-          })}
+          renderScene={renderScene}
           renderTabBar={renderTabBar}
         />
       </>
     );
   };
 
-  return (
-    <PageView style={styles.pageContainer}>
-      <ContentLoader
-        ref={contentLoaderRef}
-        loadContent={fetchEvents}
-        renderContent={renderTabView}
-        renderError={refreshControl => (
-          <ScrollView refreshControl={refreshControl}>
-            {isInitialized ? (
-              <EmptyContentScreen />
-            ) : (
-              <EmptyScreen
-                svgImage="empty-light"
-                title={I18n.get('presences-history-emptyscreen-initialization-title')}
-                text={I18n.get('presences-history-emptyscreen-initialization-text')}
-                customStyle={styles.pageContainer}
-              />
-            )}
-          </ScrollView>
-        )}
-      />
-    </PageView>
-  );
+  const renderPage = () => {
+    switch (loadingState) {
+      case AsyncPagedLoadingState.DONE:
+      case AsyncPagedLoadingState.REFRESH:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
+      case AsyncPagedLoadingState.REFRESH_SILENT:
+        return renderTabView();
+      case AsyncPagedLoadingState.PRISTINE:
+      case AsyncPagedLoadingState.INIT:
+        return <LoadingIndicator />;
+      case AsyncPagedLoadingState.INIT_FAILED:
+      case AsyncPagedLoadingState.RETRY:
+        return renderError();
+    }
+  };
+
+  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
 };
 
 export default connect(
@@ -364,6 +267,7 @@ export default connect(
           : undefined,
       classes: session?.user.classes,
       events: getRecentEvents(presencesState.statistics.data, presencesState.absenceStatements.data),
+      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
       selectedChildId: userType === UserType.Relative ? dashboardState.selectedChildId : undefined,
       session,

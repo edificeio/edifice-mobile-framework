@@ -13,39 +13,8 @@ export default StyleSheet.create({
   childListContentContainer: {
     padding: UI_SIZES.spacing.medium,
   },
-  countMethodText: {
-    marginTop: UI_SIZES.spacing.small,
-    color: theme.ui.text.light,
-  },
-  detailsActionContainer: {
-    alignSelf: 'flex-end',
-  },
-  dropdownContainer: {
-    zIndex: 10,
-  },
-  emptyScreenContainer: {
-    paddingTop: 0,
-    backgroundColor: theme.palette.grey.white,
-  },
-  emptyScreenTitle: {
-    marginTop: UI_SIZES.spacing.small,
-  },
-  eventListContentContainer: {
-    rowGap: UI_SIZES.spacing.minor,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.big,
-  },
-  historyHeadingText: {
-    marginBottom: UI_SIZES.spacing.minor,
-    color: theme.ui.text.light,
-  },
   pageContainer: {
     backgroundColor: theme.palette.grey.white,
-  },
-  statisticsContentContainer: {
-    rowGap: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.big,
   },
   tabBarContainer: {
     backgroundColor: theme.palette.grey.white,

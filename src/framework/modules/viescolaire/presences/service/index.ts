@@ -18,7 +18,7 @@ import {
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, fetchWithCache, signedFetch } from '~/infra/fetchWithCache';
 
 type BackendCall = {
   personnel_id: string;
@@ -565,7 +565,7 @@ export const presencesService = {
       formData.append('start_at', startDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('end_at', endDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('description', description);
-      await fetchJSONWithCache(api, {
+      await signedFetch(`${session.platform.url}${api}`, {
         method: 'POST',
         body: formData,
       });
