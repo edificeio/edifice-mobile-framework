@@ -2,17 +2,20 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
+import { NavigationState, SceneMap, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
+import { NamedSVG } from '~/framework/components/picture';
+import { CaptionBoldText, CaptionText, SmallBoldItalicText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
@@ -50,8 +53,26 @@ export const computeNavBar = ({
   }),
 });
 
+const dayColors = {
+  monday: theme.palette.complementary.green.pale,
+  tuesday: theme.palette.complementary.purple.pale,
+  wenesday: theme.palette.complementary.blue.pale,
+  thursday: theme.palette.complementary.red.pale,
+  friday: theme.palette.complementary.orange.pale,
+  saturday: theme.palette.complementary.yellow.pale,
+};
+
 const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
-  const [date, setDate] = React.useState<Moment>(moment());
+  const [index, setIndex] = React.useState(0);
+  const [weekdays, setWeekdays] = React.useState<Moment[]>([]);
+  const [routes] = React.useState([
+    { key: 'monday', title: 'L' },
+    { key: 'tuesday', title: 'M' },
+    { key: 'wenesday', title: 'M' },
+    { key: 'thursday', title: 'J' },
+    { key: 'friday', title: 'V' },
+    { key: 'saturday', title: 'S' },
+  ]);
   const [startDate, setStartDate] = React.useState<Moment>(moment().startOf('week'));
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
@@ -131,7 +152,6 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
   const updateSelectedDate = (newDate: Moment) => {
     const newStartDate = newDate.clone().startOf('week');
-    setDate(newDate);
     if (!newStartDate.isSame(startDate, 'day')) setStartDate(newStartDate);
   };
 
@@ -158,14 +178,17 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     return (
       <View style={[styles.courseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
         <View style={styles.subjectView}>
-          <HeadingXSText numberOfLines={1}>{firstText}</HeadingXSText>
-          <SmallText numberOfLines={1}>{secondText}</SmallText>
+          <SmallText numberOfLines={1}>{firstText}</SmallText>
+          <CaptionText style={{ color: theme.palette.grey.graphite }} numberOfLines={1}>
+            {secondText}
+          </CaptionText>
         </View>
         <View>
           {course.roomLabels[0]?.length ? (
             <View style={styles.roomView}>
-              <Icon name="pin_drop" size={16} />
-              <SmallText numberOfLines={1}>&nbsp;{`${I18n.get('edt-home-course-room')} ${course.roomLabels[0]}`}</SmallText>
+              <CaptionBoldText numberOfLines={1}>
+                &nbsp;{`${I18n.get('edt-home-course-room')} ${course.roomLabels[0]}`}
+              </CaptionBoldText>
             </View>
           ) : null}
           {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
@@ -185,23 +208,73 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     return (
       <View style={[styles.halfCourseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
         <View style={styles.halfSplitLineView}>
-          <HeadingXSText style={styles.halfTextStyle} numberOfLines={1}>
+          <SmallText style={styles.halfTextStyle} numberOfLines={1}>
             {firstText}
-          </HeadingXSText>
+          </SmallText>
           {course.roomLabels[0]?.length ? (
             <View style={styles.halfRoomLabelContainer}>
-              <Icon name="pin_drop" size={16} />
-              <SmallText numberOfLines={1}>{course.roomLabels[0]}</SmallText>
+              <CaptionBoldText numberOfLines={1}>{course.roomLabels[0]}</CaptionBoldText>
             </View>
           ) : null}
         </View>
         <View style={styles.halfSplitLineView}>
-          <SmallText style={styles.halfTextStyle} numberOfLines={1}>
+          <CaptionText style={[styles.halfTextStyle, { color: theme.palette.grey.graphite }]} numberOfLines={1}>
             {secondText}
-          </SmallText>
+          </CaptionText>
           {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
         </View>
       </View>
+    );
+  };
+
+  const getWeekdays = (displaySunday?: boolean): Moment[] => {
+    const weekdaysData: Moment[] = [];
+    const numberOfDays = displaySunday ? 7 : 6;
+
+    for (let i = 0; i < numberOfDays; i += 1) {
+      weekdaysData.push(startDate.clone().add(i, 'day'));
+    }
+    return weekdaysData;
+  };
+
+  React.useEffect(() => {
+    setWeekdays(getWeekdays());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate]);
+
+  const renderTabbar = (
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+  ) => {
+    return (
+      <TabBar
+        renderLabel={({ route, focused }) =>
+          focused ? (
+            <View style={[styles.tabBarItem, { backgroundColor: dayColors[route.key] }]}>
+              <CaptionBoldText>{route.title}</CaptionBoldText>
+            </View>
+          ) : (
+            <View style={styles.tabBarItem}>
+              <CaptionBoldText>{route.title}</CaptionBoldText>
+            </View>
+          )
+        }
+        indicatorStyle={styles.tabBarIndicator}
+        style={styles.tabBar}
+        pressColor={theme.palette.grey.pearl.toString()}
+        {...tabBarProps}
+      />
+    );
+  };
+
+  const renderScrollView = (date: Moment) => {
+    return (
+      <Timetable
+        courses={props.courses}
+        slots={props.slots}
+        date={date}
+        renderCourse={renderCourse}
+        renderCourseHalf={renderHalfCourse}
+      />
     );
   };
 
@@ -209,22 +282,28 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     return (
       <>
         <View style={styles.weekPickerView}>
-          <SmallText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallText>
+          <NamedSVG
+            name="ui-calendar"
+            width={UI_SIZES.elements.icon.small}
+            height={UI_SIZES.elements.icon.small}
+            fill={theme.palette.grey.black}
+          />
+          <SmallBoldText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallBoldText>
           <DateTimePicker mode="date" value={startDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.edt} />
         </View>
-        {loadingState === AsyncPagedLoadingState.REFRESH ? (
-          <LoadingIndicator />
-        ) : (
-          <Timetable
-            courses={props.courses}
-            mainColor={viescoTheme.palette.edt}
-            slots={props.slots}
-            startDate={startDate}
-            initialSelectedDate={date}
-            renderCourse={renderCourse}
-            renderCourseHalf={renderHalfCourse}
-          />
-        )}
+        <TabView
+          navigationState={{ index, routes }}
+          onIndexChange={setIndex}
+          renderScene={SceneMap({
+            monday: () => renderScrollView(weekdays[0]),
+            tuesday: () => renderScrollView(weekdays[1]),
+            wenesday: () => renderScrollView(weekdays[2]),
+            thursday: () => renderScrollView(weekdays[3]),
+            friday: () => renderScrollView(weekdays[4]),
+            saturday: () => renderScrollView(weekdays[5]),
+          })}
+          renderTabBar={renderTabbar}
+        />
       </>
     );
   };
@@ -247,8 +326,10 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
   return (
     <PageView>
-      {props.userType === UserType.Teacher ? <StructurePicker /> : null}
-      {props.userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
+      <View style={styles.header}>
+        {props.userType === UserType.Teacher ? <StructurePicker /> : null}
+        {props.userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
+      </View>
       {renderPage()}
     </PageView>
   );

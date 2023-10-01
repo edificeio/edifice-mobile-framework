@@ -5,18 +5,36 @@ import { UI_SIZES } from '~/framework/components/constants';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 
 export default StyleSheet.create({
+  header: {
+    backgroundColor: theme.palette.grey.white,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.grey,
+  },
   childPickerContentContainer: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.medium,
   },
   weekPickerView: {
+    backgroundColor: theme.palette.grey.white,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.medium,
   },
   weekText: {
+    marginLeft: UI_SIZES.spacing.tiny,
     marginRight: UI_SIZES.spacing.minor,
+  },
+  tabBar: {
+    backgroundColor: theme.palette.grey.white,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.grey,
+  },
+  tabBarIndicator: {
+    backgroundColor: theme.palette.grey.white,
+  },
+  tabBarItem: {
+    padding: UI_SIZES.spacing.small,
+    borderRadius: UI_SIZES.radius.small,
+    backgroundColor: theme.palette.grey.white,
   },
   courseView: {
     flexDirection: 'row',
