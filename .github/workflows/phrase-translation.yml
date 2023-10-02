@@ -22,6 +22,7 @@ jobs:
           token: ${{ secrets.PHRASE_TRANSLATIONS }}
           force: true
       - name: Send Slack notification on failure
+        if: failure()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
