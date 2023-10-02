@@ -33,10 +33,25 @@ jobs:
         with:
           node-version: 16
 
-      - name: Auto-merge if source branch is release/phrase-translations
-        uses: pascalgn/automerge-action@v0.15.6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check if source branch is phrase-translations
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "This action is only applicable to pull requests."
+            exit 1
+          fi
+
+          if [ "${{ github.event.pull_request.head.ref }}" != "phrase-translations" ]; then
+            echo "Source branch is not phrase-translations. Skipping auto-merge."
+            exit 0
+          fi
+
+      - name: Auto-Merge PR
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git fetch origin pull/${{ github.event.pull_request.number }}/merge
+          git merge FETCH_HEAD --no-edit -m "Auto-merge pull request #${{ github.event.pull_request.number }}"
+          git push origin HEAD:refs/heads/${{ github.event.pull_request.base.ref }}
 
       - name: Send Slack notification on failure
         uses: 8398a7/action-slack@v3
