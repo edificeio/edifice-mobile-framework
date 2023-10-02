@@ -55,3 +55,4 @@ jobs:
           MERGE_METHOD: 'squash'
           MERGE_REQUIRED_APPROVALS: '0'
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
+          LOG: 'TRACE'
