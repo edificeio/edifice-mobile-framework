@@ -34,7 +34,6 @@ jobs:
           node-version: 16
 
       - name: Auto-merge if source branch is release/phrase-translations
-        if: (github.head_ref == 'phrase-translations')
         uses: pascalgn/automerge-action@v0.15.6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
