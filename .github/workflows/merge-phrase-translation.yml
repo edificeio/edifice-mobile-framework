@@ -3,8 +3,21 @@ name: Auto-Merge phrase-translations
 on:
   pull_request:
     types:
-      - opened
+      - labeled
+      - unlabeled
       - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
+  pull_request_review:
+    types:
+      - submitted
+  check_suite:
+    types:
+      - completed
+  status: {}
 
 jobs:
   auto-merge:
@@ -21,10 +34,8 @@ jobs:
           node-version: 16
 
       - name: Auto-merge if source branch is release/phrase-translations
-        if: ${{ github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
-        uses: pascalgn/automerge-action@v0.14.0
-        with:
-          ref: release/phrase-translations
+        if: (github.head_ref == 'phrase-translations')
+        uses: pascalgn/automerge-action@v0.15.6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -41,4 +52,5 @@ jobs:
               }]
             }
         env:
+          MERGE_METHOD: 'squash'
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
