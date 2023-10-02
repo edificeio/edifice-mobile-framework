@@ -45,6 +45,9 @@ jobs:
             exit 0
           fi
 
+      - name: Pull latest changes from the remote repository
+        run: git pull origin phrase-translations
+
       - name: Auto-Merge PR
         run: |
           git config --global user.email "github-actions@github.com"
