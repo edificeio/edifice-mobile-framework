@@ -3,9 +3,9 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import DefaultButton from '~/framework/components/buttons/default';
+import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
-import { UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import Label from '~/framework/components/inputs/container/label';
 import { SmallText } from '~/framework/components/text';
@@ -62,13 +62,19 @@ export default function AbsenceDatesSelector(props: AbsenceDatesSelectorProps) {
           {isSingleDay ? (
             <TertiaryButton text={I18n.get('presences-declareabsence-dates-addend')} iconLeft="ui-plus" action={changeMode} />
           ) : (
-            <View style={styles.endDateContainer}>
-              <View style={UI_STYLES.flexShrink1}>
+            <>
+              <View style={styles.endDateLabel}>
                 <SmallText>{I18n.get('presences-declareabsence-dates-to')}</SmallText>
-                <DateTimePicker mode="date" value={endDate} onChangeValue={setEndDate} minimumDate={startDate} />
+                <IconButton
+                  icon="ui-close"
+                  style={styles.removeEndDateAction}
+                  size={UI_SIZES.elements.icon.xsmall}
+                  action={changeMode}
+                />
               </View>
-              <DefaultButton round iconLeft="ui-close" style={styles.removeEndDateAction} action={changeMode} />
-            </View>
+
+              <DateTimePicker mode="date" value={endDate} onChangeValue={setEndDate} minimumDate={startDate} />
+            </>
           )}
         </View>
       </View>

@@ -90,6 +90,7 @@ export const UI_SIZES = {
       large: 4,
     },
     icon: {
+      xsmall: getScaleWidth(16),
       small: getScaleWidth(20),
       default: getScaleWidth(24),
     },
