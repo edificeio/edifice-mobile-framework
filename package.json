@@ -128,6 +128,7 @@
     "react-native-localize": "3.0.2",
     "react-native-matomo": "file:third-party/react-native-matomo",
     "react-native-media-console": "2.0.6",
+    "react-native-mmkv": "2.10.2",
     "react-native-modal": "13.0.1",
     "react-native-orientation-locker": "1.5.0",
     "react-native-pager-view": "6.2.1",
