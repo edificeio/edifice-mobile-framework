@@ -34,7 +34,9 @@ export default StyleSheet.create({
   tabBarItem: {
     padding: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.radius.small,
-    backgroundColor: theme.palette.grey.white,
+  },
+  tabBarItemText: {
+    textAlign: 'center',
   },
   courseView: {
     flexDirection: 'row',

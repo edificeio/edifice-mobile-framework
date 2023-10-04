@@ -53,25 +53,18 @@ export const computeNavBar = ({
   }),
 });
 
-const dayColors = {
-  monday: theme.palette.complementary.green.pale,
-  tuesday: theme.palette.complementary.purple.pale,
-  wenesday: theme.palette.complementary.blue.pale,
-  thursday: theme.palette.complementary.red.pale,
-  friday: theme.palette.complementary.orange.pale,
-  saturday: theme.palette.complementary.yellow.pale,
-};
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   const [index, setIndex] = React.useState(0);
   const [weekdays, setWeekdays] = React.useState<Moment[]>([]);
-  const [routes] = React.useState([
-    { key: 'monday', title: 'L' },
-    { key: 'tuesday', title: 'M' },
-    { key: 'wenesday', title: 'M' },
-    { key: 'thursday', title: 'J' },
-    { key: 'friday', title: 'V' },
-    { key: 'saturday', title: 'S' },
+  const [routes, setRoutes] = React.useState([
+    { key: 'monday', title: I18n.get('date-monday') },
+    { key: 'tuesday', title: I18n.get('date-tuesday') },
+    { key: 'wednesday', title: I18n.get('date-wednesday') },
+    { key: 'thursday', title: I18n.get('date-thursday') },
+    { key: 'friday', title: I18n.get('date-friday') },
+    { key: 'saturday', title: I18n.get('date-saturday') },
   ]);
   const [startDate, setStartDate] = React.useState<Moment>(moment().startOf('week'));
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
@@ -230,10 +223,17 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   const getWeekdays = (displaySunday?: boolean): Moment[] => {
     const weekdaysData: Moment[] = [];
     const numberOfDays = displaySunday ? 7 : 6;
+    const routesData: any[] = [];
 
     for (let i = 0; i < numberOfDays; i += 1) {
       weekdaysData.push(startDate.clone().add(i, 'day'));
+      routesData.push({
+        key: days[i],
+        title: `${I18n.get('date-' + days[i])}\n${moment(startDate.clone().add(i, 'day')).format('DD')}`,
+        ...(moment(startDate.clone().add(i, 'day')).isSame(new Date(), 'day') ? { icon: 'today' } : null),
+      });
     }
+    setRoutes(routesData);
     return weekdaysData;
   };
 
@@ -247,17 +247,21 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   ) => {
     return (
       <TabBar
-        renderLabel={({ route, focused }) =>
-          focused ? (
-            <View style={[styles.tabBarItem, { backgroundColor: dayColors[route.key] }]}>
-              <CaptionBoldText>{route.title}</CaptionBoldText>
-            </View>
-          ) : (
-            <View style={styles.tabBarItem}>
-              <CaptionBoldText>{route.title}</CaptionBoldText>
-            </View>
-          )
-        }
+        renderLabel={({ route, focused }) => (
+          <View
+            style={[
+              styles.tabBarItem,
+              {
+                backgroundColor: focused
+                  ? theme.color.homework.days[route.key]?.background
+                  : route.icon
+                  ? theme.palette.grey.fog
+                  : theme.palette.grey.white,
+              },
+            ]}>
+            <CaptionBoldText style={styles.tabBarItemText}>{route.title}</CaptionBoldText>
+          </View>
+        )}
         indicatorStyle={styles.tabBarIndicator}
         style={styles.tabBar}
         pressColor={theme.palette.grey.pearl.toString()}
@@ -297,7 +301,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
           renderScene={SceneMap({
             monday: () => renderScrollView(weekdays[0]),
             tuesday: () => renderScrollView(weekdays[1]),
-            wenesday: () => renderScrollView(weekdays[2]),
+            wednesday: () => renderScrollView(weekdays[2]),
             thursday: () => renderScrollView(weekdays[3]),
             friday: () => renderScrollView(weekdays[4]),
             saturday: () => renderScrollView(weekdays[5]),
