@@ -34,7 +34,7 @@ export const computeNavBar = ({
 });
 
 const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) => {
-  const renderEvent = (color: ColorValue, startDate: Moment, endDate: Moment) => {
+  const renderEvent = (color: ColorValue, startDate: Moment, endDate: Moment, isLatenessOrDeparture?: boolean) => {
     const isSingleDay = startDate.isSame(endDate, 'day');
     const format = moment().isSame(startDate, 'year') ? 'D MMMM' : 'D MMM YYYY';
     const time = isSingleDay
@@ -42,6 +42,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
         ? I18n.get(startDate.get('hour') < 12 ? 'presences-statistics-card-morning' : 'presences-statistics-card-afternoon')
         : startDate.format('H[h]mm') + ' - ' + endDate.format('H[h]mm')
       : null;
+    const duration = endDate.diff(startDate, 'minutes');
 
     return (
       <View style={styles.eventContainer}>
@@ -52,7 +53,11 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
               ? startDate.format(format)
               : I18n.get('presences-statistics-card-dates', { start: startDate.format('D'), end: endDate.format(format) })}
           </NestedBoldText>
-          {time ? ` (${time})` : null}
+          {isLatenessOrDeparture
+            ? ` (${I18n.get('presences-history-eventcard-lateness-duration', { duration })})`
+            : time
+            ? ` (${time})`
+            : null}
         </SmallText>
       </View>
     );
@@ -79,6 +84,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
           theme.palette.complementary.pink.regular,
           (item as CommonEvent).startDate,
           (item as CommonEvent).endDate,
+          true,
         );
       case EventType.FORGOTTEN_NOTEBOOK:
         return renderSimpleEvent(theme.palette.complementary.indigo.regular, (item as ForgottenNotebook).date);
@@ -89,6 +95,7 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
           theme.palette.complementary.purple.regular,
           (item as CommonEvent).startDate,
           (item as CommonEvent).endDate,
+          true,
         );
       case EventType.NO_REASON:
         return renderEvent(theme.palette.complementary.red.regular, (item as CommonEvent).startDate, (item as CommonEvent).endDate);
