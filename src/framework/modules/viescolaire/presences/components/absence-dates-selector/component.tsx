@@ -49,13 +49,7 @@ export default function AbsenceDatesSelector(props: AbsenceDatesSelectorProps) {
           <SmallText>
             {I18n.get(isSingleDay ? 'presences-declareabsence-dates-on' : 'presences-declareabsence-dates-from')}
           </SmallText>
-          <DateTimePicker
-            mode="date"
-            value={startDate}
-            onChangeValue={setStartDate}
-            minimumDate={moment().startOf('day')}
-            maximumDate={isSingleDay ? undefined : endDate}
-          />
+          <DateTimePicker mode="date" value={startDate} onChangeValue={setStartDate} minimumDate={moment().startOf('day')} />
         </View>
         <View style={styles.separatorContainer} />
         <View style={styles.dateContainer}>
