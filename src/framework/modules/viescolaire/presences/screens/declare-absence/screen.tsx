@@ -29,6 +29,7 @@ import { presencesService } from '~/framework/modules/viescolaire/presences/serv
 import { Attachment } from '~/framework/modules/zimbra/components/Attachment';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
+import { Trackers } from '~/framework/util/tracker';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
 import styles from './styles';
@@ -70,6 +71,7 @@ const PresencesDeclareAbsenceScreen = (props: PresencesDeclareAbsenceScreenPriva
         await presencesService.absence.create(session, structureId, childId, startDate, endDate, reason);
       }
       navigation.goBack();
+      Trackers.trackEvent('Présences', 'déclarer-absence', 'déclarer');
       Toast.showSuccess(I18n.get('presences-declareabsence-successmessage'));
     } catch {
       setCreating(false);
