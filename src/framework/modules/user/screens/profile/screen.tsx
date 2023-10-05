@@ -384,6 +384,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderAbout = () => {
+    const visibility = route.params.newDescriptionVisibility ?? userInfo?.visibleInfos.includes('SHOW_HEALTH');
     const description = route.params.newDescription ?? userInfo!.health;
     if (!isMyProfile && isEmpty(userInfo?.health)) return;
     return (
@@ -397,6 +398,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 navigation.navigate(userRouteNames.editDescription, {
                   userId: userInfo!.id,
                   description,
+                  visibility,
                 })
               }
             />

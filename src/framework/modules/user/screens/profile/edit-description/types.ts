@@ -9,6 +9,7 @@ export interface UserEditDescriptionScreenEventProps {}
 export interface UserEditDescriptionScreenNavParams {
   userId: string;
   description: string;
+  visibility: boolean | undefined;
 }
 
 export type UserEditDescriptionScreenProps = UserEditDescriptionScreenDataProps &

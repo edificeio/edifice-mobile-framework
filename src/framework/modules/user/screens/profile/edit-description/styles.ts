@@ -8,4 +8,9 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
     padding: UI_SIZES.spacing.medium,
   },
+  buttonVisibility: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
 });
