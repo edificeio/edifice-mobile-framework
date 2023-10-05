@@ -1,50 +1,96 @@
-/**
- * Async Storage Helper
- */
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNConfigReader from 'react-native-config-reader';
+import { MMKV } from 'react-native-mmkv';
 
-export const getItemJson = async <T>(k: string) => {
-  try {
-    const ret = await AsyncStorage.getItem(k);
-    if (!ret) return undefined;
-    else return JSON.parse(ret) as T;
-  } catch (e) {
-    if (e instanceof Error) throw new Error(`[Storage] getItemJson: failed to load key "${k}": ${(e as Error).message}`);
-    else throw new Error(`[Storage] getItemJson: failed to load key "${k}"`);
-  }
-};
+import { getOverrideName } from './string';
+import { Trackers } from './tracker';
 
-export const setItemJson = async <T>(k: string, data: T) => {
-  try {
-    return await AsyncStorage.setItem(k, JSON.stringify(data));
-  } catch (e) {
-    if (e instanceof Error) throw new Error(`[Storage] setItemJson: failed to write key "${k}": ${(e as Error).message}`);
-    else throw new Error(`[Storage] setItemJson: failed to write key "${k}"`);
-  }
-};
+export namespace Storage {
+  export const storage = new MMKV({ id: getOverrideName(), encryptionKey: RNConfigReader.CFBundleIdentifier });
 
-export const removeItem = async (k: string) => {
-  try {
-    return await AsyncStorage.removeItem(k);
-  } catch (e) {
-    if (e instanceof Error) throw new Error(`[Storage] removeItemJson: failed to remove key "${k}": ${(e as Error).message}`);
-    else throw new Error(`[Storage] removeItemJson: failed to remove key "${k}"`);
-  }
-};
+  export const setItemJson = async <T>(key: string, data: T) => {
+    try {
+      storage.set(key, JSON.stringify(data));
+    } catch (error) {
+      throw new Error(
+        `[Storage] setItemJson: failed to write key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+    }
+  };
 
-/**
- * Rename and returns data at an old key and move it into a new key.
- * @param oldAsyncStorageKey old key to read. Data at this key will be removed.
- * @param newAsyncStorageKey new key to write.
- * @returns the data contained in oldKey, now written in newKey, or undefined if it was not present.
- */
-export async function migrateItemJson<ItemType>(
-  oldAsyncStorageKey: string,
-  newAsyncStorageKey: string,
-): Promise<ItemType | undefined> {
-  const settingsToMigrate: ItemType | undefined = await getItemJson(oldAsyncStorageKey);
-  if (settingsToMigrate) {
-    await removeItem(oldAsyncStorageKey);
-    return settingsToMigrate;
-  } else return undefined;
+  export const getItemJson = async <T>(key: string) => {
+    try {
+      const item = storage.getString(key);
+      const parsedItem = item && JSON.parse(item);
+      return parsedItem as T | undefined;
+    } catch (error) {
+      throw new Error(
+        `[Storage] getItemJson: failed to load key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+    }
+  };
+
+  export const removeItem = async (key: string) => {
+    try {
+      storage.delete(key);
+    } catch (error) {
+      throw new Error(
+        `[Storage] removeItemJson: failed to remove key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+    }
+  };
+
+  export const migrateItemJson = async <ItemType>(
+    oldAsyncStorageKey: string,
+    newAsyncStorageKey: string,
+  ): Promise<ItemType | undefined> => {
+    const settingsToMigrate: ItemType | undefined = await getItemJson(oldAsyncStorageKey);
+    if (settingsToMigrate) {
+      await removeItem(oldAsyncStorageKey);
+      return settingsToMigrate;
+    } else return undefined;
+  };
+
+  const migrateFromAsyncStorage = async (): Promise<void> => {
+    const keys = await AsyncStorage.getAllKeys();
+    for (const key of keys) {
+      try {
+        const value = await AsyncStorage.getItem(key);
+        if (value != null) {
+          if (['true', 'false'].includes(value)) {
+            storage.set(key, value === 'true');
+          } else {
+            storage.set(key, value);
+          }
+          AsyncStorage.removeItem(key);
+        }
+      } catch (error) {
+        Trackers.trackDebugEvent('Storage', 'MIGRATION ERROR', (error as Error | null)?.message || 'migrateFromAsyncStorage');
+        throw error;
+      }
+    }
+    storage.set('hasMigratedFromAsyncStorage', true);
+  };
+
+  export const init = async () => {
+    migrateFromAsyncStorage();
+  };
 }
+
+export const setItemJson = async <T>(key: string, data: T) => {
+  await Storage.setItemJson(key, data);
+};
+
+export const getItemJson = async <T>(key: string) => {
+  const parsedItem = await Storage.getItemJson(key);
+  return parsedItem as T | undefined;
+};
+
+export const removeItem = async (key: string) => {
+  await Storage.removeItem(key);
+};
+
+export const migrateItemJson = async <ItemType>(oldAsyncStorageKey: string, newAsyncStorageKey: string) => {
+  const settingsToMigrate = await Storage.migrateItemJson(oldAsyncStorageKey, newAsyncStorageKey);
+  return settingsToMigrate as ItemType | undefined;
+};

@@ -20,6 +20,7 @@ import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 
 import appConf from '~/framework/util/appConf';
+import { getOverrideName } from '~/framework/util/string';
 
 // Read Phrase ID && Secrets
 const phraseSecrets = require('ROOT/phrase.json');
@@ -30,7 +31,7 @@ export namespace I18n {
   //   - and removing all overriden keys
   const getOverridenTranslations = (translations: object) => {
     // Get Overriden keys for this override
-    const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
+    const overrideName = getOverrideName();
     const overridenKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
     // Get all overriden keys
     const overrides = ['leducdenormandie', 'lyceeconnecte', 'monlyceenet', 'neo', 'one', 'openent'];

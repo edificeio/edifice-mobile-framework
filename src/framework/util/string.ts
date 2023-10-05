@@ -1,3 +1,4 @@
+import RNConfigReader from 'react-native-config-reader';
 import unorm from 'unorm';
 
 /**
@@ -164,4 +165,13 @@ export function createUUID() {
     return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
   });
   return uuid;
+}
+
+/**
+ * Get name of current override.
+ * @returns The override name
+ */
+export function getOverrideName() {
+  const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
+  return overrideName;
 }
