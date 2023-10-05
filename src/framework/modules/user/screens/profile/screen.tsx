@@ -121,6 +121,12 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   const [family, setFamily] = React.useState<undefined | { relatedId: string | null; relatedName: string | null }[]>(undefined);
   const isMyProfile = React.useMemo(() => !(route.params.userId && route.params.userId !== session?.user.id), [route, session]);
 
+  const descriptionVisibility = route.params.newDescriptionVisibility ?? userInfo?.visibleInfos.includes('SHOW_HEALTH');
+  const description = route.params.newDescription ?? userInfo?.health;
+  const mood = route.params.newMood ?? userInfo?.mood;
+  const motto = route.params.newMotto ?? userInfo?.motto;
+  const hobbies = route.params.newHobbies ?? userInfo?.hobbies;
+
   const onChangeAvatar = async (image: ImagePicked) => {
     try {
       const lc = new LocalFile(
@@ -383,8 +389,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderAbout = () => {
-    const visibility = route.params.newDescriptionVisibility ?? userInfo?.visibleInfos.includes('SHOW_HEALTH');
-    const description = route.params.newDescription ?? userInfo!.health;
     if (!isMyProfile && isEmpty(userInfo?.health)) return;
     return (
       <View style={styles.bloc}>
@@ -397,7 +401,10 @@ const UserProfileScreen = (props: ProfilePageProps) => {
                 navigation.navigate(userRouteNames.editDescription, {
                   userId: userInfo!.id,
                   description,
-                  visibility,
+                  visibility: descriptionVisibility,
+                  mood,
+                  motto,
+                  hobbies,
                 })
               }
             />
@@ -413,8 +420,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderMoodMotto = () => {
-    const mood = route.params.newMood ?? userInfo!.mood;
-    const motto = route.params.newMotto ?? userInfo!.motto;
     if (isMyProfile && !getShowMottoMoodRight(props.session!)) return;
     if ((isEmpty(userInfo?.mood) || userInfo?.mood === 'default') && isEmpty(userInfo?.motto) && !isMyProfile) return;
     const degre = appConf.is1d ? '1d' : '2d';
@@ -425,7 +430,16 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           {isMyProfile ? (
             <TertiaryButton
               text={I18n.get('common-edit')}
-              action={() => navigation.navigate(userRouteNames.editMoodMotto, { userId: userInfo!.id, mood, motto })}
+              action={() =>
+                navigation.navigate(userRouteNames.editMoodMotto, {
+                  userId: userInfo!.id,
+                  mood,
+                  motto,
+                  hobbies,
+                  description,
+                  visibility: descriptionVisibility,
+                })
+              }
             />
           ) : null}
         </View>
@@ -450,7 +464,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const renderHobbies = () => {
     let emptyHobbie = '';
-    const hobbies = route.params.newHobbies ?? userInfo!.hobbies;
     hobbiesItems.forEach(hobbie => {
       const index = hobbies?.findIndex(hobbieItem => hobbieItem.category === hobbie);
       if (index === -1 || (index! >= 0 && hobbies![index!].values === '')) emptyHobbie += `${renderEmoji[hobbie]} `;
@@ -462,7 +475,16 @@ const UserProfileScreen = (props: ProfilePageProps) => {
           {isMyProfile ? (
             <TertiaryButton
               text={I18n.get('common-edit')}
-              action={() => navigation.navigate(userRouteNames.editHobbies, { userId: userInfo!.id, hobbies })}
+              action={() =>
+                navigation.navigate(userRouteNames.editHobbies, {
+                  userId: userInfo!.id,
+                  hobbies,
+                  description,
+                  visibility: descriptionVisibility,
+                  mood,
+                  motto,
+                })
+              }
             />
           ) : null}
         </View>

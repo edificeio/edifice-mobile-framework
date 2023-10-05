@@ -33,6 +33,7 @@ export const computeNavBar = ({
 
 const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
   const { route, navigation } = props;
+  const { userId, mood, motto, hobbies } = route.params;
 
   const [description, setDescription] = React.useState<string>();
   const [isSending, setIsSending] = React.useState<boolean>(false);
@@ -53,9 +54,15 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
       setIsSending(true);
 
       const body = JSON.stringify({ health: description?.trim() });
-      await userService.person.put(route.params.userId, body);
+      await userService.person.put(userId, body);
       await userService.person.editHealthVisibility(newVisibility);
-      navigation.navigate(userRouteNames.profile, { newDescription: description?.trim(), newDescriptionVisibility: visibility });
+      navigation.navigate(userRouteNames.profile, {
+        newDescription: description?.trim(),
+        newDescriptionVisibility: visibility,
+        newMood: mood,
+        newMotto: motto,
+        newHobbies: hobbies,
+      });
       Trackers.trackEvent('Profile', 'EDIT_DESCRIPTION');
       Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
     } catch {
