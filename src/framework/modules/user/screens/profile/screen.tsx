@@ -337,12 +337,11 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       <View style={styles.bloc}>
         <HeadingSText style={styles.blocTitle}>{I18n.get('user-profile-personnalInfos')}</HeadingSText>
         <ButtonLineGroup>
-          {userInfo?.birthdate
-            ? renderTextIcon({
-                icon: 'ui-anniversary',
-                text: userInfo?.birthdate.format('D MMMM Y'),
-              })
-            : null}
+          {renderTextIcon({
+            icon: 'ui-anniversary',
+            text: userInfo?.birthdate ? userInfo?.birthdate.format('D MMMM Y') : undefined,
+            show: isMyProfile,
+          })}
           {renderTextIcon({
             icon: 'ui-mail',
             text: userInfo?.email,
