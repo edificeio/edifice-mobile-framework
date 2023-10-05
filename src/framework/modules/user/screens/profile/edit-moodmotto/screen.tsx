@@ -113,6 +113,8 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
               onChangeText={txt => setMotto(txt)}
               maxLength={75}
               onFocus={() => scrollViewRef.current?.scrollToEnd()}
+              annotation={`${motto ? motto.length : '0'}/75`}
+              annotationStyle={styles.annotationMotto}
             />
           }
         />
