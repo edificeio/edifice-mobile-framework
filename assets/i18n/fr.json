@@ -737,7 +737,7 @@
   "presences-history-eventcard-incident": "Un incident “{{level}}” s’est produit le ",
   "presences-history-eventcard-lateness-date": "{{date}} (début du cours: {{time}}h)",
   "presences-history-eventcard-lateness-declared": "a été déclaré pour le ",
-  "presences-history-eventcard-lateness-duration": "{{duration}} min",
+  "presences-history-eventcard-lateness-duration": "{{duration}} min ",
   "presences-history-eventcard-lateness-start": "Un retard de ",
   "presences-history-eventcard-morning": "matin",
   "presences-history-eventcard-noreason-1d": "L'école a signalé une absence sans motif ",
