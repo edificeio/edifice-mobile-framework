@@ -5,6 +5,7 @@ import { ColorValue, FlatList, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { NestedBoldText, SmallText } from '~/framework/components/text';
 import {
@@ -18,6 +19,7 @@ import {
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
+import { isEmpty } from '~/framework/util/object';
 
 import styles from './styles';
 import type { PresencesEventListScreenPrivateProps } from './types';
@@ -117,17 +119,32 @@ const PresencesEventListScreen = (props: PresencesEventListScreenPrivateProps) =
     }
   };
 
+  const renderEmptyScreen = () => {
+    return (
+      <EmptyScreen
+        svgImage="empty-zimbra"
+        title={I18n.get('presences-statistics-empty-title')}
+        textColor={theme.palette.grey.black}
+        text={I18n.get('presences-statistics-empty-text')}
+      />
+    );
+  };
+
   return (
     <PageView style={styles.pageContainer}>
-      <FlatList
-        data={props.route.params.events}
-        keyExtractor={item => item.id}
-        renderItem={renderListItem}
-        ListHeaderComponent={
-          <SmallText style={styles.headingText}>{I18n.get(`presences-statistics-${props.route.params.key}-heading`)}</SmallText>
-        }
-        contentContainerStyle={styles.listContentContainer}
-      />
+      {isEmpty(props.route.params.events) ? (
+        renderEmptyScreen()
+      ) : (
+        <FlatList
+          data={props.route.params.events}
+          keyExtractor={item => item.id}
+          renderItem={renderListItem}
+          ListHeaderComponent={
+            <SmallText style={styles.headingText}>{I18n.get(`presences-statistics-${props.route.params.key}-heading`)}</SmallText>
+          }
+          contentContainerStyle={styles.listContentContainer}
+        />
+      )}
     </PageView>
   );
 };

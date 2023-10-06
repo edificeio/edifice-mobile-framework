@@ -770,6 +770,8 @@
   "presences-statistics-departures-empty": "Pas de départ anticipé",
   "presences-statistics-departures-heading": "Voici la liste des séances ayant un départ anticipé",
   "presences-statistics-departures-title": "Départs anticipés",
+  "presences-statistics-empty-text": "Il n’y a pas d’évènements de ce type signalés par votre établissement.",
+  "presences-statistics-empty-title": "Pas d’événements",
   "presences-statistics-forgottennotebooks-empty": "Pas de carnet oublié",
   "presences-statistics-forgottennotebooks-heading": "Voici la liste des carnets oubliés",
   "presences-statistics-forgottennotebooks-title": "Carnets oubliés",

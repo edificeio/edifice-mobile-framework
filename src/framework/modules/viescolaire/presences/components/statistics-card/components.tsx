@@ -49,7 +49,7 @@ export default function StatisticsCard(props: StatisticsCardProps) {
   };
 
   return (
-    <TouchCardWithoutPadding disabled={!props.events.length} onPress={openEventList} style={styles.container}>
+    <TouchCardWithoutPadding onPress={openEventList} style={styles.container}>
       <EventPicto type={props.type} style={styles.pictoContainer} />
       <View style={styles.rowContainer}>
         <BodyText>{I18n.get(`presences-statistics-${eventKey}-title`)}</BodyText>
