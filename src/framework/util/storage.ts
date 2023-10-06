@@ -51,29 +51,27 @@ export namespace Storage {
     } else return undefined;
   };
 
-  const migrateFromAsyncStorage = async (): Promise<void> => {
+  const migrateFromAsyncStorage = async () => {
     const keys = await AsyncStorage.getAllKeys();
-    for (const key of keys) {
-      try {
-        const value = await AsyncStorage.getItem(key);
-        if (value != null) {
-          if (['true', 'false'].includes(value)) {
-            storage.set(key, value === 'true');
-          } else {
+    const hasRemainingKeys = keys.length > 0;
+    if (hasRemainingKeys) {
+      for (const key of keys) {
+        try {
+          const value = await AsyncStorage.getItem(key);
+          if (value !== null) {
             storage.set(key, value);
+            AsyncStorage.removeItem(key);
           }
-          AsyncStorage.removeItem(key);
+        } catch (error) {
+          Trackers.trackDebugEvent('Storage', 'MIGRATION ERROR', (error as Error | null)?.message || 'migrateFromAsyncStorage');
+          throw error;
         }
-      } catch (error) {
-        Trackers.trackDebugEvent('Storage', 'MIGRATION ERROR', (error as Error | null)?.message || 'migrateFromAsyncStorage');
-        throw error;
       }
     }
-    storage.set('hasMigratedFromAsyncStorage', true);
   };
 
   export const init = async () => {
-    migrateFromAsyncStorage();
+    await migrateFromAsyncStorage();
   };
 }
 
