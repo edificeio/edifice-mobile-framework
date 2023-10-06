@@ -40,13 +40,33 @@ export namespace Storage {
     }
   };
 
-  export const migrateItemJson = async <ItemType>(
-    oldAsyncStorageKey: string,
-    newAsyncStorageKey: string,
-  ): Promise<ItemType | undefined> => {
-    const settingsToMigrate: ItemType | undefined = await getItemJson(oldAsyncStorageKey);
+  export const multiRemoveItem = async (keys: string[]) => {
+    try {
+      for (const key of keys) {
+        storage.delete(key);
+      }
+    } catch (error) {
+      throw new Error(
+        `[Storage] multiRemoveItem: failed to remove items${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+    }
+  };
+
+  export const getAllKeys = async () => {
+    try {
+      const keys = storage.getAllKeys();
+      return keys;
+    } catch (error) {
+      throw new Error(
+        `[Storage] getAllKeys: failed to get all keys${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+    }
+  };
+
+  export const migrateItemJson = async <ItemType>(oldKey: string): Promise<ItemType | undefined> => {
+    const settingsToMigrate: ItemType | undefined = await getItemJson(oldKey);
     if (settingsToMigrate) {
-      await removeItem(oldAsyncStorageKey);
+      await removeItem(oldKey);
       return settingsToMigrate;
     } else return undefined;
   };
@@ -88,7 +108,16 @@ export const removeItem = async (key: string) => {
   await Storage.removeItem(key);
 };
 
-export const migrateItemJson = async <ItemType>(oldAsyncStorageKey: string, newAsyncStorageKey: string) => {
-  const settingsToMigrate = await Storage.migrateItemJson(oldAsyncStorageKey, newAsyncStorageKey);
+export const multiRemoveItem = async (keys: string[]) => {
+  await Storage.multiRemoveItem(keys);
+};
+
+export const getAllKeys = async () => {
+  const keys = await Storage.getAllKeys();
+  return keys;
+};
+
+export const migrateItemJson = async <ItemType>(oldKey: string) => {
+  const settingsToMigrate = await Storage.migrateItemJson(oldKey);
   return settingsToMigrate as ItemType | undefined;
 };

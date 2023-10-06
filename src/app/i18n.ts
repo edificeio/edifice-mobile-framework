@@ -4,7 +4,6 @@
  * Usage: import and use the init() function when local changes (setup is automatic on import)
  * Then, import and use the native i18next and moment modules.
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { flatten, unflatten } from 'flat';
 import i18n, { TOptions } from 'i18next';
 import ChainedBackend from 'i18next-chained-backend';
@@ -20,6 +19,7 @@ import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
 
 import appConf from '~/framework/util/appConf';
+import { getItemJson, setItemJson } from '~/framework/util/storage';
 import { getOverrideName } from '~/framework/util/string';
 
 // Read Phrase ID && Secrets
@@ -132,7 +132,7 @@ export namespace I18n {
   export const toggleShowKeys = async () => {
     if (canShowKeys) {
       showKeys = !showKeys;
-      await AsyncStorage.setItem(I18N_SHOW_KEYS_KEY, JSON.stringify(showKeys));
+      await setItemJson(I18N_SHOW_KEYS_KEY, showKeys);
       NativeModules.DevSettings.reload();
     }
   };
@@ -142,8 +142,8 @@ export namespace I18n {
     setLanguage();
     // Initialize keys toggling
     if (canShowKeys) {
-      const stored = await AsyncStorage.getItem(I18N_SHOW_KEYS_KEY);
-      if (stored) showKeys = JSON.parse(stored);
+      const stored: boolean | undefined = await getItemJson(I18N_SHOW_KEYS_KEY);
+      if (stored) showKeys = stored;
     }
     // Initialize i18n depending on i18n OTA enabled or not
     if (appConf.i18nOTAEnabled) {
