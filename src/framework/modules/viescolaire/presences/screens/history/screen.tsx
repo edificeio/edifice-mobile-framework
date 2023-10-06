@@ -130,7 +130,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   }, [props.navigation, props.selectedChildId]);
 
   React.useEffect(() => {
-    if (props.selectedChildId && loadingState === AsyncPagedLoadingState.DONE) refresh();
+    if (props.selectedChildId) refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.selectedChildId]);
 
