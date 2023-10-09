@@ -642,6 +642,7 @@
   "peertube-moduleconfig-appname": "Peertube",
   "photospicker-addphotos": "Ajouter des photos",
   "pickfile-document": "Ajouter un document",
+  "pickfile-error-filetype": "Le format du fichier sélectionné n'est pas pris en charge",
   "pickfile-error-storageaccess": "Erreur lors de l'ajout de document. L'application n'a pas accès au stockage de votre appareil. Merci de vérifier les paramètres d'accès avant de recommencer l'opération.",
   "pickfile-error-storageaccess-alert-retry": "Paramètres",
   "pickfile-error-storageaccess-alert-text": "Erreur lors de l'ajout de document. L'application n'a pas accès au stockage de votre appareil. Vous pouvez modifier cette autorisation dans les paramètres de l'application.",

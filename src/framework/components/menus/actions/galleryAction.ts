@@ -1,7 +1,8 @@
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
+import Toast from '~/framework/components/toast';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { assertPermissions } from '~/framework/util/permissions';
 
@@ -27,7 +28,18 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
     try {
       await assertPermissions('galery.read');
       LocalFile.pick({ source: 'galery', multiple: props.multiple }).then(lf => {
-        return imageCallback(lf);
+        const videoTypes = ['video/mp4', 'video/mov', 'video/avi'];
+        let images = lf;
+        if (Platform.OS === 'android') {
+          lf.forEach(item => {
+            if (videoTypes.includes(item.filetype)) {
+              Toast.showError(I18n.get('pickfile-error-filetype'));
+            }
+          });
+          images = lf.filter(item => !videoTypes.includes(item.filetype));
+        }
+
+        return imageCallback(images);
       });
     } catch {
       Alert.alert(
