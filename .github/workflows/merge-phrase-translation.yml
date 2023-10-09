@@ -38,6 +38,8 @@ jobs:
         env:
           BASE_BRANCHES: 'phrase-translations'
           GITHUB_TOKEN: ${{ secrets.PHRASE_TRANSLATIONS }}
+          MERGE_COMMIT_MESSAGE: pull-request-title
+          MERGE_LABELS: 'automerge'
           MERGE_METHOD: 'squash'
           MERGE_REQUIRED_APPROVALS: '0'
           LOG: 'TRACE'
