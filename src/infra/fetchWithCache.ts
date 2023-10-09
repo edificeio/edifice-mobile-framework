@@ -6,7 +6,7 @@ import { sessionInvalidateAction } from '~/framework/modules/auth/actions';
 import { AuthError, RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
-import { getAllKeys, getItemJson, multiRemoveItem, setItemJson } from '~/framework/util/storage';
+import { getItemJson, getKeys, removeItems, setItemJson } from '~/framework/util/storage';
 
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
@@ -148,6 +148,6 @@ export async function fetchJSONWithCache(
  * Erase from MMKV all data that keeps requests cache.
  */
 export async function clearRequestsCache() {
-  const keys = (await getAllKeys()).filter(str => str.startsWith(CACHE_KEY_PREFIX));
-  await multiRemoveItem(keys);
+  const keys = (await getKeys()).filter(str => str.startsWith(CACHE_KEY_PREFIX));
+  await removeItems(keys);
 }

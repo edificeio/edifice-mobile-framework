@@ -59,35 +59,33 @@ export namespace Storage {
   };
 
   /**
-   * Multi remove item
+   * Remove items
    * - Find all items via provided keys
    * - Remove each item from storage
    */
-  export const multiRemoveItem = async (keys: string[]) => {
+  export const removeItems = async (keys: string[]) => {
     try {
       for (const key of keys) {
         storage.delete(key);
       }
     } catch (error) {
       throw new Error(
-        `[Storage] multiRemoveItem: failed to remove items${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+        `[Storage] removeItems: failed to remove items${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
     }
   };
 
   /**
-   * Get all keys
+   * Get keys
    * - Find all existing keys within storage
    * - Return keys
    */
-  export const getAllKeys = async () => {
+  export const getKeys = async () => {
     try {
       const keys = storage.getAllKeys();
       return keys;
     } catch (error) {
-      throw new Error(
-        `[Storage] getAllKeys: failed to get all keys${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
-      );
+      throw new Error(`[Storage] getKeys: failed to get all keys${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
     }
   };
 
@@ -150,12 +148,12 @@ export const removeItem = async (key: string) => {
   await Storage.removeItem(key);
 };
 
-export const multiRemoveItem = async (keys: string[]) => {
-  await Storage.multiRemoveItem(keys);
+export const removeItems = async (keys: string[]) => {
+  await Storage.removeItems(keys);
 };
 
-export const getAllKeys = async () => {
-  const keys = await Storage.getAllKeys();
+export const getKeys = async () => {
+  const keys = await Storage.getKeys();
   return keys;
 };
 
