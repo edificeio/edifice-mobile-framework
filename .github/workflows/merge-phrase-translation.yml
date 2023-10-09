@@ -37,7 +37,7 @@ jobs:
         uses: pascalgn/automerge-action@v0.15.6
         env:
           BASE_BRANCHES: 'phrase-translations'
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PHRASE_TRANSLATIONS }}
           MERGE_METHOD: 'squash'
           MERGE_REQUIRED_APPROVALS: '0'
           LOG: 'TRACE'
