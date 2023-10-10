@@ -313,6 +313,7 @@
   "conversation-maillist-messagedeleted": "Message supprimé",
   "conversation-maillist-messagemoved": "Message déplacé",
   "conversation-maillist-messagetrashed": "Message mis à la corbeille",
+  "conversation-maillist-noSender": "Inconnu",
   "conversation-maillist-restore": "Restaurer",
   "conversation-maillist-sendmessages": "Messages envoyés",
   "conversation-maillist-toprefix": "À :",
