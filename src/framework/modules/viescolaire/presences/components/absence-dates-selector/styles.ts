@@ -18,14 +18,15 @@ export default StyleSheet.create({
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.minor,
   },
-  endDateContainer: {
+  endDateLabel: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    columnGap: UI_SIZES.spacing.tiny,
   },
   removeEndDateAction: {
     backgroundColor: theme.palette.grey.cloudy,
     borderRadius: UI_SIZES.radius.large,
+    padding: UI_SIZES.spacing._LEGACY_tiny,
   },
   separatorContainer: {
     width: 1,

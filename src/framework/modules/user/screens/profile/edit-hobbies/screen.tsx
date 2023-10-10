@@ -19,7 +19,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
-import type { UserEditHobbiesScreenProps, objectHobbies } from './types';
+import type { ObjectHobbies, UserEditHobbiesScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -34,8 +34,10 @@ export const computeNavBar = ({
 
 const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   const { route, navigation } = props;
-  const [initialHobbies, setInitialHobbies] = React.useState<objectHobbies>();
-  const [hobbies, setHobbies] = React.useState<objectHobbies>();
+  const { userId, description, descriptionVisibility, mood, motto } = route.params;
+
+  const [initialHobbies, setInitialHobbies] = React.useState<ObjectHobbies>();
+  const [hobbies, setHobbies] = React.useState<ObjectHobbies>();
   const [isSending, setIsSending] = React.useState<boolean>(false);
   const [indexHobbie, setIndexHobbie] = React.useState<number>();
 
@@ -53,13 +55,13 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
   const inputRefs: any[] = [];
 
   const init = () => {
-    const objectHobbies = route.params.hobbies.reduce((acc, obj) => {
+    const ObjectHobbies = route.params.hobbies.reduce((acc, obj) => {
       const { category, values, visibility } = obj;
       acc[category] = { values, visibility };
       return acc;
     }, {});
-    setInitialHobbies(objectHobbies);
-    setHobbies(objectHobbies);
+    setInitialHobbies(ObjectHobbies);
+    setHobbies(ObjectHobbies);
   };
 
   const handleChangeText = (text, category) => {
@@ -102,8 +104,14 @@ const UserEditHobbiesScreen = (props: UserEditHobbiesScreenProps) => {
         visibility: hobbies![category].visibility,
       }));
       const body = JSON.stringify({ hobbies: arrayHobbies });
-      await userService.person.put(route.params.userId, body);
-      navigation.navigate(userRouteNames.profile, { newHobbies: arrayHobbies });
+      await userService.person.put(userId, body);
+      navigation.navigate(userRouteNames.profile, {
+        newHobbies: arrayHobbies,
+        newDescriptionVisibility: descriptionVisibility,
+        newDescription: description,
+        newMood: mood,
+        newMotto: motto,
+      });
       Trackers.trackEvent('Profile', 'EDIT_HOBBIES');
       Toast.showSuccess(I18n.get('user-profile-toast-editHobbiesSuccess'));
     } catch {

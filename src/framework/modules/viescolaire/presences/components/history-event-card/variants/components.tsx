@@ -127,7 +127,7 @@ export const LatenessCard = ({ event }: { event: CommonEvent }) => {
     <HistoryEventCard type={event.type}>
       <BodyText>
         {I18n.get('presences-history-eventcard-lateness-start')}
-        <NestedBoldText>{I18n.get('presences-history-eventcard-lateness-duration', { duration })}</NestedBoldText>
+        <NestedBoldText>{I18n.get('presences-history-eventcard-lateness-duration', { duration })} </NestedBoldText>
         {I18n.get('presences-history-eventcard-lateness-declared')}
         <NestedBoldText>
           {I18n.get('presences-history-eventcard-lateness-date', {

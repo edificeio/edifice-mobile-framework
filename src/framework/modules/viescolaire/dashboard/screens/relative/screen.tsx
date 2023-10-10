@@ -51,6 +51,7 @@ import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { DashboardRelativeScreenDispatchProps, DashboardRelativeScreenPrivateProps } from './types';
@@ -168,8 +169,10 @@ const DashboardRelativeScreen = (props: DashboardRelativeScreenPrivateProps) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.eventCount]);
 
-  const openAbsenceDeclaration = () =>
+  const openAbsenceDeclaration = () => {
     props.navigation.navigate(presencesRouteNames.declareAbsence, { childId: props.selectedChildId });
+    Trackers.trackEvent('Présences', 'déclarer-absence', 'init');
+  };
 
   const openAssessment = (assessment: IDevoir) => {
     const { navigation, selectedChildId, userChildren } = props;

@@ -35,6 +35,7 @@ import appConf from '~/framework/util/appConf';
 import { subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
@@ -160,15 +161,25 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const onPressCourse = async (course: Course) => {
     if (subtractTime(course.startDate, 15, 'minutes').isAfter(moment())) {
       Alert.alert(I18n.get('presences-calllist-unavailablealert-title'), I18n.get('presences-calllist-unavailablealert-message'));
+      Trackers.trackEvent('Présences', 'choix-séance', 'futur');
     } else if (course.callStateId === CallState.DONE || moment().isAfter(course.endDate)) {
       setSelectedCourseId(course.id);
       bottomSheetModalRef.current?.present();
+
       if (course.callStateId === CallState.DONE && props.session) {
         const call = await props.tryFetchCall(course.callId);
         setBottomSheetCall(call);
+        if (moment().isAfter(course.endDate)) {
+          Trackers.trackEvent('Présences', 'choix-séance', 'ancien-validé');
+        } else {
+          Trackers.trackEvent('Présences', 'choix-séance', 'courant-validé');
+        }
+      } else {
+        Trackers.trackEvent('Présences', 'choix-séance', 'ancien-non-validé');
       }
     } else {
       openCall(course);
+      Trackers.trackEvent('Présences', 'choix-séance', 'courant-non-validé');
     }
   };
 
@@ -228,10 +239,11 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   };
 
   const renderCallList = () => {
+    const today = new Date();
     return (
       <View style={UI_STYLES.flex1}>
         <DayPicker
-          initialSelectedDate={moment().startOf('day')}
+          initialSelectedDate={today.getDay() === 7 ? moment().add(1, 'days') : moment().startOf('day')}
           maximumWeeks={4}
           onDateChange={setDate}
           style={styles.dayPickerContainer}

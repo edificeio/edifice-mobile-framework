@@ -2,7 +2,6 @@
  * File Manager
  */
 import getPath from '@flyerhq/react-native-android-uri-path';
-import { NavigationProp } from '@react-navigation/native';
 import moment from 'moment';
 import { Platform } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from 'react-native-document-picker';
@@ -154,10 +153,15 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   }
 
   filename: string; // Name of the file including extension
+
   filepath: string; // Absolute url to the file on the device, starting by '/'
+
   _filepathNative: string; // Absolute url to the file on the device, including 'file://' protocol.
+
   filetype: string; // Mime type of the file
+
   nativeInfo: DocumentPickerResponse | Asset; // Backup of the full information given by react-native-fs
+
   _needIOSReleaseSecureAccess?: boolean; // Recommended by react-native-fs. A LocalFile created with pick() must be free when it's no more used.
 
   constructor(

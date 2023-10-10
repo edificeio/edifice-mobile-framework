@@ -34,6 +34,7 @@ export const computeNavBar = ({
 
 const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
   const { route, navigation } = props;
+  const { userId, description, descriptionVisibility, hobbies } = route.params;
 
   const [mood, setMood] = React.useState<string>();
   const [motto, setMotto] = React.useState<string>();
@@ -55,8 +56,14 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
       setIsSending(true);
 
       const body = JSON.stringify({ mood, motto: motto?.trim() });
-      await userService.person.put(route.params.userId, body);
-      navigation.navigate(userRouteNames.profile, { newMood: mood, newMotto: motto?.trim() });
+      await userService.person.put(userId, body);
+      navigation.navigate(userRouteNames.profile, {
+        newMood: mood,
+        newMotto: motto?.trim(),
+        newDescriptionVisibility: descriptionVisibility,
+        newDescription: description,
+        newHobbies: hobbies,
+      });
       Trackers.trackEvent('Profile', 'EDIT_MOOD_MOTTO');
       Toast.showSuccess(I18n.get('user-profile-toast-editMoodMottoSuccess'));
     } catch {
@@ -113,6 +120,8 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
               onChangeText={txt => setMotto(txt)}
               maxLength={75}
               onFocus={() => scrollViewRef.current?.scrollToEnd()}
+              annotation={`${motto ? motto.length : '0'}/75`}
+              annotationStyle={styles.annotationMotto}
             />
           }
         />
