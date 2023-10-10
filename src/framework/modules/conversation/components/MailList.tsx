@@ -415,14 +415,21 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                       <TouchableOpacity onPress={() => this.renderMailContent(item)}>
                         <ListItem
                           style={isMailUnread ? styles.containerMailUnread : styles.containerMailRead}
-                          leftElement={<GridAvatars users={contacts.map(c => c[0]!)} />}
+                          leftElement={
+                            <GridAvatars
+                              users={contacts.map(c => {
+                                if (c) return c[0]!;
+                                return undefined;
+                              })}
+                            />
+                          }
                           rightElement={
                             <View style={styles.mailInfos}>
                               {/* Contact name */}
                               <View style={styles.contactsAndDateContainer}>
                                 {isEmpty(contacts.length) || (!isFolderOutbox && !isFolderDrafts) ? (
                                   <SmallText numberOfLines={1} style={styles.contacts}>
-                                    {contacts[0][1]}
+                                    {contacts[0] ? contacts[0][1] : I18n.get('conversation-maillist-noSender')}
                                   </SmallText>
                                 ) : (
                                   <SmallText numberOfLines={1} style={styles.contacts}>
