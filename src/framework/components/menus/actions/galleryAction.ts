@@ -28,17 +28,15 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
     try {
       await assertPermissions('galery.read');
       LocalFile.pick({ source: 'galery', multiple: props.multiple }).then(lf => {
-        const videoTypes = ['video/mp4', 'video/mov', 'video/avi'];
         let images = lf;
         if (Platform.OS === 'android') {
           lf.forEach(item => {
-            if (videoTypes.includes(item.filetype)) {
+            if (item.filetype.startsWith('video/')) {
               Toast.showError(I18n.get('pickfile-error-filetype'));
             }
           });
-          images = lf.filter(item => !videoTypes.includes(item.filetype));
         }
-
+        images = lf.filter(item => !item.filetype.startsWith('video/'));
         return imageCallback(images);
       });
     } catch {
