@@ -172,7 +172,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
               {/* Contact name */}
               <View style={styles.contactNameSubContainer}>
                 <SmallBoldText numberOfLines={1} style={styles.contactName}>
-                  {mailContacts.from ? mailContacts.from[1] : I18n.get('conversation-maillist-noSender')}
+                  {mailContacts.from ? mailContacts.from[1] : I18n.get('conversation-maillist-nosender')}
                 </SmallBoldText>
               </View>
             </View>
