@@ -33,15 +33,20 @@ jobs:
         with:
           node-version: 16
 
-      - name: Auto-merge if source branch is release/phrase-translations
-        uses: pascalgn/automerge-action@v0.15.6
+      - name: Auto Merge if source branch is PHRASE_TRANSLATIONS
+        run: |
+          SOURCE_BRANCH=$(jq -r '.pull_request.head.ref' "${GITHUB_EVENT_PATH}")
+          if [ "${SOURCE_BRANCH}" == "PHRASE_TRANSLATIONS" ]; then
+            echo "Merging pull request since source branch is PHRASE_TRANSLATIONS"
+            git config user.name "${{ github.actor }}"
+            git config user.email "${{ github.actor }}@users.noreply.github.com"
+            git merge --no-ff "${{ github.event.before }}"
+            git push
+          else
+            echo "Source branch is not PHRASE_TRANSLATIONS, skipping merge."
+          fi
         env:
-          BASE_BRANCHES: 'phrase-translations'
           GITHUB_TOKEN: ${{ secrets.PHRASE_TRANSLATIONS }}
-          MERGE_COMMIT_MESSAGE: pull-request-title
-          MERGE_LABELS: 'automerge'
-          MERGE_METHOD: 'squash'
-          MERGE_REQUIRED_APPROVALS: '0'
           LOG: 'TRACE'
 
       - name: Send Slack notification on failure
