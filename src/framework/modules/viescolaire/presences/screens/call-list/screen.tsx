@@ -52,8 +52,10 @@ export const computeNavBar = ({
 });
 
 const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => {
+  const today = new Date();
+
   const [isInitialized, setInitialized] = React.useState(true);
-  const [date, setDate] = React.useState<Moment>(moment());
+  const [date, setDate] = React.useState<Moment>(today.getDay() === 0 ? moment().add(1, 'd') : moment());
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [bottomSheetCall, setBottomSheetCall] = React.useState<Call | null>(null);
@@ -239,15 +241,9 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   };
 
   const renderCallList = () => {
-    const today = new Date();
     return (
       <View style={UI_STYLES.flex1}>
-        <DayPicker
-          initialSelectedDate={today.getDay() === 7 ? moment().add(1, 'days') : moment().startOf('day')}
-          maximumWeeks={4}
-          onDateChange={setDate}
-          style={styles.dayPickerContainer}
-        />
+        <DayPicker initialSelectedDate={date} maximumWeeks={4} onDateChange={setDate} style={styles.dayPickerContainer} />
         <FlatList
           data={courses}
           renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
