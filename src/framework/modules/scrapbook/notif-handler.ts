@@ -39,7 +39,7 @@ export default () =>
   registerNotifHandlers([
     {
       type: 'SCRAPBOOK',
-      'event-type': ['SHARE'], // Replace this with the backend notification event-type
+      'event-type': ['SHARE', 'MODIFIED'],
       notifHandlerAction: handleSomeNotificationAction,
     },
   ]);
