@@ -51,7 +51,10 @@ const Statistics = (props: StatisticsProps) => {
 
   const { session, statistics, terms, openEventList } = props;
 
-  if (props.isRefreshing) return <StatisticsPlaceholder />;
+  if (props.isRefreshing) {
+    if (isDropdownOpen) setDropdownOpen(false);
+    return <StatisticsPlaceholder />;
+  }
   return (
     <ScrollView contentContainerStyle={styles.contentContainer}>
       {props.terms.length ? (
