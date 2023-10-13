@@ -101,8 +101,8 @@ export const displayDate = (date: Moment, format?: 'short' | 'extraShort', showH
 };
 
 export const displayWeekRange = (date: Moment) => {
-  const startOfCurrentWeek = today().clone().startOf('week');
-  const startOfDateWeek = date.clone().startOf('week');
+  const startOfCurrentWeek = today().clone().day(1).startOf('day');
+  const startOfDateWeek = date.clone().day(1).startOf('day');
   const endOfDateWeek = addTime(startOfDateWeek, 6, 'day');
 
   const isLastWeek = startOfDateWeek.isSame(subtractTime(startOfCurrentWeek, 1, 'week'));
