@@ -731,7 +731,7 @@
   "presences-history-eventcard-departure-duration": "{{duración}} min",
   "presences-history-eventcard-departure-start": "Una salida anticipada de ",
   "presences-history-eventcard-forgottennotebook": "El cuaderno de correspondencia se ha olvidado el",
-  "presences-history-eventcard-from": "del",
+  "presences-history-eventcard-from": "del ",
   "presences-history-eventcard-fromdate": "{{start}} a {{end}}",
   "presences-history-eventcard-incident": "Se ha producido un incidente \"{{nivel}}\" el",
   "presences-history-eventcard-lateness-date": "{{fecha}} (inicio del curso: {{hora}}h)",

@@ -731,7 +731,7 @@
   "presences-history-eventcard-departure-duration": "{{duration}} min",
   "presences-history-eventcard-departure-start": "Early departure on ",
   "presences-history-eventcard-forgottennotebook": "Notebook forgotten on",
-  "presences-history-eventcard-from": "from",
+  "presences-history-eventcard-from": "from ",
   "presences-history-eventcard-fromdate": "{{start}} to {{end}}",
   "presences-history-eventcard-incident": "A \"{{level}}\" incident occurred on",
   "presences-history-eventcard-lateness-date": "{{date}} (start of class: {{time}}h)",

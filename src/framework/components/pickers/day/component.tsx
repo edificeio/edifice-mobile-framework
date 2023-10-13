@@ -13,7 +13,6 @@ import {
   addTime,
   displayWeekRange,
   isDateGivenWeekday,
-  isDateWeekend,
   subtractTime,
   today,
 } from '~/framework/util/date';
@@ -21,19 +20,17 @@ import {
 import styles from './styles';
 import { DayPickerProps } from './types';
 
-export const defaultSelectedDate = isDateWeekend(today())
-  ? addTime(today(), 1, 'week').startOf('week')
-  : addTime(today(), 1, 'day').startOf('day');
+export const defaultSelectedDate = today().day() === 6 ? addTime(today(), 2, 'day') : addTime(today(), 1, 'day');
 
 const DayPicker = ({ initialSelectedDate = defaultSelectedDate, maximumWeeks = 8, style, onDateChange }: DayPickerProps) => {
-  const defaultStartDate = initialSelectedDate.clone().startOf('week');
+  const initialStartWeek = initialSelectedDate.clone().day(1);
 
   const [selectedDate, setSelectedDate] = React.useState(initialSelectedDate);
-  const [startDate, setStartDate] = React.useState(defaultStartDate);
+  const [startDate, setStartDate] = React.useState(initialStartWeek);
   React.useEffect(() => onDateChange(initialSelectedDate), []);
 
-  const isPastDisabled = startDate.isSame(subtractTime(defaultStartDate, maximumWeeks, 'week'));
-  const isFutureDisabled = startDate.isSame(addTime(defaultStartDate, maximumWeeks, 'week'));
+  const isPastDisabled = startDate.isSame(subtractTime(initialStartWeek, maximumWeeks, 'week'));
+  const isFutureDisabled = startDate.isSame(addTime(initialStartWeek, maximumWeeks, 'week'));
   const dayReference = (date: Moment) =>
     date.isBefore(today(), 'day') ? DayReference.PAST : date.isSame(today(), 'day') ? DayReference.TODAY : DayReference.FUTURE;
   const isWeekdaySelected = (weekdayNumber: number) => {

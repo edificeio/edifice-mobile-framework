@@ -32,7 +32,7 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { subtractTime } from '~/framework/util/date';
+import { subtractTime, today } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import { Trackers } from '~/framework/util/tracker';
@@ -52,10 +52,8 @@ export const computeNavBar = ({
 });
 
 const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => {
-  const today = new Date();
-
   const [isInitialized, setInitialized] = React.useState(true);
-  const [date, setDate] = React.useState<Moment>(today.getDay() === 0 ? moment().add(1, 'd') : moment());
+  const [date, setDate] = React.useState<Moment>(today().day() === 0 ? today().add(1, 'd') : today());
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [bottomSheetCall, setBottomSheetCall] = React.useState<Call | null>(null);
