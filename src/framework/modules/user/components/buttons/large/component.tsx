@@ -9,9 +9,9 @@ import { SmallBoldText } from '~/framework/components/text';
 import styles from './styles';
 import { LargeButtonProps } from './types';
 
-export const LargeButton = ({ action, icon, text }: LargeButtonProps) => {
+export const LargeButton = ({ action, icon, text, style }: LargeButtonProps) => {
   return (
-    <TouchableOpacity onPress={action} style={styles.container}>
+    <TouchableOpacity onPress={action} style={[styles.container, style]}>
       <View style={styles.iconContainer}>
         <NamedSVG
           name={icon}

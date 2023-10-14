@@ -29,6 +29,9 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
+import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
+import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
@@ -270,8 +273,29 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         </View>
       </>
     ),
-    [currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
+    [isFederated, currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
   );
+}
+
+/**
+ * Setup an Account button feature
+ * @param handleAddAccount a callback to add a secondary account.
+ * @param handleChangeAccount a callback to switch accounts.
+ * @returns the React Element of the account button
+ */
+function useAccountFeature(handleAddAccount, handleChangeAccount) {
+  const canAddAccount = true;
+  const hasSingleAccount = true;
+
+  return React.useMemo(() => {
+    return canAddAccount ? (
+      hasSingleAccount ? (
+        <AddAccountButton style={styles.accountButton} action={handleAddAccount} />
+      ) : (
+        <ChangeAccountButton style={styles.accountButton} action={handleChangeAccount} />
+      )
+    ) : null;
+  }, [canAddAccount, handleAddAccount, handleChangeAccount, hasSingleAccount]);
 }
 
 /**
@@ -324,57 +348,69 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
 }
 
 /**
- * Setup a version number feature that can secretly display detailed information when long pressed.
- * @returns the React Element of the touchable version text
- */
-function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
-  /**
-   * When true, version number display more info about build / platform / override / etc
-   */
-  const [isVersionDetailsShown, setIsVersionDetailsShown] = React.useState<boolean>(false);
-  const toggleVersionDetails = React.useCallback(() => {
-    setIsVersionDetailsShown(oldState => !oldState);
-  }, []);
-  const currentPlatform = session?.platform.displayName;
-  return React.useMemo(() => {
-    return (
-      <TouchableOpacity onLongPress={toggleVersionDetails}>
-        <SmallBoldText style={styles.versionButton}>
-          {I18n.get('user-page-versionnumber')} {useVersionFeature.versionNumber}
-          {isVersionDetailsShown ? ` ${useVersionFeature.versionType} (${useVersionFeature.buildNumber})` : null}
-        </SmallBoldText>
-        {isVersionDetailsShown ? (
-          <SmallBoldText style={styles.versionButton}>
-            {isVersionDetailsShown ? `${useVersionFeature.versionOverride} – ${currentPlatform}` : null}
-          </SmallBoldText>
-        ) : null}
-      </TouchableOpacity>
-    );
-  }, [currentPlatform, isVersionDetailsShown, toggleVersionDetails]);
-}
-
-/**
- * Setup a version number feature that can secretly display detailed information when long pressed.
- * @returns the React Element of the touchable toggle i18n keys
+ * Setup an i18n keys toggle feature.
+ * @returns the React Element of the toggle
  */
 function useToggleKeysFeature() {
   if (!I18n.canShowKeys) return;
   return (
-    <SecondaryButton
+    <DefaultButton
       text="Toggle i18n Keys"
       action={() => {
         I18n.toggleShowKeys();
       }}
-      style={styles.userInfoButton}
+      contentColor={theme.palette.primary.regular}
+      style={styles.toggleKeysButton}
     />
   );
 }
 
+/**
+ * Setup a version details feature.
+ * @returns the React Element of the version details text
+ */
+function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']) {
+  const currentPlatform = session?.platform.displayName;
+  return React.useMemo(() => {
+    return (
+      <SmallBoldText style={styles.version}>
+        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform}`}
+      </SmallBoldText>
+    );
+  }, [currentPlatform]);
+}
+
+/**
+ * Setup a version number feature that can secretly display detailed information when long pressed.
+ * @returns the React Element of the touchable version text
+ */
+function useVersionFeature(setAreDetailsVisible, scrollViewRef) {
+  /**
+   * When true, additional information is displayed above (build/platform/override)
+   */
+  const toggleVersionDetails = React.useCallback(() => {
+    setAreDetailsVisible(oldState => !oldState);
+    // setTimeout is used to wait for the ScrollView height to update (after details are shown).
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd();
+    }, 0);
+  }, [scrollViewRef, setAreDetailsVisible]);
+  return React.useMemo(() => {
+    return (
+      <TouchableOpacity onLongPress={toggleVersionDetails}>
+        <SmallBoldText style={styles.version}>
+          {I18n.get('user-page-versionnumber')} {useVersionFeature.versionNumber}
+        </SmallBoldText>
+      </TouchableOpacity>
+    );
+  }, [toggleVersionDetails]);
+}
+
 // All these values are compile-time constants. So we decalre them as function statics.
+useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
+useVersionDetailsFeature.versionType = RNConfigReader.BundleVersionType as string;
+useVersionDetailsFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
-useVersionFeature.buildNumber = DeviceInfo.getBuildNumber();
-useVersionFeature.versionType = RNConfigReader.BundleVersionType as string;
-useVersionFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
 
 /**
  * UserHomeScreen component
@@ -383,9 +419,11 @@ useVersionFeature.versionOverride = RNConfigReader.BundleVersionOverride as stri
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const { handleLogout, session } = props;
+  const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
+  const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
-  // We must store it in a Ref because of async operations
+  // We must store it in a Ref because of async operations.
   const focusedRef = React.useRef(useIsFocused());
   useFocusEffect(
     React.useCallback(() => {
@@ -400,13 +438,20 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
+  const accountButton = useAccountFeature();
   const logoutButton = useLogoutFeature(handleLogout);
   const toggleKeysButton = useToggleKeysFeature();
-  const versionButton = useVersionFeature(session);
+  const versionDetails = useVersionDetailsFeature(session);
+  const versionButton = useVersionFeature(setAreDetailsVisible, scrollViewRef);
 
   return (
     <PageView style={styles.page} showNetworkBar={false}>
-      <ScrollView style={UI_STYLES.flex1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={UI_STYLES.flex1}
+        bottomInset={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.sectionUserInfo}>
           {navBarDecoration}
           {avatarButton}
@@ -414,9 +459,15 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         </View>
         {accountMenu}
         <View style={styles.sectionBottom}>
+          {accountButton}
           {logoutButton}
-          {versionButton}
-          {toggleKeysButton}
+          {areDetailsVisible ? (
+            <>
+              {toggleKeysButton}
+              {versionDetails}
+            </>
+          ) : null}
+          <BottomRoundDecoration style={styles.bottomRoundDecoration} child={versionButton} />
         </View>
       </ScrollView>
     </PageView>
