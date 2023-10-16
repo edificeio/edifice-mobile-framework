@@ -135,6 +135,10 @@ export class Drawer extends React.PureComponent<IDrawerProps, IDrawerState> {
     });
   }
 
+  closeWhenFocus() {
+    this.setState({ drawerOpen: false, backdropHeight: 0 });
+  }
+
   // Open dropdown list
   open() {
     // Expand dropdown list to its max height && open dropdoxwn list first

@@ -4,7 +4,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { IFolder } from '~/framework/modules/conversation/state/initMails';
@@ -116,15 +117,14 @@ export default class MoveToFolderModal extends React.Component<
           </View>
           {!openDropdown ? (
             <View style={styles.buttonsContainer}>
-              <ActionButton
+              <SecondaryButton
                 text={I18n.get('common-cancel')}
-                type="secondary"
                 action={() => {
                   selectFolder('');
                   closeModal();
                 }}
               />
-              <ActionButton
+              <PrimaryButton
                 text={I18n.get(`conversation-movetofolder-${isCurrentFolderTrash ? 'restore' : 'move'}`)}
                 style={{ marginLeft: UI_SIZES.spacing.medium }}
                 disabled={isMoveImpossible || !selectedFolder}

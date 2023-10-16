@@ -26,6 +26,7 @@ export let APPBADGES: {
   NEWS: { icon: { type: 'NamedSvg', name: 'newsFeed' }, color: theme.palette.complementary.blue.regular },
   PAGES: { icon: { type: 'NamedSvg', name: 'pages' }, color: theme.palette.complementary.red.regular },
   POLL: { icon: { type: 'NamedSvg', name: 'poll' }, color: theme.palette.complementary.blue.regular },
+  PRESENCES: { icon: { type: 'NamedSvg', name: 'presences' }, color: theme.palette.complementary.yellow.regular },
   RACK: { icon: { type: 'NamedSvg', name: 'rack' }, color: theme.palette.complementary.red.regular },
   RBS: { icon: { type: 'NamedSvg', name: 'rbs' }, color: theme.palette.complementary.pink.regular },
   SCHOOLBOOK: { icon: { type: 'NamedSvg', name: 'homeLiaisonDiary' }, color: theme.palette.complementary.green.regular },

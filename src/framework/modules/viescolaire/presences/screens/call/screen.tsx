@@ -1,31 +1,34 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import * as React from 'react';
-import { RefreshControl, ScrollView, View } from 'react-native';
+import { FlatList, ScrollView, ScrollViewProps, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { ActionButton } from '~/framework/components/buttons/action';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { LoadingIndicator } from '~/framework/components/loading';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import SwipeableList from '~/framework/components/swipeableList';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
-import viescoTheme from '~/framework/modules/viescolaire/common/theme';
-import { LeftColoredItem } from '~/framework/modules/viescolaire/dashboard/components/Item';
-import { fetchPresencesClassCallAction } from '~/framework/modules/viescolaire/presences/actions';
-import StudentRow from '~/framework/modules/viescolaire/presences/components/StudentRow';
-import { EventType, IClassCallStudent } from '~/framework/modules/viescolaire/presences/model';
+import { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
+import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
+import CallSummary from '~/framework/modules/viescolaire/presences/components/call-summary';
+import CallPlaceholder from '~/framework/modules/viescolaire/presences/components/placeholders/call';
+import StudentListItem from '~/framework/modules/viescolaire/presences/components/student-list-item';
+import StudentStatus from '~/framework/modules/viescolaire/presences/components/student-status';
+import { CallEventType, CallState, CallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
@@ -42,264 +45,236 @@ export const computeNavBar = ({
 });
 
 const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
+  const contentLoaderRef = React.useRef<ContentLoaderHandle>(null);
+  const [selectedStudentId, setSelectedStudentId] = React.useState<string | null>(null);
   const [isValidating, setValidating] = React.useState<boolean>(false);
-  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
-  const loadingRef = React.useRef<AsyncPagedLoadingState>();
-  loadingRef.current = loadingState;
-  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
 
   const fetchCall = async () => {
     try {
+      const { eventReasons, session } = props;
       const { id } = props.route.params;
+      const structureCount = session?.user.structures?.length ?? 1;
 
       if (!id) throw new Error();
-      await props.tryFetchClassCall(id);
+      const call = await props.tryFetchCall(id);
+      if (!eventReasons.length || structureCount > 1) {
+        await props.tryFetchEventReasons(call.structureId);
+      }
     } catch {
       throw new Error();
     }
   };
 
-  const init = () => {
-    setLoadingState(AsyncPagedLoadingState.INIT);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const reload = () => {
-    setLoadingState(AsyncPagedLoadingState.RETRY);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-  };
-
-  const refresh = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
-  const refreshSilent = () => {
-    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-    fetchCall()
-      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-  };
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
-      else refreshSilent();
+      contentLoaderRef.current?.refreshSilent();
     });
     return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
+
+  const dismissBottomSheet = () => bottomSheetModalRef.current?.dismiss();
+
+  const openEvent = (student: CallStudent, type: CallEventType) => {
+    const { call, eventReasons } = props;
+    const { course, id } = props.route.params;
+
+    if (!call) return Toast.showError(I18n.get('presences-call-error-text'));
+    dismissBottomSheet();
+    props.navigation.navigate(presencesRouteNames.declareEvent, {
+      callId: id,
+      course,
+      event: student.events.find(event => event.typeId === type),
+      reasons: eventReasons.filter(reason => reason.reasonTypeId === type),
+      student,
+      type,
+    });
+  };
 
   const createAbsence = async (studentId: string) => {
     try {
-      const { classCall, session } = props;
+      const { call, session } = props;
       const { id } = props.route.params;
 
-      if (!classCall || !session) throw new Error();
-      await presencesService.event.create(session, studentId, id, EventType.ABSENCE, classCall.startDate, classCall.endDate, null);
-      await presencesService.classCall.updateStatus(session, id, 2);
-      refreshSilent();
+      if (!call || !session) throw new Error();
+      await presencesService.event.create(session, studentId, id, CallEventType.ABSENCE, call.startDate, call.endDate, null);
+      await presencesService.call.updateState(session, id, CallState.IN_PROGRESS);
+      contentLoaderRef.current?.refreshSilent();
     } catch {
       Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
-  const deleteAbsence = async (event: any) => {
+  const deleteAbsence = async (eventId: number) => {
     try {
       const { session } = props;
       const { id } = props.route.params;
 
       if (!session) throw new Error();
-      await presencesService.event.delete(session, event.id);
-      await presencesService.classCall.updateStatus(session, id, 2);
-      refreshSilent();
+      await presencesService.event.delete(session, eventId);
+      await presencesService.call.updateState(session, id, CallState.IN_PROGRESS);
+      contentLoaderRef.current?.refreshSilent();
     } catch {
       Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
+  const openStudentStatus = (id: string) => {
+    setSelectedStudentId(id);
+    bottomSheetModalRef.current?.present();
+  };
+
+  const unselectStudent = () => setSelectedStudentId(null);
+
   const validateCall = async () => {
     try {
       const { navigation, session } = props;
-      const { id } = props.route.params;
+      const { course, id } = props.route.params;
 
       setValidating(true);
       if (!session) throw new Error();
-      await presencesService.classCall.updateStatus(session, id, 3);
+      await presencesService.call.updateState(session, id, CallState.DONE);
       navigation.goBack();
-      Toast.showSuccess(I18n.get('presences-call-successmessage'));
+
+      //Tracking
+      const now = moment();
+      const isPast = now.isAfter(course.endDate);
+      const isDone = course.callStateId === CallState.DONE;
+      const event = (): string => {
+        if (isPast && isDone) return 'ancien-validé';
+        if (isPast && !isDone) return 'ancien-non-validé';
+        if (!isPast && isDone) return 'courant-validé';
+        return 'courant-non-validé';
+      };
+      Trackers.trackEvent('Présences', 'faire-appel', event());
+
+      Toast.showSuccess(
+        I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),
+      );
     } catch {
       setValidating(false);
       Toast.showError(I18n.get('presences-call-error-text'));
     }
   };
 
-  const renderError = () => {
+  const renderBottomSheet = () => {
+    const { session } = props;
+    const student = props.call!.students.find(s => s.id === selectedStudentId);
+    const hasPresencesManagementRights = session && getPresencesWorkflowInformation(session).managePresences;
+
     return (
-      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
-        <EmptyContentScreen />
-      </ScrollView>
+      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={unselectStudent}>
+        <StudentStatus
+          student={student}
+          hasAbsenceViewAccess={
+            hasPresencesManagementRights === true &&
+            props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)
+          }
+          createAbsence={createAbsence}
+          deleteAbsence={deleteAbsence}
+          dismissBottomSheet={dismissBottomSheet}
+          openEvent={openEvent}
+        />
+      </BottomSheetModal>
     );
   };
 
-  const renderStudentsList = () => {
-    const { classCall, eventReasons, navigation } = props;
-    const { id } = props.route.params;
-    const students = classCall!.students
+  const renderFooter = () => {
+    //console.log(props.route.params.course.callStateId, props.route.params.course.);
+    return (
+      <View style={styles.listFooterContainer}>
+        <View style={styles.separatorContainer} />
+        <View style={styles.summaryContainer}>
+          <CallSummary call={props.call!} />
+        </View>
+        <View style={styles.separatorContainer} />
+        <PrimaryButton
+          text={I18n.get('presences-call-action')}
+          action={validateCall}
+          loading={isValidating}
+          iconLeft="ui-check"
+          style={styles.validateContainer}
+        />
+      </View>
+    );
+  };
+
+  const renderCall = (refreshControl: ScrollViewProps['refreshControl']) => {
+    const { call } = props;
+    const { course } = props.route.params;
+    const students = call!.students
       .sort((a, b) => a.name.localeCompare(b.name))
       .map(student => ({
         key: student.id,
         ...student,
       }));
 
-    return classCall && students.length > 0 ? (
+    return (
       <>
-        <SwipeableList<IClassCallStudent & { key: string }>
+        <FlatList
           data={students}
-          keyExtractor={(item: IClassCallStudent) => item.id}
+          keyExtractor={item => item.id}
           renderItem={({ item }) => (
-            <StudentRow
+            <StudentListItem
               student={item}
-              checkAbsent={() => createAbsence(item.id)}
-              uncheckAbsent={deleteAbsence}
-              openMemento={() => props.navigation.navigate(presencesRouteNames.memento, { studentId: item.id })}
-              openLateness={() => {
-                navigation.navigate(presencesRouteNames.declareEvent, {
-                  type: EventType.LATENESS,
-                  callId: id,
-                  student: item,
-                  startDate: classCall.startDate,
-                  endDate: classCall.endDate,
-                  event: item.events.find(event => event.typeId === EventType.LATENESS),
-                });
-              }}
-              openDeparture={() => {
-                navigation.navigate(presencesRouteNames.declareEvent, {
-                  type: EventType.DEPARTURE,
-                  callId: id,
-                  student: item,
-                  startDate: classCall.startDate,
-                  endDate: classCall.endDate,
-                  event: item.events.find(event => event.typeId === EventType.DEPARTURE),
-                });
-              }}
+              isSelected={item.id === selectedStudentId}
+              callState={call!.stateId}
+              onPress={() => openStudentStatus(item.id)}
             />
           )}
-          refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
-          swipeActionWidth={70}
-          hiddenRowStyle={styles.studentHiddenRowContainer}
-          itemSwipeActionProps={({ item }) => ({
-            left: [
-              {
-                action: async row => {
-                  navigation.navigate(presencesRouteNames.declareEvent, {
-                    type: EventType.DEPARTURE,
-                    callId: id,
-                    student: item,
-                    startDate: classCall.startDate,
-                    endDate: classCall.endDate,
-                    event: item.events.find(e => e.typeId === EventType.DEPARTURE),
-                  });
-                  row[item.key]?.closeRow();
-                },
-                backgroundColor: viescoTheme.palette.presencesEvents.departure,
-                actionIcon: 'ui-walk',
-                actionIconSize: 28,
-              },
-              {
-                action: async row => {
-                  navigation.navigate(presencesRouteNames.declareEvent, {
-                    type: EventType.LATENESS,
-                    callId: id,
-                    student: item,
-                    startDate: classCall.startDate,
-                    endDate: classCall.endDate,
-                    event: item.events.find(e => e.typeId === EventType.LATENESS),
-                    reasons: eventReasons.filter(reason => reason.reasonTypeId === 2),
-                  });
-                  row[item.key]?.closeRow();
-                },
-                backgroundColor: viescoTheme.palette.presencesEvents.lateness,
-                actionIcon: 'ui-clock',
-                actionIconSize: 28,
-              },
-            ],
-          })}
+          refreshControl={refreshControl}
+          ListHeaderComponent={<CallCard course={course} showStatus disabled />}
+          ListFooterComponent={renderFooter()}
+          ListHeaderComponentStyle={styles.listHeaderContainer}
         />
-        <ActionButton
-          text={I18n.get('presences-call-action')}
-          action={validateCall}
-          loading={isValidating}
-          style={styles.validateButton}
-        />
+        {renderBottomSheet()}
       </>
-    ) : null;
+    );
   };
 
-  const renderClassCall = () => {
-    const { classCall } = props;
-    const { classroom, name } = props.route.params;
+  const isCallLackingValidation =
+    props.call !== undefined && props.call.stateId !== CallState.DONE && props.call.students.some(student => student.events.length);
 
-    return classCall ? (
-      <>
-        <LeftColoredItem shadow style={styles.headerCard} color={viescoTheme.palette.presences}>
-          <SmallText>
-            {classCall.startDate.format('LT')} - {classCall.endDate.format('LT')}
-          </SmallText>
-          {classroom ? (
-            <View style={styles.classroomContainer}>
-              <Icon name="pin_drop" size={18} />
-              <SmallText style={styles.classroomText}>{I18n.get('presences-call-room', { name: classroom })}</SmallText>
-            </View>
-          ) : null}
-          <SmallBoldText style={styles.nameText}>{name}</SmallBoldText>
-        </LeftColoredItem>
-        {renderStudentsList()}
-      </>
-    ) : null;
-  };
+  usePreventBack({
+    title: I18n.get('presences-call-leavealert-title'),
+    text: I18n.get('presences-call-leavealert-text'),
+    showAlert: isCallLackingValidation && !isValidating,
+  });
 
-  const renderPage = () => {
-    switch (loadingState) {
-      case AsyncPagedLoadingState.DONE:
-      case AsyncPagedLoadingState.REFRESH:
-      case AsyncPagedLoadingState.REFRESH_FAILED:
-      case AsyncPagedLoadingState.REFRESH_SILENT:
-        return renderClassCall();
-      case AsyncPagedLoadingState.PRISTINE:
-      case AsyncPagedLoadingState.INIT:
-        return <LoadingIndicator />;
-      case AsyncPagedLoadingState.INIT_FAILED:
-      case AsyncPagedLoadingState.RETRY:
-        return renderError();
-    }
-  };
-
-  return <PageView>{renderPage()}</PageView>;
+  return (
+    <PageView style={styles.pageContainer}>
+      <ContentLoader
+        ref={contentLoaderRef}
+        loadContent={fetchCall}
+        renderContent={renderCall}
+        renderError={refreshControl => (
+          <ScrollView refreshControl={refreshControl}>
+            <EmptyContentScreen />
+          </ScrollView>
+        )}
+        renderLoading={() => <CallPlaceholder />}
+      />
+    </PageView>
+  );
 };
 
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
     const session = getSession();
+    const call = presencesState.call.data;
 
     return {
-      classCall: presencesState.classCall.data,
+      call,
       eventReasons: presencesState.eventReasons.data,
-      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       session,
     };
   },
   dispatch =>
     bindActionCreators<PresencesCallScreenDispatchProps>(
       {
-        tryFetchClassCall: tryAction(fetchPresencesClassCallAction),
+        tryFetchCall: tryAction(fetchPresencesCallAction),
+        tryFetchEventReasons: tryAction(fetchPresencesEventReasonsAction),
       },
       dispatch,
     ),

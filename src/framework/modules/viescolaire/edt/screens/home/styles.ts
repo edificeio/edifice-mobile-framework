@@ -5,6 +5,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 
 export default StyleSheet.create({
+  childPickerContentContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+  },
   weekPickerView: {
     flexDirection: 'row',
     alignItems: 'center',

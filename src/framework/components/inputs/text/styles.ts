@@ -1,16 +1,23 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
 
-export default StyleSheet.create({
+const styles = StyleSheet.create({
+  viewInput: {
+    justifyContent: 'center',
+  },
   input: {
-    padding: UI_SIZES.spacing.medium,
+    ...TextSizeStyle.Medium,
+    lineHeight: undefined,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: Platform.OS === 'android' ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
+    paddingBottom: Platform.OS === 'android' ? UI_SIZES.spacing.small : UI_SIZES.spacing.medium,
     backgroundColor: theme.ui.background.card,
     borderWidth: 1,
     borderRadius: UI_SIZES.radius.input,
     color: theme.ui.text.regular,
-    fontSize: 16,
   },
   inputDisabled: {
     backgroundColor: theme.palette.grey.pearl,
@@ -18,7 +25,6 @@ export default StyleSheet.create({
   },
   callbackIndicator: {
     position: 'absolute',
-    top: UI_SIZES.spacing.medium,
   },
   toggle: {
     position: 'absolute',
@@ -41,3 +47,5 @@ export default StyleSheet.create({
     color: theme.palette.status.success.regular,
   },
 });
+
+export default styles;

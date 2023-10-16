@@ -1,4 +1,3 @@
-import { ContainerTextInput, ContainerView, LineButton } from './component';
+import { ContainerTextInput, ContainerView, LineButton, ButtonLineGroup } from './component';
 
-export { LineButton, ContainerTextInput, ContainerView };
-export default LineButton;
+export { LineButton, ButtonLineGroup, ContainerTextInput, ContainerView };

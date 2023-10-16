@@ -146,14 +146,20 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   const mailContacts = getMailPeople(mailInfos);
   if (mailContacts.to.length === 0) mailContacts.to = [[undefined, I18n.get('conversation-mailcontentitems-emptyto'), false]];
   const contactsToMore = mailContacts.to.length + mailContacts.cc.length + mailContacts.cci.length - 1;
-
   return (
     <TouchableOpacity onPress={() => toggleVisible(!isVisible)} activeOpacity={1}>
       <ListItem
         style={styles.headerMailSubContainer}
         leftElement={
           <View style={styles.gridAvatarsContainer}>
-            <GridAvatars users={[{ id: mailContacts.from[0], isGroup: mailContacts.from[2] }]} />
+            <GridAvatars
+              users={[
+                {
+                  id: mailContacts.from ? mailContacts.from[0] : undefined,
+                  isGroup: mailContacts.from ? mailContacts.from[2] : false,
+                },
+              ]}
+            />
           </View>
         }
         rightElement={
@@ -166,7 +172,7 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
               {/* Contact name */}
               <View style={styles.contactNameSubContainer}>
                 <SmallBoldText numberOfLines={1} style={styles.contactName}>
-                  {mailContacts.from[1]}
+                  {mailContacts.from ? mailContacts.from[1] : I18n.get('conversation-maillist-nosender')}
                 </SmallBoldText>
               </View>
             </View>

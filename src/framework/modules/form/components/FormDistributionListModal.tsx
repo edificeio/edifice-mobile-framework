@@ -4,7 +4,7 @@ import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -122,9 +122,8 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
       ref={ref}
       content={
         <View>
-          <BodyText style={styles.titleMargin}>{`${I18n.get('form-distributionlist-listmodal-myanswers')} - ${
-            props.form?.title
-          }`}</BodyText>
+          <BodyText style={styles.titleMargin}>{`${I18n.get('form-distributionlist-listmodal-myanswers')} - ${props.form
+            ?.title}`}</BodyText>
           <FlatList
             data={data}
             initialNumToRender={data.length}
@@ -133,7 +132,7 @@ const FormDistributionListModal = React.forwardRef<ModalBoxHandle, IFormDistribu
             persistentScrollbar
             style={styles.flatListContainer}
           />
-          <ActionButton
+          <PrimaryButton
             text={I18n.get('form-distributionlist-listmodal-action')}
             action={openNewDistribution}
             loading={isLoading}

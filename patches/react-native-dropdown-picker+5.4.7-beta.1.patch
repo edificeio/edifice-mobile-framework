@@ -1,3 +1,17 @@
+diff --git a/node_modules/react-native-dropdown-picker/index.d.ts b/node_modules/react-native-dropdown-picker/index.d.ts
+index 9848ccc..8f624de 100644
+--- a/node_modules/react-native-dropdown-picker/index.d.ts
++++ b/node_modules/react-native-dropdown-picker/index.d.ts
+@@ -221,6 +221,9 @@ declare module 'react-native-dropdown-picker' {
+     showTickIcon?: boolean;
+     stickyHeader?: boolean;
+     autoScroll?: boolean;
++    BodyComponent?: (props: {
++      style: StyleProp<ViewStyle>;
++    }) => JSX.Element;
+     ArrowUpIconComponent?: (props: {
+       style: StyleProp<ViewStyle>;
+     }) => JSX.Element;
 diff --git a/node_modules/react-native-dropdown-picker/package.json b/node_modules/react-native-dropdown-picker/package.json
 index a3f8cba..e85d698 100644
 --- a/node_modules/react-native-dropdown-picker/package.json
@@ -13,7 +27,7 @@ index a3f8cba..e85d698 100644
      "react": "*",
      "react-native": "*"
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
-index 08c6a68..cc301c7 100644
+index 08c6a68..07f96ac 100644
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
 +++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
 @@ -41,7 +41,8 @@ import {
@@ -26,7 +40,15 @@ index 08c6a68..cc301c7 100644
  } from '../constants';
  import THEMES from '../themes';
  import RenderBadgeItem from './RenderBadgeItem';
-@@ -162,6 +163,7 @@ function Picker({
+@@ -121,6 +122,7 @@ function Picker({
+     showTickIcon = true,
+     stickyHeader = false,
+     autoScroll = false,
++    BodyComponent = null,
+     ArrowUpIconComponent = null,
+     ArrowDownIconComponent = null,
+     TickIconComponent = null,
+@@ -162,6 +164,7 @@ function Picker({
      testID,
      closeOnBackPressed = false,
      extendableBadgeContainer = false,
@@ -34,7 +56,29 @@ index 08c6a68..cc301c7 100644
      onSelectItem = (item) => {}
  }) {
      const [necessaryItems, setNecessaryItems] = useState([]);
-@@ -1808,14 +1810,19 @@ function Picker({
+@@ -902,14 +905,16 @@ function Picker({
+      * The simple body component.
+      * @returns {JSX.Element}
+      */
+-    const SimpleBodyComponent = useMemo(() => (
++    const SimpleBodyComponent =  useMemo(() => (
+         <>
+             {SelectedItemIconComponent}
+-            <Text style={_labelStyle} {...labelProps}>
+-                {_selectedItemLabel}
+-            </Text>
++            {BodyComponent !== null ? <BodyComponent /> : (
++                <Text style={_labelStyle} {...labelProps}>
++                    {_selectedItemLabel}
++                </Text>
++            )}
+         </>
+-    ), [SelectedItemIconComponent, _labelStyle, labelProps, _selectedItemLabel]);
++    ), [SelectedItemIconComponent, BodyComponent, _labelStyle, labelProps, _selectedItemLabel]);
+ 
+     /**
+      * onPress badge.
+@@ -1808,14 +1813,19 @@ function Picker({
       */
      const pointerEvents = useMemo(() => disabled ? "none" : "auto", [disabled]);
  
@@ -58,7 +102,7 @@ index 08c6a68..cc301c7 100644
              </View>
          </>
 diff --git a/node_modules/react-native-dropdown-picker/src/constants/index.js b/node_modules/react-native-dropdown-picker/src/constants/index.js
-index 23d34eb..b01bd10 100644
+index 23d34eb..2bbfe60 100644
 --- a/node_modules/react-native-dropdown-picker/src/constants/index.js
 +++ b/node_modules/react-native-dropdown-picker/src/constants/index.js
 @@ -134,3 +134,5 @@ export const ASCII_CODE = (str) => {

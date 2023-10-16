@@ -13,4 +13,5 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
   displayOrder: 0,
   displayPicture: { type: 'Icon', name: 'nouveautes-off' },
   displayPictureFocus: { type: 'Icon', name: 'nouveautes-on' },
+  testID: 'tabbar-news',
 });

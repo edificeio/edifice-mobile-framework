@@ -64,7 +64,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
     const maxLines = 4,
       maxHeight = getScaleHeight(20) * maxLines;
 
-    return contents && contentsLanguages.length > 0 ? (
+    return flashMessageHtml && flashMessageHtml.length > 0 ? (
       <ArticleContainer style={measuredText ? styles.containerOpaque : styles.containerTransparent}>
         <TouchableContentCard
           activeOpacity={1}

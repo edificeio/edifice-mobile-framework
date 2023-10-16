@@ -5,6 +5,12 @@ import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/
 import type { IAuthState } from '~/framework/modules/auth/reducer';
 import type { Platform } from '~/framework/util/appConf';
 
+export enum LoginState {
+  IDLE = 'IDLE',
+  RUNNING = 'RUNNING',
+  DONE = 'DONE',
+}
+
 export interface LoginHomeScreenProps {
   // No public props
 }
@@ -26,12 +32,3 @@ export type LoginHomeScreenPrivateProps = LoginHomeScreenProps &
   LoginHomeScreenStoreProps &
   LoginHomeScreenDispatchProps &
   NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginHome>;
-
-export interface LoginHomeScreenState {
-  login: string;
-  password: string;
-  typing: boolean;
-  rememberMe: boolean;
-  loginState: 'IDLE' | 'RUNNING' | 'DONE';
-  error: IAuthState['error'];
-}

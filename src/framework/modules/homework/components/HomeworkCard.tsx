@@ -1,5 +1,6 @@
+import { Moment } from 'moment';
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -11,8 +12,9 @@ import HtmlToText from '~/infra/htmlConverter/text';
 export interface IHomeworkCardProps {
   title: string;
   content: string;
-  date: moment.Moment;
+  date: Moment;
   onPress: () => void;
+  style?: ViewStyle;
 }
 
 const styles = StyleSheet.create({
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => {
+const HomeworkCard = ({ title, content, onPress, date, style }: IHomeworkCardProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
   const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.stone;
@@ -46,7 +48,7 @@ const HomeworkCard = ({ title, content, onPress, date }: IHomeworkCardProps) => 
   const formattedContent = content && HtmlToText(content, false).render;
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.item}>
+    <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
       <View style={styles.viewTexts}>
         {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
         {formattedContent ? (

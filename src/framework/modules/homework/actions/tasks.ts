@@ -23,6 +23,11 @@ export interface IHomeworkTasksBackend {
     userId: string;
     displayName: string;
   };
+  shared?: ({
+    [key: string]: boolean | string | undefined;
+  } & {
+    [key in 'userId' | 'groupId']: string;
+  })[];
   created: {
     $date: number;
   };
@@ -37,6 +42,7 @@ export interface IHomeworkTasksBackend {
     entries: {
       title: string;
       value: string;
+      _id: string;
     }[];
   }[];
 }
@@ -74,6 +80,7 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
         content: itemtask.value,
         id: indextask.toString(),
         title: itemtask.title,
+        taskId: itemtask._id,
       };
     });
     // Now we put the homeworkDay into the return value
@@ -87,6 +94,8 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
     name: data.title, // What is name ??? Baby don't hurt me ! title duplicate ?
     id: data._id,
     thumbnail: data.thumbnail,
+    owner: data.owner,
+    shared: data.shared,
   };
   return ret;
 };

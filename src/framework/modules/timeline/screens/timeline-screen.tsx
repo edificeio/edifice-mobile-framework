@@ -1,4 +1,4 @@
-import { NavigationProp, ParamListBase } from '@react-navigation/native';
+import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
@@ -11,7 +11,7 @@ import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { cardPaddingMerging } from '~/framework/components/card/base';
 import { UI_STYLES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -26,8 +26,8 @@ import {
   loadNotificationsPageAction,
   startLoadNotificationsAction,
 } from '~/framework/modules/timeline/actions';
+import TimelineNotification from '~/framework/modules/timeline/components/notification';
 import { TimelineFlashMessage } from '~/framework/modules/timeline/components/timeline-flash-message';
-import { TimelineNotification } from '~/framework/modules/timeline/components/timeline-notification';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
@@ -35,6 +35,7 @@ import { NotificationsState } from '~/framework/modules/timeline/reducer/notific
 import { getTimelineWorkflowInformation } from '~/framework/modules/timeline/rights';
 import { notificationsService } from '~/framework/modules/timeline/service';
 import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modules';
+import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navigate } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
@@ -120,6 +121,7 @@ export const computeNavBar = ({
     navigation,
     route,
     title: I18n.get('timeline-appname'),
+    titleTestID: 'timeline-title',
   }),
   headerLeft: () => (
     <NavBarAction
@@ -127,6 +129,7 @@ export const computeNavBar = ({
       onPress={() => {
         navigate(timelineRouteNames.Filters);
       }}
+      testID="timeline-filter-button"
     />
   ),
 });
@@ -136,20 +139,34 @@ export const computeNavBar = ({
 function NotificationItem({
   notification,
   doOpenNotification,
+  doOpenMoodMottoNotification,
+  notificationTestID,
 }: {
   notification: ITimelineNotification;
   doOpenNotification: typeof TimelineScreen.prototype.doOpenNotification;
+  doOpenMoodMottoNotification: typeof TimelineScreen.prototype.doOpenMoodMottoNotification;
+  notificationTestID?: string;
 }) {
+  const navigation = useNavigation();
   const onNotificationAction = React.useMemo(
-    () =>
-      isResourceUriNotification(notification)
-        ? () => doOpenNotification(notification as ITimelineNotification & IResourceUriNotification)
-        : undefined,
+    () => {
+      if (notification.type === 'USERBOOK_MOTTO' || notification.type === 'USERBOOK_MOOD')
+        return () => doOpenMoodMottoNotification(notification.backupData.sender!);
+      if (isResourceUriNotification(notification))
+        return () => doOpenNotification(notification as ITimelineNotification & IResourceUriNotification);
+      return undefined;
+    },
     // Since notifications are immutable, we can memoize them only by id safely.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [notification.id, doOpenNotification],
   );
-  return <TimelineNotification notification={notification} notificationAction={onNotificationAction} />;
+  return (
+    <TimelineNotification
+      notification={notification}
+      notificationAction={onNotificationAction}
+      {...(notificationTestID ? { testID: notificationTestID } : {})}
+    />
+  );
 }
 
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
@@ -190,9 +207,14 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     return n.data.id.toString();
   }
 
-  listRenderItem({ item }: ListRenderItemInfo<ITimelineItem>) {
+  listRenderItem({ index, item }: ListRenderItemInfo<ITimelineItem>) {
     return item.type === ITimelineItemType.NOTIFICATION ? (
-      <NotificationItem notification={item.data as ITimelineNotification} doOpenNotification={this.doOpenNotification.bind(this)} />
+      <NotificationItem
+        notification={item.data as ITimelineNotification}
+        doOpenNotification={this.doOpenNotification.bind(this)}
+        doOpenMoodMottoNotification={this.doOpenMoodMottoNotification.bind(this)}
+        notificationTestID={`timeline-notification-${index}`}
+      />
     ) : (
       this.renderFlashMessageItem(item.data as IEntcoreFlashMessage)
     );
@@ -358,6 +380,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
   async doNextPage() {
     if (!this.props.notifications.endReached) await this.props.handleNextPage();
+  }
+
+  doOpenMoodMottoNotification(userId: string) {
+    this.props.navigation.navigate(userRouteNames.profile, { userId });
   }
 
   async doOpenNotification(n: IResourceUriNotification) {

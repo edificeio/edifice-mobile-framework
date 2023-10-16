@@ -1,6 +1,6 @@
 {
-  "last": "2023-09-27 11:49:57",
-  "notes": "fix(homework): MB-2080, remove add homework button in NavBar.\nrelease: 1.10.7-rc.1(1100701)",
-  "version": "1.10.7-rc.2(1100702)",
+  "last": "2023-10-13 11:55:55",
+  "notes": "fix(presence): MB-2145, close dropdown when change child\nfix(homework): MB-2144, fix wording on calendar in add homework\nfix(presence): MB-2143 , fix calendar on presence when english language\nMerge branch 'dev/1.11.0' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.0\nfeat(presence): MB-2107 , select monday if open app on sunday\nMerge pull request #93 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nfix(i18n): Fix typo\nfix(i18n): MB-2139, Wrong translations fix.\nchore(i18n): Try to make automerge work fine\nchore(build): bundle exec removal in build scripts\nrelease: 1.11.0-rc.6(1110024)",
+  "version": "1.11.0-rc.7(1110025)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }

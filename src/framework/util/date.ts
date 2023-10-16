@@ -2,7 +2,53 @@ import moment, { DurationInputArg1, DurationInputArg2, Moment } from 'moment';
 
 import { I18n } from '~/app/i18n';
 
+import { uppercaseFirstLetter } from './string';
+
+export enum DayOfTheWeek {
+  MONDAY = 'monday',
+  TUESDAY = 'tuesday',
+  WEDNESDAY = 'wednesday',
+  THURSDAY = 'thursday',
+  FRIDAY = 'friday',
+  SATURDAY = 'saturday',
+  SUNDAY = 'sunday',
+}
+
+export enum DayReference {
+  PAST,
+  TODAY,
+  FUTURE,
+}
+
 moment.relativeTimeThreshold('m', 60);
+
+export const today = () => {
+  return moment();
+};
+
+export const addTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
+  return date.clone().add(amount, unit);
+};
+
+export const subtractTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
+  return date.clone().subtract(amount, unit);
+};
+
+export const getDayOfTheWeek = (date: Moment) => {
+  if (!date || !date.isValid()) {
+    return I18n.get('date-invalid');
+  }
+  return date.locale('en').format('dddd').toLowerCase();
+};
+
+export const isDateWeekend = (date: Moment) => {
+  return date.day() === 6 || date.day() === 0;
+};
+
+export const isDateGivenWeekday = (date: Moment, weekdayNumber: number) => {
+  const weekday = date.day();
+  return weekday === weekdayNumber;
+};
 
 export const displayPastDate = (pastDate: Moment, longFormat?: boolean) => {
   const now = moment();
@@ -55,8 +101,8 @@ export const displayDate = (date: Moment, format?: 'short' | 'extraShort', showH
 };
 
 export const displayWeekRange = (date: Moment) => {
-  const startOfCurrentWeek = today().clone().startOf('week');
-  const startOfDateWeek = date.clone().startOf('week');
+  const startOfCurrentWeek = today().clone().day(1).startOf('day');
+  const startOfDateWeek = date.clone().day(1).startOf('day');
   const endOfDateWeek = addTime(startOfDateWeek, 6, 'day');
 
   const isLastWeek = startOfDateWeek.isSame(subtractTime(startOfCurrentWeek, 1, 'week'));
@@ -68,7 +114,7 @@ export const displayWeekRange = (date: Moment) => {
   const startDateLong = startOfDateWeek.format('D MMM');
   const endDateShort = endOfDateWeek.format('D');
   const endDateLong = endOfDateWeek.format('D MMM');
-  const endDateMonth = endOfDateWeek.format('MMMM');
+  const endDateMonth = uppercaseFirstLetter(endOfDateWeek.format('MMMM'));
   const endDateYear = endOfDateWeek.format('Y');
 
   return isCurrentWeek
@@ -83,32 +129,4 @@ export const displayWeekRange = (date: Moment) => {
         month: endDateMonth,
         year: isEndOfDateWeekCurrentYear ? '' : endDateYear,
       });
-};
-
-export const getDayOfTheWeek = (date: Moment) => {
-  if (!date || !date.isValid()) {
-    return I18n.get('date-invalid');
-  }
-  return date.locale('en').format('dddd').toLowerCase();
-};
-
-export const isDateWeekend = (date: Moment) => {
-  return date.day() === 6 || date.day() === 0;
-};
-
-export const isDateGivenWeekday = (date: Moment, weekdayNumber: number) => {
-  const weekday = date.day();
-  return weekday === weekdayNumber;
-};
-
-export const addTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
-  return date.clone().add(amount, unit);
-};
-
-export const subtractTime = (date: Moment, amount: DurationInputArg1, unit: DurationInputArg2) => {
-  return date.clone().subtract(amount, unit);
-};
-
-export const today = () => {
-  return moment();
 };

@@ -4,7 +4,7 @@
  * Display a row of avatars and names that can handle touches.
  */
 import * as React from 'react';
-import { ListRenderItemInfo, TouchableOpacity, ViewStyle } from 'react-native';
+import { ListRenderItemInfo, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -30,8 +30,16 @@ export interface UserListProps<ItemType extends IUserListItem = IUserListItem>
   withSeparator?: boolean;
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flexGrow: 0,
+    flexShrink: 0,
+  },
+});
+
 function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserListProps<ItemType>, ref) {
-  const { selectedId, onSelect, renderBadge, avatarSize, data, customItemStyle, withSeparator, horizontal, ...otherProps } = props;
+  const { selectedId, onSelect, renderBadge, avatarSize, data, customItemStyle, withSeparator, horizontal, style, ...otherProps } =
+    props;
   const renderItem: FlatListProps<ItemType>['renderItem'] = React.useCallback(
     info =>
       UserList.renderItem({
@@ -57,6 +65,7 @@ function UserList<ItemType extends IUserListItem = IUserListItem>(props: UserLis
       showsHorizontalScrollIndicator={!horizontal}
       bottomInset={false}
       alwaysBounceHorizontal={false}
+      style={[styles.container, style]}
       {...otherProps}
     />
   );

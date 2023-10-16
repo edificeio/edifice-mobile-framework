@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
@@ -286,7 +286,7 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                     },
                   ]}>
                   {!isSuccess || editing ? (
-                    <ActionButton
+                    <PrimaryButton
                       action={() => this.doSubmit()}
                       disabled={canSubmit}
                       text={I18n.get('auth-forgot-submit')}

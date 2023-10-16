@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Platform, View } from 'react-native';
 
 import theme, { IShades } from '~/app/theme';
-import CloseButton from '~/framework/components/buttons/close';
+import IconButton from '~/framework/components/buttons/icon';
 import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture, PictureProps } from '~/framework/components/picture';
@@ -31,8 +31,8 @@ function autoFillPicture(picture: PictureProps, shades: IShades) {
   return {
     ...picture,
     fill: picture.fill ?? shades.regular,
-    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon,
-    height: picture.width !== undefined && picture.height !== undefined ? picture.height : UI_SIZES.elements.icon,
+    width: picture.width !== undefined && picture.height !== undefined ? picture.width : UI_SIZES.elements.icon.default,
+    height: picture.width !== undefined && picture.height !== undefined ? picture.height : UI_SIZES.elements.icon.default,
   };
 }
 
@@ -60,8 +60,8 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
             type: 'NamedSvg',
             name: toastDefaultPictureProps[type],
             fill: colorShades.regular,
-            width: UI_SIZES.elements.icon,
-            height: UI_SIZES.elements.icon,
+            width: UI_SIZES.elements.icon.default,
+            height: UI_SIZES.elements.icon.default,
           } as PictureProps)),
     }),
     [colorShades, picture, type],
@@ -71,7 +71,7 @@ function useToastStyles(type: AlertCardProps['type'], picture: AlertCardProps['i
 }
 
 const defaultRenderCloseButton: Required<AlertCardProps>['renderCloseButton'] = (shades, onClose) =>
-  onClose ? <CloseButton action={onClose} /> : null;
+  onClose ? <IconButton icon="ui-close" action={onClose} /> : null;
 
 export function AlertCard(props: AlertCardProps) {
   const {

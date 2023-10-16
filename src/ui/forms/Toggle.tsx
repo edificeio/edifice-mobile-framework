@@ -44,7 +44,7 @@ const Container = styled(TouchableOpacity)<{ checked: boolean }>(
 );
 
 export class Toggle extends React.Component<
-  { checked: boolean; onUncheck?: () => void; onCheck?: () => void },
+  { checked: boolean; testID?: string; onUncheck?: () => void; onCheck?: () => void },
   { positionAnim: any }
 > {
   constructor(props) {
@@ -71,7 +71,7 @@ export class Toggle extends React.Component<
 
   render() {
     return (
-      <View style={{ width: 40, height: 22 }}>
+      <View style={{ width: 40, height: 22 }} {...(this.props.testID ? { testID: this.props.testID } : {})}>
         <Container onPress={() => this.switchCheck()} checked={this.props.checked} />
         <Animated.View style={{ left: this.state.positionAnim }}>
           <TapCircle onPress={() => this.switchCheck()} checked={this.props.checked} />

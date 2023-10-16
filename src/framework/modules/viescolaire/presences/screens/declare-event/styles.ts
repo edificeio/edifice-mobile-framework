@@ -4,58 +4,47 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  backdropContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: UI_SIZES.screen.width,
+    height: UI_SIZES.screen.height,
+  },
   container: {
-    padding: UI_SIZES.spacing.medium,
     flexGrow: 1,
+    padding: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.big,
+  },
+  deleteActionContainer: {
+    zIndex: -1,
+  },
+  fieldContainer: {
+    rowGap: UI_SIZES.spacing.minor,
+  },
+  headingContainer: {
+    flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.small,
   },
-  dropdown: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
-  },
-  dropdownText: {
-    color: theme.ui.text.regular,
-  },
-  recapHeader: {
-    paddingVertical: UI_SIZES.spacing.small,
-    alignSelf: 'flex-end',
-    width: '90%',
-    marginBottom: UI_SIZES.spacing.medium,
-  },
-  recapHeaderView: {
+  headingNameContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 1,
   },
-  recapHeaderText: {
-    marginHorizontal: UI_SIZES.spacing.tiny,
+  headingNameText: {
+    marginLeft: UI_SIZES.spacing.small,
+    flexShrink: 1,
   },
-  timePickerRowContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: UI_SIZES.spacing.medium,
+  pageContainer: {
+    backgroundColor: theme.palette.grey.white,
   },
-  timePickerText: {
-    marginRight: UI_SIZES.spacing.minor,
+  primaryActionContainer: {
+    marginTop: UI_SIZES.spacing.big,
+    zIndex: -1,
   },
-  commentText: {
-    marginBottom: UI_SIZES.spacing.minor,
-  },
-  commentInput: {
-    marginBottom: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.small,
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-    height: 100,
-    color: theme.ui.text.regular,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  deleteAction: {
-    marginRight: UI_SIZES.spacing.medium,
+  timePickerContainer: {
+    alignSelf: 'center',
   },
 });

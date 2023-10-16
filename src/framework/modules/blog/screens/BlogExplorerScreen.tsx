@@ -11,20 +11,20 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
-import Explorer, {
-  IExplorerFolderItem,
-  IExplorerResourceItemWithIcon,
-  IExplorerResourceItemWithImage,
-} from '~/framework/components/explorer';
-import { LoadingIndicator } from '~/framework/components/loading';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import ResourceExplorer from '~/framework/components/explorer/resource-explorer';
+import {
+  ResourceExplorerFolderItem,
+  ResourceExplorerItemWithIcon,
+  ResourceExplorerItemWithImage,
+} from '~/framework/components/explorer/resource-explorer/types';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchBlogsAndFoldersAction } from '~/framework/modules/blog/actions';
+import BlogPlaceholderExplorer from '~/framework/modules/blog/components/placeholder/explorer';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogFlatTree, BlogFolder, BlogFolderWithChildren, BlogFolderWithResources } from '~/framework/modules/blog/reducer';
@@ -105,9 +105,9 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
 
   const onOpenItem = (
     item:
-      | (IExplorerFolderItem & BlogFolder)
-      | (IExplorerResourceItemWithImage & DisplayedBlog)
-      | (IExplorerResourceItemWithIcon & DisplayedBlog),
+      | (ResourceExplorerFolderItem & BlogFolder)
+      | (ResourceExplorerItemWithImage & DisplayedBlog)
+      | (ResourceExplorerItemWithIcon & DisplayedBlog),
   ) => {
     if (item.type === 'folder') {
       onOpenFolder(item);
@@ -204,14 +204,13 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
     })();
 
     return (
-      <Explorer
+      <ResourceExplorer
         folders={displayedFolders}
         resources={displayedblogs}
         onItemPress={onOpenItem}
-        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         refreshControl={<RefreshControl refreshing={loadingState === AsyncLoadingState.REFRESH} onRefresh={() => refresh()} />}
+        ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         ListEmptyComponent={renderEmpty()}
-        contentContainerStyle={UI_STYLES.flexGrow1}
         keyExtractor={item => item.id}
       />
     );
@@ -226,7 +225,7 @@ const BlogExplorerScreen = (props: BlogExplorerScreenProps) => {
 
       case AsyncLoadingState.PRISTINE:
       case AsyncLoadingState.INIT:
-        return <LoadingIndicator />;
+        return <BlogPlaceholderExplorer />;
 
       case AsyncLoadingState.INIT_FAILED:
       case AsyncLoadingState.RETRY:

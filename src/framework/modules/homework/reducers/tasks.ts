@@ -19,6 +19,7 @@ export interface IHomeworkTask {
   id: string;
   title: string;
   content: string;
+  taskId: string;
 }
 
 // All tasks of a day.

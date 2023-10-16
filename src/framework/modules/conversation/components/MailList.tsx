@@ -8,7 +8,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Drawer } from '~/framework/components/drawer';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { ListItem } from '~/framework/components/listItem';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView, pageGutterSize } from '~/framework/components/page';
@@ -129,6 +129,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     };
   }
 
+  drawerRef = React.createRef();
+
   componentDidMount() {
     this.props.navigation.addListener('focus', this.handleFocus);
   }
@@ -138,6 +140,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
   }
 
   handleFocus = () => {
+    this.drawerRef.current.closeWhenFocus();
     this.refreshMailList();
     this.props.fetchInit();
   };
@@ -412,14 +415,21 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                       <TouchableOpacity onPress={() => this.renderMailContent(item)}>
                         <ListItem
                           style={isMailUnread ? styles.containerMailUnread : styles.containerMailRead}
-                          leftElement={<GridAvatars users={contacts.map(c => c[0]!)} />}
+                          leftElement={
+                            <GridAvatars
+                              users={contacts.map(c => {
+                                if (c) return c[0]!;
+                                return undefined;
+                              })}
+                            />
+                          }
                           rightElement={
                             <View style={styles.mailInfos}>
                               {/* Contact name */}
                               <View style={styles.contactsAndDateContainer}>
                                 {isEmpty(contacts.length) || (!isFolderOutbox && !isFolderDrafts) ? (
                                   <SmallText numberOfLines={1} style={styles.contacts}>
-                                    {contacts[0][1]}
+                                    {contacts[0] ? contacts[0][1] : I18n.get('conversation-maillist-nosender')}
                                   </SmallText>
                                 ) : (
                                   <SmallText numberOfLines={1} style={styles.contacts}>
@@ -526,6 +536,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
             <Drawer
               isNavbar
               isTabbar
+              ref={this.drawerRef}
               items={drawerItems}
               selectedItem={navigationKey}
               selectItem={selectedItem => {

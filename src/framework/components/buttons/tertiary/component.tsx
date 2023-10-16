@@ -1,22 +1,27 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/buttons/action';
+import DefaultButton from '~/framework/components/buttons/default';
 
-import styles from './styles';
 import { TertiaryButtonProps } from './types';
 
-const TertiaryButton = ({ iconName, action, disabled, loading, pictureFill, text }: TertiaryButtonProps) => {
+const TertiaryButton = (props: TertiaryButtonProps) => {
+  const initialContentColor = theme.palette.primary.regular;
+
+  const [contentColor, setContentColor] = useState(initialContentColor);
+
+  useEffect(() => {
+    if (props.disabled) setContentColor(theme.palette.primary.light);
+    if (!props.disabled && contentColor === theme.palette.primary.light) setContentColor(initialContentColor);
+  });
   return (
-    <ActionButton
-      text={text}
-      iconName={iconName}
-      action={action}
-      disabled={disabled || loading}
-      loading={loading}
-      style={styles.tertiaryButton}
-      pictureFill={pictureFill}
-      textColor={theme.palette.grey.graphite}
+    <DefaultButton
+      {...props}
+      activeOpacity={1}
+      onPressIn={() => setContentColor(theme.palette.primary.dark)}
+      onPressOut={() => setContentColor(initialContentColor)}
+      contentColor={contentColor}
     />
   );
 };

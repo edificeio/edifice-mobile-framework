@@ -4,7 +4,7 @@ import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
-import ActionButton from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -83,7 +83,7 @@ const SignatureModal = React.forwardRef<ModalBoxHandle, ISignatureModalProps>((p
             <Checkbox checked={isGlobal} onPress={() => setGlobal(!isGlobal)} />
             <SmallText style={styles.isGlobalText}>{I18n.get('zimbra-composer-signaturemodal-globaluse')}</SmallText>
           </TouchableOpacity>
-          <ActionButton text={I18n.get('zimbra-composer-signaturemodal-action')} action={updateSignature} loading={isUpdating} />
+          <PrimaryButton text={I18n.get('zimbra-composer-signaturemodal-action')} action={updateSignature} loading={isUpdating} />
         </View>
       }
     />

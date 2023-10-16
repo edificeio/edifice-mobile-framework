@@ -11,9 +11,9 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
-import ActionButton from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import DateTimePicker from '~/framework/components/dateTimePicker';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
@@ -204,12 +204,11 @@ const HomeworkAssistanceRequestScreen = (props: HomeworkAssistanceRequestScreenP
           {!isDateValid ? (
             <AlertCard type="error" text={I18n.get('homeworkassistance-request-date-error')} style={styles.errorAlert} />
           ) : null}
-          <ActionButton
+          <PrimaryButton
             text={I18n.get('homeworkassistance-request-action')}
             action={sendRequest}
             disabled={isActionDisabled}
             loading={isSendingRequest}
-            style={isActionDisabled ? styles.actionContainerDisabled : styles.actionContainerEnabled}
           />
         </View>
       </ScrollView>

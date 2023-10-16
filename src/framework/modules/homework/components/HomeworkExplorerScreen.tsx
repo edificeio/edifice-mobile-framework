@@ -1,13 +1,13 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { RefreshControl, StyleSheet, View } from 'react-native';
+import { RefreshControl, View } from 'react-native';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
-import Explorer from '~/framework/components/explorer';
+import { EmptyScreen } from '~/framework/components/empty-screens';
+import ResourceExplorer from '~/framework/components/explorer/resource-explorer';
 import { PageView } from '~/framework/components/page';
 import { ISession } from '~/framework/modules/auth/model';
 import config from '~/framework/modules/homework/module-config';
@@ -44,12 +44,6 @@ export interface IHomeworkExplorerScreenOtherProps
 export type IHomeworkExplorerScreenProps = IHomeworkExplorerScreenDataProps &
   IHomeworkExplorerScreenEventProps &
   IHomeworkExplorerScreenOtherProps;
-
-const styles = StyleSheet.create({
-  explorerContent: {
-    flexGrow: 1,
-  },
-});
 
 export const computeNavBar = ({
   navigation,
@@ -112,7 +106,7 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
     });
 
     return (
-      <Explorer
+      <ResourceExplorer
         resources={displayedDiaries}
         onItemPress={diary => this.onOpenItem(diary)}
         refreshControl={
@@ -127,7 +121,6 @@ export class HomeworkExplorerScreen extends React.PureComponent<IHomeworkExplore
         }
         ListFooterComponent={<View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />}
         ListEmptyComponent={this.renderEmpty()}
-        contentContainerStyle={styles.explorerContent}
         keyExtractor={item => item.id}
       />
     );

@@ -12,4 +12,5 @@ export default new NavigableModuleConfig<'zimbra', IZimbraReduxState>({
   displayOrder: 1,
   displayPicture: { type: 'Icon', name: 'messagerie-off' },
   displayPictureFocus: { type: 'Icon', name: 'messagerie-on' },
+  testID: 'tabbar-zimbra',
 });

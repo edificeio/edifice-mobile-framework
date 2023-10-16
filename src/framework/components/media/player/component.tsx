@@ -1,7 +1,7 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import Lottie from 'lottie-react-native';
 import * as React from 'react';
-import { BackHandler, Platform, StatusBar, View } from 'react-native';
+import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
@@ -10,30 +10,13 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
+import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
-import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { getSession } from '~/framework/modules/auth/reducer';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
-import { useHeaderHeight } from '@react-navigation/elements';
-
-export function computeNavBar({
-  navigation,
-  route,
-}: NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer>): NativeStackNavigationOptions {
-  return {
-    ...navBarOptions({
-      navigation,
-      route,
-      title: '',
-    }),
-    headerTransparent: true,
-    headerStyle: { backgroundColor: 'transparent' },
-    headerShadowVisible: false,
-  };
-}
 
 const ERRORS_I18N = {
   connection: ['mediaplayer-error-connection-title', 'mediaplayer-error-connection-text'],
@@ -41,15 +24,27 @@ const ERRORS_I18N = {
   default: ['mediaplayer-error-content-title', 'mediaplayer-error-content-text'],
 };
 const DELAY_STATUS_HIDE = Platform.select({ ios: 250, default: 0 });
+export const ANIMATION_AUDIO = {
+  one: require('ASSETS/animations/audio/disque-one.json'),
+  neo: require('ASSETS/animations/audio/disque-neo.json'),
+  default: require('ASSETS/animations/audio/disque.json'),
+};
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const { route, navigation, connected } = props;
+  const { route, navigation, connected, session } = props;
   const { source, type, filetype } = route.params;
 
   const isAudio = type === MediaType.AUDIO;
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
+  const [isPlaying, setIsPlaying] = React.useState(false);
   const isPortrait = React.useMemo(() => orientation === PORTRAIT, [orientation]);
+  const animationRef = React.useRef<Lottie>(null);
+  const platform = React.useMemo(() => {
+    if (session?.platform.name === 'prod-neo') return 'neo';
+    if (session?.platform.name === 'prod-one') return 'one';
+    return 'default';
+  }, [session]);
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
       const isPortraitOrLandscape =
@@ -74,12 +69,11 @@ function MediaPlayer(props: MediaPlayerProps) {
     };
   }, [handleOrientationChange, isAudio, isFocused]);
 
-  const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(isAudio ? 999999 : 3000);
+  const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(3000);
 
   const [error, setError] = React.useState<string | undefined>(undefined);
   const navigationHidden = React.useRef<boolean | undefined>(undefined);
   const isLoadingRef = React.useRef<boolean>(true);
-  const headerHeight = useHeaderHeight();
 
   const handleBack = React.useCallback(() => {
     navigationHidden.current = false;
@@ -115,17 +109,19 @@ function MediaPlayer(props: MediaPlayerProps) {
   }, []);
 
   const renderError = () => {
-    navigation.setOptions(computeNavBar({ navigation, route }));
     const i18nKeys = ERRORS_I18N[error ?? 'default'] ?? ERRORS_I18N.default;
     return (
-      <EmptyScreen
-        customStyle={styles.errorScreen}
-        svgImage="image-not-found"
-        title={I18n.get(i18nKeys[0])}
-        text={I18n.get(i18nKeys[1])}
-        svgFillColor={theme.palette.grey.fog}
-        textColor={theme.palette.grey.fog}
-      />
+      <>
+        <FakeHeaderMedia />
+        <EmptyScreen
+          customStyle={styles.errorScreen}
+          svgImage="image-not-found"
+          title={I18n.get(i18nKeys[0])}
+          text={I18n.get(i18nKeys[1])}
+          svgFillColor={theme.palette.grey.fog}
+          textColor={theme.palette.grey.fog}
+        />
+      </>
     );
   };
 
@@ -154,22 +150,28 @@ function MediaPlayer(props: MediaPlayerProps) {
     isLoadingRef.current = false;
   }, []);
 
+  const onPlay = React.useCallback(() => {
+    setIsPlaying(true);
+    animationRef.current?.resume();
+  }, []);
+
+  const onPause = React.useCallback(() => {
+    setIsPlaying(false);
+    animationRef.current?.pause();
+  }, []);
+
   const player = React.useMemo(() => {
     if (type === MediaType.WEB)
       return (
         <>
-          <View style={[styles.back, isPortrait ? styles.overlayPortrait : styles.overlayLandscape]} />
+          <FakeHeaderMedia />
           <WebView
             allowsInlineMediaPlayback
             mediaPlaybackRequiresUserAction={false}
             scrollEnabled={false}
             source={realSource}
             startInLoadingState
-            style={
-              isPortrait
-                ? [styles.playerPortrait, styles.externalPlayerPortrait]
-                : [styles.playerLandscape, styles.externalPlayerLandscape]
-            }
+            style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
           />
         </>
       );
@@ -178,7 +180,6 @@ function MediaPlayer(props: MediaPlayerProps) {
       navigation.setOptions({ headerLeft: () => <View /> });
       return (
         <VideoPlayer
-          alwaysShowControls={isAudio}
           controlTimeoutDelay={videoPlayerControlTimeoutDelay}
           disableFullscreen
           disableVolume
@@ -187,28 +188,48 @@ function MediaPlayer(props: MediaPlayerProps) {
           onEnd={handleVideoPlayerEnd}
           onError={onError}
           onLoad={onLoad}
+          onPause={onPause}
+          onPlay={onPlay}
           rewindTime={10}
           showDuration
           showOnStart
           showOnEnd
           source={realSource}
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
-          topControlsStyle={Platform.OS === 'android' ? { paddingTop: headerHeight } : {}}
+          {...(isAudio
+            ? {
+                posterElement: <Lottie ref={animationRef} source={ANIMATION_AUDIO[platform]} style={styles.poster} speed={0.5} />,
+              }
+            : {})}
         />
       );
     }
   }, [
     type,
-    isPortrait,
     realSource,
+    isPortrait,
     navigation,
-    isAudio,
     videoPlayerControlTimeoutDelay,
     handleBack,
     handleVideoPlayerEnd,
     onError,
     onLoad,
+    onPause,
+    onPlay,
+    isAudio,
+    platform,
   ]);
+
+  // Manage Lottie after passed app in background
+  React.useEffect(() => {
+    if (type === 'audio') {
+      const subscription = AppState.addEventListener('change', event => {
+        if (event === 'active' && isPlaying) animationRef.current?.resume();
+      });
+      return () => subscription.remove();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying]);
 
   // Manage Android back button
   React.useEffect(() => {
@@ -251,4 +272,5 @@ function MediaPlayer(props: MediaPlayerProps) {
 
 export default connect((state: any) => ({
   connected: !!state.connectionTracker.connected,
+  session: getSession(),
 }))(MediaPlayer);

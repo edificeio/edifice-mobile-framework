@@ -32,6 +32,7 @@ export interface StructureNode {
   distributions: any[];
   externalId: string;
   feederName: string;
+  hasApp: boolean;
   id: string;
   joinKey: string[];
   levelsOfEducation: number[];
@@ -114,22 +115,24 @@ export interface ISession {
   authorizedActions: IAuthorizedAction[];
   user: ILoggedUser;
   type: SessionType; // Is Session remembering set on ?
+  federated: boolean;
 }
 
 /** Error codes as an enum, values can be string that backend returns */
 export enum RuntimeAuthErrorCode {
-  RUNTIME_ERROR = 'runtime_error',
-  RESTORE_FAIL = 'restore-fail',
-  USERINFO_FAIL = 'userinfo-fail',
-  USERPUBLICINFO_FAIL = 'userpublicinfo-fail',
-  USERREQUIREMENTS_FAIL = 'userrequirements-fail',
+  ACTIVATION_ERROR = 'activation_error',
   FIREBASE_ERROR = 'firebase_error',
-  PRE_DELETED = 'pre_deleted',
-  PLATFORM_NOT_EXISTS = 'platform-not-exists',
-  ACTIVATION_ERROR = 'activation-error',
-  UNKNOWN_ERROR = 'unknown-error',
-  LOAD_I18N_ERROR = 'load-i18n-error',
+  LOAD_I18N_ERROR = 'loadi18nerror',
   NETWORK_ERROR = 'network_error',
+  NOT_PREMIUM = 'not_premium',
+  PLATFORM_NOT_EXISTS = 'platform_not_exists',
+  PRE_DELETED = 'pre_deleted',
+  RESTORE_FAIL = 'restore_fail',
+  RUNTIME_ERROR = 'runtime_error',
+  UNKNOWN_ERROR = 'unknown_error',
+  USERINFO_FAIL = 'userinfo_fail',
+  USERPUBLICINFO_FAIL = 'userpublicinfo_fail',
+  USERREQUIREMENTS_FAIL = 'userrequirements_fail',
 }
 
 export type AuthErrorCode = OAuth2ErrorCode | RuntimeAuthErrorCode;

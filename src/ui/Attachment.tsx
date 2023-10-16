@@ -287,7 +287,7 @@ class Attachment extends React.PureComponent<
     const toLocalFile = (att: ILocalAttachment) =>
       new LocalFile(
         {
-          filename: att['displayName'] || att.name,
+          filename: att.displayName || att.name,
           filetype: att.mime,
           filepath: att.uri,
         },

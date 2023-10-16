@@ -4,16 +4,23 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 const BORDER_WIDTH = 1;
-const BORDER_RADIUS = 16;
+const BORDER_RADIUS = 12;
 
 export default StyleSheet.create({
-  lineButtonText: {
-    flex: 1,
-    color: theme.ui.text.regular,
-    paddingRight: UI_SIZES.spacing.minor,
+  iconText: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: UI_SIZES.dimensions.width.mediumPlus,
   },
-  lineButtonIcon: {
-    transform: [{ rotate: '270deg' }],
+  text: {
+    flex: 1,
+  },
+  icon: {
+    marginRight: UI_SIZES.spacing.minor,
+  },
+  arrow: {
+    position: 'absolute',
+    right: UI_SIZES.spacing.small,
   },
   container: {
     alignItems: 'center',

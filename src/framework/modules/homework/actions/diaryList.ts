@@ -33,6 +33,11 @@ export type IHomeworkDiaryListBackend = {
   entriesModified: {
     $date: number;
   };
+  shared?: ({
+    [key: string]: boolean | string | undefined;
+  } & {
+    [key in 'userId' | 'groupId']: string;
+  })[];
 }[];
 
 const homeworkDiaryListAdapter: (data: IHomeworkDiaryListBackend) => IHomeworkDiaryList = data => {
@@ -45,6 +50,8 @@ const homeworkDiaryListAdapter: (data: IHomeworkDiaryListBackend) => IHomeworkDi
       name: item.name,
       title: item.title,
       thumbnail: item.thumbnail,
+      shared: item.shared,
+      owner: item.owner,
     };
   }
   return result;

@@ -44,7 +44,6 @@ export default StyleSheet.create({
   inputTitle: { marginLeft: UI_SIZES.spacing.minor },
   inputTitleContainer: { alignItems: 'center', marginTop: UI_SIZES.spacing.big, flexDirection: 'row' },
   logoutButton: { alignSelf: 'center', marginTop: UI_SIZES.spacing.medium },
-  logoutText: { color: theme.palette.status.failure.regular },
   page: { backgroundColor: theme.ui.background.card },
   sendButton: { marginTop: UI_SIZES.spacing.medium },
   title: { textAlign: 'center', marginTop: UI_SIZES.spacing.medium },

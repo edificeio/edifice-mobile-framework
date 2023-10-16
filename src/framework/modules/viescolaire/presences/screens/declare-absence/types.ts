@@ -5,13 +5,12 @@ import type { PresencesNavigationParams, presencesRouteNames } from '~/framework
 
 export interface PresencesDeclareAbsenceScreenProps {}
 
-export interface PresencesDeclareAbsenceScreenNavParams {}
+export interface PresencesDeclareAbsenceScreenNavParams {
+  childId: string;
+}
 
 export interface PresencesDeclareAbsenceScreenStoreProps {
-  childId?: string;
-  childName?: string;
   session?: ISession;
-  structureId?: string;
 }
 
 export interface PresencesDeclareAbsenceScreenDispatchProps {}

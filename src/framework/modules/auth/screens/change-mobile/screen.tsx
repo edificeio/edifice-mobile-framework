@@ -1,7 +1,7 @@
-import { RouteProp, UNSTABLE_usePreventRemove, useIsFocused } from '@react-navigation/native';
+import { RouteProp, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, Platform, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, View } from 'react-native';
 import PhoneInput, {
   Country,
   CountryCode,
@@ -16,21 +16,22 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import DefaultButton from '~/framework/components/buttons/default';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
-import { getMobileValidationInfos, getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
+import { getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { containsKey, isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -220,29 +221,34 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
     }
   }, [navigation, tryLogout, platform]);
 
-  UNSTABLE_usePreventRemove(!isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused, ({ data }) => {
-    Alert.alert(I18n.get('auth-change-mobile-edit-alert-title'), I18n.get('auth-change-mobile-edit-alert-message'), [
-      {
-        text: I18n.get('auth-change-mobile-discard'),
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, props.navigation);
-        },
-        style: 'destructive',
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'cancel',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('auth-change-mobile-edit-alert-title'),
+    text: I18n.get('auth-change-mobile-edit-alert-message'),
+    showAlert: !isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused && isModifyingMobile,
   });
 
   const onChangeMobile = useCallback((text: string) => changeMobile(text), [changeMobile]);
   const onSetRegion = useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
   const onSendSMS = useCallback(() => sendSMS(), [sendSMS]);
-  const onRefuseMobileVerification = useCallback(() => refuseMobileVerification(), [refuseMobileVerification]);
+  const onRefuseMobileVerification = useCallback(() => {
+    if (!isMobileEmpty && mobileState !== MobileState.PRISTINE && isScreenFocused) {
+      Alert.alert(I18n.get('auth-change-mobile-edit-alert-title'), I18n.get('auth-change-mobile-edit-alert-message'), [
+        {
+          text: I18n.get('common-quit'),
+          onPress: () => {
+            refuseMobileVerification();
+          },
+          style: 'destructive',
+        },
+        {
+          text: I18n.get('common-continue'),
+          style: 'default',
+        },
+      ]);
+    } else {
+      refuseMobileVerification();
+    }
+  }, [isMobileEmpty, isScreenFocused, mobileState, refuseMobileVerification]);
 
   return (
     <KeyboardPageView style={styles.page} scrollable>
@@ -313,7 +319,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           <CaptionItalicText style={styles.errorText}>
             {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
           </CaptionItalicText>
-          <ActionButton
+          <PrimaryButton
             style={styles.sendButton}
             text={texts.button}
             disabled={isMobileEmpty}
@@ -321,9 +327,12 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
             action={onSendSMS}
           />
           {isModifyingMobile ? null : (
-            <TouchableOpacity style={styles.logoutButton} onPress={onRefuseMobileVerification}>
-              <SmallBoldText style={styles.logoutText}>{I18n.get('auth-change-mobile-verify-disconnect')}</SmallBoldText>
-            </TouchableOpacity>
+            <DefaultButton
+              style={styles.logoutButton}
+              text={I18n.get('auth-change-mobile-verify-disconnect')}
+              contentColor={theme.palette.status.failure.regular}
+              action={onRefuseMobileVerification}
+            />
           )}
         </View>
       )}

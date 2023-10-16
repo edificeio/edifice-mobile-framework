@@ -8,7 +8,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { CardWithoutPadding, cardPadding } from '~/framework/components/card/base';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -155,13 +155,12 @@ function CarnetDeBordDetailsScreen(props: CarnetDeBordDetailsScreenProps) {
           <SmallText style={styles.message}>{data.PageReleveDeNotes.Message}</SmallText>
         ) : null}
         <CardWithoutPadding style={styles.card}>{items}</CardWithoutPadding>
-        <ActionButton
+        <SecondaryButton
           style={styles.button}
-          type="secondary"
           action={() => {
             if (data.address && props.session) redirect(props.session, data.address, pageId);
           }}
-          iconName="pictos-external-link"
+          iconRight="pictos-external-link"
           text={I18n.get('pronote-openinpronote')}
         />
       </ScrollView>

@@ -11,9 +11,9 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
@@ -167,7 +167,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
                 })
               : ''}
           </SmallText>
-          <ActionButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
+          <PrimaryButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
       );
     },
@@ -211,7 +211,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
               value={this.dropdownValue}
             />
             <View style={STYLES.submitButton}>
-              <ActionButton
+              <PrimaryButton
                 text={I18n.get('auth-wayf-select-button')}
                 disabled={this.dropdownValue === null}
                 action={() => this.loginWithCustomToken()}
@@ -233,6 +233,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           onError={this.onError.bind(this)}
           onHttpError={this.onHttpError.bind(this)}
           onLoad={this.onLoad.bind(this)}
+          onLoadStart={this.onLoadStart.bind(this)}
           onMessage={this.onMessage.bind(this)}
           onNavigationStateChange={this.onNavigationStateChange.bind(this)}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
@@ -432,6 +433,15 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   onLoad() {
     // Flag first webview page loading completion
     this.isFirstLoadFinished = true;
+  }
+
+  onLoadStart() {
+    setTimeout(() => {
+      if (!this.isFirstLoadFinished) {
+        this.error = 'wayftoolong';
+        this.setState({ mode: WAYFPageMode.ERROR });
+      }
+    }, 20000);
   }
 
   // Called each time POST_HTML_CONTENT js code is executed (e.g when WebView url changes)

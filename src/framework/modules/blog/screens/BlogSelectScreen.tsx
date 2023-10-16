@@ -1,28 +1,20 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { FlatList, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyConnectionScreen } from '~/framework/components/emptyConnectionScreen';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
-import { Icon } from '~/framework/components/icon';
-import { ListItem } from '~/framework/components/listItem';
-import { LoadingIndicator } from '~/framework/components/loading';
-import { PageView } from '~/framework/components/page';
-import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import { EmptyScreen } from '~/framework/components/empty-screens';
+import ResourcePicker from '~/framework/components/explorer/resource-picker';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
+import { moduleColor } from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { Blog, BlogList } from '~/framework/modules/blog/reducer';
+import { BlogList } from '~/framework/modules/blog/reducer';
 import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 export interface BlogSelectScreenDataProps {
   session?: ISession;
@@ -31,38 +23,15 @@ export interface BlogSelectScreenEventProps {
   handleGetPublishableBlogList(): Promise<BlogList | undefined>;
 }
 export interface BlogSelectScreenNavParams {
-  // Add nav params here
+  blogsData: BlogList;
 }
 export type BlogSelectScreenProps = BlogSelectScreenDataProps &
   BlogSelectScreenEventProps &
   NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.home>;
 
-export enum BlogSelectLoadingState {
-  PRISTINE,
-  INIT,
-  REFRESH,
-  DONE,
-}
 export interface BlogSelectScreenState {
-  loadingState: BlogSelectLoadingState;
-  blogsData: BlogList | undefined;
-  errorState: boolean;
+  blogsData: BlogList;
 }
-
-const styles = StyleSheet.create({
-  blogItem: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  blogItemTexts: {
-    flex: 1,
-    marginLeft: UI_SIZES.spacing.small,
-  },
-  listBlog: {
-    flexGrow: 1,
-  },
-});
 
 export const computeNavBar = ({
   navigation,
@@ -76,78 +45,23 @@ export const computeNavBar = ({
 });
 
 export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps, BlogSelectScreenState> {
-  state: BlogSelectScreenState = {
-    loadingState: BlogSelectLoadingState.PRISTINE,
-    blogsData: undefined,
-    errorState: false,
+  state: BlogSelectScreenState = { blogsData: this.props.route.params.blogsData };
+
+  doGetPublishableBlogList = async () => {
+    const { handleGetPublishableBlogList } = this.props;
+    const blogsData = await handleGetPublishableBlogList();
+    if (!blogsData) {
+      throw new Error('[doGetPublishableBlogList] failed to retrieve the publishable blog list');
+    }
+    this.setState({ blogsData });
   };
 
-  async doInit() {
-    try {
-      this.setState({ loadingState: BlogSelectLoadingState.INIT });
-      await this.doGetPublishableBlogList();
-    } finally {
-      this.setState({ loadingState: BlogSelectLoadingState.DONE });
-    }
-  }
+  onPressBlog = blog => {
+    const { navigation } = this.props;
+    navigation.navigate(blogRouteNames.blogCreatePost, { blog });
+  };
 
-  async doRefresh() {
-    try {
-      this.setState({ loadingState: BlogSelectLoadingState.REFRESH });
-      await this.doGetPublishableBlogList();
-    } finally {
-      this.setState({ loadingState: BlogSelectLoadingState.DONE });
-    }
-  }
-
-  async doGetPublishableBlogList() {
-    try {
-      const { handleGetPublishableBlogList } = this.props;
-      const blogsData = await handleGetPublishableBlogList();
-      if (!blogsData) {
-        throw new Error('[doGetPublishableBlogList] failed to retrieve the publishable blog list');
-      }
-      this.setState({ blogsData });
-    } catch {
-      // ToDo: Error handling
-      this.setState({ errorState: true });
-    }
-  }
-
-  componentDidMount() {
-    this.doInit();
-  }
-
-  renderError() {
-    return <EmptyConnectionScreen />;
-  }
-
-  renderList() {
-    const { loadingState, blogsData } = this.state;
-    const isEmpty = blogsData?.length === 0;
-    return (
-      <FlatList
-        data={blogsData}
-        renderItem={({ item }: { item: Blog }) => this.renderBlog(item)}
-        keyExtractor={(item: Blog) => item.id.toString()}
-        contentContainerStyle={[
-          styles.listBlog,
-          {
-            paddingBottom: isEmpty ? undefined : UI_SIZES.screen.bottomInset,
-          },
-        ]}
-        ListEmptyComponent={this.renderEmpty()}
-        refreshControl={
-          <RefreshControl
-            refreshing={[BlogSelectLoadingState.REFRESH, BlogSelectLoadingState.INIT].includes(loadingState)}
-            onRefresh={() => this.doRefresh()}
-          />
-        }
-      />
-    );
-  }
-
-  renderEmpty() {
+  renderEmptyBlogList = () => {
     const { session } = this.props;
     const hasBlogCreationRights = session && getBlogWorkflowInformation(session)?.blog.create;
     return (
@@ -159,62 +73,29 @@ export class BlogSelectScreen extends React.PureComponent<BlogSelectScreenProps,
         buttonUrl="/blog#/edit/new"
       />
     );
-  }
-
-  renderBlog(blog: Blog) {
-    const { navigation } = this.props;
-    const blogShareNumber = blog.shared?.length;
-    return (
-      <TouchableOpacity onPress={() => navigation.navigate(blogRouteNames.blogCreatePost, { blog })}>
-        <ListItem
-          leftElement={
-            <View style={styles.blogItem}>
-              <GridAvatars
-                users={[blog.thumbnail ? { uri: blog.thumbnail } : require('ASSETS/images/resource-avatar.png')]}
-                fallback={require('ASSETS/images/resource-avatar.png')}
-              />
-              <View style={styles.blogItemTexts}>
-                <SmallBoldText numberOfLines={1}>{blog.title}</SmallBoldText>
-                <CaptionText style={{ marginTop: UI_SIZES.spacing.minor }}>
-                  {I18n.get(`blog-select-sharedtonbperson${blogShareNumber === 1 ? '' : 's'}`, {
-                    nb: blogShareNumber || 0,
-                  })}
-                </CaptionText>
-              </View>
-            </View>
-          }
-          rightElement={
-            <Icon name="arrow_down" color={theme.palette.grey.graphite} style={{ transform: [{ rotate: '270deg' }] }} />
-          }
-        />
-      </TouchableOpacity>
-    );
-  }
+  };
 
   render() {
-    const { loadingState, errorState } = this.state;
+    const { blogsData } = this.state;
+
     return (
-      <>
-        <PageView>
-          {[BlogSelectLoadingState.PRISTINE, BlogSelectLoadingState.INIT].includes(loadingState) ? (
-            <LoadingIndicator />
-          ) : errorState ? (
-            this.renderError()
-          ) : (
-            this.renderList()
-          )}
-        </PageView>
-      </>
+      <ResourcePicker
+        data={blogsData}
+        emptyComponent={this.renderEmptyBlogList}
+        onRefresh={this.doGetPublishableBlogList}
+        onPressItem={this.onPressBlog}
+        defaultThumbnail={{ name: 'blog', fill: moduleColor.regular, background: moduleColor.pale }}
+      />
     );
   }
 }
 
 const mapStateToProps: (s: IGlobalState) => BlogSelectScreenDataProps = s => ({ session: getSession() });
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => BlogSelectScreenEventProps = (
-  dispatch,
-  getState,
-) => ({
+const mapDispatchToProps: (
+  dispatch: ThunkDispatch<any, any, any>,
+  getState: () => IGlobalState,
+) => BlogSelectScreenEventProps = dispatch => ({
   handleGetPublishableBlogList: async () => {
     const blogs = (await dispatch(getPublishableBlogListAction())) as unknown as BlogList;
     return blogs;

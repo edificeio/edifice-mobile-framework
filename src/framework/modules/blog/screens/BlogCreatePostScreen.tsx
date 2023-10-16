@@ -1,25 +1,27 @@
-import { NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Keyboard, ScrollView, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import { LoadingIndicator } from '~/framework/components/loading';
-import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
-import BottomMenu from '~/framework/components/menus/bottom';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
+import InputContainer from '~/framework/components/inputs/container';
+import MultilineTextInput from '~/framework/components/inputs/multiline';
+import TextInput from '~/framework/components/inputs/text';
+import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { KeyboardPageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import { NamedSVG } from '~/framework/components/picture';
+import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
+import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -30,14 +32,14 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
+import { Image } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
+import { uppercaseFirstLetter } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
-import { GridAvatars } from '~/ui/avatars/GridAvatars';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
@@ -63,71 +65,43 @@ export interface BlogCreatePostScreenState {
   sendLoadingState: boolean;
   title: string;
   content: string;
-  images: ImagePicked[];
-  onPublish: boolean;
+  images: ImagePicked[] | ILocalAttachment[];
+  thumbnailBlog: string | undefined;
 }
 
 const styles = StyleSheet.create({
-  addMedia: {
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-  },
-  addMediaButtonAdded: {
-    width: 300,
-    marginRight: UI_SIZES.spacing.minor,
-    textAlign: 'center',
-  },
-  addMediaButtonEmpty: {
-    width: 300,
-    marginRight: 0,
-    textAlign: 'center',
-  },
-  addMediaView: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.big,
-  },
-  addMediaViewAdded: {
-    flexDirection: 'row',
-    marginBottom: UI_SIZES.spacing.small,
-  },
-  addMediaViewEmpty: {
-    flexDirection: 'column',
-    marginBottom: UI_SIZES.spacing.big,
-  },
-  input: {
-    marginBottom: UI_SIZES.spacing.big,
-    padding: UI_SIZES.spacing.small,
-    backgroundColor: theme.ui.background.card,
-    borderColor: theme.ui.border.input,
-    borderWidth: 1,
-    borderRadius: 5,
-    color: theme.ui.text.regular,
-  },
-  inputArea: {
-    marginBottom: UI_SIZES.spacing.medium,
-    height: 140,
-  },
-  loaderPublish: {
-    justifyContent: 'center',
-    paddingHorizontal: UI_SIZES.spacing.big,
+  page: {
+    backgroundColor: theme.palette.grey.white,
+    marginBottom: Platform.select({ ios: -UI_SIZES.screen.bottomInset, default: 0 }),
   },
   scrollView: {
     flexGrow: 1,
-    paddingVertical: UI_SIZES.spacing.small,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.medium,
   },
   userInfos: {
-    marginBottom: UI_SIZES.spacing.big,
+    marginBottom: UI_SIZES.spacing.large,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  userInfos_texts: {
-    flex: 1,
+  thumbnailBlog: {
+    width: UI_SIZES.elements.avatar.lg,
+    aspectRatio: UI_SIZES.aspectRatios.square,
+    borderRadius: UI_SIZES.radius.medium,
+  },
+  thumbnailNoBlog: {
+    backgroundColor: theme.palette.complementary.indigo.pale,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  blogTitle: {
+    color: theme.palette.grey.darkness,
     marginLeft: UI_SIZES.spacing.minor,
+  },
+  input: {
+    marginBottom: UI_SIZES.spacing.big,
+  },
+  button: {
+    marginTop: UI_SIZES.spacing.large,
   },
 });
 
@@ -144,24 +118,10 @@ export const computeNavBar = ({
 });
 
 function PreventBack(props: { isEditing: boolean }) {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  UNSTABLE_usePreventRemove(props.isEditing, ({ data }) => {
-    Alert.alert(I18n.get('blog-createpost-confirmation-unsavedpublication'), I18n.get('blog-createpost-unsavedpublication'), [
-      {
-        text: I18n.get('common-quit'),
-        onPress: () => {
-          handleRemoveConfirmNavigationEvent(data.action, navigation);
-        },
-        style: 'destructive',
-      },
-      {
-        text: I18n.get('common-continue'),
-        style: 'default',
-        onPress: () => {
-          clearConfirmNavigationEvent();
-        },
-      },
-    ]);
+  usePreventBack({
+    title: I18n.get('blog-createpost-confirmation-unsavedpublication'),
+    text: I18n.get('blog-createpost-unsavedpublication'),
+    showAlert: props.isEditing,
   });
   return null;
 }
@@ -172,13 +132,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     title: '',
     content: '',
     images: [],
-    onPublish: false,
-  };
-
-  attachmentPickerRef: any;
-
-  imageCallback = image => {
-    this.setState(prevState => ({ images: [...prevState.images, image] }));
+    thumbnailBlog: this.props.route.params.blog.thumbnail,
   };
 
   async doSend() {
@@ -223,10 +177,10 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       }
 
       // Translate entered content to httml
-      const htmlContent = content.replace(/\n/g, '<br>');
+      const htmlContent = content.replace(/\n/g, '<br>').trim();
 
       // Create and submit/publish post
-      await handleSendBlogPost(blog, title, htmlContent, uploadedPostImages);
+      await handleSendBlogPost(blog, title.trim(), htmlContent, uploadedPostImages);
 
       // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
@@ -245,9 +199,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
       Trackers.trackEvent(eventCategory, 'Créer un billet', eventName);
       await handleInitTimeline();
-      this.setState({
-        onPublish: true,
-      });
       navigation.navigate(route.params.referrer ?? timelineRouteNames.Home, {
         ...(route.params.referrer ? { selectedBlog: route.params.blog } : {}),
       });
@@ -262,40 +213,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
     }
   }
 
-  setActionNavbar = () => {
-    const blog = this.props.route.params.blog;
-    const blogPostRight = blog && this.props.session && getBlogPostRight(blog, this.props.session);
-    const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
-    const actionText =
-      blogPostDisplayRight &&
-      {
-        [createBlogPostResourceRight]: I18n.get('blog-createpost-create'),
-        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit'),
-        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish'),
-      }[blogPostDisplayRight];
-    this.props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () =>
-        this.state.sendLoadingState ? (
-          <LoadingIndicator small customColor={theme.ui.text.inverse} customStyle={styles.loaderPublish} />
-        ) : (
-          <NavBarAction
-            title={actionText}
-            disabled={this.state.title.length === 0 || this.state.content.length === 0}
-            onPress={() => this.doSend()}
-          />
-        ),
-    });
-  };
-
-  componentDidMount() {
-    this.setActionNavbar();
-  }
-
-  componentDidUpdate() {
-    this.setActionNavbar();
-  }
-
   renderError() {
     return <SmallBoldText>Error</SmallBoldText>; // ToDo: great error screen here
   }
@@ -306,45 +223,73 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         {this.renderBlogInfos()}
         {this.renderPostInfos()}
         {this.renderPostMedia()}
+        {this.renderButton()}
       </>
+    );
+  }
+
+  renderThumbnail() {
+    const { route } = this.props;
+    const blog = route.params.blog;
+    if (this.state.thumbnailBlog)
+      return (
+        <View>
+          <Image
+            source={blog?.thumbnail}
+            style={styles.thumbnailBlog}
+            onError={() => this.setState({ thumbnailBlog: undefined })}
+          />
+        </View>
+      );
+    return (
+      <View style={[styles.thumbnailBlog, styles.thumbnailNoBlog]}>
+        <NamedSVG name="blog" fill={theme.palette.complementary.indigo.regular} height={32} width={32} />
+      </View>
     );
   }
 
   renderBlogInfos() {
     const { route, session } = this.props;
     if (!session) return <View style={styles.userInfos} />;
-    const { id, displayName } = session.user;
     const blog = route.params.blog;
     return (
       <View style={styles.userInfos}>
-        <GridAvatars users={[id]} />
-        <View style={styles.userInfos_texts}>
-          <SmallBoldText>{displayName}</SmallBoldText>
-          <SmallText>{blog?.title}</SmallText>
-        </View>
+        {this.renderThumbnail()}
+        <BodyText style={styles.blogTitle}>{blog?.title}</BodyText>
       </View>
     );
   }
 
   renderPostInfos() {
     const { title, content } = this.state;
+    const contentFieldRef: { current: any } = React.createRef();
     return (
       <>
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-post-title')}</SmallBoldText>
-        <TextInput
-          placeholder={I18n.get('blog-createpost-post-title-placeholder')}
-          value={title}
-          onChangeText={text => this.setState({ title: text })}
+        <InputContainer
+          label={{ text: I18n.get('blog-createpost-post-title'), icon: 'ui-write' }}
+          input={
+            <TextInput
+              placeholder={I18n.get('blog-createpost-post-title-placeholder')}
+              value={title}
+              onChangeText={text => this.setState({ title: text })}
+              returnKeyType="next"
+              onSubmitEditing={() => contentFieldRef?.current?.focus()}
+            />
+          }
           style={styles.input}
         />
-        <SmallBoldText style={{ marginBottom: UI_SIZES.spacing.small }}>{I18n.get('blog-createpost-postcontent')}</SmallBoldText>
-        <TextInput
-          placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
-          value={content}
-          onChangeText={text => this.setState({ content: text })}
-          style={[styles.input, styles.inputArea]}
-          textAlignVertical="top"
-          multiline
+        <InputContainer
+          label={{ text: I18n.get('blog-createpost-postcontent'), icon: 'ui-textPage' }}
+          input={
+            <MultilineTextInput
+              placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
+              value={content}
+              onChangeText={text => this.setState({ content: text })}
+              numberOfLines={5}
+              ref={contentFieldRef}
+            />
+          }
+          style={styles.input}
         />
       </>
     );
@@ -352,55 +297,51 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   renderPostMedia() {
     const { images } = this.state;
-    const imagesAdded = images.length > 0;
     return (
-      <View style={styles.addMedia}>
-        <BottomMenu
-          title={I18n.get('blog-createpost-bottommenu-addmedia')}
-          actions={[
-            cameraAction({
-              callback: this.imageCallback,
-            }),
-            galleryAction({
-              callback: this.imageCallback,
-              multiple: true,
-            }),
-          ]}>
-          <View
-            style={[styles.addMediaView, imagesAdded ? styles.addMediaViewAdded : styles.addMediaViewEmpty]}
-            // onPress={() => this.attachmentPickerRef.onPickAttachment()}
-          >
-            <SmallActionText style={imagesAdded ? styles.addMediaButtonAdded : styles.addMediaButtonEmpty}>
-              {I18n.get('blog-createpost-create-mediafield')}
-            </SmallActionText>
-            <Icon name="camera-on" size={imagesAdded ? 15 : 22} color={theme.palette.primary.regular} />
-          </View>
-        </BottomMenu>
+      <View>
         <AttachmentPicker
-          ref={r => (this.attachmentPickerRef = r)}
           onlyImages
-          attachments={images.map(
-            img =>
-              ({
-                mime: img.type,
-                name: img.fileName,
-                uri: img.uri,
-              } as ILocalAttachment),
-          )}
-          onAttachmentSelected={() => {}}
-          onAttachmentRemoved={imagesToSend => this.setState({ images: imagesToSend })}
-          notifierId="createBlogPost"
+          notifierId={uppercaseFirstLetter(moduleConfig.name)}
+          imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
+          onAttachmentRemoved={images => this.setState({ images })}
+          attachments={images.map(image => ({
+            mime: image.type,
+            name: image.fileName,
+            uri: image.uri,
+          }))}
         />
       </View>
     );
   }
 
+  renderButton() {
+    const blog = this.props.route.params.blog;
+    const blogPostRight = blog && this.props.session && getBlogPostRight(blog, this.props.session);
+    const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
+    const actionText =
+      blogPostDisplayRight &&
+      {
+        [createBlogPostResourceRight]: I18n.get('blog-createpost-create'),
+        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit'),
+        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish'),
+      }[blogPostDisplayRight];
+    return (
+      <PrimaryButton
+        text={actionText}
+        loading={this.state.sendLoadingState}
+        disabled={this.state.title.trim().length === 0 || this.state.content.trim().length === 0}
+        action={() => this.doSend()}
+        style={styles.button}
+      />
+    );
+  }
+
   render() {
-    const isEditing = !isEmpty(this.state.title || this.state.content || this.state.images) && !this.state.onPublish;
+    const isEditing = !isEmpty(this.state.title || this.state.content || this.state.images) && !this.state.sendLoadingState;
     return (
       <>
         <PreventBack isEditing={isEditing} />
-        <KeyboardPageView scrollable={false}>
+        <KeyboardPageView scrollable={false} style={styles.page}>
           {/* ToDo : don't use magic keywords like this. */}
           <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.scrollView}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>

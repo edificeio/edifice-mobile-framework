@@ -10,5 +10,6 @@ export interface IDraft {
   body: string;
   threadBody: string;
   attachments: IDistantFileWithId[];
+  id?: string;
   inReplyTo?: string;
 }

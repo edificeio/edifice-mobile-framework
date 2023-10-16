@@ -1,4 +1,4 @@
-import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove, useNavigation } from '@react-navigation/native';
+import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import * as React from 'react';
@@ -16,8 +16,7 @@ import { BottomSheet } from '~/framework/components/BottomSheet';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
-import { LoadingIndicator } from '~/framework/components/loading';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -25,6 +24,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import usePreventBack from '~/framework/hooks/usePreventBack';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteBlogPostAction,
@@ -35,7 +35,7 @@ import {
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
 import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
-import moduleConfig from '~/framework/modules/blog/module-config';
+import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
 import {
@@ -46,7 +46,6 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -76,28 +75,12 @@ export const computeNavBar = ({
 
 function PreventBack(props: { infoComment: InfoCommentField }) {
   const { infoComment } = props;
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  UNSTABLE_usePreventRemove(infoComment.changed, ({ data }) => {
-    Alert.alert(
-      I18n.get(`blog-postdetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      I18n.get(`blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
-      [
-        {
-          text: I18n.get('common-quit'),
-          style: 'destructive',
-          onPress: () => {
-            handleRemoveConfirmNavigationEvent(data.action, navigation);
-          },
-        },
-        {
-          text: I18n.get('common-continue'),
-          style: 'default',
-          onPress: () => {
-            clearConfirmNavigationEvent();
-          },
-        },
-      ],
-    );
+  usePreventBack({
+    title: I18n.get(`blog-postdetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+    text: I18n.get(
+      `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
+    ),
+    showAlert: infoComment.changed,
   });
   return null;
 }
@@ -645,7 +628,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         <PreventBack infoComment={this.state.infoComment} />
         <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
           {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
-            <LoadingIndicator />
+            <BlogPlaceholderDetails />
           ) : errorState ? (
             this.renderError()
           ) : (

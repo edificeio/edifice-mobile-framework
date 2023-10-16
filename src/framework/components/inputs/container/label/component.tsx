@@ -7,12 +7,21 @@ import { SmallBoldText, SmallItalicText } from '~/framework/components/text';
 
 import styles from './styles';
 import { LabelIndicator, LabelProps } from './types';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default function Label(props: LabelProps) {
   const { text, icon, indicator } = props;
 
   const renderIcon = useCallback(() => {
-    return <NamedSVG name={icon!} width={20} height={20} fill={theme.palette.grey.black} style={styles.labelIcon} />;
+    return (
+      <NamedSVG
+        name={icon!}
+        width={UI_SIZES.elements.icon.small}
+        height={UI_SIZES.elements.icon.small}
+        fill={theme.palette.grey.black}
+        style={styles.labelIcon}
+      />
+    );
   }, [icon]);
 
   const renderLabelIndicator = useCallback(() => {

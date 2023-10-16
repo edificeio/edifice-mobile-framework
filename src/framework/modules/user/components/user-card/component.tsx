@@ -3,9 +3,11 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { cameraAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomMenu from '~/framework/components/menus/bottom';
-import { BodyBoldText, SmallText } from '~/framework/components/text';
+import { HeadingXSText, SmallBoldText } from '~/framework/components/text';
+import { colorType } from '~/framework/modules/user/screens/home';
 import { IconButton } from '~/ui/IconButton';
 import { Loading } from '~/ui/Loading';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
@@ -20,16 +22,10 @@ export const UserCard = ({
   canEdit = false,
   hasAvatar,
   updatingAvatar,
+  onPressInlineButton,
   onChangeAvatar,
   onDeleteAvatar,
 }: IUserCardProps) => {
-  const renderUserType = (userType: 'Student' | 'Relative' | 'Teacher' | 'Personnel' | 'Guest') => (
-    <View style={styles.textType}>
-      <View style={styles.roundColorType} key={userType} />
-      <SmallText style={{ color: theme.ui.text.light }}>{I18n.get(`user-profiletypes-${userType}`.toLowerCase())}</SmallText>
-    </View>
-  );
-
   const renderActions = (avatar: boolean, changeAvatar: (image) => void, deleteAvatar: () => void) => (
     <View style={styles.buttonsActionAvatar}>
       {avatar ? (
@@ -73,14 +69,24 @@ export const UserCard = ({
 
   return (
     <View style={styles.main}>
-      <View style={styles.boxAvatar}>
-        <Avatar sourceOrId={id} size={Size.verylarge} id="" />
+      <View style={[styles.boxAvatar, { ...(canEdit ? styles.boxAvatarEdit : {}) }]}>
+        <Avatar sourceOrId={id} size={Size.xxl} id="" />
         {canEdit ? renderActions(hasAvatar, onChangeAvatar, onDeleteAvatar) : null}
         {updatingAvatar ? <Loading customColor={theme.palette.grey.white} customStyle={styles.loaderAvatar} /> : null}
       </View>
       <View style={styles.boxTexts}>
-        <BodyBoldText>{displayName}</BodyBoldText>
-        {Array.isArray(type) ? type.map(item => renderUserType(item)) : renderUserType(type)}
+        <HeadingXSText style={styles.name}>{displayName}</HeadingXSText>
+        <SmallBoldText style={{ color: colorType[type] }}>
+          {I18n.get(`user-profiletypes-${type.toLocaleLowerCase()}`)}
+        </SmallBoldText>
+        {!canEdit ? (
+          <TertiaryButton
+            style={styles.sendMessage}
+            iconLeft="ui-mail"
+            text={I18n.get('user-profile-sendMessage')}
+            action={onPressInlineButton}
+          />
+        ) : null}
       </View>
     </View>
   );

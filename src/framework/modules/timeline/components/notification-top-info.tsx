@@ -11,6 +11,7 @@ import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 import { ISession } from '~/framework/modules/auth/model';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { APPBADGES } from '~/framework/modules/timeline/app-badges';
+import appConf from '~/framework/util/appConf';
 import {
   INamedResourceNotification,
   ITimelineNotification,
@@ -26,6 +27,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
   const sender = notification && getAsSenderNotification(notification)?.sender;
   const resource =
     notification && (getAsNamedResourceNotification(notification)?.resource as Partial<INamedResourceNotification['resource']>);
+  const degre = appConf.is1d ? '1d' : '2d';
 
   let formattedMessage = message;
   if (message) {
@@ -38,15 +40,22 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
         sender && sender.displayName,
         `${sender.displayName} ${I18n.get('timeline-meindicator')} `,
       );
+    if (notification.type === 'USERBOOK_MOTTO')
+      formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get('timeline-notiftype-motto')}`;
+    if (notification.type === 'USERBOOK_MOOD')
+      formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get('timeline-notiftype-mood')} ${I18n.get(
+        `user-profile-mood-${notification.backupData.params.moodImg}-${degre}`,
+      ).toLocaleLowerCase()}`;
   }
 
   const badgeInfo = {
     icon: APPBADGES[type] && APPBADGES[type].icon,
     color: APPBADGES[type] && APPBADGES[type].color,
   };
+
   return (
     <ContentCardHeader
-      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/system-avatar.png')]} badge={badgeInfo} />}
+      icon={<ContentCardIcon userIds={[sender || require('ASSETS/images/school-avatar.png')]} badge={badgeInfo} />}
       date={date}
       text={
         <HtmlContentView
@@ -62,7 +71,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
             ignoreLineBreaks: true,
             globalTextStyle: {
               ...TextFontStyle.Regular,
-              ...TextSizeStyle.Small,
+              ...TextSizeStyle.Normal,
             },
             linkTextStyle: {
               ...TextFontStyle.Bold,

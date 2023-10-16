@@ -9,7 +9,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
-import { ActionButton } from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
@@ -212,7 +212,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                       {(hasErrorKey || errorText) && !typing ? I18n.get('auth-activation-errorsubmit') : ''}
                     </SmallText>
                     <ButtonWrapper error={hasErrorKey} typing={typing}>
-                      <ActionButton
+                      <PrimaryButton
                         action={() => this.doActivation()}
                         disabled={isNotValid}
                         text={I18n.get('auth-activation-activate')}

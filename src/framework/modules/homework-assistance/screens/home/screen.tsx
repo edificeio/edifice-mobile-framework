@@ -8,8 +8,8 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import ActionButton from '~/framework/components/buttons/action';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
@@ -105,7 +105,7 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
             <SmallText style={styles.secondaryText}>{info}</SmallText>
           </View>
         </View>
-        <ActionButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} style={styles.actionContainer} />
+        <PrimaryButton text={I18n.get('homeworkassistance-home-action')} action={goToRequest} />
       </ScrollView>
     );
   };

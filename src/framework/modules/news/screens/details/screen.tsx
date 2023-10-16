@@ -1,6 +1,7 @@
 import { HeaderBackButton } from '@react-navigation/elements';
 import { UNSTABLE_usePreventRemove } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
@@ -16,7 +17,7 @@ import CardFooter from '~/framework/components/card/footer';
 import CardTopContent from '~/framework/components/card/top-content';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/emptyContentScreen';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -50,7 +51,6 @@ import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import { NewsDetailsScreenDataProps, NewsDetailsScreenEventProps, NewsDetailsScreenProps } from './types';
-import moment from 'moment';
 
 export const computeNavBar = ({
   navigation,
@@ -108,7 +108,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   }, []);
 
   const flatListRef: { current: any } = useRef<typeof FlatList>(null);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   const commentFieldRefs: any[] = [];
 
   const getComments = useCallback(
@@ -284,7 +284,7 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
             text={news.owner.displayName}
             userId={news.owner.id}
             isHorizontal
-            size={UI_SIZES.elements.icon}
+            size={UI_SIZES.elements.icon.default}
             viewStyle={styles.detailsOwner}
           />
           <HtmlContentView html={news.content} />

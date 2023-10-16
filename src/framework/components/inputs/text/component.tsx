@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 import { ColorValue, TextInput as RNTextInput, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
@@ -9,23 +9,44 @@ import { CaptionItalicText } from '~/framework/components/text';
 import styles from './styles';
 import { TextInputProps } from './types';
 
-const ICON_INPUT_SIZE = 20;
+const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 
-export default function TextInput(props: TextInputProps) {
-  const { annotation, showError, showSuccess, toggleIconOn, toggleIconOff, value, disabled, onToggle, onFocus, onBlur } = props;
+const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
+  const {
+    annotation,
+    showError,
+    showSuccess,
+    showIconCallback,
+    toggleIconOn,
+    toggleIconOff,
+    value,
+    disabled,
+    style,
+    testIDToggle,
+    onToggle,
+    onFocus,
+    onBlur,
+  } = props;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isToggle, setIsToggle] = useState<boolean>(false);
 
+  const isShowIconCallback = useMemo(
+    () => (showError || showSuccess) && showIconCallback,
+    [showError, showSuccess, showIconCallback],
+  );
+
   // padding right input management if have icon success || error or if have toggle icon or both :)
   const paddingRight = useMemo(
     () =>
-      toggleIconOn && toggleIconOff
-        ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor + 2 * UI_SIZES.spacing.small + ICON_INPUT_SIZE
-        : showError || showSuccess
+      toggleIconOn && toggleIconOff && isShowIconCallback
+        ? UI_SIZES.spacing.medium + 2 * ICON_INPUT_SIZE + UI_SIZES.spacing.minor + 2 * UI_SIZES.spacing.small
+        : toggleIconOn && toggleIconOff
+        ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small
+        : isShowIconCallback
         ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
         : UI_SIZES.spacing.medium,
-    [toggleIconOn, toggleIconOff, showError, showSuccess],
+    [toggleIconOn, toggleIconOff, isShowIconCallback],
   );
   // position icon success || error management if have toggle icon or not
   const positionIconCallbackInput = useMemo(
@@ -67,7 +88,7 @@ export default function TextInput(props: TextInputProps) {
   }, [isToggle, onToggle]);
 
   const renderIconInput = useCallback(() => {
-    if (showError || showSuccess)
+    if (isShowIconCallback)
       return (
         <NamedSVG
           name={showError ? 'ui-error' : 'ui-success'}
@@ -77,12 +98,15 @@ export default function TextInput(props: TextInputProps) {
           style={[styles.callbackIndicator, { right: positionIconCallbackInput }]}
         />
       );
-  }, [positionIconCallbackInput, showError, showSuccess]);
+  }, [isShowIconCallback, positionIconCallbackInput, showError]);
 
   const renderToggle = useCallback(() => {
     if (toggleIconOn && toggleIconOff)
       return (
-        <TouchableOpacity style={[styles.toggle, { borderColor: colorStatus() }]} onPress={() => handleToggle()}>
+        <TouchableOpacity
+          style={[styles.toggle, { borderColor: colorStatus() }]}
+          onPress={() => handleToggle()}
+          testID={testIDToggle ?? ''}>
           <NamedSVG
             name={isToggle ? toggleIconOn : toggleIconOff}
             fill={disabled ? theme.palette.grey.graphite : theme.palette.grey.black}
@@ -91,33 +115,45 @@ export default function TextInput(props: TextInputProps) {
           />
         </TouchableOpacity>
       );
-  }, [colorStatus, disabled, handleToggle, toggleIconOn, toggleIconOff, isToggle]);
+  }, [toggleIconOn, toggleIconOff, colorStatus, testIDToggle, isToggle, disabled, handleToggle]);
 
   const renderInput = useCallback(() => {
     return (
-      <View>
+      <View style={styles.viewInput}>
         <RNTextInput
+          {...props}
           onFocus={e => handleFocus(e)}
           onBlur={e => handleBlur(e)}
-          style={[styles.input, { paddingRight, borderColor: colorStatus() }, { ...(disabled ? styles.inputDisabled : null) }]}
+          placeholderTextColor={theme.palette.grey.stone}
+          ref={ref}
           {...(disabled ? { editable: false, placeholderTextColor: theme.palette.grey.graphite } : null)}
-          {...props}
+          style={[
+            styles.input,
+            { paddingRight, borderColor: colorStatus() },
+            { ...(disabled ? styles.inputDisabled : null) },
+            style,
+          ]}
         />
+
         {renderIconInput()}
         {renderToggle()}
       </View>
     );
-  }, [paddingRight, colorStatus, disabled, props, renderIconInput, renderToggle, handleFocus, handleBlur]);
+  }, [props, ref, disabled, paddingRight, colorStatus, style, renderIconInput, renderToggle, handleFocus, handleBlur]);
 
   const renderAnnotation = useCallback(() => {
     if (annotation)
       return (
         <CaptionItalicText
-          style={[styles.annotation, { ...(showError ? styles.annotationError : showSuccess ? styles.annotationSuccess : null) }]}>
+          style={[
+            styles.annotation,
+            props.annotationStyle,
+            { ...(showError ? styles.annotationError : showSuccess ? styles.annotationSuccess : null) },
+          ]}>
           {annotation}
         </CaptionItalicText>
       );
-  }, [annotation, showError, showSuccess]);
+  }, [annotation, props.annotationStyle, showError, showSuccess]);
 
   return (
     <View>
@@ -125,4 +161,6 @@ export default function TextInput(props: TextInputProps) {
       {renderAnnotation()}
     </View>
   );
-}
+});
+
+export default TextInput;

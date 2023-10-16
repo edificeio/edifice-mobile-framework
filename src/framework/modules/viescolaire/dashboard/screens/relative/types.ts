@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { IUser } from '~/framework/modules/auth/model';
+import type { ISession, IUser } from '~/framework/modules/auth/model';
 import type {
   fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
@@ -13,7 +13,7 @@ import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework
 import type { fetchDiaryHomeworksFromChildAction, fetchDiaryTeachersAction } from '~/framework/modules/viescolaire/diary/actions';
 import type { IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import type { fetchPresencesChildrenEventsAction } from '~/framework/modules/viescolaire/presences/actions';
-import type { IChildrenEvents } from '~/framework/modules/viescolaire/presences/model';
+import type { ChildEvents } from '~/framework/modules/viescolaire/presences/model';
 import type { AsyncState } from '~/framework/util/redux/async';
 
 export interface DashboardRelativeScreenProps {}
@@ -22,23 +22,26 @@ export interface DashboardRelativeScreenNavParams {}
 
 export interface DashboardRelativeScreenStoreProps {
   authorizedViescoApps: IAuthorizedViescoApps;
-  childrenEvents: IChildrenEvents;
+  childrenEvents: { [key: string]: ChildEvents };
   competences: ICompetence[];
   devoirs: IDevoir[];
   eventCount: number;
   homeworks: AsyncState<IHomeworkMap>;
   isFetchingDevoirs: boolean;
+  selectedChildId: string;
   subjects: ISubject[];
   userChildren: IUserChild[];
   childId?: string;
-  hasPresencesCreateAbsenceRight?: boolean;
+  session?: ISession;
   structureId?: string;
   userId?: string;
 }
 
 export interface DashboardRelativeScreenDispatchProps {
   handleClearLevels: () => void;
-  tryFetchChildrenEvents: (...args: Parameters<typeof fetchPresencesChildrenEventsAction>) => Promise<IChildrenEvents>;
+  tryFetchChildrenEvents: (
+    ...args: Parameters<typeof fetchPresencesChildrenEventsAction>
+  ) => Promise<{ [key: string]: ChildEvents }>;
   tryFetchCompetences: (...args: Parameters<typeof fetchCompetencesAction>) => Promise<ICompetence[]>;
   tryFetchDevoirs: (...args: Parameters<typeof fetchCompetencesDevoirsAction>) => Promise<IDevoir[]>;
   tryFetchHomeworks: (...args: Parameters<typeof fetchDiaryHomeworksFromChildAction>) => Promise<IHomeworkMap>;

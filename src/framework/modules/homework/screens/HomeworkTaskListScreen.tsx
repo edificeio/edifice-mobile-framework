@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
-import {
-  HomeworkTaskListScreen,
+import HomeworkTaskListScreen, {
   IHomeworkTaskListScreenDataProps,
   IHomeworkTaskListScreenEventProps,
   IHomeworkTaskListScreenProps,
@@ -73,6 +72,10 @@ const mapDispatchToProps: (dispatch: any) => IHomeworkTaskListScreenEventProps =
     },
   };
 };
+
+export interface HomeworkTaskListScreenNavigationParams {
+  createdEntryId?: string;
+}
 
 class HomeworkTaskListScreenContainer extends React.PureComponent<IHomeworkTaskListScreenProps, object> {
   render() {

@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import ModalBox, { ModalBoxHandle } from '~/framework/components/ModalBox';
-import ActionButton from '~/framework/components/buttons/action';
+import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -83,7 +83,7 @@ const MoveMailsModal = React.forwardRef<ModalBoxHandle, IMoveMailsModalProps>((p
             )}
             style={styles.listContainer}
           />
-          <ActionButton
+          <PrimaryButton
             text={I18n.get(props.folderPath === '/Trash' ? 'zimbra-movemailsmodal-restore' : 'zimbra-movemailsmodal-move')}
             action={moveMails}
             disabled={!selectedFolderId}

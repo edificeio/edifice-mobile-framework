@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IUser } from '~/framework/modules/auth/model';
@@ -28,6 +28,10 @@ import { PageContainer } from '~/ui/ContainerContent';
 import { HomeworkItem, SessionItem } from './Items';
 
 const styles = StyleSheet.create({
+  childPickerContentContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+  },
   mainView: {
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
@@ -184,7 +188,7 @@ export default (props: HomeworkListProps) => {
 
   return (
     <PageContainer>
-      {userType === UserType.Relative ? <ChildPicker /> : null}
+      {userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
       <View style={styles.homeworkPart}>
         <View style={styles.grid}>
           <SmallText>{I18n.get('diary-homeworklist-from')}</SmallText>

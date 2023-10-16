@@ -1,12 +1,11 @@
 import styled from '@emotion/native';
 import * as React from 'react';
 import * as ReactIs from 'react-is';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, TextStyle, View } from 'react-native';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import styles from '~/framework/components/buttons/line/styles';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import TouchableOpacity from '~/ui/CustomTouchableOpacity';
@@ -36,42 +35,75 @@ export const ContainerTextInput = styled.TextInput({
 export const LineButton = ({
   onPress,
   title,
+  icon,
   first = false,
   last = false,
   alone = false,
   disabled = false,
   loading = false,
+  showArrow = true,
+  textStyle,
 }: {
-  onPress: () => any;
   title: string;
+  icon?: string;
+  onPress?: () => any;
   first?: boolean;
   last?: boolean;
   alone?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  showArrow?: boolean;
+  textStyle?: TextStyle;
 }) => {
+  const Container = onPress ? TouchableOpacity : View;
+
+  const renderIcon = () => {
+    if (!icon) return;
+    return (
+      <NamedSVG
+        style={styles.icon}
+        name={icon}
+        width={getScaleWidth(20)}
+        height={getScaleWidth(20)}
+        fill={theme.palette.grey.black}
+      />
+    );
+  };
+
+  const renderArrow = () => {
+    if (!showArrow || !onPress) return;
+    if (loading)
+      return (
+        <ActivityIndicator color={theme.palette.primary.regular} size={UI_SIZES.dimensions.width.mediumPlus} style={styles.arrow} />
+      );
+    return (
+      <NamedSVG
+        name="ui-rafterRight"
+        width={UI_SIZES.dimensions.width.mediumPlus}
+        height={UI_SIZES.dimensions.width.mediumPlus}
+        fill={theme.palette.primary.regular}
+        style={styles.arrow}
+      />
+    );
+  };
+
   return (
-    <TouchableOpacity onPress={() => onPress()} disabled={loading || disabled}>
+    <Container {...(onPress ? { onPress: onPress } : {})} disabled={loading || disabled}>
       <View
         style={[
           styles.container,
           first ? styles.containerFirst : last ? styles.containerLast : alone ? styles.containerAlone : null,
         ]}>
-        <SmallText style={styles.lineButtonText} numberOfLines={1}>
-          {I18n.get(title)}
-        </SmallText>
-        {loading ? (
-          <ActivityIndicator color={theme.palette.primary.regular} size={UI_SIZES.dimensions.width.mediumPlus} />
-        ) : (
-          <NamedSVG
-            name="ui-rafterRight"
-            width={UI_SIZES.dimensions.width.mediumPlus}
-            height={UI_SIZES.dimensions.width.mediumPlus}
-            fill={theme.palette.primary.regular}
-          />
-        )}
+        <View style={styles.iconText}>
+          {renderIcon()}
+          <SmallText numberOfLines={1} style={[styles.text, { ...(textStyle ? textStyle : null) }]}>
+            {title}
+          </SmallText>
+        </View>
+
+        {renderArrow()}
       </View>
-    </TouchableOpacity>
+    </Container>
   );
 };
 

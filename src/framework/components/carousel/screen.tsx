@@ -5,18 +5,18 @@ import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
 import Share from 'react-native-share';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import ImageViewer from '~/framework/components/carousel/image-viewer';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { EmptyScreen } from '~/framework/components/emptyScreen';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
@@ -29,6 +29,8 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
+import { isEmpty } from '~/framework/util/object';
+import { getItemJson, setItemJson } from '~/framework/util/storage';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -85,13 +87,23 @@ async function assertPermissions(permissions: Permission[]) {
 }
 
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
-  const showPrivacyAlert = action => {
-    Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
-      {
-        text: I18n.get('carousel-privacy-button'),
-        onPress: action,
-      },
-    ]);
+  const showPrivacyAlert = async action => {
+    try {
+      const getDatePrivacyAlert: Moment | undefined = await getItemJson('privacyAlert');
+      if (isEmpty(getDatePrivacyAlert) || moment().startOf('day').isAfter(getDatePrivacyAlert)) {
+        Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
+          {
+            text: I18n.get('carousel-privacy-button'),
+            onPress: action,
+          },
+        ]);
+        await setItemJson('privacyAlert', moment().startOf('day'));
+      } else {
+        action();
+      }
+    } catch {
+      throw new Error();
+    }
   };
 
   return (
@@ -206,7 +218,7 @@ export function Carousel(props: ICarouselProps) {
           if (!sf) return;
           const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
           const permissions = Platform.select<Permission[]>({
-            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY, PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
+            ios: [PERMISSIONS.IOS.PHOTO_LIBRARY_ADD_ONLY],
             android:
               androidVersionMajor >= 13
                 ? [PERMISSIONS.ANDROID.READ_MEDIA_IMAGES, PERMISSIONS.ANDROID.READ_MEDIA_VIDEO]
@@ -343,13 +355,11 @@ export function Carousel(props: ICarouselProps) {
   const navBarAndStatusBarHeight = useHeaderHeight();
 
   return (
-    <GestureHandlerRootView style={UI_STYLES.flex1}>
-      <PageView style={styles.page} showNetworkBar={false} showToast={false}>
-        <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
-        {imageViewer}
-        <ToastHandler offset={navBarAndStatusBarHeight + DEFAULTS.offset} />
-      </PageView>
-    </GestureHandlerRootView>
+    <PageView style={styles.page} showNetworkBar={false} showToast={false}>
+      <StatusBar backgroundColor={theme.ui.shadowColor} barStyle="light-content" hidden={!isNavBarVisible} />
+      {imageViewer}
+      <ToastHandler offset={navBarAndStatusBarHeight + DEFAULTS.offset} />
+    </PageView>
   );
 }
 
