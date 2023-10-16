@@ -129,6 +129,7 @@ export enum RuntimeAuthErrorCode {
   LOAD_I18N_ERROR = 'loadi18nerror',
   MOBILEVALIDATIONINFOS_FAIL = 'mobilevalidationinfos_fail',
   NETWORK_ERROR = 'network_error',
+  NO_TOKEN = 'no_token',
   NOT_PREMIUM = 'not_premium',
   PLATFORM_NOT_EXISTS = 'platform_not_exists',
   PRE_DELETED = 'pre_deleted',
