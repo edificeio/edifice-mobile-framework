@@ -1,3 +1,3 @@
 import { LargeButtonProps } from '~/framework/modules/user/components/buttons/large/types';
 
-export type ChangeAccountButtonProps = Pick<LargeButtonProps, 'action' | 'style'>;
+export type ChangeAccountButtonProps = Pick<LargeButtonProps, 'style'>;

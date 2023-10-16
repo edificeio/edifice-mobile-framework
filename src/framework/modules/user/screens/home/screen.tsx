@@ -283,19 +283,19 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @param handleChangeAccount a callback to switch accounts.
  * @returns the React Element of the account button
  */
-function useAccountFeature(handleAddAccount, handleChangeAccount) {
+function useAccountFeature() {
   const canAddAccount = true;
   const hasSingleAccount = true;
 
   return React.useMemo(() => {
     return canAddAccount ? (
       hasSingleAccount ? (
-        <AddAccountButton style={styles.accountButton} action={handleAddAccount} />
+        <AddAccountButton style={styles.accountButton} />
       ) : (
-        <ChangeAccountButton style={styles.accountButton} action={handleChangeAccount} />
+        <ChangeAccountButton style={styles.accountButton} />
       )
     ) : null;
-  }, [canAddAccount, handleAddAccount, handleChangeAccount, hasSingleAccount]);
+  }, [canAddAccount, hasSingleAccount]);
 }
 
 /**
