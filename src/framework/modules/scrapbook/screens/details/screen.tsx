@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
 import navBarActionStyles from '~/framework/components/navigation/navbar-action/styles';
 import { PageView } from '~/framework/components/page';
@@ -117,29 +118,45 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     [orientation],
   );
   useDeviceOrientationChange(handleOrientationChange);
+
+  const setOrientationToLandscape = () => {
+    Orientation.lockToLandscapeRight();
+    setOrientation('LANDSCAPE-RIGHT');
+  };
+
   const webviewStyle = React.useMemo(() => [styles.webview], []);
 
   const player = React.useMemo(
     () =>
       urlObject ? (
-        <WebView
-          javaScriptEnabled
-          onError={onError}
-          onHttpError={onHttpError}
-          onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-          renderLoading={renderLoading}
-          scalesPageToFit
-          showsHorizontalScrollIndicator={false}
-          source={urlObject}
-          setSupportMultipleWindows={false}
-          startInLoadingState
-          style={webviewStyle}
-          ref={webviewRef}
-        />
+        <>
+          <WebView
+            javaScriptEnabled
+            onError={onError}
+            onHttpError={onHttpError}
+            onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+            renderLoading={renderLoading}
+            scalesPageToFit
+            showsHorizontalScrollIndicator={false}
+            source={urlObject}
+            setSupportMultipleWindows={false}
+            startInLoadingState
+            style={webviewStyle}
+            ref={webviewRef}
+          />
+          {orientation === 'PORTRAIT' ? (
+            <SecondaryButton
+              style={styles.button}
+              text="Mode paysage"
+              iconRight="ui-arrowRight"
+              action={setOrientationToLandscape}
+            />
+          ) : null}
+        </>
       ) : (
         <Loading />
       ),
-    [onError, onHttpError, onShouldStartLoadWithRequest, renderLoading, urlObject, webviewStyle],
+    [onError, onHttpError, onShouldStartLoadWithRequest, renderLoading, urlObject, webviewStyle, orientation],
   );
 
   return <PageView>{player}</PageView>;
