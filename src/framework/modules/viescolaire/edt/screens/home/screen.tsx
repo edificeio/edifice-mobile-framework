@@ -66,7 +66,12 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     { key: 'friday', title: I18n.get('date-friday') },
     { key: 'saturday', title: I18n.get('date-saturday') },
   ]);
-  const [startDate, setStartDate] = React.useState<Moment>(moment().startOf('week'));
+  const [startDate, setStartDate] = React.useState<Moment>(
+    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day'),
+  );
+  const [selectedDate, setSelectedDate] = React.useState<Moment>(
+    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day'),
+  );
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -144,8 +149,9 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   }, [startDate]);
 
   const updateSelectedDate = (newDate: Moment) => {
-    const newStartDate = newDate.clone().startOf('week');
+    const newStartDate = newDate.clone().day(1).startOf('day');
     if (!newStartDate.isSame(startDate, 'day')) setStartDate(newStartDate);
+    setSelectedDate(newDate);
   };
 
   const renderError = () => {
@@ -226,11 +232,13 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     const routesData: any[] = [];
 
     for (let i = 0; i < numberOfDays; i += 1) {
-      weekdaysData.push(startDate.clone().add(i, 'day'));
+      const date = startDate.clone().add(i, 'day');
+      if (date.isSame(selectedDate)) setIndex(i);
+      weekdaysData.push(date);
       routesData.push({
         key: days[i],
-        title: `${I18n.get('date-' + days[i])}\n${moment(startDate.clone().add(i, 'day')).format('DD')}`,
-        ...(moment(startDate.clone().add(i, 'day')).isSame(new Date(), 'day') ? { icon: 'today' } : null),
+        title: `${I18n.get('date-' + days[i])}\n${moment(date).format('DD')}`,
+        ...(moment(date).isSame(new Date(), 'day') ? { icon: 'today' } : null),
       });
     }
     setRoutes(routesData);
@@ -293,7 +301,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
             fill={theme.palette.grey.black}
           />
           <SmallBoldText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallBoldText>
-          <DateTimePicker mode="date" value={startDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.edt} />
+          <DateTimePicker mode="date" value={selectedDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.edt} />
         </View>
         <TabView
           navigationState={{ index, routes }}
