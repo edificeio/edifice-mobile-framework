@@ -260,10 +260,11 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
             style={[
               styles.tabBarItem,
               {
-                backgroundColor: focused
-                  ? theme.color.homework.days[route.key]?.background
+                backgroundColor: focused ? theme.color.homework.days[route.key]?.background : theme.palette.grey.white,
+                borderColor: focused
+                  ? theme.color.homework.days[route.key]?.accent
                   : route.icon
-                  ? theme.palette.grey.fog
+                  ? theme.palette.grey.grey
                   : theme.palette.grey.white,
               },
             ]}>
@@ -306,6 +307,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
         <TabView
           navigationState={{ index, routes }}
           onIndexChange={setIndex}
+          animationEnabled={false}
           renderScene={SceneMap({
             monday: () => renderScrollView(weekdays[0]),
             tuesday: () => renderScrollView(weekdays[1]),
