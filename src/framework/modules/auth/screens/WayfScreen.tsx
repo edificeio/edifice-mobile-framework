@@ -90,6 +90,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   //  User selection dropdown selected value
   dropdownValue: string | null = null;
 
+  // Auth url if defined
+  private authUrl: string | undefined = undefined;
+
   // Error if any
   private error: string = '';
 
@@ -97,13 +100,13 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private isFirstLoadFinished = false;
 
   // Platform url
-  private pfUrl: string = '';
+  private pfUrl: string | null = null;
 
   // SAMLResponse if any
-  private samlResponse: string | null = null;
+  private samlResponse: string | undefined = undefined;
 
   // WAYF url
-  private wayfUrl: string = '';
+  private wayfUrl: string | undefined = undefined;
 
   // WebView reference management
   private webview?: WebView;
@@ -252,8 +255,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   constructor(props: IWayfScreenProps) {
     super(props);
     const pfConf = this.props.route.params.platform;
-    this.pfUrl = pfConf?.url || '';
-    this.wayfUrl = pfConf?.wayf || '';
+    this.authUrl = pfConf?.auth;
+    this.pfUrl = pfConf?.url;
+    this.wayfUrl = pfConf?.wayf;
     this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
     this.backActions.forEach(action => {
       action.bind(this);
@@ -284,7 +288,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         this.error = '';
         this.dropdownItems = [];
         this.dropdownValue = null;
-        this.samlResponse = null;
+        this.samlResponse = undefined;
         // Execute given callack
         callback();
       })
@@ -372,7 +376,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.clearDatas(async () => {
       Trackers.trackDebugEvent('Auth', 'WAYF', 'LOGIN');
       this.displayLoading();
-      this.samlResponse = null;
+      this.samlResponse = undefined;
       try {
         const redirect = await this.props.dispatch(loginAction(this.props.route.params.platform));
         if (redirect) {
@@ -472,15 +476,21 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Must return true|false to allow|avoid navigation
   // See WebView onNavigationStateChange property
   onShouldStartLoadWithRequest(request: ShouldStartLoadRequest) {
-    // Go to standard login page and block navigation when
-    //   - No SAMLResponse has been detected
-    //   - WAYF redirects to web standard login page
     const url = request.url;
-    if (this.isFirstLoadFinished && url !== this.wayfUrl && this.pfUrl && url.startsWith(this.pfUrl)) {
-      if (!this.samlResponse)
-        this.props.navigation.replace(authRouteNames.loginHome, { platform: this.props.route.params.platform });
-      return false;
+    // Wait for first launch to be finished
+    if (this.isFirstLoadFinished && url !== this.wayfUrl) {
+      // Allow navigation to auth page for SP-Initiated WAYFs
+      if (this.authUrl && url.startsWith(this.authUrl)) return true;
+      // Go to standard login page and block navigation when
+      //   - No SAMLResponse has been detected
+      //   - WAYF redirects to web standard login page
+      if (this.pfUrl && url.startsWith(this.pfUrl)) {
+        if (!this.samlResponse)
+          this.props.navigation.replace(authRouteNames.loginHome, { platform: this.props.route.params.platform });
+        return false;
+      }
     }
+    // Allow navigation
     return true;
   }
 

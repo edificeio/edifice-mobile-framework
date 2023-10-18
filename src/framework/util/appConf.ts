@@ -10,6 +10,7 @@ import { PictureProps } from '~/framework/components/picture';
 // Platforms ======================================================================================
 
 export type IPlatformAccessDeclaration = {
+  auth?: string; // PF authentication page (Required for SP-Initiated WAYF)
   displayName: string; // Display name
   federation?: true | string; // Show federation links onto the login page. Can be the url to redriect.
   hidden?: true; // Hidden platform access is not displayed on the main screen
@@ -27,6 +28,8 @@ export type IPlatformAccessDeclaration = {
 };
 
 export class Platform {
+  auth: IPlatformAccessDeclaration['auth'];
+
   displayName!: IPlatformAccessDeclaration['displayName'];
 
   federation: IPlatformAccessDeclaration['federation'];
@@ -56,6 +59,7 @@ export class Platform {
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
   constructor(pf: IPlatformAccessDeclaration) {
+    this.auth = pf.auth;
     this.displayName = pf.displayName;
     this.federation = pf.federation;
     this.hidden = pf.hidden;
