@@ -125,7 +125,7 @@ async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, p
  * Get token
  * - Create new session and token if credentials are provided
  * - Otherwise restore an existing session and token
- * - Track & throw appropiate error if needed (if bad credentials, verify if it's an account activation process)
+ * - Throw appropiate error if needed (if bad credentials, verify if it's an account activation process)
  */
 async function getToken(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   try {
