@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,7 +15,18 @@ const AccountListItem = ({ avatar, id, name, type, selected }: AccountListItemPr
   const typeText = I18n.get(`user-profiletypes-${type}`.toLowerCase());
   const numberOfLines = 1;
   const onSelectAccount = () => id;
-  const onRemoveAccount = () => id;
+  const onRemoveAccount = () => {
+    Alert.alert(I18n.get('accountlistitem-removealert-title'), I18n.get('accountlistitem-removealert-description'), [
+      {
+        text: I18n.get('common-delete'),
+        style: 'destructive',
+        onPress: () => id,
+      },
+      {
+        text: I18n.get('common-cancel'),
+      },
+    ]);
+  };
 
   return (
     <TouchableOpacity style={[styles.container, containerBackgroundColor]} onPress={onSelectAccount}>
