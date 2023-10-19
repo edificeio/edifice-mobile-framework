@@ -15,6 +15,7 @@ import DefaultButton from '~/framework/components/buttons/default';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
@@ -29,6 +30,8 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import AddAccountList from '~/framework/modules/user/components/account-list/add';
+import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
@@ -39,7 +42,6 @@ import { handleAction } from '~/framework/util/redux/actions';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-import { colorType } from '.';
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
@@ -130,7 +132,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     () => (
       <>
         <HeadingXSText style={styles.userInfoName}>{session?.user.displayName}</HeadingXSText>
-        <SmallBoldText style={{ color: colorType[session?.user.type!] }}>
+        <SmallBoldText style={{ color: theme.color.profileTypes[session?.user.type!] }}>
           {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
         </SmallBoldText>
         <SecondaryButton
@@ -278,24 +280,49 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 }
 
 /**
- * Setup an Account button feature
- * @param handleAddAccount a callback to add a secondary account.
- * @param handleChangeAccount a callback to switch accounts.
- * @returns the React Element of the account button
+ * Setup an Accounts button feature that opens up an account list
+ * @param session
+ * @param accountListRef
+ * @returns the React Elements of the account button and list
  */
-function useAccountFeature() {
-  const canAddAccount = true;
-  const hasSingleAccount = true;
+function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accountListRef) {
+  const canManageAccounts = session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel;
+  const showAccountList = React.useCallback(() => {
+    accountListRef.current?.present();
+  }, [accountListRef]);
 
   return React.useMemo(() => {
-    return canAddAccount ? (
+    const data = [
+      {
+        avatar: new Blob(),
+        id: session?.user.id,
+        name: session?.user.displayName,
+        type: session?.user.type,
+        selected: true,
+      },
+      {
+        avatar: new Blob(),
+        id: '123',
+        name: 'Secondary Account',
+        type: 'Teacher',
+        selected: false,
+      },
+    ];
+    const hasSingleAccount = data.length === 1;
+    return canManageAccounts ? (
       hasSingleAccount ? (
-        <AddAccountButton style={styles.accountButton} />
+        <>
+          <AddAccountButton action={showAccountList} style={styles.accountButton} />
+          <AddAccountList ref={accountListRef} data={data} />
+        </>
       ) : (
-        <ChangeAccountButton style={styles.accountButton} />
+        <>
+          <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
+          <ChangeAccountList ref={accountListRef} data={data} />
+        </>
       )
     ) : null;
-  }, [canAddAccount, hasSingleAccount]);
+  }, [accountListRef, canManageAccounts, session?.user.displayName, session?.user.id, session?.user.type, showAccountList]);
 }
 
 /**
@@ -422,6 +449,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
   const scrollViewRef = React.useRef(null);
+  const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   // Manages focus to send to others features in this screen.
   // We must store it in a Ref because of async operations.
   const focusedRef = React.useRef(useIsFocused());
@@ -438,7 +466,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountButton = useAccountFeature();
+  const accountsButton = useAccountsFeature(session, accountListRef);
   const logoutButton = useLogoutFeature(handleLogout);
   const toggleKeysButton = useToggleKeysFeature();
   const versionDetails = useVersionDetailsFeature(session);
@@ -459,7 +487,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         </View>
         {accountMenu}
         <View style={styles.sectionBottom}>
-          {accountButton}
+          {accountsButton}
           {logoutButton}
           {areDetailsVisible ? (
             <>
