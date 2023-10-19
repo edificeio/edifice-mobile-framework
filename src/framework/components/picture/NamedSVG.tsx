@@ -223,6 +223,7 @@ const imports = {
   'schoolbook-outing': import('ASSETS/images/schoolbook/outing.svg'),
   'schoolbook-various': import('ASSETS/images/schoolbook/various.svg'),
   'textbook-default': import('ASSETS/images/textbook-default.svg'),
+  'user-account-onboarding': import('ASSETS/images/user/account-onboarding.svg'),
   'user-email': import('ASSETS/images/user/email.svg'),
   'user-smartphone': import('ASSETS/images/user/smartphone.svg'),
   'userpage-header': import('ASSETS/images/userpage-header.svg'),
