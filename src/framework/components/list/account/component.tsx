@@ -12,7 +12,11 @@ import BottomSheetModal from '~/framework/components/modals/bottom-sheet';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 
-const ItemSeparator = () => <View style={styles.itemSeparator} />;
+const ItemSeparator = () => (
+  <View style={styles.separatorContainer}>
+    <View style={styles.separator} />
+  </View>
+);
 
 const AccountList = ({ data, description, title }: AccountListProps, ref) => {
   const hasSingleAccount = data.length === 1;
