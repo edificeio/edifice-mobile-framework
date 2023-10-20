@@ -20,6 +20,7 @@ import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
 import { scrapbookService } from '~/framework/modules/scrapbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { openUrl } from '~/framework/util/linking';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -102,9 +103,15 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   const webviewRef = React.useRef<WebView>(null);
 
-  const onShouldStartLoadWithRequest = React.useCallback(request => {
-    return true;
-  }, []);
+  const onShouldStartLoadWithRequest = React.useCallback(
+    request => {
+      const pfUrl = props.session?.platform.url;
+      const reqUrl = request.url;
+      if (!reqUrl.startsWith(pfUrl)) openUrl(reqUrl);
+      return false;
+    },
+    [props.session?.platform.url],
+  );
 
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
