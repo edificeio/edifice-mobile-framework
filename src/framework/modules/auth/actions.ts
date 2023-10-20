@@ -24,6 +24,7 @@ import {
   RuntimeAuthErrorCode,
   SessionType,
   createActivationError,
+  createAuthError,
   createChangePasswordError,
 } from './model';
 import { assertSession, actions as authActions, getSession } from './reducer';
@@ -124,7 +125,7 @@ async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, p
  * Get token
  * - Create new session and token if credentials are provided
  * - Otherwise restore an existing session and token
- * - Track & throw appropiate error if needed (in case of bad credentials, verify if it's an account activation process)
+ * - Throw appropiate error if needed (if bad credentials, verify if it's an account activation process)
  */
 async function getToken(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   try {
@@ -134,11 +135,11 @@ async function getToken(platform: Platform, credentials?: IAuthCredentials, reme
       const tokenData = await restoreSessionAvailable();
       if (tokenData) {
         await restoreSession(platform);
-      }
+      } else throw createAuthError(RuntimeAuthErrorCode.NO_TOKEN, 'No stored token', '');
     }
   } catch (e) {
-    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getToken');
     const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getToken');
     if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
       await ensureCredentialsMatchActivationCode(platform, credentials);
       const context = await getAuthContext(platform);
@@ -295,6 +296,8 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       return redirectScenario;
     } catch (e) {
       const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+      // Don't show error message if no stored token is found
+      if (authError?.type === RuntimeAuthErrorCode.NO_TOKEN) return undefined;
       await Trackers.trackEvent('Auth', 'LOGIN ERROR', authError?.type);
       dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
       throw e;

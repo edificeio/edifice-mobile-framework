@@ -32,8 +32,9 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
   },
   tabBarItem: {
-    padding: UI_SIZES.spacing.small,
-    borderRadius: UI_SIZES.radius.small,
+    padding: UI_SIZES.spacing.minor,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: 1,
   },
   tabBarItemText: {
     textAlign: 'center',

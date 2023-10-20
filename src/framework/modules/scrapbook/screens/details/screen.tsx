@@ -8,12 +8,17 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import navBarActionStyles from '~/framework/components/navigation/navbar-action/styles';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
+import { SmallBoldText } from '~/framework/components/text';
+import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
+import { scrapbookService } from '~/framework/modules/scrapbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
@@ -89,6 +94,12 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     console.error('WebView http error: ', event.nativeEvent);
   }, []);
 
+  const init = async () => {
+    const uri = props.route.params.notification.resource.uri;
+    const id = uri.replace('/scrapbook#/view-scrapbook/', '');
+    await scrapbookService.get(id);
+  };
+
   const webviewRef = React.useRef<WebView>(null);
 
   const onShouldStartLoadWithRequest = React.useCallback(request => {
@@ -117,32 +128,46 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     [orientation],
   );
   useDeviceOrientationChange(handleOrientationChange);
+
+  const setOrientationToLandscape = () => {
+    Orientation.lockToLandscapeRight();
+    setOrientation('LANDSCAPE-RIGHT');
+  };
+
   const webviewStyle = React.useMemo(() => [styles.webview], []);
 
-  const player = React.useMemo(
-    () =>
-      urlObject ? (
-        <WebView
-          javaScriptEnabled
-          onError={onError}
-          onHttpError={onHttpError}
-          onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-          renderLoading={renderLoading}
-          scalesPageToFit
-          showsHorizontalScrollIndicator={false}
-          source={urlObject}
-          setSupportMultipleWindows={false}
-          startInLoadingState
-          style={webviewStyle}
-          ref={webviewRef}
-        />
-      ) : (
-        <Loading />
-      ),
-    [onError, onHttpError, onShouldStartLoadWithRequest, renderLoading, urlObject, webviewStyle],
+  const player = () => (
+    <>
+      <WebView
+        javaScriptEnabled
+        onError={onError}
+        onHttpError={onHttpError}
+        onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
+        renderLoading={renderLoading}
+        scalesPageToFit
+        showsHorizontalScrollIndicator={false}
+        source={urlObject}
+        setSupportMultipleWindows={false}
+        startInLoadingState
+        style={webviewStyle}
+        ref={webviewRef}
+      />
+      {orientation === 'PORTRAIT' ? (
+        <SecondaryButton style={styles.button} text="Mode paysage" iconRight="ui-arrowRight" action={setOrientationToLandscape} />
+      ) : null}
+    </>
   );
 
-  return <PageView>{player}</PageView>;
+  return (
+    <PageView>
+      <ContentLoader
+        loadContent={init}
+        renderContent={player}
+        renderError={() => <EmptyContentScreen />}
+        renderLoading={() => <SmallBoldText>load</SmallBoldText>}
+      />
+    </PageView>
+  );
 };
 
 const mapStateToProps: (s: IGlobalState) => ScrapbookDetailsScreenDataProps = s => ({

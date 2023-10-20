@@ -2,7 +2,7 @@ import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 export default new NavigableModuleConfig<'scrapbook', null>({
   name: 'scrapbook',
-  entcoreScope: [],
+  entcoreScope: ['scrapbook'],
   matchEntcoreApp: '/scrapbook',
   displayI18n: '',
   displayAs: '',

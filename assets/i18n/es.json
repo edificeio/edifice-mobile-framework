@@ -395,7 +395,7 @@
   "date-week-current": "Esta semana",
   "date-week-last": "Semana pasada\n(del {{startDate}} al {{endDate}})",
   "date-week-next": "Próxima semana\n(del {{startDate}} al {{endDate}})",
-  "date-week-of": "Semana del {{startDate}} al {{endDate}}\n{{mes}} {{año}}",
+  "date-week-of": "Semana del {{startDate}} al {{endDate}}\n{{month}} {{year}}",
   "date-yesterday": "ayer",
   "diary-homework-duedate": "Para el {{date}}",
   "diary-homework-homework": "Trabajo para hacer en casa",
