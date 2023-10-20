@@ -32,7 +32,7 @@ const UserAccountOnboardingScreen = (props: UserAccountOnboardingScreenPrivatePr
   return (
     <PageView style={styles.page}>
       <View style={styles.topContainer}>
-        <NamedSVG name="user-account-onboarding" width={getScaleWidth(130)} height={getScaleWidth(130)} />
+        <NamedSVG name="multi-account" width={getScaleWidth(130)} height={getScaleWidth(130)} />
         <HeadingSText style={styles.title}>{I18n.get('user-accountonboarding-heading')}</HeadingSText>
         <SmallText style={styles.description}>{I18n.get('user-accountonboarding-description')}</SmallText>
       </View>

@@ -4,10 +4,10 @@
 import { CommonActions, NavigationProp, ParamListBase, StackRouter } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/moduleConfig';
+import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
@@ -18,6 +18,7 @@ import appConf, { Platform } from '~/framework/util/appConf';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
+  accountSelection: `${moduleConfig.name}/accountSelection` as 'accountSelection',
   loginHome: `${moduleConfig.name}/login/home` as 'loginHome',
   loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
   wayf: `${moduleConfig.name}/wayf` as 'wayf',
@@ -35,6 +36,7 @@ export const authRouteNames = {
 };
 
 export interface IAuthNavigationParams extends ParamListBase {
+  accountSelection: AuthAccountSelectionScreenNavParams;
   loginHome: LoginHomeScreenNavParams;
   loginWayf: { platform: Platform };
   wayf: { platform: Platform };

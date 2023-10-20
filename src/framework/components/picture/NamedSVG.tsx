@@ -1,10 +1,10 @@
 /**
  * NamedSVG
  *
- * Display a SVG file from its name.
+ * Display an SVG file through its name.
  *
- * To add a SVG in the app, beware add its path to the "imports" list below.
- * ToDo : make this list automatically computed.
+ * To add an SVG in the app, add its path to the "imports" list below.
+ * ToDo: make this list compute automatically.
  */
 import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
@@ -201,6 +201,7 @@ const imports = {
   'homework-assistance-home': import('ASSETS/images/homework-assistance-home.svg'),
   'image-not-found': import('ASSETS/images/empty-screen/image-not-found.svg'),
   'form-default': import('ASSETS/images/form-default.svg'),
+  'multi-account': import('ASSETS/images/multi-account.svg'),
   'onboarding-0': import('ASSETS/images/onboarding/onboarding_0.svg'),
   'onboarding-1': import('ASSETS/images/onboarding/onboarding_1.svg'),
   'onboarding-2': import('ASSETS/images/onboarding/onboarding_2.svg'),
@@ -223,7 +224,6 @@ const imports = {
   'schoolbook-outing': import('ASSETS/images/schoolbook/outing.svg'),
   'schoolbook-various': import('ASSETS/images/schoolbook/various.svg'),
   'textbook-default': import('ASSETS/images/textbook-default.svg'),
-  'user-account-onboarding': import('ASSETS/images/user/account-onboarding.svg'),
   'user-email': import('ASSETS/images/user/email.svg'),
   'user-smartphone': import('ASSETS/images/user/smartphone.svg'),
   'userpage-header': import('ASSETS/images/userpage-header.svg'),
