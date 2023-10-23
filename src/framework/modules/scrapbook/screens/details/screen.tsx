@@ -6,6 +6,7 @@ import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
@@ -14,7 +15,6 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import navBarActionStyles from '~/framework/components/navigation/navbar-action/styles';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { SmallBoldText } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
@@ -34,7 +34,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: 'test',
+    title: '',
   }),
   headerStyle: { backgroundColor: theme.ui.background.card.toString() },
   headerTitleStyle: { color: theme.ui.text.regular.toString() },
@@ -80,12 +80,16 @@ const getQueryParamToken = async (finalUrl: string) => {
 
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   const [url, setUrl] = React.useState<string | undefined>(undefined);
+  const [orientation, setOrientation] = React.useState(PORTRAIT);
 
-  React.useEffect(() => {
-    const newResourceUri = props.route.params.notification.resource.uri.replace('scrapbook', 'scrapbook?fullscreen=1');
-    const urlScrapbook = `${props.session?.platform.url + newResourceUri}`;
-    getQueryParamToken(urlScrapbook).then(setUrl);
-  }, [props.route.params.notification.resource.uri, props.session?.platform.url]);
+  const urlObject = React.useMemo(() => (url ? { uri: url } : undefined), [url]);
+  const webviewRef = React.useRef<WebView>(null);
+
+  const init = async () => {
+    const uri = props.route.params.notification.resource.uri;
+    const id = uri.replace('/scrapbook#/view-scrapbook/', '');
+    await scrapbookService.get(id);
+  };
 
   const onError = React.useCallback(event => {
     console.error('WebView error: ', event.nativeEvent);
@@ -94,14 +98,6 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   const onHttpError = React.useCallback(event => {
     console.error('WebView http error: ', event.nativeEvent);
   }, []);
-
-  const init = async () => {
-    const uri = props.route.params.notification.resource.uri;
-    const id = uri.replace('/scrapbook#/view-scrapbook/', '');
-    await scrapbookService.get(id);
-  };
-
-  const webviewRef = React.useRef<WebView>(null);
 
   const onShouldStartLoadWithRequest = React.useCallback(
     request => {
@@ -113,17 +109,11 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     [props.session?.platform.url],
   );
 
-  React.useEffect(() => {
-    Orientation.unlockAllOrientations();
-    return () => {
-      Orientation.lockToPortrait();
-    };
-  }, []);
+  const setOrientationToLandscape = () => {
+    Orientation.lockToLandscapeRight();
+    setOrientation('LANDSCAPE-RIGHT');
+  };
 
-  const renderLoading = React.useCallback(() => <Loading />, []);
-  const urlObject = React.useMemo(() => (url ? { uri: url } : undefined), [url]);
-
-  const [orientation, setOrientation] = React.useState(PORTRAIT);
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
       const isPortraitOrLandscape =
@@ -134,33 +124,47 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     },
     [orientation],
   );
+
   useDeviceOrientationChange(handleOrientationChange);
 
-  const setOrientationToLandscape = () => {
-    Orientation.lockToLandscapeRight();
-    setOrientation('LANDSCAPE-RIGHT');
-  };
+  React.useEffect(() => {
+    Orientation.unlockAllOrientations();
+    return () => {
+      Orientation.lockToPortrait();
+    };
+  }, []);
 
-  const webviewStyle = React.useMemo(() => [styles.webview], []);
+  React.useEffect(() => {
+    const newResourceUri = props.route.params.notification.resource.uri.replace('scrapbook', 'scrapbook?fullscreen=1');
+    const urlScrapbook = `${props.session?.platform.url + newResourceUri}`;
+    getQueryParamToken(urlScrapbook).then(setUrl);
+  }, [props.route.params.notification.resource.uri, props.session?.platform.url]);
+
+  const renderLoading = React.useCallback(() => <Loading />, []);
 
   const player = () => (
     <>
       <WebView
         javaScriptEnabled
+        ref={webviewRef}
+        renderLoading={renderLoading}
+        scalesPageToFit
+        setSupportMultipleWindows={false}
+        showsHorizontalScrollIndicator={false}
+        source={urlObject}
+        startInLoadingState
+        style={styles.webview}
         onError={onError}
         onHttpError={onHttpError}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
-        renderLoading={renderLoading}
-        scalesPageToFit
-        showsHorizontalScrollIndicator={false}
-        source={urlObject}
-        setSupportMultipleWindows={false}
-        startInLoadingState
-        style={webviewStyle}
-        ref={webviewRef}
       />
       {orientation === 'PORTRAIT' ? (
-        <SecondaryButton style={styles.button} text="Mode paysage" iconRight="ui-arrowRight" action={setOrientationToLandscape} />
+        <SecondaryButton
+          style={styles.button}
+          text={I18n.get('scrapbook-details-landscape')}
+          iconRight="ui-arrowRight"
+          action={setOrientationToLandscape}
+        />
       ) : null}
     </>
   );
@@ -171,7 +175,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         loadContent={init}
         renderContent={player}
         renderError={() => <EmptyContentScreen />}
-        renderLoading={() => <SmallBoldText>load</SmallBoldText>}
+        renderLoading={renderLoading}
       />
     </PageView>
   );
