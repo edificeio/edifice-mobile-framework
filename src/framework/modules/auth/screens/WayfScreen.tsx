@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import { ShouldStartLoadRequest, WebView, WebViewMessageEvent } from 'react-native-webview';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -478,24 +478,22 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // See WebView onNavigationStateChange property
   onShouldStartLoadWithRequest(request: ShouldStartLoadRequest) {
     const url = request.url;
-    if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest => ', url);
-    // Wait for first launch to be finished
-    if (this.isFirstLoadFinished && url !== this.wayfUrl) {
-      // Allow navigation to auth page for SP-Initiated WAYFs
-      if (this.authUrl && url.startsWith(this.authUrl)) {
-        if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest => authUrl allowed');
-        return true;
+    if (__DEV__) {
+      console.debug('WAYFScreen::onShouldStartLoadWithRequest => isFirstLoadFinished = ', this.isFirstLoadFinished);
+      console.debug('WAYFScreen::onShouldStartLoadWithRequest => ', url);
+    }
+    // Determine ENT login page
+    // SP - Initiated WAYFs must set auth config field with exact ENT Login page
+    const pfUrl = this.authUrl ?? this.pfUrl ?? '';
+    // Go to standard login page and block navigation when
+    //   - No SAMLResponse has been detected
+    //   - WAYF redirects to web standard login page
+    if (this.isFirstLoadFinished && url !== this.wayfUrl && pfUrl && url.startsWith(pfUrl)) {
+      if (!this.samlResponse) {
+        if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest => Will show login page');
+        this.props.navigation.replace(authRouteNames.loginHome, { platform: this.props.route.params.platform });
       }
-      // Go to standard login page and block navigation when
-      //   - No SAMLResponse has been detected
-      //   - WAYF redirects to ent login page
-      if (this.pfUrl && url.startsWith(this.pfUrl)) {
-        if (!this.samlResponse) {
-          if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest => Will show login page');
-          this.props.navigation.replace(authRouteNames.loginHome, { platform: this.props.route.params.platform });
-        }
-        return false;
-      }
+      return false;
     }
     // Allow navigation
     console.debug('WAYFScreen::onShouldStartLoadWithRequest => Navigation allowed');
