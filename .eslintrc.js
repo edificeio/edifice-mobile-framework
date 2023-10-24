@@ -4,7 +4,7 @@ module.exports = {
     browser: true,
     'react-native/react-native': true,
   },
-  extends: ['@react-native-community', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native'],
+  extends: ['@react-native', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',

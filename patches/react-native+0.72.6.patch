@@ -1,19 +1,47 @@
 diff --git a/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js b/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
-index 2f48f9e..1c9c605 100644
+index 9fb5637..b51513b 100644
 --- a/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
 +++ b/node_modules/react-native/Libraries/Components/Keyboard/KeyboardAvoidingView.js
-@@ -51,9 +51,7 @@ type Props = $ReadOnly<{|
+@@ -8,22 +8,21 @@
+  * @flow strict-local
+  */
+ 
+-import type {ViewStyleProp} from '../../StyleSheet/StyleSheet';
++import type { ViewStyleProp } from '../../StyleSheet/StyleSheet';
+ import type {
+   ViewLayout,
+-  ViewLayoutEvent,
+-  ViewProps,
++  ViewLayoutEvent
+ } from '../View/ViewPropTypes';
+-import type {KeyboardEvent, KeyboardMetrics} from './Keyboard';
++import type { KeyboardEvent, KeyboardMetrics } from './Keyboard';
+ 
++import * as React from 'react';
+ import LayoutAnimation from '../../LayoutAnimation/LayoutAnimation';
+ import StyleSheet from '../../StyleSheet/StyleSheet';
+ import Platform from '../../Utilities/Platform';
+-import {type EventSubscription} from '../../vendor/emitter/EventEmitter';
++import { type EventSubscription } from '../../vendor/emitter/EventEmitter';
+ import AccessibilityInfo from '../AccessibilityInfo/AccessibilityInfo';
+ import View from '../View/View';
+ import Keyboard from './Keyboard';
+-import * as React from 'react';
+ 
+ type Props = $ReadOnly<{|
+   ...ViewProps,
+@@ -51,10 +50,6 @@ type Props = $ReadOnly<{|
    keyboardVerticalOffset?: number,
  |}>;
  
 -type State = {|
 -  bottom: number,
 -|};
-+type State = {};
- 
+-
  /**
   * View that moves out of the way when the keyboard appears by automatically
-@@ -65,11 +63,13 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+  * adjusting its height, position, or bottom padding.
+@@ -65,11 +60,13 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
    _subscriptions: Array<EventSubscription> = [];
    viewRef: {current: React.ElementRef<typeof View> | null, ...};
    _initialFrameHeight: number = 0;
@@ -28,7 +56,7 @@ index 2f48f9e..1c9c605 100644
    }
  
    async _relativeKeyboardHeight(
-@@ -95,7 +95,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+@@ -95,7 +92,7 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
  
      if (this.props.behavior === 'height') {
        return Math.max(
@@ -37,7 +65,7 @@ index 2f48f9e..1c9c605 100644
          0,
        );
      }
-@@ -129,14 +129,17 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+@@ -130,14 +127,17 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
  
    _updateBottomIfNecessary = async () => {
      if (this._keyboardEvent == null) {
@@ -57,7 +85,7 @@ index 2f48f9e..1c9c605 100644
        return;
      }
  
-@@ -150,7 +153,8 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+@@ -151,7 +151,8 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
          },
        });
      }
@@ -67,7 +95,7 @@ index 2f48f9e..1c9c605 100644
    };
  
    componentDidMount(): void {
-@@ -184,13 +188,13 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
+@@ -185,13 +186,13 @@ class KeyboardAvoidingView extends React.Component<Props, State> {
        onLayout,
        ...props
      } = this.props;
