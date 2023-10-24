@@ -1,6 +1,6 @@
 {
-  "last": "2023-10-24 11:25:02",
-  "notes": "release: 1.11.1-rc.1(1110101)",
-  "version": "1.11.1-rc.2(1110102)",
+  "last": "2023-10-24 16:16:27",
+  "notes": "fix(wayf): MB2082, Add and manage auth url for SP-Initiated WAYFs\nrelease: 1.11.1-rc.2(1110102)",
+  "version": "1.11.1-rc.3(1110103)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
