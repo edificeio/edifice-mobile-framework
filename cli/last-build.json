@@ -1,6 +1,6 @@
 {
-  "last": "2023-10-23 19:29:58",
-  "notes": "Merge pull request #98 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nUpdated translations from Phrase\nMerge pull request #97 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nchore(build): Add activesupport 7.0.8 to Gemfile to fix cocoapods 1.13 error\nauth(wayf): Add debug log messages.\nfix(wayf): MB2082, Add and manage auth url for SP-Initiated WAYFs\nchore(i18n): Change sync-phrase-translations GitHub action target\nrelease: 1.11.1(1110100)\nMerge pull request #96 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nMerge pull request #95 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nchore(i18n): Review auto merge github action\nrelease: 1.11.0-rc.7(1110025)",
-  "version": "1.11.1-rc.1(1110101)",
+  "last": "2023-10-24 11:25:02",
+  "notes": "release: 1.11.1-rc.1(1110101)",
+  "version": "1.11.1-rc.2(1110102)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
