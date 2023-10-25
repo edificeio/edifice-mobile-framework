@@ -1,6 +1,6 @@
 {
-  "last": "2023-10-24 16:16:27",
-  "notes": "fix(wayf): MB2082, Add and manage auth url for SP-Initiated WAYFs\nrelease: 1.11.1-rc.2(1110102)",
-  "version": "1.11.1-rc.3(1110103)",
+  "last": "2023-10-25 12:04:57",
+  "notes": "fix(wayf): MB 2179, Wrong urls tests fix && clearCookies when entering webview\nrelease: 1.11.1-rc.3(1110103)",
+  "version": "1.11.1-rc.4(1110104)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
