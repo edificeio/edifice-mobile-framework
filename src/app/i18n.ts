@@ -130,7 +130,7 @@ export namespace I18n {
       const newLang = bestAvailableLanguage?.languageTag ?? fallbackLng;
       i18n.language = newLang;
     } else {
-      i18n.language = (lang as string) ?? 'en';
+      i18n.language = (lang as string) ?? fallbackLng;
     }
     moment.locale(i18n.language?.split('-')[0]);
     return i18n.language;

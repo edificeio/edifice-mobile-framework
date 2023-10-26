@@ -35,7 +35,6 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
     { label: I18n.get('user-lang-dropdownvalue-fr'), value: 'fr' },
     { label: I18n.get('user-lang-dropdownvalue-en'), value: 'en' },
     { label: I18n.get('user-lang-dropdownvalue-es'), value: 'es' },
-    { label: I18n.get('user-lang-dropdownvalue-keys'), value: 'wordingKeys' },
   ];
 
   const setInitialValue = async () => {
@@ -52,7 +51,6 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
   }, []);
 
   const onChangeLang = lang => {
-    console.log(lang.value, value);
     if (lang.value === value) return;
     Alert.alert(I18n.get('user-lang-alerttitle'), I18n.get('user-lang-alerttext'), [
       {
@@ -76,7 +74,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
       <DropdownPicker
         open={isDropdownOpen}
         value={value}
-        items={values}
+        items={I18n.canShowKeys ? [...values, { label: I18n.get('user-lang-dropdownvalue-keys'), value: 'wordingKeys' }] : values}
         setOpen={setIsDropdownOpen}
         setValue={() => {}}
         onSelectItem={onChangeLang}
