@@ -1,13 +1,6 @@
-/**
- * Metro configuration for React Native with svg support
- * https://github.com/facebook/react-native
- *
- * @format
- */
+const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
 
-const { getDefaultConfig } = require('metro-config');
-
-module.exports = (async () => {
+const config = (async () => {
   const {
     resolver: { sourceExts, assetExts },
   } = await getDefaultConfig();
@@ -28,3 +21,5 @@ module.exports = (async () => {
     },
   };
 })();
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);
