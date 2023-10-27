@@ -1,6 +1,6 @@
 {
-  "last": "2023-10-25 13:35:54",
-  "notes": "release: 1.11.1-rc.4(1110104)",
-  "version": "1.11.1-rc.5(1110105)",
+  "last": "2023-10-27 08:35:51",
+  "notes": "debug(wayf): Detailed log addition\nrelease: 1.11.1-rc.5(1110105)\nrelease: 1.11.1-rc.5(1110105)",
+  "version": "1.11.1-rc.6(1110106)",
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
 }
