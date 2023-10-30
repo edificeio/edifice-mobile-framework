@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-10-24 19:06:43",
-  "notes": "Merge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfeat(user): MB-2172 , user can change app lang now\nrelease: 1.11.2-alpha.1(1110201)",
-  "version": "1.11.2-alpha.2(1110202)"
+  "last": "2023-10-30 18:25:58",
+  "notes": "feat: MB-2185, new primary/secondary colors\nfix(edt): MB-2142 , fix selecteddate when change date on Android\nfeat(timeline): MB-2184 , changhe i18n timeline notif mood\nMerge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfix(user) change lang i18n keys possible only in  alpha\nMerge branch 'dev/1.11.1' into dev/1.11.2\nrelease: 1.11.1-rc.5(1110105)\nrelease: 1.11.1-rc.5(1110105)\nrelease: 1.11.1-rc.4(1110104)\nfix(wayf): MB 2179, Wrong urls tests fix && clearCookies when entering webview\nrelease: 1.11.2-alpha.2(1110202)",
+  "version": "1.11.2-alpha.3(1110203)"
 }
