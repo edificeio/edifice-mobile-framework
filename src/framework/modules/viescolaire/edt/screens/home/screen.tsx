@@ -248,7 +248,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   React.useEffect(() => {
     setWeekdays(getWeekdays());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate]);
+  }, [selectedDate]);
 
   const renderTabbar = (
     tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
