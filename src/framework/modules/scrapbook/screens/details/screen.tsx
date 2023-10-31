@@ -1,7 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
-import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -13,6 +12,7 @@ import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
+import WebView from '~/framework/components/webview';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
