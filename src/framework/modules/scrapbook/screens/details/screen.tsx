@@ -8,9 +8,10 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import IconButton from '~/framework/components/buttons/icon';
 import SecondaryButton from '~/framework/components/buttons/secondary';
+import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
@@ -31,10 +32,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: '',
   }),
-  headerStyle: { backgroundColor: theme.ui.background.card.toString() },
-  headerShadowVisible: false,
+  headerShown: false,
 });
 
 const getQueryParamToken = async (finalUrl: string) => {
@@ -59,6 +58,7 @@ const getQueryParamToken = async (finalUrl: string) => {
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   const [url, setUrl] = React.useState<string | undefined>(undefined);
   const [orientation, setOrientation] = React.useState(PORTRAIT);
+  const [isLockedToLandscape, setIsLockedToLandscape] = React.useState(false);
 
   const urlObject = React.useMemo(() => (url ? { uri: url } : undefined), [url]);
   const webviewRef = React.useRef<WebView>(null);
@@ -89,6 +89,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   const setOrientationToLandscape = () => {
     Orientation.lockToLandscapeRight();
+    setIsLockedToLandscape(true);
     setOrientation('LANDSCAPE-RIGHT');
   };
 
@@ -101,11 +102,15 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     (newOrientation: OrientationType) => {
       const isPortraitOrLandscape =
         newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
+      if (isLockedToLandscape && newOrientation === 'PORTRAIT') {
+        Orientation.unlockAllOrientations();
+        setIsLockedToLandscape(false);
+      }
       if (isPortraitOrLandscape && newOrientation !== orientation) {
         setOrientation(newOrientation);
       }
     },
-    [orientation],
+    [isLockedToLandscape, orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
@@ -113,13 +118,6 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
   }, []);
-
-  React.useEffect(() => {
-    props.navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerLeft: () => <NavBarAction onPress={goBack} icon="ui-close" color={theme.palette.grey.black} />,
-    });
-  }, [goBack, props.navigation]);
 
   React.useEffect(() => {
     const newResourceUri = props.route.params.notification.resource.uri.replace('scrapbook', 'scrapbook?fullscreen=1');
@@ -145,13 +143,23 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         onHttpError={onHttpError}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
-      {orientation === 'PORTRAIT' ? (
-        <SecondaryButton
-          style={styles.button}
-          text={I18n.get('scrapbook-details-landscape')}
-          iconRight="ui-arrowRight"
-          action={setOrientationToLandscape}
-        />
+
+      {orientation === 'PORTRAIT' && !isLockedToLandscape ? (
+        <>
+          <IconButton
+            action={goBack}
+            icon="ui-close"
+            color={theme.palette.grey.black}
+            size={UI_SIZES.elements.icon.default}
+            style={styles.closeButton}
+          />
+          <SecondaryButton
+            style={styles.button}
+            text={I18n.get('scrapbook-details-landscape')}
+            iconRight="ui-arrowRight"
+            action={setOrientationToLandscape}
+          />
+        </>
       ) : null}
     </>
   );
