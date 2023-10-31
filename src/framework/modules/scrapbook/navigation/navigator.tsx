@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/scrapbook/module-config';
 import ScrapbookDetailsScreen, { computeNavBar as detailsNavBar } from '~/framework/modules/scrapbook/screens/details';
+import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
@@ -18,3 +19,5 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       />
     </Stack.Group>
   ));
+
+setModalModeForRoutes([scrapbookRouteNames.details]);
