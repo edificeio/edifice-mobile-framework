@@ -9,12 +9,12 @@ import { ScrapbookNavigationParams, scrapbookRouteNames } from '.';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<ScrapbookNavigationParams>(moduleConfig.name, Stack => (
-    <>
+    <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
       <Stack.Screen
         name={scrapbookRouteNames.details}
         component={ScrapbookDetailsScreen}
         options={detailsNavBar}
         initialParams={{}}
       />
-    </>
+    </Stack.Group>
   ));

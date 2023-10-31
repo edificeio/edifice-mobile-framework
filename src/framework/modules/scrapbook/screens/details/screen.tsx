@@ -1,6 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
@@ -10,11 +9,9 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
-import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import navBarActionStyles from '~/framework/components/navigation/navbar-action/styles';
+import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
@@ -37,26 +34,7 @@ export const computeNavBar = ({
     title: '',
   }),
   headerStyle: { backgroundColor: theme.ui.background.card.toString() },
-  headerTitleStyle: { color: theme.ui.text.regular.toString() },
   headerShadowVisible: false,
-  headerRight: props => (
-    <TouchableOpacity
-      onPress={navigation.goBack}
-      hitSlop={genericHitSlop}
-      style={[
-        navBarActionStyles.navBarActionWrapper,
-        navBarActionStyles.navBarActionWrapperIcon,
-        { backgroundColor: theme.palette.grey.cloudy, borderRadius: UI_SIZES.elements.navbarButtonSize / 2 },
-      ]}>
-      <NamedSVG
-        name="ui-close"
-        fill={theme.ui.text.regular}
-        width={UI_SIZES.elements.navbarIconSize}
-        height={UI_SIZES.elements.navbarIconSize}
-        style={navBarActionStyles.navBarActionIcon}
-      />
-    </TouchableOpacity>
-  ),
 });
 
 const getQueryParamToken = async (finalUrl: string) => {
@@ -104,7 +82,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
       const pfUrl = props.session?.platform.url;
       const reqUrl = request.url;
       if (!reqUrl.startsWith(pfUrl)) openUrl(reqUrl);
-      return false;
+      return true;
     },
     [props.session?.platform.url],
   );
@@ -113,6 +91,11 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     Orientation.lockToLandscapeRight();
     setOrientation('LANDSCAPE-RIGHT');
   };
+
+  const goBack = React.useCallback(() => {
+    Orientation.lockToPortrait();
+    props.navigation.goBack();
+  }, [props.navigation]);
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
@@ -129,10 +112,14 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
-    return () => {
-      Orientation.lockToPortrait();
-    };
   }, []);
+
+  React.useEffect(() => {
+    props.navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerLeft: () => <NavBarAction onPress={goBack} icon="ui-close" color={theme.palette.grey.black} />,
+    });
+  }, [goBack, props.navigation]);
 
   React.useEffect(() => {
     const newResourceUri = props.route.params.notification.resource.uri.replace('scrapbook', 'scrapbook?fullscreen=1');
