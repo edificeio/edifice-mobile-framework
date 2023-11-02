@@ -4,16 +4,13 @@ import { ActivityIndicator, TouchableOpacity } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { openUrl } from '~/framework/util/linking';
 
-import styles from './styles';
+import styles, { BUTTON_ICON_SIZE } from './styles';
 import { DefaultButtonProps } from './types';
-
-export const BUTTON_ICON_SIZE = UI_SIZES.elements.icon.small;
 
 export const DefaultButton = (props: DefaultButtonProps) => {
   const {
