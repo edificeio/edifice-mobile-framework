@@ -81,7 +81,10 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     request => {
       const pfUrl = props.session?.platform.url;
       const reqUrl = request.url;
-      if (!reqUrl.startsWith(pfUrl)) openUrl(reqUrl);
+      if (!reqUrl.startsWith(pfUrl) && !reqUrl.includes('embed') && reqUrl !== 'about:blank') {
+        openUrl(reqUrl);
+        return false;
+      }
       return true;
     },
     [props.session?.platform.url],
