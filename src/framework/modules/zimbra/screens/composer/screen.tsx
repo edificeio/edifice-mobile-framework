@@ -250,7 +250,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
     );
   };
 
-  getMailData = (): Partial<IMail> => {
+  getMailData = (includeAttachments: boolean = true): Partial<IMail> => {
     const { draft, signature, useSignature } = this.state;
     const { type } = this.props.route.params;
     let body = draft.body.replace(/(\r\n|\n|\r)/gm, '<br>');
@@ -265,7 +265,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       bcc: draft.bcc.map(recipient => recipient.id),
       subject: draft.subject,
       body,
-      attachments: draft.attachments,
+      attachments: includeAttachments ? draft.attachments : [],
     };
   };
 
@@ -322,7 +322,7 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
   saveDraft = async (saveIfEmpty: boolean = false): Promise<string | undefined> => {
     try {
       const { mail, session } = this.props;
-      const { draft, id, isSettingId } = this.state;
+      const { id, isSettingId } = this.state;
 
       if ((!saveIfEmpty && this.checkIsDraftBlank()) || isSettingId) return;
       if (!session) throw new Error();
@@ -332,9 +332,9 @@ class ZimbraComposerScreen extends React.PureComponent<ZimbraComposerScreenPriva
       } else {
         this.setState({ isSettingId: true });
         const isForward = this.props.route.params.type === DraftType.FORWARD;
-        const draftId = await zimbraService.draft.create(session, this.getMailData(), mail?.id, isForward);
+        const draftId = await zimbraService.draft.create(session, this.getMailData(false), mail?.id, isForward);
         this.setState({ id: draftId, isSettingId: false });
-        if (isForward && draft.inReplyTo) await zimbraService.draft.forward(session, draftId, draft.inReplyTo);
+        if (isForward && mail?.id) await zimbraService.draft.forward(session, draftId, mail.id);
         return draftId;
       }
     } catch {

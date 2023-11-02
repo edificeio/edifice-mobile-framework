@@ -12,14 +12,15 @@ import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
 import { initReactI18next } from 'react-i18next';
-import { NativeModules } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
+import RNRestart from 'react-native-restart';
 
 import appConf from '~/framework/util/appConf';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { isEmpty } from '~/framework/util/object';
+import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
 import { getOverrideName } from '~/framework/util/string';
 
 // Read Phrase ID && Secrets
@@ -61,6 +62,8 @@ export namespace I18n {
   const I18N_SHOW_KEYS_KEY = 'showKeys';
   let showKeys = false;
   export const canShowKeys = isDevOrAlpha;
+
+  const I18N_APP_LANG = 'appLang';
 
   // Define fallback locale
   const fallbackLng = 'en';
@@ -117,15 +120,28 @@ export namespace I18n {
   }
 
   // Set language to device one
-  export function setLanguage() {
+  export async function setLanguage() {
     const bestAvailableLanguage = RNLocalize.findBestLanguageTag(supportedLanguages) as {
       languageTag: string;
       isRTL: boolean;
     };
-    i18n.language = bestAvailableLanguage?.languageTag ?? fallbackLng;
+    const lang = await getItemJson(I18N_APP_LANG);
+    if (isEmpty(lang)) {
+      const newLang = bestAvailableLanguage?.languageTag ?? fallbackLng;
+      i18n.language = newLang;
+    } else {
+      i18n.language = (lang as string) ?? fallbackLng;
+    }
     moment.locale(i18n.language?.split('-')[0]);
     return i18n.language;
   }
+
+  export const changeLanguage = async (lang: 'fr' | 'en' | 'es' | 'auto') => {
+    if (showKeys) await setItemJson(I18N_SHOW_KEYS_KEY, false);
+    if (lang === 'auto') await removeItem(I18N_APP_LANG);
+    else await setItemJson(I18N_APP_LANG, lang);
+    RNRestart.restart();
+  };
 
   // Toggle i18n Keys (dev && alpha only)
   // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
@@ -133,7 +149,7 @@ export namespace I18n {
     if (canShowKeys) {
       showKeys = !showKeys;
       await setItemJson(I18N_SHOW_KEYS_KEY, showKeys);
-      NativeModules.DevSettings.reload();
+      RNRestart.restart();
     }
   };
 

@@ -247,6 +247,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 />
               </>
             ) : null}
+            <LineButton
+              disabled={!!currentLoadingMenu}
+              title={I18n.get('user-page-editlang')}
+              onPress={() => navigation.navigate(userRouteNames.lang, {})}
+            />
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
@@ -353,23 +358,6 @@ function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
   }, [currentPlatform, isVersionDetailsShown, toggleVersionDetails]);
 }
 
-/**
- * Setup a version number feature that can secretly display detailed information when long pressed.
- * @returns the React Element of the touchable toggle i18n keys
- */
-function useToggleKeysFeature() {
-  if (!I18n.canShowKeys) return;
-  return (
-    <SecondaryButton
-      text="Toggle i18n Keys"
-      action={() => {
-        I18n.toggleShowKeys();
-      }}
-      style={styles.userInfoButton}
-    />
-  );
-}
-
 // All these values are compile-time constants. So we decalre them as function statics.
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
 useVersionFeature.buildNumber = DeviceInfo.getBuildNumber();
@@ -401,7 +389,6 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
   const logoutButton = useLogoutFeature(handleLogout);
-  const toggleKeysButton = useToggleKeysFeature();
   const versionButton = useVersionFeature(session);
 
   return (
@@ -416,7 +403,6 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         <View style={styles.sectionBottom}>
           {logoutButton}
           {versionButton}
-          {toggleKeysButton}
         </View>
       </ScrollView>
     </PageView>
