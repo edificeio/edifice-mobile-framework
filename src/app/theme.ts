@@ -150,17 +150,17 @@ export const defaultTheme: ThemeInitializer = {
   palette: {
     primary: {
       evil: 'magenta',
-      dark: '#1C1C73',
-      regular: '#3030D1',
-      light: '#C5C5F2',
-      pale: '#F0F0FF',
+      dark: '#1B84AC',
+      regular: '#2A9CC8',
+      light: '#AADAED',
+      pale: '#E4F4FF',
     },
     secondary: {
       evil: 'magenta',
-      dark: '#C73200',
-      regular: '#FC5E29',
-      light: '#FFC7B8',
-      pale: '#FFEBE5',
+      dark: '#F17A17',
+      regular: '#FF8D2E',
+      light: '#FFC696',
+      pale: '#FFEFE3',
     },
     complementary: {
       red: {
