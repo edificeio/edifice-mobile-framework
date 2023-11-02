@@ -1,10 +1,11 @@
+console.debug('EXEC .eslintrc.js')
 module.exports = {
   root: true,
   env: {
     browser: true,
     'react-native/react-native': true,
   },
-  extends: ['@react-native', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native'],
+  extends: ['@react-native', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native', 'plugin:import/typescript'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',
@@ -12,7 +13,7 @@ module.exports = {
       jsx: true,
     },
   },
-  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native', 'jest'],
+  plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native', 'jest', 'eslint-plugin-import'],
   rules: {
     '@typescript-eslint/naming-convention': ['error'],
     'ft-flow/boolean-style': [2, 'boolean'],
@@ -87,6 +88,13 @@ module.exports = {
     'react-native/no-unused-styles': 2,
     'react/prop-types': 2,
     semi: 2,
+    'import/no-cycle': [
+      'error', // can be 'warn'
+      {
+        maxDepth: 20,
+        ignoreExternal: true,
+      },
+    ],
   },
   settings: {
     'ft-flow': {
