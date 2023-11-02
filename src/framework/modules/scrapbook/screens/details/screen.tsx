@@ -4,11 +4,9 @@ import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } fr
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
-import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
@@ -58,7 +56,7 @@ const getQueryParamToken = async (finalUrl: string) => {
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   const [url, setUrl] = React.useState<string | undefined>(undefined);
   const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [isLockedToLandscape, setIsLockedToLandscape] = React.useState(false);
+  const [isLocked, setIsLocked] = React.useState(false);
 
   const urlObject = React.useMemo(() => (url ? { uri: url } : undefined), [url]);
   const webviewRef = React.useRef<WebView>(null);
@@ -90,10 +88,15 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     [props.session?.platform.url],
   );
 
-  const setOrientationToLandscape = () => {
-    Orientation.lockToLandscapeRight();
-    setIsLockedToLandscape(true);
-    setOrientation('LANDSCAPE-RIGHT');
+  const setLockedOrientation = () => {
+    if (orientation !== 'PORTRAIT') {
+      Orientation.lockToPortrait();
+      setOrientation('PORTRAIT');
+    } else {
+      Orientation.lockToLandscapeRight();
+      setOrientation('LANDSCAPE-RIGHT');
+    }
+    setIsLocked(true);
   };
 
   const goBack = React.useCallback(() => {
@@ -105,15 +108,19 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     (newOrientation: OrientationType) => {
       const isPortraitOrLandscape =
         newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
-      if (isLockedToLandscape && newOrientation === 'PORTRAIT') {
+      if (isLocked && orientation !== 'PORTRAIT' && newOrientation === 'PORTRAIT') {
         Orientation.unlockAllOrientations();
-        setIsLockedToLandscape(false);
+        setIsLocked(false);
+      }
+      if (isLocked && orientation === 'PORTRAIT' && newOrientation !== 'PORTRAIT') {
+        Orientation.unlockAllOrientations();
+        setIsLocked(false);
       }
       if (isPortraitOrLandscape && newOrientation !== orientation) {
         setOrientation(newOrientation);
       }
     },
-    [isLockedToLandscape, orientation],
+    [isLocked, orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
@@ -146,23 +153,21 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         onHttpError={onHttpError}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
-
-      {orientation === 'PORTRAIT' && !isLockedToLandscape ? (
-        <>
-          <IconButton
-            action={goBack}
-            icon="ui-close"
-            color={theme.palette.grey.black}
-            size={UI_SIZES.elements.icon.default}
-            style={styles.closeButton}
-          />
-          <SecondaryButton
-            style={styles.button}
-            text={I18n.get('scrapbook-details-landscape')}
-            iconRight="ui-arrowRight"
-            action={setOrientationToLandscape}
-          />
-        </>
+      <IconButton
+        style={styles.button}
+        icon={orientation === 'PORTRAIT' ? 'ui-fullScreen' : 'ui-closeFullScreen'}
+        action={setLockedOrientation}
+        color={theme.palette.grey.black}
+        size={UI_SIZES.elements.icon.small}
+      />
+      {orientation === 'PORTRAIT' ? (
+        <IconButton
+          action={goBack}
+          icon="ui-close"
+          color={theme.palette.grey.black}
+          size={UI_SIZES.elements.icon.default}
+          style={styles.closeButton}
+        />
       ) : null}
     </>
   );
