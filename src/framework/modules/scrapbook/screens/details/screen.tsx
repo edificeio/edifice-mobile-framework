@@ -62,7 +62,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   const webviewRef = React.useRef<WebView>(null);
 
   const init = async () => {
-    const uri = props.route.params.notification.resource.uri;
+    const uri = props.route.params.resourceUri;
     const id = uri.replace('/scrapbook#/view-scrapbook/', '');
     await scrapbookService.get(id);
   };
@@ -130,15 +130,15 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   }, []);
 
   React.useEffect(() => {
-    const newResourceUri = props.route.params.notification.resource.uri.replace('scrapbook', 'scrapbook?fullscreen=1');
+    const newResourceUri = props.route.params.resourceUri.replace('scrapbook', 'scrapbook?fullscreen=1');
     const urlScrapbook = `${props.session?.platform.url + newResourceUri}`;
     getQueryParamToken(urlScrapbook).then(setUrl);
-  }, [props.route.params.notification.resource.uri, props.session?.platform.url]);
+  }, [props.route.params.resourceUri, props.session?.platform.url]);
 
   const renderLoading = React.useCallback(() => <Loading />, []);
 
   const player = () => (
-    <>
+    <PageView>
       <WebView
         javaScriptEnabled
         ref={webviewRef}
@@ -169,19 +169,26 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
           style={styles.closeButton}
         />
       ) : null}
-    </>
-  );
-
-  return (
-    <PageView>
-      <ContentLoader
-        loadContent={init}
-        renderContent={player}
-        renderError={() => <EmptyContentScreen />}
-        renderLoading={renderLoading}
-      />
     </PageView>
   );
+
+  const renderError = () => {
+    Orientation.lockToPortrait();
+    return (
+      <>
+        <EmptyContentScreen />
+        <IconButton
+          action={goBack}
+          icon="ui-close"
+          color={theme.palette.grey.black}
+          size={UI_SIZES.elements.icon.default}
+          style={styles.closeButton}
+        />
+      </>
+    );
+  };
+
+  return <ContentLoader loadContent={init} renderContent={player} renderError={renderError} renderLoading={renderLoading} />;
 };
 
 const mapStateToProps: (s: IGlobalState) => ScrapbookDetailsScreenDataProps = s => ({

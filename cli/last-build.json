@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-10-31 17:56:56",
-  "notes": "Merge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfeat(scrapbook) add custom webview with header\nfix(zimbra): AMZ-141 solve mail forwarding with attachments\nfeat(scrapbook) hide tabbar on android in details view\nMerge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfeat(scrapbook): fake header & manage landscape button\nfix(competences): AMVS-383 unselect term and subject on child change\nMerge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfeat(scrapbook): change details view on fullscreenModal & fix bug\nfix(diary): AMVS-382 prevent teacher timetable screen crash when switching structure\nfix(crash): MB-2194 , fix crash on timeline\nMerge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfeat(conversation): MB-2156 , add testid on conversation mail content\nMerge commit '1ed29ab97fec0a2678f2520530c6584ee066e618' into dev/1.11.2\nchore(i18n): Change sync-phrase-translations GitHub action target\nrelease: 1.11.2-alpha.3(1110203)",
-  "version": "1.11.2-alpha.4(1110204)"
+  "last": "2023-11-02 19:31:48",
+  "notes": "Merge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfeat(scrapbook): add scrapbook to my apps\nRevert \"feat: MB-2185, new primary/secondary colors\"\nfeat: MB-2202, mood images\nfeat(scrapbook): change orientation button\nfix(scrapbook): MB-2201 , fix popup redirection on extern url\nrelease: 1.11.2-alpha.4(1110204)",
+  "version": "1.11.2-alpha.5(1110205)"
 }
