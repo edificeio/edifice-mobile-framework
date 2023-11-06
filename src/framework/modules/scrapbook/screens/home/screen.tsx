@@ -8,7 +8,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import ResourceExplorer from '~/framework/components/explorer/resource-explorer';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
@@ -21,6 +21,7 @@ import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modu
 import { scrapbookService } from '~/framework/modules/scrapbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
+import { isEmpty } from '~/framework/util/object';
 
 import { ScrapbookHomeScreenDataProps, ScrapbookHomeScreenEventProps, ScrapbookHomeScreenProps } from './types';
 
@@ -51,6 +52,14 @@ const ScrapbookHomeScreen = (props: ScrapbookHomeScreenProps) => {
   const renderLoading = () => <BlogPlaceholderExplorer />;
 
   const renderExplorer = () => {
+    if (isEmpty(scrapbooks))
+      return (
+        <EmptyScreen
+          svgImage="empty-hammock"
+          title={I18n.get('scrapbook-emptyscreen-title')}
+          text={I18n.get('scrapbook-emptyscreen-text')}
+        />
+      );
     const explorerScrapbooks = scrapbooks.map(sb => {
       const { thumbnail, ...b } = sb;
       return {

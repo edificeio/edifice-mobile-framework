@@ -42,7 +42,14 @@ export const scrapbookService = {
     backendScrapbooks.forEach(scrapbook => {
       if (scrapbook.trashed !== 1) scrapbooks.push(scrapbookItemAdapter(scrapbook));
     });
-    return scrapbooks as ScrapbookItem[];
+
+    const finalScrapbooks = scrapbooks.sort((a, b) => {
+      if (a.title < b.title) return -1;
+      if (a.title > b.title) return 1;
+      return 0;
+    });
+
+    return finalScrapbooks as ScrapbookItem[];
   },
   get: async (id: string) => {
     const api = `/scrapbook/get/${id}`;
