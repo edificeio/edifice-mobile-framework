@@ -1,5 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+import { BackHandler } from 'react-native';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -102,6 +103,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   const goBack = React.useCallback(() => {
     Orientation.lockToPortrait();
     props.navigation.goBack();
+    return true;
   }, [props.navigation]);
 
   const handleOrientationChange = React.useCallback(
@@ -127,6 +129,10 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   React.useEffect(() => {
     Orientation.unlockAllOrientations();
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', goBack);
+    return () => backHandler.remove();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
