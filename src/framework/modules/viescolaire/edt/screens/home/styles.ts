@@ -20,6 +20,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: UI_SIZES.spacing.medium,
+    zIndex: -1,
   },
   weekText: {
     marginLeft: UI_SIZES.spacing.tiny,
