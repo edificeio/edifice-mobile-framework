@@ -74,7 +74,15 @@ export const navBarOptions: (props: {
         if (isModalModeOnThisRoute(route.name)) {
           return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" testID={backButtonTestID} />;
         } else {
-          return <HeaderBackButton {...props} onPress={navigation.goBack} style={styles.backbutton} testID={backButtonTestID} />;
+          return (
+            <HeaderBackButton
+              {...props}
+              labelVisible={false}
+              style={styles.backbutton}
+              testID={backButtonTestID}
+              onPress={navigation.goBack}
+            />
+          );
         }
       } else return null;
     },

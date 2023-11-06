@@ -15,9 +15,10 @@ export default function FakeHeaderMedia() {
       // eslint-disable-next-line react/no-unstable-nested-components
       headerLeft={() => (
         <HeaderBackButton
-          onPress={() => navigation.goBack()}
-          tintColor={theme.palette.grey.white.toString()}
+          labelVisible={false}
           style={{ marginLeft: UI_SIZES.spacing.minor }}
+          tintColor={theme.palette.grey.white.toString()}
+          onPress={() => navigation.goBack()}
         />
       )}
       headerTintColor="white"
