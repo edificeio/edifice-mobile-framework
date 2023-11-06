@@ -1,4 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import Lottie from 'lottie-react-native';
 import { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
@@ -6,7 +7,8 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import CheckboxButton from '~/framework/components/buttons/checkbox';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -39,6 +41,7 @@ export interface HomeworkTaskDetailsScreenDataProps {
 
 export interface HomeworkTaskDetailsScreenEventProps {
   handleDeleteHomeworkEntry(diaryId: string, entryId: string, date: Moment): Promise<void>;
+  handleToggleHomeworkEntryStatus(diaryId: string, entryId: string, finished: boolean): Promise<void>;
   handleGetHomeworkTasks(diaryId: string): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
 }
@@ -59,6 +62,23 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
     aspectRatio: 3,
   },
+  checkboxButtonContainer: {
+    position: 'absolute',
+    right: UI_SIZES.spacing.medium,
+    bottom: UI_SIZES.spacing.medium,
+    paddingTop: getScaleWidth(80),
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 6,
+    shadowColor: theme.ui.shadowColor,
+    shadowOpacity: 0.15,
+    elevation: 4,
+  },
+  checkboxContainer: {
+    marginLeft: UI_SIZES.spacing.minor,
+  },
+  checkboxListItem: {
+    borderRadius: UI_SIZES.spacing.medium,
+  },
   content: {
     ...TextSizeStyle.Medium,
     marginTop: UI_SIZES.spacing.medium,
@@ -73,6 +93,10 @@ const styles = StyleSheet.create({
 });
 
 export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTaskDetailsScreenProps, object> {
+  state = {
+    checked: this.props.route.params.task.finished,
+  };
+
   async doDeleteDiaryEntry(diaryId: string, entryId: string, date: Moment) {
     try {
       const { handleDeleteHomeworkEntry, handleGetHomeworkTasks, navigation } = this.props;
@@ -85,6 +109,24 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
       navigation.goBack();
     } catch {
       Toast.showError(I18n.get('homework-taskdetails-deletion-error'));
+    }
+  }
+
+  async doToggleDiaryEntryStatus(finished: boolean) {
+    try {
+      const { handleToggleHomeworkEntryStatus, handleGetHomeworkTasks, route } = this.props;
+      const { checked } = this.state;
+      const diaryId = route.params.diaryId;
+      const taskId = route.params.task.taskId;
+      if (!diaryId || !taskId) {
+        throw new Error('failed to call api (missing information)');
+      }
+
+      await handleToggleHomeworkEntryStatus(diaryId, taskId, finished);
+      await handleGetHomeworkTasks(diaryId);
+      this.setState({ checked: !checked });
+    } catch {
+      Toast.showError(I18n.get('homework-taskdetails-status-error'));
     }
   }
 
@@ -135,11 +177,14 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
 
   render() {
     const { route } = this.props;
+    const { checked } = this.state;
     const { date, title, content } = route.params.task;
     const dayOfTheWeek = getDayOfTheWeek(date);
     const dayColor = theme.color.homework.days[dayOfTheWeek].background;
     const opacity = 80;
     const bannerColor = `${dayColor}${opacity}`;
+    const animationSource = require('ASSETS/animations/homework/done.json');
+
     return (
       <PageView style={styles.page}>
         <View style={[styles.banner, { backgroundColor: bannerColor }]}>
@@ -161,6 +206,16 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
             />
           ) : null}
         </ScrollView>
+        <View style={styles.checkboxButtonContainer}>
+          {checked ? <Lottie source={animationSource} autoPlay loop={false} /> : null}
+          <CheckboxButton
+            title="homework-taskdetails-status-done"
+            onPress={() => this.doToggleDiaryEntryStatus(!checked)}
+            isChecked={checked}
+            customListItemStyle={styles.checkboxListItem}
+            customCheckboxContainerStyle={styles.checkboxContainer}
+          />
+        </View>
       </PageView>
     );
   }

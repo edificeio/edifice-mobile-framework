@@ -5,6 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { getSession } from '~/framework/modules/auth/reducer';
 import { deleteHomeworkDiaryEntry } from '~/framework/modules/homework/actions/deleteEntry';
+import { toggleHomeworkDiaryEntryStatus } from '~/framework/modules/homework/actions/entryStatus';
 import { fetchHomeworkTasks } from '~/framework/modules/homework/actions/tasks';
 import {
   HomeworkTaskDetailsScreen,
@@ -29,6 +30,9 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => HomeworkTa
   handleDeleteHomeworkEntry: async (diaryId: string, entryId: string, date: Moment) => {
     return (await dispatch(deleteHomeworkDiaryEntry(diaryId, entryId, date))) as unknown as undefined;
   },
+  handleToggleHomeworkEntryStatus: async (diaryId: string, entryId: string, finished: boolean) => {
+    return (await dispatch(toggleHomeworkDiaryEntryStatus(diaryId, entryId, finished))) as unknown as undefined;
+  },
   handleGetHomeworkTasks: diaryId => {
     return dispatch(fetchHomeworkTasks(diaryId));
   },
@@ -43,6 +47,7 @@ export interface IHomeworkTaskDetailsScreenNavigationParams {
     content: string;
     taskId: string;
     type: string;
+    finished: boolean;
   };
   diaryId: string;
 }

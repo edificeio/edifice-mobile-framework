@@ -20,6 +20,7 @@ export interface IHomeworkTask {
   title: string;
   content: string;
   taskId: string;
+  finished: boolean;
 }
 
 // All tasks of a day.
@@ -34,6 +35,13 @@ export interface IHomeworkDay {
 
 // All days of a homework.
 export type IHomeworkTasks = IOrderedArrayById<IHomeworkDay> & { diaryInfo?: Partial<IHomeworkDiary> };
+
+// Task statuses of a homework.
+export interface IHomeworkTaskStatus {
+  entryId: string;
+  finished: boolean;
+}
+export type IHomeworkTaskStatuses = IHomeworkTaskStatus[];
 
 // All diaries
 export interface IAllHomeworkTasksByHomeworkIds {

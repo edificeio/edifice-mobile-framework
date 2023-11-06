@@ -538,6 +538,8 @@
   "homework-taskdetails-deletion-error": "Erreur lors de la suppression",
   "homework-taskdetails-deletion-text": "Cette action est irréversible. Êtes-vous sûr de vouloir supprimer l'activité ?",
   "homework-taskdetails-deletion-title": "Confirmez-vous la suppression ?",
+  "homework-taskdetails-status-done": "Devoir fait",
+  "homework-taskdetails-status-error": "Erreur lors de la mise à jour du devoir",
   "homework-tasklist-addhomework": "Ajouter une activité",
   "homework-tasklist-createactivity": "Ajouter une activité",
   "homework-tasklist-displaypastdays": "Afficher les jours précédents",

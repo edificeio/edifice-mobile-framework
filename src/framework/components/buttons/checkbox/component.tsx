@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ViewStyle } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,15 +16,20 @@ export const CheckboxButton = ({
   title,
   isChecked,
   isAllButton,
+  customListItemStyle,
+  customCheckboxContainerStyle,
 }: {
   onPress: () => any;
   title: string;
   isChecked: boolean;
   isAllButton?: boolean;
+  customListItemStyle?: ViewStyle;
+  customCheckboxContainerStyle?: ViewStyle;
 }) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <ListItem
+        style={customListItemStyle}
         leftElement={<SmallText style={UI_STYLES.flexShrink1}>{I18n.get(title)}</SmallText>}
         rightElement={
           <Checkbox
@@ -31,6 +37,7 @@ export const CheckboxButton = ({
             {...(isAllButton ? { customContainerStyle: styles.allButton } : {})}
             checked={isChecked}
             onPress={onPress}
+            customContainerStyle={customCheckboxContainerStyle}
           />
         }
       />

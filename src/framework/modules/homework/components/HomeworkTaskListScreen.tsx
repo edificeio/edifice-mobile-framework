@@ -357,6 +357,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           key={index}
           title={item.title}
           content={item.content}
+          finished={item.finished}
           date={item.date}
           onPress={displayEntry}
           style={isLastItem && styles.lastCard}
