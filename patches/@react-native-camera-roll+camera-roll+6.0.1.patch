@@ -1,5 +1,5 @@
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
-index d5b0f40..096f4c5 100644
+index d4b7b12..ca999d7 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 @@ -11,7 +11,7 @@ buildscript {
@@ -11,6 +11,15 @@ index d5b0f40..096f4c5 100644
      }
    }
  }
+@@ -114,7 +114,7 @@ if (isNewArchitectureEnabled()) {
+ }
+ 
+ def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+-def shouldUseNameSpace = agpVersion >= 7 && REACT_NATIVE_VERSION >= 71
++def shouldUseNameSpace = agpVersion >= 7 && REACT_NATIVE_VERSION >= "0.71"
+ def PACKAGE_PROP = "package=\"com.reactnativecommunity.cameraroll\""
+ def manifestOutFile = file("${projectDir}/src/main/AndroidManifest.xml")
+ def manifestContent = manifestOutFile.getText()
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
 index dbda53f..98fb413 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
@@ -25,7 +34,7 @@ index dbda53f..98fb413 100644
    
 \ No newline at end of file
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-index 698fcd3..c1e7975 100644
+index 53b6018..a82aa3d 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
 @@ -238,7 +238,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {

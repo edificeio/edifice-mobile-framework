@@ -31,6 +31,9 @@ const styles = StyleSheet.create({
 });
 
 export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) =>
+  /*(
+  <HeaderTitle testID={testID}>{title ?? ''}</HeaderTitle>
+);*/
   !isEmpty(title) && Platform.OS === 'android'
     ? () => (
         <BodyBoldText
