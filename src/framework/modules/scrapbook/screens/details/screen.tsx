@@ -1,3 +1,4 @@
+import CookieManager from '@react-native-cookies/cookies';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { BackHandler } from 'react-native';
@@ -80,7 +81,14 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     request => {
       const pfUrl = props.session?.platform.url;
       const reqUrl = request.url;
-      if (!reqUrl.startsWith(pfUrl) && !reqUrl.includes('embed') && reqUrl !== 'about:blank') {
+      if (
+        !reqUrl.startsWith(pfUrl) &&
+        !reqUrl.includes('embed') &&
+        !reqUrl.includes('imasdk.googleapis.com') &&
+        !reqUrl.includes('player.vimeo.com') &&
+        !reqUrl.includes('learningapps.org') &&
+        reqUrl !== 'about:blank'
+      ) {
         openUrl(reqUrl);
         return false;
       }
@@ -128,6 +136,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   useDeviceOrientationChange(handleOrientationChange);
 
   React.useEffect(() => {
+    CookieManager.clearAll(true);
     Orientation.unlockAllOrientations();
 
     const backHandler = BackHandler.addEventListener('hardwareBackPress', goBack);
