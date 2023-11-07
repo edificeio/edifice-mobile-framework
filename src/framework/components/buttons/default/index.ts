@@ -3,7 +3,8 @@ import TextSize from 'react-native-text-size';
 import { UI_SIZES } from '~/framework/components/constants';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
 
-import { BUTTON_ICON_SIZE, DefaultButton } from './component';
+import { DefaultButton } from './component';
+import { BUTTON_ICON_SIZE } from './styles';
 import { DefaultButtonProps } from './types';
 
 const getButtonWidth = async ({ text, icons, type }: { text: string; icons?: number; type: string }): Promise<number> => {

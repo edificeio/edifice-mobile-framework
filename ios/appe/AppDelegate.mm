@@ -84,10 +84,6 @@ static NSString* RECEIVED_PUSHES_KEY = @"RECEIVED_PUSHES";
   return [RCTLinkingManager application:application openURL:url options:options];
 }
 
--(BOOL)concurrentRootEnabled {
-  return true; // Switch this bool to turn on and off the concurrent root
-}
-
 -(NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
   #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
