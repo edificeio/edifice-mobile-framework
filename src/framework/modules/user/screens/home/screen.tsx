@@ -271,6 +271,13 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}
             />
+            <LineButton
+              title="Test UI Multicompte"
+              textStyle={{ color: 'orange' }}
+              onPress={() => {
+                navigation.navigate(userRouteNames.multicomptePages, {});
+              }}
+            />
           </ButtonLineGroup>
         </View>
       </>
@@ -285,31 +292,32 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @param accountListRef
  * @returns the React Elements of the account button and list
  */
-function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accountListRef) {
+function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accountListRef, data: any) {
   const canManageAccounts = session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel;
   const showAccountList = React.useCallback(() => {
     accountListRef.current?.present();
   }, [accountListRef]);
 
   return React.useMemo(() => {
-    const data = [
-      {
-        avatar: new Blob(),
-        id: session?.user.id,
-        name: session?.user.displayName,
-        type: session?.user.type,
-        selected: true,
-      },
-      {
-        avatar: new Blob(),
-        id: '123',
-        name: 'Secondary Account',
-        type: 'Teacher',
-        selected: false,
-      },
-    ];
-    const hasSingleAccount = data.length === 1;
-    return canManageAccounts ? (
+    // const data = [
+    //   {
+    //     avatar: new Blob(),
+    //     id: session?.user.id,
+    //     name: session?.user.displayName,
+    //     type: session?.user.type,
+    //     selected: true,
+    //   },
+    //   {
+    //     avatar: new Blob(),
+    //     id: '123',
+    //     name: 'Secondary Account',
+    //     type: 'Teacher',
+    //     selected: false,
+    //   },
+    // ];
+
+    const hasSingleAccount = data?.length === 1;
+    return data ? (
       hasSingleAccount ? (
         <>
           <AddAccountButton action={showAccountList} style={styles.accountButton} />
@@ -322,7 +330,7 @@ function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], acco
         </>
       )
     ) : null;
-  }, [accountListRef, canManageAccounts, session?.user.displayName, session?.user.id, session?.user.type, showAccountList]);
+  }, [accountListRef, data, showAccountList]);
 }
 
 /**
@@ -445,8 +453,9 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
-  const { handleLogout, session } = props;
+  const { handleLogout, session, route } = props;
   const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
+  const data = route.params.data;
 
   const scrollViewRef = React.useRef(null);
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
@@ -466,7 +475,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(session, accountListRef);
+  const accountsButton = useAccountsFeature(session, accountListRef, data);
   const logoutButton = useLogoutFeature(handleLogout);
   const toggleKeysButton = useToggleKeysFeature();
   const versionDetails = useVersionDetailsFeature(session);

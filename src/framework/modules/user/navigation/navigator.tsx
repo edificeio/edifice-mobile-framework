@@ -13,6 +13,9 @@ import UserAccountOnboardingScreen, {
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
 import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/framework/modules/user/screens/legal-notice';
+import UserMulticomptePagesScreen, {
+  computeNavBar as multicomptePagesNavBar,
+} from '~/framework/modules/user/screens/multicompte-pages';
 import UserProfileScreen, { computeNavBar as profileNavBar } from '~/framework/modules/user/screens/profile';
 import UserEditDescriptionScreen, {
   computeNavBar as editDescriptionNavBar,
@@ -47,6 +50,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         initialParams={{}}
       />
       <Stack.Screen name={userRouteNames.lang} component={UserLangScreen} options={langNavBar} initialParams={{}} />
+      <Stack.Screen
+        name={userRouteNames.multicomptePages}
+        component={UserMulticomptePagesScreen}
+        options={multicomptePagesNavBar}
+        initialParams={{}}
+      />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen
           name={userRouteNames.notifPrefsDetails}
