@@ -1,8 +1,10 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
+
+const WIDTH_TEXT_TAB = getScaleWidth(20);
 
 export default StyleSheet.create({
   header: {
@@ -18,6 +20,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: UI_SIZES.spacing.medium,
+    zIndex: -1,
   },
   weekText: {
     marginLeft: UI_SIZES.spacing.tiny,
@@ -32,12 +35,14 @@ export default StyleSheet.create({
     backgroundColor: theme.palette.grey.white,
   },
   tabBarItem: {
-    padding: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.radius.medium,
     borderWidth: 1,
   },
   tabBarItemText: {
     textAlign: 'center',
+    width: WIDTH_TEXT_TAB,
   },
   courseView: {
     flexDirection: 'row',

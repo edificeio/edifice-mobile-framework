@@ -204,7 +204,7 @@ const workspaceService = {
     },
     startUploadFile: (session: ISession, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
       const api = '/workspace/document';
-      const queryParams = { parent: params.parent };
+      const queryParams = { parent: params.parent, public: true };
       const url = queryString.stringifyUrl({
         url: api,
         query: { ...queryParams, ...getImplicitWorkspaceUploadParams(params), ...getThumbnailWorkspaceUploadParams() },

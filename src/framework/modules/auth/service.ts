@@ -4,7 +4,7 @@ import moment from 'moment';
 import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { getItem, getItemJson, setItem, setItemJson } from '~/framework/util/storage';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId } from '~/infra/oauth';
@@ -299,7 +299,7 @@ export const PLATFORM_STORAGE_KEY = 'currentPlatform';
  * Read the platform stored in MMKV.
  */
 export async function loadCurrentPlatform() {
-  const platformId = await getItemJson(PLATFORM_STORAGE_KEY);
+  const platformId = await getItem(PLATFORM_STORAGE_KEY);
   if (platformId) {
     const platform = appConf.platforms.find(_pf => _pf.name === platformId);
     if (!platform)
@@ -314,7 +314,7 @@ export async function loadCurrentPlatform() {
  * Read and select the platform stored in MMKV.
  */
 export async function savePlatform(platform: Platform) {
-  await setItemJson(PLATFORM_STORAGE_KEY, platform.name);
+  await setItem(PLATFORM_STORAGE_KEY, platform.name);
 }
 
 export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: IAuthCredentials) {

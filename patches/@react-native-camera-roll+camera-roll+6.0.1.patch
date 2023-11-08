@@ -1,0 +1,48 @@
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+index d4b7b12..ca999d7 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
+@@ -11,7 +11,7 @@ buildscript {
+     }
+ 
+     dependencies {
+-      classpath("com.android.tools.build:gradle:4.2.2")
++      classpath('com.android.tools.build:gradle:7.1.3')
+     }
+   }
+ }
+@@ -114,7 +114,7 @@ if (isNewArchitectureEnabled()) {
+ }
+ 
+ def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+-def shouldUseNameSpace = agpVersion >= 7 && REACT_NATIVE_VERSION >= 71
++def shouldUseNameSpace = agpVersion >= 7 && REACT_NATIVE_VERSION >= "0.71"
+ def PACKAGE_PROP = "package=\"com.reactnativecommunity.cameraroll\""
+ def manifestOutFile = file("${projectDir}/src/main/AndroidManifest.xml")
+ def manifestContent = manifestOutFile.getText()
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
+index dbda53f..98fb413 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
+@@ -1,6 +1,6 @@
+ 
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-          package="com.reactnativecommunity.cameraroll">
++          >
+ 
+ </manifest>
+   
+\ No newline at end of file
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+index 53b6018..a82aa3d 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
+@@ -238,7 +238,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
+                     }
+                   });
+         }
+-      } catch (IOException e) {
++      } catch (Exception e) {
+         mPromise.reject(e);
+       } finally {
+         if (input != null) {

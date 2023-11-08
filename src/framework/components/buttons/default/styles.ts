@@ -2,7 +2,7 @@ import { Platform, StyleSheet } from 'react-native';
 
 import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
-import { BUTTON_ICON_SIZE } from './component';
+export const BUTTON_ICON_SIZE = UI_SIZES.elements.icon.small;
 
 export default StyleSheet.create({
   commonView: {

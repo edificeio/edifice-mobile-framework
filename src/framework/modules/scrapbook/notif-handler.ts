@@ -20,7 +20,7 @@ const handleSomeNotificationAction: NotifHandlerThunkAction<IScrapbookNotificati
         params: {
           initial: false,
           screen: scrapbookRouteNames.details,
-          params: { notification },
+          params: { resourceUri: notification.resource.uri },
         },
       });
 

@@ -16,14 +16,16 @@ import AppModules from '~/app/modules';
 import { UI_STYLES } from '~/framework/components/constants';
 import Navigation from '~/framework/navigation/RootNavigator';
 import { useNavigationDevPlugins } from '~/framework/navigation/helper';
+import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
 import { isEmpty } from '~/framework/util/object';
 import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { AllModulesBackup } from '~/infra/oauth';
+import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
 import { I18n } from './i18n';
-import { IStoreProp, connectWithStore } from './store';
+import { IStoreProp, Reducers, connectWithStore } from './store';
 
 const FlipperAsyncStorage = __DEV__ ? require('rn-flipper-async-storage-advanced').default : undefined;
 const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage /> : null;
@@ -125,5 +127,9 @@ function App(props: AppProps) {
 
 // Hack to generate scopes without circular deps. ToDo: fix it !
 AllModulesBackup.value = AppModules();
+
+// Hack : Flatten reducers to prevent misordring of module execution
+Reducers.register('startup', navigationReducer);
+Reducers.register('connectionTracker', connectionTrackerReducer);
 
 export default connectWithStore(App);

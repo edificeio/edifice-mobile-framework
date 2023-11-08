@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { ColorValue, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
@@ -12,6 +12,7 @@ export default function NavBarAction(props: {
   icon?: string;
   title?: string;
   disabled?: boolean;
+  color?: ColorValue;
   testID?: string;
   onPress?: () => void;
 }) {
@@ -33,7 +34,7 @@ export default function NavBarAction(props: {
       {props.icon ? (
         <NamedSVG
           name={props.icon}
-          fill={theme.ui.text.inverse}
+          fill={props.color ?? theme.ui.text.inverse}
           width={UI_SIZES.elements.navbarIconSize}
           height={UI_SIZES.elements.navbarIconSize}
           style={[opacityIconStyle, styles.navBarActionIcon]}

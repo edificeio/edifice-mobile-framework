@@ -27,6 +27,21 @@ export namespace Storage {
   };
 
   /**
+   * Set item JSON
+   * - Convert data into JSON string
+   * - Save data and key within storage
+   */
+  export const setItem = async <T extends string | number | boolean>(key: string, data: T) => {
+    try {
+      storage.set(key, data);
+    } catch (error) {
+      throw new Error(
+        `[Storage] setItem: failed to write key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+    }
+  };
+
+  /**
    * Get item JSON
    * - Retrieve stored item via key
    * - Parse and return item
@@ -39,6 +54,22 @@ export namespace Storage {
     } catch (error) {
       throw new Error(
         `[Storage] getItemJson: failed to load key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      );
+    }
+  };
+
+  /**
+   * Get item JSON
+   * - Retrieve stored item via key
+   * - Parse and return item
+   */
+  export const getItem = async <T extends string | number | boolean>(key: string) => {
+    try {
+      const item = storage.getString(key);
+      return item as T | undefined;
+    } catch (error) {
+      throw new Error(
+        `[Storage] getItem: failed to load key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
     }
   };
@@ -139,9 +170,18 @@ export const setItemJson = async <T>(key: string, data: T) => {
   await Storage.setItemJson(key, data);
 };
 
+export const setItem = async <T extends string | number | boolean>(key: string, data: T) => {
+  await Storage.setItem(key, data);
+};
+
 export const getItemJson = async <T>(key: string) => {
   const parsedItem = await Storage.getItemJson(key);
   return parsedItem as T | undefined;
+};
+
+export const getItem = async <T extends string | number | boolean>(key: string) => {
+  const item = await Storage.getItem(key);
+  return item as T | undefined;
 };
 
 export const removeItem = async (key: string) => {

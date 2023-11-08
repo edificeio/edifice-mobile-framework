@@ -1,20 +1,18 @@
+import CookieManager from '@react-native-cookies/cookies';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { BackHandler, StatusBar } from 'react-native';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
-import WebView from 'react-native-webview';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import SecondaryButton from '~/framework/components/buttons/secondary';
-import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
-import navBarActionStyles from '~/framework/components/navigation/navbar-action/styles';
+import IconButton from '~/framework/components/buttons/icon';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
+import WebView from '~/framework/components/webview';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
@@ -34,29 +32,8 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: '',
   }),
-  headerStyle: { backgroundColor: theme.ui.background.card.toString() },
-  headerTitleStyle: { color: theme.ui.text.regular.toString() },
-  headerShadowVisible: false,
-  headerRight: props => (
-    <TouchableOpacity
-      onPress={navigation.goBack}
-      hitSlop={genericHitSlop}
-      style={[
-        navBarActionStyles.navBarActionWrapper,
-        navBarActionStyles.navBarActionWrapperIcon,
-        { backgroundColor: theme.palette.grey.cloudy, borderRadius: UI_SIZES.elements.navbarButtonSize / 2 },
-      ]}>
-      <NamedSVG
-        name="ui-close"
-        fill={theme.ui.text.regular}
-        width={UI_SIZES.elements.navbarIconSize}
-        height={UI_SIZES.elements.navbarIconSize}
-        style={navBarActionStyles.navBarActionIcon}
-      />
-    </TouchableOpacity>
-  ),
+  headerShown: false,
 });
 
 const getQueryParamToken = async (finalUrl: string) => {
@@ -81,69 +58,104 @@ const getQueryParamToken = async (finalUrl: string) => {
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   const [url, setUrl] = React.useState<string | undefined>(undefined);
   const [orientation, setOrientation] = React.useState(PORTRAIT);
+  const [isLocked, setIsLocked] = React.useState(false);
+  const [error, setError] = React.useState(false);
 
   const urlObject = React.useMemo(() => (url ? { uri: url } : undefined), [url]);
   const webviewRef = React.useRef<WebView>(null);
 
   const init = async () => {
-    const uri = props.route.params.notification.resource.uri;
+    const uri = props.route.params.resourceUri;
     const id = uri.replace('/scrapbook#/view-scrapbook/', '');
     await scrapbookService.get(id);
   };
 
   const onError = React.useCallback(event => {
-    console.error('WebView error: ', event.nativeEvent);
+    setError(true);
   }, []);
 
   const onHttpError = React.useCallback(event => {
-    console.error('WebView http error: ', event.nativeEvent);
+    setError(true);
   }, []);
 
   const onShouldStartLoadWithRequest = React.useCallback(
     request => {
       const pfUrl = props.session?.platform.url;
       const reqUrl = request.url;
-      if (!reqUrl.startsWith(pfUrl)) openUrl(reqUrl);
-      return false;
+      if (
+        !reqUrl.startsWith(pfUrl) &&
+        !reqUrl.includes('embed') &&
+        !reqUrl.includes('imasdk.googleapis.com') &&
+        !reqUrl.includes('player.vimeo.com') &&
+        !reqUrl.includes('learningapps.org') &&
+        reqUrl !== 'about:blank'
+      ) {
+        openUrl(reqUrl);
+        return false;
+      }
+      return true;
     },
     [props.session?.platform.url],
   );
 
-  const setOrientationToLandscape = () => {
-    Orientation.lockToLandscapeRight();
-    setOrientation('LANDSCAPE-RIGHT');
+  const setLockedOrientation = () => {
+    if (orientation !== 'PORTRAIT') {
+      Orientation.lockToPortrait();
+      setOrientation('PORTRAIT');
+    } else {
+      Orientation.lockToLandscapeRight();
+      setOrientation('LANDSCAPE-RIGHT');
+    }
+    setIsLocked(true);
   };
+
+  const goBack = React.useCallback(() => {
+    Orientation.lockToPortrait();
+    props.navigation.goBack();
+    return true;
+  }, [props.navigation]);
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
       const isPortraitOrLandscape =
         newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
+      if (isLocked && orientation !== 'PORTRAIT' && newOrientation === 'PORTRAIT') {
+        Orientation.unlockAllOrientations();
+        setIsLocked(false);
+      }
+      if (isLocked && orientation === 'PORTRAIT' && newOrientation !== 'PORTRAIT') {
+        Orientation.unlockAllOrientations();
+        setIsLocked(false);
+      }
       if (isPortraitOrLandscape && newOrientation !== orientation) {
         setOrientation(newOrientation);
       }
     },
-    [orientation],
+    [isLocked, orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
 
   React.useEffect(() => {
+    CookieManager.clearAll(true);
     Orientation.unlockAllOrientations();
-    return () => {
-      Orientation.lockToPortrait();
-    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', goBack);
+    return () => backHandler.remove();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
-    const newResourceUri = props.route.params.notification.resource.uri.replace('scrapbook', 'scrapbook?fullscreen=1');
+    const newResourceUri = props.route.params.resourceUri.replace('scrapbook', 'scrapbook?fullscreen=1');
     const urlScrapbook = `${props.session?.platform.url + newResourceUri}`;
     getQueryParamToken(urlScrapbook).then(setUrl);
-  }, [props.route.params.notification.resource.uri, props.session?.platform.url]);
+  }, [props.route.params.resourceUri, props.session?.platform.url]);
 
   const renderLoading = React.useCallback(() => <Loading />, []);
 
   const player = () => (
-    <>
+    <PageView>
+      <StatusBar animated hidden />
       <WebView
         javaScriptEnabled
         ref={webviewRef}
@@ -158,26 +170,48 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         onHttpError={onHttpError}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
+      <IconButton
+        style={styles.button}
+        icon={orientation === 'PORTRAIT' ? 'ui-fullScreen' : 'ui-closeFullScreen'}
+        action={setLockedOrientation}
+        color={theme.palette.grey.black}
+        size={UI_SIZES.elements.icon.small}
+      />
       {orientation === 'PORTRAIT' ? (
-        <SecondaryButton
-          style={styles.button}
-          text={I18n.get('scrapbook-details-landscape')}
-          iconRight="ui-arrowRight"
-          action={setOrientationToLandscape}
+        <IconButton
+          action={goBack}
+          icon="ui-close"
+          color={theme.palette.grey.black}
+          size={UI_SIZES.elements.icon.default}
+          style={styles.closeButton}
         />
       ) : null}
-    </>
+    </PageView>
   );
 
+  const renderError = () => {
+    Orientation.lockToPortrait();
+    return (
+      <>
+        {error ? <EmptyConnectionScreen /> : <EmptyContentScreen />}
+        <IconButton
+          action={goBack}
+          icon="ui-close"
+          color={theme.palette.grey.black}
+          size={UI_SIZES.elements.icon.default}
+          style={styles.closeButton}
+        />
+      </>
+    );
+  };
+
   return (
-    <PageView>
-      <ContentLoader
-        loadContent={init}
-        renderContent={player}
-        renderError={() => <EmptyContentScreen />}
-        renderLoading={renderLoading}
-      />
-    </PageView>
+    <ContentLoader
+      loadContent={init}
+      renderContent={error ? renderError : player}
+      renderError={renderError}
+      renderLoading={renderLoading}
+    />
   );
 };
 

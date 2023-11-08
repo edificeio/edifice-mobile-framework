@@ -9,7 +9,7 @@ import DateTimePicker from '~/framework/components/dateTimePicker';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
-import Timetable from '~/framework/modules/viescolaire/common/components/Timetable';
+import TimetableDiary from '~/framework/modules/viescolaire/common/components/TimetableDiary';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
   homeworkListDetailsTeacherAdapter,
@@ -225,7 +225,7 @@ export default class DiaryTeacherTimetable extends React.PureComponent<Timetable
         {courses.isFetching || courses.isPristine ? (
           <LoadingIndicator />
         ) : (
-          <Timetable
+          <TimetableDiary
             courses={slotEvents}
             mainColor={viescoTheme.palette.diary}
             slots={slots.data}

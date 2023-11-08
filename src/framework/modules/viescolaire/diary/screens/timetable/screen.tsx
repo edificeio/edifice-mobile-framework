@@ -65,7 +65,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
 
   componentDidUpdate(prevProps, prevState) {
     const { startDate, selectedDate } = this.state;
-    const { structureId, fetchSlots } = this.props;
+    const { structureId, tryFetchSlots } = this.props;
 
     // on selected date change
     if (!prevState.selectedDate.isSame(selectedDate, 'day')) this.setState({ startDate: selectedDate.clone().startOf('week') });
@@ -74,7 +74,7 @@ class DiaryTimetableScreen extends React.PureComponent<DiaryTimetableScreenPriva
     if (!prevState.startDate.isSame(startDate, 'day') || structureId !== prevProps.structureId) this.fetchCourses();
 
     // on structure change
-    if (structureId !== prevProps.structureId) fetchSlots(structureId);
+    if (structureId !== prevProps.structureId) tryFetchSlots(structureId);
   }
 
   updateSelectedDate = (newDate: Moment) => {
