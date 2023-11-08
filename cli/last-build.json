@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-11-08 07:53:26",
-  "notes": "Merge pull request #100 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nrelease: 1.11.2-rc.1(1110206)",
-  "version": "1.11.2-rc.2(1110207)"
+  "last": "2023-11-08 09:19:53",
+  "notes": "release: 1.11.2-rc.2(1110207)",
+  "version": "1.11.2-rc.3(1110208)"
 }
