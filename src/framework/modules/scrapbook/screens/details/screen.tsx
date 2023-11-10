@@ -1,7 +1,7 @@
 import CookieManager from '@react-native-cookies/cookies';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { BackHandler, StatusBar } from 'react-native';
+import { BackHandler, StatusBar, View } from 'react-native';
 import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -193,6 +193,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     Orientation.lockToPortrait();
     return (
       <>
+        <View style={{ height: props.route.params.headerHeight, backgroundColor: theme.ui.background.page }} />
         {error ? <EmptyConnectionScreen /> : <EmptyContentScreen />}
         <IconButton
           action={goBack}

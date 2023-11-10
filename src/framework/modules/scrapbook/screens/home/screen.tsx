@@ -1,3 +1,4 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { View } from 'react-native';
@@ -38,13 +39,17 @@ export const computeNavBar = ({
 
 const ScrapbookHomeScreen = (props: ScrapbookHomeScreenProps) => {
   const [scrapbooks, setScrapbooks] = React.useState<ScrapbookItem[]>([]);
+  const headerHeight = useHeaderHeight();
   const init = async () => {
     const data = await scrapbookService.list();
     setScrapbooks(data);
   };
 
   const onOpenScrapbook = item => {
-    props.navigation.navigate(scrapbookRouteNames.details, { resourceUri: `/scrapbook#/view-scrapbook/${item.id}` });
+    props.navigation.navigate(scrapbookRouteNames.details, {
+      resourceUri: `/scrapbook#/view-scrapbook/${item.id}`,
+      headerHeight,
+    });
   };
 
   const renderEmpty = () => <EmptyContentScreen />;
