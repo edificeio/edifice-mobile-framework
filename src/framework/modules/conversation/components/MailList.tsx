@@ -512,7 +512,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               this.toggleRead(item.unread, item.id);
                               row[item.key]?.closeRow();
                             },
-                            backgroundColor: theme.palette.status.info.regular,
+                            backgroundColor: theme.palette.secondary.regular,
                             actionText: I18n.get(`conversation-maillist-mark${item.unread ? 'read' : 'unread'}`),
                             actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                           },
