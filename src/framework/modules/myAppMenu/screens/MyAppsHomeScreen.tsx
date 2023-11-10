@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   const renderFooter = () => {
     return (
-      <>
+      <View>
         <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
         <InfoBubble
           infoText={I18n.get('myapp-infobubble-text', { appName: DeviceInfo.getApplicationName() })}
@@ -35,7 +35,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
           infoBubbleType="floating"
           infoBubbleId="myAppsScreen.redirect"
         />
-      </>
+      </View>
     );
   };
 
