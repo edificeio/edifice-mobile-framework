@@ -41,7 +41,7 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
     return (
       <View style={[globalStyle, styles.thumbnailContainerSelected]}>
         <Selected />
-        <NamedSVG name="newsFeed" fill={theme.palette.primary.regular} height={heightSVGNoIcon} />
+        <NamedSVG name="newsFeed" fill={theme.palette.complementary.blue.regular} height={heightSVGNoIcon} />
       </View>
     );
   }
@@ -54,7 +54,7 @@ export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...
   }
   return (
     <View style={globalStyle}>
-      <NamedSVG name="newsFeed" fill={theme.palette.primary.regular} height={heightSVGNoIcon} />
+      <NamedSVG name="newsFeed" fill={theme.palette.complementary.blue.regular} height={heightSVGNoIcon} />
     </View>
   );
 }
