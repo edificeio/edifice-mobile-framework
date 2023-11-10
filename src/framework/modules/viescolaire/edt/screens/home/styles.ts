@@ -20,6 +20,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: UI_SIZES.spacing.medium,
+    paddingBottom: 0,
     zIndex: -1,
   },
   weekText: {
@@ -38,7 +39,7 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.radius.medium,
-    borderWidth: 1,
+    borderWidth: 2,
   },
   tabBarItemText: {
     textAlign: 'center',

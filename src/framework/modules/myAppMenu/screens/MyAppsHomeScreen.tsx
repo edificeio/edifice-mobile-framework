@@ -72,20 +72,18 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     };
 
     return (
-      <>
-        <GridList
-          data={allModules}
-          renderItem={renderGridItem}
-          keyExtractor={item => item.config.name}
-          gap={UI_SIZES.spacing.big}
-          gapOutside={UI_SIZES.spacing.big}
-          ListFooterComponent={renderFooter()}
-          ListFooterComponentStyle={styles.footer}
-          alwaysBounceVertical={false}
-          overScrollMode="never"
-          contentContainerStyle={styles.container}
-        />
-      </>
+      <GridList
+        data={allModules}
+        renderItem={renderGridItem}
+        keyExtractor={item => item.config.name}
+        gap={UI_SIZES.spacing.big}
+        gapOutside={UI_SIZES.spacing.big}
+        ListFooterComponent={renderFooter()}
+        ListFooterComponentStyle={styles.footer}
+        alwaysBounceVertical={false}
+        overScrollMode="never"
+        contentContainerStyle={styles.container}
+      />
     );
   };
 
