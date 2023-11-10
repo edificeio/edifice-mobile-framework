@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-11-08 09:19:53",
-  "notes": "release: 1.11.2-rc.2(1110207)",
-  "version": "1.11.2-rc.3(1110208)"
+  "last": "2023-11-10 19:44:07",
+  "notes": "fix(user): MB-2262, loading arrows\nfix(myapps): MB-2241, web version view\nfix(auth): MB-2254 fix user info requirements condition\nMerge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfix(news): MB-2253 , change primary color to blue complementary\nUpdated translations from Phrase\nfix(media-player): MB-2248 , add empty screen when link is out\nfix(scrapbook): MB-2230, add view to fake navBar to center content empty screen\nMerge branch 'dev/1.11.2' of https://github.com/opendigitaleducation/ode-mobile-framework into dev/1.11.2\nfix(edt): MB-2141, feedback design\nfix(i18n): MB-2236, MB-2243, MB-2244 setLanguage was async function not awaited\nfeat(conversation): MB-2242, mark as unread/read color\nfix(android): MB2180, Lock orientation to portrait at startup\nchore(build): Unwanted patch removal\nfix: MB-2235 currentPlatform was not loaded properly\nrelease: 1.11.2-rc.3(1110208)",
+  "version": "1.11.2-rc.4(1110209)"
 }
