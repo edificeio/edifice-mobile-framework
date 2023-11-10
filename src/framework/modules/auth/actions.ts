@@ -156,14 +156,17 @@ async function getToken(platform: Platform, credentials?: IAuthCredentials, reme
  * - Fetch user public infos
  * - Track & throw appropiate error if needed
  */
-async function getUserData(platform: Platform) {
+async function getUserData(platform: Platform, partialSessionScenario?: PartialSessionScenario) {
   try {
     const infos = await fetchUserInfo(platform);
     ensureUserValidity(infos);
     DeviceInfo.getUniqueId().then(uniqueID => {
       infos.uniqueId = uniqueID;
     });
-    const { userdata, userPublicInfo } = await fetchUserPublicInfo(infos, platform);
+    // If we have requirements (=partialSessionScenario), we can't fetch public info, we mock it instead.
+    const { userdata, userPublicInfo } = partialSessionScenario
+      ? { userdata: undefined, userPublicInfo: undefined }
+      : await fetchUserPublicInfo(infos, platform);
     return { infos, publicInfos: { userData: userdata, userPublicInfo } };
   } catch (e) {
     Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getUserData');
@@ -268,14 +271,14 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       const activationScenario = await getToken(platform, credentials, rememberMe);
       if (activationScenario) return activationScenario;
 
-      // 2. Get user data (personal infos, validity, device id, public infos)
-      const user = await getUserData(platform);
-
-      // 3. Handle session (firebase, platform, save)
-      const mustSaveSession = await handleSession(platform, credentials, rememberMe);
-
-      // 4. Get user conditions (legal urls, requirements)
+      // 2. Get user conditions (legal urls, requirements)
       const partialSessionScenario = await getUserConditions(platform, dispatch);
+
+      // 3. Get user data (personal infos, validity, device id, public infos)
+      const user = await getUserData(platform, partialSessionScenario);
+
+      // 4. Handle session (firebase, platform, save)
+      const mustSaveSession = await handleSession(platform, credentials, rememberMe);
 
       // 5. Handle login redirection (partial/complete)
       const redirectScenario = await dispatch(
