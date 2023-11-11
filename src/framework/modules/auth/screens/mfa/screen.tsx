@@ -1,5 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import Lottie from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { CodeField, Cursor, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
@@ -99,7 +99,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
   const [code, setCode] = useState('');
   const [codeState, setCodeState] = useState<CodeState>(CodeState.PRISTINE);
   const [animationSource, setAnimationSource] = useState(animationSources[CodeState.CODE_CORRECT]);
-  const animationRef = useRef<Lottie>(null);
+  const animationRef = useRef<LottieView>(null);
 
   const codeFieldRef = useBlurOnFulfill({ value: code, cellCount: CELL_COUNT });
   const [codeFieldProps, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -282,7 +282,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
                 height={UI_SIZES.elements.thumbnail}
               />
             ) : (
-              <Lottie
+              <LottieView
                 ref={animationRef}
                 source={animationSource}
                 style={styles.animation}

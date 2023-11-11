@@ -1,5 +1,5 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import Lottie from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import { AppState, BackHandler, Platform, StatusBar, View } from 'react-native';
 import VideoPlayer from 'react-native-media-console';
@@ -39,7 +39,7 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [orientation, setOrientation] = React.useState(PORTRAIT);
   const [isPlaying, setIsPlaying] = React.useState(false);
   const isPortrait = React.useMemo(() => orientation === PORTRAIT, [orientation]);
-  const animationRef = React.useRef<Lottie>(null);
+  const animationRef = React.useRef<LottieView>(null);
   const platform = React.useMemo(() => {
     if (session?.platform.name === 'prod-neo') return 'neo';
     if (session?.platform.name === 'prod-one') return 'one';
@@ -200,7 +200,9 @@ function MediaPlayer(props: MediaPlayerProps) {
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
           {...(isAudio
             ? {
-                posterElement: <Lottie ref={animationRef} source={ANIMATION_AUDIO[platform]} style={styles.poster} speed={0.5} />,
+                posterElement: (
+                  <LottieView ref={animationRef} source={ANIMATION_AUDIO[platform]} style={styles.poster} speed={0.5} />
+                ),
               }
             : {})}
         />

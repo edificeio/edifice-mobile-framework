@@ -1,11 +1,13 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import Lottie from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Alert, Platform, View } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Rate, { AndroidMarket } from 'react-native-rate';
 
 import { I18n } from '~/app/i18n';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
@@ -13,8 +15,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
 import type { UserWhoAreWeScreenPrivateProps } from './types';
-import SecondaryButton from '~/framework/components/buttons/secondary';
-import PrimaryButton from '~/framework/components/buttons/primary';
 
 export const computeNavBar = ({
   navigation,
@@ -28,14 +28,13 @@ export const computeNavBar = ({
 });
 
 const APPLE_APP_ID = '1450246545';
-const GOOGLE_PACKAGE_NAME = 'com.ode.one';
 const animationSource = require('ASSETS/animations/edifice.json');
 
 function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
   return (
     <ScrollView bottomInset>
       <View style={styles.animationWrapper}>
-        <Lottie source={animationSource} autoPlay loop={false} speed={0.8} />
+        <LottieView source={animationSource} autoPlay loop={false} speed={0.8} style={styles.animationView} />
       </View>
       <View style={styles.textWrapper}>
         <HeadingXSText>{I18n.get('user-whoarewe-quote-text')}</HeadingXSText>
@@ -47,7 +46,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
           action={() => {
             const options = {
               AppleAppID: APPLE_APP_ID,
-              GooglePackageName: GOOGLE_PACKAGE_NAME,
+              GooglePackageName: DeviceInfo.getBundleId(),
               preferredAndroidMarket: AndroidMarket.Google,
               preferInApp: Platform.OS !== 'android',
               inAppDelay: 0,
