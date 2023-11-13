@@ -20,6 +20,7 @@ export default StyleSheet.create({
     width: UI_SIZES.screen.width,
   },
   externalPlayerPortrait: { marginTop: 0 },
+  // eslint-disable-next-line react-native/no-color-literals
   errorScreen: {
     backgroundColor: 'transparent',
     justifyContent: 'center',
@@ -31,6 +32,5 @@ export default StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    flex: 1,
   },
 });
