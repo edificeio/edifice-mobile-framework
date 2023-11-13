@@ -206,8 +206,7 @@ async function handleSession(platform: Platform, credentials?: IAuthCredentials,
  */
 async function getUserConditions(platform: Platform, dispatch: ThunkDispatch<any, any, any>) {
   try {
-    await dispatch(getLegalUrlsAction(platform));
-    const userRequirements = await fetchUserRequirements(platform);
+    const [userRequirements] = await Promise.all([fetchUserRequirements(platform), dispatch(getLegalUrlsAction(platform))]);
     const partialSessionScenario = getPartialSessionScenario(userRequirements);
     return partialSessionScenario;
   } catch (e) {
