@@ -187,9 +187,7 @@ async function getUserData(platform: Platform, partialSessionScenario?: PartialS
  */
 async function handleSession(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
   try {
-    await initFirebaseToken(platform);
-    await savePlatform(platform);
-    await forgetPreviousSession();
+    await Promise.all([initFirebaseToken(platform), savePlatform(platform), forgetPreviousSession()]);
     const mustSaveSession = !credentials || rememberMe || platform.wayf;
     if (mustSaveSession) await saveSession();
     return mustSaveSession;
