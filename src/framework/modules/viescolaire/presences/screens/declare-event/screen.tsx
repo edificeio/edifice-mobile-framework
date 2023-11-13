@@ -16,7 +16,7 @@ import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import { CallEvent, CallEventType, CallState, Course } from '~/framework/modules/viescolaire/presences/model';

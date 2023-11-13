@@ -1,8 +1,13 @@
 import CookieManager from '@react-native-cookies/cookies';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { BackHandler, StatusBar, View } from 'react-native';
-import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
+import { BackHandler, Platform, StatusBar, View } from 'react-native';
+import Orientation, {
+  LANDSCAPE_LEFT,
+  OrientationType,
+  PORTRAIT,
+  useDeviceOrientationChange,
+} from 'react-native-orientation-locker';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -13,6 +18,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import WebView from '~/framework/components/webview';
+import { useConstructor } from '~/framework/hooks/constructor';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
@@ -56,13 +62,25 @@ const getQueryParamToken = async (finalUrl: string) => {
 };
 
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
-  const [url, setUrl] = React.useState<string | undefined>(undefined);
-  const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [isLocked, setIsLocked] = React.useState(false);
+  const [autorotateEnabled, setIsAutorotateEnabled] = React.useState(true);
+
   const [error, setError] = React.useState(false);
 
+  const [isLocked, setIsLocked] = React.useState(false);
+
+  const [orientation, setOrientation] = React.useState(PORTRAIT);
+
+  const [url, setUrl] = React.useState<string | undefined>(undefined);
+
   const urlObject = React.useMemo(() => (url ? { uri: url } : undefined), [url]);
+
   const webviewRef = React.useRef<WebView>(null);
+
+  const goBack = React.useCallback(() => {
+    Orientation.lockToPortrait();
+    props.navigation.goBack();
+    return true;
+  }, [props.navigation]);
 
   const init = async () => {
     const uri = props.route.params.resourceUri;
@@ -99,47 +117,58 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   );
 
   const setLockedOrientation = () => {
-    if (orientation !== 'PORTRAIT') {
+    if (orientation !== PORTRAIT) {
       Orientation.lockToPortrait();
-      setOrientation('PORTRAIT');
+      setOrientation(PORTRAIT);
     } else {
-      Orientation.lockToLandscapeRight();
-      setOrientation('LANDSCAPE-RIGHT');
+      Orientation.lockToLandscapeLeft();
+      setOrientation(LANDSCAPE_LEFT);
     }
     setIsLocked(true);
   };
 
-  const goBack = React.useCallback(() => {
-    Orientation.lockToPortrait();
-    props.navigation.goBack();
-    return true;
-  }, [props.navigation]);
+  // Check Android orientation lock and lock to portrait if needed
+  useConstructor(() => {
+    if (Platform.OS === 'android') {
+      Orientation.getAutoRotateState(state => {
+        if (!state) Orientation.lockToPortrait();
+        setIsAutorotateEnabled(state);
+        console.log('autorotateEnabled=' + autorotateEnabled);
+      });
+    }
+  });
+
+  // Manage Orientation
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
-      const isPortraitOrLandscape =
-        newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
-      if (isLocked && orientation !== 'PORTRAIT' && newOrientation === 'PORTRAIT') {
-        Orientation.unlockAllOrientations();
-        setIsLocked(false);
-      }
-      if (isLocked && orientation === 'PORTRAIT' && newOrientation !== 'PORTRAIT') {
-        Orientation.unlockAllOrientations();
-        setIsLocked(false);
-      }
-      if (isPortraitOrLandscape && newOrientation !== orientation) {
-        setOrientation(newOrientation);
+      if (autorotateEnabled) {
+        const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
+        if (isLocked && orientation !== PORTRAIT && newOrientation === PORTRAIT) {
+          Orientation.unlockAllOrientations();
+          setIsLocked(false);
+        }
+        if (isLocked && orientation === PORTRAIT && newOrientation !== PORTRAIT) {
+          Orientation.unlockAllOrientations();
+          setIsLocked(false);
+        }
+        if (isPortraitOrLandscape && newOrientation !== orientation) {
+          setOrientation(newOrientation);
+        }
       }
     },
-    [isLocked, orientation],
+    [autorotateEnabled, isLocked, orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
 
   React.useEffect(() => {
-    CookieManager.clearAll(true);
-    Orientation.unlockAllOrientations();
+    if (autorotateEnabled) Orientation.unlockAllOrientations();
+  }, [autorotateEnabled]);
 
+  React.useEffect(() => {
+    CookieManager.clearAll(true);
+    if (autorotateEnabled) Orientation.unlockAllOrientations();
     const backHandler = BackHandler.addEventListener('hardwareBackPress', goBack);
     return () => backHandler.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,7 +182,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   const renderLoading = React.useCallback(() => <Loading />, []);
 
-  const player = () => (
+  const renderPlayer = () => (
     <PageView>
       <StatusBar animated hidden />
       <WebView
@@ -170,14 +199,16 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         onHttpError={onHttpError}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
-      <IconButton
-        style={styles.button}
-        icon={orientation === 'PORTRAIT' ? 'ui-fullScreen' : 'ui-closeFullScreen'}
-        action={setLockedOrientation}
-        color={theme.palette.grey.black}
-        size={UI_SIZES.elements.icon.small}
-      />
-      {orientation === 'PORTRAIT' ? (
+      {autorotateEnabled ? (
+        <IconButton
+          style={styles.button}
+          icon={orientation === PORTRAIT ? 'ui-fullScreen' : 'ui-closeFullScreen'}
+          action={setLockedOrientation}
+          color={theme.palette.grey.black}
+          size={UI_SIZES.elements.icon.small}
+        />
+      ) : null}
+      {orientation === PORTRAIT ? (
         <IconButton
           action={goBack}
           icon="ui-close"
@@ -209,7 +240,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   return (
     <ContentLoader
       loadContent={init}
-      renderContent={error ? renderError : player}
+      renderContent={error ? renderError : renderPlayer}
       renderError={renderError}
       renderLoading={renderLoading}
     />

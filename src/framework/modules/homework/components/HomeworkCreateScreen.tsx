@@ -16,7 +16,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import DayPicker from '~/framework/components/pickers/day';
 import { defaultSelectedDate } from '~/framework/components/pickers/day/component';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import moduleConfig from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';

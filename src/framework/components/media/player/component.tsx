@@ -13,6 +13,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
+import { useConstructor } from '~/framework/hooks/constructor';
 import { getSession } from '~/framework/modules/auth/reducer';
 
 import styles from './styles';
@@ -23,7 +24,9 @@ const ERRORS_I18N = {
   AVFoundationErrorDomain: ['mediaplayer-error-notsupported-title', 'mediaplayer-error-notsupported-text'],
   default: ['mediaplayer-error-content-title', 'mediaplayer-error-content-text'],
 };
+
 const DELAY_STATUS_HIDE = Platform.select({ ios: 250, default: 0 });
+
 export const ANIMATION_AUDIO = {
   one: require('ASSETS/animations/audio/disque-one.json'),
   neo: require('ASSETS/animations/audio/disque-neo.json'),
@@ -32,42 +35,69 @@ export const ANIMATION_AUDIO = {
 
 function MediaPlayer(props: MediaPlayerProps) {
   const { route, navigation, connected, session } = props;
+
   const { source, type, filetype } = route.params;
+
+  const animationRef = React.useRef<LottieView>(null);
+
+  const [autorotateEnabled, setIsAutorotateEnabled] = React.useState(true);
 
   const isAudio = type === MediaType.AUDIO;
 
-  const [orientation, setOrientation] = React.useState(PORTRAIT);
   const [isPlaying, setIsPlaying] = React.useState(false);
+
+  const [orientation, setOrientation] = React.useState(PORTRAIT);
+
   const isPortrait = React.useMemo(() => orientation === PORTRAIT, [orientation]);
-  const animationRef = React.useRef<LottieView>(null);
+
   const platform = React.useMemo(() => {
     if (session?.platform.name === 'prod-neo') return 'neo';
     if (session?.platform.name === 'prod-one') return 'one';
     return 'default';
   }, [session]);
-  const handleOrientationChange = React.useCallback(
-    (newOrientation: OrientationType) => {
-      const isPortraitOrLandscape =
-        newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
-      if (isPortraitOrLandscape && newOrientation !== orientation) {
-        setOrientation(newOrientation);
-      }
-    },
-    [orientation],
-  );
-  useDeviceOrientationChange(handleOrientationChange);
+
+  // Check Android orientation lock and lock to portrait if needed
+  useConstructor(() => {
+    if (Platform.OS === 'android') {
+      Orientation.getAutoRotateState(state => {
+        if (!state) Orientation.lockToPortrait();
+        setIsAutorotateEnabled(state);
+        console.log('autorotateEnabled=' + autorotateEnabled);
+      });
+    }
+  });
 
   // Manage orientation
+
+  const handleOrientationChange = React.useCallback(
+    (newOrientation: OrientationType) => {
+      if (autorotateEnabled) {
+        const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
+        if (isPortraitOrLandscape && newOrientation !== orientation) {
+          setOrientation(newOrientation);
+        }
+      }
+    },
+    [autorotateEnabled, orientation],
+  );
+
+  useDeviceOrientationChange(handleOrientationChange);
+
   const isFocused = useIsFocused();
+
   React.useEffect(() => {
-    if (isFocused && !isAudio) Orientation.unlockAllOrientations();
-    setTimeout(() => {
-      Orientation.getDeviceOrientation(handleOrientationChange);
-    });
+    // Unlock and handle orientation if needed
+    if (isFocused && autorotateEnabled && !isAudio) {
+      Orientation.unlockAllOrientations();
+      setTimeout(() => {
+        Orientation.getDeviceOrientation(handleOrientationChange);
+      });
+    }
+    // Lock to portrait when released
     return () => {
       Orientation.lockToPortrait();
     };
-  }, [handleOrientationChange, isAudio, isFocused]);
+  }, [autorotateEnabled, isAudio, isFocused, handleOrientationChange]);
 
   const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(3000);
 
