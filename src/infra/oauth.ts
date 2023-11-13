@@ -318,7 +318,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         method: 'POST',
       });
       // 3: Build token from data
-      if (!data.hasOwnProperty('access_token')) {
+      if (!Object.hasOwn(data, 'access_token')) {
         throw this.createAuthError(OAuth2ErrorCode.BAD_RESPONSE, 'no access_token returned', '', { data });
       }
       this.token = {
