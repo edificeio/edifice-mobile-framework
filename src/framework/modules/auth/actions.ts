@@ -269,9 +269,7 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
     try {
       // 1. Get token from session (created/restored)
       // (exit loginAction and redirect to activation if needed)
-      const activationScenario = (await dispatch(getTokenAction(platform, credentials, rememberMe))) as unknown as Awaited<
-        ReturnType<Awaited<ReturnType<typeof getTokenAction>>>
-      >;
+      const activationScenario = await dispatch(getTokenAction(platform, credentials, rememberMe));
       if (activationScenario) return activationScenario;
 
       // 2. Get user conditions (legal urls, requirements)
