@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   subjectAndContentContainer: { flex: 1 },
   subjectContentAndAttachmentIndicatorContainer: { flex: 1, flexDirection: 'row' },
   swipeableListContentContainerStyle: { flexGrow: 1 },
-  swipeableListStyle: { marginTop: 45 },
+  swipeableListStyle: { marginTop: 45, zIndex: 0 },
 });
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {

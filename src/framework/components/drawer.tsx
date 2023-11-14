@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   backdrop: {
     backgroundColor: theme.ui.shadowColor,
     marginTop: ITEM_HEIGHT,
-    zIndex: -1,
+    zIndex: 1,
   },
   container: {
     position: 'absolute',
@@ -67,12 +67,14 @@ const styles = StyleSheet.create({
     color: theme.palette.secondary.regular,
   },
   style: {
-    borderBottomColor: theme.ui.border.listItem,
+    borderColor: theme.ui.border.listItem, // Must specifiy borderColor to override package value
     borderBottomWidth: 1,
     borderRadius: undefined,
     borderWidth: undefined,
     height: ITEM_HEIGHT,
+    minHeight: ITEM_HEIGHT, // Must specifiy minHeight to override package value
     position: 'absolute',
+    zIndex: 2,
   },
   text: {
     ...TextFontStyle.Bold,
