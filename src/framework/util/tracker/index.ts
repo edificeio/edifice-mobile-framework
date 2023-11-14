@@ -258,21 +258,23 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       conversation: 'Conversation',
       diary: 'Diary',
       edt: 'Edt',
+      form: 'Formulaire',
       homework: 'Homeworks',
       homeworkAssistance: 'HomeworkAssistance',
       mediacentre: 'Mediacentre',
+      messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
       news: 'Actualites',
       presences: 'Presences',
       schoolbook: 'SchoolBook',
+      scrapbook: 'Scrapbook',
       support: 'Support',
       user: 'MyAccount',
-      viesco: 'Presences',
+      // viesco: 'Presences', // not used anymore
       workspace: 'Workspace',
       zimbra: 'Zimbra',
     };
     let willLog = false;
     if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
-      // console.debug('Track entcore', moduleAccessMap[moduleName]);
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
           method: 'POST',
