@@ -62,7 +62,7 @@ static NSString* RECEIVED_PUSHES_KEY = @"RECEIVED_PUSHES";
   //
   // Show SplashScreen
   //
-  [RNSplashScreen show];
+  [RNSplashScreen showSplash:@"SplashScreen" inRootView:[[[self window] rootViewController] view]];
   
   return YES;
   
