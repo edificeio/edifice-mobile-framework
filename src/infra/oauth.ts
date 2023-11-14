@@ -234,6 +234,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers: {
           ...init?.headers,
           Authorization: 'Bearer ' + this.token!.access_token,
+          'X-Device-Id': uniqueId(),
         },
       });
       return req;
