@@ -9,7 +9,6 @@ const BORDER_WIDTH = 4;
 
 export default StyleSheet.create({
   thumbnailItem: {
-    backgroundColor: theme.palette.complementary.blue.pale,
     justifyContent: 'center',
   },
   thumbnailItemRectangle: {
@@ -26,7 +25,6 @@ export default StyleSheet.create({
     width: WIDTH_THUMBNAIL_THREAD_ITEM_RECTANGLE + BORDER_WIDTH,
     aspectRatio: UI_SIZES.aspectRatios.thumbnail,
     borderWidth: BORDER_WIDTH,
-    borderColor: theme.palette.complementary.blue.regular,
     position: 'absolute',
     top: 0,
     left: 0,
