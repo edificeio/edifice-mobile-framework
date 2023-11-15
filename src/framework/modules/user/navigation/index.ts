@@ -12,6 +12,7 @@ import { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens
 import { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
+import type { UserXmasScreenNavParams } from '~/framework/modules/user/screens/xmas';
 
 export const userRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',
@@ -23,6 +24,7 @@ export const userRouteNames = {
   editDescription: `${moduleConfig.routeName}/profile/editDescription` as 'editDescription',
   editMoodMotto: `${moduleConfig.routeName}/profile/editMoodMotto` as 'editMoodMotto',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
+  xmas: `${moduleConfig.routeName}/xmas` as 'xmas',
   legalNotice: `${moduleConfig.routeName}/legal-notice` as 'legalNotice',
   lang: `${moduleConfig.routeName}/lang` as 'lang',
 };
@@ -36,6 +38,7 @@ export interface UserNavigationParams extends ParamListBase {
   editDescription: UserEditDescriptionScreenNavParams;
   editMoodMotto: UserEditMoodMottoScreenNavParams;
   whoAreWe: UserWhoAreWeScreenNavParams;
+  xmas: UserXmasScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
   lang: UserLangScreenNavParams;
 }

@@ -257,6 +257,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         <View style={[styles.section, styles.sectionLast]}>
           <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-others')}</HeadingSText>
           <ButtonLineGroup>
+            <LineButton
+              title={I18n.get('user-xmas-title')}
+              onPress={() => {
+                navigation.navigate(userRouteNames.xmas, {});
+              }}
+            />
             {showWhoAreWe ? (
               <LineButton
                 title={I18n.get('user-whoarewe-title')}
