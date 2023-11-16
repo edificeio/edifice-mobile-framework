@@ -85,6 +85,8 @@ const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: num
 
 export const isWithinXmasPeriod = getIsWithinXmasPeriod(1, 12, 5, 1);
 
+export const getIsXmasActive = (state: IGlobalState) => isWithinXmasPeriod && state.user.xmasTheme;
+
 export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     const asyncStorageKey = computeXmasAsyncStorageKey();
