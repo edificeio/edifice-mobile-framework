@@ -24,6 +24,7 @@ const implicitWorkspaceUploadParams = {
 export type WorkspaceParentItem = keyof typeof implicitWorkspaceUploadParams | string;
 export interface IWorkspaceUploadParams extends IUploadCommonParams {
   parent?: WorkspaceParentItem;
+  public?: boolean;
 }
 
 type IEntcoreWorkspaceDocument = {
@@ -204,10 +205,20 @@ const workspaceService = {
     },
     startUploadFile: (session: ISession, file: LocalFile, params: IWorkspaceUploadParams, callbacks?: IUploadCallbaks) => {
       const api = '/workspace/document';
-      const queryParams = { parent: params.parent, public: true };
+      const queryParams = params.public
+        ? {
+            application: 'media-library',
+            quality: 1,
+            public: true,
+          }
+        : {
+            parent: params.parent,
+            ...getImplicitWorkspaceUploadParams(params),
+            ...getThumbnailWorkspaceUploadParams(),
+          };
       const url = queryString.stringifyUrl({
         url: api,
-        query: { ...queryParams, ...getImplicitWorkspaceUploadParams(params), ...getThumbnailWorkspaceUploadParams() },
+        query: queryParams,
       });
       const adapter = (data: any) => {
         const datajson = JSON.parse(data) as IEntcoreWorkspaceDocument;
