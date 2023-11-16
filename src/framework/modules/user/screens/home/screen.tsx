@@ -29,6 +29,7 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
@@ -257,12 +258,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         <View style={[styles.section, styles.sectionLast]}>
           <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-others')}</HeadingSText>
           <ButtonLineGroup>
-            <LineButton
-              title={I18n.get('user-xmas-title')}
-              onPress={() => {
-                navigation.navigate(userRouteNames.xmas, {});
-              }}
-            />
+            {isWithinXmasPeriod ? (
+              <LineButton
+                title={I18n.get('user-xmas-title')}
+                onPress={() => {
+                  navigation.navigate(userRouteNames.xmas, {});
+                }}
+              />
+            ) : null}
             {showWhoAreWe ? (
               <LineButton
                 title={I18n.get('user-whoarewe-title')}

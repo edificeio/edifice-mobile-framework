@@ -1,12 +1,16 @@
 /**
  * Thunk actions for module user
  */
+import { Moment } from 'moment';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
-import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
+import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
+import { actionTypes } from '~/framework/modules/user/reducer';
+import { addTime, today } from '~/framework/util/date';
+import { setItemJson } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
@@ -58,3 +62,36 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
     }
   };
 }
+
+const computeXmasAsyncStorageKey = () => {
+  const session = getSession();
+  const userId = session?.user?.id;
+  return `xmasThemeSetting.${userId}`;
+};
+
+const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: number, endMonth: number) => {
+  const getDateForYear = (startOfYear: Moment, day: number, month: number) => {
+    const monthOfYear = addTime(startOfYear, month - 1, 'month');
+    const dateOfYear = addTime(monthOfYear, day - 1, 'day');
+    return dateOfYear;
+  };
+  const startOfThisYear = today().startOf('year');
+  const startOfNextYear = addTime(today(), 1, 'year').startOf('year');
+  const startDateThisYear = getDateForYear(startOfThisYear, startDay, startMonth);
+  const endDateNextYear = getDateForYear(startOfNextYear, endDay, endMonth);
+  const isWithinXmasPeriod = today().isBetween(startDateThisYear, endDateNextYear);
+  return isWithinXmasPeriod;
+};
+
+export const isWithinXmasPeriod = getIsWithinXmasPeriod(1, 12, 5, 1);
+
+export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  try {
+    const asyncStorageKey = computeXmasAsyncStorageKey();
+    dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
+    await setItemJson(asyncStorageKey, xmasTheme);
+  } catch {
+    // If error, we disable theme for now
+    dispatch({ type: actionTypes.toggleXmasTheme, value: false });
+  }
+};
