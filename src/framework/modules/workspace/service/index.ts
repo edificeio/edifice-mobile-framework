@@ -49,6 +49,7 @@ type IEntcoreWorkspaceDocument = {
   owner: string;
   ownerName: string;
   thumbnails: { [id: string]: string };
+  public?: boolean;
 };
 
 export type IEntcoreWorkspaceFolder = {
@@ -226,7 +227,7 @@ const workspaceService = {
         return {
           ...file,
           id,
-          url: `/workspace/document/${id}`,
+          url: datajson.public ? `/workspace/pub/document/${id}` : `/workspace/document/${id}`,
           filesize: datajson.metadata?.size,
           filename: datajson.name || file.filename,
         };
