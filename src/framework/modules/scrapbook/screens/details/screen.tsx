@@ -1,7 +1,7 @@
 import CookieManager from '@react-native-cookies/cookies';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { BackHandler, Platform, StatusBar, View } from 'react-native';
+import { BackHandler, StatusBar, View } from 'react-native';
 import Orientation, {
   LANDSCAPE_LEFT,
   OrientationType,
@@ -18,7 +18,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import WebView from '~/framework/components/webview';
-import { useConstructor } from '~/framework/hooks/constructor';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
@@ -135,16 +134,6 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     setIsLocked(true);
   };
 
-  // Check Android orientation lock and lock to portrait if needed
-  useConstructor(() => {
-    if (Platform.OS === 'android') {
-      Orientation.getAutoRotateState(state => {
-        if (!state) Orientation.lockToPortrait();
-        setIsAutorotateEnabled(state);
-      });
-    }
-  });
-
   // Manage Orientation
 
   const handleOrientationChange = React.useCallback(
@@ -169,7 +158,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   React.useEffect(() => {
     CookieManager.clearAll(true);
-    if (autorotateEnabled) Orientation.unlockAllOrientations();
+    Orientation.unlockAllOrientations();
     const backHandler = BackHandler.addEventListener('hardwareBackPress', goBack);
     return () => backHandler.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps

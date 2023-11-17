@@ -13,7 +13,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
-import { useConstructor } from '~/framework/hooks/constructor';
 import { getSession } from '~/framework/modules/auth/reducer';
 
 import styles from './styles';
@@ -53,16 +52,6 @@ function MediaPlayer(props: MediaPlayerProps) {
     if (session?.platform.name === 'prod-one') return 'one';
     return 'default';
   }, [session]);
-
-  // Check Android orientation lock and lock to portrait if needed
-  useConstructor(() => {
-    if (Platform.OS === 'android') {
-      Orientation.getAutoRotateState(state => {
-        if (!state) Orientation.lockToPortrait();
-        setIsAutorotateEnabled(state);
-      });
-    }
-  });
 
   // Manage orientation
 
