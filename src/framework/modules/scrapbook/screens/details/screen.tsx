@@ -66,6 +66,8 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   const [error, setError] = React.useState(false);
 
+  const [firstLoad, setFirstLoad] = React.useState(true);
+
   const [isLocked, setIsLocked] = React.useState(false);
 
   const [orientation, setOrientation] = React.useState(PORTRAIT);
@@ -96,12 +98,20 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     setError(true);
   }, []);
 
+  const onLoad = React.useCallback(() => {
+    setFirstLoad(false);
+  }, []);
+
   const onShouldStartLoadWithRequest = React.useCallback(
     request => {
       const pfUrl = props.session?.platform.url;
       const reqUrl = request.url;
+      if (firstLoad) return true;
+      if (!reqUrl.startsWith(pfUrl)) {
+        openUrl(reqUrl);
+        return false;
+      }
       if (
-        !reqUrl.startsWith(pfUrl) &&
         !reqUrl.includes('embed') &&
         !reqUrl.includes('imasdk.googleapis.com') &&
         !reqUrl.includes('player.vimeo.com') &&
@@ -197,6 +207,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         style={styles.webview}
         onError={onError}
         onHttpError={onHttpError}
+        onLoad={onLoad}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
       {autorotateEnabled ? (
