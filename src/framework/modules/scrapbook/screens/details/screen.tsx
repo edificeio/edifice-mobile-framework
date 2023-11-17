@@ -62,8 +62,6 @@ const getQueryParamToken = async (finalUrl: string) => {
 };
 
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
-  const [autorotateEnabled, setIsAutorotateEnabled] = React.useState(true);
-
   const [error, setError] = React.useState(false);
 
   const [firstLoad, setFirstLoad] = React.useState(true);
@@ -143,7 +141,6 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
       Orientation.getAutoRotateState(state => {
         if (!state) Orientation.lockToPortrait();
         setIsAutorotateEnabled(state);
-        console.log('autorotateEnabled=' + autorotateEnabled);
       });
     }
   });
@@ -152,29 +149,23 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
-      if (autorotateEnabled) {
-        const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
-        if (isLocked && orientation !== PORTRAIT && newOrientation === PORTRAIT) {
-          Orientation.unlockAllOrientations();
-          setIsLocked(false);
-        }
-        if (isLocked && orientation === PORTRAIT && newOrientation !== PORTRAIT) {
-          Orientation.unlockAllOrientations();
-          setIsLocked(false);
-        }
-        if (isPortraitOrLandscape && newOrientation !== orientation) {
-          setOrientation(newOrientation);
-        }
+      const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
+      if (isLocked && orientation !== PORTRAIT && newOrientation === PORTRAIT) {
+        Orientation.unlockAllOrientations();
+        setIsLocked(false);
+      }
+      if (isLocked && orientation === PORTRAIT && newOrientation !== PORTRAIT) {
+        Orientation.unlockAllOrientations();
+        setIsLocked(false);
+      }
+      if (isPortraitOrLandscape && newOrientation !== orientation) {
+        setOrientation(newOrientation);
       }
     },
-    [autorotateEnabled, isLocked, orientation],
+    [isLocked, orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
-
-  React.useEffect(() => {
-    if (autorotateEnabled) Orientation.unlockAllOrientations();
-  }, [autorotateEnabled]);
 
   React.useEffect(() => {
     CookieManager.clearAll(true);
@@ -210,15 +201,13 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         onLoad={onLoad}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
-      {autorotateEnabled ? (
-        <IconButton
-          style={styles.button}
-          icon={orientation === PORTRAIT ? 'ui-fullScreen' : 'ui-closeFullScreen'}
-          action={setLockedOrientation}
-          color={theme.palette.grey.black}
-          size={UI_SIZES.elements.icon.small}
-        />
-      ) : null}
+      <IconButton
+        style={styles.button}
+        icon={orientation === PORTRAIT ? 'ui-fullScreen' : 'ui-closeFullScreen'}
+        action={setLockedOrientation}
+        color={theme.palette.grey.black}
+        size={UI_SIZES.elements.icon.small}
+      />
       {orientation === PORTRAIT ? (
         <IconButton
           action={goBack}

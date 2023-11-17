@@ -40,8 +40,6 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   const animationRef = React.useRef<LottieView>(null);
 
-  const [autorotateEnabled, setIsAutorotateEnabled] = React.useState(true);
-
   const isAudio = type === MediaType.AUDIO;
 
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -62,7 +60,6 @@ function MediaPlayer(props: MediaPlayerProps) {
       Orientation.getAutoRotateState(state => {
         if (!state) Orientation.lockToPortrait();
         setIsAutorotateEnabled(state);
-        console.log('autorotateEnabled=' + autorotateEnabled);
       });
     }
   });
@@ -71,14 +68,12 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
-      if (autorotateEnabled) {
-        const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
-        if (isPortraitOrLandscape && newOrientation !== orientation) {
-          setOrientation(newOrientation);
-        }
+      const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
+      if (isPortraitOrLandscape && newOrientation !== orientation) {
+        setOrientation(newOrientation);
       }
     },
-    [autorotateEnabled, orientation],
+    [orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
@@ -87,7 +82,7 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   React.useEffect(() => {
     // Unlock and handle orientation if needed
-    if (isFocused && autorotateEnabled && !isAudio) {
+    if (isFocused && !isAudio) {
       Orientation.unlockAllOrientations();
       setTimeout(() => {
         Orientation.getDeviceOrientation(handleOrientationChange);
@@ -97,7 +92,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     return () => {
       Orientation.lockToPortrait();
     };
-  }, [autorotateEnabled, isAudio, isFocused, handleOrientationChange]);
+  }, [isAudio, isFocused, handleOrientationChange]);
 
   const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(3000);
 
