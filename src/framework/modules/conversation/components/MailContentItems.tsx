@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   dotReceiverColor: {
     width: 8,
     height: 8,
-    borderRadius: 15,
+    borderRadius: 4,
     marginRight: UI_SIZES.spacing.tiny,
   },
   fileIcon: { flex: 0 },

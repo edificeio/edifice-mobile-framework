@@ -69,7 +69,7 @@ const styles = {
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: UI_SIZES.dimensions.width.tiny,
   },
-  modalBoxContainer: { flexGrow: 1, flexShrink: 1 },
+  modalBoxContainer: { flexGrow: 1, flexShrink: 1, paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight },
   responsesContainer: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-11-14 22:03:28",
-  "notes": "fix(ios): MB2237, Review completely iOS Splachscreen.\nfix(tracking): fix conversation tracking + add ACCESS for scrapbook\nfix(news): MB-2253, thread color\nfix(tracking): MB-2277 ACCESS requests were not signed.\nfix(conversation): MB-2239, MB-2240 fix dropdown style\nfix: MB-2272 fix phone validation filter for mobile phone check\nfix(mediacentre): AMV2-598 change resource id and uid values to have consistent favorite removing\nfix(edt): MB-2206 header style\nfeat(iOS): Use only 1024x1024 icon.\nfix(orientation): MB2231, Avoid rotation when Android auto-rotate is disabled.\nrefacto(auth): fix lint error\nrefacto(auth): fix lint error\nrefacto(auth): add `Promise.all` in `getUserConditions`\nrefacto(auth): type fix\nrefacto(auth): add `Promise.all()` in `handleSession()`\nfix(auth): MB-2260 fetch legal i18n on activation\nfix(lottie): Audio playing flash fix.\nrelease: 1.11.2-rc.5(1110210)",
-  "version": "1.11.2-rc.6(1110211)"
+  "last": "2023-11-17 19:21:21",
+  "notes": "fix(orientation): Unused code removal\nfix(orientation): Review orientation lock for players\nfix(ui): MB-2246, Add placeHolderColor for PhoneNumberInput.\nfix(ui): MB-2247, Review modal elements styles.\nfix(conversation): MB-2280 wrong borderRadius for user dots\nfix(workspace): MB-467 add `/pub` in public documents url\nfix(android): Missing http domain addition for debug network configuration\nfix(blog): MB-467, Manage public blogs images differently.\nfix(conversation): adjust testID\nfix(blog): MB-2279 fix blog navbar\nfix(wayf): MB2283, Add extranet.ac-reims.fr to network-security-config.xml.\nrelease: 1.11.2-rc.6(1110211)",
+  "version": "1.11.2-rc.7(1110212)"
 }

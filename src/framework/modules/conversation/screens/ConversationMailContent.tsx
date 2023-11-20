@@ -159,7 +159,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 ? popupActionsMenu.splice(2, 1)
                 : popupActionsMenu
             }>
-            <NavBarAction icon="ui-options" />
+            <NavBarAction icon="ui-options" testID="message-read-settings" />
           </PopupMenu>
         ),
     });
@@ -339,11 +339,16 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
   private mailContent() {
     const { mail, dispatch } = this.props;
     return (
-      <View style={styles.mailContentContainer} testID="message-read-content">
+      <View style={styles.mailContentContainer}>
         {mail.body !== undefined && (
-          <HtmlContentView onHtmlError={() => this.setState({ htmlError: true })} html={mail.body} opts={{ selectable: true }} />
+          <HtmlContentView
+            testID="message-read-content"
+            onHtmlError={() => this.setState({ htmlError: true })}
+            html={mail.body}
+            opts={{ selectable: true }}
+          />
         )}
-        <View style={{ marginTop: UI_SIZES.spacing.medium }} />
+        <View style={{ marginTop: UI_SIZES.spacing.medium }} testID="message-read-attachments" />
         {mail.attachments && mail.attachments.length > 0 && (
           <RenderPJs attachments={mail.attachments} mailId={mail.id} dispatch={dispatch} />
         )}

@@ -1,7 +1,7 @@
 import CookieManager from '@react-native-cookies/cookies';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { BackHandler, Platform, StatusBar, View } from 'react-native';
+import { BackHandler, StatusBar, View } from 'react-native';
 import Orientation, {
   LANDSCAPE_LEFT,
   OrientationType,
@@ -18,7 +18,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import WebView from '~/framework/components/webview';
-import { useConstructor } from '~/framework/hooks/constructor';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
@@ -62,9 +61,9 @@ const getQueryParamToken = async (finalUrl: string) => {
 };
 
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
-  const [autorotateEnabled, setIsAutorotateEnabled] = React.useState(true);
-
   const [error, setError] = React.useState(false);
+
+  const [firstLoad, setFirstLoad] = React.useState(true);
 
   const [isLocked, setIsLocked] = React.useState(false);
 
@@ -96,12 +95,20 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     setError(true);
   }, []);
 
+  const onLoad = React.useCallback(() => {
+    setFirstLoad(false);
+  }, []);
+
   const onShouldStartLoadWithRequest = React.useCallback(
     request => {
       const pfUrl = props.session?.platform.url;
       const reqUrl = request.url;
+      if (firstLoad) return true;
+      if (!reqUrl.startsWith(pfUrl)) {
+        openUrl(reqUrl);
+        return false;
+      }
       if (
-        !reqUrl.startsWith(pfUrl) &&
         !reqUrl.includes('embed') &&
         !reqUrl.includes('imasdk.googleapis.com') &&
         !reqUrl.includes('player.vimeo.com') &&
@@ -127,47 +134,31 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     setIsLocked(true);
   };
 
-  // Check Android orientation lock and lock to portrait if needed
-  useConstructor(() => {
-    if (Platform.OS === 'android') {
-      Orientation.getAutoRotateState(state => {
-        if (!state) Orientation.lockToPortrait();
-        setIsAutorotateEnabled(state);
-      });
-    }
-  });
-
   // Manage Orientation
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
-      if (autorotateEnabled) {
-        const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
-        if (isLocked && orientation !== PORTRAIT && newOrientation === PORTRAIT) {
-          Orientation.unlockAllOrientations();
-          setIsLocked(false);
-        }
-        if (isLocked && orientation === PORTRAIT && newOrientation !== PORTRAIT) {
-          Orientation.unlockAllOrientations();
-          setIsLocked(false);
-        }
-        if (isPortraitOrLandscape && newOrientation !== orientation) {
-          setOrientation(newOrientation);
-        }
+      const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
+      if (isLocked && orientation !== PORTRAIT && newOrientation === PORTRAIT) {
+        Orientation.unlockAllOrientations();
+        setIsLocked(false);
+      }
+      if (isLocked && orientation === PORTRAIT && newOrientation !== PORTRAIT) {
+        Orientation.unlockAllOrientations();
+        setIsLocked(false);
+      }
+      if (isPortraitOrLandscape && newOrientation !== orientation) {
+        setOrientation(newOrientation);
       }
     },
-    [autorotateEnabled, isLocked, orientation],
+    [isLocked, orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
 
   React.useEffect(() => {
-    if (autorotateEnabled) Orientation.unlockAllOrientations();
-  }, [autorotateEnabled]);
-
-  React.useEffect(() => {
     CookieManager.clearAll(true);
-    if (autorotateEnabled) Orientation.unlockAllOrientations();
+    Orientation.unlockAllOrientations();
     const backHandler = BackHandler.addEventListener('hardwareBackPress', goBack);
     return () => backHandler.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -196,17 +187,16 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         style={styles.webview}
         onError={onError}
         onHttpError={onHttpError}
+        onLoad={onLoad}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
-      {autorotateEnabled ? (
-        <IconButton
-          style={styles.button}
-          icon={orientation === PORTRAIT ? 'ui-fullScreen' : 'ui-closeFullScreen'}
-          action={setLockedOrientation}
-          color={theme.palette.grey.black}
-          size={UI_SIZES.elements.icon.small}
-        />
-      ) : null}
+      <IconButton
+        style={styles.button}
+        icon={orientation === PORTRAIT ? 'ui-fullScreen' : 'ui-closeFullScreen'}
+        action={setLockedOrientation}
+        color={theme.palette.grey.black}
+        size={UI_SIZES.elements.icon.small}
+      />
       {orientation === PORTRAIT ? (
         <IconButton
           action={goBack}

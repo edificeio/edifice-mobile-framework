@@ -314,6 +314,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
               },
               keyboardType: 'phone-pad',
               inputMode: 'tel',
+              placeholderTextColor: theme.palette.grey.stone,
             }}
           />
           <CaptionItalicText style={styles.errorText}>

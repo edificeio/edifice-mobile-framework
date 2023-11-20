@@ -46,7 +46,7 @@ export interface BlogCreatePostScreenDataProps {
 }
 
 export interface BlogCreatePostScreenEventProps {
-  handleUploadPostImages(images: ImagePicked[]): Promise<SyncedFile[]>;
+  handleUploadPostImages(images: ImagePicked[], isPublic: boolean): Promise<SyncedFile[]>;
   handleSendBlogPost(blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
@@ -163,7 +163,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       let uploadedPostImages: undefined | SyncedFile[];
       if (images.length > 0) {
         try {
-          uploadedPostImages = await handleUploadPostImages(images);
+          uploadedPostImages = await handleUploadPostImages(images, blog.visibility === 'PUBLIC');
         } catch (e: any) {
           // Full storage management
           // statusCode = 400 on iOS and code = 'ENOENT' on Android
@@ -359,9 +359,9 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
-  handleUploadPostImages: async (images: ImagePicked[]) => {
+  handleUploadPostImages: async (images: ImagePicked[], isPublic: boolean) => {
     const localFiles = images.map(img => imagePickedToLocalFile(img));
-    return dispatch(uploadBlogPostImagesAction(localFiles)) as unknown as Promise<SyncedFile[]>;
+    return dispatch(uploadBlogPostImagesAction(localFiles, isPublic)) as unknown as Promise<SyncedFile[]>;
   },
   handleSendBlogPost: async (blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
     return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;

@@ -13,7 +13,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
-import { useConstructor } from '~/framework/hooks/constructor';
 import { getSession } from '~/framework/modules/auth/reducer';
 
 import styles from './styles';
@@ -40,8 +39,6 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   const animationRef = React.useRef<LottieView>(null);
 
-  const [autorotateEnabled, setIsAutorotateEnabled] = React.useState(true);
-
   const isAudio = type === MediaType.AUDIO;
 
   const [isPlaying, setIsPlaying] = React.useState(false);
@@ -56,28 +53,16 @@ function MediaPlayer(props: MediaPlayerProps) {
     return 'default';
   }, [session]);
 
-  // Check Android orientation lock and lock to portrait if needed
-  useConstructor(() => {
-    if (Platform.OS === 'android') {
-      Orientation.getAutoRotateState(state => {
-        if (!state) Orientation.lockToPortrait();
-        setIsAutorotateEnabled(state);
-      });
-    }
-  });
-
   // Manage orientation
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
-      if (autorotateEnabled) {
-        const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
-        if (isPortraitOrLandscape && newOrientation !== orientation) {
-          setOrientation(newOrientation);
-        }
+      const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
+      if (isPortraitOrLandscape && newOrientation !== orientation) {
+        setOrientation(newOrientation);
       }
     },
-    [autorotateEnabled, orientation],
+    [orientation],
   );
 
   useDeviceOrientationChange(handleOrientationChange);
@@ -86,7 +71,7 @@ function MediaPlayer(props: MediaPlayerProps) {
 
   React.useEffect(() => {
     // Unlock and handle orientation if needed
-    if (isFocused && autorotateEnabled && !isAudio) {
+    if (isFocused && !isAudio) {
       Orientation.unlockAllOrientations();
       setTimeout(() => {
         Orientation.getDeviceOrientation(handleOrientationChange);
@@ -96,7 +81,7 @@ function MediaPlayer(props: MediaPlayerProps) {
     return () => {
       Orientation.lockToPortrait();
     };
-  }, [autorotateEnabled, isAudio, isFocused, handleOrientationChange]);
+  }, [isAudio, isFocused, handleOrientationChange]);
 
   const [videoPlayerControlTimeoutDelay, setVideoPlayerControlTimeoutDelay] = React.useState(3000);
 
