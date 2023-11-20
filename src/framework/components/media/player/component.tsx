@@ -62,7 +62,6 @@ function MediaPlayer(props: MediaPlayerProps) {
       Orientation.getAutoRotateState(state => {
         if (!state) Orientation.lockToPortrait();
         setIsAutorotateEnabled(state);
-        console.log('autorotateEnabled=' + autorotateEnabled);
       });
     }
   });

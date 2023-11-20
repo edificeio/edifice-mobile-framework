@@ -319,9 +319,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
     try {
       // === 0 auto select the default theme
       const theme = platform.webTheme;
-      if (!theme) {
-        console.debug('[User][Activation] activationAccount -> theme was not found:', platform.webTheme);
-      }
+      if (!theme && __DEV__) console.debug('[User][Activation] activationAccount -> theme was not found:', platform.webTheme);
       // === 1 - prepare payload
       const payload: IActivationSubmitPayload = {
         acceptCGU: true,

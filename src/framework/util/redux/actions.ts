@@ -1,4 +1,4 @@
-import { AnyAction, Dispatch } from 'redux';
+import { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
@@ -62,7 +62,7 @@ export function tryAction<Args extends any[], R, E>(
   return performAction(
     action,
     e => {
-      console.warn(action.name, e);
+      if (__DEV__) console.warn(action.name, e);
       throw e;
     },
     opts,
@@ -84,7 +84,7 @@ export function handleAction<Args extends any[], R, E>(
   return performAction(
     action,
     e => {
-      console.warn(action.name, e);
+      if (__DEV__) console.warn(action.name, e);
     },
     opts,
   );

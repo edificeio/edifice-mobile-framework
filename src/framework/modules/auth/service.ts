@@ -393,7 +393,7 @@ export class FcmService {
       if (tokens instanceof Array) {
         return tokens;
       } else {
-        //console.debug("not an array?", tokens)
+        if (__DEV__) console.debug("not an array?", tokens)
       }
     } catch {
       // TODO: Manage error
@@ -422,9 +422,7 @@ export class FcmService {
       this._removeTokenFromDeleteQueue(token);
     } catch {
       //unregistering fcm token should not crash the login process
-      if (Connection.isOnline) {
-        //console.debug(err);
-      } else {
+      if (!Connection.isOnline) {
         //when no connection => get it from property
         const tokenToUnregister = token || this.lastRegisteredToken;
         if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
@@ -448,9 +446,7 @@ export class FcmService {
       //
     } catch {
       //registering fcm token should not crash the login process
-      if (Connection.isOnline) {
-        //console.debug(err);
-      } else {
+      if (!Connection.isOnline) {
         this.pendingRegistration = 'delayed';
       }
     }
@@ -505,7 +501,7 @@ export async function getMFAValidationInfos() {
     const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
     return MFAValidationInfos;
   } catch {
-    // console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
+    if (__DEV__) console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
   }
 }
 
@@ -517,7 +513,7 @@ export async function verifyMFACode(key: string) {
     })) as IEntcoreMFAValidationState;
     return mfaValidationState;
   } catch {
-    // console.warn('[UserService] verifyMFACode: could not verify mfa code', e);
+    if (__DEV__) console.warn('[UserService] verifyMFACode: could not verify mfa code', e);
   }
 }
 
@@ -550,7 +546,7 @@ export async function verifyMobileCode(key: string) {
     })) as IEntcoreMobileValidationState;
     return mobileValidationState;
   } catch {
-    // console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
+    if (__DEV__) console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
   }
 }
 
@@ -583,7 +579,7 @@ export async function verifyEmailCode(key: string) {
     })) as IEntcoreEmailValidationState;
     return emailValidationState;
   } catch {
-    // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
+    if (__DEV__) console.warn('[UserService] verifyEmailCode: could not verify email code', e);
   }
 }
 

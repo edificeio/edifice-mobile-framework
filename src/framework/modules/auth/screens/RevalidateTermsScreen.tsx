@@ -73,7 +73,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
       props.tryLogout();
       props.navigation.reset(getAuthNavigationState(props.route.params.platform));
     } catch {
-      // console.warn('refuseTerms: could not refuse terms', e);
+      if (__DEV__) console.warn('refuseTerms: could not refuse terms', e);
     }
     // Manually specified deps here
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,7 +91,7 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
       const redirect = await props.tryLogin(platform, credentials, rememberMe);
       redirectLoginNavAction(redirect, platform, props.navigation);
     } catch {
-      // console.warn('revalidateTerms: could not revalidate terms', e);
+      if (__DEV__) console.warn('revalidateTerms: could not revalidate terms', e);
     }
     // Manually specified deps here
     // eslint-disable-next-line react-hooks/exhaustive-deps

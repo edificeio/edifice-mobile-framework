@@ -133,7 +133,6 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
       Orientation.getAutoRotateState(state => {
         if (!state) Orientation.lockToPortrait();
         setIsAutorotateEnabled(state);
-        console.log('autorotateEnabled=' + autorotateEnabled);
       });
     }
   });

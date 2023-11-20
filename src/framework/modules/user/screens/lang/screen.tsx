@@ -42,7 +42,6 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
     const showI18nKeys = await getItemJson(I18N_SHOW_KEYS_KEY);
 
     const initialLang = showI18nKeys ? 'wordingKeys' : lang ?? 'auto';
-    console.log(initialLang, showI18nKeys);
     setValue(initialLang as string);
   };
 
