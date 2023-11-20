@@ -12,6 +12,7 @@ export interface ScrapbookDetailsScreenEventProps {}
 
 export interface ScrapbookDetailsScreenNavParams {
   resourceUri: string;
+  headerHeight: number;
 }
 
 export type ScrapbookDetailsScreenProps = ScrapbookDetailsScreenDataProps &

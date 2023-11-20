@@ -13,7 +13,7 @@ import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/component
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';

@@ -71,6 +71,7 @@ const _override_copyMergePaths = {
   'ios/Assets.xcassets': 'ios/appe/Assets.xcassets', // iOS specific native assets
   'android/res': 'android/app/src/main/res', // Android specific native assets
   'ios/Fonts': 'ios/Fonts', // iOS specific fonts
+  'ios/images': 'ios/appe/images', // iOS specific images
   'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
 };
 

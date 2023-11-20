@@ -26,7 +26,7 @@ import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import { getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
@@ -314,6 +314,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
               },
               keyboardType: 'phone-pad',
               inputMode: 'tel',
+              placeholderTextColor: theme.palette.grey.stone,
             }}
           />
           <CaptionItalicText style={styles.errorText}>

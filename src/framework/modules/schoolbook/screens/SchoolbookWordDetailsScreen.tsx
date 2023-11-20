@@ -16,7 +16,7 @@ import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';

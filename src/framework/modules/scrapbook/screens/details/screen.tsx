@@ -1,8 +1,13 @@
 import CookieManager from '@react-native-cookies/cookies';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { BackHandler, StatusBar } from 'react-native';
-import Orientation, { OrientationType, PORTRAIT, useDeviceOrientationChange } from 'react-native-orientation-locker';
+import { BackHandler, StatusBar, View } from 'react-native';
+import Orientation, {
+  LANDSCAPE_LEFT,
+  OrientationType,
+  PORTRAIT,
+  useDeviceOrientationChange,
+} from 'react-native-orientation-locker';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -56,13 +61,25 @@ const getQueryParamToken = async (finalUrl: string) => {
 };
 
 const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
-  const [url, setUrl] = React.useState<string | undefined>(undefined);
-  const [orientation, setOrientation] = React.useState(PORTRAIT);
-  const [isLocked, setIsLocked] = React.useState(false);
   const [error, setError] = React.useState(false);
 
+  const [firstLoad, setFirstLoad] = React.useState(true);
+
+  const [isLocked, setIsLocked] = React.useState(false);
+
+  const [orientation, setOrientation] = React.useState(PORTRAIT);
+
+  const [url, setUrl] = React.useState<string | undefined>(undefined);
+
   const urlObject = React.useMemo(() => (url ? { uri: url } : undefined), [url]);
+
   const webviewRef = React.useRef<WebView>(null);
+
+  const goBack = React.useCallback(() => {
+    Orientation.lockToPortrait();
+    props.navigation.goBack();
+    return true;
+  }, [props.navigation]);
 
   const init = async () => {
     const uri = props.route.params.resourceUri;
@@ -78,12 +95,20 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     setError(true);
   }, []);
 
+  const onLoad = React.useCallback(() => {
+    setFirstLoad(false);
+  }, []);
+
   const onShouldStartLoadWithRequest = React.useCallback(
     request => {
       const pfUrl = props.session?.platform.url;
       const reqUrl = request.url;
+      if (firstLoad) return true;
+      if (!reqUrl.startsWith(pfUrl)) {
+        openUrl(reqUrl);
+        return false;
+      }
       if (
-        !reqUrl.startsWith(pfUrl) &&
         !reqUrl.includes('embed') &&
         !reqUrl.includes('imasdk.googleapis.com') &&
         !reqUrl.includes('player.vimeo.com') &&
@@ -99,31 +124,26 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   );
 
   const setLockedOrientation = () => {
-    if (orientation !== 'PORTRAIT') {
+    if (orientation !== PORTRAIT) {
       Orientation.lockToPortrait();
-      setOrientation('PORTRAIT');
+      setOrientation(PORTRAIT);
     } else {
-      Orientation.lockToLandscapeRight();
-      setOrientation('LANDSCAPE-RIGHT');
+      Orientation.lockToLandscapeLeft();
+      setOrientation(LANDSCAPE_LEFT);
     }
     setIsLocked(true);
   };
 
-  const goBack = React.useCallback(() => {
-    Orientation.lockToPortrait();
-    props.navigation.goBack();
-    return true;
-  }, [props.navigation]);
+  // Manage Orientation
 
   const handleOrientationChange = React.useCallback(
     (newOrientation: OrientationType) => {
-      const isPortraitOrLandscape =
-        newOrientation === 'LANDSCAPE-RIGHT' || newOrientation === 'LANDSCAPE-LEFT' || newOrientation === 'PORTRAIT';
-      if (isLocked && orientation !== 'PORTRAIT' && newOrientation === 'PORTRAIT') {
+      const isPortraitOrLandscape = newOrientation.startsWith('LANDSCAPE') || newOrientation === PORTRAIT;
+      if (isLocked && orientation !== PORTRAIT && newOrientation === PORTRAIT) {
         Orientation.unlockAllOrientations();
         setIsLocked(false);
       }
-      if (isLocked && orientation === 'PORTRAIT' && newOrientation !== 'PORTRAIT') {
+      if (isLocked && orientation === PORTRAIT && newOrientation !== PORTRAIT) {
         Orientation.unlockAllOrientations();
         setIsLocked(false);
       }
@@ -139,7 +159,6 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   React.useEffect(() => {
     CookieManager.clearAll(true);
     Orientation.unlockAllOrientations();
-
     const backHandler = BackHandler.addEventListener('hardwareBackPress', goBack);
     return () => backHandler.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,7 +172,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
 
   const renderLoading = React.useCallback(() => <Loading />, []);
 
-  const player = () => (
+  const renderPlayer = () => (
     <PageView>
       <StatusBar animated hidden />
       <WebView
@@ -168,16 +187,17 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
         style={styles.webview}
         onError={onError}
         onHttpError={onHttpError}
+        onLoad={onLoad}
         onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       />
       <IconButton
         style={styles.button}
-        icon={orientation === 'PORTRAIT' ? 'ui-fullScreen' : 'ui-closeFullScreen'}
+        icon={orientation === PORTRAIT ? 'ui-fullScreen' : 'ui-closeFullScreen'}
         action={setLockedOrientation}
         color={theme.palette.grey.black}
         size={UI_SIZES.elements.icon.small}
       />
-      {orientation === 'PORTRAIT' ? (
+      {orientation === PORTRAIT ? (
         <IconButton
           action={goBack}
           icon="ui-close"
@@ -193,6 +213,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
     Orientation.lockToPortrait();
     return (
       <>
+        <View style={{ height: props.route.params.headerHeight, backgroundColor: theme.ui.background.page }} />
         {error ? <EmptyConnectionScreen /> : <EmptyContentScreen />}
         <IconButton
           action={goBack}
@@ -208,7 +229,7 @@ const ScrapbookDetailsScreen = (props: ScrapbookDetailsScreenProps) => {
   return (
     <ContentLoader
       loadContent={init}
-      renderContent={error ? renderError : player}
+      renderContent={error ? renderError : renderPlayer}
       renderError={renderError}
       renderLoading={renderLoading}
     />

@@ -49,7 +49,9 @@ function useAppState() {
         // Change locale if needed
         const locales = RNLocalize.getLocales();
         const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
-        if (newLocale !== currentLocale) setCurrentLocale(I18n.setLanguage());
+        I18n.setLanguage().then(lng => {
+          if (newLocale !== currentLocale) setCurrentLocale(lng);
+        });
         // Reset badge value
         setCurrentBadgeValue(0);
       } else if (nextAppState === 'background') {

@@ -11,7 +11,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { NavBarAction } from '~/framework/components/navigation';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { HobbieVisibility } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { userService } from '~/framework/modules/user/service';

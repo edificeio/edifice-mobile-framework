@@ -234,6 +234,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers: {
           ...init?.headers,
           Authorization: 'Bearer ' + this.token!.access_token,
+          'X-Device-Id': uniqueId(),
         },
       });
       return req;
@@ -318,7 +319,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         method: 'POST',
       });
       // 3: Build token from data
-      if (!data.hasOwnProperty('access_token')) {
+      if (!Object.hasOwn(data, 'access_token')) {
         throw this.createAuthError(OAuth2ErrorCode.BAD_RESPONSE, 'no access_token returned', '', { data });
       }
       this.token = {
@@ -326,7 +327,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
       // 4: Save token if asked
-      saveToken && (await this.saveToken());
+      if (saveToken) await this.saveToken();
       await this.deleteQueryParamToken(); // Delete current queryParamToken here to ensure we'll not have previous one form another accounts.
       this.generateUniqueSesionIdentifier();
       return this.token!;

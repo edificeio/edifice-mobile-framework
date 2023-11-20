@@ -10,5 +10,6 @@
         <domain includeSubdomains="true">appli.ac-aix-marseille.fr</domain>
         <domain includeSubdomains="true">aaa-idp.ac-nantes.fr</domain>
         <domain includeSubdomains="true">extranet.ac-guyane.fr</domain>
+        <domain includeSubdomains="true">extranet.ac-reims.fr</domain>
     </domain-config>
 </network-security-config>

@@ -9,6 +9,9 @@ const WIDTH_TEXT_TAB = getScaleWidth(20);
 export default StyleSheet.create({
   header: {
     backgroundColor: theme.palette.grey.white,
+    zIndex: 1000,
+  },
+  childPicker: {
     borderBottomWidth: 1,
     borderBottomColor: theme.palette.grey.grey,
   },
@@ -20,6 +23,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: UI_SIZES.spacing.medium,
+    paddingBottom: 0,
     zIndex: -1,
   },
   weekText: {
@@ -38,7 +42,7 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
     borderRadius: UI_SIZES.radius.medium,
-    borderWidth: 1,
+    borderWidth: 2,
   },
   tabBarItemText: {
     textAlign: 'center',

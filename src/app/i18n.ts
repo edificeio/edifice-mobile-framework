@@ -155,7 +155,7 @@ export namespace I18n {
 
   export async function init() {
     // Initalize language
-    setLanguage();
+    await setLanguage();
     // Initialize keys toggling
     if (canShowKeys) {
       const stored: boolean | undefined = await getItemJson(I18N_SHOW_KEYS_KEY);

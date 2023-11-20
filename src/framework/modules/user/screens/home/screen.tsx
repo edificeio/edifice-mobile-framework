@@ -204,11 +204,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           (routeParams as AuthMFAScreenNavParams).mfaRedirectionRoute = routeName;
           routeName = authRouteNames.mfaModal;
         }
+        setCurrentLoadingMenu(undefined);
         if (focusedRef.current) navigation.navigate(routeName, routeParams);
       } catch {
-        Toast.showError(I18n.get('user-page-error-text'));
-      } finally {
         setCurrentLoadingMenu(undefined);
+        Toast.showError(I18n.get('user-page-error-text'));
       }
     },
     [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],

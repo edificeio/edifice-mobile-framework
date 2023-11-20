@@ -19,7 +19,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { BodyText, SmallActionText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
