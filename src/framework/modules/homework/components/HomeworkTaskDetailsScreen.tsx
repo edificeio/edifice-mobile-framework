@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Lottie from 'lottie-react-native';
+import LottieView from 'lottie-react-native';
 import { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import CheckboxButton from '~/framework/components/buttons/checkbox';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: UI_SIZES.spacing.medium,
     bottom: UI_SIZES.spacing.medium,
-    paddingTop: getScaleWidth(80),
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     shadowColor: theme.ui.shadowColor,
@@ -82,6 +81,14 @@ const styles = StyleSheet.create({
   },
   checkboxListItem: {
     borderRadius: UI_SIZES.spacing.medium,
+  },
+  confetti: {
+    height: getScaleHeight(80),
+  },
+  confettiContainer: {
+    width: '100%',
+    position: 'absolute',
+    bottom: UI_SIZES.spacing.small,
   },
   content: {
     ...TextSizeStyle.Medium,
@@ -187,9 +194,9 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const dayColor = theme.color.homework.days[dayOfTheWeek].background;
     const opacity = 80;
     const bannerColor = `${dayColor}${opacity}`;
-    const animationSource = require('ASSETS/animations/homework/done.json');
     const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCheckHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.check;
+    const animationSource = require('ASSETS/animations/homework/done.json');
 
     return (
       <PageView style={styles.page}>
@@ -214,7 +221,6 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
         </ScrollView>
         {hasCheckHomeworkResourceRight ? (
           <View style={styles.checkboxButtonContainer}>
-            {checked ? <Lottie source={animationSource} autoPlay loop={false} /> : null}
             <CheckboxButton
               title="homework-taskdetails-status-done"
               onPress={() => this.doToggleDiaryEntryStatus(!checked)}
@@ -222,6 +228,11 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
               customListItemStyle={styles.checkboxListItem}
               customCheckboxContainerStyle={styles.checkboxContainer}
             />
+            {checked ? (
+              <View pointerEvents="none" style={styles.confettiContainer}>
+                <LottieView source={animationSource} style={styles.confetti} resizeMode="cover" loop={false} autoPlay />
+              </View>
+            ) : null}
           </View>
         ) : null}
       </PageView>
