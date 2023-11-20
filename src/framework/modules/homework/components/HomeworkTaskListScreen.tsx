@@ -20,7 +20,11 @@ import { ISession } from '~/framework/modules/auth/model';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
-import { hasPermissionManager, modifyHomeworkEntryResourceRight } from '~/framework/modules/homework/rights';
+import {
+  getHomeworkWorkflowInformation,
+  hasPermissionManager,
+  modifyHomeworkEntryResourceRight,
+} from '~/framework/modules/homework/rights';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
@@ -344,9 +348,11 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   private renderItem({ item, index, section }) {
-    const { navigation, diaryId } = this.props;
+    const { navigation, diaryId, session } = this.props;
     const isLastItem = index === section?.data?.length - 1;
     const displayEntry = () => navigation!.navigate(homeworkRouteNames.homeworkTaskDetails, { task: item, diaryId });
+    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
+    const hasCheckHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.check;
 
     return (item as unknown as { type: string }).type !== 'day' ? (
       this.renderFooterItem()
@@ -357,7 +363,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           key={index}
           title={item.title}
           content={item.content}
-          finished={item.finished}
+          finished={hasCheckHomeworkResourceRight ? item.finished : undefined}
           date={item.date}
           onPress={displayEntry}
           style={isLastItem && styles.lastCard}

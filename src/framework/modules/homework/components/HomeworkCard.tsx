@@ -61,13 +61,15 @@ const HomeworkCard = ({ title, content, finished, onPress, date, style }: IHomew
       <View style={styles.viewTexts}>
         <View style={styles.viewTitle}>
           {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
-          <NamedSVG
-            fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
-            name={`ui-${finished ? 'check' : 'clock'}`}
-            style={styles.status}
-            width={UI_SIZES.elements.icon.xsmall}
-            height={UI_SIZES.elements.icon.xsmall}
-          />
+          {finished === undefined ? null : (
+            <NamedSVG
+              fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
+              name={`ui-${finished ? 'check' : 'clock'}`}
+              style={styles.status}
+              width={UI_SIZES.elements.icon.xsmall}
+              height={UI_SIZES.elements.icon.xsmall}
+            />
+          )}
         </View>
         {formattedContent ? (
           <SmallText style={{ marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>

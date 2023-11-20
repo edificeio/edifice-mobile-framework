@@ -20,7 +20,11 @@ import { ISession } from '~/framework/modules/auth/model';
 import HomeworkDayCheckpoint from '~/framework/modules/homework/components/HomeworkDayCheckpoint';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
-import { deleteHomeworkEntryResourceRight, hasPermissionManager } from '~/framework/modules/homework/rights';
+import {
+  deleteHomeworkEntryResourceRight,
+  getHomeworkWorkflowInformation,
+  hasPermissionManager,
+} from '~/framework/modules/homework/rights';
 import { getDayOfTheWeek } from '~/framework/util/date';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -176,7 +180,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
   }
 
   render() {
-    const { route } = this.props;
+    const { route, session } = this.props;
     const { checked } = this.state;
     const { date, title, content } = route.params.task;
     const dayOfTheWeek = getDayOfTheWeek(date);
@@ -184,6 +188,8 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const opacity = 80;
     const bannerColor = `${dayColor}${opacity}`;
     const animationSource = require('ASSETS/animations/homework/done.json');
+    const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
+    const hasCheckHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.check;
 
     return (
       <PageView style={styles.page}>
@@ -206,16 +212,18 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
             />
           ) : null}
         </ScrollView>
-        <View style={styles.checkboxButtonContainer}>
-          {checked ? <Lottie source={animationSource} autoPlay loop={false} /> : null}
-          <CheckboxButton
-            title="homework-taskdetails-status-done"
-            onPress={() => this.doToggleDiaryEntryStatus(!checked)}
-            isChecked={checked}
-            customListItemStyle={styles.checkboxListItem}
-            customCheckboxContainerStyle={styles.checkboxContainer}
-          />
-        </View>
+        {hasCheckHomeworkResourceRight ? (
+          <View style={styles.checkboxButtonContainer}>
+            {checked ? <Lottie source={animationSource} autoPlay loop={false} /> : null}
+            <CheckboxButton
+              title="homework-taskdetails-status-done"
+              onPress={() => this.doToggleDiaryEntryStatus(!checked)}
+              isChecked={checked}
+              customListItemStyle={styles.checkboxListItem}
+              customCheckboxContainerStyle={styles.checkboxContainer}
+            />
+          </View>
+        ) : null}
       </PageView>
     );
   }
