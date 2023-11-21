@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
     marginRight: UI_SIZES.spacing.tiny,
+    overflow: 'hidden',
   },
   fileIcon: { flex: 0 },
   footerButtonContainer: {
