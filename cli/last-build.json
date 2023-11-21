@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-11-17 19:21:21",
-  "notes": "fix(orientation): Unused code removal\nfix(orientation): Review orientation lock for players\nfix(ui): MB-2246, Add placeHolderColor for PhoneNumberInput.\nfix(ui): MB-2247, Review modal elements styles.\nfix(conversation): MB-2280 wrong borderRadius for user dots\nfix(workspace): MB-467 add `/pub` in public documents url\nfix(android): Missing http domain addition for debug network configuration\nfix(blog): MB-467, Manage public blogs images differently.\nfix(conversation): adjust testID\nfix(blog): MB-2279 fix blog navbar\nfix(wayf): MB2283, Add extranet.ac-reims.fr to network-security-config.xml.\nrelease: 1.11.2-rc.6(1110211)",
-  "version": "1.11.2-rc.7(1110212)"
+  "last": "2023-11-21 16:09:18",
+  "notes": "fix(crash): MB-2207, Review podfile for archive builds.\nfix(ui): MB-2247, Review modal elements styles.\nMerge pull request #105 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nfix(crash): MB-2207, Xcode15 pod patch removal (Will downgrade to Xcode 14.3.1).\nfix(conversation): MB-2280 wrong borderRadius for user dots (add overflow)\nchore(i18n): Not working github action removal.\nrelease: 1.11.2-rc.7(1110212)",
+  "version": "1.11.2-rc.8(1110213)"
 }
