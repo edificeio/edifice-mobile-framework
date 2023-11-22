@@ -56,7 +56,7 @@
     "@emotion/react": "11.11.1",
     "@flyerhq/react-native-android-uri-path": "2.3.0",
     "@gorhom/bottom-sheet": "4",
-    "@react-native-async-storage/async-storage": "1.19.6",
+    "@react-native-async-storage/async-storage": "1.19.8",
     "@react-native-camera-roll/camera-roll": "7.0.0",
     "@react-native-clipboard/clipboard": "1.12.1",
     "@react-native-community/cli": "12.1.1",
