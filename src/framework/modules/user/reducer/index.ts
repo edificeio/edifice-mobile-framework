@@ -6,18 +6,21 @@ import createReducer from '~/framework/util/redux/reducerFactory';
 
 export interface UserState {
   xmasTheme: boolean;
+  flakesFalling: boolean;
 }
 
 // Initial state value
 
 export const initialState: UserState = {
   xmasTheme: true,
+  flakesFalling: false,
 };
 
 // Actions definitions
 
 export const actionTypes = {
   toggleXmasTheme: moduleConfig.namespaceActionType('TOGGLE_XMAS_THEME'),
+  setFlakes: moduleConfig.namespaceActionType('SET_FLAKES'),
 };
 
 export interface ActionPayloads {}
@@ -29,6 +32,9 @@ export const actions = {};
 const reducer = createReducer(initialState, {
   [actionTypes.toggleXmasTheme]: (state, action) => {
     return { ...initialState, xmasTheme: action.value };
+  },
+  [actionTypes.setFlakes]: (state, action) => {
+    return { ...initialState, flakesFalling: action.value };
   },
 });
 

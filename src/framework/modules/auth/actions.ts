@@ -3,6 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { importXmasThemeAction } from '~/framework/modules/user/actions';
 import { Platform } from '~/framework/util/appConf';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
@@ -295,6 +296,9 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
 
       // 6. Track login (initial/restored)
       await trackLogin(credentials, partialSessionScenario);
+
+      // 7. Import xmas theme
+      await dispatch(importXmasThemeAction());
 
       return redirectScenario;
     } catch (e) {
