@@ -26,6 +26,7 @@ import UserEditMoodMottoScreen, {
 } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import UserStructuresScreen, { computeNavBar as structuresNavBar } from '~/framework/modules/user/screens/profile/structures';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
+import UserXmasScreen, { computeNavBar as xmasNavBar } from '~/framework/modules/user/screens/xmas';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -56,6 +57,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={multicomptePagesNavBar}
         initialParams={{}}
       />
+      <Stack.Screen name={userRouteNames.xmas} component={UserXmasScreen} options={xmasNavBar} initialParams={{}} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen
           name={userRouteNames.notifPrefsDetails}

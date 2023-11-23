@@ -17,13 +17,16 @@ import {
 } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform } from 'react-native';
+import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { setUpModulesAccess } from '~/app/modules';
+import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture, PictureProps } from '~/framework/components/picture';
+import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
+import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -50,6 +53,13 @@ import { computeTabRouteName, tabModules } from './tabModules';
 
 const Tab = createBottomTabNavigator();
 
+const PictureWithXmas = connect((state: IGlobalState) => ({
+  isXmas: getIsXmasActive(state),
+}))((props: PictureProps & IconProps & { isXmas?: boolean; focused: boolean }) => {
+  const { name, isXmas, ...other } = props;
+  return <Picture {...other} name={`${isXmas ? 'xmas-' : ''}${name}`} />;
+});
+
 const createTabIcon = (
   moduleConfig: AnyNavigableModuleConfig,
   props: Parameters<Required<BottomTabNavigationOptions>['tabBarIcon']>[0],
@@ -74,7 +84,7 @@ const createTabIcon = (
     dp = { ...dp, ...moduleConfig.displayPictureFocus } as Partial<PictureProps>;
   }
 
-  return <Picture {...(dp as PictureProps)} />;
+  return <PictureWithXmas {...(dp as PictureProps)} />;
 };
 
 const createTabOptions = (moduleConfig: AnyNavigableModuleConfig) => {

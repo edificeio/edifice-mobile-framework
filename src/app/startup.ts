@@ -47,12 +47,12 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatfo
             }),
           )
           .catch(e => {
-            console.warn(e);
+            if (__DEV__) console.warn(e);
             dispatch(appReadyAction());
           }),
       )
       .catch(e => {
-        console.warn(e);
+        if (__DEV__) console.warn(e);
         dispatch(appReadyAction());
       });
     // We WANT TO call this only once

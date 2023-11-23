@@ -104,13 +104,10 @@ const callPhoneNumber = tel => {
   const telWithoutSpaces = tel.replace(/\s/g, '');
   Linking.canOpenURL(`tel:${telWithoutSpaces}`)
     .then(supported => {
-      if (!supported) {
-        console.log(`L'appel du numéro ${telWithoutSpaces} n'est pas supporté.`);
-      } else {
-        return Linking.openURL(`tel:${telWithoutSpaces}`);
-      }
+      if (supported) return Linking.openURL(`tel:${telWithoutSpaces}`);
+      if (__DEV__) console.log(`L'appel du numéro ${telWithoutSpaces} n'est pas supporté.`);
     })
-    .catch(err => console.error("Une erreur s'est produite lors de l'appel du numéro.", err));
+    .catch(err => {if (__DEV__) console.error("Une erreur s'est produite lors de l'appel du numéro.", err);});
 };
 
 const UserProfileScreen = (props: ProfilePageProps) => {

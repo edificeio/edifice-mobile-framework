@@ -310,7 +310,7 @@ export default React.forwardRef(
     const realRenderItem = React.useCallback(
       (info, rowMap) => {
         if (!renderItem) {
-          console.warn('[swipeableList] renderItem not provided.');
+          if (__DEV__) console.warn('[swipeableList] renderItem not provided.');
           return null;
         }
         const onSwipeValueChange = (swipeData: { key: string; value: number; direction: 'left' | 'right'; isOpen: boolean }) => {
@@ -353,7 +353,7 @@ export default React.forwardRef(
     );
 
     if (!renderItem) {
-      console.warn('[swipeableList] renderItem not provided.');
+      if (__DEV__) console.warn('[swipeableList] renderItem not provided.');
       return null;
     }
 

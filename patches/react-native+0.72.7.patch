@@ -164,29 +164,19 @@ index 0000000..361f5fb
 +++ b/node_modules/react-native/scripts/.packager.env
 @@ -0,0 +1 @@
 +export RCT_METRO_PORT=8081
-diff --git a/node_modules/react-native/scripts/cocoapods/utils.rb b/node_modules/react-native/scripts/cocoapods/utils.rb
-index d4bf3a0..c702376 100644
---- a/node_modules/react-native/scripts/cocoapods/utils.rb
-+++ b/node_modules/react-native/scripts/cocoapods/utils.rb
-@@ -136,12 +136,12 @@ class ReactNativePodsUtils
-                 self.add_value_to_setting_if_missing(config, gcc_preprocessor_definition_key, libcpp_cxx17_fix)
- 
-                 # fix for weak linking
--                self.safe_init(config, other_ld_flags_key)
--                if self.is_using_xcode15_or_greter(:xcodebuild_manager => xcodebuild_manager)
--                    self.add_value_to_setting_if_missing(config, other_ld_flags_key, xcode15_compatibility_flags)
--                else
--                    self.remove_value_from_setting_if_present(config, other_ld_flags_key, xcode15_compatibility_flags)
--                end
-+                #self.safe_init(config, other_ld_flags_key)
-+                #if self.is_using_xcode15_or_greter(:xcodebuild_manager => xcodebuild_manager)
-+                #    self.add_value_to_setting_if_missing(config, other_ld_flags_key, xcode15_compatibility_flags)
-+                #else
-+                #    self.remove_value_from_setting_if_present(config, other_ld_flags_key, xcode15_compatibility_flags)
-+                #end
-             end
-             project.save()
+diff --git a/node_modules/react-native/scripts/cocoapods/helpers.rb b/node_modules/react-native/scripts/cocoapods/helpers.rb
+index 6d2a58d..13bbd27 100644
+--- a/node_modules/react-native/scripts/cocoapods/helpers.rb
++++ b/node_modules/react-native/scripts/cocoapods/helpers.rb
+@@ -38,7 +38,7 @@ end
+ module Helpers
+     class Constants
+         def self.min_ios_version_supported
+-            return '12.4'
++            return '13.0'
          end
+     end
+ end
 diff --git a/node_modules/react-native/sdks/hermes/hermes-engine.podspec b/node_modules/react-native/sdks/hermes/hermes-engine.podspec
 new file mode 100644
 index 0000000..87d0710
