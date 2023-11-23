@@ -19,7 +19,7 @@ import { getItemJson, migrateItemJson, setItemJson } from '~/framework/util/stor
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
 
-const getAsyncStorageKey = (userId: string) => `${moduleConfig.name}.notifFilterSettings.${userId}`;
+const getStorageKey = (userId: string) => `${moduleConfig.name}.notifFilterSettings.${userId}`;
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -33,16 +33,16 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     }
     state = moduleConfig.getState(getState());
 
-    // 2 - Load notif settings from Async Storage
-    const asyncStorageKey = getAsyncStorageKey(userId);
-    let settings: INotifFilterSettings | undefined = await getItemJson(asyncStorageKey);
+    // 2 - Load notif settings from MMKV
+    const storageKey = getStorageKey(userId);
+    let settings: INotifFilterSettings | undefined = await getItemJson(storageKey);
 
     // 2 bis - No existing data ? Maybe we have old data to migrate
     if (!settings) {
-      settings = await migrateItemJson(`timelinev2.notifFilterSettings`, asyncStorageKey);
+      settings = await migrateItemJson(`timelinev2.notifFilterSettings`);
     }
     if (!settings) {
-      settings = await migrateItemJson(`timelinev2.notifFilterSettings.${userId}`, asyncStorageKey);
+      settings = await migrateItemJson(`timelinev2.notifFilterSettings.${userId}`);
     }
 
     // 3 - merge with defaults
@@ -53,7 +53,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     settings = { ...defaults, ...settings };
 
     // 4 - Save loaded notif settings for persistency
-    await setItemJson(asyncStorageKey, settings);
+    await setItemJson(storageKey, settings);
     dispatch(notifFilterSettingsActions.receipt(settings));
   } catch (e) {
     // ToDo: Error handling
@@ -66,9 +66,9 @@ export const setFiltersAction =
     try {
       const session = assertSession();
       const userId = session.user.id;
-      const asyncStorageKey = getAsyncStorageKey(userId);
+      const storageKey = getStorageKey(userId);
       dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
-      await setItemJson(asyncStorageKey, selectedFilters);
+      await setItemJson(storageKey, selectedFilters);
       dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
     } catch {
       // ToDo: Error handling

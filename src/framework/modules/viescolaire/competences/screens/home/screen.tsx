@@ -73,9 +73,6 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       getItemJson<boolean>(STORAGE_KEY).then(value => {
         if (value) setAverageColorsShown(true);
       });
-      if (term !== 'default') {
-        await props.tryFetchAverages(structureId, childId, term);
-      }
       await props.tryFetchSubjects(structureId);
       let childClasses = classes?.[0];
       if (userType === UserType.Relative) {
@@ -133,11 +130,13 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   React.useEffect(() => {
     if (loadingState === AsyncPagedLoadingState.DONE) init();
+    setTerm('default');
+    setSubject('default');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.childId]);
 
   React.useEffect(() => {
-    if (term !== 'default' && subject === 'default') refresh();
+    if (term !== 'default' && subject === 'default' && loadingState === AsyncPagedLoadingState.DONE) refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [term, subject]);
 

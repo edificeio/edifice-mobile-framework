@@ -31,6 +31,9 @@ const styles = StyleSheet.create({
 });
 
 export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) =>
+  /*(
+  <HeaderTitle testID={testID}>{title ?? ''}</HeaderTitle>
+);*/
   !isEmpty(title) && Platform.OS === 'android'
     ? () => (
         <BodyBoldText
@@ -74,7 +77,15 @@ export const navBarOptions: (props: {
         if (isModalModeOnThisRoute(route.name)) {
           return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" testID={backButtonTestID} />;
         } else {
-          return <HeaderBackButton {...props} onPress={navigation.goBack} style={styles.backbutton} testID={backButtonTestID} />;
+          return (
+            <HeaderBackButton
+              {...props}
+              labelVisible={false}
+              style={styles.backbutton}
+              testID={backButtonTestID}
+              onPress={navigation.goBack}
+            />
+          );
         }
       } else return null;
     },

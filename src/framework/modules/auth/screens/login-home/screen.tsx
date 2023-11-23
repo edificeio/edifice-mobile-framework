@@ -1,7 +1,6 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { InteractionManager, ScrollView, View } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -18,7 +17,7 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import { AuthErrorCode } from '~/framework/modules/auth/model';
+import { AuthErrorCode, getAuthErrorCode } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -162,18 +161,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-        <BodyText style={styles.userTextError}>
-          {I18n.get('auth-error-' + error!.replaceAll('_', ''), {
-            version: DeviceInfo.getVersion(),
-            errorcode: error,
-            currentplatform: platform.url,
-            defaultValue: I18n.get('auth-error-other', {
-              version: DeviceInfo.getVersion(),
-              errorcode: error,
-              currentplatform: platform.url,
-            }),
-          })}
-        </BodyText>
+        <BodyText style={styles.userTextError}>{getAuthErrorCode(error, platform)}</BodyText>
       </View>
     );
   }, [error, platform]);

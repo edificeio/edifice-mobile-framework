@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   subjectAndContentContainer: { flex: 1 },
   subjectContentAndAttachmentIndicatorContainer: { flex: 1, flexDirection: 'row' },
   swipeableListContentContainerStyle: { flexGrow: 1 },
-  swipeableListStyle: { marginTop: 45 },
+  swipeableListStyle: { marginTop: 45, zIndex: 0 },
 });
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
@@ -512,7 +512,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               this.toggleRead(item.unread, item.id);
                               row[item.key]?.closeRow();
                             },
-                            backgroundColor: theme.palette.status.info.regular,
+                            backgroundColor: theme.palette.secondary.regular,
                             actionText: I18n.get(`conversation-maillist-mark${item.unread ? 'read' : 'unread'}`),
                             actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                           },

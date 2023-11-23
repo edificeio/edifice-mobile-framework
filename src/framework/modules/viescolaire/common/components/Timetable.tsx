@@ -1,18 +1,18 @@
 import moment, { Moment } from 'moment';
 import React from 'react';
-import { ColorValue, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
-import { PanGestureHandler, ScrollView, State } from 'react-native-gesture-handler';
+import { StyleSheet, View, ViewStyle } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 import theme from '~/app/theme';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 import { SmallText } from '~/framework/components/text';
 import { ISlot } from '~/framework/modules/viescolaire/edt/model';
 
-const DEFAULT_SLOT_COUNT = 10;
-const LINE_HEIGHT = 32;
-const SLOT_HEIGHT = 70;
-const TIME_COLUMN_WIDTH = 56;
-const COURSE_WIDTH = UI_SIZES.screen.width - TIME_COLUMN_WIDTH - UI_SIZES.spacing.minor;
+export const DEFAULT_SLOT_COUNT = 10;
+export const LINE_HEIGHT = 32;
+export const SLOT_HEIGHT = 70;
+export const TIME_COLUMN_WIDTH = 56;
+export const COURSE_WIDTH = UI_SIZES.screen.width - TIME_COLUMN_WIDTH - UI_SIZES.spacing.minor;
 
 const styles = StyleSheet.create({
   courseContainer: {
@@ -35,60 +35,39 @@ const styles = StyleSheet.create({
   timeSlotText: {
     width: TIME_COLUMN_WIDTH,
     textAlign: 'center',
-  },
-  weekdayContainer: {
-    alignItems: 'center',
-    paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing.tiny,
-    borderRadius: 10,
-  },
-  weekdayListContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: UI_SIZES.spacing.small,
+    color: theme.palette.grey.graphite,
   },
 });
 
-const minutes = (m: Moment): number => {
+export const minutes = (m: Moment): number => {
   return m.minutes() + m.hours() * 60;
 };
 
-type ITimetableCourse = {
+export type ITimetableCourse = {
   endDate: Moment;
   startDate: Moment;
 } & any;
 
 interface ITimetableProps {
   courses: ITimetableCourse[];
-  mainColor: string;
   slots: ISlot[];
-  startDate: Moment;
   displaySunday?: boolean;
-  initialSelectedDate?: Moment;
+  date?: Moment;
   renderCourse: (course: ITimetableCourse) => React.JSX.Element;
   renderCourseHalf: (course: ITimetableCourse) => React.JSX.Element;
   renderHeader?: (day: Moment) => React.JSX.Element;
 }
 
 interface ITimetableState {
-  selectedDate: Moment;
   slots: ISlot[];
-  weekdays: Moment[];
 }
 
-interface ITimeSlotLineProps {
+export interface ITimeSlotLineProps {
   style: ViewStyle;
   text: string;
 }
 
-interface IWeekdayButtonProps {
-  color: ColorValue;
-  date: Moment;
-  isSelected: boolean;
-  onPress: () => void;
-}
-
-const TimeSlotLine = (props: ITimeSlotLineProps) => {
+export const TimeSlotLine = (props: ITimeSlotLineProps) => {
   return (
     <View style={[styles.timeSlotLineContainer, props.style]}>
       <SmallText style={styles.timeSlotText}>{props.text}</SmallText>
@@ -97,40 +76,13 @@ const TimeSlotLine = (props: ITimeSlotLineProps) => {
   );
 };
 
-const WeekdayButton = (props: IWeekdayButtonProps) => {
-  const { date, isSelected } = props;
-  return (
-    <TouchableOpacity onPress={props.onPress} style={[styles.weekdayContainer, isSelected && { backgroundColor: props.color }]}>
-      <SmallText style={{ color: isSelected ? theme.ui.text.inverse : theme.ui.text.light }}>
-        {date.format('ddd').charAt(0).toUpperCase()}
-      </SmallText>
-      <SmallText style={isSelected && { color: theme.ui.text.inverse }}>{date.format('DD')}</SmallText>
-    </TouchableOpacity>
-  );
-};
-
 export default class Timetable extends React.PureComponent<ITimetableProps, ITimetableState> {
   constructor(props) {
     super(props);
-    const { displaySunday, initialSelectedDate, slots, startDate } = this.props;
+    const { slots } = this.props;
     this.state = {
-      selectedDate: initialSelectedDate ?? this.props.startDate.clone(),
       slots: slots.length ? slots : this.getDefaultSlots(),
-      weekdays: this.getWeekdays(startDate, displaySunday),
     };
-  }
-
-  componentDidUpdate(prevProps) {
-    const { startDate, displaySunday, initialSelectedDate } = this.props;
-
-    /* on week change */
-    if (!prevProps.startDate.isSame(startDate, 'd')) {
-      const newSelected = initialSelectedDate ? initialSelectedDate.clone() : startDate.clone();
-      this.setState({
-        selectedDate: newSelected,
-        weekdays: this.getWeekdays(startDate, displaySunday),
-      });
-    }
   }
 
   organizeColumns = (courses: ITimetableCourse[]): [ITimetableCourse[], ITimetableCourse[], ITimetableCourse[]] => {
@@ -177,16 +129,6 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
       }
     });
     return columns;
-  };
-
-  getWeekdays = (startDate: Moment, displaySunday?: boolean): Moment[] => {
-    const weekdays: Moment[] = [];
-    const numberOfDays = displaySunday ? 7 : 6;
-
-    for (let index = 0; index < numberOfDays; index += 1) {
-      weekdays.push(startDate.clone().add(index, 'day'));
-    }
-    return weekdays;
   };
 
   getDefaultSlots = (): ISlot[] => {
@@ -271,16 +213,17 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
     return <View style={[styles.courseContainer, positionStyle]}>{renderCourse(course)}</View>;
   };
 
-  renderScrollView = () => {
+  public render() {
     const { courses, renderCourse, renderCourseHalf } = this.props;
-    const { selectedDate, slots } = this.state;
+    const { slots } = this.state;
+    const { date } = this.props;
     const latestSlot = slots.reduce((latest, slot) => (slot.endHour > latest.endHour ? slot : latest));
-    const organizedCourses = this.organizeColumns(courses.filter(d => d.startDate.isSame(selectedDate, 'day')));
+    const organizedCourses = this.organizeColumns(courses.filter(d => d.startDate.isSame(date, 'day')));
 
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ height: SLOT_HEIGHT * slots.length + SLOT_HEIGHT / 2 }}>
+        contentContainerStyle={{ height: SLOT_HEIGHT * slots.length + SLOT_HEIGHT / 2, backgroundColor: theme.palette.grey.fog }}>
         {slots.map((slot, index) => (
           <TimeSlotLine key={index} text={slot.startHour.format('HH:mm')} style={{ top: SLOT_HEIGHT * index }} />
         ))}
@@ -289,42 +232,6 @@ export default class Timetable extends React.PureComponent<ITimetableProps, ITim
         {organizedCourses[1].map(d => this.renderElement(d, renderCourseHalf, 'l'))}
         {organizedCourses[2].map(d => this.renderElement(d, renderCourseHalf, 'r'))}
       </ScrollView>
-    );
-  };
-
-  public handleStateChange = ({ nativeEvent }) => {
-    if (nativeEvent.state === State.END && nativeEvent.oldState === State.ACTIVE) {
-      const { selectedDate, weekdays } = this.state;
-      const index = weekdays.findIndex(weekDay => weekDay.isSame(selectedDate, 'd'));
-
-      if (nativeEvent.translationX < 0 && index < weekdays.length - 1) {
-        this.setState({ selectedDate: weekdays[index + 1] });
-      } else if (nativeEvent.translationX > 0 && index > 0) {
-        this.setState({ selectedDate: weekdays[index - 1] });
-      }
-    }
-  };
-
-  public render() {
-    const { mainColor, renderHeader } = this.props;
-    const { selectedDate, weekdays } = this.state;
-
-    return (
-      <View style={UI_STYLES.flex1}>
-        <View style={styles.weekdayListContainer}>
-          {weekdays.map((weekday, index) => (
-            <WeekdayButton
-              key={index}
-              date={weekday}
-              color={mainColor}
-              isSelected={weekday.isSame(selectedDate, 'd')}
-              onPress={() => this.setState({ selectedDate: weekday })}
-            />
-          ))}
-        </View>
-        {renderHeader ? renderHeader(selectedDate) : null}
-        <PanGestureHandler onHandlerStateChange={this.handleStateChange}>{this.renderScrollView()}</PanGestureHandler>
-      </View>
     );
   }
 }

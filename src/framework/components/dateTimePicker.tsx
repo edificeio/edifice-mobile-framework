@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
   buttonText: {
     marginLeft: UI_SIZES.spacing.tiny,
   },
+  dateTimePickerIos: {
+    // fix space in IOS
+    marginLeft: -10,
+  },
 });
 
 const DateTimePickerIOS = (props: DateTimePickerProps) => {
@@ -49,7 +53,7 @@ const DateTimePickerIOS = (props: DateTimePickerProps) => {
       maximumDate={props.maximumDate?.toDate()}
       minimumDate={props.minimumDate?.toDate()}
       locale="fr-FR"
-      style={props.style}
+      style={[styles.dateTimePickerIos, props.style]}
     />
   );
 };

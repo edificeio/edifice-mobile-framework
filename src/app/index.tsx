@@ -16,16 +16,23 @@ import AppModules from '~/app/modules';
 import { UI_STYLES } from '~/framework/components/constants';
 import Navigation from '~/framework/navigation/RootNavigator';
 import { useNavigationDevPlugins } from '~/framework/navigation/helper';
+import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
 import { isEmpty } from '~/framework/util/object';
+import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { AllModulesBackup } from '~/infra/oauth';
+import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
 import { I18n } from './i18n';
-import { IStoreProp, connectWithStore } from './store';
+import { IStoreProp, Reducers, connectWithStore } from './store';
 
 const FlipperAsyncStorage = __DEV__ ? require('rn-flipper-async-storage-advanced').default : undefined;
 const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage /> : null;
+const FlipperMMKV = __DEV__
+  ? require('react-native-mmkv-flipper-plugin').initializeMMKVFlipper({ default: Storage.storage })
+  : undefined;
+const FlipperMMKVElement = FlipperMMKV ? <FlipperMMKV /> : null;
 
 /**
  * Code that listens to App State changes
@@ -42,7 +49,9 @@ function useAppState() {
         // Change locale if needed
         const locales = RNLocalize.getLocales();
         const newLocale = isEmpty(locales) ? null : locales[0].languageCode;
-        if (newLocale !== currentLocale) setCurrentLocale(I18n.setLanguage());
+        I18n.setLanguage().then(lng => {
+          if (newLocale !== currentLocale) setCurrentLocale(lng);
+        });
         // Reset badge value
         setCurrentBadgeValue(0);
       } else if (nextAppState === 'background') {
@@ -113,11 +122,16 @@ function App(props: AppProps) {
         </Provider>
       </SafeAreaProvider>
       {FlipperAsyncStorageElement}
+      {FlipperMMKVElement}
     </GestureHandlerRootView>
   );
 }
 
 // Hack to generate scopes without circular deps. ToDo: fix it !
 AllModulesBackup.value = AppModules();
+
+// Hack : Flatten reducers to prevent misordring of module execution
+Reducers.register('startup', navigationReducer);
+Reducers.register('connectionTracker', connectionTrackerReducer);
 
 export default connectWithStore(App);

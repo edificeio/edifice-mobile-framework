@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen, EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
@@ -223,7 +223,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         refreshControl={
           <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={() => reload(selectedBlogId)} />
         }>
-        <EmptyContentScreen />
+        <EmptyConnectionScreen />
       </ScrollView>
     );
   };
@@ -270,7 +270,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
 
   const renderPage = () => {
     if (!selectedBlog) {
-      return renderError();
+      return <EmptyContentScreen />;
     }
     switch (loadingState) {
       case AsyncPagedLoadingState.DONE:

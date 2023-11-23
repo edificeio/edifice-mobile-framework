@@ -1,6 +1,6 @@
 {
-  "last": "2023-10-27 08:35:51",
-  "notes": "debug(wayf): Detailed log addition\nrelease: 1.11.1-rc.5(1110105)\nrelease: 1.11.1-rc.5(1110105)",
-  "version": "1.11.1-rc.6(1110106)",
-  "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!"
+  "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
+  "last": "2023-11-21 16:09:18",
+  "notes": "fix(crash): MB-2207, Review podfile for archive builds.\nfix(ui): MB-2247, Review modal elements styles.\nMerge pull request #105 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nfix(crash): MB-2207, Xcode15 pod patch removal (Will downgrade to Xcode 14.3.1).\nfix(conversation): MB-2280 wrong borderRadius for user dots (add overflow)\nchore(i18n): Not working github action removal.\nrelease: 1.11.2-rc.7(1110212)",
+  "version": "1.11.2-rc.8(1110213)"
 }

@@ -9,7 +9,7 @@ import CheckboxButton from '~/framework/components/buttons/checkbox';
 import FlatList from '~/framework/components/list/flat-list';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { setFiltersAction } from '~/framework/modules/timeline/actions/notif-settings';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';

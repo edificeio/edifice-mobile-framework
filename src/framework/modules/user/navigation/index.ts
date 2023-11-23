@@ -4,13 +4,14 @@ import moduleConfig from '~/framework/modules/user/module-config';
 import { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
 import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
+import { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
 import type { UserLegalNoticeScreenNavParams } from '~/framework/modules/user/screens/legal-notice';
 import type { ProfileScreenNavigationParams } from '~/framework/modules/user/screens/profile';
+import { UserEditDescriptionScreenNavParams } from '~/framework/modules/user/screens/profile/edit-description';
+import { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
+import { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
-import { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
-import { UserEditDescriptionScreenNavParams } from '~/framework/modules/user/screens/profile/edit-description';
-import { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 
 export const userRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',
@@ -23,6 +24,7 @@ export const userRouteNames = {
   editMoodMotto: `${moduleConfig.routeName}/profile/editMoodMotto` as 'editMoodMotto',
   whoAreWe: `${moduleConfig.routeName}/who-are-we` as 'whoAreWe',
   legalNotice: `${moduleConfig.routeName}/legal-notice` as 'legalNotice',
+  lang: `${moduleConfig.routeName}/lang` as 'lang',
 };
 export interface UserNavigationParams extends ParamListBase {
   home: UserHomeScreenNavParams;
@@ -35,4 +37,5 @@ export interface UserNavigationParams extends ParamListBase {
   editMoodMotto: UserEditMoodMottoScreenNavParams;
   whoAreWe: UserWhoAreWeScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
+  lang: UserLangScreenNavParams;
 }

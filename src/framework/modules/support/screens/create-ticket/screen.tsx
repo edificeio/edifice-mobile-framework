@@ -18,7 +18,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Picture } from '~/framework/components/picture';
 import { BodyBoldText, NestedBoldText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { postSupportTicketAction, uploadSupportTicketAttachmentsAction } from '~/framework/modules/support/actions';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';

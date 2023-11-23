@@ -10,7 +10,7 @@ import Matomo from 'react-native-matomo';
 import { getSession } from '~/framework/modules/auth/reducer';
 import appConf from '~/framework/util/appConf';
 import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/moduleTool';
-import { uniqueId, urlSigner } from '~/infra/oauth';
+import { urlSigner } from '~/infra/oauth';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
@@ -215,11 +215,7 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
     while (this.sending && this.reportQueue.length) {
       try {
         const req = this.reportQueue[0].clone();
-        const res = await fetch(urlSigner.signRequest(this.reportQueue[0]), {
-          headers: {
-            'X-Device-Id': uniqueId(),
-          },
-        });
+        const res = await fetch(urlSigner.signRequest(this.reportQueue[0]));
         if (res.ok) {
           this.reportQueue.shift();
           this.errorCount = 0;
@@ -262,21 +258,23 @@ export class ConcreteEntcoreTracker extends AbstractTracker<undefined> {
       conversation: 'Conversation',
       diary: 'Diary',
       edt: 'Edt',
+      form: 'Formulaire',
       homework: 'Homeworks',
       homeworkAssistance: 'HomeworkAssistance',
       mediacentre: 'Mediacentre',
+      messagerie: 'Conversation', // duplicates conversation because of a tracking keyword issue
       news: 'Actualites',
       presences: 'Presences',
       schoolbook: 'SchoolBook',
+      scrapbook: 'Scrapbook',
       support: 'Support',
       user: 'MyAccount',
-      viesco: 'Presences',
+      // viesco: 'Presences', // not used anymore
       workspace: 'Workspace',
       zimbra: 'Zimbra',
     };
     let willLog = false;
     if (platform && this.lastModulename !== moduleName && Object.prototype.hasOwnProperty.call(moduleAccessMap, moduleName)) {
-      // console.debug('Track entcore', moduleAccessMap[moduleName]);
       this.reportQueue.push(
         new Request(`${platform!.url}/infra/event/mobile/store`, {
           method: 'POST',

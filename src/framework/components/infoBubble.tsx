@@ -133,9 +133,9 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
 
   async doVerifyIfAcknowledged() {
     const { infoBubbleId } = this.props;
-    const asyncStorageKey = computeStorageId(infoBubbleId);
+    const storageKey = computeStorageId(infoBubbleId);
     try {
-      const res = await getItemJson(asyncStorageKey);
+      const res = await getItemJson(storageKey);
       const isAcknowledged = !!res;
       this.setState({ isAcknowledged });
     } catch (e) {
@@ -145,11 +145,11 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
 
   async doAcknowledge(acknowledge: boolean) {
     const { infoBubbleId, infoBubbleType } = this.props;
-    const asyncStorageKey = computeStorageId(infoBubbleId);
+    const storageKey = computeStorageId(infoBubbleId);
     const isRegular = infoBubbleType === 'regular';
     const isFloating = infoBubbleType === 'floating';
     try {
-      acknowledge ? await setItemJson(asyncStorageKey, true) : await removeItem(asyncStorageKey);
+      acknowledge ? await setItemJson(storageKey, true) : await removeItem(storageKey);
       isFloating ? this.setState({ isAcknowledged: true }) : isRegular ? this.setState({ acknowledgeToggle: acknowledge }) : null;
     } catch (e) {
       // ToDo: Error handling

@@ -62,7 +62,7 @@ static NSString* RECEIVED_PUSHES_KEY = @"RECEIVED_PUSHES";
   //
   // Show SplashScreen
   //
-  [RNSplashScreen show];
+  [RNSplashScreen showSplash:@"SplashScreen" inRootView:[[[self window] rootViewController] view]];
   
   return YES;
   
@@ -82,10 +82,6 @@ static NSString* RECEIVED_PUSHES_KEY = @"RECEIVED_PUSHES";
 
 -(BOOL)application:(UIApplication *)application openURL:(NSURL *)url  options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
   return [RCTLinkingManager application:application openURL:url options:options];
-}
-
--(BOOL)concurrentRootEnabled {
-  return true; // Switch this bool to turn on and off the concurrent root
 }
 
 -(NSURL *)sourceURLForBridge:(RCTBridge *)bridge {

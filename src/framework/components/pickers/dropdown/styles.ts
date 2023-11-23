@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     color: theme.palette.grey.stone,
   },
   dropdownContainer: {
-    maxHeight: 224,
+    maxHeight: 300,
     backgroundColor: theme.palette.grey.white,
     borderWidth: 0,
     borderRadius: UI_SIZES.radius.mediumPlus,

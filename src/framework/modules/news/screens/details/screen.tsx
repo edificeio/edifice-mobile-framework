@@ -378,7 +378,8 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
         // eslint-disable-next-line react/no-unstable-nested-components
         headerLeft: () => (
           <HeaderBackButton
-            tintColor={theme.palette.grey.white}
+            labelVisible={false}
+            tintColor={theme.palette.grey.white as string}
             onPress={() => navigation.navigate(newsRouteNames.home, { page: route.params.page })}
           />
         ),

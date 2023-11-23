@@ -1,3 +1,6 @@
+import DeviceInfo from 'react-native-device-info';
+
+import { I18n } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
@@ -121,9 +124,12 @@ export interface ISession {
 /** Error codes as an enum, values can be string that backend returns */
 export enum RuntimeAuthErrorCode {
   ACTIVATION_ERROR = 'activation_error',
+  EMAILVALIDATIONINFOS_FAIL = 'emailvalidationinfos_fail',
   FIREBASE_ERROR = 'firebase_error',
   LOAD_I18N_ERROR = 'loadi18nerror',
+  MOBILEVALIDATIONINFOS_FAIL = 'mobilevalidationinfos_fail',
   NETWORK_ERROR = 'network_error',
+  NO_TOKEN = 'no_token',
   NOT_PREMIUM = 'not_premium',
   PLATFORM_NOT_EXISTS = 'platform_not_exists',
   PRE_DELETED = 'pre_deleted',
@@ -156,6 +162,19 @@ export function createAuthError<T extends object>(
   err.error = error;
   err.description = description;
   return { ...err, ...additionalData } as AuthError & T;
+}
+
+export function getAuthErrorCode(error: AuthErrorCode, platform: Platform) {
+  return I18n.get('auth-error-' + error.replaceAll('_', ''), {
+    version: DeviceInfo.getVersion(),
+    errorcode: error,
+    currentplatform: platform.url,
+    defaultValue: I18n.get('auth-error-other', {
+      version: DeviceInfo.getVersion(),
+      errorcode: error,
+      currentplatform: platform.url,
+    }),
+  });
 }
 
 export enum PartialSessionScenario {

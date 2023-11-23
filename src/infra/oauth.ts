@@ -1,7 +1,6 @@
 /**
  * OAuth2 client for Ressource Owner Password Grant type flow.
  */
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 import { encode as btoa } from 'base-64';
 import querystring from 'querystring';
@@ -235,6 +234,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers: {
           ...init?.headers,
           Authorization: 'Bearer ' + this.token!.access_token,
+          'X-Device-Id': uniqueId(),
         },
       });
       return req;
@@ -319,7 +319,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         method: 'POST',
       });
       // 3: Build token from data
-      if (!data.hasOwnProperty('access_token')) {
+      if (!Object.hasOwn(data, 'access_token')) {
         throw this.createAuthError(OAuth2ErrorCode.BAD_RESPONSE, 'no access_token returned', '', { data });
       }
       this.token = {
@@ -327,7 +327,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
       // 4: Save token if asked
-      saveToken && (await this.saveToken());
+      if (saveToken) await this.saveToken();
       await this.deleteQueryParamToken(); // Delete current queryParamToken here to ensure we'll not have previous one form another accounts.
       this.generateUniqueSesionIdentifier();
       return this.token!;
@@ -359,51 +359,42 @@ export class OAuth2RessourceOwnerPasswordClient {
     return this.getNewToken('password', { username, password }, saveToken);
   }
 
-  public static async getStoredTokenStr(): Promise<string | undefined> {
-    const rawStoredToken = await AsyncStorage.getItem('token');
+  public static async getStoredTokenStr(): Promise<IOAuthToken | undefined> {
+    const rawStoredToken = await getItemJson('token');
     if (!rawStoredToken) {
       return undefined;
     }
-    return rawStoredToken;
+    return rawStoredToken as IOAuthToken;
   }
 
   /**
    * Read stored token in local storage. No-op if no token is stored, return undefined.
    */
-  public async loadToken(fromData?: string): Promise<IOAuthToken | undefined> {
-    try {
-      const rawStoredToken = fromData ?? (await OAuth2RessourceOwnerPasswordClient.getStoredTokenStr());
-      if (!rawStoredToken) {
-        return undefined;
-      }
-      const storedToken = JSON.parse(rawStoredToken);
-      if (!storedToken) {
-        const err = new Error('[oAuth] loadToken: Unable to parse stored token');
-        throw err;
-      }
-      this.token = {
-        ...storedToken,
-        expires_at: new Date(storedToken.expires_at),
-      };
-      this.generateUniqueSesionIdentifier();
-      return this.token!;
-    } catch (err) {
-      throw err;
+  public async loadToken(): Promise<IOAuthToken | undefined> {
+    const storedToken = await OAuth2RessourceOwnerPasswordClient.getStoredTokenStr();
+    if (!storedToken) {
+      return undefined;
     }
+    this.token = {
+      ...storedToken,
+      expires_at: new Date(storedToken.expires_at),
+    };
+    this.generateUniqueSesionIdentifier();
+    return this.token!;
   }
 
   /**
    * Saves given token information in local storage.
    */
   public async saveToken() {
-    await AsyncStorage.setItem('token', JSON.stringify(this.token));
+    await setItemJson('token', this.token);
   }
 
   /**
    * Remove given token information in local storage.
    */
   public async forgetToken() {
-    await AsyncStorage.removeItem('token');
+    await removeItem('token');
   }
 
   /**
@@ -491,13 +482,9 @@ export class OAuth2RessourceOwnerPasswordClient {
    * It will be also removed from local storage.
    */
   public async eraseToken() {
-    try {
-      await AsyncStorage.removeItem('token');
-      await this.deleteQueryParamToken();
-      this.token = null;
-    } catch (err) {
-      throw err;
-    }
+    await removeItem('token');
+    await this.deleteQueryParamToken();
+    this.token = null;
   }
 
   /**
@@ -506,6 +493,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   public getUniqueSessionIdentifier() {
     return this.uniqueSessionIdentifier || this.generateUniqueSesionIdentifier();
   }
+
   public generateUniqueSesionIdentifier() {
     this.uniqueSessionIdentifier = Math.random().toString(36).substring(7);
     return this.uniqueSessionIdentifier;
@@ -516,8 +504,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static QUERY_PARAM_TOKEN_EXPIRATION_DELTA = 60;
 
-  private static QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY = 'auth.queryParamToken';
-  // CAUTION : storage in AsyncStorage is not encrypted.
+  private static QUERY_PARAM_TOKEN_STORAGE_KEY = 'auth.queryParamToken';
 
   public async getQueryParamToken() {
     try {
@@ -525,7 +512,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       // We apply a 60secs margin to the duration of the token to ensure validitiy will not be expired during the process.
       nowDate.setSeconds(nowDate.getSeconds() + OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_EXPIRATION_DELTA);
       let currentQueryParamToken = await getItemJson<IOAuthQueryParamToken>(
-        OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY,
+        OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY,
       );
       if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
         const session = assertSession();
@@ -537,7 +524,7 @@ export class OAuth2RessourceOwnerPasswordClient {
           ...data,
           expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
         };
-        await setItemJson(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY, currentQueryParamToken);
+        await setItemJson(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY, currentQueryParamToken);
       }
       return currentQueryParamToken?.access_token;
     } catch (e) {
@@ -546,7 +533,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   public async deleteQueryParamToken() {
-    await removeItem(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_ASYNC_STORAGE_KEY);
+    await removeItem(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY);
   }
 }
 

@@ -35,8 +35,9 @@ const styles = StyleSheet.create({
   dotReceiverColor: {
     width: 8,
     height: 8,
-    borderRadius: 15,
+    borderRadius: 4,
     marginRight: UI_SIZES.spacing.tiny,
+    overflow: 'hidden',
   },
   fileIcon: { flex: 0 },
   footerButtonContainer: {
@@ -99,7 +100,7 @@ const User = ({ userId, userName }) => {
 const SendersDetails = ({ mailInfos, inInbox }) => {
   const contacts = getMailPeople(mailInfos);
   return (
-    <View style={{ marginTop: UI_SIZES.spacing.tiny }}>
+    <View style={{ marginTop: UI_SIZES.spacing.tiny }} testID="message-read-to">
       {inInbox || (
         <View style={styles.usersContainer}>
           <CaptionText style={styles.greyColor}>{I18n.get('conversation-mailcontentitems-fromprefix')}</CaptionText>
@@ -165,13 +166,13 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
         rightElement={
           <View style={styles.mailInfos}>
             {/* Date */}
-            <SmallText style={styles.mailDate} numberOfLines={1}>
+            <SmallText style={styles.mailDate} numberOfLines={1} testID="message-read-date">
               {displayPastDate(moment(mailInfos.date), true)}
             </SmallText>
             <View style={styles.contactNameContainer}>
               {/* Contact name */}
               <View style={styles.contactNameSubContainer}>
-                <SmallBoldText numberOfLines={1} style={styles.contactName}>
+                <SmallBoldText numberOfLines={1} style={styles.contactName} testID="message-read-from">
                   {mailContacts.from ? mailContacts.from[1] : I18n.get('conversation-maillist-nosender')}
                 </SmallBoldText>
               </View>
@@ -206,9 +207,9 @@ export const HeaderMail = ({ mailInfos, currentFolder }) => {
   );
 };
 
-export const FooterButton = ({ icon, text, onPress }) => {
+export const FooterButton = ({ icon, text, onPress, testID }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.footerButtonContainer}>
+    <TouchableOpacity onPress={onPress} style={styles.footerButtonContainer} testID={testID}>
       <Icon name={icon} size={24} style={{ color: theme.ui.text.light }} />
       <CaptionText style={{ color: theme.ui.text.light }}>{text}</CaptionText>
     </TouchableOpacity>

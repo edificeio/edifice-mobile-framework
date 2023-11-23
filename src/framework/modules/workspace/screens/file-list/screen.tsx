@@ -330,9 +330,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
       headerLeft: ({ tintColor }) => (
         <>
           <HeaderBackButton
+            labelVisible={false}
+            style={{ marginLeft: -UI_SIZES.spacing.minor }}
             tintColor={tintColor}
             onPress={() => props.navigation.dispatch(CommonActions.goBack())}
-            style={{ marginLeft: -UI_SIZES.spacing.minor }}
           />
           {isSelectionActive ? <BodyBoldText style={styles.navBarCountText}>{selectedFiles.length}</BodyBoldText> : null}
         </>

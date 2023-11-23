@@ -1,22 +1,52 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
+import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 
+const WIDTH_TEXT_TAB = getScaleWidth(20);
+
 export default StyleSheet.create({
+  header: {
+    backgroundColor: theme.palette.grey.white,
+    zIndex: 1000,
+  },
+  childPicker: {
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.grey,
+  },
   childPickerContentContainer: {
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.medium,
   },
   weekPickerView: {
+    backgroundColor: theme.palette.grey.white,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.medium,
+    paddingBottom: 0,
+    zIndex: -1,
   },
   weekText: {
+    marginLeft: UI_SIZES.spacing.tiny,
     marginRight: UI_SIZES.spacing.minor,
+  },
+  tabBar: {
+    backgroundColor: theme.palette.grey.white,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.palette.grey.grey,
+  },
+  tabBarIndicator: {
+    backgroundColor: theme.palette.grey.white,
+  },
+  tabBarItem: {
+    paddingVertical: UI_SIZES.spacing.minor,
+    paddingHorizontal: UI_SIZES.spacing.small,
+    borderRadius: UI_SIZES.radius.medium,
+    borderWidth: 2,
+  },
+  tabBarItemText: {
+    textAlign: 'center',
+    width: WIDTH_TEXT_TAB,
   },
   courseView: {
     flexDirection: 'row',

@@ -319,7 +319,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       return {
         headerLeft: ({ tintColor }) => (
           <View style={styles.navBarLeftContainer}>
-            <HeaderBackButton tintColor={tintColor} onPress={() => setSelectedMails([])} />
+            <HeaderBackButton labelVisible={false} tintColor={tintColor} onPress={() => setSelectedMails([])} />
             <BodyBoldText style={styles.navBarCountText}>{selectedMails.length}</BodyBoldText>
           </View>
         ),

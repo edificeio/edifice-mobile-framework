@@ -7,6 +7,7 @@ import { actions } from '~/framework/modules/auth/reducer';
 import { loadCurrentPlatform } from '~/framework/modules/auth/service';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { Platform } from '~/framework/util/appConf';
+import { Storage } from '~/framework/util/storage';
 
 import { I18n } from './i18n';
 
@@ -16,38 +17,42 @@ import { I18n } from './i18n';
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatform?: Platform) {
   const [loadedPlatform, setLoadedPlatform] = React.useState<Platform | undefined>(undefined);
   React.useEffect(() => {
-    I18n.init()
+    Storage.init()
       .then(() =>
-        loadCurrentPlatform()
-          .then(platform => {
-            if (platform) {
-              let loginDone = false;
-              dispatch(loginAction(platform, undefined))
-                .then(redirect => {
-                  dispatch(actions.redirectAutoLogin(redirect));
-                })
-                .catch(() => {
-                  // Do nothing. Finally clause + default navigation state will handle the case.
-                })
-                .finally(() => {
-                  loginDone = true;
-                  setLoadedPlatform(platform);
-                  dispatch(appReadyAction());
-                });
-              setTimeout(() => {
-                if (!loginDone) {
-                  dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
-                  setLoadedPlatform(platform);
-                  dispatch(appReadyAction());
-                }
-              }, 15000);
-            } else dispatch(appReadyAction());
-          })
-          .catch(() => {
+        I18n.init()
+          .then(() =>
+            loadCurrentPlatform().then(platform => {
+              if (platform) {
+                let loginDone = false;
+                dispatch(loginAction(platform, undefined))
+                  .then(redirect => {
+                    dispatch(actions.redirectAutoLogin(redirect));
+                  })
+                  .catch(() => {
+                    // Do nothing. Finally clause + default navigation state will handle the case.
+                  })
+                  .finally(() => {
+                    loginDone = true;
+                    setLoadedPlatform(platform);
+                    dispatch(appReadyAction());
+                  });
+                setTimeout(() => {
+                  if (!loginDone) {
+                    dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
+                    setLoadedPlatform(platform);
+                    dispatch(appReadyAction());
+                  }
+                }, 15000);
+              } else dispatch(appReadyAction());
+            }),
+          )
+          .catch(e => {
+            console.warn(e);
             dispatch(appReadyAction());
           }),
       )
-      .catch(() => {
+      .catch(e => {
+        console.warn(e);
         dispatch(appReadyAction());
       });
     // We WANT TO call this only once

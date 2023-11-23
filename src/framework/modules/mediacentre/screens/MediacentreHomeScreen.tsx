@@ -288,7 +288,7 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
 
 const setFavorites = (resources: IResource[], favorites: string[]) => {
   for (const resource of resources) {
-    resource.favorite = favorites.includes(String(resource.id));
+    resource.favorite = favorites.includes(String(resource.uid));
   }
 };
 
@@ -300,7 +300,7 @@ const mapStateToProps = (gs: IGlobalState) => {
   const signets = state.signets;
   const textbooks = state.textbooks;
 
-  const favIds = favorites.data.map(favorite => String(favorite.id));
+  const favIds = favorites.data.map(favorite => String(favorite.uid));
   setFavorites(externals.data, favIds);
   setFavorites(search.data, favIds);
   setFavorites(signets.data.orientation, favIds);
