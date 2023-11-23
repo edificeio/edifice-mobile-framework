@@ -2,5 +2,5 @@
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
   "last": "2023-11-23 15:26:55",
   "notes": "Merge branch 'dev/1.11.3' into dev/1.12.0\nchore(i18n): Change auto import branch to dev/1.11.3 (Post MEP operation)\nMerge branch 'dev/1.11.3' into dev/1.12.0\nfeat(ios): MB-2306, Fix iOS Minimum Version to 13\nfeat(homework): MB-2308, wordings by override\nfeat(ios): MB-2306, Fix iOS Minimum Version to 13\nfeat(android): MB-2307, Fix Android Minimum Version to 6 (API 22)\nfix(conversation): MB-2278, green deletion confirmation toast\nupdate(stack): Update some packages.\nfeat(xmas): MB-2217, snowflakes\nupdate(stack): Update some packages.\nMerge branch 'dev/1.11.2' into dev/1.12.0\nrelease: 1.11.3(1110300)\nMerge branch 'dev/1.11.2' into dev/1.11.3\nchore(build): iOS Archive failed with Fastlane && Xcode 13.4.1.\nrelease: 1.11.2-rc.8(1110213)",
-  "version": "1.12.3-alpha.1(1120301)"
+  "version": "1.12.0-alpha.1(1120001)"
 }
