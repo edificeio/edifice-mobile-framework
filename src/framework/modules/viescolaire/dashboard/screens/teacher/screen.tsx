@@ -17,6 +17,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
+import { loadStoredStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import { ModuleButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import { diaryRouteNames } from '~/framework/modules/viescolaire/diary/navigation';
@@ -86,6 +87,11 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
     return unsubscribe;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.navigation]);
+
+  React.useEffect(() => {
+    props.tryLoadStoredStructure();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openCall = async (course: Course) => {
     try {
@@ -202,6 +208,7 @@ export default connect(
     bindActionCreators<DashboardTeacherScreenDispatchProps>(
       {
         tryFetchCourses: tryAction(fetchPresencesCoursesAction),
+        tryLoadStoredStructure: tryAction(loadStoredStructureAction),
       },
       dispatch,
     ),
