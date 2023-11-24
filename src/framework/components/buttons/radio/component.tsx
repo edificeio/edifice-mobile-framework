@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Pressable, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
 
 import styles from './styles';
@@ -28,8 +28,7 @@ export const RadioButton = ({ isChecked, isDisabled, label, size = 'default', st
         <LabelTextComponent style={[styles.labelText, isDisabled && styles.disabledLabelText]}>{label}</LabelTextComponent>
       ) : null}
       <View style={[styles.iconContainer, isPressed && styles.iconPressedContainer]}>
-        <Picture
-          type="NamedSvg"
+        <NamedSVG
           name={isChecked ? 'ui-radio-checked' : 'ui-radio-unchecked'}
           width={iconSize}
           height={iconSize}

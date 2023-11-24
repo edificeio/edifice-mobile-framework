@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
 import { CallEventType, CallState } from '~/framework/modules/viescolaire/presences/model';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
@@ -32,8 +32,7 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
             {student.name}
           </BodyText>
           {student.lastCourseAbsent ? (
-            <Picture
-              type="NamedSvg"
+            <NamedSVG
               name="ui-error-past"
               width={20}
               height={20}
@@ -44,8 +43,7 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
         </View>
         <View style={styles.statusesContainer}>
           {!eventTypes.length ? (
-            <Picture
-              type="NamedSvg"
+            <NamedSVG
               name="ui-success_outline"
               width={32}
               height={32}
@@ -53,13 +51,13 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
             />
           ) : null}
           {eventTypes.includes(CallEventType.ABSENCE) ? (
-            <Picture type="NamedSvg" name="ui-error" width={32} height={32} fill={theme.palette.status.failure.regular} />
+            <NamedSVG name="ui-error" width={32} height={32} fill={theme.palette.status.failure.regular} />
           ) : null}
           {eventTypes.includes(CallEventType.LATENESS) ? (
-            <Picture type="NamedSvg" name="ui-clock-alert" width={32} height={32} fill={theme.palette.status.warning.regular} />
+            <NamedSVG name="ui-clock-alert" width={32} height={32} fill={theme.palette.status.warning.regular} />
           ) : null}
           {eventTypes.includes(CallEventType.DEPARTURE) ? (
-            <Picture type="NamedSvg" name="ui-leave" width={32} height={32} fill={theme.palette.status.warning.regular} />
+            <NamedSVG name="ui-leave" width={32} height={32} fill={theme.palette.status.warning.regular} />
           ) : null}
         </View>
       </TouchableOpacity>
