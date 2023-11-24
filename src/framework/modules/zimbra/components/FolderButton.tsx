@@ -4,7 +4,7 @@ import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { IFolder } from '~/framework/modules/zimbra/model';
 
 const styles = StyleSheet.create({
@@ -49,8 +49,7 @@ export const FolderButton = (props: FolderButtonProps) => {
         />
         {folder.folders.length ? (
           <TouchableOpacity onPress={() => setExpanded(!isExpanded)} style={styles.expandActionContainer}>
-            <Picture
-              type="NamedSvg"
+            <NamedSVG
               name={isExpanded ? 'ui-rafterUp' : 'ui-rafterDown'}
               width={18}
               height={18}

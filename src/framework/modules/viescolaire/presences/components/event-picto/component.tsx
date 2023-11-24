@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import theme from '~/app/theme';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { EventType } from '~/framework/modules/viescolaire/presences/model';
 
 import styles from './styles';
@@ -72,7 +72,7 @@ export default function EventPicto(props: EventPictoProps) {
 
   return (
     <View style={[styles.container, { backgroundColor }, props.style]}>
-      <Picture type="NamedSvg" name={iconName} width={24} height={24} fill={iconColor} />
+      <NamedSVG name={iconName} width={24} height={24} fill={iconColor} />
     </View>
   );
 }

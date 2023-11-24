@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { ISession } from '~/framework/modules/auth/model';
 import type { UserType } from '~/framework/modules/auth/service';
+import type { loadStoredStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import type { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
 import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
 import type { fetchPresencesCoursesAction } from '~/framework/modules/viescolaire/presences/actions';
@@ -24,6 +25,7 @@ export interface DashboardTeacherScreenStoreProps {
 
 export interface DashboardTeacherScreenDispatchProps {
   tryFetchCourses: (...args: Parameters<typeof fetchPresencesCoursesAction>) => Promise<Course[]>;
+  tryLoadStoredStructure: (...args: Parameters<typeof loadStoredStructureAction>) => Promise<string | undefined>;
 }
 
 export type DashboardTeacherScreenPrivateProps = DashboardTeacherScreenProps &
