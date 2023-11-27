@@ -19,7 +19,7 @@ import { useNavigationDevPlugins } from '~/framework/navigation/helper';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
 import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
 import { isEmpty } from '~/framework/util/object';
-import { Storage } from '~/framework/util/storage';
+import { FlipperMMKVElement } from '~/framework/util/storage/mmkv';
 import { Trackers } from '~/framework/util/tracker';
 import { AllModulesBackup } from '~/infra/oauth';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
@@ -29,10 +29,6 @@ import { IStoreProp, Reducers, connectWithStore } from './store';
 
 const FlipperAsyncStorage = __DEV__ ? require('rn-flipper-async-storage-advanced').default : undefined;
 const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage /> : null;
-const FlipperMMKV = __DEV__
-  ? require('react-native-mmkv-flipper-plugin').initializeMMKVFlipper({ default: Storage.storage })
-  : undefined;
-const FlipperMMKVElement = FlipperMMKV ? <FlipperMMKV /> : null;
 
 /**
  * Code that listens to App State changes

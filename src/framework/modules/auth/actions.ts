@@ -10,6 +10,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCache } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, destroyOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
 
+import { StorageDict } from '~/framework/util/storage/storage';
 import {
   AuthError,
   ForgotMode,
@@ -235,6 +236,7 @@ function handleLoginRedirection(
     try {
       const { userData, userPublicInfo } = publicInfo;
       const sessionInfo = formatSession(platform, userInfo, userData, userPublicInfo, !!mustSaveSession);
+      await StorageDict.sessionInitAllStorages(sessionInfo);
       if (partialSessionScenario) {
         const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario, platform.url);
         const context = await getAuthContext(platform);

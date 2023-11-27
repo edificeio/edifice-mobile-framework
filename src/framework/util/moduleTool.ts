@@ -90,11 +90,15 @@ interface IModuleConfigRedux<State> extends IModuleConfigDeclarationRedux {
 interface IModuleConfigTracking {
   trackingName: string; // Name used for tracking category. Computed from `name` if not specified.
 }
+interface IModuleConfigStorage {
+  storageName: string; // Name used for storage namespace. Equals to `name` if not specified.
+}
 // All information config available about a module
 export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> &
   IModuleConfigRights &
   IModuleConfigRedux<State> &
-  IModuleConfigTracking & {
+  IModuleConfigTracking &
+  IModuleConfigStorage & {
     init: (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => void;
     isReady: boolean;
     assignValues: (values: IModuleConfigDeclaration<Name>) => void;
@@ -103,7 +107,8 @@ export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> 
 export type IModuleConfigDeclaration<Name extends string> = IModuleConfigBase<Name> &
   IModuleConfigDeclarationRights &
   Partial<IModuleConfigDeclarationRedux> &
-  Partial<IModuleConfigTracking>;
+  Partial<IModuleConfigTracking> &
+  Partial<IModuleConfigStorage>;
 export type IUnkownModuleConfig = IModuleConfig<string, unknown>;
 export type IAnyModuleConfig = IModuleConfig<string, any>;
 
@@ -135,6 +140,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 
   trackingName: IModuleConfig<Name, State>['trackingName'];
 
+  storageName: IModuleConfig<Name, State>['storageName'];
+
   constructor(decl: IModuleConfigDeclaration<Name>) {
     const {
       name,
@@ -145,6 +152,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
       actionTypesPrefix,
       reducerName,
       trackingName,
+      storageName,
       ...rest
     } = decl;
     // Base
@@ -167,6 +175,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.getState = (globalState: IGlobalState) => globalState[this.reducerName];
     // Tracking
     this.trackingName = trackingName ?? this.name;
+    // Storage
+    this.storageName = storageName ?? this.name;
     // Rest
     Object.assign(this, rest);
   }
