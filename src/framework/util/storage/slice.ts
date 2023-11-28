@@ -1,10 +1,8 @@
 import type { IModuleConfig } from '~/framework/util/moduleTool';
-
-import { ISession } from '~/framework/modules/auth/model';
+import { StorageHandler } from './handler';
 import type {
   IStorageBackend,
   IStorageDict,
-  IStorageHandler,
   KeysWithValueNotOfType,
   KeysWithValueOfType,
   StorageKey,
@@ -12,116 +10,7 @@ import type {
   StorageTypeMap,
 } from './types';
 
-export class StorageHandler<Storage extends IStorageBackend | IStorageDict<StorageTypeMap>> implements IStorageHandler<Storage> {
-  constructor(
-    protected storage: Storage,
-    protected storageName?: string,
-  ) {}
-
-  private static storageListWithAppInit: StorageHandler<IStorageBackend | IStorageDict<StorageTypeMap>>[] = [];
-
-  private static storageListWithSessionInit: StorageHandler<IStorageBackend | IStorageDict<StorageTypeMap>>[] = [];
-
-  private static initPhaseDone: boolean = false;
-
-  private isInitialized: boolean = false;
-
-  private init?: () => void;
-
-  /**
-   * Execute this function when the app startup. Use the `function` keyword instead of `() => {}` to use `this` keyword inside the function.
-   * @param initFn
-   * @returns
-   */
-  setAppInit(initFn: (this: this) => void) {
-    if (this.isInitialized) {
-      console.warn('[Storage] Do not use `withInit()` twice.');
-      return this;
-    }
-
-    this.init = async () => {
-      console.debug(`[Storage] init storage '${this.storageName ?? this.constructor.name}'`);
-      initFn.call(this);
-      this.isInitialized = true;
-    };
-
-    StorageHandler.storageListWithAppInit.push(this);
-    if (StorageHandler.initPhaseDone) {
-      this.init();
-    }
-
-    return this;
-  }
-
-  private sessionInit?: (session: ISession) => void;
-
-  /**
-   * Execute this function whenever a user logs in. Use the `function` keyword instead of `() => {}` to use `this` keyword inside the function.
-   * @param initFn
-   */
-  setSessionInit(initFn: (this: this, session: ISession) => void) {
-    this.sessionInit = async (session: ISession) => {
-      console.debug(`[Storage] session init storage '${this.storageName ?? this.constructor.name}'`);
-      initFn.call(this, session);
-    };
-
-    StorageHandler.storageListWithSessionInit.push(this);
-
-    return this;
-  }
-
-  static async initAllStorages() {
-    for (const storage of StorageHandler.storageListWithAppInit) {
-      try {
-        if (!storage.isInitialized) {
-          storage.init?.();
-        }
-      } catch (e) {
-        console.warn(`[Storage] storage '${storage.storageName ?? storage.constructor.name}' failed to init`, e);
-      }
-    }
-    StorageHandler.initPhaseDone = true;
-  }
-
-  static async sessionInitAllStorages(session: ISession) {
-    for (const storage of StorageHandler.storageListWithSessionInit) {
-      try {
-        storage.sessionInit?.(session);
-      } catch (e) {
-        console.warn(`[Storage] storage '${storage.storageName ?? storage.constructor.name}' failed to session init`, e);
-      }
-    }
-  }
-}
-
-export class StorageBackend extends StorageHandler<IStorageBackend> implements IStorageBackend {
-  constructor(storage: IStorageBackend, storageName?: string) {
-    super(storage, storageName);
-  }
-  contains(key: StorageKey): boolean {
-    return this.storage.contains(key);
-  }
-  delete(key: StorageKey): void {
-    return this.storage.delete(key);
-  }
-  getBoolean(key: StorageKey): boolean | undefined {
-    return this.storage.getBoolean(key);
-  }
-  getNumber(key: StorageKey): number | undefined {
-    return this.storage.getNumber(key);
-  }
-  getString(key: StorageKey): string | undefined {
-    return this.storage.getString(key);
-  }
-  set(key: StorageKey, value: string | number | boolean): void {
-    return this.storage.set(key, value);
-  }
-  getAllKeys(): StorageKey[] {
-    return this.storage.getAllKeys();
-  }
-}
-
-export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IStorageBackend | IStorageDict<StorageTypeMap>>
+export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends IStorageBackend | IStorageDict<StorageTypeMap>>
   extends StorageHandler<Storage>
   implements IStorageDict<StorageTypes>
 {
@@ -140,12 +29,12 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
    * @returns
    */
   computeKey(key: StorageStringKeys<StorageTypes>): StorageKey {
-    return this.storage instanceof StorageDict
+    return this.storage instanceof StorageSlice
       ? this.prefix.length
-        ? this.prefix.join(StorageDict.separator) + (key ? StorageDict.separator + this.storage.computeKey(key) : key)
+        ? this.prefix.join(StorageSlice.separator) + (key ? StorageSlice.separator + this.storage.computeKey(key) : key)
         : this.storage.computeKey(key)
       : this.prefix.length
-      ? this.prefix.join(StorageDict.separator) + (key ? StorageDict.separator + key : '')
+      ? this.prefix.join(StorageSlice.separator) + (key ? StorageSlice.separator + key : '')
       : key;
   }
 
@@ -155,13 +44,13 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
    * @returns
    */
   contains(key: StorageStringKeys<StorageTypes>): boolean {
-    return this.storage instanceof StorageDict
+    return this.storage instanceof StorageSlice
       ? this.storage.#contains(this.computeKey(key))
       : this.#contains(this.computeKey(key));
   }
 
   #contains(key: StorageKey) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#contains(key);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#contains`, key);
@@ -175,11 +64,11 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
    * @returns
    */
   delete(key: StorageStringKeys<StorageTypes>): void {
-    return this.storage instanceof StorageDict ? this.storage.#delete(this.computeKey(key)) : this.#delete(this.computeKey(key));
+    return this.storage instanceof StorageSlice ? this.storage.#delete(this.computeKey(key)) : this.#delete(this.computeKey(key));
   }
 
   #delete(key: StorageKey) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#delete(key);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#delete`, key);
@@ -195,13 +84,13 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
   getBoolean(
     key: KeysWithValueOfType<StorageTypes, boolean>,
   ): StorageTypes[KeysWithValueOfType<StorageTypes, boolean>] | undefined {
-    return this.storage instanceof StorageDict
+    return this.storage instanceof StorageSlice
       ? this.storage.#getBoolean(this.computeKey(key))
       : this.#getBoolean(this.computeKey(key));
   }
 
   #getBoolean(key: StorageKey) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#getBoolean(key);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#getBoolean`, key);
@@ -215,13 +104,13 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
    * @returns
    */
   getNumber(key: KeysWithValueOfType<StorageTypes, number>): StorageTypes[KeysWithValueOfType<StorageTypes, number>] | undefined {
-    return this.storage instanceof StorageDict
+    return this.storage instanceof StorageSlice
       ? this.storage.#getNumber(this.computeKey(key))
       : this.#getNumber(this.computeKey(key));
   }
 
   #getNumber(key: StorageKey) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#getNumber(key);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#getNumber`, key);
@@ -235,13 +124,13 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
    * @returns
    */
   getString(key: KeysWithValueOfType<StorageTypes, string>): StorageTypes[KeysWithValueOfType<StorageTypes, string>] | undefined {
-    return this.storage instanceof StorageDict
+    return this.storage instanceof StorageSlice
       ? this.storage.#getString(this.computeKey(key))
       : this.#getString(this.computeKey(key));
   }
 
   #getString(key: StorageKey) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#getString(key);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#getString`, key);
@@ -257,11 +146,11 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
   getJSON(
     key: KeysWithValueNotOfType<StorageTypes, boolean | number | string>,
   ): StorageTypes[KeysWithValueNotOfType<StorageTypes, boolean | number | string>] | undefined {
-    return this.storage instanceof StorageDict ? this.storage.#getJSON(this.computeKey(key)) : this.#getJSON(this.computeKey(key));
+    return this.storage instanceof StorageSlice ? this.storage.#getJSON(this.computeKey(key)) : this.#getJSON(this.computeKey(key));
   }
 
   #getJSON(key: StorageKey) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#getJSON(key);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#getJSON`, key);
@@ -280,7 +169,7 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
   set(key: KeysWithValueOfType<StorageTypes, string>, value: StorageTypes[KeysWithValueOfType<StorageTypes, string>]): void;
   set(key: unknown, value: unknown): void {
     if (typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {
-      return this.storage instanceof StorageDict
+      return this.storage instanceof StorageSlice
         ? this.storage.#set(this.computeKey(key as Exclude<typeof key, unknown>), value)
         : this.#set(this.computeKey(key as Exclude<typeof key, unknown>), value);
     } else {
@@ -291,7 +180,7 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
   }
 
   #set(key: StorageKey, value: boolean | number | string) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#set(key, value);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#set`, key);
@@ -308,13 +197,13 @@ export class StorageDict<StorageTypes extends StorageTypeMap, Storage extends IS
     key: KeysWithValueNotOfType<StorageTypes, boolean | number | string>,
     value: StorageTypes[KeysWithValueNotOfType<StorageTypes, boolean | number | string>],
   ): void {
-    return this.storage instanceof StorageDict
+    return this.storage instanceof StorageSlice
       ? this.storage.#setJSON(this.computeKey(key), value)
       : this.#setJSON(this.computeKey(key), value);
   }
 
   #setJSON(key: StorageKey, value: any) {
-    if (this.storage instanceof StorageDict) {
+    if (this.storage instanceof StorageSlice) {
       return this.storage.#setJSON(key, value);
     } else {
       console.debug(`[Storage] ${this.storageName || this.constructor.name}#setJSON`, key);

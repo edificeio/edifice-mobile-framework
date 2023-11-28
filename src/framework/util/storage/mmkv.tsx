@@ -6,7 +6,7 @@ import { MMKV } from 'react-native-mmkv';
 import { getOverrideName } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 
-import { StorageBackend } from './storage';
+import { StorageBackend } from './backend';
 import type { IStorageBackend } from './types';
 
 /**

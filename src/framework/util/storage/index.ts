@@ -1,5 +1,6 @@
+import { StorageHandler } from './handler';
 import { mmkvStorageHelper } from './mmkv';
-import { StorageDict, StorageHandler } from './storage';
+import { StorageSlice } from './slice';
 import { IStorageBackend, IStorageDict, StorageKey, StorageTypeMap } from './types';
 
 /**
@@ -16,7 +17,7 @@ export const storage = {
    * @returns the storage created
    */
   create: <Types extends { [key: StorageKey]: any }>() => {
-    return new StorageDict<Types, IStorageBackend>(defaultStorage);
+    return new StorageSlice<Types, IStorageBackend>(defaultStorage);
   },
 
   /**
@@ -25,7 +26,7 @@ export const storage = {
    * @returns
    */
   compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageDict<StorageTypeMap>>(storage: Storage) => {
-    return new StorageDict<Types, Storage>(storage);
+    return new StorageSlice<Types, Storage>(storage);
   },
 
   /**
