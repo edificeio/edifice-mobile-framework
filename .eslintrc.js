@@ -6,7 +6,15 @@ module.exports = {
     node: true,
     'react-native/react-native': true,
   },
-  extends: ['@react-native', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native', 'plugin:import/typescript', 'plugin:prettier/recommended'],
+  extends: [
+    '@react-native',
+    'airbnb-typescript',
+    'eslint:recommended',
+    'prettier',
+    'universe/native',
+    'plugin:import/typescript',
+    'plugin:prettier/recommended',
+  ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',
@@ -16,6 +24,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier', 'import', 'react', 'react-hooks', 'react-native', 'jest', 'eslint-plugin-import'],
   rules: {
+    'prettier/prettier': ['warn'],
     '@typescript-eslint/naming-convention': ['error'],
     'ft-flow/boolean-style': [2, 'boolean'],
     'import/extensions': [
