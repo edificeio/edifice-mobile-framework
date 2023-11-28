@@ -1,4 +1,5 @@
 import type { IModuleConfig } from '~/framework/util/moduleTool';
+
 import { StorageHandler } from './handler';
 import type {
   IStorageBackend,
@@ -34,8 +35,8 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
         ? this.prefix.join(StorageSlice.separator) + (key ? StorageSlice.separator + this.storage.computeKey(key) : key)
         : this.storage.computeKey(key)
       : this.prefix.length
-      ? this.prefix.join(StorageSlice.separator) + (key ? StorageSlice.separator + key : '')
-      : key;
+        ? this.prefix.join(StorageSlice.separator) + (key ? StorageSlice.separator + key : '')
+        : key;
   }
 
   /**

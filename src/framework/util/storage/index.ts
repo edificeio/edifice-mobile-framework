@@ -22,11 +22,11 @@ export const storage = {
 
   /**
    * defines a storage space that encompass another with additional prefixes and/or init phases.
-   * @param storage
+   * @param subStorage
    * @returns
    */
-  compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageDict<StorageTypeMap>>(storage: Storage) => {
-    return new StorageSlice<Types, Storage>(storage);
+  compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageDict<StorageTypeMap>>(subStorage: Storage) => {
+    return new StorageSlice<Types, Storage>(subStorage);
   },
 
   /**

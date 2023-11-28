@@ -2,10 +2,10 @@
  * AppConfTool
  * AppConf Loader
  */
-import { ImageStyle, PlatformOSType } from 'react-native';
+import type { ImageStyle, PlatformOSType } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
-import { PictureProps } from '~/framework/components/picture';
+import type { PictureProps } from '~/framework/components/picture';
 
 // Platforms ======================================================================================
 
