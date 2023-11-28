@@ -154,6 +154,13 @@ export namespace I18n {
   };
 
   export async function init() {
+    // Initialize keys toggling
+    if (canShowKeys) {
+      const stored: boolean | undefined = await getItemJson(I18N_SHOW_KEYS_KEY);
+      if (stored) showKeys = stored;
+    }
+    // Initalize language
+    await setLanguage();
     // Initialize i18n depending on i18n OTA enabled or not
     if (appConf.i18nOTAEnabled) {
       await i18n
@@ -185,12 +192,5 @@ export namespace I18n {
         returnObjects: true,
       });
     }
-    // Initialize keys toggling
-    if (canShowKeys) {
-      const stored: boolean | undefined = await getItemJson(I18N_SHOW_KEYS_KEY);
-      if (stored) showKeys = stored;
-    }
-    // Initalize language
-    await setLanguage();
   }
 }
