@@ -264,8 +264,8 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
                 borderColor: focused
                   ? theme.color.homework.days[route.key]?.accent
                   : route.icon
-                  ? theme.palette.grey.grey
-                  : theme.palette.grey.white,
+                    ? theme.palette.grey.grey
+                    : theme.palette.grey.white,
               },
             ]}>
             <CaptionBoldText style={styles.tabBarItemText}>{route.title}</CaptionBoldText>
@@ -282,8 +282,8 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   const renderScrollView = (date: Moment) => {
     return (
       <Timetable
-        courses={props.courses}
-        slots={props.slots}
+        courses={props.courses ?? []}
+        slots={props.slots ?? []}
         date={date}
         renderCourse={renderCourse}
         renderCourseHalf={renderHalfCourse}
@@ -369,8 +369,8 @@ export default connect(
         userType === UserType.Student
           ? session?.user.structures?.[0]?.id
           : userType === UserType.Relative
-          ? getChildStructureId(dashboardState.selectedChildId)
-          : dashboardState.selectedStructureId,
+            ? getChildStructureId(dashboardState.selectedChildId)
+            : dashboardState.selectedStructureId,
       teachers: edtState.teachers.data,
       userId,
       userType,
