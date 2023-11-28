@@ -31,6 +31,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';
 import { AnyNavigableModule, AnyNavigableModuleConfig, IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
+import SnowFlakes from '../components/SnowFlakes';
 import { handleCloseModalActions } from './helper';
 import { getAndroidTabBarStyleForNavState } from './hideTabBarAndroid';
 import modals from './modals/navigator';
@@ -221,7 +222,12 @@ export function useTabNavigator(apps?: IEntcoreApp[], widgets?: IEntcoreWidget[]
       };
     }, []);
   return React.useMemo(() => {
-    return <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>;
+    return (
+      <>
+        <Tab.Navigator screenOptions={screenOptions}>{tabRoutes}</Tab.Navigator>
+        <SnowFlakes />
+      </>
+    );
   }, [screenOptions, tabRoutes]);
 }
 
