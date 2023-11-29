@@ -33,15 +33,15 @@ const styles = StyleSheet.create({
 const getSectionTitle = (key: string): string => {
   switch (key) {
     case 'DEPARTURE':
-      return I18n.get('presences-history-category-departures');
+      return I18n.get('dashboard-relative-childreneventsmodal-departures');
     case 'LATENESS':
-      return I18n.get('presences-history-category-latenesses');
+      return I18n.get('dashboard-relative-childreneventsmodal-latenesses');
     case 'NO_REASON':
-      return I18n.get('presences-history-category-noreason');
+      return I18n.get('dashboard-relative-childreneventsmodal-noreason');
     case 'REGULARIZED':
-      return I18n.get('presences-history-category-regularized');
+      return I18n.get('dashboard-relative-childreneventsmodal-regularized');
     case 'UNREGULARIZED':
-      return I18n.get('presences-history-category-unregularized');
+      return I18n.get('dashboard-relative-childreneventsmodal-unregularized');
     default:
       return '';
   }
@@ -119,7 +119,7 @@ const ChildrenEventsModal = React.forwardRef<ModalBoxHandle, ChildrenEventsModal
           renderItem={({ item: [childId, events] }) =>
             renderChildEvents(events, props.userChildren.find(child => child.id === childId)?.firstName)
           }
-          ListHeaderComponent={<BodyText>{I18n.get('presences-childreneventsmodal-title')}</BodyText>}
+          ListHeaderComponent={<BodyText>{I18n.get('dashboard-relative-childreneventsmodal-title')}</BodyText>}
           scrollEnabled={false}
         />
       }
