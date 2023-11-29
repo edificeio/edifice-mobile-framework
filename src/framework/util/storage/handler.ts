@@ -1,4 +1,5 @@
-import { ISession } from '~/framework/modules/auth/model';
+import type { ISession } from '~/framework/modules/auth/model';
+
 import type { IStorageBackend, IStorageDict, IStorageHandler, StorageTypeMap } from './types';
 
 export class StorageHandler<Storage extends IStorageBackend | IStorageDict<StorageTypeMap>> implements IStorageHandler<Storage> {

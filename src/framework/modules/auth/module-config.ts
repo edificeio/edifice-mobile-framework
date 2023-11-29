@@ -1,6 +1,6 @@
 import { ModuleConfig } from '~/framework/util/moduleTool';
 
-import { IAuthState } from './reducer';
+import type { IAuthState } from './reducer';
 
 export default new ModuleConfig<'auth', IAuthState>({
   name: 'auth',

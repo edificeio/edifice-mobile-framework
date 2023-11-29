@@ -1,5 +1,5 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
-import { ILoginResult } from '~/framework/modules/auth/actions';
+import type { ILoginResult } from '~/framework/modules/auth/actions';
 import type { AuthErrorCode, ILoggedUserProfile, ISession, LegalUrls } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import createReducer from '~/framework/util/redux/reducerFactory';
