@@ -25,7 +25,6 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
-import SnowFlakes from '~/framework/components/SnowFlakes';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
@@ -102,7 +101,6 @@ export const PageView = (props: PageViewProps) => {
         <View style={gutterStyle}>{children}</View>
         {isModal && showToast ? <ToastHandler /> : null}
       </>
-      <SnowFlakes />
     </PageViewStyle>
   );
 };

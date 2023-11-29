@@ -144,7 +144,7 @@ type IBackendLevel = {
   id_etablissement: string;
   couleur: string;
   lettre: string;
-  id: number;
+  id: number | null;
   cycle: string;
 };
 
@@ -281,7 +281,7 @@ const levelAdapter = (data: IBackendLevel): ILevel => {
     color: data.couleur,
     cycleId: data.id_cycle,
     defaultColor: data.default,
-    id: data.id,
+    id: data.id ?? data.id_niveau,
     label: data.libelle,
     order: data.ordre,
   };
