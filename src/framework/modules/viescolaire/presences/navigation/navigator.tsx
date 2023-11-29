@@ -13,10 +13,10 @@ import PresencesDeclareAbsenceScreen, {
 import PresencesDeclareEventScreen, {
   computeNavBar as declareEventNavBar,
 } from '~/framework/modules/viescolaire/presences/screens/declare-event';
+import PresencesEventListScreen, {
+  computeNavBar as eventListNavBar,
+} from '~/framework/modules/viescolaire/presences/screens/event-list';
 import PresencesHistoryScreen, { computeNavBar as historyNavBar } from '~/framework/modules/viescolaire/presences/screens/history';
-import PresencesStatisticsScreen, {
-  computeNavBar as statisticsNavBar,
-} from '~/framework/modules/viescolaire/presences/screens/statistics';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -68,15 +68,19 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={historyNavBar}
           initialParams={{}}
         />,
-        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Group screenOptions={{ presentation: 'modal' }}>
           <Stack.Screen
-            key={presencesRouteNames.statistics}
-            name={presencesRouteNames.statistics}
-            component={PresencesStatisticsScreen}
-            options={statisticsNavBar}
+            key={presencesRouteNames.eventList}
+            name={presencesRouteNames.eventList}
+            component={PresencesEventListScreen}
+            options={eventListNavBar}
             initialParams={{}}
           />
-          {session?.user.type === UserType.Relative ? (
+        </Stack.Group>,
+      );
+      if (session?.user.type === UserType.Relative) {
+        screens.push(
+          <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
             <Stack.Screen
               key={presencesRouteNames.declareAbsence}
               name={presencesRouteNames.declareAbsence}
@@ -84,12 +88,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
               options={declareAbsenceNavBar}
               initialParams={{}}
             />
-          ) : null}
-        </Stack.Group>,
-      );
+          </Stack.Group>,
+        );
+      }
       moduleConfig.routeName = presencesRouteNames.history;
     }
     return <>{screens}</>;
   });
 
-setModalModeForRoutes([presencesRouteNames.declareEvent, presencesRouteNames.statistics, presencesRouteNames.declareAbsence]);
+setModalModeForRoutes([presencesRouteNames.declareEvent, presencesRouteNames.declareAbsence, presencesRouteNames.eventList]);

@@ -76,7 +76,7 @@ export const UserCard = ({
       </View>
       <View style={styles.boxTexts}>
         <HeadingXSText style={styles.name}>{displayName}</HeadingXSText>
-        <SmallBoldText style={{ color: colorType[type] }}>
+        <SmallBoldText style={{ color: theme.color.profileTypes[type] }}>
           {I18n.get(`user-profiletypes-${type.toLocaleLowerCase()}`)}
         </SmallBoldText>
         {!canEdit ? (

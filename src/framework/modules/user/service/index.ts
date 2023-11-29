@@ -1,10 +1,9 @@
 import moment from 'moment';
 
-import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
-
-import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
 import { UserType } from '~/framework/modules/auth/service';
+import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
 import { hobbiesItems } from '~/framework/modules/user/screens/profile';
+import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
 
 interface BackendInfoPerson {
   id: string;
@@ -88,6 +87,11 @@ export const userService = {
         method: 'PUT',
         body,
       });
+    },
+    editHealthVisibility: async (visibility: 'prive' | 'public') => {
+      const api = `/userbook/api/edit-user-info-visibility?info=health&state=${visibility}`;
+
+      return fetchJSONWithCache(api);
     },
   },
 };

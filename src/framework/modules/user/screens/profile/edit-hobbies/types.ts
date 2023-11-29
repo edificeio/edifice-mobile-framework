@@ -10,13 +10,17 @@ export interface UserEditHobbiesScreenEventProps {}
 export interface UserEditHobbiesScreenNavParams {
   userId: string;
   hobbies: HobbieItem[];
+  description?: string;
+  descriptionVisibility?: boolean;
+  mood?: string;
+  motto?: string;
 }
 
 export type UserEditHobbiesScreenProps = UserEditHobbiesScreenDataProps &
   UserEditHobbiesScreenEventProps &
   NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.editHobbies>;
 
-export interface objectHobbies {
+export interface ObjectHobbies {
   [category: string]: {
     values: string;
     visibility: string;

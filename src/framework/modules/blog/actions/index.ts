@@ -83,11 +83,18 @@ export const getBlogsAction = () => async (dispatch: ThunkDispatch<any, any, any
 };
 
 export const uploadBlogPostImagesAction =
-  (images: LocalFile[]) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (images: LocalFile[], isPublic: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     return dispatch(
-      workspaceFileTransferActions.uploadFilesAction(images, {
-        parent: 'protected',
-      }),
+      workspaceFileTransferActions.uploadFilesAction(
+        images,
+        isPublic
+          ? {
+              public: true,
+            }
+          : {
+              parent: 'protected',
+            },
+      ),
     );
   };
 

@@ -2,17 +2,20 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
+import { NavigationState, SceneMap, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import theme from '~/app/theme';
+import { UI_SIZES } from '~/framework/components/constants';
 import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { HeadingXSText, SmallBoldItalicText, SmallText } from '~/framework/components/text';
+import { NamedSVG } from '~/framework/components/picture';
+import { CaptionBoldText, CaptionText, SmallBoldItalicText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
@@ -50,9 +53,25 @@ export const computeNavBar = ({
   }),
 });
 
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
 const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
-  const [date, setDate] = React.useState<Moment>(moment());
-  const [startDate, setStartDate] = React.useState<Moment>(moment().startOf('week'));
+  const [index, setIndex] = React.useState(0);
+  const [weekdays, setWeekdays] = React.useState<Moment[]>([]);
+  const [routes, setRoutes] = React.useState([
+    { key: 'monday', title: I18n.get('date-monday') },
+    { key: 'tuesday', title: I18n.get('date-tuesday') },
+    { key: 'wednesday', title: I18n.get('date-wednesday') },
+    { key: 'thursday', title: I18n.get('date-thursday') },
+    { key: 'friday', title: I18n.get('date-friday') },
+    { key: 'saturday', title: I18n.get('date-saturday') },
+  ]);
+  const [startDate, setStartDate] = React.useState<Moment>(
+    moment().day() === 0 ? moment().clone().add(1, 'd').clone().day(1).startOf('day') : moment().clone().day(1).startOf('day'),
+  );
+  const [selectedDate, setSelectedDate] = React.useState<Moment>(
+    moment().day() === 0 ? moment().clone().add(1, 'd') : moment().clone().startOf('day'),
+  );
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
@@ -130,9 +149,9 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   }, [startDate]);
 
   const updateSelectedDate = (newDate: Moment) => {
-    const newStartDate = newDate.clone().startOf('week');
-    setDate(newDate);
+    const newStartDate = newDate.clone().day(1).startOf('day');
     if (!newStartDate.isSame(startDate, 'day')) setStartDate(newStartDate);
+    setSelectedDate(newDate);
   };
 
   const renderError = () => {
@@ -158,14 +177,17 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     return (
       <View style={[styles.courseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
         <View style={styles.subjectView}>
-          <HeadingXSText numberOfLines={1}>{firstText}</HeadingXSText>
-          <SmallText numberOfLines={1}>{secondText}</SmallText>
+          <SmallText numberOfLines={1}>{firstText}</SmallText>
+          <CaptionText style={{ color: theme.palette.grey.graphite }} numberOfLines={1}>
+            {secondText}
+          </CaptionText>
         </View>
         <View>
           {course.roomLabels[0]?.length ? (
             <View style={styles.roomView}>
-              <Icon name="pin_drop" size={16} />
-              <SmallText numberOfLines={1}>&nbsp;{`${I18n.get('edt-home-course-room')} ${course.roomLabels[0]}`}</SmallText>
+              <CaptionBoldText numberOfLines={1}>
+                &nbsp;{`${I18n.get('edt-home-course-room')} ${course.roomLabels[0]}`}
+              </CaptionBoldText>
             </View>
           ) : null}
           {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
@@ -185,23 +207,87 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     return (
       <View style={[styles.halfCourseView, hasTag && styles.taggedCourseBackground, isActive && styles.activeCourseBorder]}>
         <View style={styles.halfSplitLineView}>
-          <HeadingXSText style={styles.halfTextStyle} numberOfLines={1}>
+          <SmallText style={styles.halfTextStyle} numberOfLines={1}>
             {firstText}
-          </HeadingXSText>
+          </SmallText>
           {course.roomLabels[0]?.length ? (
             <View style={styles.halfRoomLabelContainer}>
-              <Icon name="pin_drop" size={16} />
-              <SmallText numberOfLines={1}>{course.roomLabels[0]}</SmallText>
+              <CaptionBoldText numberOfLines={1}>{course.roomLabels[0]}</CaptionBoldText>
             </View>
           ) : null}
         </View>
         <View style={styles.halfSplitLineView}>
-          <SmallText style={styles.halfTextStyle} numberOfLines={1}>
+          <CaptionText style={[styles.halfTextStyle, { color: theme.palette.grey.graphite }]} numberOfLines={1}>
             {secondText}
-          </SmallText>
+          </CaptionText>
           {course.tags.length ? <SmallBoldItalicText numberOfLines={1}>{course.tags[0].label}</SmallBoldItalicText> : null}
         </View>
       </View>
+    );
+  };
+
+  const getWeekdays = (displaySunday?: boolean): Moment[] => {
+    const weekdaysData: Moment[] = [];
+    const numberOfDays = displaySunday ? 7 : 6;
+    const routesData: any[] = [];
+
+    for (let i = 0; i < numberOfDays; i += 1) {
+      const date = startDate.clone().add(i, 'day');
+      if (date.isSame(selectedDate)) setIndex(i);
+      weekdaysData.push(date);
+      routesData.push({
+        key: days[i],
+        title: `${I18n.get('date-' + days[i])}\n${moment(date).format('DD')}`,
+        ...(moment(date).isSame(new Date(), 'day') ? { icon: 'today' } : null),
+      });
+    }
+    setRoutes(routesData);
+    return weekdaysData;
+  };
+
+  React.useEffect(() => {
+    setWeekdays(getWeekdays());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate]);
+
+  const renderTabbar = (
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+  ) => {
+    return (
+      <TabBar
+        renderLabel={({ route, focused }) => (
+          <View
+            style={[
+              styles.tabBarItem,
+              {
+                backgroundColor: focused ? theme.color.homework.days[route.key]?.background : theme.palette.grey.white,
+                borderColor: focused
+                  ? theme.color.homework.days[route.key]?.accent
+                  : route.icon
+                  ? theme.palette.grey.grey
+                  : theme.palette.grey.white,
+              },
+            ]}>
+            <CaptionBoldText style={styles.tabBarItemText}>{route.title}</CaptionBoldText>
+          </View>
+        )}
+        indicatorStyle={styles.tabBarIndicator}
+        style={styles.tabBar}
+        pressColor={theme.palette.grey.pearl.toString()}
+        {...tabBarProps}
+      />
+    );
+  };
+
+  const renderScrollView = (date: Moment) => {
+    return (
+      <Timetable
+        courses={props.courses}
+        slots={props.slots}
+        date={date}
+        renderCourse={renderCourse}
+        renderCourseHalf={renderHalfCourse}
+      />
     );
   };
 
@@ -209,22 +295,29 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
     return (
       <>
         <View style={styles.weekPickerView}>
-          <SmallText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallText>
-          <DateTimePicker mode="date" value={startDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.edt} />
-        </View>
-        {loadingState === AsyncPagedLoadingState.REFRESH ? (
-          <LoadingIndicator />
-        ) : (
-          <Timetable
-            courses={props.courses}
-            mainColor={viescoTheme.palette.edt}
-            slots={props.slots}
-            startDate={startDate}
-            initialSelectedDate={date}
-            renderCourse={renderCourse}
-            renderCourseHalf={renderHalfCourse}
+          <NamedSVG
+            name="ui-calendar"
+            width={UI_SIZES.elements.icon.small}
+            height={UI_SIZES.elements.icon.small}
+            fill={theme.palette.grey.black}
           />
-        )}
+          <SmallBoldText style={styles.weekText}>{I18n.get('edt-home-week')}</SmallBoldText>
+          <DateTimePicker mode="date" value={selectedDate} onChangeValue={updateSelectedDate} iconColor={viescoTheme.palette.edt} />
+        </View>
+        <TabView
+          navigationState={{ index, routes }}
+          onIndexChange={setIndex}
+          animationEnabled={false}
+          renderScene={SceneMap({
+            monday: () => renderScrollView(weekdays[0]),
+            tuesday: () => renderScrollView(weekdays[1]),
+            wednesday: () => renderScrollView(weekdays[2]),
+            thursday: () => renderScrollView(weekdays[3]),
+            friday: () => renderScrollView(weekdays[4]),
+            saturday: () => renderScrollView(weekdays[5]),
+          })}
+          renderTabBar={renderTabbar}
+        />
       </>
     );
   };
@@ -247,8 +340,12 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
 
   return (
     <PageView>
-      {props.userType === UserType.Teacher ? <StructurePicker /> : null}
-      {props.userType === UserType.Relative ? <ChildPicker /> : null}
+      <View style={styles.header}>
+        {props.userType === UserType.Teacher ? <StructurePicker /> : null}
+        {props.userType === UserType.Relative ? (
+          <ChildPicker contentContainerStyle={styles.childPickerContentContainer} style={styles.childPicker} />
+        ) : null}
+      </View>
       {renderPage()}
     </PageView>
   );

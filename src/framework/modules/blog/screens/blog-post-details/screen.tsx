@@ -16,7 +16,7 @@ import { BottomSheet } from '~/framework/components/BottomSheet';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -24,7 +24,7 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteBlogPostAction,
@@ -46,7 +46,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
+import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
@@ -321,16 +321,22 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         : [menuItemOpenBrowser];
 
     this.props.navigation.setOptions({
-      headerTitle: navBarTitle(blogPostData?.title),
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () =>
-        resourceUri &&
-        (loadingState === BlogPostDetailsLoadingState.DONE || loadingState === BlogPostDetailsLoadingState.REFRESH) &&
-        !errorState ? (
-          <PopupMenu actions={menuData}>
-            <NavBarAction icon="ui-options" />
-          </PopupMenu>
-        ) : undefined,
+      ...navBarOptions({
+        navigation,
+        route,
+        ...(blogPostData?.title ? { title: blogPostData?.title, titleTestID: blogPostData?.title } : undefined),
+      }),
+      ...(menuData.length
+        ? {
+            // eslint-disable-next-line react/no-unstable-nested-components
+            headerRight: () =>
+              resourceUri && !errorState ? (
+                <PopupMenu actions={menuData}>
+                  <NavBarAction icon="ui-options" />
+                </PopupMenu>
+              ) : undefined,
+          }
+        : undefined),
     });
   };
 
@@ -403,7 +409,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   }
 
   renderError() {
-    return <EmptyContentScreen />;
+    return <EmptyConnectionScreen />;
   }
 
   renderContent() {

@@ -608,9 +608,6 @@ export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(mo
     // 1. Load module in the map
     const module = Array.isArray(moduleInc) ? moduleInc[0] : moduleInc;
     if (typeof module === 'object') {
-      /*if (moduleMap.hasOwnProperty(module.config.name)) {
-        console.debug(`[ModuleTool] Duplicate module identifier "${module.config.name}".`);
-      }*/
       moduleMap[module.config.name] = module;
     } else if (typeof module === 'string') {
       // Do nothing
@@ -621,11 +618,9 @@ export const loadModules = <ModuleType extends UnknownModule = UnknownModule>(mo
     if (Array.isArray(moduleInc) && moduleInc[1]) {
       if (typeof module === 'object') {
         module.config.assignValues(moduleInc[1]); // Also MUTATES the config imported from moduleConfig.ts
-        // console.debug(`[ModuleTool] Update config of module "${module.config.name}".`);
       } else if (typeof module === 'string') {
         const modToUpdate = moduleMap[module]; // Module must have already loaded.
         if (modToUpdate) {
-          // console.debug(`[ModuleTool] Update config of module "${module}".`);
           modToUpdate.config.assignValues(moduleInc[1]); // Also MUTATES the config imported from moduleConfig.ts
         } else {
           // console.debug(`[ModuleTool] Cannot Update config of module "${module}".`);

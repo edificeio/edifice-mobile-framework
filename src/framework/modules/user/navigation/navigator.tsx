@@ -7,23 +7,31 @@ import PushNotifsItemsListScreen, {
 import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import UserAccountOnboardingScreen, {
+  computeNavBar as accountOnboardingNavBar,
+} from '~/framework/modules/user/screens/account-onboarding';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
+import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
 import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/framework/modules/user/screens/legal-notice';
+import UserMulticomptePagesScreen, {
+  computeNavBar as multicomptePagesNavBar,
+} from '~/framework/modules/user/screens/multicompte-pages';
 import UserProfileScreen, { computeNavBar as profileNavBar } from '~/framework/modules/user/screens/profile';
+import UserEditDescriptionScreen, {
+  computeNavBar as editDescriptionNavBar,
+} from '~/framework/modules/user/screens/profile/edit-description';
+import UserEditHobbiesScreen, { computeNavBar as editHobbiesNavBar } from '~/framework/modules/user/screens/profile/edit-hobbies';
+import UserEditMoodMottoScreen, {
+  computeNavBar as editMoodMottoNavBar,
+} from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import UserStructuresScreen, { computeNavBar as structuresNavBar } from '~/framework/modules/user/screens/profile/structures';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
+import UserXmasScreen, { computeNavBar as xmasNavBar } from '~/framework/modules/user/screens/xmas';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import { UserNavigationParams, userRouteNames } from './';
-import UserEditHobbiesScreen, { computeNavBar as editHobbiesNavBar } from '~/framework/modules/user/screens/profile/edit-hobbies';
-import UserEditDescriptionScreen, {
-  computeNavBar as editDescriptionNavBar,
-} from '~/framework/modules/user/screens/profile/edit-description';
-import UserEditMoodMottoScreen, {
-  computeNavBar as editMoodMottoNavBar,
-} from '~/framework/modules/user/screens/profile/edit-moodmotto';
 
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
@@ -42,6 +50,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         options={legalNoticeNavBar}
         initialParams={{}}
       />
+      <Stack.Screen name={userRouteNames.lang} component={UserLangScreen} options={langNavBar} initialParams={{}} />
+      <Stack.Screen
+        name={userRouteNames.multicomptePages}
+        component={UserMulticomptePagesScreen}
+        options={multicomptePagesNavBar}
+        initialParams={{}}
+      />
+      <Stack.Screen name={userRouteNames.xmas} component={UserXmasScreen} options={xmasNavBar} initialParams={{}} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen
           name={userRouteNames.notifPrefsDetails}
@@ -54,6 +70,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={userRouteNames.structures}
           component={UserStructuresScreen}
           options={structuresNavBar}
+          initialParams={{}}
+        />
+      </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Screen
+          name={userRouteNames.accountOnboarding}
+          component={UserAccountOnboardingScreen}
+          options={accountOnboardingNavBar}
           initialParams={{}}
         />
       </Stack.Group>
@@ -84,6 +108,7 @@ setModalModeForRoutes([
   userRouteNames.notifPrefsDetails,
   userRouteNames.whoAreWe,
   userRouteNames.structures,
+  userRouteNames.accountOnboarding,
   userRouteNames.editHobbies,
   userRouteNames.editDescription,
   userRouteNames.editMoodMotto,

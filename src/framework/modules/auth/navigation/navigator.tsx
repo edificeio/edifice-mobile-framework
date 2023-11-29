@@ -10,6 +10,9 @@ import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import PlatformSelectScreen from '~/framework/modules/auth/screens/PlatformSelectScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
+import AuthAccountSelectionScreen, {
+  computeNavBar as authAccountSelectionNavBar,
+} from '~/framework/modules/auth/screens/account-selection';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
@@ -31,6 +34,11 @@ export default function () {
         <Stack.Screen name={authRouteNames.onboarding} component={OnboardingScreen} />
         <Stack.Screen name={authRouteNames.platforms} component={PlatformSelectScreen} />
       </Stack.Group>
+      <Stack.Screen
+        name={authRouteNames.accountSelection}
+        component={AuthAccountSelectionScreen}
+        options={authAccountSelectionNavBar}
+      />
       <Stack.Screen name={authRouteNames.loginHome} component={LoginHomeScreen} options={authLoginHomeNavBar} />
       <Stack.Screen
         name={authRouteNames.loginWayf}

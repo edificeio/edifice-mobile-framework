@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { TextStyle, ViewStyle } from 'react-native';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 
 export interface SearchBarProps {
   query: string;
@@ -61,7 +60,7 @@ export const SearchBar = (props: SearchBarProps) => {
 
   return (
     <TouchableOpacity onPress={focusInput} activeOpacity={1} style={[styles.container, props.containerStyle]}>
-      <Picture type="NamedSvg" name="ui-search" width={18} height={18} fill={theme.ui.text.regular} style={styles.searchIcon} />
+      <NamedSVG name="ui-search" width={18} height={18} fill={theme.ui.text.regular} style={styles.searchIcon} />
       <TextInput
         ref={inputRef}
         value={props.query}
@@ -78,7 +77,7 @@ export const SearchBar = (props: SearchBarProps) => {
       {props.query.length ? (
         <TouchableOpacity onPress={clearSearch} style={styles.clearContainer}>
           <View style={styles.clearAction}>
-            <Picture type="NamedSvg" name="ui-close" width={8} height={8} fill={theme.ui.text.inverse} />
+            <NamedSVG name="ui-close" width={8} height={8} fill={theme.ui.text.inverse} />
           </View>
         </TouchableOpacity>
       ) : null}

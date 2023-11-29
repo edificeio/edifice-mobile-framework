@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   subjectAndContentContainer: { flex: 1 },
   subjectContentAndAttachmentIndicatorContainer: { flex: 1, flexDirection: 'row' },
   swipeableListContentContainerStyle: { flexGrow: 1 },
-  swipeableListStyle: { marginTop: 45 },
+  swipeableListStyle: { marginTop: 45, zIndex: 0 },
 });
 
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
@@ -244,7 +244,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       } else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
-      Toast.showInfo(I18n.get(`conversation-maillist-message${isTrashedOrDraft ? 'deleted' : 'trashed'}`));
+      Toast.showSuccess(I18n.get(`conversation-maillist-message${isTrashedOrDraft ? 'deleted' : 'trashed'}`));
     } catch {
       // TODO: Manage error
     }
@@ -415,14 +415,21 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                       <TouchableOpacity onPress={() => this.renderMailContent(item)}>
                         <ListItem
                           style={isMailUnread ? styles.containerMailUnread : styles.containerMailRead}
-                          leftElement={<GridAvatars users={contacts.map(c => c[0]!)} />}
+                          leftElement={
+                            <GridAvatars
+                              users={contacts.map(c => {
+                                if (c) return c[0]!;
+                                return undefined;
+                              })}
+                            />
+                          }
                           rightElement={
                             <View style={styles.mailInfos}>
                               {/* Contact name */}
                               <View style={styles.contactsAndDateContainer}>
                                 {isEmpty(contacts.length) || (!isFolderOutbox && !isFolderDrafts) ? (
                                   <SmallText numberOfLines={1} style={styles.contacts}>
-                                    {contacts[0][1]}
+                                    {contacts[0] ? contacts[0][1] : I18n.get('conversation-maillist-nosender')}
                                   </SmallText>
                                 ) : (
                                   <SmallText numberOfLines={1} style={styles.contacts}>
@@ -505,7 +512,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                               this.toggleRead(item.unread, item.id);
                               row[item.key]?.closeRow();
                             },
-                            backgroundColor: theme.palette.status.info.regular,
+                            backgroundColor: theme.palette.secondary.regular,
                             actionText: I18n.get(`conversation-maillist-mark${item.unread ? 'read' : 'unread'}`),
                             actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                           },

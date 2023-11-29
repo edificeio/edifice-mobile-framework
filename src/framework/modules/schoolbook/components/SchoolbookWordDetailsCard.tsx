@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { UserType } from '~/framework/modules/auth/service';
 import {
   IConcernedStudent,
@@ -69,7 +69,11 @@ const styles = {
     borderBottomColor: theme.palette.grey.pearl,
     borderBottomWidth: UI_SIZES.dimensions.width.tiny,
   },
-  modalBoxContainer: { flexGrow: 1, flexShrink: 1 },
+  modalBoxContainer: {
+    flexGrow: 1,
+    flexShrink: 1,
+    paddingBottom: UI_SIZES.screen.bottomInset + UI_SIZES.elements.tabbarHeight + Platform.select({ ios: 8, default: 48 }), // Still magic numbers here
+  },
   responsesContainer: {
     flexDirection: 'row',
     alignItems: 'center',

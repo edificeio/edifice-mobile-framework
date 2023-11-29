@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import CookieManager from '@react-native-cookies/cookies';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -7,6 +6,7 @@ import { sessionInvalidateAction } from '~/framework/modules/auth/actions';
 import { AuthError, RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
+import { getItemJson, getKeys, removeItems, setItemJson } from '~/framework/util/storage';
 
 import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
@@ -90,7 +90,7 @@ export async function fetchWithCache(
   if (!platform) throw new Error('must specify a platform');
   // TODO bugfix : cache key must depends on userID and platformID.
   const cacheKey = CACHE_KEY_PREFIX + path;
-  const dataFromCache = await AsyncStorage.getItem(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
+  const dataFromCache = await getItemJson(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
   if (Connection.isOnline && (forceSync || !dataFromCache)) {
     let response =
       path.indexOf(platform) === -1 ? await signedFetch(`${platform}${path}`, init) : await signedFetch(`${path}`, init);
@@ -106,13 +106,13 @@ export async function fetchWithCache(
         statusText: response.statusText,
       },
     };
-    await AsyncStorage.setItem(cacheKey, JSON.stringify(cacheResponse));
+    await setItemJson(cacheKey, cacheResponse);
     const ret = await getBody(response);
     return ret;
   }
 
   if (dataFromCache) {
-    const cacheResponse = JSON.parse(dataFromCache);
+    const cacheResponse = dataFromCache;
     return getCacheResult(cacheResponse);
   }
 
@@ -145,9 +145,9 @@ export async function fetchJSONWithCache(
 }
 
 /**
- * Erase from AsyncStorage all data that keeps requests cache.
+ * Erase from MMKV all data that keeps requests cache.
  */
 export async function clearRequestsCache() {
-  const keys = (await AsyncStorage.getAllKeys()).filter(str => str.startsWith(CACHE_KEY_PREFIX));
-  await AsyncStorage.multiRemove(keys);
+  const keys = (await getKeys()).filter(str => str.startsWith(CACHE_KEY_PREFIX));
+  await removeItems(keys);
 }

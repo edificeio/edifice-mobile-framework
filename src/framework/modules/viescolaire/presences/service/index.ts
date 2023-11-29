@@ -18,7 +18,7 @@ import {
 } from '~/framework/modules/viescolaire/presences/model';
 import { LocalFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
-import { fetchJSONWithCache, fetchWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, fetchWithCache, signedFetch } from '~/infra/fetchWithCache';
 
 type BackendCall = {
   personnel_id: string;
@@ -87,7 +87,7 @@ type BackendCourse = {
     id: string;
     displayName: string;
   }[];
-  registerId: number;
+  registerId: number | null;
   registerStateId: number;
   notified: boolean;
   splitSlot: boolean;
@@ -565,7 +565,7 @@ export const presencesService = {
       formData.append('start_at', startDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('end_at', endDate.format('YYYY-MM-DD HH:mm:ss'));
       formData.append('description', description);
-      await fetchJSONWithCache(api, {
+      await signedFetch(`${session.platform.url}${api}`, {
         method: 'POST',
         body: formData,
       });
@@ -658,6 +658,29 @@ export const presencesService = {
         .filter(course => course.allowRegister)
         .map(courseAdapter)
         .sort((a, b) => a.startDate.diff(b.startDate));
+    },
+  },
+  events: {
+    get: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
+      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
+      return historyEventsAdapter(events);
+    },
+    getForgottenNotebooks: async (
+      session: ISession,
+      studentId: string,
+      structureId: string,
+      startDate: string,
+      endDate: string,
+    ) => {
+      const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
+      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
+      return forgottenNotebooksAdapter(forgottenNotebooks);
+    },
+    getIncidents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+      const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
+      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
+      return incidentsAdapter(incidents);
     },
   },
   event: {
@@ -761,29 +784,6 @@ export const presencesService = {
         method: 'PUT',
         body,
       });
-    },
-  },
-  history: {
-    getEvents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
-      const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
-      const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
-      return historyEventsAdapter(events);
-    },
-    getForgottenNotebookEvents: async (
-      session: ISession,
-      studentId: string,
-      structureId: string,
-      startDate: string,
-      endDate: string,
-    ) => {
-      const api = `/presences/forgotten/notebook/student/${studentId}?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}`;
-      const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
-      return forgottenNotebooksAdapter(forgottenNotebooks);
-    },
-    getIncidents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
-      const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
-      const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
-      return incidentsAdapter(incidents);
     },
   },
   initialization: {

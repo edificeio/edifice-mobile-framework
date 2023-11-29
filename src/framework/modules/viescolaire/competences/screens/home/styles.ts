@@ -5,6 +5,10 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { pageGutterSize } from '~/framework/components/page';
 
 export default StyleSheet.create({
+  childPickerContentContainer: {
+    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingTop: UI_SIZES.spacing.medium,
+  },
   colorsText: {
     marginRight: UI_SIZES.spacing.minor,
   },

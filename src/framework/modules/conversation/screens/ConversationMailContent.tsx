@@ -86,6 +86,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
+    backButtonTestID: 'message-read-back',
   }),
 });
 
@@ -158,7 +159,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 ? popupActionsMenu.splice(2, 1)
                 : popupActionsMenu
             }>
-            <NavBarAction icon="ui-options" />
+            <NavBarAction icon="ui-options" testID="message-read-settings" />
           </PopupMenu>
         ),
     });
@@ -250,7 +251,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                       onViewportEnter={() => this.updateVisible(true)}
                       onViewportLeave={() => this.updateVisible(false)}
                       innerRef={ref => (this._subjectRef = ref)}>
-                      <HeadingSText>{mail.subject}</HeadingSText>
+                      <HeadingSText testID="message-read-title">{mail.subject}</HeadingSText>
                     </ViewportAwareSubject>
                     {mail.body !== undefined && this.mailContent()}
                   </ScrollView>
@@ -293,6 +294,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 currentFolder: route.params.currentFolder,
               });
             }}
+            testID="message-read-reply"
           />
           <FooterButton
             icon="reply_all"
@@ -307,6 +309,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 currentFolder: route.params.currentFolder,
               });
             }}
+            testID="message-read-reply-all"
           />
           <FooterButton
             icon="forward"
@@ -320,6 +323,7 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
                 mailId: mail.id,
               });
             }}
+            testID="message-read-reply-transfer"
           />
         </View>
       </SafeAreaView>
@@ -337,9 +341,14 @@ class MailContentScreen extends React.PureComponent<ConversationMailContentScree
     return (
       <View style={styles.mailContentContainer}>
         {mail.body !== undefined && (
-          <HtmlContentView onHtmlError={() => this.setState({ htmlError: true })} html={mail.body} opts={{ selectable: true }} />
+          <HtmlContentView
+            testID="message-read-content"
+            onHtmlError={() => this.setState({ htmlError: true })}
+            html={mail.body}
+            opts={{ selectable: true }}
+          />
         )}
-        <View style={{ marginTop: UI_SIZES.spacing.medium }} />
+        <View style={{ marginTop: UI_SIZES.spacing.medium }} testID="message-read-attachments" />
         {mail.attachments && mail.attachments.length > 0 && (
           <RenderPJs attachments={mail.attachments} mailId={mail.id} dispatch={dispatch} />
         )}

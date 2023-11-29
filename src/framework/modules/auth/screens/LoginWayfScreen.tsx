@@ -1,7 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { InteractionManager, SafeAreaView, StyleSheet, View } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -13,6 +12,7 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthError } from '~/framework/modules/auth/actions';
+import { getAuthErrorCode } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { handleAction } from '~/framework/util/redux/actions';
@@ -110,20 +110,7 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
           <View style={styles.safeAreaInner}>
             <PFLogo pf={route.params.platform} />
             <SmallText style={styles.textCenter}>{I18n.get('auth-wayf-main-text')}</SmallText>
-            <SmallText style={styles.textError}>
-              {error
-                ? I18n.get('auth-error-' + error.replaceAll('_', ''), {
-                    version: DeviceInfo.getVersion(),
-                    errorcode: error,
-                    currentplatform: platform.url,
-                    defaultValue: I18n.get('auth-error-other', {
-                      version: DeviceInfo.getVersion(),
-                      errorcode: error,
-                      currentplatform: platform.url,
-                    }),
-                  })
-                : ''}
-            </SmallText>
+            <SmallText style={styles.textError}>{error ? getAuthErrorCode(error, platform) : ''}</SmallText>
             <PrimaryButton
               text={I18n.get('auth-wayf-main-button')}
               action={() => {

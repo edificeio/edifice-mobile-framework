@@ -23,9 +23,9 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
+import SnowFlakes from '~/framework/components/SnowFlakes';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
@@ -36,7 +36,6 @@ import { ToastHandler } from './toast/component';
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
-  // xmasTheme?: boolean;
   statusBar?: 'primary' | 'light' | 'dark';
   showToast?: boolean;
 }
@@ -59,7 +58,7 @@ export const PageViewStyle = styled.View({
   flex: 1,
   backgroundColor: theme.ui.background.page,
 });
-export const PageViewContainer = (props: PageViewProps) => {
+export const PageView = (props: PageViewProps) => {
   const { children, gutters, showNetworkBar = true, statusBar = 'primary', showToast = true, ...viewProps } = props;
   const route = useRoute();
 
@@ -103,15 +102,10 @@ export const PageViewContainer = (props: PageViewProps) => {
         <View style={gutterStyle}>{children}</View>
         {isModal && showToast ? <ToastHandler /> : null}
       </>
+      <SnowFlakes />
     </PageViewStyle>
   );
 };
-export const PageView = connect((state: any) => {
-  const ret = {
-    // xmasTheme: state.user.xmas.xmasTheme,
-  };
-  return ret;
-})(PageViewContainer);
 
 export const KeyboardPageView = (
   props: React.PropsWithChildren<

@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
+import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { actionTypes as authActionTypes } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
@@ -33,7 +34,8 @@ export const actionTypes = {
 const reducer = combineReducers({
   selectedChildId: createSessionReducer(initialState.selectedChildId, {
     [authActionTypes.sessionCreate]: (state, action) => {
-      return action.session.user.children?.[0]?.children?.[0]?.id ?? null;
+      const children = getFlattenedChildren(action.session.user.children);
+      return children?.find(child => child.classesNames.length)?.id ?? null;
     },
     [actionTypes.selectChild]: (state, action) => {
       setItemJson<string>(getChildStorageKey(action.userId ?? 'global'), action.childId);

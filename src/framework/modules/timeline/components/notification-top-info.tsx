@@ -43,9 +43,9 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
     if (notification.type === 'USERBOOK_MOTTO')
       formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get('timeline-notiftype-motto')}`;
     if (notification.type === 'USERBOOK_MOOD')
-      formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get('timeline-notiftype-mood')} ${I18n.get(
-        `user-profile-mood-${notification.backupData.params.moodImg}-${degre}`,
-      ).toLocaleLowerCase()}`;
+      formattedMessage = `<a>${notification.backupData.params.username}</a> ${I18n.get(
+        `timeline-notiftype-mood-${notification.backupData.params.moodImg}-${degre}`,
+      )}`;
   }
 
   const badgeInfo = {

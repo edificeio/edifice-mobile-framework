@@ -13,10 +13,10 @@ import DateTimePicker from '~/framework/components/dateTimePicker';
 import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import DropdownPicker from '~/framework/components/pickers/dropdown';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
 import { CallEvent, CallEventType, CallState, Course } from '~/framework/modules/viescolaire/presences/model';
@@ -91,7 +91,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
       setCreating(true);
       if (!session) throw new Error();
       const absence = student.events.find(e => e.typeId === CallEventType.ABSENCE);
-      if (type === CallEventType.LATENESS && absence) {
+      if (type !== CallEventType.ABSENCE && absence) {
         await presencesService.event.delete(session, absence.id);
       }
       if (event && event.id) {
@@ -175,7 +175,7 @@ const PresencesDeclareEventScreen = (props: PresencesDeclareEventScreenPrivatePr
             {student.name}
           </BodyText>
         </View>
-        <Picture type="NamedSvg" name={iconName} width={32} height={32} fill={color} />
+        <NamedSVG name={iconName} width={32} height={32} fill={color} />
       </View>
     );
   };

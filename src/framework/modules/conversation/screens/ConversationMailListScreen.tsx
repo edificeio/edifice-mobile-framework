@@ -307,6 +307,6 @@ registerCustomRouteTracking(
           return 'folder';
       }
     };
-    return `${moduleConfig.trackingName}/${getValue()}`;
+    return `${moduleConfig.routeName}/${getValue()}`;
   },
 );

@@ -1,47 +1,44 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import * as React from 'react';
-import { FlatList, ScrollView } from 'react-native';
+import { RefreshControl, ScrollView } from 'react-native';
+import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import UserList from '~/framework/components/UserList';
+import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import TertiaryButton from '~/framework/components/buttons/tertiary';
 import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { HeadingXSText, SmallText } from '~/framework/components/text';
-import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
+import { NamedSVG } from '~/framework/components/picture';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserType } from '~/framework/modules/auth/service';
+import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
-import { fetchPresencesHistoryAction } from '~/framework/modules/viescolaire/presences/actions';
+import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import {
-  AbsenceCard,
-  DepartureCard,
-  ForgottenNotebookCard,
-  IncidentCard,
-  LatenessCard,
-  PunishmentCard,
-  StatementAbsenceCard,
-} from '~/framework/modules/viescolaire/presences/components/history-event-card/variants';
-import {
-  Absence,
-  CommonEvent,
-  Event,
-  EventType,
-  ForgottenNotebook,
-  Incident,
-  Punishment,
-} from '~/framework/modules/viescolaire/presences/model';
+  fetchPresencesAbsenceStatementsAction,
+  fetchPresencesSchoolYearAction,
+  fetchPresencesStatisticsAction,
+  fetchPresencesTermsAction,
+  fetchPresencesUserChildrenAction,
+} from '~/framework/modules/viescolaire/presences/actions';
+import History from '~/framework/modules/viescolaire/presences/components/history';
+import Statistics from '~/framework/modules/viescolaire/presences/components/statistics';
+import { Event } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
+import { getRecentEvents } from '~/framework/modules/viescolaire/presences/utils/events';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { addTime, subtractTime } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesHistoryScreenDispatchProps, PresencesHistoryScreenPrivateProps } from './types';
@@ -58,161 +55,207 @@ export const computeNavBar = ({
 });
 
 const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
-  const contentLoaderRef = React.useRef<ContentLoaderHandle>(null);
-  const [selectedChildId, setSelectedChildId] = React.useState<string>(props.children?.[0]?.id ?? '');
   const [isInitialized, setInitialized] = React.useState(true);
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'statistics', title: I18n.get('presences-history-tab-statistics'), icon: 'ui-trending-up' },
+    { key: 'history', title: I18n.get('presences-history-tab-history'), icon: 'ui-upcoming' },
+  ]);
+  const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
+  const loadingRef = React.useRef<AsyncPagedLoadingState>();
+  loadingRef.current = loadingState;
+  // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
 
   const fetchEvents = async () => {
     try {
-      const { session, userId, userType } = props;
+      const { classes, selectedChildId, session, userId, userType } = props;
       const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
       const studentId = userType === UserType.Student ? userId : selectedChildId;
 
-      if (!session || !structureId || !studentId || !userId || !userType) throw new Error();
-      /*const initialized = await presencesService.initialization.getStructureStatus(session, structureId);
-      if (!initialized) {
-        setInitialized(false);
-        throw new Error();
-      }*/
-      await props.tryFetchHistory(studentId, structureId, moment().subtract(1, 'month'), moment());
+      if (!structureId || !studentId || !userId || !userType) throw new Error();
+      const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
+      await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
+      await props.tryFetchAbsenceStatements(
+        studentId,
+        structureId,
+        subtractTime(moment(), 1, 'month'),
+        addTime(moment(), 1, 'month'),
+      );
+      let groupId = classes?.[0];
+      if (userType === UserType.Relative) {
+        const children = await props.tryFetchUserChildren(userId);
+        groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
+      }
+      await props.tryFetchTerms(structureId, groupId ?? '');
     } catch {
       throw new Error();
     }
   };
 
+  const init = () => {
+    setLoadingState(AsyncPagedLoadingState.INIT);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const reload = () => {
+    setLoadingState(AsyncPagedLoadingState.RETRY);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+  };
+
+  const refresh = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
+  const refreshSilent = () => {
+    setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+    fetchEvents()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+  };
+
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      contentLoaderRef.current?.refreshSilent();
+      if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
+      else refreshSilent();
     });
     return unsubscribe;
-  }, [props.navigation, selectedChildId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.navigation, props.selectedChildId]);
 
   React.useEffect(() => {
-    contentLoaderRef.current?.refresh();
-  }, [selectedChildId]);
+    if (props.selectedChildId) refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedChildId]);
 
-  const renderHeader = () => {
-    const { userType } = props;
+  const openEventList = (events: Event[], key: string) => {
+    props.navigation.navigate(presencesRouteNames.eventList, {
+      events,
+      key,
+    });
+  };
+
+  const renderError = () => {
+    return (
+      <ScrollView refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.RETRY} onRefresh={reload} />}>
+        {isInitialized ? (
+          <EmptyContentScreen />
+        ) : (
+          <EmptyScreen
+            svgImage="empty-light"
+            title={I18n.get('presences-history-emptyscreen-initialization-title')}
+            text={I18n.get('presences-history-emptyscreen-initialization-text')}
+            customStyle={styles.pageContainer}
+          />
+        )}
+      </ScrollView>
+    );
+  };
+
+  const renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'statistics':
+        return (
+          <Statistics
+            isRefreshing={loadingState === AsyncPagedLoadingState.REFRESH}
+            statistics={props.statistics}
+            terms={props.terms}
+            session={props.session}
+            openEventList={openEventList}
+          />
+        );
+      case 'history':
+        return (
+          <History isRefreshing={loadingState === AsyncPagedLoadingState.REFRESH} events={props.events} userType={props.userType} />
+        );
+      default:
+        return null;
+    }
+  };
+
+  const renderTabBar = (
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+  ) => {
+    return (
+      <TabBar
+        renderLabel={({ route, focused }) =>
+          focused ? (
+            <SmallBoldText style={styles.tabBarLabelFocused}>{route.title}</SmallBoldText>
+          ) : (
+            <SmallText style={styles.tabBarLabel}>{route.title}</SmallText>
+          )
+        }
+        renderIcon={({ route, focused }) => (
+          <NamedSVG
+            name={route.icon}
+            fill={focused ? theme.palette.primary.regular : theme.palette.grey.black}
+            height={20}
+            width={20}
+          />
+        )}
+        tabStyle={styles.tabBarTabContainer}
+        indicatorStyle={styles.tabBarIndicatorContainer}
+        style={styles.tabBarContainer}
+        pressColor={theme.palette.grey.pearl.toString()}
+        {...tabBarProps}
+      />
+    );
+  };
+
+  const renderTabView = () => {
+    const { selectedChildId, session, userType } = props;
+    const isChildPickerShown = userType === UserType.Relative && props.children!.length > 1;
 
     return (
       <>
-        {userType === UserType.Relative && props.hasPresencesCreateAbsenceRight ? (
+        {isChildPickerShown ? <ChildPicker contentContainerStyle={styles.childListContentContainer} /> : null}
+        {selectedChildId && session && getPresencesWorkflowInformation(session).createAbsenceStatements ? (
           <PrimaryButton
             text={I18n.get('presences-history-reportabsence')}
             iconLeft="ui-plus"
             action={() => props.navigation.navigate(presencesRouteNames.declareAbsence, { childId: selectedChildId })}
-            style={styles.absenceActionContainer}
+            style={[styles.absenceActionContainer, !isChildPickerShown && styles.absenceActionTopMargin]}
           />
         ) : null}
-        <HeadingXSText>{I18n.get('presences-history-heading')}</HeadingXSText>
-        {props.events.length ? (
-          <SmallText style={styles.informationText}>
-            {I18n.get(
-              userType === UserType.Relative ? 'presences-history-description-relative' : 'presences-history-description-student',
-            )}
-          </SmallText>
-        ) : null}
-      </>
-    );
-  };
-
-  const renderHistoryEventListItem = ({ item }: { item: Event }) => {
-    switch (item.type) {
-      case EventType.NO_REASON:
-      case EventType.REGULARIZED:
-      case EventType.UNREGULARIZED:
-        return <AbsenceCard event={item as CommonEvent} />;
-      case EventType.DEPARTURE:
-        return <DepartureCard event={item as CommonEvent} />;
-      case EventType.FORGOTTEN_NOTEBOOK:
-        return <ForgottenNotebookCard event={item as ForgottenNotebook} />;
-      case EventType.INCIDENT:
-        return <IncidentCard event={item as Incident} />;
-      case EventType.LATENESS:
-        return <LatenessCard event={item as CommonEvent} />;
-      case EventType.PUNISHMENT:
-        return <PunishmentCard event={item as Punishment} />;
-      case EventType.STATEMENT_ABSENCE:
-        return <StatementAbsenceCard event={item as Absence} userType={props.userType} />;
-    }
-  };
-
-  const renderHistory = () => {
-    const { userType } = props;
-
-    return (
-      <>
-        {userType === UserType.Relative && props.children!.length > 1 ? (
-          <UserList
-            horizontal
-            data={props.children!}
-            selectedId={selectedChildId}
-            onSelect={id => setSelectedChildId(id)}
-            style={styles.childListContainer}
-            contentContainerStyle={styles.childListContentContainer}
-          />
-        ) : null}
-        <FlatList
-          data={props.events}
-          keyExtractor={item => item.type + item.id}
-          renderItem={renderHistoryEventListItem}
-          ListHeaderComponent={renderHeader()}
-          ListFooterComponent={
-            <TertiaryButton
-              text={I18n.get('presences-history-bottomaction')}
-              iconRight="ui-arrowRight"
-              action={() => props.navigation.navigate(presencesRouteNames.statistics, { studentId: selectedChildId })}
-              style={styles.detailsActionContainer}
-            />
-          }
-          ListEmptyComponent={
-            <EmptyScreen
-              svgImage="empty-zimbra"
-              title={I18n.get('presences-history-emptyscreen-default-title')}
-              text={I18n.get(
-                userType === UserType.Relative
-                  ? 'presences-history-emptyscreen-default-text-relative'
-                  : 'presences-history-emptyscreen-default-text-student',
-              )}
-              customStyle={styles.emptyScreenContainer}
-              customTitleStyle={styles.emptyScreenTitle}
-            />
-          }
-          alwaysBounceVertical={false}
-          contentContainerStyle={styles.listContentContainer}
+        <TabView
+          navigationState={{ index, routes }}
+          onIndexChange={setIndex}
+          renderScene={renderScene}
+          renderTabBar={renderTabBar}
         />
       </>
     );
   };
 
-  return (
-    <PageView style={styles.pageContainer}>
-      <ContentLoader
-        ref={contentLoaderRef}
-        loadContent={fetchEvents}
-        renderContent={renderHistory}
-        renderError={refreshControl => (
-          <ScrollView refreshControl={refreshControl}>
-            {isInitialized ? (
-              <EmptyContentScreen />
-            ) : (
-              <EmptyScreen
-                svgImage="empty-light"
-                title={I18n.get('presences-history-emptyscreen-initialization-title')}
-                text={I18n.get('presences-history-emptyscreen-initialization-text')}
-                customStyle={styles.pageContainer}
-              />
-            )}
-          </ScrollView>
-        )}
-      />
-    </PageView>
-  );
+  const renderPage = () => {
+    switch (loadingState) {
+      case AsyncPagedLoadingState.DONE:
+      case AsyncPagedLoadingState.REFRESH:
+      case AsyncPagedLoadingState.REFRESH_FAILED:
+      case AsyncPagedLoadingState.REFRESH_SILENT:
+        return renderTabView();
+      case AsyncPagedLoadingState.PRISTINE:
+      case AsyncPagedLoadingState.INIT:
+        return <LoadingIndicator />;
+      case AsyncPagedLoadingState.INIT_FAILED:
+      case AsyncPagedLoadingState.RETRY:
+        return renderError();
+    }
+  };
+
+  return <PageView style={styles.pageContainer}>{renderPage()}</PageView>;
 };
 
 export default connect(
   (state: IGlobalState) => {
     const presencesState = moduleConfig.getState(state);
+    const dashboardState = dashboardConfig.getState(state);
     const session = getSession();
     const userId = session?.user.id;
     const userType = session?.user.type;
@@ -220,13 +263,16 @@ export default connect(
     return {
       children:
         userType === UserType.Relative
-          ? getFlattenedChildren(session?.user.children)
-              ?.filter(child => child.classesNames.length)
-              .map(child => ({ id: child.id, name: child.firstName })) ?? []
+          ? getFlattenedChildren(session?.user.children)?.filter(child => child.classesNames.length) ?? []
           : undefined,
-      events: presencesState.history.data,
-      hasPresencesCreateAbsenceRight: session && getPresencesWorkflowInformation(session).createAbsence,
+      classes: session?.user.classes,
+      events: getRecentEvents(presencesState.statistics.data, presencesState.absenceStatements.data),
+      initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+      schoolYear: presencesState.schoolYear.data,
+      selectedChildId: userType === UserType.Relative ? dashboardState.selectedChildId : undefined,
       session,
+      statistics: presencesState.statistics.data,
+      terms: presencesState.terms.data,
       userId,
       userType,
     };
@@ -234,7 +280,11 @@ export default connect(
   dispatch =>
     bindActionCreators<PresencesHistoryScreenDispatchProps>(
       {
-        tryFetchHistory: tryAction(fetchPresencesHistoryAction),
+        tryFetchAbsenceStatements: tryAction(fetchPresencesAbsenceStatementsAction),
+        tryFetchSchoolYear: tryAction(fetchPresencesSchoolYearAction),
+        tryFetchStatistics: tryAction(fetchPresencesStatisticsAction),
+        tryFetchTerms: tryAction(fetchPresencesTermsAction),
+        tryFetchUserChildren: tryAction(fetchPresencesUserChildrenAction),
       },
       dispatch,
     ),

@@ -5,6 +5,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   animationWrapper: { aspectRatio: 3 },
+  animationView: { flex: 1 },
   buttonDiscover: { marginTop: UI_SIZES.spacing.medium },
   buttonReview: { marginTop: UI_SIZES.spacing.large },
   quoteAuthor: { textAlign: 'right', marginBottom: UI_SIZES.spacing.large, color: theme.palette.grey.graphite },

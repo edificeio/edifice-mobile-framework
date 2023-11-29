@@ -66,7 +66,7 @@ export interface CommonEvent extends EventBase {
 }
 
 export interface Course {
-  callId: number;
+  callId: number | null;
   callStateId: CallState;
   classes: string[];
   endDate: Moment;
@@ -176,9 +176,3 @@ export interface Statistics {
   };
   recoveryMethod: 'DAY' | 'HALF_DAY' | 'HOUR' | null;
 }
-
-export const compareEvents = (a: Event, b: Event): number => {
-  const firstDate = 'startDate' in a ? a.startDate : a.date;
-  const secondDate = 'startDate' in b ? b.startDate : b.date;
-  return secondDate.diff(firstDate);
-};

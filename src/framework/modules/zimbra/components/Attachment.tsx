@@ -3,7 +3,7 @@ import { ActivityIndicator, StyleSheet, TouchableOpacity, View } from 'react-nat
 
 import theme from '~/app/theme';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
 import { getFileIcon } from '~/framework/modules/zimbra/utils/fileIcon';
@@ -44,8 +44,7 @@ export const Attachment = ({ name, type, uploadSuccess = true, onRemove }: IAtta
         {name}
       </SmallText>
       <TouchableOpacity onPress={onRemove} disabled={!uploadSuccess} style={styles.iconContainer}>
-        <Picture
-          type="NamedSvg"
+        <NamedSVG
           name="pictos-close"
           width={UI_SIZES.dimensions.width.medium}
           height={UI_SIZES.dimensions.height.medium}

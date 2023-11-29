@@ -3,6 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { importXmasThemeAction } from '~/framework/modules/user/actions';
 import { Platform } from '~/framework/util/appConf';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
@@ -24,10 +25,14 @@ import {
   RuntimeAuthErrorCode,
   SessionType,
   createActivationError,
+  createAuthError,
   createChangePasswordError,
 } from './model';
 import { assertSession, actions as authActions, getSession } from './reducer';
 import {
+  IUserInfoBackend,
+  UserPersonDataBackend,
+  UserPrivateData,
   createSession,
   ensureCredentialsMatchActivationCode,
   ensureUserValidity,
@@ -100,9 +105,9 @@ export function getLegalUrlsAction(platform: Platform) {
 }
 
 /**
- *
- * @param partialSessionScenario
- * @returns
+ * Get default infos
+ * - Fetch appropriate validation infos if must be verified
+ * - Return default mobile or email
  */
 async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, platformUrl: string) {
   let defaultMobile: string | undefined;
@@ -117,60 +122,119 @@ async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, p
   return { defaultMobile, defaultEmail };
 }
 
-export function loginAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
-  return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<ILoginResult> {
+/**
+ * Get token
+ * - Create new session and token if credentials are provided
+ * - Otherwise restore an existing session and token
+ * - Throw appropiate error if needed (if bad credentials, verify if it's an account activation process)
+ */
+function getTokenAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
+  return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any) {
     try {
-      await dispatch(getLegalUrlsAction(platform));
-
-      // 1. Get token from somewhere
       if (credentials) {
         await createSession(platform, credentials);
       } else {
         const tokenData = await restoreSessionAvailable();
         if (tokenData) {
           await restoreSession(platform);
-        } else {
-          return;
-        }
+        } else throw createAuthError(RuntimeAuthErrorCode.NO_TOKEN, 'No stored token', '');
       }
+    } catch (e) {
+      const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getToken');
+      if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
+        // ensureCredentialsMatchActivationCode is awaited before the two other because it throws auth errors
+        await ensureCredentialsMatchActivationCode(platform, credentials);
+        const [context] = await Promise.all([getAuthContext(platform), dispatch(getLegalUrlsAction(platform))]);
+        return { action: 'activate', context, credentials, rememberMe } as ILoginActionResultActivation;
+      }
+      throw e;
+    }
+  };
+}
 
-      // 2. Gather user information
-      const userinfo = await fetchUserInfo(platform);
-      ensureUserValidity(userinfo);
-      // Add device ID to userinfo
-      DeviceInfo.getUniqueId().then(uniqueID => {
-        userinfo.uniqueId = uniqueID;
-      });
+/**
+ * Get user data
+ * - Fetch user infos & verify data validity (no pending deletion, etc.)
+ * - Add unique device id
+ * - Fetch user public infos
+ * - Track & throw appropiate error if needed
+ */
+async function getUserData(platform: Platform, partialSessionScenario?: PartialSessionScenario) {
+  try {
+    const infos = await fetchUserInfo(platform);
+    ensureUserValidity(infos);
+    DeviceInfo.getUniqueId().then(uniqueID => {
+      infos.uniqueId = uniqueID;
+    });
+    // If we have requirements (=partialSessionScenario), we can't fetch public info, we mock it instead.
+    const { userdata, userPublicInfo } = partialSessionScenario
+      ? { userdata: undefined, userPublicInfo: undefined }
+      : await fetchUserPublicInfo(infos, platform);
+    return { infos, publicInfos: { userData: userdata, userPublicInfo } };
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getUserData');
+    throw e;
+  }
+}
 
-      // 3. Gather user requirements
-      const userRequirements = await fetchUserRequirements(platform);
+/**
+ * Handle session
+ * - Initialize firebase token
+ * - Save selected platform
+ * - Forget previous session
+ * - Save session if needed
+ * - Track & throw appropiate error if needed
+ */
+async function handleSession(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
+  try {
+    await Promise.all([initFirebaseToken(platform), savePlatform(platform), forgetPreviousSession()]);
+    const mustSaveSession = !credentials || rememberMe || platform.wayf;
+    if (mustSaveSession) await saveSession();
+    return mustSaveSession;
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'handleSession');
+    throw e;
+  }
+}
 
-      // 4. Gather partial session case
-      const partialSessionScenario = getPartialSessionScenario(userRequirements);
+/**
+ * Get user conditions
+ * - Fetch legal url's
+ * - Fetch user requirements
+ * - Return partial session scenario if needed (terms validation, mobile verification, etc.)
+ * - Track & throw appropiate error if needed
+ */
+async function getUserConditions(platform: Platform, dispatch: ThunkDispatch<any, any, any>) {
+  try {
+    const [userRequirements] = await Promise.all([fetchUserRequirements(platform), dispatch(getLegalUrlsAction(platform))]);
+    const partialSessionScenario = getPartialSessionScenario(userRequirements);
+    return partialSessionScenario;
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getUserConditions');
+    throw e;
+  }
+}
 
-      // 5. Gather user public info (only if complete session scenario)
-      const { userdata, userPublicInfo } = partialSessionScenario
-        ? { userdata: undefined, userPublicInfo: undefined }
-        : await fetchUserPublicInfo(userinfo, platform);
-
-      // 6. Init Firebase
-      await initFirebaseToken(platform);
-
-      // 7. Save session info if needed
-      await savePlatform(platform);
-      const mustSaveSession = !credentials || rememberMe || platform.wayf;
-      await forgetPreviousSession();
-      if (mustSaveSession) await saveSession();
-
-      // 8. Do tracking
-      if (credentials) await Trackers.trackEvent('Auth', 'LOGIN', partialSessionScenario);
-      else await Trackers.trackEvent('Auth', 'RESTORE', partialSessionScenario);
-
-      // === Bonus : clear cookies. The backend can soemtimes send back a Set-Cookie header that conflicts with the oAuth2 token.
-      await CookieManager.clearAll();
-
-      // 9. Validate session + return redirect scenario
-      const sessionInfo = formatSession(platform, userinfo, userdata, userPublicInfo, !!mustSaveSession);
+/**
+ * Handle login redirection
+ * - Fetch default data (email or mobile validation infos) and auth context in case of partial session scenario
+ * - Dispatch and return login redirection infos
+ * - Track & throw appropiate error if needed
+ */
+function handleLoginRedirection(
+  platform: Platform,
+  userInfo: IUserInfoBackend,
+  publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
+  mustSaveSession?: string | boolean,
+  partialSessionScenario?: PartialSessionScenario,
+  credentials?: IAuthCredentials,
+  rememberMe?: boolean,
+) {
+  return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any) {
+    try {
+      const { userData, userPublicInfo } = publicInfo;
+      const sessionInfo = formatSession(platform, userInfo, userData, userPublicInfo, !!mustSaveSession);
       if (partialSessionScenario) {
         const { defaultMobile, defaultEmail } = await getDefaultInfos(partialSessionScenario, platform.url);
         const context = await getAuthContext(platform);
@@ -180,43 +244,86 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
         dispatch(authActions.sessionCreate(sessionInfo));
       }
     } catch (e) {
-      let authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'handleLoginRedirection');
+      throw e;
+    }
+  };
+}
 
-      // 1. If error is bad user/password, it may be an account activation process
-      if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
-        try {
-          await ensureCredentialsMatchActivationCode(platform, credentials);
-          const context = await getAuthContext(platform);
-          return { action: 'activate', context, credentials, rememberMe };
-        } catch (err) {
-          authError = (err as Error).name === 'EAUTH' ? (err as AuthError) : undefined;
-          dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
-          throw err;
-        }
-      } else {
-        if (credentials) await Trackers.trackEvent('Auth', 'LOGIN ERROR', authError?.type);
-        else await Trackers.trackEvent('Auth', 'RESTORE ERROR', authError?.type);
-        dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
-        throw e;
-      }
+/**
+ * Track login
+ * - Track login completion (including login type and partial session scenario)
+ * - Track & throw appropiate error if needed
+ */
+async function trackLogin(credentials?: IAuthCredentials, partialSessionScenario?: PartialSessionScenario) {
+  try {
+    await Trackers.trackEvent('Auth', credentials ? 'LOGIN' : 'RESTORE', partialSessionScenario);
+  } catch (e) {
+    Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'trackLogin');
+    throw e;
+  }
+}
+
+export function loginAction(platform: Platform, credentials?: IAuthCredentials, rememberMe?: boolean) {
+  return async function (dispatch: ThunkDispatch<any, any, any>): Promise<ILoginResult> {
+    try {
+      // 1. Get token from session (created/restored)
+      // (exit loginAction and redirect to activation if needed)
+      const activationScenario = await dispatch(getTokenAction(platform, credentials, rememberMe));
+      if (activationScenario) return activationScenario;
+
+      // 2. Get user conditions (legal urls, requirements)
+      const partialSessionScenario = await getUserConditions(platform, dispatch);
+
+      // 3. Get user data (personal infos, validity, device id, public infos)
+      const user = await getUserData(platform, partialSessionScenario);
+
+      // 4. Handle session (firebase, platform, save)
+      const mustSaveSession = await handleSession(platform, credentials, rememberMe);
+
+      // 5. Handle login redirection (partial/complete)
+      const redirectScenario = await dispatch(
+        handleLoginRedirection(
+          platform,
+          user.infos,
+          user.publicInfos,
+          mustSaveSession,
+          partialSessionScenario,
+          credentials,
+          rememberMe,
+        ),
+      );
+
+      // 6. Track login (initial/restored)
+      await trackLogin(credentials, partialSessionScenario);
+
+      // 7. Import xmas theme
+      await dispatch(importXmasThemeAction());
+
+      return redirectScenario;
+    } catch (e) {
+      const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+      // Don't show error message if no stored token is found
+      if (authError?.type === RuntimeAuthErrorCode.NO_TOKEN) return undefined;
+      await Trackers.trackEvent('Auth', 'LOGIN ERROR', authError?.type);
+      dispatch(authActions.sessionError(authError?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+      throw e;
     }
   };
 }
 
 interface IActivationSubmitPayload extends IActivationPayload {
-  callBack: string; // No idea what is it for...
+  callBack: string;
   theme: string;
 }
 
-// ToDo : move API calls of this in service !
+// ToDo : move following API calls to a service
 export function activateAccountAction(platform: Platform, model: IActivationPayload, rememberMe?: boolean) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState) => {
     try {
       // === 0 auto select the default theme
       const theme = platform.webTheme;
-      if (!theme) {
-        console.debug('[User][Activation] activationAccount -> theme was not found:', platform.webTheme);
-      }
+      if (!theme && __DEV__) console.debug('[User][Activation] activationAccount -> theme was not found:', platform.webTheme);
       // === 1 - prepare payload
       const payload: IActivationSubmitPayload = {
         acceptCGU: true,
@@ -243,7 +350,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
         },
         method: 'post',
       });
-      // === 3 - Check whether the activation was successfull
+      // === 3 - Check whether the activation was successful
       if (!res.ok) {
         throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'));
       }
@@ -256,7 +363,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
         }
       }
 
-      // === Bonus : clear cookies. The backend send back a Set-Cookie header that conflicts with the oAuth2 token.
+      // === Bonus : clear cookies. The backend sends back a Set-Cookie header that conflicts with the oAuth2 token.
       await CookieManager.clearAll();
       // ToDo : what to do if clearing the cookies doesn't work ? The user will be stuck with that cookie and will be logged to that account forever and ever ! 😱
 
@@ -321,7 +428,7 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
 }
 
 /**
- * removes the current stored auth error
+ * Removes the currently stored auth error
  */
 export function consumeAuthError() {
   return (dispatch: ThunkDispatch<any, any, any>) => {
@@ -345,7 +452,7 @@ function sessionDestroyAction(platform: Platform) {
 }
 
 /** Action that invalidates the session without Tracking anything in case of error.
- * This removes FCM and take the user to the auth stack.
+ * This removes FCM and takes the user to the auth stack.
  */
 export function sessionInvalidateAction(platform: Platform, error?: AuthError) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
@@ -373,7 +480,7 @@ export interface IChangePasswordSubmitPayload {
   password: string;
   confirmPassword: string;
   login: string;
-  callback: string; // WTF is it for ???
+  callback: string;
 }
 
 export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean) {
@@ -402,7 +509,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
         },
         method: 'post',
       });
-      // === 3 - Check whether the password change was successfull
+      // === 3 - Check whether the password change was successful
       if (!res.ok) {
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }

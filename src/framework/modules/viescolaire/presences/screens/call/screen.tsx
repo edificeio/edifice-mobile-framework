@@ -1,4 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import * as React from 'react';
 import { FlatList, ScrollView, ScrollViewProps, View } from 'react-native';
 import { connect } from 'react-redux';
@@ -12,7 +13,7 @@ import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/component
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { ContentLoader, ContentLoaderHandle } from '~/framework/hooks/loader';
-import usePreventBack from '~/framework/hooks/usePreventBack';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
 import CallCard from '~/framework/modules/viescolaire/presences/components/call-card';
@@ -23,9 +24,11 @@ import StudentStatus from '~/framework/modules/viescolaire/presences/components/
 import { CallEventType, CallState, CallStudent } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
+import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { PresencesCallScreenDispatchProps, PresencesCallScreenPrivateProps } from './types';
@@ -132,6 +135,19 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
       if (!session) throw new Error();
       await presencesService.call.updateState(session, id, CallState.DONE);
       navigation.goBack();
+
+      //Tracking
+      const now = moment();
+      const isPast = now.isAfter(course.endDate);
+      const isDone = course.callStateId === CallState.DONE;
+      const event = (): string => {
+        if (isPast && isDone) return 'ancien-validé';
+        if (isPast && !isDone) return 'ancien-non-validé';
+        if (!isPast && isDone) return 'courant-validé';
+        return 'courant-non-validé';
+      };
+      Trackers.trackEvent('Présences', 'faire-appel', event());
+
       Toast.showSuccess(
         I18n.get('presences-call-successmessage', { class: course.classes.length ? course.classes : course.groups }),
       );
@@ -142,12 +158,18 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   };
 
   const renderBottomSheet = () => {
+    const { session } = props;
     const student = props.call!.students.find(s => s.id === selectedStudentId);
+    const hasPresencesManagementRights = session && getPresencesWorkflowInformation(session).managePresences;
+
     return (
       <BottomSheetModal ref={bottomSheetModalRef} onDismiss={unselectStudent}>
         <StudentStatus
           student={student}
-          hasAbsenceReasons={props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)}
+          hasAbsenceViewAccess={
+            hasPresencesManagementRights === true &&
+            props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)
+          }
           createAbsence={createAbsence}
           deleteAbsence={deleteAbsence}
           dismissBottomSheet={dismissBottomSheet}

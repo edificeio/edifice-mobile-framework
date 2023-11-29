@@ -7,7 +7,7 @@ import theme from '~/app/theme';
 
 import { TouchCardWithoutPadding } from './card/base';
 import { UI_SIZES } from './constants';
-import { Picture } from './picture';
+import { NamedSVG } from './picture';
 import { SmallText } from './text';
 
 export interface DateTimePickerProps {
@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
   buttonText: {
     marginLeft: UI_SIZES.spacing.tiny,
   },
+  dateTimePickerIos: {
+    // fix space in IOS
+    marginLeft: -10,
+  },
 });
 
 const DateTimePickerIOS = (props: DateTimePickerProps) => {
@@ -49,7 +53,7 @@ const DateTimePickerIOS = (props: DateTimePickerProps) => {
       maximumDate={props.maximumDate?.toDate()}
       minimumDate={props.minimumDate?.toDate()}
       locale="fr-FR"
-      style={props.style}
+      style={[styles.dateTimePickerIos, props.style]}
     />
   );
 };
@@ -63,8 +67,7 @@ const DateTimePickerAndroid = (props: DateTimePickerProps) => {
   return (
     <>
       <TouchCardWithoutPadding onPress={showPicker} disabled={props.disabled} style={[styles.buttonContainer, props.style]}>
-        <Picture
-          type="NamedSvg"
+        <NamedSVG
           name={props.mode === 'date' ? 'ui-calendarLight' : 'ui-clock'}
           width={20}
           height={20}

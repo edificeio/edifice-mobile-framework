@@ -29,4 +29,7 @@ export default StyleSheet.create({
     height: MOOD_PICTURE_SIZE,
     width: MOOD_PICTURE_SIZE,
   },
+  annotationMotto: {
+    textAlign: 'right',
+  },
 });

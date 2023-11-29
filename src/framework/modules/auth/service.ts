@@ -1,10 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 
 import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
+import { getItem, getItemJson, setItem, setItemJson } from '~/framework/util/storage';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId } from '~/infra/oauth';
@@ -183,12 +183,12 @@ export function restoreSessionAvailable() {
   return OAuth2RessourceOwnerPasswordClient.getStoredTokenStr();
 }
 
-export async function restoreSession(platform: Platform, fromData?: string) {
+export async function restoreSession(platform: Platform) {
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
   }
-  await OAuth2RessourceOwnerPasswordClient.connection.loadToken(fromData);
+  await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
   if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
     throw createAuthError(RuntimeAuthErrorCode.RESTORE_FAIL, 'Failed to restore saved session', '');
   }
@@ -296,10 +296,10 @@ export function formatSession(
 export const PLATFORM_STORAGE_KEY = 'currentPlatform';
 
 /**
- * Read the platform stored in AsyncStorage.
+ * Read the platform stored in MMKV.
  */
 export async function loadCurrentPlatform() {
-  const platformId = await AsyncStorage.getItem(PLATFORM_STORAGE_KEY);
+  const platformId = await getItem(PLATFORM_STORAGE_KEY);
   if (platformId) {
     const platform = appConf.platforms.find(_pf => _pf.name === platformId);
     if (!platform)
@@ -311,10 +311,10 @@ export async function loadCurrentPlatform() {
 }
 
 /**
- * Read and select the platform stored in AsyncStorage.
+ * Read and select the platform stored in MMKV.
  */
 export async function savePlatform(platform: Platform) {
-  await AsyncStorage.setItem(PLATFORM_STORAGE_KEY, platform.name);
+  await setItem(PLATFORM_STORAGE_KEY, platform.name);
 }
 
 export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: IAuthCredentials) {
@@ -387,13 +387,13 @@ export class FcmService {
 
   private async _getTokenToDeleteQueue(): Promise<string[]> {
     try {
-      const tokensCached = await AsyncStorage.getItem(FcmService.FCM_TOKEN_TODELETE_KEY);
+      const tokensCached = await getItemJson(FcmService.FCM_TOKEN_TODELETE_KEY);
       if (!tokensCached) return [];
-      const tokens: string[] = JSON.parse(tokensCached);
+      const tokens = tokensCached as string[];
       if (tokens instanceof Array) {
         return tokens;
       } else {
-        //console.debug("not an array?", tokens)
+        if (__DEV__) console.debug("not an array?", tokens)
       }
     } catch {
       // TODO: Manage error
@@ -408,8 +408,7 @@ export class FcmService {
     //merge is not supported by all implementation
     let tokens = await this._getTokenToDeleteQueue();
     tokens = tokens.filter(t => t !== token);
-    const json = JSON.stringify(tokens);
-    await AsyncStorage.setItem(FcmService.FCM_TOKEN_TODELETE_KEY, json);
+    await setItemJson(FcmService.FCM_TOKEN_TODELETE_KEY, tokens);
   }
 
   async unregisterFCMToken(token: string | null = null) {
@@ -423,9 +422,7 @@ export class FcmService {
       this._removeTokenFromDeleteQueue(token);
     } catch {
       //unregistering fcm token should not crash the login process
-      if (Connection.isOnline) {
-        //console.debug(err);
-      } else {
+      if (!Connection.isOnline) {
         //when no connection => get it from property
         const tokenToUnregister = token || this.lastRegisteredToken;
         if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
@@ -449,9 +446,7 @@ export class FcmService {
       //
     } catch {
       //registering fcm token should not crash the login process
-      if (Connection.isOnline) {
-        //console.debug(err);
-      } else {
+      if (!Connection.isOnline) {
         this.pendingRegistration = 'delayed';
       }
     }
@@ -506,7 +501,7 @@ export async function getMFAValidationInfos() {
     const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
     return MFAValidationInfos;
   } catch {
-    // console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
+    if (__DEV__) console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
   }
 }
 
@@ -518,7 +513,7 @@ export async function verifyMFACode(key: string) {
     })) as IEntcoreMFAValidationState;
     return mfaValidationState;
   } catch {
-    // console.warn('[UserService] verifyMFACode: could not verify mfa code', e);
+    if (__DEV__) console.warn('[UserService] verifyMFACode: could not verify mfa code', e);
   }
 }
 
@@ -526,8 +521,13 @@ export async function getMobileValidationInfos(platformUrl: string) {
   try {
     const mobileValidationInfos = await fetchJSONWithCache('/directory/user/mobilestate', {}, true, platformUrl);
     return mobileValidationInfos;
-  } catch (e) {
-    console.warn('[UserService] getMobileValidationInfos: could not get mobile validation infos', e);
+  } catch (err) {
+    throw createAuthError(
+      RuntimeAuthErrorCode.MOBILEVALIDATIONINFOS_FAIL,
+      'Failed to fetch mobile validation infos',
+      '',
+      err as Error,
+    );
   }
 }
 
@@ -546,7 +546,7 @@ export async function verifyMobileCode(key: string) {
     })) as IEntcoreMobileValidationState;
     return mobileValidationState;
   } catch {
-    // console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
+    if (__DEV__) console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
   }
 }
 
@@ -554,8 +554,13 @@ export async function getEmailValidationInfos() {
   try {
     const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
     return emailValidationInfos;
-  } catch {
-    // console.warn('[UserService] getEmailValidationInfos: could not get email validation infos', e);
+  } catch (err) {
+    throw createAuthError(
+      RuntimeAuthErrorCode.EMAILVALIDATIONINFOS_FAIL,
+      'Failed to fetch email validation infos',
+      '',
+      err as Error,
+    );
   }
 }
 
@@ -574,7 +579,7 @@ export async function verifyEmailCode(key: string) {
     })) as IEntcoreEmailValidationState;
     return emailValidationState;
   } catch {
-    // console.warn('[UserService] verifyEmailCode: could not verify email code', e);
+    if (__DEV__) console.warn('[UserService] verifyEmailCode: could not verify email code', e);
   }
 }
 

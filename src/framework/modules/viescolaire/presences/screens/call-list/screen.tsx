@@ -32,9 +32,10 @@ import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modu
 import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { subtractTime } from '~/framework/util/date';
+import { subtractTime, today } from '~/framework/util/date';
 import { tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { PresencesCallListScreenDispatchProps, PresencesCallListScreenPrivateProps } from './types';
@@ -52,7 +53,7 @@ export const computeNavBar = ({
 
 const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => {
   const [isInitialized, setInitialized] = React.useState(true);
-  const [date, setDate] = React.useState<Moment>(moment());
+  const [date, setDate] = React.useState<Moment>(today().day() === 0 ? today().add(1, 'd') : today());
   const [selectedCourseId, setSelectedCourseId] = React.useState<string | null>(null);
   const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
   const [bottomSheetCall, setBottomSheetCall] = React.useState<Call | null>(null);
@@ -60,7 +61,6 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
-
   const courses = props.courses[date.format('YYYY-MM-DD')] ?? [];
 
   const fetchCourses = async () => {
@@ -161,15 +161,25 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const onPressCourse = async (course: Course) => {
     if (subtractTime(course.startDate, 15, 'minutes').isAfter(moment())) {
       Alert.alert(I18n.get('presences-calllist-unavailablealert-title'), I18n.get('presences-calllist-unavailablealert-message'));
+      Trackers.trackEvent('Présences', 'choix-séance', 'futur');
     } else if (course.callStateId === CallState.DONE || moment().isAfter(course.endDate)) {
       setSelectedCourseId(course.id);
       bottomSheetModalRef.current?.present();
+
       if (course.callStateId === CallState.DONE && props.session) {
         const call = await props.tryFetchCall(course.callId);
         setBottomSheetCall(call);
+        if (moment().isAfter(course.endDate)) {
+          Trackers.trackEvent('Présences', 'choix-séance', 'ancien-validé');
+        } else {
+          Trackers.trackEvent('Présences', 'choix-séance', 'courant-validé');
+        }
+      } else {
+        Trackers.trackEvent('Présences', 'choix-séance', 'ancien-non-validé');
       }
     } else {
       openCall(course);
+      Trackers.trackEvent('Présences', 'choix-séance', 'courant-non-validé');
     }
   };
 
@@ -231,11 +241,11 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
   const renderCallList = () => {
     return (
       <View style={UI_STYLES.flex1}>
-        <DayPicker initialSelectedDate={date} onDateChange={setDate} style={styles.dayPickerContainer} />
+        <DayPicker initialSelectedDate={date} maximumWeeks={4} onDateChange={setDate} style={styles.dayPickerContainer} />
         <FlatList
           data={courses}
           renderItem={({ item }) => <CallCard course={item} showStatus onPress={() => onPressCourse(item)} />}
-          keyExtractor={item => item.id + item.startDate}
+          keyExtractor={item => item.callId?.toString() ?? item.id + item.startDate.format()}
           refreshControl={<RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={refresh} />}
           ListHeaderComponent={
             appConf.is2d && courses.length ? <BodyBoldText>{I18n.get('presences-calllist-heading')}</BodyBoldText> : null
