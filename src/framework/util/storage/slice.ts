@@ -144,9 +144,9 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
    * @param key
    * @returns
    */
-  getJSON(
-    key: KeysWithValueNotOfType<StorageTypes, boolean | number | string>,
-  ): StorageTypes[KeysWithValueNotOfType<StorageTypes, boolean | number | string>] | undefined {
+  getJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
+    key: KeyType,
+  ): StorageTypes[typeof key] | undefined {
     return this.storage instanceof StorageSlice ? this.storage.#getJSON(this.computeKey(key)) : this.#getJSON(this.computeKey(key));
   }
 
@@ -194,9 +194,9 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
    * @param key
    * @param value
    */
-  setJSON(
-    key: KeysWithValueNotOfType<StorageTypes, boolean | number | string>,
-    value: StorageTypes[KeysWithValueNotOfType<StorageTypes, boolean | number | string>],
+  setJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
+    key: KeyType,
+    value: StorageTypes[typeof key],
   ): void {
     return this.storage instanceof StorageSlice
       ? this.storage.#setJSON(this.computeKey(key), value)

@@ -1,4 +1,5 @@
-import { ISession } from '~/framework/modules/auth/model';
+import type { ISession } from '~/framework/modules/auth/model';
+
 import type { IModuleConfig } from '../moduleTool';
 
 export type StorageKey = string;
@@ -38,15 +39,15 @@ export interface IStorageDict<StorageTypes extends Record<StorageKey, string | n
   getBoolean(key: KeysWithValueOfType<StorageTypes, boolean>): StorageTypes[KeysWithValueOfType<StorageTypes, boolean>] | undefined;
   getNumber(key: KeysWithValueOfType<StorageTypes, number>): StorageTypes[KeysWithValueOfType<StorageTypes, number>] | undefined;
   getString(key: KeysWithValueOfType<StorageTypes, string>): StorageTypes[KeysWithValueOfType<StorageTypes, string>] | undefined;
-  getJSON(
-    key: KeysWithValueNotOfType<StorageTypes, boolean | number | string>,
-  ): StorageTypes[KeysWithValueNotOfType<StorageTypes, boolean | number | string>] | undefined;
+  getJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
+    key: KeyType,
+  ): StorageTypes[typeof key] | undefined;
   set(key: KeysWithValueOfType<StorageTypes, boolean>, value: StorageTypes[KeysWithValueOfType<StorageTypes, boolean>]): void;
   set(key: KeysWithValueOfType<StorageTypes, number>, value: StorageTypes[KeysWithValueOfType<StorageTypes, number>]): void;
   set(key: KeysWithValueOfType<StorageTypes, string>, value: StorageTypes[KeysWithValueOfType<StorageTypes, string>]): void;
-  setJSON(
-    key: KeysWithValueNotOfType<StorageTypes, boolean | number | string>,
-    value: StorageTypes[KeysWithValueNotOfType<StorageTypes, boolean | number | string>],
+  setJSON<KeyType extends KeysWithValueNotOfType<StorageTypes, boolean | number | string>>(
+    key: KeyType,
+    value: StorageTypes[typeof key],
   ): void;
   withPrefix(prefix: string): IStorageDict<StorageTypes>;
   withModule<Name extends string>(module: IModuleConfig<Name, any>): IStorageDict<StorageTypes>;
