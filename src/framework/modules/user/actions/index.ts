@@ -7,6 +7,7 @@ import RNShake from 'react-native-shake';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import Sound from 'react-native-sound';
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
@@ -65,9 +66,19 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
   };
 }
 
-const xmasStorageKey = 'xmasThemeSetting';
-const snowDuration = 20000;
+const xmasThemeStorageKey = 'xmasThemeSetting';
+const xmasMusicStorageKey = 'xmasMusicSetting';
+const snowDuration = 35000;
 let snowfallTimer: NodeJS.Timeout;
+
+Sound.setCategory('Playback');
+const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
+  if (error) {
+    console.log('failed to load the sound', error);
+  } else
+    console.log('duration in seconds: ' + jingleBells.getDuration() + 'number of channels: ' + jingleBells.getNumberOfChannels());
+});
+jingleBells.setVolume(0.5);
 
 const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: number, endMonth: number) => {
   const getDateForYear = (startOfYear: Moment, day: number, month: number) => {
@@ -86,6 +97,7 @@ const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: num
 export const isWithinXmasPeriod = getIsWithinXmasPeriod(1, 12, 5, 1);
 
 export const getIsXmasActive = (state: IGlobalState) => isWithinXmasPeriod && state.user.xmasTheme;
+export const getIsXmasMusicActive = (state: IGlobalState) => state.user.xmasMusic;
 
 export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
@@ -120,6 +132,7 @@ const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any,
       shakeListener = RNShake.addListener(() => {
         Vibration.vibrate();
         dispatch(letItSnowAction());
+        if (getIsXmasMusicActive(getState())) jingleBells.play();
       });
     } else if (shakeListener && !getIsXmasActive(getState())) {
       shakeListener.remove();
@@ -130,11 +143,32 @@ const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any,
   }
 };
 
+export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  try {
+    await setItemJson(xmasMusicStorageKey, xmasMusic);
+    dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusic });
+    if (xmasMusic) {
+      jingleBells.play();
+      dispatch(letItSnowAction());
+    } else {
+      jingleBells.stop();
+      dispatch(stopItSnowAction());
+    }
+  } catch {
+    // If error, we disable music for now
+    dispatch({ type: actionTypes.toggleXmasMusic, value: false });
+  }
+};
+
 export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await setItemJson(xmasStorageKey, xmasTheme);
+    await setItemJson(xmasThemeStorageKey, xmasTheme);
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
-    if (xmasTheme) dispatch(letItSnowAction());
+    if (xmasTheme) {
+      dispatch(letItSnowAction());
+    } else {
+      dispatch(setXmasMusicAction(false));
+    }
     dispatch(updateShakeListenerAction());
   } catch {
     // If error, we disable theme for now
@@ -142,17 +176,26 @@ export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: Thunk
   }
 };
 
-export const importXmasThemeAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
+export const importXmasAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
-    let xmasSetting;
-    xmasSetting = (await getItemJson(xmasStorageKey)) as boolean | undefined;
-    // The setting is undefined on first launch (we set the theme on by default)
-    if (xmasSetting === undefined) {
-      await setItemJson(xmasStorageKey, true);
-      xmasSetting = true;
+    let xmasThemeSetting;
+    let xmasMusicSetting;
+    xmasThemeSetting = (await getItemJson(xmasThemeStorageKey)) as boolean | undefined;
+    xmasMusicSetting = (await getItemJson(xmasMusicStorageKey)) as boolean | undefined;
+    // These settings are undefined on first launch (by default, we set the theme on and the music off)
+    if (xmasThemeSetting === undefined) {
+      await setItemJson(xmasThemeStorageKey, true);
+      xmasThemeSetting = true;
     }
-    const xmasTheme = xmasSetting && isWithinXmasPeriod;
+    if (xmasMusicSetting === undefined) {
+      await setItemJson(xmasMusicStorageKey, false);
+      xmasMusicSetting = false;
+    }
+
+    const xmasTheme = xmasThemeSetting && isWithinXmasPeriod;
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
+    dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusicSetting });
+
     if (xmasTheme) dispatch(letItSnowAction());
     dispatch(updateShakeListenerAction());
   } catch {
