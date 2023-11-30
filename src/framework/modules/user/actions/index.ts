@@ -68,7 +68,8 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
 
 const xmasThemeStorageKey = 'xmasThemeSetting';
 const xmasMusicStorageKey = 'xmasMusicSetting';
-const snowDuration = 35000;
+const snowFallDuration = 35000;
+const snowFirstLaunchWait = 1000;
 let snowfallTimer: NodeJS.Timeout;
 
 Sound.setCategory('Playback');
@@ -106,7 +107,7 @@ export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, an
     if (snowfallTimer) {
       clearTimeout(snowfallTimer);
     }
-    snowfallTimer = setTimeout(() => dispatch({ type: actionTypes.setFlakes, value: false }), snowDuration);
+    snowfallTimer = setTimeout(() => dispatch({ type: actionTypes.setFlakes, value: false }), snowFallDuration);
   } catch {
     // ToDo: Error handling
   }
@@ -196,7 +197,10 @@ export const importXmasAction = () => async (dispatch: ThunkDispatch<any, any, a
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
     dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusicSetting });
 
-    if (xmasTheme) dispatch(letItSnowAction());
+    // We make sure the app is ready to display the snowflakes on first launch
+    setTimeout(() => {
+      if (xmasTheme) dispatch(letItSnowAction());
+    }, snowFirstLaunchWait);
     dispatch(updateShakeListenerAction());
   } catch {
     // If error, we reset to the inital behavior => theme on

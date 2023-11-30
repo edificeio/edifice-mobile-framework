@@ -21,6 +21,8 @@ import { getState as getAuthState, getSession } from '~/framework/modules/auth/r
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
+import SnowFlakes from '~/framework/components/SnowFlakes';
+import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
@@ -81,6 +83,12 @@ function RootNavigator(props: RootNavigatorProps) {
   // === Render navigation container with initialState ===
 
   const trackNavState = useNavigationTracker();
+  const manageNavSnow = useNavigationSnowHandler(dispatch);
+
+  const onStateChange = () => {
+    trackNavState();
+    manageNavSnow();
+  };
 
   const ret = React.useMemo(() => {
     return (
@@ -88,7 +96,7 @@ function RootNavigator(props: RootNavigatorProps) {
         <SplashScreenComponent key={isReady} />
         {isReady ? (
           <>
-            <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
+            <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={onStateChange}>
               <AppPushNotificationHandlerComponent>
                 <RootStack.Navigator screenOptions={{ headerShown: true }}>
                   {routes}
@@ -96,12 +104,13 @@ function RootNavigator(props: RootNavigatorProps) {
                 </RootStack.Navigator>
               </AppPushNotificationHandlerComponent>
               <RootToastHandler />
+              <SnowFlakes />
             </NavigationContainer>
           </>
         ) : null}
       </>
     );
-  }, [isReady, initialNavState, trackNavState, routes]);
+  }, [isReady, initialNavState, onStateChange, routes]);
 
   return ret;
 }
