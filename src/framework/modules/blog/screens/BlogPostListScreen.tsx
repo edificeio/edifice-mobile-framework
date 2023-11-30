@@ -4,13 +4,14 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import React from 'react';
-import { FlatList, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen, EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
@@ -80,41 +81,48 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   /**
    * @throws Error
    */
-  const fetchPage = async (blogId: string, fromPage?: number, flushAfter?: boolean) => {
-    try {
-      const pageToFetch = fromPage ?? nextPageToFetchState; // If page is not defined, automatically fetch the next page
-      if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
-      const session = props.session;
-      if (!session) throw new Error('BlogPostListScreen.fetchPage: no session');
-      const newBlogPosts = await blogService.posts.page(session, blogId, pageToFetch, ['PUBLISHED', 'SUBMITTED']);
-      let pagingSize = pagingSizeState;
-      if (!pagingSize) {
-        setPagingSize(newBlogPosts.length);
-        pagingSize = newBlogPosts.length;
-      }
-      if (pagingSize) {
-        if (newBlogPosts.length) {
-          setBlogPosts([
-            ...blogPosts.slice(0, pagingSize * pageToFetch),
-            ...newBlogPosts,
-            ...(flushAfter ? [] : blogPosts.slice(pagingSize * (pageToFetch + 1))),
-          ]);
+  const fetchPage = React.useCallback(
+    async (blogId: string, fromPage?: number, flushAfter?: boolean) => {
+      try {
+        const pageToFetch = fromPage ?? nextPageToFetchState; // If page is not defined, automatically fetch the next page
+        if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
+        const session = props.session;
+        if (!session) throw new Error('BlogPostListScreen.fetchPage: no session');
+        const newBlogPosts = await blogService.posts.page(session, blogId, pageToFetch, ['PUBLISHED', 'SUBMITTED']);
+        let pagingSize = pagingSizeState;
+        if (!pagingSize) {
+          setPagingSize(newBlogPosts.length);
+          pagingSize = newBlogPosts.length;
         }
+        if (pagingSize) {
+          if (newBlogPosts.length) {
+            setBlogPosts([
+              ...blogPosts.slice(0, pagingSize * pageToFetch),
+              ...newBlogPosts,
+              ...(flushAfter ? [] : blogPosts.slice(pagingSize * (pageToFetch + 1))),
+            ]);
+          }
 
-        if (!fromPage) {
-          setNextPageToFetch(newBlogPosts.length === 0 || newBlogPosts.length < pagingSize ? -1 : pageToFetch + 1);
-        } else if (flushAfter) {
-          setNextPageToFetch(fromPage + 1);
-        }
-        // Only increment pagecount when fromPage is not specified
-      } else setBlogPosts([]);
-    } catch {
-      throw new Error();
-    }
-  };
-  const fetchFromStart = async (blogId: string) => {
-    return fetchPage(blogId, 0, true);
-  };
+          if (!fromPage) {
+            setNextPageToFetch(newBlogPosts.length === 0 || newBlogPosts.length < pagingSize ? -1 : pageToFetch + 1);
+          } else if (flushAfter) {
+            setNextPageToFetch(fromPage + 1);
+          }
+          // Only increment pagecount when fromPage is not specified
+        } else setBlogPosts([]);
+      } catch {
+        throw new Error();
+      }
+    },
+    [blogPosts, nextPageToFetchState, pagingSizeState, props.session],
+  );
+
+  const fetchFromStart = React.useCallback(
+    async (blogId: string) => {
+      return fetchPage(blogId, 0, true);
+    },
+    [fetchPage],
+  );
 
   const init = (selectedBlog_Id: string) => {
     if (selectedBlog_Id) {
@@ -125,52 +133,70 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     }
   };
 
-  const reload = (selectedBlog_Id: string) => {
-    if (selectedBlog_Id) {
-      setLoadingState(AsyncPagedLoadingState.RETRY);
-      fetchFromStart(selectedBlog_Id)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
-    }
-  };
+  const reload = React.useCallback(
+    (selectedBlog_Id: string) => {
+      if (selectedBlog_Id) {
+        setLoadingState(AsyncPagedLoadingState.RETRY);
+        fetchFromStart(selectedBlog_Id)
+          .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+          .catch(() => setLoadingState(AsyncPagedLoadingState.INIT_FAILED));
+      }
+    },
+    [fetchFromStart],
+  );
 
-  const refresh = (selectedBlog_Id: string) => {
-    if (selectedBlog_Id) {
-      setLoadingState(AsyncPagedLoadingState.REFRESH);
-      fetchFromStart(selectedBlog_Id)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-    }
-  };
-  const refreshSilent = (selectedBlog_Id: string) => {
-    if (selectedBlog_Id) {
-      setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
-      fetchFromStart(selectedBlog_Id)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
-    }
-  };
-  const fetchNextPage = (selectedBlog_Id: string) => {
-    if (selectedBlog_Id) {
-      setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
-      fetchPage(selectedBlog_Id)
-        .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
-        .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
-    }
-  };
+  const refresh = React.useCallback(
+    (selectedBlog_Id: string) => {
+      if (selectedBlog_Id) {
+        setLoadingState(AsyncPagedLoadingState.REFRESH);
+        fetchFromStart(selectedBlog_Id)
+          .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+          .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+      }
+    },
+    [fetchFromStart],
+  );
+  const refreshSilent = React.useCallback(
+    (selectedBlog_Id: string) => {
+      if (selectedBlog_Id) {
+        setLoadingState(AsyncPagedLoadingState.REFRESH_SILENT);
+        fetchFromStart(selectedBlog_Id)
+          .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+          .catch(() => setLoadingState(AsyncPagedLoadingState.REFRESH_FAILED));
+      }
+    },
+    [fetchFromStart],
+  );
+  const fetchNextPage = React.useCallback(
+    (selectedBlog_Id: string) => {
+      if (selectedBlog_Id) {
+        setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
+        fetchPage(selectedBlog_Id)
+          .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+          .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
+      }
+    },
+    [fetchPage],
+  );
 
-  const onGoToPostCreationScreen = () =>
-    props.navigation.navigate(blogRouteNames.blogCreatePost, {
-      blog: selectedBlog,
-      referrer: `${moduleConfig.routeName}/posts`,
-    });
+  const onGoToPostCreationScreen = React.useCallback(
+    () =>
+      props.navigation.navigate(blogRouteNames.blogCreatePost, {
+        blog: selectedBlog,
+        referrer: `${moduleConfig.routeName}/posts`,
+      }),
+    [props.navigation, selectedBlog],
+  );
 
-  const onOpenBlogPost = (item: BlogPost) => {
-    props.navigation.navigate(blogRouteNames.blogPostDetails, {
-      blogPost: item,
-      blog: selectedBlog,
-    });
-  };
+  const onOpenBlogPost = React.useCallback(
+    (item: BlogPost) => {
+      props.navigation.navigate(blogRouteNames.blogPostDetails, {
+        blogPost: item,
+        blog: selectedBlog,
+      });
+    },
+    [props.navigation, selectedBlog],
+  );
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
@@ -201,7 +227,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedBlogTitle]);
 
-  const renderEmpty = () => {
+  const renderEmpty = React.useCallback(() => {
     return (
       <EmptyScreen
         svgImage="empty-blog"
@@ -215,9 +241,9 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           : {})}
       />
     );
-  };
+  }, [hasBlogPostCreationRights, onGoToPostCreationScreen]);
 
-  const renderError = () => {
+  const renderError = React.useCallback(() => {
     return (
       <ScrollView
         refreshControl={
@@ -226,43 +252,60 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         <EmptyConnectionScreen />
       </ScrollView>
     );
-  };
+  }, [loadingState, reload, selectedBlogId]);
+
+  const renderItem = React.useCallback(
+    ({ item }) => {
+      return (
+        <BlogPostResourceCard
+          action={() => onOpenBlogPost(item)}
+          authorId={item.author.userId}
+          authorName={item.author.username}
+          comments={item.comments?.length as number}
+          contentHtml={item.content}
+          date={moment(item.created)}
+          title={item.title}
+          state={item.state as 'PUBLISHED' | 'SUBMITTED'}
+        />
+      );
+    },
+    [onOpenBlogPost],
+  );
+
+  const keyExtractor = React.useCallback((item: BlogPost) => item._id, []);
+
+  const onEndReached = React.useCallback(() => {
+    fetchNextPage(selectedBlogId);
+  }, [fetchNextPage, selectedBlogId]);
+
+  const listHeaderComponent = React.useMemo(() => <View style={{ height: UI_SIZES.spacing.medium }} />, []);
+  const listFooterComponent = React.useMemo(
+    () => (
+      <>
+        {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withVerticalMargins /> : null}
+        <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
+      </>
+    ),
+    [loadingState],
+  );
+
+  const refreshControl = React.useMemo(
+    () => <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />,
+    [loadingState, refresh, selectedBlogId],
+  );
 
   const renderBlogPostList = () => {
     return (
       <FlatList
         data={blogPosts}
-        renderItem={({ item }) => {
-          return (
-            <BlogPostResourceCard
-              action={() => onOpenBlogPost(item)}
-              authorId={item.author.userId}
-              authorName={item.author.username}
-              comments={item.comments?.length as number}
-              contentHtml={item.content}
-              date={moment(item.created)}
-              title={item.title}
-              state={item.state as 'PUBLISHED' | 'SUBMITTED'}
-            />
-          );
-        }}
-        keyExtractor={item => item._id}
-        ListEmptyComponent={renderEmpty()}
-        ListHeaderComponent={<View style={{ height: UI_SIZES.spacing.medium }} />}
-        ListFooterComponent={
-          <>
-            {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withVerticalMargins /> : null}
-            <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
-          </>
-        }
-        refreshControl={
-          <RefreshControl refreshing={loadingState === AsyncPagedLoadingState.REFRESH} onRefresh={() => refresh(selectedBlogId)} />
-        }
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        ListEmptyComponent={renderEmpty}
+        ListHeaderComponent={listHeaderComponent}
+        ListFooterComponent={listFooterComponent}
+        refreshControl={refreshControl}
         contentContainerStyle={styles.flexGrow1}
-        scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-        onEndReached={() => {
-          fetchNextPage(selectedBlogId);
-        }}
+        onEndReached={onEndReached}
         onEndReachedThreshold={0.5}
       />
     );
