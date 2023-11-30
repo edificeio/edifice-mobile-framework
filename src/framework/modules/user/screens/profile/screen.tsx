@@ -175,7 +175,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const onNewMessage = () => {
     const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
-    if (userInfo?.type === UserType.Student && !isEmpty(family)) {
+    if (userInfo?.type === UserType.Student && !isEmpty(family) && session?.user.type !== UserType.Student) {
       const familyUser: any = [];
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
