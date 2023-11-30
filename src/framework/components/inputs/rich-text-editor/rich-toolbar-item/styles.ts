@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
     borderRadius: UI_SIZES.radius.medium,
   },
-  itemSelected: {
+  itemActive: {
     backgroundColor: theme.palette.primary.pale,
   },
 });
