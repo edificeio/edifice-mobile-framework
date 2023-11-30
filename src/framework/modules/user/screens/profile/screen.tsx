@@ -233,7 +233,10 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderPersonFamily = user => {
-    if (!isMyProfile && (session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel))
+    if (
+      (!isMyProfile && (session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel)) ||
+      (isMyProfile && session?.user.type === UserType.Relative)
+    )
       return (
         <TouchableOpacity
           key={user.relatedId}
