@@ -116,6 +116,7 @@ export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, an
 export const stopItSnowAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
     if (!getIsXmasActive(getState())) return;
+    jingleBells.stop();
     dispatch({ type: actionTypes.setFlakes, value: false });
     if (snowfallTimer) {
       clearTimeout(snowfallTimer);
@@ -152,7 +153,6 @@ export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: Thunk
       jingleBells.play();
       dispatch(letItSnowAction());
     } else {
-      jingleBells.stop();
       dispatch(stopItSnowAction());
     }
   } catch {
