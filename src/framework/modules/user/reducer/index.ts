@@ -5,6 +5,7 @@ import createReducer from '~/framework/util/redux/reducerFactory';
 // State type
 
 export interface UserState {
+  xmasMusic: boolean;
   xmasTheme: boolean;
   flakesFalling: boolean;
 }
@@ -12,6 +13,7 @@ export interface UserState {
 // Initial state value
 
 export const initialState: UserState = {
+  xmasMusic: false,
   xmasTheme: true,
   flakesFalling: false,
 };
@@ -19,6 +21,7 @@ export const initialState: UserState = {
 // Actions definitions
 
 export const actionTypes = {
+  toggleXmasMusic: moduleConfig.namespaceActionType('TOGGLE_XMAS_MUSIC'),
   toggleXmasTheme: moduleConfig.namespaceActionType('TOGGLE_XMAS_THEME'),
   setFlakes: moduleConfig.namespaceActionType('SET_FLAKES'),
 };
@@ -30,11 +33,14 @@ export const actions = {};
 // Reducer
 
 const reducer = createReducer(initialState, {
+  [actionTypes.toggleXmasMusic]: (state, action) => {
+    return { ...state, xmasMusic: action.value };
+  },
   [actionTypes.toggleXmasTheme]: (state, action) => {
-    return { ...initialState, xmasTheme: action.value };
+    return { ...state, xmasTheme: action.value };
   },
   [actionTypes.setFlakes]: (state, action) => {
-    return { ...initialState, flakesFalling: action.value };
+    return { ...state, flakesFalling: action.value };
   },
 });
 

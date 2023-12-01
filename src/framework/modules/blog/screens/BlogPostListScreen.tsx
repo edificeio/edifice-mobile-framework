@@ -1,6 +1,7 @@
 /**
  * Blog post list
  */
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import React from 'react';
@@ -21,7 +22,7 @@ import { BlogPostResourceCard } from '~/framework/modules/blog/components/BlogPo
 import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
+import { Blog, BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import { blogService } from '~/framework/modules/blog/service';
@@ -58,6 +59,31 @@ export const computeNavBar = ({
     title: I18n.get('blog-appname'),
   }),
 });
+
+const BlogPostListItem = ({ blog, post }: { blog: Blog; post: BlogPost }) => {
+  const navigation = useNavigation<NavigationProp<BlogNavigationParams, typeof blogRouteNames.blogPostList>>();
+  const onOpenBlogPost = React.useCallback(() => {
+    navigation.navigate(blogRouteNames.blogPostDetails, {
+      blogPost: post,
+      blog,
+    });
+  }, [blog, navigation, post]);
+
+  const dateAsMoment = React.useMemo(() => moment(post.created), [post.created]);
+
+  return (
+    <BlogPostResourceCard
+      action={onOpenBlogPost}
+      authorId={post.author.userId}
+      authorName={post.author.username}
+      comments={post.comments?.length as number}
+      contentHtml={post.content}
+      date={dateAsMoment}
+      title={post.title}
+      state={post.state as 'PUBLISHED' | 'SUBMITTED'}
+    />
+  );
+};
 
 const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   const selectedBlog = props.route.params.selectedBlog;
@@ -188,16 +214,6 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     [props.navigation, selectedBlog],
   );
 
-  const onOpenBlogPost = React.useCallback(
-    (item: BlogPost) => {
-      props.navigation.navigate(blogRouteNames.blogPostDetails, {
-        blogPost: item,
-        blog: selectedBlog,
-      });
-    },
-    [props.navigation, selectedBlog],
-  );
-
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init(selectedBlogId);
@@ -254,23 +270,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     );
   }, [loadingState, reload, selectedBlogId]);
 
-  const renderItem = React.useCallback(
-    ({ item }) => {
-      return (
-        <BlogPostResourceCard
-          action={() => onOpenBlogPost(item)}
-          authorId={item.author.userId}
-          authorName={item.author.username}
-          comments={item.comments?.length as number}
-          contentHtml={item.content}
-          date={moment(item.created)}
-          title={item.title}
-          state={item.state as 'PUBLISHED' | 'SUBMITTED'}
-        />
-      );
-    },
-    [onOpenBlogPost],
-  );
+  const renderItem = React.useCallback(({ item }) => <BlogPostListItem blog={selectedBlog} post={item} />, [selectedBlog]);
 
   const keyExtractor = React.useCallback((item: BlogPost) => item._id, []);
 
