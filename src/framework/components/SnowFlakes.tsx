@@ -3,14 +3,15 @@
  */
 import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { Animated } from 'react-native';
+import { Animated, AppState } from 'react-native';
 import Snow from 'react-native-snow-bg';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
 
+import { getSession } from '~/framework/modules/auth/reducer';
+import { jingleBells } from '~/framework/modules/user/actions';
 import { ISession } from '../modules/auth/model';
-import { getSession } from '../modules/auth/reducer';
 
 interface SnowFlakesReduxProps {
   session?: ISession;
@@ -23,6 +24,20 @@ const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesRed
   const [snowfall, setSnowfall] = React.useState(false);
   const [fadeAnim, setFadeAnim] = React.useState(new Animated.Value(1));
   const wasFlaskesFalling = React.useRef(false);
+
+  // Pause and resume playback depending on app state
+  React.useEffect(() => {
+    const subscription = AppState.addEventListener('change', event => {
+      if (event === 'background') jingleBells.pause();
+      if (event === 'active') {
+        jingleBells.getCurrentTime(currentTime => {
+          if (currentTime > 0) jingleBells.play();
+        });
+      }
+    });
+    return () => subscription.remove();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const getShouldSnowFall = React.useCallback(
     async (fadeAnimation: Animated.Value) => {

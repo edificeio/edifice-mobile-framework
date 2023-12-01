@@ -73,7 +73,7 @@ const snowFirstLaunchWait = 1000;
 let snowfallTimer: NodeJS.Timeout;
 
 Sound.setCategory('Playback');
-const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
+export const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
   if (error) {
     console.log('failed to load the sound', error);
   } else
