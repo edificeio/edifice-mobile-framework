@@ -8,7 +8,6 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -17,6 +16,7 @@ import { setXmasMusicAction, setXmasThemeAction } from '~/framework/modules/user
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
+import AlertCard from '~/framework/components/alert';
 import styles from './styles';
 import { UserXmasScreenPrivateProps } from './types';
 
@@ -34,8 +34,6 @@ export const computeNavBar = ({
 const XmasScreen = ({ onSetXmasMusic, onSetXmasTheme, xmasMusic, xmasTheme }: UserXmasScreenPrivateProps) => {
   return (
     <PageView style={styles.page}>
-      <SmallText style={{ color: 'orange' }}>{xmasTheme ? 'THEME ON' : 'THEME OFF'}</SmallText>
-      <SmallText style={{ color: 'pink' }}>{xmasMusic ? 'MUSIC ON' : 'MUSIC OFF'}</SmallText>
       <SmallText>{I18n.get('user-xmas-description-temporary')}</SmallText>
       <View style={styles.toggleContainer}>
         <BodyText>{I18n.get('user-xmas-activate-theme')}</BodyText>
@@ -45,19 +43,7 @@ const XmasScreen = ({ onSetXmasMusic, onSetXmasTheme, xmasMusic, xmasTheme }: Us
         <BodyText style={!xmasTheme && { color: theme.palette.grey.grey }}>{I18n.get('user-xmas-activate-music')}</BodyText>
         <Toggle disabled={!xmasTheme} onCheckChange={() => onSetXmasMusic(!xmasMusic)} checked={xmasMusic} />
       </View>
-      <View style={styles.informationContainer}>
-        <View style={styles.informationBar} />
-        <NamedSVG
-          name="ui-infoCircle"
-          style={styles.informationIcon}
-          fill={theme.palette.complementary.blue.regular}
-          width={UI_SIZES.dimensions.width.larger}
-          height={UI_SIZES.dimensions.height.larger}
-        />
-        <SmallText numberOfLines={2} style={styles.hintText}>
-          {I18n.get('user-xmas-description-hint')}
-        </SmallText>
-      </View>
+      <AlertCard style={styles.alertCard} type="info" text={I18n.get('user-xmas-description-hint')} />
       <View style={styles.xmasTreeContainer}>
         <View style={styles.wishTextContainer}>
           <SmallText>{I18n.get('user-xmas-description-wish', { appName: DeviceInfo.getApplicationName() })}</SmallText>
