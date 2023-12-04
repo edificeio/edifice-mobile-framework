@@ -8,10 +8,9 @@ import Snow from 'react-native-snow-bg';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
-
+import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { jingleBells } from '~/framework/modules/user/actions';
-import { ISession } from '../modules/auth/model';
 
 interface SnowFlakesReduxProps {
   session?: ISession;
@@ -36,7 +35,6 @@ const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesRed
       }
     });
     return () => subscription.remove();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getShouldSnowFall = React.useCallback(
