@@ -167,9 +167,8 @@ export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: Thunk
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
     if (xmasTheme) {
       dispatch(letItSnowAction());
-    } else {
-      dispatch(setXmasMusicAction(false));
-    }
+      if (getIsXmasMusicActive(getState())) jingleBells.play();
+    } else jingleBells.stop();
     dispatch(updateShakeListenerAction());
   } catch {
     // If error, we disable theme for now
