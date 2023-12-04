@@ -239,13 +239,13 @@ const sectionAdapter = (data: IBackendSection): ISection => {
 
 export const formService = {
   distributions: {
-    listMine: async (session: ISession) => {
+    list: async (session: ISession) => {
       const api = '/formulaire/distributions/listMine';
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
       return distributions.map(distributionAdapter);
     },
-    getFromForm: async (session: ISession, formId: number) => {
-      const api = `/formulaire/distributions/forms/${formId}/list`;
+    listFromForm: async (session: ISession, formId: number) => {
+      const api = `/formulaire/distributions/forms/${formId}/listMine`;
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
       return distributions.map(distributionAdapter);
     },
