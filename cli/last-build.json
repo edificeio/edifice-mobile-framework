@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-11-30 12:01:55",
-  "notes": "fix(blog): MB-2284 fix blinking audio on blog post list\nfeat(profile): MB-2323 , fix change rules view bloc family\nchore(build): Change overrides repository url\nfeat(xmas): MB-2314, xmas screen design + jingle sound + react-native-sound package\nchore(stack): Sone upgrades.\nfeat(i18n): AMVS-386 add ChildrenEventsModal missing i18n keys, delete unused history details screen\nfix(edt): MO-345 prevent timetable component from having undefined courses or slots\nchore(stack): Sone upgrades.\nfix(i18n); Review i18n init order\nfix(xmas): MB-2217, snowflakes above tabbar\nfix(competences): MO-346 fix a case where level could have undefined id\nfix(crash): MB-2312, Make Storage and i18n inits more robust.\nfix(mediacentre): MO-344 prevent crash when filtering by resource type\nchore: replace Picture occurences with NamedSVG\nfix(diary): AMVS-385 fix a case where teachers with several structures could fetch slots from the wrong structure\nrelease: 1.11.3-alpha.1(1110301)",
-  "version": "1.11.3-alpha.2(1110302)"
+  "last": "2023-12-04 18:54:26",
+  "notes": "chore(lint): Remove relative imports\nRevert \"fix(xmas): MB-2333, android toggle colors\"\nfix(xmas): MB-2333, android toggle colors\nfix(form): AMV2-603 use other api to list form distributions\nfix(xmas): MB-2336, toggles logic\nfix(xmas): MB-2316, toggle colors\nfix(xmas): MB-2328, pause/resume sound\nMerge pull request #109 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nfix(xmas): MB-2327, stop sound on navigation\nfix(xmas): MB-2329, Add \"xmas\" to override name masque.\nchore(xmas): title wording\nMerge pull request #107 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nrelease: 1.11.3-rc.1(1110303)",
+  "version": "1.11.3-rc.2(1110304)"
 }
