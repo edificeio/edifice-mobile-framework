@@ -1,42 +1,40 @@
 /**
  * All the logic needed for printing the snow flakes on screen
  */
-import { NavigationProp, useIsFocused, useNavigation } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import * as React from 'react';
-import { Animated } from 'react-native';
+import { Animated, AppState } from 'react-native';
 import Snow from 'react-native-snow-bg';
 import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { stopItSnowAction } from '~/framework/modules/user/actions';
-import { UserNavigationParams } from '~/framework/modules/user/navigation';
-
-import { ISession } from '../modules/auth/model';
-import { getSession } from '../modules/auth/reducer';
+import { ISession } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
+import { jingleBells } from '~/framework/modules/user/actions';
 
 interface SnowFlakesReduxProps {
   session?: ISession;
   isXmasActivated?: boolean;
   isFlakesFalling: boolean;
-  stopItSnow: () => Promise<void>;
 }
 
-const SnowFlakes = ({ session, isXmasActivated, stopItSnow, isFlakesFalling }: SnowFlakesReduxProps) => {
+const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesReduxProps) => {
   // Determine xmas theme setting here & if snow must be falling
-  const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [snowfall, setSnowfall] = React.useState(false);
   const [fadeAnim, setFadeAnim] = React.useState(new Animated.Value(1));
   const wasFlaskesFalling = React.useRef(false);
 
-  // End snow when go to another page
+  // Pause and resume playback depending on app state
   React.useEffect(() => {
-    const blurListener = navigation.addListener('blur', () => {
-      stopItSnow();
+    const subscription = AppState.addEventListener('change', event => {
+      if (event === 'background') jingleBells.pause();
+      if (event === 'active') {
+        jingleBells.getCurrentTime(currentTime => {
+          if (currentTime > 0) jingleBells.play();
+        });
+      }
     });
-    return blurListener;
-    // We want to execute this on mount/unmount only
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => subscription.remove();
   }, []);
 
   const getShouldSnowFall = React.useCallback(
@@ -80,16 +78,11 @@ const SnowFlakes = ({ session, isXmasActivated, stopItSnow, isFlakesFalling }: S
   ) : null;
 };
 
-const SnowFlakesConnected = connect(
-  (state: IGlobalState) => ({
-    session: getSession(),
-    isXmasActivated: state.user.xmasTheme,
-    isFlakesFalling: state.user.flakesFalling,
-  }),
-  (dispatch: ThunkDispatch<any, any, any>) => ({
-    stopItSnow: () => dispatch(stopItSnowAction()),
-  }),
-)(SnowFlakes);
+const SnowFlakesConnected = connect((state: IGlobalState) => ({
+  session: getSession(),
+  isXmasActivated: state.user.xmasTheme,
+  isFlakesFalling: state.user.flakesFalling,
+}))(SnowFlakes);
 
 export default connect((state: IGlobalState) => ({
   session: getSession(),

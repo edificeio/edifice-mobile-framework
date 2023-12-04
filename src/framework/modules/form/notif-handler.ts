@@ -37,7 +37,7 @@ const handleNewFormNotificationAction: NotifHandlerThunkAction =
         Alert.alert(I18n.get('form-notifhandler-errormessage'));
         return { managed: 0 };
       }
-      const distributions = await formService.distributions.getFromForm(session, formId);
+      const distributions = await formService.distributions.listFromForm(session, formId);
 
       // 2. Compute nav action
       const navAction = CommonActions.navigate({

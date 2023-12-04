@@ -13,7 +13,8 @@ export const Toggle = ({ checked, disabled, onCheckChange }: IToggleProps) => (
   <Switch
     value={checked}
     onValueChange={() => onCheckChange && onCheckChange()}
-    trackColor={{ false: theme.palette.grey.fog, true: theme.palette.primary.regular }}
+    trackColor={{ false: theme.palette.grey.fog, true: theme.palette.secondary.regular }}
+    thumbColor={theme.palette.grey.white}
     disabled={disabled}
   />
 );

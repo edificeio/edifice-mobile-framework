@@ -73,7 +73,7 @@ const snowFirstLaunchWait = 1000;
 let snowfallTimer: NodeJS.Timeout;
 
 Sound.setCategory('Playback');
-const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
+export const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
   if (error) {
     console.log('failed to load the sound', error);
   } else
@@ -116,6 +116,7 @@ export const letItSnowAction = () => async (dispatch: ThunkDispatch<any, any, an
 export const stopItSnowAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
   try {
     if (!getIsXmasActive(getState())) return;
+    jingleBells.stop();
     dispatch({ type: actionTypes.setFlakes, value: false });
     if (snowfallTimer) {
       clearTimeout(snowfallTimer);
@@ -152,7 +153,6 @@ export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: Thunk
       jingleBells.play();
       dispatch(letItSnowAction());
     } else {
-      jingleBells.stop();
       dispatch(stopItSnowAction());
     }
   } catch {
@@ -167,9 +167,8 @@ export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: Thunk
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
     if (xmasTheme) {
       dispatch(letItSnowAction());
-    } else {
-      dispatch(setXmasMusicAction(false));
-    }
+      if (getIsXmasMusicActive(getState())) jingleBells.play();
+    } else jingleBells.stop();
     dispatch(updateShakeListenerAction());
   } catch {
     // If error, we disable theme for now

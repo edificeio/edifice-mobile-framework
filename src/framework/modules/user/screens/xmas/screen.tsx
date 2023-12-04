@@ -8,6 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import AlertCard from '~/framework/components/alert';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallText } from '~/framework/components/text';
@@ -16,7 +17,6 @@ import { setXmasMusicAction, setXmasThemeAction } from '~/framework/modules/user
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import AlertCard from '~/framework/components/alert';
 import styles from './styles';
 import { UserXmasScreenPrivateProps } from './types';
 
