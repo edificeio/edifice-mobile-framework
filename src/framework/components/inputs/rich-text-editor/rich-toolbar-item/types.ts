@@ -1,10 +1,12 @@
 import { RichEditor, RichToolbar } from '..';
+import { RichToolbarPage } from '../rich-toolbar-page';
 
 export interface RichToolbarItemProps {
-  active: boolean;
   editor: RichEditor;
   icon: string;
   index: number;
+  pages: (typeof RichToolbarPage)[];
   toolbar: RichToolbar;
+  selected: boolean;
   onSelected: () => void;
 }
