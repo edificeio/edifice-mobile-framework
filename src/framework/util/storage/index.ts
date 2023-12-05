@@ -1,7 +1,7 @@
 import { StorageHandler } from './handler';
 import { mmkvStorageHelper } from './mmkv';
 import { StorageSlice } from './slice';
-import { IStorageBackend, IStorageDict, StorageKey, StorageTypeMap } from './types';
+import { IStorageBackend, IStorageSlice, StorageKey, StorageTypeMap } from './types';
 
 /**
  * Use MMKV as the storage technology.
@@ -25,7 +25,7 @@ export const storage = {
    * @param subStorage
    * @returns
    */
-  compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageDict<StorageTypeMap>>(subStorage: Storage) => {
+  compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageSlice<StorageTypeMap>>(subStorage: Storage) => {
     return new StorageSlice<Types, Storage>(subStorage);
   },
 

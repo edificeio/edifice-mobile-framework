@@ -1,16 +1,16 @@
 import type { ISession } from '~/framework/modules/auth/model';
 
-import type { IStorageBackend, IStorageDict, IStorageHandler, StorageTypeMap } from './types';
+import type { IStorageBackend, IStorageHandler, IStorageSlice, StorageTypeMap } from './types';
 
-export class StorageHandler<Storage extends IStorageBackend | IStorageDict<StorageTypeMap>> implements IStorageHandler<Storage> {
+export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<StorageTypeMap>> implements IStorageHandler<Storage> {
   constructor(
     protected storage: Storage,
     protected storageName?: string,
   ) {}
 
-  private static storageListWithAppInit: StorageHandler<IStorageBackend | IStorageDict<StorageTypeMap>>[] = [];
+  private static storageListWithAppInit: StorageHandler<IStorageBackend | IStorageSlice<StorageTypeMap>>[] = [];
 
-  private static storageListWithSessionInit: StorageHandler<IStorageBackend | IStorageDict<StorageTypeMap>>[] = [];
+  private static storageListWithSessionInit: StorageHandler<IStorageBackend | IStorageSlice<StorageTypeMap>>[] = [];
 
   private static initPhaseDone: boolean = false;
 

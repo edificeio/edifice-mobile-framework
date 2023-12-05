@@ -11,7 +11,7 @@ import type { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
 import { toSnakeCase } from '~/framework/util/string';
 
-import type { IStorageDict, StorageTypeMap } from './storage/types';
+import type { IStorageSlice, StorageTypeMap } from './storage/types';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -216,8 +216,8 @@ export interface IModuleStorage<
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > {
-  storage?: IStorageDict<ModuleStorageSliceTypeMap>;
-  sessionStorage?: IStorageDict<ModuleSessionStorageSliceTypeMap>;
+  storage?: IStorageSlice<ModuleStorageSliceTypeMap>;
+  sessionStorage?: IStorageSlice<ModuleSessionStorageSliceTypeMap>;
 }
 export interface IModule<
   Name extends string,
@@ -259,9 +259,9 @@ export class Module<
 
   reducer: Reducer<State>;
 
-  storage?: IStorageDict<ModuleStorageSliceTypeMap> | undefined;
+  storage?: IStorageSlice<ModuleStorageSliceTypeMap> | undefined;
 
-  sessionStorage?: IStorageDict<ModuleSessionStorageSliceTypeMap> | undefined;
+  sessionStorage?: IStorageSlice<ModuleSessionStorageSliceTypeMap> | undefined;
 
   constructor(
     moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap>,

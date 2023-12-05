@@ -3,7 +3,7 @@ import type { IModuleConfig } from '~/framework/util/moduleTool';
 import { StorageHandler } from './handler';
 import type {
   IStorageBackend,
-  IStorageDict,
+  IStorageSlice,
   KeysWithValueNotOfType,
   KeysWithValueOfType,
   StorageKey,
@@ -11,9 +11,9 @@ import type {
   StorageTypeMap,
 } from './types';
 
-export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends IStorageBackend | IStorageDict<StorageTypeMap>>
+export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends IStorageBackend | IStorageSlice<StorageTypeMap>>
   extends StorageHandler<Storage>
-  implements IStorageDict<StorageTypes>
+  implements IStorageSlice<StorageTypes>
 {
   static separator = '.';
 

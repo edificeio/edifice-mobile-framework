@@ -32,7 +32,7 @@ export interface IStorageBackend {
 /**
  * Storage that host differents keys with values
  */
-export interface IStorageDict<StorageTypes extends Record<StorageKey, string | number | boolean | any>> {
+export interface IStorageSlice<StorageTypes extends Record<StorageKey, string | number | boolean | any>> {
   computeKey(key: StorageStringKeys<StorageTypes>): StorageKey;
   contains(key: StorageStringKeys<StorageTypes>): boolean;
   delete(key: StorageStringKeys<StorageTypes>): void;
@@ -49,14 +49,14 @@ export interface IStorageDict<StorageTypes extends Record<StorageKey, string | n
     key: KeyType,
     value: StorageTypes[typeof key],
   ): void;
-  withPrefix(prefix: string): IStorageDict<StorageTypes>;
-  withModule<Name extends string>(module: IModuleConfig<Name, any>): IStorageDict<StorageTypes>;
+  withPrefix(prefix: string): IStorageSlice<StorageTypes>;
+  withModule<Name extends string>(module: IModuleConfig<Name, any>): IStorageSlice<StorageTypes>;
 }
 
 /**
  * Utilisty function to create a storage with init & migration
  */
-export interface IStorageHandler<Storage extends IStorageBackend | IStorageDict<StorageTypeMap>> {
+export interface IStorageHandler<Storage extends IStorageBackend | IStorageSlice<StorageTypeMap>> {
   setAppInit(initFn: (this: ThisType<Storage>) => void): this;
   setSessionInit(initFn: (this: ThisType<Storage>, session: ISession) => void): this;
 }
