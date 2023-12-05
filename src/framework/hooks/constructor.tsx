@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 export const useConstructor: any = (callback = () => {}) => {
-  const [hasBeenCalled, setHasBeenCalled] = React.useState(false);
-  if (hasBeenCalled) return;
+  const hasBeenCalledRef = React.useRef(false);
+  if (hasBeenCalledRef.current) return;
   if (callback) callback();
-  setHasBeenCalled(true);
+  hasBeenCalledRef.current = true;
 };
