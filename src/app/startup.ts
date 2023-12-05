@@ -1,15 +1,12 @@
-import * as React from 'react';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loginAction } from '~/framework/modules/auth/actions';
-import { RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
-import { actions } from '~/framework/modules/auth/reducer';
-import { loadCurrentPlatform } from '~/framework/modules/auth/service';
+// import { loginAction } from '~/framework/modules/auth/actions';
+import { useConstructor } from '~/framework/hooks/constructor';
+import { authInitAction } from '~/framework/modules/auth/actions';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { Platform } from '~/framework/util/appConf';
 import { StorageObject } from '~/framework/util/storage';
 
-import { getSavedAccounts } from '~/framework/modules/auth/storage';
 import { I18n } from './i18n';
 
 const initFeatures = async () => {
@@ -17,54 +14,55 @@ const initFeatures = async () => {
   await I18n.init();
 };
 
-const loadStartupData = () => {
-  const savedAccounts = getSavedAccounts();
-};
-
-const MAX_STARTUP_TIME_MS = 15000;
+// const MAX_STARTUP_TIME_MS = 15000;
 
 /**
  * Logic code that is run for the app start
  */
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatform?: Platform) {
-  const [loadedPlatform, setLoadedPlatform] = React.useState<Platform | undefined>(undefined);
+  useConstructor(async () => {
+    await initFeatures();
+    await dispatch(authInitAction());
 
-  React.useEffect(() => {
-    initFeatures()
-      .then(() => {
-        loadStartupData();
-        loadCurrentPlatform().then(platform => {
-          if (platform) {
-            let loginDone = false;
-            dispatch(loginAction(platform, undefined))
-              .then(redirect => {
-                dispatch(actions.redirectAutoLogin(redirect));
-              })
-              .catch(() => {
-                // Do nothing. Finally clause + default navigation state will handle the case.
-              })
-              .finally(() => {
-                loginDone = true;
-                setLoadedPlatform(platform);
-                dispatch(appReadyAction());
-              });
-            setTimeout(() => {
-              if (!loginDone) {
-                dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
-                setLoadedPlatform(platform);
-                dispatch(appReadyAction());
-              }
-            }, MAX_STARTUP_TIME_MS);
-          } else dispatch(appReadyAction());
-        });
-      })
-      .catch(e => {
-        console.warn(`[startup] startup error`, e);
-        dispatch(appReadyAction());
-      });
-    // We WANT TO call this only once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    dispatch(appReadyAction());
+  });
+
+  // React.useEffect(() => {
+  //   initFeatures()
+  //     .then(() => {
+  //       loadStartupData();
+  //       loadCurrentPlatform().then(platform => {
+  //         if (platform) {
+  //           let loginDone = false;
+  //           dispatch(loginAction(platform, undefined))
+  //             .then(redirect => {
+  //               dispatch(actions.redirectAutoLogin(redirect));
+  //             })
+  //             .catch(() => {
+  //               // Do nothing. Finally clause + default navigation state will handle the case.
+  //             })
+  //             .finally(() => {
+  //               loginDone = true;
+  //               setLoadedPlatform(platform);
+  //               dispatch(appReadyAction());
+  //             });
+  //           setTimeout(() => {
+  //             if (!loginDone) {
+  //               dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
+  //               setLoadedPlatform(platform);
+  //               dispatch(appReadyAction());
+  //             }
+  //           }, MAX_STARTUP_TIME_MS);
+  //         } else dispatch(appReadyAction());
+  //       });
+  //     })
+  //     .catch(e => {
+  //       console.warn(`[startup] startup error`, e);
+  //       dispatch(appReadyAction());
+  //     });
+  //   // We WANT TO call this only once
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   // React.useEffect(() => {
   //   Storage.init()
@@ -110,9 +108,9 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatfo
   // }, []);
 
   // Update last-known platform if provided.
-  if (lastPlatform && lastPlatform !== loadedPlatform) {
-    setLoadedPlatform(lastPlatform);
-    return lastPlatform;
-  }
-  return loadedPlatform;
+  // if (lastPlatform && lastPlatform !== loadedPlatform) {
+  //   setLoadedPlatform(lastPlatform);
+  //   return lastPlatform;
+  // }
+  // return loadedPlatform;
 }

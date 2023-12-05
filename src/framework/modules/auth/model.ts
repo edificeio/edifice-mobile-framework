@@ -1,3 +1,4 @@
+import type { Moment } from 'moment';
 import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
@@ -5,19 +6,146 @@ import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
-import { IAuthorizedAction, UserPrivateData, UserType } from './service';
+import type { IAuthorizedAction, UserPrivateData, UserType } from './service';
 
 /**
- * Describes a generic user (public info)
+ * Every profile type for accounts. Each account is of one type only.
+ * Parent teachers have two accounts, one for each type.
  */
-
-export interface IUserProfile {
-  displayName: string;
-  photo?: string;
+export enum AccountType {
+  STUDENT = 'STUDENT',
+  RELATIVE = 'RELATIVE',
+  TEACHER = 'TEACHER',
+  PERSONNEL = 'PERSONNEL',
+  GUEST = 'GUEST',
 }
 
-export interface IUser extends IUserProfile {
-  id: string;
+/**
+ * Describes minimal info to display a user
+ */
+export interface DisplayUserPublic {
+  id: string; // id is used to get avatar
+  displayName: string;
+}
+
+/**
+ * Describes minimal info to display a user, but with account type hint
+ */
+export interface DisplayUserPublicWithType extends DisplayUserPublic {
+  type: AccountType;
+}
+
+/**
+ * Represent user information that a seved account contains
+ */
+export interface AuthSavedAccountUserInfo extends DisplayUserPublicWithType {
+  avatar?: Blob;
+  loginUsed: string;
+}
+
+/**
+ * Describes the contact information of a user
+ */
+export interface AuthUserContactDetails {
+  email?: string;
+  mobile?: string;
+  homePhone?: string;
+}
+
+/**
+ * Describes all visible values from logged user profile.
+ */
+export interface AuthLoggedUserProfile extends AuthSavedAccountUserInfo, AuthUserContactDetails {
+  birthDate?: Moment;
+  firstName: string;
+  lastName: string;
+  login?: string; // May be same as loginUsed if real login was used to log in
+  loginAlias?: string; // May be same as loginUsed if alias was used to log in
+}
+
+/**
+ * Describes all data thet is tied to the logged user
+ */
+export interface AuthLoggedUserInfo extends AuthSavedAccountUserInfo {
+  groups: string[];
+  uniqueId?: string;
+  children?: UserChildren;
+  relatives?: UserPrivateData['parents'];
+  classes?: string[];
+  structures?: UserStructureWithClasses[];
+}
+
+export type DateTimeString = string;
+
+/**
+ * A generic token information
+ */
+export interface AuthToken {
+  value: string;
+}
+
+/**
+ * A Bearer token used for authentication
+ */
+export interface AuthBearerToken extends AuthToken {
+  type: 'Bearer';
+  expiresAt: DateTimeString;
+}
+
+/**
+ * A set of authentication tokens and scope information
+ */
+export interface AuthTokenSet {
+  access: AuthBearerToken;
+  refresh: AuthToken;
+  scope: string[];
+}
+
+/**
+ * Every info a saved account contains
+ */
+export interface AuthSavedAccount {
+  platform: string;
+  tokens: AuthTokenSet;
+  userinfo: AuthSavedAccountUserInfo;
+}
+
+export interface AuthLoggedAccountRights {
+  apps: IEntcoreApp[];
+  widgets: IEntcoreWidget[];
+  authorizedActions: IAuthorizedAction[];
+}
+
+/**
+ * Every info the logged account contains
+ */
+export interface AuthLoggedAccount {
+  platform: string;
+  tokens: AuthTokenSet;
+  userinfo: AuthLoggedUserInfo;
+  rights: AuthLoggedAccountRights;
+  type: SessionType;
+  federated: boolean;
+}
+
+export enum AuthRequirement {
+  MUST_CHANGE_PASSWORD,
+  MUST_REVALIDATE_TERMS,
+  MUST_VALIDATE_TERMS,
+  MUST_VERIFY_MOBILE,
+  MUST_VERIFY_EMAIL,
+}
+
+/**
+ * Associates a saved account to each user id
+ */
+export type AuthSavedAccountMap = Record<string, AuthSavedAccount>;
+
+export type AuthLoggedAccountMap = Record<string, AuthLoggedAccount>;
+
+export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthLoggedAccount>;
+
+export interface IUser extends DisplayUserPublic {
   login: string;
   type: UserType;
 }
@@ -54,16 +182,11 @@ export interface UserStructureWithClasses extends StructureNode {
   classes: string[];
 }
 
-export interface LoggedUserContactDetails {
-  email?: string;
-  mobile?: string;
-}
-
 /**
  * Describes all editable profile values as text-only, without verifications.
  */
-export interface ILoggedUserProfile extends IUserProfile, LoggedUserContactDetails {
-  birthDate?: moment.Moment;
+export interface ILoggedUserProfile extends DisplayUserPublic, AuthUserContactDetails {
+  birthDate?: Moment;
   firstName: string;
   lastName: string;
   homePhone?: string; // It's not in LoggedUserContactDetails because there is no logic associed with it unlike mobile.
@@ -116,7 +239,7 @@ export interface ISession {
   apps: IEntcoreApp[];
   widgets: IEntcoreWidget[];
   authorizedActions: IAuthorizedAction[];
-  user: ILoggedUser;
+  user: AuthLoggedUserInfo;
   type: SessionType; // Is Session remembering set on ?
   federated: boolean;
 }
