@@ -4,7 +4,6 @@ import { ThunkDispatch } from 'redux-thunk';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction } from '~/framework/modules/auth/actions';
 import { appReadyAction } from '~/framework/navigation/redux';
-import { Platform } from '~/framework/util/appConf';
 import { StorageObject } from '~/framework/util/storage';
 
 import { I18n } from './i18n';
@@ -19,7 +18,7 @@ const initFeatures = async () => {
 /**
  * Logic code that is run for the app start
  */
-export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatform?: Platform) {
+export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
   useConstructor(async () => {
     await initFeatures();
     await dispatch(authInitAction());

@@ -13,16 +13,13 @@ import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { RootToastHandler } from '~/framework/components/toast';
-import { ILoginResult } from '~/framework/modules/auth/actions';
-import { ISession } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
-import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
+import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
 import { navigationRef } from './helper';
-import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
@@ -37,10 +34,10 @@ function SplashScreenComponent() {
 }
 
 export interface RootNavigatorStoreProps {
-  session?: ISession;
-  logged: boolean;
-  isReady: StartupState['isReady'];
-  autoLoginResult?: ILoginResult;
+  pending: IAuthState['pending'];
+  accounts: IAuthState['accounts'];
+  showOnboarding: IAuthState['showOnboarding'];
+  appReady: StartupState['isReady'];
   dispatch: Dispatch;
 }
 export type RootNavigatorProps = RootNavigatorStoreProps;
@@ -48,33 +45,46 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
-  const { logged, session, isReady, autoLoginResult, dispatch } = props;
-  const isFullyLogged = !!(logged && session); // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
+  const { accounts, pending, showOnboarding, dispatch, appReady } = props;
 
   React.useEffect(() => {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
   }, []);
 
+  // App Startup
+
+  useAppStartup(dispatch);
+
+  // Get navigation state from redux state
+  // Only if app is ready, and if the used is not logged in. (If logged, no navState goes to the timeline)
+
+  const logged = false; // ToDo get from reducer
+  const navigationState = React.useMemo(() => {
+    return appReady && !logged ? getAuthNavigationState(accounts, pending, showOnboarding) : undefined;
+  }, [accounts, appReady, logged, pending, showOnboarding]);
+
+  // === Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
+  React.useLayoutEffect(() => {
+    // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
+    if (navigationState && navigationRef.isReady()) navigationRef.reset(navigationState);
+  }, [navigationState]);
+
+  // === Auth/Main switch ===
+  // const mainNavigation = useMainNavigation(session?.apps ?? [], session?.widgets ?? []);
+  const authNavigation = useAuthNavigation();
+  const routes = React.useMemo(() => {
+    return authNavigation;
+  }, [authNavigation]);
+
+  // const isFullyLogged = !!(logged && session); // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
+
   // === Compute initial auth state ===
   // ToDo : verify that the state is correctly reset after logout & auto-login
 
-  const lastLoadedPlatform = useAppStartup(dispatch, session?.platform);
-  const initialNavState = React.useMemo(() => {
-    return isReady && !logged ? getAuthNavigationState(lastLoadedPlatform, autoLoginResult) : undefined;
-  }, [isReady, logged, lastLoadedPlatform, autoLoginResult]);
-
-  // === If initialNavState changed during the runtime, we need to update it in navigationRef by hand ===
-  React.useLayoutEffect(() => {
-    // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
-    if (initialNavState && navigationRef.isReady()) navigationRef.reset(initialNavState);
-  }, [initialNavState]);
-
-  // === Auth/Main switch ===
-  const mainNavigation = useMainNavigation(session?.apps ?? [], session?.widgets ?? []);
-  const authNavigation = useAuthNavigation();
-  const routes = React.useMemo(() => {
-    return isFullyLogged ? mainNavigation : authNavigation;
-  }, [authNavigation, isFullyLogged, mainNavigation]);
+  // const lastLoadedPlatform = useAppStartup(dispatch, session?.platform);
+  // const initialNavState = React.useMemo(() => {
+  //   return isReady && !logged ? getAuthNavigationState(lastLoadedPlatform, autoLoginResult) : undefined;
+  // }, [isReady, logged, lastLoadedPlatform, autoLoginResult]);
 
   // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
 
@@ -85,10 +95,10 @@ function RootNavigator(props: RootNavigatorProps) {
   const ret = React.useMemo(() => {
     return (
       <>
-        <SplashScreenComponent key={isReady} />
-        {isReady ? (
+        <SplashScreenComponent key={appReady} />
+        {appReady ? (
           <>
-            <NavigationContainer ref={navigationRef} initialState={initialNavState} onStateChange={trackNavState}>
+            <NavigationContainer ref={navigationRef} initialState={navigationState} onStateChange={trackNavState}>
               <AppPushNotificationHandlerComponent>
                 <RootStack.Navigator screenOptions={{ headerShown: true }}>
                   {routes}
@@ -101,14 +111,14 @@ function RootNavigator(props: RootNavigatorProps) {
         ) : null}
       </>
     );
-  }, [isReady, initialNavState, trackNavState, routes]);
+  }, [appReady, navigationState, trackNavState, routes]);
 
   return ret;
 }
 
 export default connect((state: IGlobalState) => ({
-  session: getSession(),
-  logged: getAuthState(state).logged,
-  isReady: getAppStartupState(state).isReady,
-  autoLoginResult: getAuthState(state).autoLoginResult,
+  appReady: getAppStartupState(state).isReady,
+  pending: getAuthState(state).pending,
+  showOnboarding: getAuthState(state).showOnboarding,
+  accounts: getAuthState(state).accounts,
 }))(RootNavigator);

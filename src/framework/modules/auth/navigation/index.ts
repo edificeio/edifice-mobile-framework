@@ -1,7 +1,7 @@
 /**
  * Navigator for the auth section
  */
-import { CommonActions, NavigationProp, ParamListBase, StackRouter } from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { ILoginResult } from '~/framework/modules/auth/actions';
@@ -15,6 +15,8 @@ import type { LoginHomeScreenNavParams } from '~/framework/modules/auth/screens/
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
+
+import { IAuthState } from '../reducer';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
@@ -51,6 +53,11 @@ export interface IAuthNavigationParams extends ParamListBase {
   mfaModal: AuthMFAScreenNavParams;
 }
 
+/**
+ * Get the right login route name for the given platfoem (credential /// wayf)
+ * @param platform
+ * @returns
+ */
 export const getLoginRouteName = (platform?: Platform) => {
   return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginHome;
 };
@@ -148,37 +155,67 @@ export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IA
   }
 }
 
-export const getAuthNavigationState = (selectedPlatform?: Platform, loginRedirect?: ILoginResult) => {
+/**
+ * Compute Auth navigation state from diven information from redux store
+ * @param accounts
+ * @param pending
+ * @param showOnboarding
+ * @returns
+ */
+export const getAuthNavigationState = (
+  accounts: IAuthState['accounts'],
+  pending: IAuthState['pending'],
+  showOnboarding: IAuthState['showOnboarding'],
+) => {
   const routes = [] as RouteStack;
+  const allPlatforms = appConf.platforms;
 
-  // 1. Pre-login screens
+  // 1. Onboarding
 
-  routes.push({ name: authRouteNames.onboarding });
+  if (showOnboarding) routes.push({ name: authRouteNames.onboarding });
 
-  if (appConf.platforms.length > 1 && (selectedPlatform || !routes.length)) routes.push({ name: authRouteNames.platforms });
+  // 2. PlatformSelect
 
-  if (selectedPlatform || !routes.length)
+  const multiplePlatforms = allPlatforms.length > 1;
+  if (multiplePlatforms) {
+    routes.push({ name: authRouteNames.platforms });
+  }
+
+  // 2. Login Screen
+
+  // Get platform name from pending auth task
+  const platformName = pending && (pending.platform ?? (pending.account && accounts[pending.account]?.platform));
+  // Get the corresponding platform data
+  const platform = multiplePlatforms
+    ? platformName
+      ? allPlatforms.find(item => item.name === platformName)
+      : undefined // Silenty go to the select page if the platform name has no correspondance.
+    : allPlatforms[0];
+  // This is not the same screen depending of the platform data (federated or not)
+  if (platform || !routes.length)
     routes.push({
-      name: getLoginRouteName(selectedPlatform),
+      name: getLoginRouteName(platform),
       params: {
-        platform: selectedPlatform || appConf.platforms[0], // Auto-select first platform if not defined
+        platform,
       },
     });
 
-  // 2. post-login screens (if loginRedirect provided only)
+  return { routes };
 
-  if (!loginRedirect || !selectedPlatform) return { routes };
+  // // 2. post-login screens (if loginRedirect provided only)
+
+  // if (!loginRedirect || !selectedPlatform) return { routes };
 
   // Okay time for explanation !
   // { routes } are "stale" navigation state and must be rehyrated to apply `navAction` on it.
   // We create a dummy StackRouter to perform this, then returns the resulting navState.
-  const navAction = getRedirectLoginNavAction(loginRedirect, selectedPlatform);
-  if (!navAction) return { routes };
+  // const navAction = getRedirectLoginNavAction(loginRedirect, selectedPlatform);
+  // if (!navAction) return { routes };
 
-  const router = StackRouter({});
-  const routeNames = Object.values(authRouteNames);
-  const rehydratedState = router.getRehydratedState({ routes }, { routeNames, routeParamList: {}, routeGetIdList: {} });
-  const newState = router.getStateForAction(rehydratedState, navAction, { routeNames, routeParamList: {}, routeGetIdList: {} });
+  // const router = StackRouter({});
+  // const routeNames = Object.values(authRouteNames);
+  // const rehydratedState = router.getRehydratedState({ routes }, { routeNames, routeParamList: {}, routeGetIdList: {} });
+  // const newState = router.getStateForAction(rehydratedState, navAction, { routeNames, routeParamList: {}, routeGetIdList: {} });
 
-  return newState ?? { routes };
+  // return newState ?? { routes };
 };
