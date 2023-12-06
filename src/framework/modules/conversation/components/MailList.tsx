@@ -244,7 +244,7 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
       } else await trashMails([mailId]);
       await this.refreshMailList();
       await fetchInit();
-      Toast.showInfo(I18n.get(`conversation-maillist-message${isTrashedOrDraft ? 'deleted' : 'trashed'}`));
+      Toast.showSuccess(I18n.get(`conversation-maillist-message${isTrashedOrDraft ? 'deleted' : 'trashed'}`));
     } catch {
       // TODO: Manage error
     }

@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-11-21 16:09:18",
-  "notes": "fix(crash): MB-2207, Review podfile for archive builds.\nfix(ui): MB-2247, Review modal elements styles.\nMerge pull request #105 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nfix(crash): MB-2207, Xcode15 pod patch removal (Will downgrade to Xcode 14.3.1).\nfix(conversation): MB-2280 wrong borderRadius for user dots (add overflow)\nchore(i18n): Not working github action removal.\nrelease: 1.11.2-rc.7(1110212)",
-  "version": "1.11.2-rc.8(1110213)"
+  "last": "2023-12-04 18:54:26",
+  "notes": "chore(lint): Remove relative imports\nRevert \"fix(xmas): MB-2333, android toggle colors\"\nfix(xmas): MB-2333, android toggle colors\nfix(form): AMV2-603 use other api to list form distributions\nfix(xmas): MB-2336, toggles logic\nfix(xmas): MB-2316, toggle colors\nfix(xmas): MB-2328, pause/resume sound\nMerge pull request #109 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nfix(xmas): MB-2327, stop sound on navigation\nfix(xmas): MB-2329, Add \"xmas\" to override name masque.\nchore(xmas): title wording\nMerge pull request #107 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nrelease: 1.11.3-rc.1(1110303)",
+  "version": "1.11.3-rc.2(1110304)"
 }

@@ -495,7 +495,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       }
     }
     // Allow navigation
-    console.debug('WAYFScreen::onShouldStartLoadWithRequest: Navigation allowed');
+    if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: Navigation allowed');
     return true;
   }
 

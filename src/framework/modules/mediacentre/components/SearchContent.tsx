@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
@@ -10,7 +11,6 @@ import { Icon } from '~/framework/components/picture/Icon';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 
-import SecondaryButton from '~/framework/components/buttons/secondary';
 import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
 import { SearchFilter } from './SearchFilter';
@@ -65,7 +65,7 @@ export enum SearchState {
 
 interface ISearchFilters {
   level: string[];
-  'resource-type': string[];
+  resourcetype: string[];
   source: string[];
 }
 
@@ -93,11 +93,11 @@ interface ISearchContentProps {
 }
 
 const resourceMatchesFilters = (resource: IResource, filters: ISearchFilters) => {
-  let typeMatches = filters['resource-type'].length === 0;
+  let typeMatches = filters.resourcetype.length === 0;
   let sourceMatches = filters.source.length === 0;
   let levelMatches = filters.level.length === 0;
 
-  for (const type of filters['resource-type']) {
+  for (const type of filters.resourcetype) {
     if (resource.types.includes(type)) {
       typeMatches = true;
     }
@@ -153,9 +153,8 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
 
 export const SearchContent: React.FunctionComponent<ISearchContentProps> = (props: ISearchContentProps) => {
   const [filteredResources, setFilteredResources] = useState<IResource[]>([]);
-  const [activeFilters, setActiveFilters] = useState<ISearchFilters>({ 'resource-type': [], source: [], level: [] });
-  const isFiltering =
-    activeFilters['resource-type'].length > 0 || activeFilters.source.length > 0 || activeFilters.level.length > 0;
+  const [activeFilters, setActiveFilters] = useState<ISearchFilters>({ resourcetype: [], source: [], level: [] });
+  const isFiltering = activeFilters.resourcetype.length > 0 || activeFilters.source.length > 0 || activeFilters.level.length > 0;
   const sources = getSources(isFiltering ? filteredResources : props.resources);
   const filterResources = () => {
     const filtered: IResource[] = [];

@@ -27,7 +27,7 @@ export const fetchFormDistributionsAction =
     try {
       const session = assertSession();
       dispatch(formListDistributionsActionsCreators.request());
-      const distributions = await formService.distributions.listMine(session);
+      const distributions = await formService.distributions.list(session);
       dispatch(formListDistributionsActionsCreators.receipt(distributions));
       return distributions;
     } catch (e) {

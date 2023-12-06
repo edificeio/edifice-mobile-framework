@@ -3,6 +3,7 @@ import DeviceInfo from 'react-native-device-info';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { importXmasAction } from '~/framework/modules/user/actions';
 import { Platform } from '~/framework/util/appConf';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { Trackers } from '~/framework/util/tracker';
@@ -296,6 +297,9 @@ export function loginAction(platform: Platform, credentials?: IAuthCredentials, 
       // 6. Track login (initial/restored)
       await trackLogin(credentials, partialSessionScenario);
 
+      // 7. Import xmas theme
+      await dispatch(importXmasAction());
+
       return redirectScenario;
     } catch (e) {
       const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
@@ -319,9 +323,7 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
     try {
       // === 0 auto select the default theme
       const theme = platform.webTheme;
-      if (!theme) {
-        console.debug('[User][Activation] activationAccount -> theme was not found:', platform.webTheme);
-      }
+      if (!theme && __DEV__) console.debug('[User][Activation] activationAccount -> theme was not found:', platform.webTheme);
       // === 1 - prepare payload
       const payload: IActivationSubmitPayload = {
         acceptCGU: true,

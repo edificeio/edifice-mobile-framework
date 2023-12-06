@@ -12,7 +12,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchHomeworkAssistanceConfigAction } from '~/framework/modules/homework-assistance/actions';
@@ -89,19 +89,19 @@ const HomeworkAssistanceHomeScreen = (props: HomeworkAssistanceHomeScreenPrivate
       <ScrollView contentContainerStyle={styles.container}>
         <SmallBoldText style={styles.primaryText}>{header}</SmallBoldText>
         <SmallText style={styles.primaryText}>{body}</SmallText>
-        <Picture type="NamedSvg" name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
+        <NamedSVG name="homework-assistance-home" width="50%" style={styles.backgroundImage} />
         <View>
           <SmallText>{I18n.get('homeworkassistance-home-serviceavailable')}</SmallText>
           <View style={styles.rowContainer}>
-            <Picture type="NamedSvg" name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
+            <NamedSVG name="ui-calendarLight" width={24} height={24} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.secondaryText}>{days}</SmallText>
           </View>
           <View style={styles.rowContainer}>
-            <Picture type="NamedSvg" name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
+            <NamedSVG name="ui-clock" width={24} height={24} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.secondaryText}>{time}</SmallText>
           </View>
           <View style={styles.rowContainer}>
-            <Picture type="NamedSvg" name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
+            <NamedSVG name="ui-infoCircle" width={24} height={24} fill={theme.palette.secondary.regular} />
             <SmallText style={styles.secondaryText}>{info}</SmallText>
           </View>
         </View>

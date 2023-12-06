@@ -1,11 +1,12 @@
-console.debug('EXEC .eslintrc.js')
 module.exports = {
   root: true,
   env: {
     browser: true,
+    es6: true,
+    node: true,
     'react-native/react-native': true,
   },
-  extends: ['@react-native', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native', 'plugin:import/typescript'],
+  extends: ['@react-native', 'airbnb-typescript', 'eslint:recommended', 'prettier', 'universe/native', 'plugin:import/typescript', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json',

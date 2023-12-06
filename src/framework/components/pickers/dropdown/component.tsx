@@ -4,7 +4,7 @@ import DropDownPicker, { ValueType } from 'react-native-dropdown-picker';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyItalicText, BodyText } from '~/framework/components/text';
 
 import DropdownListItem from './list-item';
@@ -20,7 +20,7 @@ export const DropdownPicker = <T extends ValueType>(props: DropdownPickerProps<T
 
   const renderBody = () => (
     <View style={styles.bodyContainer}>
-      {iconName ? <Picture type="NamedSvg" name={iconName} width={22} height={22} fill={theme.palette.grey.black} /> : null}
+      {iconName ? <NamedSVG name={iconName} width={22} height={22} fill={theme.palette.grey.black} /> : null}
       {value !== null ? (
         <BodyText style={disabled && styles.disabledText}>{getSelectedItemLabel()}</BodyText>
       ) : (
@@ -30,23 +30,11 @@ export const DropdownPicker = <T extends ValueType>(props: DropdownPickerProps<T
   );
 
   const renderArrowUpIcon = () => (
-    <Picture
-      type="NamedSvg"
-      name="ui-rafterUp"
-      width={16}
-      height={16}
-      fill={disabled ? theme.palette.grey.stone : theme.palette.grey.black}
-    />
+    <NamedSVG name="ui-rafterUp" width={16} height={16} fill={disabled ? theme.palette.grey.stone : theme.palette.grey.black} />
   );
 
   const renderArrowDownIcon = () => (
-    <Picture
-      type="NamedSvg"
-      name="ui-rafterDown"
-      width={16}
-      height={16}
-      fill={disabled ? theme.palette.grey.stone : theme.palette.grey.black}
-    />
+    <NamedSVG name="ui-rafterDown" width={16} height={16} fill={disabled ? theme.palette.grey.stone : theme.palette.grey.black} />
   );
 
   return (

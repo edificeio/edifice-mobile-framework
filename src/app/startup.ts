@@ -47,13 +47,15 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatfo
             }),
           )
           .catch(e => {
-            console.warn(e);
+            if (__DEV__) console.warn(e);
             dispatch(appReadyAction());
           }),
       )
       .catch(e => {
-        console.warn(e);
-        dispatch(appReadyAction());
+        if (__DEV__) console.warn(e);
+        I18n.init().finally(() => {
+          dispatch(appReadyAction());
+        });
       });
     // We WANT TO call this only once
     // eslint-disable-next-line react-hooks/exhaustive-deps

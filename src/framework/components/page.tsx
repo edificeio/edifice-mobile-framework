@@ -23,20 +23,19 @@ import {
   View,
   ViewProps,
 } from 'react-native';
-import { connect } from 'react-redux';
 
 import theme from '~/app/theme';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
+import SnowFlakes from './SnowFlakes';
 import { UI_SIZES } from './constants';
 import { ToastHandler } from './toast/component';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
-  // xmasTheme?: boolean;
   statusBar?: 'primary' | 'light' | 'dark';
   showToast?: boolean;
 }
@@ -59,7 +58,7 @@ export const PageViewStyle = styled.View({
   flex: 1,
   backgroundColor: theme.ui.background.page,
 });
-export const PageViewContainer = (props: PageViewProps) => {
+export const PageView = (props: PageViewProps) => {
   const { children, gutters, showNetworkBar = true, statusBar = 'primary', showToast = true, ...viewProps } = props;
   const route = useRoute();
 
@@ -80,14 +79,14 @@ export const PageViewContainer = (props: PageViewProps) => {
               android: <StatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />,
             }
           : statusBar === 'light'
-          ? {
-              ios: <StatusBar barStyle="dark-content" />,
-              android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
-            }
-          : /* statusBar === 'dark' */ {
-              ios: <StatusBar barStyle="light-content" />,
-              android: <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
-            },
+            ? {
+                ios: <StatusBar barStyle="dark-content" />,
+                android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
+              }
+            : /* statusBar === 'dark' */ {
+                ios: <StatusBar barStyle="light-content" />,
+                android: <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
+              },
       ),
     [statusBar],
   );
@@ -102,16 +101,11 @@ export const PageViewContainer = (props: PageViewProps) => {
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
         {isModal && showToast ? <ToastHandler /> : null}
+        {isModal && <SnowFlakes />}
       </>
     </PageViewStyle>
   );
 };
-export const PageView = connect((state: any) => {
-  const ret = {
-    // xmasTheme: state.user.xmas.xmasTheme,
-  };
-  return ret;
-})(PageViewContainer);
 
 export const KeyboardPageView = (
   props: React.PropsWithChildren<

@@ -54,7 +54,7 @@ function UserWhoAreWeScreen(props: UserWhoAreWeScreenPrivateProps) {
             Rate.rate(options, (success, error) => {
               if (error) {
                 Alert.alert(I18n.get('user-whoarewe-error-title'), I18n.get('user-whoarewe-error-text'));
-                console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
+                if (__DEV__) console.error(`WhoAreWeScreen Rate.rate() error: ${error}`);
               }
             });
           }}

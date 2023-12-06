@@ -180,7 +180,6 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
   };
 
   const renderFooter = () => {
-    //console.log(props.route.params.course.callStateId, props.route.params.course.);
     return (
       <View style={styles.listFooterContainer}>
         <View style={styles.separatorContainer} />

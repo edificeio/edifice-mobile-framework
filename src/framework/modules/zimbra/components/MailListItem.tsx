@@ -5,7 +5,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { ListItem } from '~/framework/components/listItem';
-import { Picture } from '~/framework/components/picture';
+import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IMail } from '~/framework/modules/zimbra/model';
 import { displayPastDate } from '~/framework/util/date';
@@ -114,9 +114,7 @@ export class MailListItem extends React.PureComponent<IMailListItemProps> {
                 <SubjectText numberOfLines={1} style={styles.subjectText}>
                   {mail.subject}
                 </SubjectText>
-                {mail.hasAttachment ? (
-                  <Picture type="NamedSvg" name="ui-attachment" width={18} height={18} fill={theme.ui.text.light} />
-                ) : null}
+                {mail.hasAttachment ? <NamedSVG name="ui-attachment" width={18} height={18} fill={theme.ui.text.light} /> : null}
               </View>
             </View>
           }

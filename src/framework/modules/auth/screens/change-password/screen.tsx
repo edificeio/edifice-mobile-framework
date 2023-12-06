@@ -90,7 +90,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
       this.props.tryLogout();
       this.props.navigation.reset(getAuthNavigationState(this.props.route.params.platform));
     } catch {
-      // console.warn('refuseTerms: could not refuse terms', e);
+      if (__DEV__) console.warn('refuseTerms: could not refuse terms', e);
     }
   };
 
