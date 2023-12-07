@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-12-06 13:45:06",
-  "notes": "chore(i18n): MB-2213, Change Phrase translations sync branche to dev/1.11.4\nfix(i18n): MB-2170 + MB-1931, Default headers addition.\nfix(override): Review override name to fit all situations\nchore(build): Nokogiri XML parser addition\nMerge branch 'dev/1.11.3' into dev/1.11.4\nfix(xmas): MB-2336, android toggle disabled color\nMerge branch 'dev/1.11.3' into dev/1.11.4\nrelease: 1.11.3-rc.2(1110304)",
-  "version": "1.11.4-alpha.1(1110401)"
+  "last": "2023-12-07 19:40:41",
+  "notes": "chore(build): Support builds addition.\nfix(fetch): MB-2322, Review fetchWithCache.\nchore(stack): Upgrade some packages.\nrelease: 1.11.4-alpha.1(1110401)",
+  "version": "1.11.4-alpha.2(1110402)"
 }
