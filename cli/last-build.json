@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-12-07 19:40:41",
-  "notes": "chore(build): Support builds addition.\nfix(fetch): MB-2322, Review fetchWithCache.\nchore(stack): Upgrade some packages.\nrelease: 1.11.4-alpha.1(1110401)",
-  "version": "1.11.4-alpha.2(1110402)"
+  "last": "2023-12-07 19:44:18",
+  "notes": "release: 1.11.4-alpha.2(1110402)",
+  "version": "1.11.4-alpha.3(1110403)"
 }
