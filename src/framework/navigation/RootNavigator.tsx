@@ -63,13 +63,14 @@ function RootNavigator(props: RootNavigatorProps) {
     return appReady && !logged ? getAuthNavigationState(accounts, pending, showOnboarding) : undefined;
   }, [accounts, appReady, logged, pending, showOnboarding]);
 
-  // === Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
+  // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
   React.useLayoutEffect(() => {
     // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
     if (navigationState && navigationRef.isReady()) navigationRef.reset(navigationState);
+    console.debug('[Navigation] Reset root navigator state', navigationState);
   }, [navigationState]);
 
-  // === Auth/Main switch ===
+  // Auth/Main switch
   // const mainNavigation = useMainNavigation(session?.apps ?? [], session?.widgets ?? []);
   const authNavigation = useAuthNavigation();
   const routes = React.useMemo(() => {

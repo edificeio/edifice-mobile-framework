@@ -11,7 +11,7 @@ import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/sc
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
-import type { LoginHomeScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
+import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -21,7 +21,7 @@ import { IAuthState } from '../reducer';
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
   accountSelection: `${moduleConfig.name}/accountSelection` as 'accountSelection',
-  loginHome: `${moduleConfig.name}/login/home` as 'loginHome',
+  loginCredentials: `${moduleConfig.name}/login/credentials` as 'loginCredentials',
   loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
   wayf: `${moduleConfig.name}/wayf` as 'wayf',
   onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
@@ -39,7 +39,7 @@ export const authRouteNames = {
 
 export interface IAuthNavigationParams extends ParamListBase {
   accountSelection: AuthAccountSelectionScreenNavParams;
-  loginHome: LoginHomeScreenNavParams;
+  loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: { platform: Platform };
   wayf: { platform: Platform };
   activation: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
@@ -59,7 +59,7 @@ export interface IAuthNavigationParams extends ParamListBase {
  * @returns
  */
 export const getLoginRouteName = (platform?: Platform) => {
-  return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginHome;
+  return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginCredentials;
 };
 
 export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platform) => {

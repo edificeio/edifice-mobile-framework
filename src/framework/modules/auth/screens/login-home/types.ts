@@ -11,24 +11,24 @@ export enum LoginState {
   DONE = 'DONE',
 }
 
-export interface LoginHomeScreenProps {
+export interface LoginCredentialsScreenProps {
   // No public props
 }
 
-export interface LoginHomeScreenNavParams {
+export interface LoginCredentialsScreenNavParams {
   platform: Platform;
 }
 
-export interface LoginHomeScreenStoreProps {
+export interface LoginCredentialsScreenStoreProps {
   auth: IAuthState;
 }
 
-export interface LoginHomeScreenDispatchProps {
+export interface LoginCredentialsScreenDispatchProps {
   tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
   handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void;
 }
 
-export type LoginHomeScreenPrivateProps = LoginHomeScreenProps &
-  LoginHomeScreenStoreProps &
-  LoginHomeScreenDispatchProps &
-  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginHome>;
+export type LoginCredentialsScreenPrivateProps = LoginCredentialsScreenProps &
+  LoginCredentialsScreenStoreProps &
+  LoginCredentialsScreenDispatchProps &
+  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginCredentials>;

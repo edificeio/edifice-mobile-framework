@@ -26,12 +26,12 @@ import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { OAuth2ErrorCode } from '~/infra/oauth';
 
 import styles from './styles';
-import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginState } from './types';
+import { LoginCredentialsScreenDispatchProps, LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginHome>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginCredentials>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -41,7 +41,7 @@ export const computeNavBar = ({
   }),
 });
 
-const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
+const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { route, navigation } = props;
   const { platform } = route.params;
 
@@ -278,11 +278,11 @@ export default connect(
     };
   },
   dispatch =>
-    bindActionCreators<LoginHomeScreenDispatchProps>(
+    bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
         tryLogin: tryAction(loginAction),
         handleConsumeError: handleAction(consumeAuthError),
       },
       dispatch,
     ),
-)(LoginScreen);
+)(LoginCredentialsScreen);

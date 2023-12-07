@@ -1,6 +1,6 @@
-import LoginHomeScreen from './screen';
-import type { LoginHomeScreenNavParams, LoginHomeScreenProps } from './types';
+import LoginCredentialsScreen from './screen';
+import type { LoginCredentialsScreenNavParams, LoginCredentialsScreenProps } from './types';
 
-export default LoginHomeScreen;
-export { LoginHomeScreenNavParams, LoginHomeScreenProps };
+export default LoginCredentialsScreen;
 export { computeNavBar } from './screen';
+export { LoginCredentialsScreenNavParams, LoginCredentialsScreenProps };
