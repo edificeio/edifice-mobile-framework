@@ -5,8 +5,10 @@ import CookieManager from '@react-native-cookies/cookies';
 import { encode as btoa } from 'base-64';
 import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { Source } from 'react-native-fast-image';
 
+import { I18n } from '~/app/i18n';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
@@ -233,7 +235,11 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...init,
         headers: {
           ...init?.headers,
+          'Accept-Language': I18n.getLanguage(),
           Authorization: 'Bearer ' + this.token!.access_token,
+          'X-APP': 'mobile',
+          'X-APP-NAME': DeviceInfo.getApplicationName(),
+          'X-APP-VERSION': DeviceInfo.getReadableVersion(),
           'X-Device-Id': uniqueId(),
         },
       });
