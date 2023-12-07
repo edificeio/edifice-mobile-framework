@@ -1,14 +1,13 @@
 import { ReactElement } from 'react';
 
-import { RichEditor, RichToolbar } from '..';
-import { RichToolbarItem } from '../rich-toolbar-item';
+import RichEditor from '~/framework/components/inputs/rich-text-editor/RichEditor';
+import { RichToolbarItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item/component';
+import RichToolbar from '~/framework/components/inputs/rich-text-editor/rich-toolbar/component';
 
 export interface RichToolbarPageProps {
   content: ReactElement;
   editor: RichEditor;
-  index: number;
   item: typeof RichToolbarItem;
   title: string;
   toolbar: RichToolbar;
-  handleBack: () => void;
 }

@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { RichToolbarButton } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-button';
+import { RichToolbarButton } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-button/component';
 import { NamedSVG } from '~/framework/components/picture';
 
 import { RichToolbarIconButtonProps } from './types';

@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Keyboard, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Keyboard, Platform, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -11,6 +11,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
+import { RichTextEditorMode } from '~/framework/components/inputs/rich-text-editor';
 import TextInput from '~/framework/components/inputs/text';
 import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { KeyboardPageView } from '~/framework/components/page';
@@ -32,6 +33,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
+import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { Image } from '~/framework/util/media';
@@ -278,6 +280,12 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
           }
           style={styles.input}
         />
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate(ModalsRouteNames.RichTextEditor, { content: null, mode: RichTextEditorMode.ENABLED })
+          }>
+          <View style={{ height: 200, backgroundColor: 'red' }} />
+        </TouchableOpacity>
         <InputContainer
           label={{ text: I18n.get('blog-createpost-postcontent'), icon: 'ui-textPage' }}
           input={

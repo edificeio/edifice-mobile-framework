@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 
-import RichEditor from '../RichEditor';
+import { RichEditor } from '~/framework/components/inputs/rich-text-editor';
 
 export interface RichToolbarButtonProps {
   action: () => void;

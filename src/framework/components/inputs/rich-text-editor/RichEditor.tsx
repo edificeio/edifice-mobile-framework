@@ -4,10 +4,9 @@ import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
+import { actions, messages } from '~/framework/components/inputs/rich-text-editor/const';
+import { createHTML } from '~/framework/components/inputs/rich-text-editor/editor';
 import { getSession } from '~/framework/modules/auth/reducer';
-
-import { actions, messages } from './const';
-import { createHTML } from './editor';
 
 const PlatformIOS = Platform.OS === 'ios';
 

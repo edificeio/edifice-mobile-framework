@@ -1,9 +1,9 @@
-import RichEditor from './RichEditor';
-import { actions } from './const';
-import { createHTML, getContentCSS } from './editor';
-import { RichToolbar, defaultActions } from './rich-toolbar';
-import RichTextEditorScreen, { computeNavBar } from './screen';
-import { RichTextEditorMode, RichTextEditorScreenNavParams } from './types';
+import RichEditor from '~/framework/components/inputs/rich-text-editor/RichEditor';
+import { actions } from '~/framework/components/inputs/rich-text-editor/const';
+import { createHTML, getContentCSS } from '~/framework/components/inputs/rich-text-editor/editor';
+import { RichToolbar } from '~/framework/components/inputs/rich-text-editor/rich-toolbar';
+import RichTextEditorScreen, { computeNavBar } from '~/framework/components/inputs/rich-text-editor/screen';
+import { RichTextEditorMode, RichTextEditorScreenNavParams } from '~/framework/components/inputs/rich-text-editor/types';
 
 export {
   RichEditor,
@@ -14,6 +14,5 @@ export {
   actions,
   computeNavBar,
   createHTML,
-  defaultActions,
   getContentCSS,
 };
