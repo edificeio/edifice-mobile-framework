@@ -1,4 +1,4 @@
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 import type { IModuleConfig } from '../moduleTool';
 
@@ -58,5 +58,5 @@ export interface IStorageSlice<StorageTypes extends Record<StorageKey, string | 
  */
 export interface IStorageHandler<Storage extends IStorageBackend | IStorageSlice<StorageTypeMap>> {
   setAppInit(initFn: (this: ThisType<Storage>) => void): this;
-  setSessionInit(initFn: (this: ThisType<Storage>, session: ISession) => void): this;
+  setSessionInit(initFn: (this: ThisType<Storage>, session: AuthLoggedAccount) => void): this;
 }

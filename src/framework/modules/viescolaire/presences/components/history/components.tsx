@@ -4,7 +4,7 @@ import { FlatList } from 'react-native';
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { SmallText } from '~/framework/components/text';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountTyoe } from '~/framework/modules/auth/model';
 import {
   AbsenceCard,
   DepartureCard,
@@ -60,7 +60,7 @@ const History = (props: HistoryProps) => {
         props.events.length ? (
           <SmallText style={styles.headingText}>
             {I18n.get(
-              props.userType === UserType.Relative
+              props.userType === AccountTyoe.Relative
                 ? 'presences-history-description-relative'
                 : 'presences-history-description-student',
             )}
@@ -72,7 +72,7 @@ const History = (props: HistoryProps) => {
           svgImage="empty-zimbra"
           title={I18n.get('presences-history-emptyscreen-default-title')}
           text={I18n.get(
-            props.userType === UserType.Relative
+            props.userType === AccountTyoe.Relative
               ? 'presences-history-emptyscreen-default-text-relative'
               : 'presences-history-emptyscreen-default-text-student',
           )}

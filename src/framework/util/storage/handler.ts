@@ -1,4 +1,4 @@
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 import type { IStorageBackend, IStorageHandler, IStorageSlice, StorageTypeMap } from './types';
 
@@ -43,14 +43,14 @@ export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<Stor
     return this;
   }
 
-  private sessionInit?: (session: ISession) => void;
+  private sessionInit?: (session: AuthLoggedAccount) => void;
 
   /**
    * Execute this function whenever a user logs in. Use the `function` keyword instead of `() => {}` to use `this` keyword inside the function.
    * @param initFn
    */
-  setSessionInit(initFn: (this: this, session: ISession) => void) {
-    this.sessionInit = async (session: ISession) => {
+  setSessionInit(initFn: (this: this, session: AuthLoggedAccount) => void) {
+    this.sessionInit = async (session: AuthLoggedAccount) => {
       console.debug(`[Storage] session init storage '${this.storageName ?? this.constructor.name}'`);
       initFn.call(this, session);
     };
@@ -73,7 +73,7 @@ export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<Stor
     StorageHandler.initPhaseDone = true;
   }
 
-  static async sessionInitAllStorages(session: ISession) {
+  static async sessionInitAllStorages(session: AuthLoggedAccount) {
     for (const storage of StorageHandler.storageListWithSessionInit) {
       try {
         storage.sessionInit?.(session);

@@ -1,7 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession } from '~/framework/modules/auth/model';
-import type { UserType } from '~/framework/modules/auth/service';
+import type { AccountTyoe, ISession } from '~/framework/modules/auth/model';
 import type { loadStoredStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import type { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
 import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
@@ -20,7 +19,7 @@ export interface DashboardTeacherScreenStoreProps {
   structureIds: string[];
   session?: ISession;
   userId?: string;
-  userType?: UserType;
+  userType?: AccountTyoe;
 }
 
 export interface DashboardTeacherScreenDispatchProps {

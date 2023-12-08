@@ -1,13 +1,13 @@
+import theme from '~/app/theme';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { ICompetencesReduxState } from './reducer';
-import theme from '~/app/theme';
+import { AccountTyoe } from '../../auth/model';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
-  return !!userType && entcoreApp.address === '/competences' && [UserType.Student, UserType.Relative].includes(userType);
+  return !!userType && entcoreApp.address === '/competences' && [AccountTyoe.Student, AccountTyoe.Relative].includes(userType);
 }
 
 export default new NavigableModuleConfig<'competences', ICompetencesReduxState>({

@@ -1,9 +1,9 @@
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountTyoe } from '~/framework/modules/auth/model';
 
 export interface AccountListItemProps {
   avatar: Blob;
   id: string;
   name: string;
-  type: UserType;
+  type: AccountTyoe;
   selected?: boolean;
 }

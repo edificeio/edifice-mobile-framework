@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import { BodyText, CaptionBoldText, NestedBoldText } from '~/framework/components/text';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountTyoe } from '~/framework/modules/auth/model';
 import HistoryEventCard from '~/framework/modules/viescolaire/presences/components/history-event-card';
 import {
   Absence,
@@ -156,13 +156,13 @@ export const PunishmentCard = ({ event }: { event: Punishment }) => {
   );
 };
 
-export const StatementAbsenceCard = ({ event, userType }: { event: Absence; userType?: UserType }) => {
+export const StatementAbsenceCard = ({ event, userType }: { event: Absence; userType?: AccountTyoe }) => {
   const isSingleDay = event.endDate.isSame(event.startDate, 'day');
 
   return (
     <HistoryEventCard type={event.type}>
       <BodyText>
-        {userType === UserType.Relative
+        {userType === AccountTyoe.Relative
           ? I18n.get('presences-history-eventcard-statementabsence-relative', { childName: event.studentFirstName })
           : I18n.get('presences-history-eventcard-statementabsence-student')}
         {I18n.get(isSingleDay ? 'presences-history-eventcard-on' : 'presences-history-eventcard-from')}

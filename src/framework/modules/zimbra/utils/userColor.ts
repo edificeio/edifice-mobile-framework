@@ -2,20 +2,21 @@ import { ColorValue } from 'react-native';
 
 import theme from '~/app/theme';
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { zimbraService } from '~/framework/modules/zimbra/service';
+
+import { AccountTyoe } from '../../auth/model';
 
 export const getProfileColor = (userType?: string): ColorValue => {
   switch (userType) {
-    case UserType.Student:
+    case AccountTyoe.Student:
       return theme.color.profileTypes.Student;
-    case UserType.Relative:
+    case AccountTyoe.Relative:
       return theme.color.profileTypes.Relative;
-    case UserType.Teacher:
+    case AccountTyoe.Teacher:
       return theme.color.profileTypes.Teacher;
-    case UserType.Personnel:
+    case AccountTyoe.Personnel:
       return theme.color.profileTypes.Personnel;
-    case UserType.Guest:
+    case AccountTyoe.Guest:
       return theme.color.profileTypes.Guest;
     default:
       return theme.palette.grey.graphite;

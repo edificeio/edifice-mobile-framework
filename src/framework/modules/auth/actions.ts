@@ -14,18 +14,164 @@
 // }
 // export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPartialScenario | void;
 
+import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { Platform } from '~/framework/util/appConf';
+import { StorageSlice } from '~/framework/util/storage/slice';
+import { Trackers } from '~/framework/util/tracker';
+
+import { AuthError, IAuthCredentials, PartialSessionScenario } from './model';
 import { IAuthState, actions } from './reducer';
+import {
+  IUserInfoBackend,
+  UserPersonDataBackend,
+  UserPrivateData,
+  createSession,
+  ensureUserValidity,
+  fetchRawUserRequirements,
+  fetchUserInfo,
+  fetchUserPublicInfo,
+  forgetPlatform,
+  forgetPreviousSession,
+  formatSession,
+  getRequirementScenario,
+  manageFirebaseToken,
+} from './service';
 import { getSavedAccounts, getSavedStartup, getShowOnbording } from './storage';
 
-export const authInitAction = () => async (dispatch: ThunkDispatch<IAuthState, any, AnyAction>) => {
+type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
+
+export const authInitAction = () => async (dispatch: AuthDispatch) => {
   const startup = getSavedStartup();
   const accounts = getSavedAccounts();
   const showOnboarding = getShowOnbording();
 
   dispatch(actions.authInit(startup, accounts, showOnboarding));
+};
+
+/**
+ * Every step for login process is here.
+ */
+export const loginSteps = {
+  /**
+   * Get a new oAuth2 token set with given credentials
+   * If bad credentials provided, check if this not the activation code /
+   */
+  getToken: async (platform: Platform, credentials: IAuthCredentials) => {
+    const start = Date.now();
+    try {
+      await createSession(platform, credentials);
+    } catch (e) {
+      // If get token failed because of wrong login/pwd, it may be an activation or password reset scenario
+      const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
+      // if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {}
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.getToken');
+      throw e;
+    } finally {
+      console.info(`[perf] getToken in ${Date.now() - start}ms`);
+    }
+  },
+  /**
+   * Loads the saved token oAuth2 from the storage.
+   * @param platform
+   */
+  loadToken: async (platform: Platform) => {},
+  /**
+   * Get one of the requirements needed by the user to access the app
+   * @param platform
+   * @returns
+   */
+  getRequirement: async (platform: Platform) => {
+    const start = Date.now();
+    try {
+      const userRequirements = await fetchRawUserRequirements(platform);
+      return getRequirementScenario(userRequirements);
+    } catch (e) {
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.getRequirements');
+      throw e;
+    } finally {
+      console.info(`[perf] getRequirement in ${Date.now() - start}ms`);
+    }
+  },
+  /**
+   * Retrives the user information from the backend
+   * @param platform
+   * @param requirement
+   * @returns
+   */
+  getUserData: async (platform: Platform, requirement?: PartialSessionScenario) => {
+    const start = Date.now();
+    try {
+      const infos = await fetchUserInfo(platform);
+      ensureUserValidity(infos);
+      DeviceInfo.getUniqueId().then(uniqueID => {
+        infos.uniqueId = uniqueID;
+      });
+      // If we have requirements, we can't fetch public info, we mock it instead.
+      const { userdata, userPublicInfo } = requirement
+        ? { userdata: undefined, userPublicInfo: undefined }
+        : await fetchUserPublicInfo(infos, platform);
+      return { infos, publicInfos: { userData: userdata, userPublicInfo } };
+    } catch (e) {
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.getUserData');
+      throw e;
+    } finally {
+      console.info(`[perf] getUserData in ${Date.now() - start}ms`);
+    }
+  },
+  /**
+   * Saves the new account information & registers tokens (fcm) into the backend
+   * @param platform
+   */
+  finalizeLogin: async (
+    platform: Platform,
+    loginUsed: string,
+    userInfo: IUserInfoBackend,
+    publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
+    mustSaveSession?: string | boolean,
+    partialSessionScenario?: PartialSessionScenario,
+  ) => {
+    const start = Date.now();
+    try {
+      await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
+      const { userData, userPublicInfo } = publicInfo;
+      const sessionInfo = formatSession(platform, loginUsed, userInfo, userData, userPublicInfo, !!mustSaveSession);
+      await StorageSlice.sessionInitAllStorages(sessionInfo);
+      return sessionInfo;
+    } catch (e) {
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.confirmLogin');
+      throw e;
+    } finally {
+      console.info(`[perf] confirmLogin in ${Date.now() - start}ms`);
+    }
+  },
+};
+
+/**
+ * Manual login action with credentials by getting a fresh new token.
+ * @param platform
+ * @param credentials
+ * @returns
+ * @throws
+ */
+export const loginAction = (platform: Platform, credentials: IAuthCredentials) => async (dispatch: AuthDispatch) => {
+  const activationScenario = await loginSteps.getToken(platform, credentials);
+  if (activationScenario) return activationScenario;
+  const requirement = await loginSteps.getRequirement(platform);
+  const user = await loginSteps.getUserData(platform, requirement);
+  const accountInfo = await loginSteps.finalizeLogin(platform, credentials.username, user.infos, user.publicInfos);
+  dispatch(actions.login(accountInfo.user.id, accountInfo));
+};
+
+export const restoreAction = (platform: Platform) => async (dispatch: AuthDispatch) => {};
+
+/**
+ * Marks the current error as displayed.
+ */
+export const consumeAuthError = () => (dispatch: AuthDispatch) => {
+  // dispatch(authActions.sessionErrorConsume());
 };
 
 // /**
@@ -383,15 +529,6 @@ export const authInitAction = () => async (dispatch: ThunkDispatch<IAuthState, a
 //     const ok = resStatus >= 200 && resStatus < 300;
 //     const response = { ...resJson, ok };
 //     return response;
-//   };
-// }
-
-// /**
-//  * Removes the currently stored auth error
-//  */
-// export function consumeAuthError() {
-//   return (dispatch: ThunkDispatch<any, any, any>) => {
-//     dispatch(authActions.sessionErrorConsume());
 //   };
 // }
 

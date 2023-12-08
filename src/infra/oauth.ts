@@ -7,6 +7,7 @@ import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
 import { Source } from 'react-native-fast-image';
 
+import { AuthTokenSet } from '~/framework/modules/auth/model';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
@@ -395,6 +396,16 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public async forgetToken() {
     await removeItem('token');
+  }
+
+  /** */
+  public exportToken(): AuthTokenSet {
+    if (!this.token) throw new Error('[oAuth] exportToken : no token');
+    return {
+      access: { value: this.token.access_token, type: 'Bearer', expiresAt: this.token.expires_at.toString() },
+      refresh: { value: this.token.refresh_token },
+      scope: this.token.scope.split(' '),
+    };
   }
 
   /**

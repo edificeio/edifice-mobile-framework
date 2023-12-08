@@ -19,7 +19,9 @@ import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/r
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
+import { AuthLoggedAccountMap } from '../modules/auth/model';
 import { navigationRef } from './helper';
+import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
@@ -38,6 +40,7 @@ export interface RootNavigatorStoreProps {
   accounts: IAuthState['accounts'];
   showOnboarding: IAuthState['showOnboarding'];
   appReady: StartupState['isReady'];
+  connected: IAuthState['connected'];
   dispatch: Dispatch;
 }
 export type RootNavigatorProps = RootNavigatorStoreProps;
@@ -71,11 +74,12 @@ function RootNavigator(props: RootNavigatorProps) {
   }, [navigationState]);
 
   // Auth/Main switch
-  // const mainNavigation = useMainNavigation(session?.apps ?? [], session?.widgets ?? []);
+  const session = props.connected ? (props.accounts as AuthLoggedAccountMap)[props.connected] : undefined;
+  const mainNavigation = useMainNavigation(session?.rights.apps ?? [], session?.rights.widgets ?? []);
   const authNavigation = useAuthNavigation();
   const routes = React.useMemo(() => {
-    return authNavigation;
-  }, [authNavigation]);
+    return session ? mainNavigation : authNavigation;
+  }, [authNavigation, mainNavigation, session]);
 
   // const isFullyLogged = !!(logged && session); // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
 
@@ -122,4 +126,5 @@ export default connect((state: IGlobalState) => ({
   pending: getAuthState(state).pending,
   showOnboarding: getAuthState(state).showOnboarding,
   accounts: getAuthState(state).accounts,
+  connected: getAuthState(state).connected,
 }))(RootNavigator);

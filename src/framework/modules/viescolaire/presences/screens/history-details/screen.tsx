@@ -11,9 +11,8 @@ import { IGlobalState } from '~/app/store';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { getFlattenedChildren } from '~/framework/modules/auth/model';
+import { AccountTyoe, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
@@ -22,14 +21,6 @@ import {
   fetchPresencesTermsAction,
   fetchPresencesUserChildrenAction,
 } from '~/framework/modules/viescolaire/presences/actions';
-import {
-  HistoryCategoryCard,
-  renderDeparture,
-  renderForgottenNotebook,
-  renderIncident,
-  renderLateness,
-  renderPunishment,
-} from '~/framework/modules/viescolaire/presences/components/HistoryCategoryCard';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
@@ -39,6 +30,15 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import type { PresencesHistoryDetailsScreenDispatchProps, PresencesHistoryDetailsScreenPrivateProps } from './types';
+
+import {
+  HistoryCategoryCard,
+  renderDeparture,
+  renderForgottenNotebook,
+  renderIncident,
+  renderLateness,
+  renderPunishment,
+} from '~/framework/modules/viescolaire/presences/components/HistoryCategoryCard';
 
 export const computeNavBar = ({
   navigation,
@@ -64,12 +64,13 @@ const PresencesHistoryDetailsScreen = (props: PresencesHistoryDetailsScreenPriva
   const fetchEvents = async () => {
     try {
       const { classes, session, userId, userType } = props;
-      const structureId = userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
-      const studentId = userType === UserType.Student ? userId : selectedChildId;
+      const structureId =
+        userType === AccountTyoe.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
+      const studentId = userType === AccountTyoe.Student ? userId : selectedChildId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       let groupId = classes?.[0];
-      if (userType === UserType.Relative) {
+      if (userType === AccountTyoe.Relative) {
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
@@ -272,7 +273,7 @@ export default connect(
 
     return {
       children:
-        userType === UserType.Relative
+        userType === AccountTyoe.Relative
           ? getFlattenedChildren(session?.user.children)
               ?.filter(child => child.classesNames.length)
               .map(child => ({ id: child.id, name: child.firstName })) ?? []

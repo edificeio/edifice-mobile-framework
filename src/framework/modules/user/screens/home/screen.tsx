@@ -22,14 +22,14 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
-import { IAuthContext } from '~/framework/modules/auth/model';
+import { AccountTyoe, IAuthContext } from '~/framework/modules/auth/model';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
-import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import AddAccountList from '~/framework/modules/user/components/account-list/add';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
@@ -214,7 +214,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     },
     [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
-  const canEditPersonalInfo = session?.user.type !== UserType.Student;
+  const canEditPersonalInfo = session?.user.type !== AccountTyoe.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
   return React.useMemo(
@@ -302,7 +302,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @returns the React Elements of the account button and list
  */
 function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accountListRef, data: any) {
-  const canManageAccounts = session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel;
+  const canManageAccounts = session?.user.type === AccountTyoe.Teacher || session?.user.type === AccountTyoe.Personnel;
   const showAccountList = React.useCallback(() => {
     accountListRef.current?.present();
   }, [accountListRef]);

@@ -20,8 +20,8 @@ import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/
 import { TextAvatar } from '~/framework/components/textAvatar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
+import { AccountTyoe } from '~/framework/modules/auth/model';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
@@ -107,7 +107,9 @@ const callPhoneNumber = tel => {
       if (supported) return Linking.openURL(`tel:${telWithoutSpaces}`);
       if (__DEV__) console.log(`L'appel du numéro ${telWithoutSpaces} n'est pas supporté.`);
     })
-    .catch(err => {if (__DEV__) console.error("Une erreur s'est produite lors de l'appel du numéro.", err);});
+    .catch(err => {
+      if (__DEV__) console.error("Une erreur s'est produite lors de l'appel du numéro.", err);
+    });
 };
 
 const UserProfileScreen = (props: ProfilePageProps) => {
@@ -173,7 +175,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const onNewMessage = () => {
     const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
-    if (userInfo?.type === UserType.Student && !isEmpty(family)) {
+    if (userInfo?.type === AccountTyoe.Student && !isEmpty(family)) {
       const familyUser: any = [];
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
@@ -231,11 +233,11 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderFamily = () => {
-    if (userInfo?.type !== UserType.Relative && userInfo?.type !== UserType.Student) return;
+    if (userInfo?.type !== AccountTyoe.Relative && userInfo?.type !== AccountTyoe.Student) return;
     return (
       <View style={styles.bloc}>
         <HeadingSText style={family ? {} : styles.blocTitle}>
-          {userInfo?.type === UserType.Student
+          {userInfo?.type === AccountTyoe.Student
             ? I18n.get(family?.length! > 1 ? 'user-profile-relatives' : 'user-profile-relative')
             : I18n.get(family?.length! > 1 ? 'user-profile-children' : 'user-profile-child')}
         </HeadingSText>

@@ -6,18 +6,18 @@ import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
-import type { IAuthorizedAction, UserPrivateData, UserType } from './service';
+import type { IAuthorizedAction, UserPrivateData } from './service';
 
 /**
  * Every profile type for accounts. Each account is of one type only.
  * Parent teachers have two accounts, one for each type.
  */
-export enum AccountType {
-  STUDENT = 'STUDENT',
-  RELATIVE = 'RELATIVE',
-  TEACHER = 'TEACHER',
-  PERSONNEL = 'PERSONNEL',
-  GUEST = 'GUEST',
+export enum AccountTyoe {
+  Student = 'Student',
+  Relative = 'Relative',
+  Teacher = 'Teacher',
+  Personnel = 'Personnel',
+  Guest = 'Guest',
 }
 
 /**
@@ -32,7 +32,7 @@ export interface DisplayUserPublic {
  * Describes minimal info to display a user, but with account type hint
  */
 export interface DisplayUserPublicWithType extends DisplayUserPublic {
-  type: AccountType;
+  type: AccountTyoe;
 }
 
 /**
@@ -61,12 +61,13 @@ export interface AuthLoggedUserProfile extends AuthSavedAccountUserInfo, AuthUse
   lastName: string;
   login?: string; // May be same as loginUsed if real login was used to log in
   loginAlias?: string; // May be same as loginUsed if alias was used to log in
+  photo?: string; // = avatar url if defined. Keep in mind `avatar` property stores the Blob data of the image.
 }
 
 /**
  * Describes all data thet is tied to the logged user
  */
-export interface AuthLoggedUserInfo extends AuthSavedAccountUserInfo {
+export interface AuthLoggedUserInfo extends AuthLoggedUserProfile {
   groups: string[];
   uniqueId?: string;
   children?: UserChildren;
@@ -107,7 +108,7 @@ export interface AuthTokenSet {
 export interface AuthSavedAccount {
   platform: string;
   tokens: AuthTokenSet;
-  userinfo: AuthSavedAccountUserInfo;
+  user: AuthSavedAccountUserInfo;
 }
 
 export interface AuthLoggedAccountRights {
@@ -120,9 +121,9 @@ export interface AuthLoggedAccountRights {
  * Every info the logged account contains
  */
 export interface AuthLoggedAccount {
-  platform: string;
+  platform: Platform;
   tokens: AuthTokenSet;
-  userinfo: AuthLoggedUserInfo;
+  user: AuthLoggedUserInfo;
   rights: AuthLoggedAccountRights;
   type: SessionType;
   federated: boolean;
@@ -147,7 +148,7 @@ export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthLoggedAc
 
 export interface IUser extends DisplayUserPublic {
   login: string;
-  type: UserType;
+  type: AccountTyoe;
 }
 
 export interface StructureNode {
@@ -303,6 +304,7 @@ export function getAuthErrorCode(error: AuthErrorCode, platform: Platform) {
 export enum PartialSessionScenario {
   MUST_CHANGE_PASSWORD = 'must-change-password',
   MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
+  // ToDo: add MUST_VALIDATE_TERMS for initial cgu validation for federated accounts
   MUST_VERIFY_MOBILE = 'must-verify-mobile',
   MUST_VERIFY_EMAIL = 'must-verify-email',
 }

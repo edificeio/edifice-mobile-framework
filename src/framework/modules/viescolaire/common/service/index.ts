@@ -1,7 +1,6 @@
 import moment from 'moment';
 
-import { ISession, IUser } from '~/framework/modules/auth/model';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountTyoe, ISession, IUser } from '~/framework/modules/auth/model';
 import { IClassGroups, ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
@@ -83,7 +82,7 @@ const userAdapter = (data: IBackendUser): IUser => {
     displayName: data.displayName,
     id: data.id,
     login: '',
-    type: data.type as UserType,
+    type: data.type as AccountTyoe,
   };
 };
 

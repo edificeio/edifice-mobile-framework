@@ -10,8 +10,8 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
+import { AccountTyoe } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
   fetchCompetencesAction,
@@ -163,8 +163,8 @@ export default connect(
           : AsyncPagedLoadingState.DONE,
       levels: competencesState.levels.data.filter(level => level.cycleId === domaines[0]?.cycleId),
       structureId:
-        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
-      studentId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
+        userType === AccountTyoe.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
+      studentId: userType === AccountTyoe.Student ? userId : dashboardState.selectedChildId,
     };
   },
   dispatch =>

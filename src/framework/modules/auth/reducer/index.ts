@@ -1,5 +1,11 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
-import type { AuthErrorDetails, AuthLoggedAccountMap, AuthMixedAccountMap, IAuthContext } from '~/framework/modules/auth/model';
+import type {
+  AuthErrorDetails,
+  AuthLoggedAccount,
+  AuthLoggedAccountMap,
+  AuthMixedAccountMap,
+  IAuthContext,
+} from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
@@ -35,6 +41,7 @@ export const initialState: IAuthState = {
 // Actions definitions
 export const actionTypes = {
   authInit: moduleConfig.namespaceActionType('INIT'),
+  login: moduleConfig.namespaceActionType('LOGIN'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -51,6 +58,7 @@ export const actionTypes = {
 
 export interface ActionPayloads {
   authInit: Pick<AuthStorageData, 'accounts' | 'startup' | 'showOnboarding'>;
+  login: { id: string; account: AuthLoggedAccount };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -72,6 +80,8 @@ export const actions = {
     showOnboarding: AuthStorageData['showOnboarding'],
   ) => ({ type: actionTypes.authInit, startup, accounts, showOnboarding }),
 
+  login: (id: string, account: AuthLoggedAccount) => ({ type: actionTypes.login, id, account }),
+
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
   // sessionPartial: (session: ISession) => ({ type: actionTypes.sessionPartial, session }),
   // sessionRefresh: (session: ISession) => ({ type: actionTypes.sessionRefresh, session }),
@@ -92,8 +102,12 @@ const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
     const { accounts, startup, showOnboarding } = action as unknown as ActionPayloads['authInit'];
     const pending = startup.platform ? { platform: startup.platform } : undefined;
-    console.debug(actionTypes.authInit, { ...initialState, accounts, showOnboarding, pending });
     return { ...initialState, accounts, showOnboarding, pending };
+  },
+
+  [actionTypes.login]: (state, action) => {
+    const { id, account } = action as unknown as ActionPayloads['login'];
+    return { ...state, accounts: { ...state.accounts, [id]: account }, connected: id, showOnboarding: false };
   },
 
   // // Saves session info & consider user logged

@@ -10,9 +10,11 @@ import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId } from '~/infra/oauth';
 
 import {
+  AccountTyoe,
+  AuthLoggedAccount,
+  AuthLoggedUserInfo,
   IAuthContext,
   IAuthCredentials,
-  ILoggedUser,
   ISession,
   PartialSessionScenario,
   RuntimeAuthErrorCode,
@@ -77,21 +79,13 @@ export interface IEntcoreEmailValidationState {
   valid: string; // Last known valid email address (or empty string)
 }
 
-export enum UserType {
-  Student = 'Student',
-  Relative = 'Relative',
-  Teacher = 'Teacher',
-  Personnel = 'Personnel',
-  Guest = 'Guest',
-}
-
 export interface IAuthorizedAction {
   name: string;
   displayName: string;
   type: 'SECURED_ACTION_WORKFLOW'; // ToDo add other types here
 }
 
-export enum UserTypeBackend {
+export enum AccountTypeBackend {
   Student = 'Student',
   Relative = 'Relative',
   Teacher = 'Teacher',
@@ -104,7 +98,7 @@ export interface IUserInfoBackend {
   userId?: string;
   username?: string;
   login?: string;
-  type?: UserType;
+  type?: AccountTyoe;
   deletePending?: boolean;
   hasApp?: boolean;
   forceChangePassword?: boolean;
@@ -218,11 +212,12 @@ export async function forgetPreviousSession() {
 
 export function formatSession(
   platform: Platform,
+  loginUsed: string,
   userinfo: IUserInfoBackend,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
   rememberMe?: boolean,
-): ISession {
+): AuthLoggedAccount {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
   }
@@ -240,9 +235,10 @@ export function formatSession(
   ) {
     throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing data in user info', '');
   }
-  const user: ILoggedUser = {
+  const user: AuthLoggedUserInfo = {
     id: userinfo.userId,
     login: userinfo.login,
+    loginUsed,
     type: userinfo.type,
     displayName: userinfo.username,
     firstName: userinfo.firstName,
@@ -282,14 +278,16 @@ export function formatSession(
   }
   return {
     platform,
-    oauth2: OAuth2RessourceOwnerPasswordClient.connection,
-    apps: userinfo.apps,
-    widgets: userinfo.widgets,
-    authorizedActions: userinfo.authorizedActions,
+    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
+    user,
+    rights: {
+      apps: userinfo.apps,
+      widgets: userinfo.widgets,
+      authorizedActions: userinfo.authorizedActions,
+    },
     type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
     federated: userinfo.federated ?? false,
     // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
-    user,
   };
 }
 
@@ -315,6 +313,10 @@ export async function loadCurrentPlatform() {
  */
 export function savePlatform(platform: Platform) {
   storage.global.set(PLATFORM_STORAGE_KEY, platform.name);
+}
+
+export function forgetPlatform() {
+  storage.global.delete(PLATFORM_STORAGE_KEY);
 }
 
 export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: IAuthCredentials) {
@@ -393,7 +395,7 @@ export class FcmService {
       if (tokens instanceof Array) {
         return tokens;
       } else {
-        if (__DEV__) console.debug("not an array?", tokens)
+        if (__DEV__) console.debug('not an array?', tokens);
       }
     } catch {
       // TODO: Manage error
@@ -588,7 +590,7 @@ export async function getUserRequirements(platform: Platform) {
   return resp.status === 404 ? null : (resp.json() as IUserRequirements);
 }
 
-export async function fetchUserRequirements(platform: Platform) {
+export async function fetchRawUserRequirements(platform: Platform) {
   try {
     const requirements = await getUserRequirements(platform);
     return requirements as IUserRequirements;
@@ -607,7 +609,7 @@ export async function fetchUserRequirements(platform: Platform) {
  * @param userRequirements get userRequirements from `fetchUserRequirements()`
  * @returns the first flag encountered (until there is none).
  */
-export function getPartialSessionScenario(userRequirements: IUserRequirements) {
+export function getRequirementScenario(userRequirements: IUserRequirements) {
   if (userRequirements.forceChangePassword) return PartialSessionScenario.MUST_CHANGE_PASSWORD;
   if (userRequirements.needRevalidateTerms) return PartialSessionScenario.MUST_REVALIDATE_TERMS;
   if (userRequirements.needRevalidateMobile) return PartialSessionScenario.MUST_VERIFY_MOBILE;
@@ -675,7 +677,7 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
 
     // We fetch children information only for relative users
     const childrenStructure: UserPrivateData['childrenStructure'] =
-      userinfo.type === UserType.Relative
+      userinfo.type === AccountTyoe.Relative
         ? await (fetchJSONWithCache('/directory/user/' + userinfo.userId + '/children', {}, true, platform.url) as any)
         : undefined;
     if (childrenStructure) {
@@ -683,7 +685,7 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
     }
 
     // We enforce undefined parents for non-student users becase backend populates this with null data
-    if (userinfo.type !== UserType.Student) {
+    if (userinfo.type !== AccountTyoe.Student) {
       userdata.parents = undefined;
     }
 

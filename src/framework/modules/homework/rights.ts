@@ -6,8 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountTyoe, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -23,17 +22,17 @@ export const modifyHomeworkEntryResourceRight = 'fr-wseduc-homeworks-controllers
 export const viewHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|view';
 export const createHomeworkResourceRight = 'fr.wseduc.homeworks.controllers.HomeworksController|createHomework';
 
-export const hasPermissionManager = (homework: IHomeworkDiary, right: string, session: ISession) => {
+export const hasPermissionManager = (homework: IHomeworkDiary, right: string, session: AuthLoggedAccount) => {
   return homework && (homework.owner.userId === session.user.id || resourceHasRight(homework, right, session));
 };
 
-export const getHomeworkWorkflowInformation = (session: ISession) => {
+export const getHomeworkWorkflowInformation = (session: AuthLoggedAccount) => {
   const userType = session?.user.type;
-  const isRelativeOrStudent = userType === UserType.Relative || userType === UserType.Student;
+  const isRelativeOrStudent = userType === AccountTyoe.Relative || userType === AccountTyoe.Student;
 
   return {
-    view: session.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
-    create: session.authorizedActions.some(a => a.name === createHomeworkResourceRight),
+    view: session.rights.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
+    create: session.rights.authorizedActions.some(a => a.name === createHomeworkResourceRight),
     //Todo: replace with resourceRight from backend
     check: isRelativeOrStudent,
   };

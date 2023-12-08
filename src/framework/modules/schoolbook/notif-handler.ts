@@ -7,7 +7,6 @@
 import { CommonActions } from '@react-navigation/native';
 
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';
 import type { IResourceUriNotification, ITimelineNotification } from '~/framework/util/notifications';
@@ -18,6 +17,7 @@ import {
 } from '~/framework/util/notifications/routing';
 
 import { schoolbookRouteNames } from './navigation';
+import { AccountTyoe } from '../auth/model';
 
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -26,7 +26,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
     try {
       // 1. Get notification data
       const userType = assertSession().user.type;
-      const isParent = userType === UserType.Relative;
+      const isParent = userType === AccountTyoe.Relative;
 
       // 2. actual navigation action
       const navAction = CommonActions.navigate({

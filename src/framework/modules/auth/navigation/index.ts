@@ -11,7 +11,7 @@ import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/sc
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
-import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
+import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/screens/login-credentials/types';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
