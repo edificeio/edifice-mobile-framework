@@ -13,13 +13,13 @@ import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { RootToastHandler } from '~/framework/components/toast';
+import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
-import { AuthLoggedAccountMap } from '../modules/auth/model';
 import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
@@ -41,6 +41,7 @@ export interface RootNavigatorStoreProps {
   showOnboarding: IAuthState['showOnboarding'];
   appReady: StartupState['isReady'];
   connected: IAuthState['connected'];
+  requirement: IAuthState['requirement'];
   dispatch: Dispatch;
 }
 export type RootNavigatorProps = RootNavigatorStoreProps;
@@ -48,7 +49,7 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
-  const { accounts, pending, showOnboarding, dispatch, appReady } = props;
+  const { accounts, pending, showOnboarding, dispatch, appReady, requirement } = props;
 
   React.useEffect(() => {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
@@ -63,8 +64,8 @@ function RootNavigator(props: RootNavigatorProps) {
 
   const logged = false; // ToDo get from reducer
   const navigationState = React.useMemo(() => {
-    return appReady && !logged ? getAuthNavigationState(accounts, pending, showOnboarding) : undefined;
-  }, [accounts, appReady, logged, pending, showOnboarding]);
+    return appReady && !logged ? getAuthNavigationState(accounts, pending, showOnboarding, requirement) : undefined;
+  }, [accounts, appReady, logged, pending, requirement, showOnboarding]);
 
   // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
   React.useLayoutEffect(() => {
@@ -78,8 +79,8 @@ function RootNavigator(props: RootNavigatorProps) {
   const mainNavigation = useMainNavigation(session?.rights.apps ?? [], session?.rights.widgets ?? []);
   const authNavigation = useAuthNavigation();
   const routes = React.useMemo(() => {
-    return session ? mainNavigation : authNavigation;
-  }, [authNavigation, mainNavigation, session]);
+    return session && !requirement ? mainNavigation : authNavigation;
+  }, [authNavigation, mainNavigation, requirement, session]);
 
   // const isFullyLogged = !!(logged && session); // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
 
@@ -127,4 +128,5 @@ export default connect((state: IGlobalState) => ({
   showOnboarding: getAuthState(state).showOnboarding,
   accounts: getAuthState(state).accounts,
   connected: getAuthState(state).connected,
+  requirement: getAuthState(state).requirement,
 }))(RootNavigator);

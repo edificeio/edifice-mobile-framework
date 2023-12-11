@@ -129,8 +129,12 @@ export interface AuthLoggedAccount {
   federated: boolean;
 }
 
+/**
+ * All possible requirements after a user log in.
+ * Formerly "partial session scenarios".
+ */
 export enum AuthRequirement {
-  MUST_CHANGE_PASSWORD,
+  MUST_CHANGE_PASSWORD = 1,
   MUST_REVALIDATE_TERMS,
   MUST_VALIDATE_TERMS,
   MUST_VERIFY_MOBILE,
@@ -299,14 +303,6 @@ export function getAuthErrorCode(error: AuthErrorCode, platform: Platform) {
       currentplatform: platform.url,
     }),
   });
-}
-
-export enum PartialSessionScenario {
-  MUST_CHANGE_PASSWORD = 'must-change-password',
-  MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
-  // ToDo: add MUST_VALIDATE_TERMS for initial cgu validation for federated accounts
-  MUST_VERIFY_MOBILE = 'must-verify-mobile',
-  MUST_VERIFY_EMAIL = 'must-verify-email',
 }
 
 export interface IAuthContext {

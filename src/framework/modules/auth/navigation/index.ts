@@ -1,11 +1,19 @@
 /**
  * Navigator for the auth section
  */
-import { CommonActions, NavigationProp, ParamListBase } from '@react-navigation/native';
+import {
+  CommonActions,
+  NavigationProp,
+  ParamListBase,
+  Router,
+  StackActionType,
+  StackNavigationState,
+  StackRouter,
+} from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { ILoginResult } from '~/framework/modules/auth/actions';
-import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '~/framework/modules/auth/model';
+import { AuthRequirement, ForgotMode, IAuthContext, IAuthCredentials } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
@@ -62,6 +70,28 @@ export const getLoginRouteName = (platform?: Platform) => {
   return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginCredentials;
 };
 
+export const getNavActionForRequirement = (requirement: AuthRequirement) => {
+  switch (requirement) {
+    case AuthRequirement.MUST_CHANGE_PASSWORD:
+      return CommonActions.reset({
+        routes: [
+          {
+            name: authRouteNames.changePassword,
+            params: {
+              forceChange: true,
+            },
+          },
+        ],
+      });
+  }
+};
+
+/**
+ * Returns
+ * @param action
+ * @param platform
+ * @returns
+ */
 export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platform) => {
   if (action) {
     switch (action.action) {
@@ -72,7 +102,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           credentials: action.credentials,
           rememberMe: action.rememberMe,
         });
-      case PartialSessionScenario.MUST_CHANGE_PASSWORD:
+      case AuthRequirement.MUST_CHANGE_PASSWORD:
         return CommonActions.reset({
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
@@ -88,7 +118,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
             },
           ],
         });
-      case PartialSessionScenario.MUST_REVALIDATE_TERMS:
+      case AuthRequirement.MUST_REVALIDATE_TERMS:
         return CommonActions.reset({
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
@@ -102,7 +132,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
             },
           ],
         });
-      case PartialSessionScenario.MUST_VERIFY_MOBILE:
+      case AuthRequirement.MUST_VERIFY_MOBILE:
         return CommonActions.reset({
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
@@ -116,7 +146,7 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
             },
           ],
         });
-      case PartialSessionScenario.MUST_VERIFY_EMAIL:
+      case AuthRequirement.MUST_VERIFY_EMAIL:
         return CommonActions.reset({
           // we reset instead of navigate to prevent the user from going back or something else
           routes: [
@@ -156,6 +186,24 @@ export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IA
 }
 
 /**
+ * Simulate a nav action from the given nav state and returns the resulting nav state
+ * @param action the nav action to simulate
+ * @param state nav state (can be stale) to apply the nav action on
+ * @returns The new nav State (will be rehydrated)
+ */
+const simulateNavAction = (
+  action: CommonActions.Action,
+  state: Parameters<Router<StackNavigationState<ParamListBase>, CommonActions.Action | StackActionType>['getRehydratedState']>[0],
+) => {
+  // We must instaciate a throwaway StackRouter to perform the action on the state and get the resulting one.
+  const router = StackRouter({});
+  const routeNames = Object.values(authRouteNames);
+  const rehydratedState = router.getRehydratedState(state, { routeNames, routeParamList: {}, routeGetIdList: {} });
+  const newState = router.getStateForAction(rehydratedState, action, { routeNames, routeParamList: {}, routeGetIdList: {} });
+  return newState ?? state;
+};
+
+/**
  * Compute Auth navigation state from diven information from redux store
  * @param accounts
  * @param pending
@@ -166,6 +214,7 @@ export const getAuthNavigationState = (
   accounts: IAuthState['accounts'],
   pending: IAuthState['pending'],
   showOnboarding: IAuthState['showOnboarding'],
+  requirement: IAuthState['requirement'],
 ) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
@@ -200,22 +249,16 @@ export const getAuthNavigationState = (
       },
     });
 
-  return { routes };
+  // 3. Login redirection for requirements
 
-  // // 2. post-login screens (if loginRedirect provided only)
+  let navRedirection: CommonActions.Action | undefined;
+  if (requirement) {
+    navRedirection = getNavActionForRequirement(requirement);
+  }
 
-  // if (!loginRedirect || !selectedPlatform) return { routes };
+  // 4. Apply redirection if so
 
-  // Okay time for explanation !
-  // { routes } are "stale" navigation state and must be rehyrated to apply `navAction` on it.
-  // We create a dummy StackRouter to perform this, then returns the resulting navState.
-  // const navAction = getRedirectLoginNavAction(loginRedirect, selectedPlatform);
-  // if (!navAction) return { routes };
+  if (!navRedirection) return { routes };
 
-  // const router = StackRouter({});
-  // const routeNames = Object.values(authRouteNames);
-  // const rehydratedState = router.getRehydratedState({ routes }, { routeNames, routeParamList: {}, routeGetIdList: {} });
-  // const newState = router.getStateForAction(rehydratedState, navAction, { routeNames, routeParamList: {}, routeGetIdList: {} });
-
-  // return newState ?? { routes };
+  return simulateNavAction(navRedirection, { routes });
 };

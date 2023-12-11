@@ -1,29 +1,22 @@
-// interface ILoginActionResultActivation {
-//   action: 'activate';
-//   credentials: IAuthCredentials;
-//   rememberMe?: boolean;
-//   context: IAuthContext;
-// }
-// interface ILoginActionResultPartialScenario {
-//   action: PartialSessionScenario;
-//   defaultMobile?: string;
-//   defaultEmail?: string;
-//   credentials?: IAuthCredentials;
-//   rememberMe?: boolean;
-//   context: IAuthContext;
-// }
-// export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPartialScenario | void;
-
+import { Alert } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { I18n } from '~/app/i18n';
+import { IAuthState, actions, assertSession, getState as getAuthState, getPlatform } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { StorageSlice } from '~/framework/util/storage/slice';
 import { Trackers } from '~/framework/util/tracker';
 
-import { AuthError, IAuthCredentials, PartialSessionScenario } from './model';
-import { IAuthState, actions } from './reducer';
+import {
+  AuthError,
+  AuthRequirement,
+  IAuthCredentials,
+  IChangePasswordError,
+  IChangePasswordPayload,
+  createChangePasswordError,
+} from './model';
 import {
   IUserInfoBackend,
   UserPersonDataBackend,
@@ -36,6 +29,7 @@ import {
   forgetPlatform,
   forgetPreviousSession,
   formatSession,
+  getAuthContext,
   getRequirementScenario,
   manageFirebaseToken,
 } from './service';
@@ -43,12 +37,29 @@ import { getSavedAccounts, getSavedStartup, getShowOnbording } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
+// interface ILoginActionResultActivation {
+//   action: 'activate';
+//   credentials: IAuthCredentials;
+//   rememberMe?: boolean;
+//   context: IAuthContext;
+// }
+// interface ILoginActionResultPartialScenario {
+//   action: AuthRequirement;
+//   defaultMobile?: string;
+//   defaultEmail?: string;
+//   credentials?: IAuthCredentials;
+//   rememberMe?: boolean;
+//   context: IAuthContext;
+// }
+// export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPartialScenario | void;
+
 export const authInitAction = () => async (dispatch: AuthDispatch) => {
   const startup = getSavedStartup();
   const accounts = getSavedAccounts();
   const showOnboarding = getShowOnbording();
+  const deviceId = await DeviceInfo.getUniqueId();
 
-  dispatch(actions.authInit(startup, accounts, showOnboarding));
+  dispatch(actions.authInit(startup, accounts, showOnboarding, deviceId));
 };
 
 /**
@@ -101,7 +112,7 @@ export const loginSteps = {
    * @param requirement
    * @returns
    */
-  getUserData: async (platform: Platform, requirement?: PartialSessionScenario) => {
+  getUserData: async (platform: Platform, requirement?: AuthRequirement) => {
     const start = Date.now();
     try {
       const infos = await fetchUserInfo(platform);
@@ -130,8 +141,8 @@ export const loginSteps = {
     loginUsed: string,
     userInfo: IUserInfoBackend,
     publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
+    requirement?: AuthRequirement,
     mustSaveSession?: string | boolean,
-    partialSessionScenario?: PartialSessionScenario,
   ) => {
     const start = Date.now();
     try {
@@ -151,18 +162,24 @@ export const loginSteps = {
 
 /**
  * Manual login action with credentials by getting a fresh new token.
- * @param platform
- * @param credentials
+ * @param platform platform info to create the session on.
+ * @param credentials login & password
  * @returns
  * @throws
  */
 export const loginAction = (platform: Platform, credentials: IAuthCredentials) => async (dispatch: AuthDispatch) => {
   const activationScenario = await loginSteps.getToken(platform, credentials);
-  if (activationScenario) return activationScenario;
+  // if (activationScenario) return activationScenario;
   const requirement = await loginSteps.getRequirement(platform);
   const user = await loginSteps.getUserData(platform, requirement);
-  const accountInfo = await loginSteps.finalizeLogin(platform, credentials.username, user.infos, user.publicInfos);
-  dispatch(actions.login(accountInfo.user.id, accountInfo));
+  const accountInfo = await loginSteps.finalizeLogin(platform, credentials.username, user.infos, user.publicInfos, requirement);
+  console.debug('requirement ?', requirement);
+  if (requirement) {
+    const context = await getAuthContext(platform);
+    dispatch(actions.loginRequirement(accountInfo.user.id, accountInfo, requirement, context));
+  } else {
+    dispatch(actions.login(accountInfo.user.id, accountInfo));
+  }
 };
 
 export const restoreAction = (platform: Platform) => async (dispatch: AuthDispatch) => {};
@@ -172,6 +189,19 @@ export const restoreAction = (platform: Platform) => async (dispatch: AuthDispat
  */
 export const consumeAuthError = () => (dispatch: AuthDispatch) => {
   // dispatch(authActions.sessionErrorConsume());
+};
+
+/**
+ * fetchs the auth context of current platform and stores it in redux.
+ * @returns
+ */
+export const loadAuthContext = () => async (dispatch: AuthDispatch) => {
+  const platform = getPlatform();
+  if (!platform) return;
+  const context = await getAuthContext(platform);
+  if (!context) return;
+  dispatch(actions.loadPfContext(platform.name, context));
+  return context;
 };
 
 // /**
@@ -560,84 +590,87 @@ export const consumeAuthError = () => (dispatch: AuthDispatch) => {
 //   };
 // }
 
-// /** Clear the current session and track logout event.
-//  * Session must exist and this action will throw if no session is active.
-//  */
-// export function logoutAction() {
-//   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-//     const platform = assertSession().platform;
-//     await dispatch(sessionDestroyAction(platform));
-//     Trackers.trackEvent('Auth', 'LOGOUT');
-//   };
-// }
+/** Clear the current session and track logout event.
+ * Session must exist and this action will throw if no session is active.
+ */
+export function logoutAction() {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const platform = assertSession().platform;
+    // await dispatch(sessionDestroyAction(platform));
+    Alert.alert('Log out');
+    Trackers.trackEvent('Auth', 'LOGOUT');
+  };
+}
 
-// export interface IChangePasswordSubmitPayload {
-//   oldPassword: string;
-//   password: string;
-//   confirmPassword: string;
-//   login: string;
-//   callback: string;
-// }
+export interface IChangePasswordSubmitPayload {
+  oldPassword: string;
+  password: string;
+  confirmPassword: string;
+  login: string;
+  callback: string;
+}
 
-// export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean) {
-//   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-//     try {
-//       // === 2 - prepare chg pwd payload
-//       const payload: IChangePasswordSubmitPayload = {
-//         oldPassword: p.oldPassword,
-//         password: p.newPassword,
-//         confirmPassword: p.confirm,
-//         login: p.login,
-//         callback: '',
-//         ...(forceChange ? { forceChange: 'force' } : {}),
-//       };
-//       const formdata = new FormData();
-//       for (const key in payload) {
-//         formdata.append(key, payload[key as keyof IChangePasswordSubmitPayload]);
-//       }
-//       // === 3 - Send change password information
-//       const res = await fetch(`${platform.url}/auth/reset`, {
-//         body: formdata,
-//         headers: {
-//           Accept: 'application/json',
-//           'Content-Type': 'multipart/form-data',
-//           'X-Device-Id': uniqueId(),
-//         },
-//         method: 'post',
-//       });
-//       // === 3 - Check whether the password change was successful
-//       if (!res.ok) {
-//         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
-//       }
-//       // a json response can contains an error field
-//       if (res.headers.get('content-type') && res.headers.get('content-type')!.indexOf('application/json') !== -1) {
-//         // checking response header
-//         const resBody = await res.json();
-//         if (resBody.error) {
-//           const pwdRegex = getState().user.changePassword?.context?.passwordRegex;
-//           const regexp = new RegExp(pwdRegex);
-//           if (pwdRegex && !regexp.test(p.newPassword)) {
-//             throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-regex'));
-//           } else {
-//             throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-fields'));
-//           }
-//         }
-//       }
+export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean) {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    try {
+      // === 2 - prepare chg pwd payload
+      const payload: IChangePasswordSubmitPayload = {
+        oldPassword: p.oldPassword,
+        password: p.newPassword,
+        confirmPassword: p.confirm,
+        login: p.login,
+        callback: '',
+        ...(forceChange ? { forceChange: 'force' } : {}),
+      };
+      const formdata = new FormData();
+      for (const key in payload) {
+        formdata.append(key, payload[key as keyof IChangePasswordSubmitPayload]);
+      }
+      // === 3 - Send change password information
+      const deviceId = getAuthState(getState()).deviceInfo.uniqueId;
+      if (!deviceId) {
+        throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
+      }
+      const res = await fetch(`${platform.url}/auth/reset`, {
+        body: formdata,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+          'X-Device-Id': deviceId,
+        },
+        method: 'post',
+      });
+      // === 3 - Check whether the password change was successful
+      if (!res.ok) {
+        throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
+      }
+      // a json response can contains an error field
+      if (res.headers.get('content-type') && res.headers.get('content-type')!.indexOf('application/json') !== -1) {
+        // checking response header
+        const resBody = await res.json();
+        if (resBody.error) {
+          const pwdRegex = getState().user.changePassword?.context?.passwordRegex;
+          const regexp = new RegExp(pwdRegex);
+          if (pwdRegex && !regexp.test(p.newPassword)) {
+            throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-regex'));
+          } else {
+            throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-fields'));
+          }
+        }
+      }
 
-//       Trackers.trackEvent('Profile', 'CHANGE PASSWORD');
-//     } catch (e) {
-//       Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
-//       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
-//       else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
-//     }
+      Trackers.trackEvent('Profile', 'CHANGE PASSWORD');
+    } catch (e) {
+      Trackers.trackEvent('Profile', 'CHANGE PASSWORD ERROR');
+      if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
+      else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
+    }
 
-//     // 4 === Login back to get renewed token
-//     const credentials: IAuthCredentials = {
-//       username: p.login,
-//       password: p.newPassword,
-//     };
-//     const rememberMe = getSession()?.type === SessionType.PERMANENT;
-//     const redirect = await dispatch(loginAction(platform, credentials, rememberMe));
-//     return redirect;
-//   };
-// }
+    // 4 === Login back to get renewed token
+    const credentials: IAuthCredentials = {
+      username: p.login,
+      password: p.newPassword,
+    };
+    await dispatch(loginAction(platform, credentials));
+  };
+}

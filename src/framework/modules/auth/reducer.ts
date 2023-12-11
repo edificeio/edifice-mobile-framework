@@ -4,18 +4,22 @@ import type {
   AuthLoggedAccount,
   AuthLoggedAccountMap,
   AuthMixedAccountMap,
+  AuthRequirement,
   IAuthContext,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
+import { Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
-import { AuthStorageData } from '../storage';
+import type { AuthStorageData } from './storage';
 
 export interface IAuthState {
   accounts: AuthMixedAccountMap; // account list with populated info
   connected?: keyof IAuthState['accounts']; // Currently logged user if so
+  requirement?: AuthRequirement; // Requirement for the current account
   deleted?: keyof IAuthState['accounts']; // Last account was deleted
   showOnboarding: AuthStorageData['showOnboarding'];
+  platformContexts: Record<string, IAuthContext>; // Platform contexts by pf name
 
   pending?: {
     // Current login task
@@ -30,18 +34,26 @@ export interface IAuthState {
       code: string;
     };
   };
+
+  deviceInfo: {
+    uniqueId?: string;
+  };
 }
 
 // Initial state
 export const initialState: IAuthState = {
   accounts: {},
   showOnboarding: true,
+  platformContexts: {},
+  deviceInfo: {},
 };
 
 // Actions definitions
 export const actionTypes = {
   authInit: moduleConfig.namespaceActionType('INIT'),
+  loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
   login: moduleConfig.namespaceActionType('LOGIN'),
+  loginRequirement: moduleConfig.namespaceActionType('LOGIN_REQUIREMENT'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -57,8 +69,10 @@ export const actionTypes = {
 };
 
 export interface ActionPayloads {
-  authInit: Pick<AuthStorageData, 'accounts' | 'startup' | 'showOnboarding'>;
+  authInit: Pick<AuthStorageData, 'accounts' | 'startup' | 'showOnboarding'> & { deviceId: IAuthState['deviceInfo']['uniqueId'] };
+  loadPfContext: { name: Platform['name']; context: IAuthContext };
   login: { id: string; account: AuthLoggedAccount };
+  loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: IAuthContext };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -78,9 +92,24 @@ export const actions = {
     startup: AuthStorageData['startup'],
     accounts: AuthStorageData['accounts'],
     showOnboarding: AuthStorageData['showOnboarding'],
-  ) => ({ type: actionTypes.authInit, startup, accounts, showOnboarding }),
+    deviceId: IAuthState['deviceInfo']['uniqueId'],
+  ) => ({ type: actionTypes.authInit, startup, accounts, showOnboarding, deviceId }),
 
-  login: (id: string, account: AuthLoggedAccount) => ({ type: actionTypes.login, id, account }),
+  loadPfContext: (name: Platform['name'], context: IAuthContext) => ({ type: actionTypes.loadPfContext, name, context }),
+
+  login: (id: string, account: AuthLoggedAccount) => ({
+    type: actionTypes.login,
+    id,
+    account,
+  }),
+
+  loginRequirement: (id: string, account: AuthLoggedAccount, requirement: AuthRequirement, context: IAuthContext) => ({
+    type: actionTypes.loginRequirement,
+    id,
+    account,
+    requirement,
+    context,
+  }),
 
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
   // sessionPartial: (session: ISession) => ({ type: actionTypes.sessionPartial, session }),
@@ -100,14 +129,31 @@ export const actions = {
 
 const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
-    const { accounts, startup, showOnboarding } = action as unknown as ActionPayloads['authInit'];
+    const { accounts, startup, showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
     const pending = startup.platform ? { platform: startup.platform } : undefined;
-    return { ...initialState, accounts, showOnboarding, pending };
+    return { ...initialState, accounts, showOnboarding, pending, deviceInfo: { ...state.deviceInfo, uniqueId: deviceId } };
+  },
+
+  [actionTypes.loadPfContext]: (state, action) => {
+    const { name, context } = action as unknown as ActionPayloads['loadPfContext'];
+    return { ...state, platformContexts: { ...state.platformContexts, [name]: context } };
   },
 
   [actionTypes.login]: (state, action) => {
     const { id, account } = action as unknown as ActionPayloads['login'];
     return { ...state, accounts: { ...state.accounts, [id]: account }, connected: id, showOnboarding: false };
+  },
+
+  [actionTypes.loginRequirement]: (state, action) => {
+    const { id, account, requirement, context } = action as unknown as ActionPayloads['loginRequirement'];
+    return {
+      ...state,
+      accounts: { ...state.accounts, [id]: account },
+      connected: id,
+      showOnboarding: false,
+      requirement,
+      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+    };
   },
 
   // // Saves session info & consider user logged
@@ -174,6 +220,16 @@ export const getState = (state: IGlobalState) => state[moduleConfig.reducerName]
 export function getSession() {
   const state = getState(getStore().getState());
   return state.connected ? (state.accounts as AuthLoggedAccountMap)[state.connected] : undefined;
+}
+
+export function getPlatform() {
+  return getSession()?.platform;
+}
+
+export function getPlatformContext() {
+  const state = getState(getStore().getState());
+  const session = getSession();
+  return session ? state.platformContexts[session.platform.name] : undefined;
 }
 
 /**

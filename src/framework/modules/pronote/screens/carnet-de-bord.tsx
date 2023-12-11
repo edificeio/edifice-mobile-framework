@@ -302,10 +302,10 @@ CarnetDeBordScreen.getRenderContent =
                               })
                           : I18n.get('pronote-noinfo')
                         : vsco.Date
-                        ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
-                          ? displayDate(vsco.Date, 'short') + I18n.get('common-space') + vsco.Date.format('LT')
-                          : displayDate(vsco.Date, 'short')
-                        : I18n.get('pronote-noinfo'),
+                          ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
+                            ? displayDate(vsco.Date, 'short') + I18n.get('common-space') + vsco.Date.format('LT')
+                            : displayDate(vsco.Date, 'short')
+                          : I18n.get('pronote-noinfo'),
                   }
                 );
               })()}

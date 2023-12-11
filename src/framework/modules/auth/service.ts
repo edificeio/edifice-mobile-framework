@@ -13,10 +13,10 @@ import {
   AccountTyoe,
   AuthLoggedAccount,
   AuthLoggedUserInfo,
+  AuthRequirement,
   IAuthContext,
   IAuthCredentials,
   ISession,
-  PartialSessionScenario,
   RuntimeAuthErrorCode,
   SessionType,
   StructureNode,
@@ -610,10 +610,13 @@ export async function fetchRawUserRequirements(platform: Platform) {
  * @returns the first flag encountered (until there is none).
  */
 export function getRequirementScenario(userRequirements: IUserRequirements) {
-  if (userRequirements.forceChangePassword) return PartialSessionScenario.MUST_CHANGE_PASSWORD;
-  if (userRequirements.needRevalidateTerms) return PartialSessionScenario.MUST_REVALIDATE_TERMS;
-  if (userRequirements.needRevalidateMobile) return PartialSessionScenario.MUST_VERIFY_MOBILE;
-  if (userRequirements.needRevalidateEmail) return PartialSessionScenario.MUST_VERIFY_EMAIL;
+  // MOCK
+  return AuthRequirement.MUST_CHANGE_PASSWORD;
+  // END MOCK
+  // if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
+  // if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+  // if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
+  // if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
 }
 
 export async function fetchUserInfo(platform: Platform) {

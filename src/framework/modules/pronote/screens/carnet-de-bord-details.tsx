@@ -217,18 +217,18 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
                   })
               : I18n.get('pronote-noinfo')
             : item.Date
-            ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
-              ? displayDate(item.Date) + I18n.get('common-space') + item.Date.format('LT')
-              : displayDate(item.Date)
-            : I18n.get('pronote-noinfo'),
+              ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
+                ? displayDate(item.Date) + I18n.get('common-space') + item.Date.format('LT')
+                : displayDate(item.Date)
+              : I18n.get('pronote-noinfo'),
         description:
           item.type === 'Absence' || item.type === 'Retard'
             ? item.Motif || I18n.get('pronote-noinfo')
             : item.type === 'Punition' || item.type === 'Sanction'
-            ? item.Nature || I18n.get('pronote-noinfo')
-            : item.type === 'Observation'
-            ? item.Observation || I18n.get('pronote-noinfo')
-            : I18n.get('pronote-noinfo'),
+              ? item.Nature || I18n.get('pronote-noinfo')
+              : item.type === 'Observation'
+                ? item.Observation || I18n.get('pronote-noinfo')
+                : I18n.get('pronote-noinfo'),
       }));
     }
   }

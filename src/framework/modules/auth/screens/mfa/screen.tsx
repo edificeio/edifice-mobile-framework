@@ -126,20 +126,20 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         title: I18n.get('auth-mfa-email-title'),
       }
     : isMobileMFA
-    ? {
-        feedback: I18n.get(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
-        message: I18n.get('auth-mfa-mobile-message'),
-        messageSent: `${I18n.get('auth-mfa-mobile-message-sent')} ${mobile}.`,
-        resendToast: I18n.get('auth-mfa-mobile-toast'),
-        title: I18n.get('auth-mfa-mobile-title'),
-      }
-    : {
-        feedback: I18n.get(`auth-mfa-feedback-${codeState.toLowerCase()}`),
-        message: I18n.get('auth-mfa-message'),
-        messageSent: `${I18n.get('auth-mfa-message-sent')} ${mobile}.`,
-        resendToast: I18n.get('auth-mfa-toast'),
-        title: I18n.get('auth-mfa-title'),
-      };
+      ? {
+          feedback: I18n.get(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+          message: I18n.get('auth-mfa-mobile-message'),
+          messageSent: `${I18n.get('auth-mfa-mobile-message-sent')} ${mobile}.`,
+          resendToast: I18n.get('auth-mfa-mobile-toast'),
+          title: I18n.get('auth-mfa-mobile-title'),
+        }
+      : {
+          feedback: I18n.get(`auth-mfa-feedback-${codeState.toLowerCase()}`),
+          message: I18n.get('auth-mfa-message'),
+          messageSent: `${I18n.get('auth-mfa-message-sent')} ${mobile}.`,
+          resendToast: I18n.get('auth-mfa-toast'),
+          title: I18n.get('auth-mfa-title'),
+        };
 
   const setResendTimer = () => {
     setIsResendDisabled(true);
@@ -172,8 +172,8 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           validationState?.state === 'valid'
             ? CodeState.CODE_CORRECT
             : validationState?.ttl === 0 || validationState?.tries === 0
-            ? CodeState.CODE_EXPIRED
-            : CodeState.CODE_WRONG;
+              ? CodeState.CODE_EXPIRED
+              : CodeState.CODE_WRONG;
         const isCodeAlreadyExpired = codeState === CodeState.CODE_EXPIRED && state === CodeState.CODE_EXPIRED;
         if (!isCodeAlreadyExpired) startAnimation(state);
         setCodeState(state);
@@ -312,8 +312,8 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
                       borderColor: isCodeStateDisplayed
                         ? codeStateColor
                         : isFocused
-                        ? theme.palette.grey.graphite
-                        : theme.palette.grey.stone,
+                          ? theme.palette.grey.graphite
+                          : theme.palette.grey.stone,
                     },
                   ]}
                   onLayout={getCellOnLayoutHandler(index)}>

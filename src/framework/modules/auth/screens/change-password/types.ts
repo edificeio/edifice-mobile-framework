@@ -1,8 +1,8 @@
 import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ILoginResult, changePasswordAction, loginAction, logoutAction } from '~/framework/modules/auth/actions';
-import type { IAuthContext, IAuthCredentials, IAuthUsernameCredential, ISession } from '~/framework/modules/auth/model';
+import { ILoginResult, changePasswordAction, logoutAction } from '~/framework/modules/auth/actions';
+import type { AuthLoggedAccount, IAuthContext } from '~/framework/modules/auth/model';
 import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IChangePasswordModel } from '~/framework/modules/user/actions';
 import type { Platform } from '~/framework/util/appConf';
@@ -14,20 +14,17 @@ export interface ChangePasswordScreenProps {
 }
 
 export interface ChangePasswordScreenNavParams {
-  platform: Platform;
-  context: IAuthContext;
-  credentials: IAuthCredentials | IAuthUsernameCredential;
-  rememberMe?: boolean;
   forceChange?: boolean;
   navCallback?: NavigationAction;
 }
 
 export interface ChangePasswordScreenStoreProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
+  platform?: Platform;
+  context?: IAuthContext;
 }
 
 export interface ChangePasswordScreenDispatchProps {
-  tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
   tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
   trySubmit: (...args: Parameters<typeof changePasswordAction>) => Promise<ILoginResult>;
 }
