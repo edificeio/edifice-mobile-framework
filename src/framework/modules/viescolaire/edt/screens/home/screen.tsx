@@ -16,7 +16,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, SmallBoldItalicText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { AccountTyoe } from '~/framework/modules/auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import StructurePicker from '~/framework/modules/viescolaire/common/components/StructurePicker';
@@ -83,11 +83,11 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
       const endDate = startDate.clone().endOf('week');
 
       if (!structureId || !userId || !userType) throw new Error();
-      if (userType === AccountTyoe.Teacher) {
+      if (userType === AccountType.Teacher) {
         await props.tryFetchTeacherCourses(structureId, startDate, endDate, userId);
       } else {
         let childClasses = classes;
-        if (userType === AccountTyoe.Relative) {
+        if (userType === AccountType.Relative) {
           const children = await props.tryFetchUserChildren();
           childClasses = children.find(c => c.id === childId)?.idClasses;
         }
@@ -167,7 +167,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   };
 
   const renderCourse = (course: IEdtCourse) => {
-    const isTeacher = props.userType === AccountTyoe.Teacher;
+    const isTeacher = props.userType === AccountType.Teacher;
     const className = course.classes.length ? course.classes[0] : course.groups[0];
     const firstText = isTeacher ? className : course.subject.name;
     const secondText = isTeacher ? course.subject.name : getTeacherName(course.teacherIds);
@@ -197,7 +197,7 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   };
 
   const renderHalfCourse = (course: IEdtCourse) => {
-    const isTeacher = props.userType === AccountTyoe.Teacher;
+    const isTeacher = props.userType === AccountType.Teacher;
     const className = course.classes.length ? course.classes[0] : course.groups[0];
     const firstText = isTeacher ? className : course.subject.name;
     const secondText = isTeacher ? course.subject.name : getTeacherName(course.teacherIds);
@@ -341,8 +341,8 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   return (
     <PageView>
       <View style={styles.header}>
-        {props.userType === AccountTyoe.Teacher ? <StructurePicker /> : null}
-        {props.userType === AccountTyoe.Relative ? (
+        {props.userType === AccountType.Teacher ? <StructurePicker /> : null}
+        {props.userType === AccountType.Relative ? (
           <ChildPicker contentContainerStyle={styles.childPickerContentContainer} style={styles.childPicker} />
         ) : null}
       </View>
@@ -360,15 +360,15 @@ export default connect(
     const userType = session?.user.type;
 
     return {
-      childId: userType === AccountTyoe.Student ? userId : dashboardState.selectedChildId,
+      childId: userType === AccountType.Student ? userId : dashboardState.selectedChildId,
       classes: session?.user.classes,
       courses: edtState.courses.data,
       initialLoadingState: edtState.courses.isPristine ? AsyncPagedLoadingState.PRISTINE : AsyncPagedLoadingState.DONE,
       slots: edtState.slots.data,
       structureId:
-        userType === AccountTyoe.Student
+        userType === AccountType.Student
           ? session?.user.structures?.[0]?.id
-          : userType === AccountTyoe.Relative
+          : userType === AccountType.Relative
             ? getChildStructureId(dashboardState.selectedChildId)
             : dashboardState.selectedStructureId,
       teachers: edtState.teachers.data,

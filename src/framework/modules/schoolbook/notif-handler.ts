@@ -17,7 +17,7 @@ import {
 } from '~/framework/util/notifications/routing';
 
 import { schoolbookRouteNames } from './navigation';
-import { AccountTyoe } from '../auth/model';
+import { AccountType } from '../auth/model';
 
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
@@ -26,7 +26,7 @@ const handleSchoolbookNotificationAction: NotifHandlerThunkAction =
     try {
       // 1. Get notification data
       const userType = assertSession().user.type;
-      const isParent = userType === AccountTyoe.Relative;
+      const isParent = userType === AccountType.Relative;
 
       // 2. actual navigation action
       const navAction = CommonActions.navigate({

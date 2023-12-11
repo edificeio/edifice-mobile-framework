@@ -4,7 +4,7 @@
 
 import { Moment } from 'moment';
 
-import { AccountTyoe } from '../../auth/model';
+import { AccountType } from '../../auth/model';
 
 export enum HobbieVisibility {
   PRIVE = 'PRIVE',
@@ -21,7 +21,7 @@ export interface InfoPerson {
   id: string;
   login: string;
   displayName: string;
-  type: AccountTyoe;
+  type: AccountType;
   visibleInfos: string[];
   schools: {
     exports: null | any;

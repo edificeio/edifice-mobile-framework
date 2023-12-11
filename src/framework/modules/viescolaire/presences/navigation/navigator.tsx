@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { AccountTyoe } from '~/framework/modules/auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import PresencesCallScreen, { computeNavBar as callNavBar } from '~/framework/modules/viescolaire/presences/screens/call';
@@ -32,7 +32,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     const screens: React.ReactElement[] = [];
     const session = getSession();
 
-    if (session?.user.type === AccountTyoe.Teacher) {
+    if (session?.user.type === AccountType.Teacher) {
       screens.push(
         <Stack.Screen
           key={presencesRouteNames.callList}
@@ -78,7 +78,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           />
         </Stack.Group>,
       );
-      if (session?.user.type === AccountTyoe.Relative) {
+      if (session?.user.type === AccountType.Relative) {
         screens.push(
           <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
             <Stack.Screen

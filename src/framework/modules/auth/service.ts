@@ -10,7 +10,7 @@ import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId } from '~/infra/oauth';
 
 import {
-  AccountTyoe,
+  AccountType,
   AuthLoggedAccount,
   AuthLoggedUserInfo,
   AuthRequirement,
@@ -98,7 +98,7 @@ export interface IUserInfoBackend {
   userId?: string;
   username?: string;
   login?: string;
-  type?: AccountTyoe;
+  type?: AccountType;
   deletePending?: boolean;
   hasApp?: boolean;
   forceChangePassword?: boolean;
@@ -680,7 +680,7 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
 
     // We fetch children information only for relative users
     const childrenStructure: UserPrivateData['childrenStructure'] =
-      userinfo.type === AccountTyoe.Relative
+      userinfo.type === AccountType.Relative
         ? await (fetchJSONWithCache('/directory/user/' + userinfo.userId + '/children', {}, true, platform.url) as any)
         : undefined;
     if (childrenStructure) {
@@ -688,7 +688,7 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
     }
 
     // We enforce undefined parents for non-student users becase backend populates this with null data
-    if (userinfo.type !== AccountTyoe.Student) {
+    if (userinfo.type !== AccountType.Student) {
       userdata.parents = undefined;
     }
 

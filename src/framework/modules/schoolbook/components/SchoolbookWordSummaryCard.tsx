@@ -20,7 +20,7 @@ import { displayPastDate } from '~/framework/util/date';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { AccountTyoe } from '../../auth/model';
+import { AccountType } from '../../auth/model';
 import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
@@ -34,7 +34,7 @@ const responsesString = (responses: number) =>
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
-  userType: AccountTyoe | undefined;
+  userType: AccountType | undefined;
   userId: string | undefined;
   acknowledgments: IAcknowledgment[];
   owner: string;
@@ -64,9 +64,9 @@ export const SchoolbookWordSummaryCard = ({
   total,
 }: ISchoolbookWordSummaryCardProps) => {
   const usersTextMaxLines = 1;
-  const isParent = userType === AccountTyoe.Relative;
-  const isTeacher = userType === AccountTyoe.Teacher;
-  const isStudent = userType === AccountTyoe.Student;
+  const isParent = userType === AccountType.Relative;
+  const isTeacher = userType === AccountType.Teacher;
+  const isStudent = userType === AccountType.Student;
   const isWordAcknowledgedForParent = userId && getIsWordAcknowledgedForParent(userId, acknowledgments);
   const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(ackNumber, total);
   const isWordAcknowledgedForStudent = getIsWordAcknowledgedForStudent(acknowledgments);

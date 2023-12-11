@@ -20,7 +20,7 @@ import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/
 import { TextAvatar } from '~/framework/components/textAvatar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { AccountTyoe } from '~/framework/modules/auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
@@ -175,7 +175,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const onNewMessage = () => {
     const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
-    if (userInfo?.type === AccountTyoe.Student && !isEmpty(family) && session?.user.type !== AccountTyoe.Student) {
+    if (userInfo?.type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {
       const familyUser: any = [];
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
@@ -260,13 +260,13 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderFamily = () => {
-    if (userInfo?.type !== AccountTyoe.Relative && userInfo?.type !== AccountTyoe.Student) return;
-    if (!isMyProfile && session?.user.type === AccountTyoe.Student && userInfo?.type === AccountTyoe.Relative) return;
-    if (!isMyProfile && session?.user.type === AccountTyoe.Student && userInfo?.type === AccountTyoe.Student) return;
+    if (userInfo?.type !== AccountType.Relative && userInfo?.type !== AccountType.Student) return;
+    if (!isMyProfile && session?.user.type === AccountType.Student && userInfo?.type === AccountType.Relative) return;
+    if (!isMyProfile && session?.user.type === AccountType.Student && userInfo?.type === AccountType.Student) return;
     return (
       <View style={styles.bloc}>
         <HeadingSText style={family ? {} : styles.blocTitle}>
-          {userInfo?.type === AccountTyoe.Student
+          {userInfo?.type === AccountType.Student
             ? I18n.get(family?.length! > 1 ? 'user-profile-relatives' : 'user-profile-relative')
             : I18n.get(family?.length! > 1 ? 'user-profile-children' : 'user-profile-child')}
         </HeadingSText>

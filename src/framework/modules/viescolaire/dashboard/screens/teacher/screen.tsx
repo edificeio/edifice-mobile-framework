@@ -15,7 +15,7 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { AccountTyoe } from '~/framework/modules/auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadStoredStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import { ModuleButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleButton';
@@ -80,7 +80,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      if (props.userType !== AccountTyoe.Teacher || !props.authorizedViescoApps.presences) return;
+      if (props.userType !== AccountType.Teacher || !props.authorizedViescoApps.presences) return;
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
       else refreshSilent();
     });
@@ -148,7 +148,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
     );
   };
 
-  if (props.userType !== AccountTyoe.Teacher) {
+  if (props.userType !== AccountType.Teacher) {
     return (
       <EmptyScreen
         svgImage="empty-viesco"

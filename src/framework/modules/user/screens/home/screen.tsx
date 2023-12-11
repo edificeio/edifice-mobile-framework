@@ -22,7 +22,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { logoutAction } from '~/framework/modules/auth/actions';
-import { AccountTyoe, IAuthContext } from '~/framework/modules/auth/model';
+import { AccountType, IAuthContext } from '~/framework/modules/auth/model';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
@@ -214,7 +214,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     },
     [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
-  const canEditPersonalInfo = session?.user.type !== AccountTyoe.Student;
+  const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
   return React.useMemo(
@@ -302,7 +302,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @returns the React Elements of the account button and list
  */
 function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accountListRef, data: any) {
-  const canManageAccounts = session?.user.type === AccountTyoe.Teacher || session?.user.type === AccountTyoe.Personnel;
+  const canManageAccounts = session?.user.type === AccountType.Teacher || session?.user.type === AccountType.Personnel;
   const showAccountList = React.useCallback(() => {
     accountListRef.current?.present();
   }, [accountListRef]);

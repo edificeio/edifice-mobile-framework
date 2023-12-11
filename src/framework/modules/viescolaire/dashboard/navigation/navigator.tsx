@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { AccountTyoe } from '~/framework/modules/auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import DashboardRelativeScreen, {
@@ -23,7 +23,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     const session = getSession();
     const userType = session?.user.type;
 
-    if (userType === AccountTyoe.Student) {
+    if (userType === AccountType.Student) {
       screens.push(
         <Stack.Screen
           name={dashboardRouteNames.student}
@@ -33,7 +33,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         />,
       );
       moduleConfig.routeName = dashboardRouteNames.student;
-    } else if (userType === AccountTyoe.Relative) {
+    } else if (userType === AccountType.Relative) {
       screens.push(
         <Stack.Screen
           name={dashboardRouteNames.relative}

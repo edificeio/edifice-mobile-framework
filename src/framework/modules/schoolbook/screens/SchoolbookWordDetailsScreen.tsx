@@ -17,7 +17,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { AccountTyoe, ISession } from '~/framework/modules/auth/model';
+import { AccountType, ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
@@ -79,8 +79,8 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   const detailsCardRef: { current: any } = React.useRef();
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === AccountTyoe.Teacher;
-  const isParent = userType === AccountTyoe.Relative;
+  const isTeacher = userType === AccountType.Teacher;
+  const isParent = userType === AccountType.Relative;
 
   // EVENTS =====================================================================================
 

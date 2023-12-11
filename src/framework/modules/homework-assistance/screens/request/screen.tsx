@@ -18,7 +18,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { AccountTyoe, getFlattenedChildren } from '~/framework/modules/auth/model';
+import { AccountType, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   fetchHomeworkAssistanceConfigAction,
@@ -239,7 +239,7 @@ export default connect(
 
     return {
       children:
-        session?.user.type === AccountTyoe.Relative
+        session?.user.type === AccountType.Relative
           ? getFlattenedChildren(session?.user.children)?.map(child => ({
               value: child.id,
               label: `${child.firstName} ${child.lastName}`,

@@ -4,7 +4,7 @@ import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
 import { hobbiesItems } from '~/framework/modules/user/screens/profile';
 import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
 
-import { AccountTyoe } from '../../auth/model';
+import { AccountType } from '../../auth/model';
 
 interface BackendInfoPerson {
   id: string;
@@ -51,7 +51,7 @@ export const infoPersonAdapter = (n: BackendInfoPerson) => {
     id: n.id,
     login: n.login,
     displayName: n.displayName,
-    type: n.type[0] as AccountTyoe,
+    type: n.type[0] as AccountType,
     visibleInfos: n.visibleInfos,
     schools: n.schools,
     relatedName: n.relatedName,

@@ -12,7 +12,7 @@ import type { IAuthorizedAction, UserPrivateData } from './service';
  * Every profile type for accounts. Each account is of one type only.
  * Parent teachers have two accounts, one for each type.
  */
-export enum AccountTyoe {
+export enum AccountType {
   Student = 'Student',
   Relative = 'Relative',
   Teacher = 'Teacher',
@@ -32,7 +32,7 @@ export interface DisplayUserPublic {
  * Describes minimal info to display a user, but with account type hint
  */
 export interface DisplayUserPublicWithType extends DisplayUserPublic {
-  type: AccountTyoe;
+  type: AccountType;
 }
 
 /**
@@ -152,7 +152,7 @@ export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthLoggedAc
 
 export interface IUser extends DisplayUserPublic {
   login: string;
-  type: AccountTyoe;
+  type: AccountType;
 }
 
 export interface StructureNode {

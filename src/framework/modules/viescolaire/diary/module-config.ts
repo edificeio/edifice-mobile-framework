@@ -3,14 +3,14 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { IDiaryReduxState } from './reducer';
-import { AccountTyoe } from '../../auth/model';
+import { AccountType } from '../../auth/model';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
   return (
     !!userType &&
     entcoreApp.address === '/diary' &&
-    [AccountTyoe.Student, AccountTyoe.Relative, AccountTyoe.Teacher].includes(userType)
+    [AccountType.Student, AccountType.Relative, AccountType.Teacher].includes(userType)
   );
 }
 

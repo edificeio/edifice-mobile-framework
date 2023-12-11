@@ -29,12 +29,12 @@ import {
 import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { AccountTyoe } from '../../auth/model';
+import { AccountType } from '../../auth/model';
 import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.get(`schoolbook-worddetails-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
-const unacknowledgedString = (userType: AccountTyoe) =>
+const unacknowledgedString = (userType: AccountType) =>
   I18n.get(`schoolbook-worddetails-acknowledgementneeded-${userType.toLowerCase()}`);
 const recipientsString = (report: IConcernedStudent[]) =>
   getHasSingleRecipientForTeacher(report)
@@ -51,7 +51,7 @@ export interface ISchoolBookWordDetailsCardProps {
   onEditComment: (data) => any;
   isPublishingReply: boolean;
   isAcknowledgingWord: boolean;
-  userType: AccountTyoe | undefined;
+  userType: AccountType | undefined;
   userId: string | undefined;
   studentId: string;
   schoolbookWord: IWordReport;
@@ -113,9 +113,9 @@ const SchoolbookWordDetailsCard = (
   const schoolbookWordOwnerId = word?.ownerId;
   const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
-  const isParent = userType === AccountTyoe.Relative;
-  const isTeacher = userType === AccountTyoe.Teacher;
-  const isStudent = userType === AccountTyoe.Student;
+  const isParent = userType === AccountType.Relative;
+  const isTeacher = userType === AccountType.Teacher;
+  const isStudent = userType === AccountType.Student;
   const isAuthorOtherTeacher = isTeacher && !isUserSchoolbookWordOwner;
   const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(report);
   const studentsForTeacher = getStudentsForTeacher(report)?.map(student => ({ id: student.owner, name: student.ownerName }));

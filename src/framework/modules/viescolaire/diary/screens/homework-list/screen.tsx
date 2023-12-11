@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { PageView } from '~/framework/components/page';
-import { AccountTyoe } from '~/framework/modules/auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
@@ -43,12 +43,12 @@ class DiaryHomeworkListScreen extends React.PureComponent<DiaryHomeworkListScree
   }
 
   private fetchHomeworks = (startDate, endDate) =>
-    this.props.userType === AccountTyoe.Student
+    this.props.userType === AccountType.Student
       ? this.props.tryFetchHomeworks(this.props.structureId, startDate, endDate)
       : this.props.tryFetchChildHomeworks(this.props.childId, this.props.structureId, startDate, endDate);
 
   private fetchSessions = (startDate, endDate) =>
-    this.props.userType === AccountTyoe.Student
+    this.props.userType === AccountType.Student
       ? this.props.tryFetchSessions(this.props.structureId, startDate, endDate)
       : this.props.tryFetchChildSessions(this.props.childId, startDate, endDate);
 
@@ -87,7 +87,7 @@ export default connect(
       isFetchingSession: diaryState.sessions.isFetching || diaryState.teachers.isFetching,
       sessions: diaryState.sessions.data,
       structureId:
-        userType === AccountTyoe.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
+        userType === AccountType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
       teachers: diaryState.teachers.data,
       userType,
     };

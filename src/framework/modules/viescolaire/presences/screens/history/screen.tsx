@@ -15,7 +15,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { AccountTyoe, getFlattenedChildren } from '~/framework/modules/auth/model';
+import { AccountType, getFlattenedChildren } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
@@ -69,8 +69,8 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
     try {
       const { classes, selectedChildId, session, userId, userType } = props;
       const structureId =
-        userType === AccountTyoe.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
-      const studentId = userType === AccountTyoe.Student ? userId : selectedChildId;
+        userType === AccountType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(selectedChildId);
+      const studentId = userType === AccountType.Student ? userId : selectedChildId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
@@ -82,7 +82,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
         addTime(moment(), 1, 'month'),
       );
       let groupId = classes?.[0];
-      if (userType === AccountTyoe.Relative) {
+      if (userType === AccountType.Relative) {
         const children = await props.tryFetchUserChildren(userId);
         groupId = children.find(child => child.id === studentId)?.structures[0].classes[0].id;
       }
@@ -210,7 +210,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
   const renderTabView = () => {
     const { selectedChildId, session, userType } = props;
-    const isChildPickerShown = userType === AccountTyoe.Relative && props.children!.length > 1;
+    const isChildPickerShown = userType === AccountType.Relative && props.children!.length > 1;
 
     return (
       <>
@@ -262,14 +262,14 @@ export default connect(
 
     return {
       children:
-        userType === AccountTyoe.Relative
+        userType === AccountType.Relative
           ? getFlattenedChildren(session?.user.children)?.filter(child => child.classesNames.length) ?? []
           : undefined,
       classes: session?.user.classes,
       events: getRecentEvents(presencesState.statistics.data, presencesState.absenceStatements.data),
       initialLoadingState: AsyncPagedLoadingState.PRISTINE,
       schoolYear: presencesState.schoolYear.data,
-      selectedChildId: userType === AccountTyoe.Relative ? dashboardState.selectedChildId : undefined,
+      selectedChildId: userType === AccountType.Relative ? dashboardState.selectedChildId : undefined,
       session,
       statistics: presencesState.statistics.data,
       terms: presencesState.terms.data,

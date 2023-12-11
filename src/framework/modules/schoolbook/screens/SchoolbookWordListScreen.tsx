@@ -19,7 +19,7 @@ import { linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
-import { AccountTyoe, ISession } from '~/framework/modules/auth/model';
+import { AccountType, ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { SchoolbookWordSummaryCard } from '~/framework/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
@@ -71,8 +71,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === AccountTyoe.Teacher;
-  const isParent = userType === AccountTyoe.Relative;
+  const isTeacher = userType === AccountType.Teacher;
+  const isParent = userType === AccountType.Relative;
   const hasSchoolbookWordCreationRights = session && getSchoolbookWorkflowInformation(session).create;
 
   // EVENTS =====================================================================================

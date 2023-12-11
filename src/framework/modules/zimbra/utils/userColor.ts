@@ -4,19 +4,19 @@ import theme from '~/app/theme';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 
-import { AccountTyoe } from '../../auth/model';
+import { AccountType } from '../../auth/model';
 
 export const getProfileColor = (userType?: string): ColorValue => {
   switch (userType) {
-    case AccountTyoe.Student:
+    case AccountType.Student:
       return theme.color.profileTypes.Student;
-    case AccountTyoe.Relative:
+    case AccountType.Relative:
       return theme.color.profileTypes.Relative;
-    case AccountTyoe.Teacher:
+    case AccountType.Teacher:
       return theme.color.profileTypes.Teacher;
-    case AccountTyoe.Personnel:
+    case AccountType.Personnel:
       return theme.color.profileTypes.Personnel;
-    case AccountTyoe.Guest:
+    case AccountType.Guest:
       return theme.color.profileTypes.Guest;
     default:
       return theme.palette.grey.graphite;

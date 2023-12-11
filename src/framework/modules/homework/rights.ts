@@ -6,7 +6,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import { AccountTyoe, AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -28,7 +28,7 @@ export const hasPermissionManager = (homework: IHomeworkDiary, right: string, se
 
 export const getHomeworkWorkflowInformation = (session: AuthLoggedAccount) => {
   const userType = session?.user.type;
-  const isRelativeOrStudent = userType === AccountTyoe.Relative || userType === AccountTyoe.Student;
+  const isRelativeOrStudent = userType === AccountType.Relative || userType === AccountType.Student;
 
   return {
     view: session.rights.authorizedActions.some(a => a.name === viewHomeworkResourceRight),

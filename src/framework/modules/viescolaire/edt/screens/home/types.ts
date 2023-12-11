@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { AccountTyoe, IUser } from '~/framework/modules/auth/model';
+import type { AccountType, IUser } from '~/framework/modules/auth/model';
 import type { IClassGroups } from '~/framework/modules/viescolaire/common/model';
 import type {
   fetchEdtClassGroupsAction,
@@ -28,7 +28,7 @@ export interface EdtHomeScreenStoreProps {
   classes?: string[];
   structureId?: string;
   userId?: string;
-  userType?: AccountTyoe;
+  userType?: AccountType;
 }
 
 export interface EdtHomeScreenDispatchProps {
