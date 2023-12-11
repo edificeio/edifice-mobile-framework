@@ -7,10 +7,12 @@ export interface UserXmasScreenProps {}
 export interface UserXmasScreenNavParams {}
 
 export interface UserXmasScreenStoreProps {
+  xmasMusic: boolean;
   xmasTheme: boolean;
 }
 
 export interface UserXmasScreenDispatchProps {
+  onSetXmasMusic: (xmasMusic: boolean) => void;
   onSetXmasTheme: (xmasTheme: boolean) => void;
 }
 

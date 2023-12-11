@@ -57,9 +57,10 @@ export const StorageObject = {
     try {
       defaultStorage.set(key, JSON.stringify(data));
     } catch (error) {
-      throw new Error(
-        `[Storage] setItemJson: failed to write key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      console.warn(
+        `[Storage] setItemJson: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
+      Trackers.trackDebugEvent('Storage', 'setItemJson ERROR', (error as Error | null)?.message || '');
     }
   },
 
@@ -72,9 +73,10 @@ export const StorageObject = {
     try {
       defaultStorage.set(key, data);
     } catch (error) {
-      throw new Error(
-        `[Storage] setItem: failed to write key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      console.warn(
+        `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
+      Trackers.trackDebugEvent('Storage', 'setItem ERROR', (error as Error | null)?.message || '');
     }
   },
 
@@ -89,9 +91,11 @@ export const StorageObject = {
       const parsedItem = item && JSON.parse(item);
       return parsedItem as T | undefined;
     } catch (error) {
-      throw new Error(
-        `[Storage] getItemJson: failed to load key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      console.warn(
+        `[Storage] getItemJson: failed to load key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
+      Trackers.trackDebugEvent('Storage', 'getItemJson ERROR', (error as Error | null)?.message || '');
+      return null;
     }
   },
 
@@ -105,9 +109,11 @@ export const StorageObject = {
       const item = defaultStorage.getString(key);
       return item as T | undefined;
     } catch (error) {
-      throw new Error(
-        `[Storage] getItem: failed to load key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      console.warn(
+        `[Storage] getItem: failed to load key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
+      Trackers.trackDebugEvent('Storage', 'getItem ERROR', (error as Error | null)?.message || '');
+      return null;
     }
   },
 
@@ -120,9 +126,10 @@ export const StorageObject = {
     try {
       defaultStorage.delete(key);
     } catch (error) {
-      throw new Error(
-        `[Storage] removeItemJson: failed to remove key "${key}"${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      console.warn(
+        `[Storage] removeItemJson: failed to remove key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
+      Trackers.trackDebugEvent('Storage', 'removeItem ERROR', (error as Error | null)?.message || '');
     }
   },
 
@@ -137,9 +144,10 @@ export const StorageObject = {
         defaultStorage.delete(key);
       }
     } catch (error) {
-      throw new Error(
-        `[Storage] removeItems: failed to remove items${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
+      console.warn(
+        `[Storage] removeItems: failed to remove items ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
+      Trackers.trackDebugEvent('Storage', 'removeItems ERROR', (error as Error | null)?.message || '');
     }
   },
 
@@ -153,7 +161,9 @@ export const StorageObject = {
       const keys = defaultStorage.getAllKeys();
       return keys;
     } catch (error) {
-      throw new Error(`[Storage] getKeys: failed to get all keys${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
+      console.warn(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
+      Trackers.trackDebugEvent('Storage', 'getKeys ERROR', (error as Error | null)?.message || '');
+      return null;
     }
   },
 

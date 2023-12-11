@@ -1,3 +1,4 @@
+import NetInfo from '@react-native-community/netinfo';
 import CookieManager from '@react-native-cookies/cookies';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -8,7 +9,6 @@ import { assertSession, actions as authActions, getSession } from '~/framework/m
 import { Platform } from '~/framework/util/appConf';
 import { getItemJson, getKeys, removeItems, setItemJson } from '~/framework/util/storage';
 
-import { Connection } from './Connection';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
 
 /** singleton boolean to prevent logout multiple time when parallel fetchs fails */
@@ -67,6 +67,24 @@ export async function signedFetchJson2(url: string | Request, init?: any): Promi
 
 const CACHE_KEY_PREFIX = 'request-';
 
+export const getCachedData = async <T>(path: string) => {
+  let cachedData: undefined;
+  try {
+    cachedData = await getItemJson(CACHE_KEY_PREFIX + path);
+  } catch {
+    // Do nothing. We don't want to fail.
+  }
+  return cachedData as T | undefined;
+};
+
+export const setCachedData = async (path: string, data: T) => {
+  try {
+    await setItemJson(CACHE_KEY_PREFIX + path, data);
+  } catch {
+    // Do nothing. We don't want to fail.
+  }
+};
+
 /**
  * Perform a fetch operation usign the standard fetch api, with cache management.
  * It will saves the result of the fetch in the cache storage, and get from it if internet connexion isn't available.
@@ -87,18 +105,16 @@ export async function fetchWithCache(
   getBody: (r: Response) => any = r => r.text(),
   getCacheResult = (cr: any) => new Response(...cr),
 ) {
-  if (!platform) throw new Error('must specify a platform');
-  // TODO bugfix : cache key must depends on userID and platformID.
-  const cacheKey = CACHE_KEY_PREFIX + path;
-  const dataFromCache = await getItemJson(cacheKey); // TODO : optimization  - get dataFrmCache only when needed.
-  if (Connection.isOnline && (forceSync || !dataFromCache)) {
-    let response =
+  const isConnected = await NetInfo.fetch().then(state => state.isConnected);
+  // Continue if connected and if sync wanted
+  if (isConnected && forceSync) {
+    // Check platform
+    if (!platform) throw new Error('must specify a platform');
+    // Fetch
+    const response =
       path.indexOf(platform) === -1 ? await signedFetch(`${platform}${path}`, init) : await signedFetch(`${path}`, init);
-    const r2 = response.clone();
-    response = r2;
-
-    // TODO: check if response is OK
-    const cacheResponse = {
+    // Manage response
+    const data = {
       body: await getBody(response.clone()),
       init: {
         headers: response.headers,
@@ -106,17 +122,15 @@ export async function fetchWithCache(
         statusText: response.statusText,
       },
     };
-    await setItemJson(cacheKey, cacheResponse);
+    // Cache response data
+    await setCachedData(path, data);
+    // Return fetched data
     const ret = await getBody(response);
     return ret;
   }
-
-  if (dataFromCache) {
-    const cacheResponse = dataFromCache;
-    return getCacheResult(cacheResponse);
-  }
-
-  return null;
+  // Otherwise return cached data if any
+  const cachedData = getCachedData(path);
+  return cachedData ? getCacheResult(cachedData) : null;
 }
 
 /**

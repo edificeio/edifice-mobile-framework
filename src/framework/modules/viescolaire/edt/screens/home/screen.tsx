@@ -282,8 +282,8 @@ const EdtHomeScreen = (props: EdtHomeScreenPrivateProps) => {
   const renderScrollView = (date: Moment) => {
     return (
       <Timetable
-        courses={props.courses}
-        slots={props.slots}
+        courses={props.courses ?? []}
+        slots={props.slots ?? []}
         date={date}
         renderCourse={renderCourse}
         renderCourseHalf={renderHalfCourse}

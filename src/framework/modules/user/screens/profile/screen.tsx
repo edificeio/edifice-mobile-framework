@@ -175,7 +175,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const onNewMessage = () => {
     const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
-    if (userInfo?.type === AccountTyoe.Student && !isEmpty(family)) {
+    if (userInfo?.type === AccountTyoe.Student && !isEmpty(family) && session?.user.type !== AccountTyoe.Student) {
       const familyUser: any = [];
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
@@ -232,8 +232,37 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     );
   };
 
+  const renderPersonFamily = user => {
+    if (
+      (!isMyProfile && (session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel)) ||
+      (isMyProfile && session?.user.type === UserType.Relative)
+    )
+      return (
+        <TouchableOpacity
+          key={user.relatedId}
+          style={styles.userFamily}
+          onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
+          <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
+          <NamedSVG
+            style={styles.userFamilyIcon}
+            name="ui-rafterRight"
+            width={UI_SIZES.dimensions.width.mediumPlus}
+            height={UI_SIZES.dimensions.height.mediumPlus}
+            fill={theme.palette.primary.regular}
+          />
+        </TouchableOpacity>
+      );
+    return (
+      <View key={user.relatedId} style={styles.userFamily}>
+        <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
+      </View>
+    );
+  };
+
   const renderFamily = () => {
     if (userInfo?.type !== AccountTyoe.Relative && userInfo?.type !== AccountTyoe.Student) return;
+    if (!isMyProfile && session?.user.type === AccountTyoe.Student && userInfo?.type === AccountTyoe.Relative) return;
+    if (!isMyProfile && session?.user.type === AccountTyoe.Student && userInfo?.type === AccountTyoe.Student) return;
     return (
       <View style={styles.bloc}>
         <HeadingSText style={family ? {} : styles.blocTitle}>
@@ -242,21 +271,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             : I18n.get(family?.length! > 1 ? 'user-profile-children' : 'user-profile-child')}
         </HeadingSText>
         {!isEmpty(family) ? (
-          family?.map(user => (
-            <TouchableOpacity
-              key={user.relatedId}
-              style={styles.userFamily}
-              onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
-              <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
-              <NamedSVG
-                style={styles.userFamilyIcon}
-                name="ui-rafterRight"
-                width={UI_SIZES.dimensions.width.mediumPlus}
-                height={UI_SIZES.dimensions.height.mediumPlus}
-                fill={theme.palette.primary.regular}
-              />
-            </TouchableOpacity>
-          ))
+          family?.map(user => renderPersonFamily(user))
         ) : (
           <View style={styles.emptyFamily}>
             <NamedSVG

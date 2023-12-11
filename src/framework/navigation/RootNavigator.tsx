@@ -12,12 +12,14 @@ import { Dispatch } from 'redux';
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import SnowFlakes from '~/framework/components/SnowFlakes';
 import { RootToastHandler } from '~/framework/components/toast';
 import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
+import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
 import { navigationRef } from './helper';
@@ -97,6 +99,12 @@ function RootNavigator(props: RootNavigatorProps) {
   // === Render navigation container with initialState ===
 
   const trackNavState = useNavigationTracker();
+  const manageNavSnow = useNavigationSnowHandler(dispatch);
+
+  const onStateChange = () => {
+    trackNavState();
+    manageNavSnow();
+  };
 
   const ret = React.useMemo(() => {
     return (
@@ -112,6 +120,7 @@ function RootNavigator(props: RootNavigatorProps) {
                 </RootStack.Navigator>
               </AppPushNotificationHandlerComponent>
               <RootToastHandler />
+              <SnowFlakes />
             </NavigationContainer>
           </>
         ) : null}

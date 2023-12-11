@@ -34,65 +34,58 @@ export const commentsString = (comments: number) =>
       : `${comments} ${I18n.get('blog-postlist-comments').toLowerCase()}`
     : I18n.get('blog-postlist-comment-nocomments');
 
-export const BlogPostResourceCard = ({
-  action,
-  authorId,
-  authorName,
-  comments,
-  contentHtml,
-  date,
-  title,
-  state,
-}: BlogPostResourceCardProps) => {
-  const authorTextMaxLines = 1;
-  const contentTextMaxLines = 5;
-  const blogPostText = extractTextFromHtml(contentHtml);
-  const blogPostMedia = extractMediaFromHtml(contentHtml);
-  const hasBlogPostText = blogPostText && !isStringEmpty(blogPostText);
-  const hasBlogPostMedia = blogPostMedia?.length;
+export const BlogPostResourceCard = React.memo(
+  ({ action, authorId, authorName, comments, contentHtml, date, title, state }: BlogPostResourceCardProps) => {
+    const authorTextMaxLines = 1;
+    const contentTextMaxLines = 5;
+    const blogPostText = extractTextFromHtml(contentHtml);
+    const blogPostMedia = extractMediaFromHtml(contentHtml);
+    const hasBlogPostText = blogPostText && !isStringEmpty(blogPostText);
+    const hasBlogPostMedia = blogPostMedia?.length;
 
-  return (
-    <ArticleContainer>
-      <TouchableResourceCard
-        onPress={action}
-        header={
-          <ContentCardHeader
-            icon={<ContentCardIcon userIds={[authorId || require('ASSETS/images/system-avatar.png')]} />}
-            text={
-              authorName ? (
-                <SmallBoldText numberOfLines={authorTextMaxLines}>{`${I18n.get('common-by')} ${authorName}`}</SmallBoldText>
-              ) : undefined
-            }
-            date={date}
-          />
-        }
-        title={
-          <>
-            {state === 'SUBMITTED' ? (
-              <SmallBoldText style={{ color: theme.palette.status.warning.regular }}>
-                {I18n.get('blog-postlist-needvalidation')}
-              </SmallBoldText>
-            ) : null}
-            <ContentCardTitle>{title}</ContentCardTitle>
-          </>
-        }
-        footer={
-          state !== 'SUBMITTED' ? (
-            <View style={styles.footer}>
-              <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
-              <CaptionBoldText style={{ color: theme.ui.text.light }}>{commentsString(comments)}</CaptionBoldText>
-            </View>
-          ) : undefined
-        }>
-        {hasBlogPostText ? (
-          <SmallText
-            style={{ marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
-            numberOfLines={contentTextMaxLines}>
-            {blogPostText}
-          </SmallText>
-        ) : null}
-        {hasBlogPostMedia ? renderMediaPreview(blogPostMedia) : null}
-      </TouchableResourceCard>
-    </ArticleContainer>
-  );
-};
+    return (
+      <ArticleContainer>
+        <TouchableResourceCard
+          onPress={action}
+          header={
+            <ContentCardHeader
+              icon={<ContentCardIcon userIds={[authorId || require('ASSETS/images/system-avatar.png')]} />}
+              text={
+                authorName ? (
+                  <SmallBoldText numberOfLines={authorTextMaxLines}>{`${I18n.get('common-by')} ${authorName}`}</SmallBoldText>
+                ) : undefined
+              }
+              date={date}
+            />
+          }
+          title={
+            <>
+              {state === 'SUBMITTED' ? (
+                <SmallBoldText style={{ color: theme.palette.status.warning.regular }}>
+                  {I18n.get('blog-postlist-needvalidation')}
+                </SmallBoldText>
+              ) : null}
+              <ContentCardTitle>{title}</ContentCardTitle>
+            </>
+          }
+          footer={
+            state !== 'SUBMITTED' ? (
+              <View style={styles.footer}>
+                <Icon style={{ marginRight: UI_SIZES.spacing.minor }} size={18} name="chat3" color={theme.ui.text.regular} />
+                <CaptionBoldText style={{ color: theme.ui.text.light }}>{commentsString(comments)}</CaptionBoldText>
+              </View>
+            ) : undefined
+          }>
+          {hasBlogPostText ? (
+            <SmallText
+              style={{ marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}
+              numberOfLines={contentTextMaxLines}>
+              {blogPostText}
+            </SmallText>
+          ) : null}
+          {hasBlogPostMedia ? renderMediaPreview(blogPostMedia) : null}
+        </TouchableResourceCard>
+      </ArticleContainer>
+    );
+  },
+);
