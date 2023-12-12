@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-12-12 21:24:08",
-  "notes": "release: 1.11.4-rc.2(1110406)",
-  "version": "1.11.4-rc.3(1110407)"
+  "last": "2023-12-12 22:39:41",
+  "notes": "chore(build): Remove unwanted env vars.\nrelease: 1.11.4-rc.3(1110407)",
+  "version": "1.11.4-rc.4(1110408)"
 }
