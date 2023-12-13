@@ -11,6 +11,7 @@ import AlertCard from '~/framework/components/alert';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import { KeyboardPageView } from '~/framework/components/page';
@@ -18,7 +19,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { changePasswordAction, loadAuthContext, logoutAction } from '~/framework/modules/auth/actions';
+import { changePasswordAction, loadAuthContextAction, logoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext, IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
 import { getPlatformContext, getSession } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -268,15 +269,16 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePass
 };
 
 const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => {
-  const { context } = props;
+  const { context, platform } = props;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useConstructor(async () => {
-    if (!context) {
-      dispatch(loadAuthContext());
+    if (!context && platform) {
+      dispatch(loadAuthContextAction(platform));
     }
   });
 
+  if (!platform) return <EmptyConnectionScreen />;
   if (!context) return <Loading />;
   else return <ChangePasswordScreen {...props} context={context} />;
 };

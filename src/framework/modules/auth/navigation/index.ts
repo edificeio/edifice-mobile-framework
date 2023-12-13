@@ -52,7 +52,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   wayf: { platform: Platform };
   activation: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
   forgot: { platform: Platform; mode: ForgotMode };
-  revalidateTerms: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
+  revalidateTerms: object;
   changePassword: ChangePasswordScreenNavParams;
   changePasswordModal: ChangePasswordScreenNavParams;
   changeEmail: AuthChangeEmailScreenNavParams;
@@ -80,6 +80,14 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
             params: {
               forceChange: true,
             },
+          },
+        ],
+      });
+    case AuthRequirement.MUST_REVALIDATE_TERMS:
+      return CommonActions.reset({
+        routes: [
+          {
+            name: authRouteNames.revalidateTerms,
           },
         ],
       });

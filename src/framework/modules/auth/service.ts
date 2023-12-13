@@ -7,7 +7,7 @@ import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { getItemJson, setItemJson, storage } from '~/framework/util/storage';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId } from '~/infra/oauth';
+import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
 
 import {
   AccountType,
@@ -16,7 +16,7 @@ import {
   AuthRequirement,
   IAuthContext,
   IAuthCredentials,
-  ISession,
+  LegalUrls,
   RuntimeAuthErrorCode,
   SessionType,
   StructureNode,
@@ -485,14 +485,25 @@ export async function getAuthTranslationKeys(platform: Platform, language: I18n.
     const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language, 'X-Device-Id': uniqueId() } });
     if (res.ok) {
       const authTranslationKeys = await res.json();
-      return authTranslationKeys;
+      const legalUrls: LegalUrls = {
+        cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
+        cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
+      };
+      if (authTranslationKeys) {
+        legalUrls.userCharter = urlSigner.getAbsoluteUrl(
+          authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),
+          platform,
+        );
+      }
+      return legalUrls;
     } else throw new Error('http response not 2xx');
   } catch (e) {
     throw createAuthError(RuntimeAuthErrorCode.LOAD_I18N_ERROR, '', '', e as Error);
   }
 }
 
-export async function revalidateTerms(session: ISession) {
+export async function revalidateTerms(session: AuthLoggedAccount) {
   await signedFetch(session.platform.url + '/auth/cgu/revalidate', {
     method: 'PUT',
   });
@@ -599,6 +610,8 @@ export async function fetchRawUserRequirements(platform: Platform) {
   }
 }
 
+let first = true;
+
 /**
  * Get flags status for the current user.
  * These flags may lead to partial session scenarios
@@ -611,7 +624,9 @@ export async function fetchRawUserRequirements(platform: Platform) {
  */
 export function getRequirementScenario(userRequirements: IUserRequirements) {
   // MOCK
-  return AuthRequirement.MUST_CHANGE_PASSWORD;
+  const a = first;
+  first = false;
+  return a ? AuthRequirement.MUST_REVALIDATE_TERMS : undefined;
   // END MOCK
   // if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
   // if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;

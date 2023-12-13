@@ -6,6 +6,7 @@ import type {
   AuthMixedAccountMap,
   AuthRequirement,
   IAuthContext,
+  LegalUrls,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { Platform } from '~/framework/util/appConf';
@@ -20,6 +21,7 @@ export interface IAuthState {
   deleted?: keyof IAuthState['accounts']; // Last account was deleted
   showOnboarding: AuthStorageData['showOnboarding'];
   platformContexts: Record<string, IAuthContext>; // Platform contexts by pf name
+  platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
 
   pending?: {
     // Current login task
@@ -45,6 +47,7 @@ export const initialState: IAuthState = {
   accounts: {},
   showOnboarding: true,
   platformContexts: {},
+  platformLegalUrls: {},
   deviceInfo: {},
 };
 
@@ -52,8 +55,10 @@ export const initialState: IAuthState = {
 export const actionTypes = {
   authInit: moduleConfig.namespaceActionType('INIT'),
   loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
+  loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
   login: moduleConfig.namespaceActionType('LOGIN'),
   loginRequirement: moduleConfig.namespaceActionType('LOGIN_REQUIREMENT'),
+  updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -71,8 +76,10 @@ export const actionTypes = {
 export interface ActionPayloads {
   authInit: Pick<AuthStorageData, 'accounts' | 'startup' | 'showOnboarding'> & { deviceId: IAuthState['deviceInfo']['uniqueId'] };
   loadPfContext: { name: Platform['name']; context: IAuthContext };
+  loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
   login: { id: string; account: AuthLoggedAccount };
   loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: IAuthContext };
+  updateRequirement: { requirement: AuthRequirement; context?: IAuthContext };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -97,6 +104,8 @@ export const actions = {
 
   loadPfContext: (name: Platform['name'], context: IAuthContext) => ({ type: actionTypes.loadPfContext, name, context }),
 
+  loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ type: actionTypes.loadPfLegalUrls, name, legalUrls }),
+
   login: (id: string, account: AuthLoggedAccount) => ({
     type: actionTypes.login,
     id,
@@ -107,6 +116,12 @@ export const actions = {
     type: actionTypes.loginRequirement,
     id,
     account,
+    requirement,
+    context,
+  }),
+
+  updateRequirement: (requirement: AuthRequirement | undefined, context?: IAuthContext) => ({
+    type: actionTypes.updateRequirement,
     requirement,
     context,
   }),
@@ -139,6 +154,11 @@ const reducer = createReducer(initialState, {
     return { ...state, platformContexts: { ...state.platformContexts, [name]: context } };
   },
 
+  [actionTypes.loadPfLegalUrls]: (state, action) => {
+    const { name, legalUrls } = action as unknown as ActionPayloads['loadPfLegalUrls'];
+    return { ...state, platformLegalUrls: { ...state.platformLegalUrls, [name]: legalUrls } };
+  },
+
   [actionTypes.login]: (state, action) => {
     const { id, account } = action as unknown as ActionPayloads['login'];
     return { ...state, accounts: { ...state.accounts, [id]: account }, connected: id, showOnboarding: false };
@@ -154,6 +174,16 @@ const reducer = createReducer(initialState, {
       requirement,
       platformContexts: { ...state.platformContexts, [account.platform.name]: context },
     };
+  },
+
+  [actionTypes.updateRequirement]: (state, action) => {
+    if (!state.connected) return state;
+    const account = state.accounts[state.connected] as AuthLoggedAccount;
+    if (!account) return state;
+    const { requirement, context } = action as unknown as ActionPayloads['updateRequirement'];
+    if (context)
+      return { ...state, requirement, platformContexts: { ...state.platformContexts, [account.platform.name]: context } };
+    else return { ...state, requirement };
   },
 
   // // Saves session info & consider user logged
@@ -230,6 +260,12 @@ export function getPlatformContext() {
   const state = getState(getStore().getState());
   const session = getSession();
   return session ? state.platformContexts[session.platform.name] : undefined;
+}
+
+export function getPlatformLegalUrls() {
+  const state = getState(getStore().getState());
+  const session = getSession();
+  return session ? state.platformLegalUrls[session.platform.name] : undefined;
 }
 
 /**

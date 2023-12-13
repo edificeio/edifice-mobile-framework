@@ -4,7 +4,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import { IAuthState, actions, assertSession, getState as getAuthState, getPlatform } from '~/framework/modules/auth/reducer';
+import { IAuthState, actions, assertSession, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { StorageSlice } from '~/framework/util/storage/slice';
 import { Trackers } from '~/framework/util/tracker';
@@ -12,11 +12,13 @@ import { Trackers } from '~/framework/util/tracker';
 import {
   AuthError,
   AuthRequirement,
+  IAuthContext,
   IAuthCredentials,
   IChangePasswordError,
   IChangePasswordPayload,
   createChangePasswordError,
 } from './model';
+import * as authService from './service';
 import {
   IUserInfoBackend,
   UserPersonDataBackend,
@@ -32,6 +34,7 @@ import {
   getAuthContext,
   getRequirementScenario,
   manageFirebaseToken,
+  revalidateTerms,
 } from './service';
 import { getSavedAccounts, getSavedStartup, getShowOnbording } from './storage';
 
@@ -60,6 +63,28 @@ export const authInitAction = () => async (dispatch: AuthDispatch) => {
   const deviceId = await DeviceInfo.getUniqueId();
 
   dispatch(actions.authInit(startup, accounts, showOnboarding, deviceId));
+};
+
+/**
+ * fetch the auth context of current platform and stores it in redux.
+ * @returns
+ */
+export const loadAuthContextAction = (platform: Platform) => async (dispatch: AuthDispatch) => {
+  const context = await authService.getAuthContext(platform);
+  if (!context) return;
+  dispatch(actions.loadPfContext(platform.name, context));
+  return context;
+};
+
+/**
+ * fetchs the auth context of current platform and stores it in redux.
+ * @returns
+ */
+export const loadPlatformLegalUrlsAction = (platform: Platform) => async (dispatch: AuthDispatch) => {
+  const legalUrls = await authService.getAuthTranslationKeys(platform, I18n.getLanguage() as I18n.SupportedLocales);
+  if (!legalUrls) return;
+  dispatch(actions.loadPfLegalUrls(platform.name, legalUrls));
+  return legalUrls;
 };
 
 /**
@@ -173,9 +198,11 @@ export const loginAction = (platform: Platform, credentials: IAuthCredentials) =
   const requirement = await loginSteps.getRequirement(platform);
   const user = await loginSteps.getUserData(platform, requirement);
   const accountInfo = await loginSteps.finalizeLogin(platform, credentials.username, user.infos, user.publicInfos, requirement);
-  console.debug('requirement ?', requirement);
   if (requirement) {
-    const context = await getAuthContext(platform);
+    const context = await authService.getAuthContext(platform);
+    if (requirement === AuthRequirement.MUST_REVALIDATE_TERMS) {
+      await dispatch(loadPlatformLegalUrlsAction(platform));
+    }
     dispatch(actions.loginRequirement(accountInfo.user.id, accountInfo, requirement, context));
   } else {
     dispatch(actions.login(accountInfo.user.id, accountInfo));
@@ -191,17 +218,34 @@ export const consumeAuthError = () => (dispatch: AuthDispatch) => {
   // dispatch(authActions.sessionErrorConsume());
 };
 
+const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
+
 /**
- * fetchs the auth context of current platform and stores it in redux.
+ * Fetch again the logged user requirements and updates the store.
+ * User needs to be logged.
+ * @returns The new requirement if exists
+ */
+export const refreshRequirementsAction = () => async (dispatch: AuthDispatch) => {
+  const session = assertSession();
+  const requirement = await loginSteps.getRequirement(session.platform);
+  let context: IAuthContext | undefined;
+  if (requirement) {
+    context = await getAuthContext(session.platform);
+    if (requirementsThatNeedLegalUrls.includes(requirement)) {
+      await dispatch(loadPlatformLegalUrlsAction(session.platform));
+    }
+  }
+  dispatch(actions.updateRequirement(requirement, context));
+};
+
+/**
+ * Revalidates terms for the current user and updates the store
  * @returns
  */
-export const loadAuthContext = () => async (dispatch: AuthDispatch) => {
-  const platform = getPlatform();
-  if (!platform) return;
-  const context = await getAuthContext(platform);
-  if (!context) return;
-  dispatch(actions.loadPfContext(platform.name, context));
-  return context;
+export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
+  const session = assertSession();
+  await revalidateTerms(session);
+  await dispatch(refreshRequirementsAction());
 };
 
 // /**
@@ -213,18 +257,7 @@ export const loadAuthContext = () => async (dispatch: AuthDispatch) => {
 //   return async function (dispatch: ThunkDispatch<any, any, any>, getState: () => any): Promise<LegalUrls | undefined> {
 //     // === 1: Load legal document urls
 //     try {
-//       const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.getLanguage());
-//       const legalUrls: LegalUrls = {
-//         cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
-//         personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
-//         cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
-//       };
-//       if (authTranslationKeys) {
-//         legalUrls.userCharter = urlSigner.getAbsoluteUrl(
-//           authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),
-//           platform,
-//         );
-//       }
+//       const authTranslationKeys = await getAuthTranslationKeys(platform, I18n.getLanguage() as I18n.SupportedLocales);
 //       dispatch(authActions.getLegalDocuments(legalUrls));
 //       return legalUrls;
 //     } catch (e) {
