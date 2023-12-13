@@ -610,8 +610,6 @@ export async function fetchRawUserRequirements(platform: Platform) {
   }
 }
 
-let first = true;
-
 /**
  * Get flags status for the current user.
  * These flags may lead to partial session scenarios
@@ -624,14 +622,12 @@ let first = true;
  */
 export function getRequirementScenario(userRequirements: IUserRequirements) {
   // MOCK
-  const a = first;
-  first = false;
-  return a ? AuthRequirement.MUST_REVALIDATE_TERMS : undefined;
+  // return a ? AuthRequirement.MUST_REVALIDATE_TERMS : undefined;
   // END MOCK
-  // if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
-  // if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
-  // if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
-  // if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
+  if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
+  if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+  if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
+  if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
 }
 
 export async function fetchUserInfo(platform: Platform) {

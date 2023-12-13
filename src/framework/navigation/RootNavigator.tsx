@@ -51,7 +51,7 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
-  const { accounts, pending, showOnboarding, dispatch, appReady, requirement } = props;
+  const { accounts, pending, showOnboarding, dispatch, appReady, requirement, connected } = props;
 
   React.useEffect(() => {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
@@ -64,10 +64,9 @@ function RootNavigator(props: RootNavigatorProps) {
   // Get navigation state from redux state
   // Only if app is ready, and if the used is not logged in. (If logged, no navState goes to the timeline)
 
-  const logged = false; // ToDo get from reducer
   const navigationState = React.useMemo(() => {
-    return appReady && !logged ? getAuthNavigationState(accounts, pending, showOnboarding, requirement) : undefined;
-  }, [accounts, appReady, logged, pending, requirement, showOnboarding]);
+    return appReady && !connected ? getAuthNavigationState(accounts, pending, showOnboarding, requirement) : undefined;
+  }, [accounts, appReady, connected, pending, requirement, showOnboarding]);
 
   // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
   React.useLayoutEffect(() => {
@@ -84,27 +83,15 @@ function RootNavigator(props: RootNavigatorProps) {
     return session && !requirement ? mainNavigation : authNavigation;
   }, [authNavigation, mainNavigation, requirement, session]);
 
-  // const isFullyLogged = !!(logged && session); // Partial sessions scenarios have session = {...} && logged = false, and must stay on auth stack.
-
-  // === Compute initial auth state ===
-  // ToDo : verify that the state is correctly reset after logout & auto-login
-
-  // const lastLoadedPlatform = useAppStartup(dispatch, session?.platform);
-  // const initialNavState = React.useMemo(() => {
-  //   return isReady && !logged ? getAuthNavigationState(lastLoadedPlatform, autoLoginResult) : undefined;
-  // }, [isReady, logged, lastLoadedPlatform, autoLoginResult]);
-
-  // No need to initialize navState when fully logged, because it will load the default MainStack behaviour (= Tabs view)
-
   // === Render navigation container with initialState ===
 
   const trackNavState = useNavigationTracker();
   const manageNavSnow = useNavigationSnowHandler(dispatch);
 
-  const onStateChange = () => {
+  const onStateChange = React.useCallback(() => {
     trackNavState();
     manageNavSnow();
-  };
+  }, [manageNavSnow, trackNavState]);
 
   const ret = React.useMemo(() => {
     return (
@@ -112,7 +99,7 @@ function RootNavigator(props: RootNavigatorProps) {
         <SplashScreenComponent key={appReady} />
         {appReady ? (
           <>
-            <NavigationContainer ref={navigationRef} initialState={navigationState} onStateChange={trackNavState}>
+            <NavigationContainer ref={navigationRef} initialState={navigationState} onStateChange={onStateChange}>
               <AppPushNotificationHandlerComponent>
                 <RootStack.Navigator screenOptions={{ headerShown: true }}>
                   {routes}
