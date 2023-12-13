@@ -113,7 +113,7 @@ function RootNavigator(props: RootNavigatorProps) {
         ) : null}
       </>
     );
-  }, [appReady, navigationState, trackNavState, routes]);
+  }, [appReady, navigationState, onStateChange, routes]);
 
   return ret;
 }
