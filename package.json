@@ -35,7 +35,7 @@
     "lint-folder": "eslint --ext .js,.jsx,.ts,.tsx",
     "override": "node cli/override.js -l",
     "override-local": "node cli/override.js --local -l",
-    "override-silent": "node cli/override.js -v --no-i $CONFIG_TO --uri=$CONFIG_URI --username=$CONFIG_USER --password=$CONFIG_PWD",
+    "override-silent": "node cli/override.js -v --no-i $CONFIG_TO",
     "override-restore": "node cli/override.js restore",
     "override-restore-local": "node cli/override.js restore --local",
     "patch": "npx patch-package --exclude 'nothing'",
