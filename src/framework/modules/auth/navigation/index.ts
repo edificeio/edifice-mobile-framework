@@ -24,7 +24,7 @@ import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mf
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-import { IAuthState } from '../reducer';
+import { IAuthState, getPlatform, getSession } from '../reducer';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
@@ -71,7 +71,6 @@ export const getLoginRouteName = (platform?: Platform) => {
 };
 
 export const getNavActionForRequirement = (requirement: AuthRequirement) => {
-  console.debug('getNavActionForRequirement', requirement);
   switch (requirement) {
     case AuthRequirement.MUST_CHANGE_PASSWORD:
       return CommonActions.reset({
@@ -93,13 +92,13 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
         ],
       });
     case AuthRequirement.MUST_VERIFY_MOBILE:
-      console.debug('AGAHAH');
       return CommonActions.reset({
         routes: [
           {
             name: authRouteNames.changeMobile,
             params: {
-              // defaultMobile: action.defaultMobile,
+              platform: getPlatform(),
+              defaultMobile: getSession()?.user.mobile,
             },
           },
         ],

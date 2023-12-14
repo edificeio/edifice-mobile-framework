@@ -610,6 +610,8 @@ export async function fetchRawUserRequirements(platform: Platform) {
   }
 }
 
+let a = true;
+
 /**
  * Get flags status for the current user.
  * These flags may lead to partial session scenarios
@@ -622,7 +624,9 @@ export async function fetchRawUserRequirements(platform: Platform) {
  */
 export function getRequirementScenario(userRequirements: IUserRequirements) {
   // MOCK
-  return AuthRequirement.MUST_VERIFY_MOBILE;
+  const first = a;
+  a = false;
+  return first ? AuthRequirement.MUST_VERIFY_MOBILE : undefined;
   // END MOCK
   // if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
   // if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;

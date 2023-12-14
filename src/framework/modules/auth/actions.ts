@@ -88,6 +88,24 @@ export const loadPlatformLegalUrlsAction = (platform: Platform) => async (dispat
 };
 
 /**
+ * Get default infos
+ * - Fetch appropriate validation infos if must be verified
+ * - Return default mobile or email
+ */
+async function getRequirementAdditionalInfos(requirement: AuthRequirement, platform: Platform) {
+  let defaultMobile: string | undefined;
+  let defaultEmail: string | undefined;
+  if (requirement === AuthRequirement.MUST_VERIFY_MOBILE) {
+    const mobileValidationInfos = await authService.getMobileValidationInfos(platform.url);
+    defaultMobile = mobileValidationInfos?.mobile;
+  } else if (requirement === AuthRequirement.MUST_VERIFY_EMAIL) {
+    const emailValidationInfos = await authService.getEmailValidationInfos();
+    defaultEmail = emailValidationInfos?.email;
+  }
+  return { defaultMobile, defaultEmail };
+}
+
+/**
  * Every step for login process is here.
  */
 export const loginSteps = {
@@ -167,13 +185,12 @@ export const loginSteps = {
     userInfo: IUserInfoBackend,
     publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
     requirement?: AuthRequirement,
-    mustSaveSession?: string | boolean,
   ) => {
     const start = Date.now();
     try {
       await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
       const { userData, userPublicInfo } = publicInfo;
-      const sessionInfo = formatSession(platform, loginUsed, userInfo, userData, userPublicInfo, !!mustSaveSession);
+      const sessionInfo = formatSession(platform, loginUsed, userInfo, userData, userPublicInfo);
       await StorageSlice.sessionInitAllStorages(sessionInfo);
       return sessionInfo;
     } catch (e) {
@@ -202,6 +219,9 @@ export const loginAction = (platform: Platform, credentials: IAuthCredentials) =
   const accountInfo = await loginSteps.finalizeLogin(platform, credentials.username, user.infos, user.publicInfos, requirement);
   if (requirement) {
     const context = await authService.getAuthContext(platform);
+    const infos = await getRequirementAdditionalInfos(requirement, platform);
+    accountInfo.user.mobile = infos.defaultMobile;
+    accountInfo.user.email = infos.defaultEmail;
     if (requirementsThatNeedLegalUrls.includes(requirement)) {
       await dispatch(loadPlatformLegalUrlsAction(platform));
     }
@@ -228,6 +248,14 @@ export const consumeAuthError = () => (dispatch: AuthDispatch) => {
 export const refreshRequirementsAction = () => async (dispatch: AuthDispatch) => {
   const session = assertSession();
   const requirement = await loginSteps.getRequirement(session.platform);
+  const user = await loginSteps.getUserData(session.platform, requirement);
+  const accountInfo = formatSession(
+    session.platform,
+    session.user.loginUsed,
+    user.infos,
+    user.publicInfos.userData,
+    user.publicInfos.userPublicInfo,
+  );
   let context: IAuthContext | undefined;
   if (requirement) {
     context = await getAuthContext(session.platform);
@@ -235,7 +263,7 @@ export const refreshRequirementsAction = () => async (dispatch: AuthDispatch) =>
       await dispatch(loadPlatformLegalUrlsAction(session.platform));
     }
   }
-  dispatch(actions.updateRequirement(requirement, context));
+  dispatch(actions.updateRequirement(requirement, accountInfo, context));
 };
 
 /**
@@ -269,24 +297,6 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
 //       }
 //     }
 //   };
-// }
-
-// /**
-//  * Get default infos
-//  * - Fetch appropriate validation infos if must be verified
-//  * - Return default mobile or email
-//  */
-// async function getDefaultInfos(partialSessionScenario: PartialSessionScenario, platformUrl: string) {
-//   let defaultMobile: string | undefined;
-//   let defaultEmail: string | undefined;
-//   if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_MOBILE) {
-//     const mobileValidationInfos = await getMobileValidationInfos(platformUrl);
-//     defaultMobile = mobileValidationInfos?.mobile;
-//   } else if (partialSessionScenario === PartialSessionScenario.MUST_VERIFY_EMAIL) {
-//     const emailValidationInfos = await getEmailValidationInfos();
-//     defaultEmail = emailValidationInfos?.email;
-//   }
-//   return { defaultMobile, defaultEmail };
 // }
 
 // /**

@@ -28,7 +28,7 @@ import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/fra
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { logoutAction } from '~/framework/modules/auth/actions';
-import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
@@ -68,7 +68,6 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const phoneInputRef = useRef<PhoneInput>(null);
 
   const platform = route.params.platform;
-  const rememberMe = route.params.rememberMe;
   const defaultMobile = route.params.defaultMobile;
   const modificationType = route.params.modificationType;
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
@@ -164,7 +163,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           await requestMobileVerificationCode(platform, mobileNumberFormatted);
           navigation.navigate(authRouteNames.mfa, {
             platform,
-            rememberMe,
+            rememberMe: false,
             modificationType,
             isMobileMFA: true,
             mobile: mobileNumberFormatted,
@@ -185,18 +184,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         setIsSendingCode(false);
       }
     },
-    [
-      getIsValidMobileNumberForRegion,
-      isCheckMobile,
-      isModifyingMobile,
-      modificationType,
-      navigation,
-      platform,
-      props,
-      region,
-      rememberMe,
-      route,
-    ],
+    [getIsValidMobileNumberForRegion, isCheckMobile, modificationType, navigation, platform, props, region, route],
   );
 
   const sendSMS = useCallback(async () => {
@@ -215,11 +203,11 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const refuseMobileVerification = useCallback(async () => {
     try {
       await tryLogout();
-      navigation.reset(getAuthNavigationState(platform));
+      // navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }
-  }, [navigation, tryLogout, platform]);
+  }, [tryLogout]);
 
   usePreventBack({
     title: I18n.get('auth-change-mobile-edit-alert-title'),

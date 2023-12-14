@@ -79,7 +79,7 @@ export interface ActionPayloads {
   loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
   login: { id: string; account: AuthLoggedAccount };
   loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: IAuthContext };
-  updateRequirement: { requirement: AuthRequirement; context?: IAuthContext };
+  updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: IAuthContext };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -120,9 +120,10 @@ export const actions = {
     context,
   }),
 
-  updateRequirement: (requirement: AuthRequirement | undefined, context?: IAuthContext) => ({
+  updateRequirement: (requirement: AuthRequirement | undefined, account: AuthLoggedAccount, context?: IAuthContext) => ({
     type: actionTypes.updateRequirement,
     requirement,
+    account,
     context,
   }),
 
@@ -178,12 +179,16 @@ const reducer = createReducer(initialState, {
 
   [actionTypes.updateRequirement]: (state, action) => {
     if (!state.connected) return state;
-    const account = state.accounts[state.connected] as AuthLoggedAccount;
-    if (!account) return state;
-    const { requirement, context } = action as unknown as ActionPayloads['updateRequirement'];
+    const { requirement, context, account } = action as unknown as ActionPayloads['updateRequirement'];
+    const id = account.user.id;
     if (context)
-      return { ...state, requirement, platformContexts: { ...state.platformContexts, [account.platform.name]: context } };
-    else return { ...state, requirement };
+      return {
+        ...state,
+        accounts: { ...state.accounts, [id]: account },
+        requirement,
+        platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+      };
+    else return { ...state, accounts: { ...state.accounts, [id]: account }, requirement };
   },
 
   // // Saves session info & consider user logged

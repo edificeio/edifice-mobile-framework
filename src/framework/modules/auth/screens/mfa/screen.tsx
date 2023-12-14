@@ -16,7 +16,7 @@ import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { loginAction } from '~/framework/modules/auth/actions';
+import { loginAction, refreshRequirementsAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
@@ -77,10 +77,9 @@ export const computeNavBar = ({
 };
 
 const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
-  const { tryLogin, tryUpdateProfile, navigation, route } = props;
+  const { tryRefreshRequirements, tryUpdateProfile, navigation, route } = props;
 
   const platform = props.route.params.platform;
-  const rememberMe = props.route.params.rememberMe;
   const modificationType = route.params.modificationType;
   const mfaRedirectionRoute = route.params.mfaRedirectionRoute;
   const isEmailMFA = route.params.isEmailMFA;
@@ -245,13 +244,13 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       }
     } else {
       try {
-        const redirect = await tryLogin(platform, undefined, rememberMe);
+        const redirect = await tryRefreshRequirements();
         redirectLoginNavAction(redirect, platform, navigation);
       } catch {
         Toast.showError(I18n.get('auth-mfa-error-text'));
       }
     }
-  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryLogin, platform, rememberMe]);
+  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryRefreshRequirements, platform]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -377,6 +376,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScr
   return bindActionCreators<AuthMFAScreenDispatchProps>(
     {
       tryLogin: tryAction(loginAction),
+      tryRefreshRequirements: tryAction(refreshRequirementsAction),
       tryUpdateProfile: tryAction(profileUpdateAction),
     },
     dispatch,
