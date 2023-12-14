@@ -28,8 +28,15 @@ jobs:
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          message: "Sync phrase-translations completed: ${{ job.status }}"
-          action_result: ${{ job.status }}
-          color: ${{ job.status === 'success' ? '#9ECCFF' : '#F4887C' }}
+          payload: |
+            {
+              "text": "Sync phrase-translations completed",
+              "attachments": [
+                {
+                  "pretext": "${{ job.status }}",
+                  "color": "9ECCFF",
+                }
+              ]
+            }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
