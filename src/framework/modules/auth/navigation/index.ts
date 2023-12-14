@@ -103,6 +103,18 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
           },
         ],
       });
+    case AuthRequirement.MUST_VERIFY_EMAIL:
+      return CommonActions.reset({
+        routes: [
+          {
+            name: authRouteNames.changeEmail,
+            params: {
+              platform: getPlatform(),
+              defaultEmail: getSession()?.user.email,
+            },
+          },
+        ],
+      });
   }
 };
 

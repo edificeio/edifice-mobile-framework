@@ -99,7 +99,7 @@ async function getRequirementAdditionalInfos(requirement: AuthRequirement, platf
     const mobileValidationInfos = await authService.getMobileValidationInfos(platform.url);
     defaultMobile = mobileValidationInfos?.mobile;
   } else if (requirement === AuthRequirement.MUST_VERIFY_EMAIL) {
-    const emailValidationInfos = await authService.getEmailValidationInfos();
+    const emailValidationInfos = await authService.getEmailValidationInfos(platform.url);
     defaultEmail = emailValidationInfos?.email;
   }
   return { defaultMobile, defaultEmail };

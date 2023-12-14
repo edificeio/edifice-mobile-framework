@@ -513,7 +513,7 @@ export async function getMFAValidationInfos() {
   try {
     const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
     return MFAValidationInfos;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
   }
 }
@@ -525,7 +525,7 @@ export async function verifyMFACode(key: string) {
       body: JSON.stringify({ key }),
     })) as IEntcoreMFAValidationState;
     return mfaValidationState;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] verifyMFACode: could not verify mfa code', e);
   }
 }
@@ -558,14 +558,19 @@ export async function verifyMobileCode(key: string) {
       body: JSON.stringify({ key }),
     })) as IEntcoreMobileValidationState;
     return mobileValidationState;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
   }
 }
 
-export async function getEmailValidationInfos() {
+export async function getEmailValidationInfos(platformUrl: string) {
   try {
-    const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
+    const emailValidationInfos = (await fetchJSONWithCache(
+      '/directory/user/mailstate',
+      {},
+      true,
+      platformUrl,
+    )) as IEntcoreEmailValidationInfos;
     return emailValidationInfos;
   } catch (err) {
     throw createAuthError(
@@ -591,7 +596,7 @@ export async function verifyEmailCode(key: string) {
       body: JSON.stringify({ key }),
     })) as IEntcoreEmailValidationState;
     return emailValidationState;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] verifyEmailCode: could not verify email code', e);
   }
 }
@@ -626,7 +631,7 @@ export function getRequirementScenario(userRequirements: IUserRequirements) {
   // MOCK
   const first = a;
   a = false;
-  return first ? AuthRequirement.MUST_VERIFY_MOBILE : undefined;
+  return first ? AuthRequirement.MUST_VERIFY_EMAIL : undefined;
   // END MOCK
   // if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
   // if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;

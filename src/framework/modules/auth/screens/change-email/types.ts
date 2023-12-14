@@ -14,7 +14,6 @@ export interface AuthChangeEmailScreenNavParams {
   modificationType?: ModificationType;
   navBarTitle?: string;
   platform: Platform;
-  rememberMe?: boolean;
 }
 
 export interface AuthChangeEmailScreenProps {}
