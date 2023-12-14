@@ -234,8 +234,8 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const renderPersonFamily = user => {
     if (
-      (!isMyProfile && (session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel)) ||
-      (isMyProfile && session?.user.type === UserType.Relative)
+      (!isMyProfile && (session?.user.type === AccountType.Teacher || session?.user.type === AccountType.Personnel)) ||
+      (isMyProfile && session?.user.type === AccountType.Relative)
     )
       return (
         <TouchableOpacity
