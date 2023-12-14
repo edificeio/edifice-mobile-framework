@@ -172,6 +172,5 @@ export function createUUID() {
  * @returns The override name
  */
 export function getOverrideName() {
-  const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod|\/xmas/g, '');
-  return overrideName;
+  return (RNConfigReader.BundleVersionOverride as string).split('/')[0];
 }
