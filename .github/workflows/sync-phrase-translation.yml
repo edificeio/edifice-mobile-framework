@@ -31,13 +31,7 @@ jobs:
           payload: |
             {
               "text": "Sync phrase-translations completed",
-              "color": ""
-              "attachments": [
-                {
-                  "pretext": "${{ job.status }}",
-                  "color": "9ECCFF"
-                }
-              ]
+              "color": "9ECCFF"
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
