@@ -28,10 +28,8 @@ jobs:
       - name: Send Slack notification
         uses: slackapi/slack-github-action@v1.24.0
         with:
-          payload: |
-            {
-              color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
-              text: `${process.env.AS_WORKFLOW}\n${process.env.AS_JOB} (${process.env.AS_COMMIT}) of ${process.env.AS_REPO}@${process.env.AS_REF} by ${process.env.AS_AUTHOR} ${{ job.status }} in ${process.env.AS_TOOK}`,
-            }
+          message: "Sync phrase-translations completed: ${{ job.status }}"
+          action_result: ${{ job.status }}
+          color: ${{ job.status === 'success' ? '#9ECCFF' : '#F4887C' }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
