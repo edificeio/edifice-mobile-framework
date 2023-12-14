@@ -1,13 +1,13 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { SupportNavigationParams, supportRouteNames } from '~/framework/modules/support/navigation';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 
 export interface ISupportCreateTicketScreenDataProps {
   apps: { label: string; value: string }[];
   structures: { label: string; value: string }[];
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export type SupportScreenNavParams = undefined;

@@ -1,11 +1,11 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type { ScrapbookNavigationParams } from '~/framework/modules/scrapbook/navigation';
 import { scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
 
 export interface ScrapbookDetailsScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface ScrapbookDetailsScreenEventProps {}

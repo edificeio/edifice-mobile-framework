@@ -5,7 +5,7 @@ import { Moment } from 'moment';
 import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';
@@ -228,7 +228,7 @@ export const computeAllBlogsFlatHierarchy = <FolderType extends BlogFolder = Blo
 
 // Getters
 
-export const getPublishableBlogs = (session: ISession, blogs: BlogList) => {
+export const getPublishableBlogs = (session: AuthLoggedAccount, blogs: BlogList) => {
   const publishableBlogs = (resourceRightFilter(blogs, createBlogPostResourceRight, session) as BlogList).filter(
     (blog: Blog) => !blog.trashed,
   );

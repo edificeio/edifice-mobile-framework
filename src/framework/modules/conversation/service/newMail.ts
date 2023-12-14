@@ -1,4 +1,4 @@
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileHandlerService, { IUploadCallbaks } from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
@@ -41,7 +41,7 @@ export const newMailService = {
     const searchResult = await fetchJSONWithCache(`/conversation/visible?search=${search}`);
     return searchResult;
   },
-  sendMail: async (session: ISession, mailDatas, draftId, inReplyTo) => {
+  sendMail: async (session: AuthLoggedAccount, mailDatas, draftId, inReplyTo) => {
     const params = {
       id: draftId,
       'In-Reply-To': inReplyTo,
@@ -80,7 +80,7 @@ export const newMailService = {
   updateDraftMail: async (mailId, mailDatas) => {
     await fetchJSONWithCache(`/conversation/draft/${mailId}`, { method: 'PUT', body: JSON.stringify(formatMailDatas(mailDatas)) });
   },
-  addAttachment: async (session: ISession, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
+  addAttachment: async (session: AuthLoggedAccount, draftId: string, file: LocalFile, callbacks?: IUploadCallbaks) => {
     const url = `/conversation/message/${draftId}/attachment`;
     const uploadedFile = await fileHandlerService.uploadFile<SyncedFileWithId>(
       session,

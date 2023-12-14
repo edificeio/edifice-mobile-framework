@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type { fetchZimbraMailAction, fetchZimbraSignatureAction } from '~/framework/modules/zimbra/actions';
 import type { DraftType, IMail, ISignature } from '~/framework/modules/zimbra/model';
 import type { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
@@ -21,7 +21,7 @@ export interface ZimbraComposerScreenNavParams {
 export interface ZimbraComposerScreenStoreProps {
   signature: ISignature;
   mail?: IMail;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface ZimbraComposerScreenDispatchProps {

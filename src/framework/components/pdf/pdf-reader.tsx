@@ -6,7 +6,7 @@ import Pdf from 'react-native-pdf';
 import theme from '~/app/theme';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -40,7 +40,7 @@ export class PDFReader extends React.PureComponent<
   };
 
   handlePressLink(
-    uri: string | ((session: ISession) => string | false | Promise<string | false | undefined> | undefined) | undefined,
+    uri: string | ((session: AuthLoggedAccount) => string | false | Promise<string | false | undefined> | undefined) | undefined,
   ) {
     openUrl(uri);
   }

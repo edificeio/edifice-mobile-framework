@@ -6,7 +6,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import { XMLParser } from 'fast-xml-parser';
 import moment from 'moment';
 
-import { ISession, UserChildrenFlattened } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount, UserChildrenFlattened } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import {
   ICarnetDeBord,
@@ -419,7 +419,7 @@ function carnetDeBordAdapter(data: ICarnetDeBordBackend, children: UserChildrenF
 }
 
 export default {
-  get: async (session: ISession, children: UserChildrenFlattened, matchingApps: IEntcoreApp[]) => {
+  get: async (session: AuthLoggedAccount, children: UserChildrenFlattened, matchingApps: IEntcoreApp[]) => {
     const api = `/sso/pronote`;
     let data = await fetchWithCache(api, undefined, undefined, undefined, async r => r);
     if (!data || typeof data === 'string') throw new Error('[carnetDeBord] received data is not Response.');

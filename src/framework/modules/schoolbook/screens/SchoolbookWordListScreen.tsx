@@ -19,7 +19,7 @@ import { linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
-import { AccountType, ISession } from '~/framework/modules/auth/model';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { SchoolbookWordSummaryCard } from '~/framework/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
@@ -46,7 +46,7 @@ const styles = {
 
 export interface ISchoolbookWordListScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session: ISession | undefined;
+  session?: AuthLoggedAccount;
 }
 export type ISchoolbookWordListScreenProps = ISchoolbookWordListScreenDataProps &
   NativeStackScreenProps<SchoolbookNavigationParams, typeof schoolbookRouteNames.home>;

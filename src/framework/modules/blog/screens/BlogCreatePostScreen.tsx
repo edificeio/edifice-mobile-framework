@@ -18,7 +18,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
 import moduleConfig from '~/framework/modules/blog/module-config';
@@ -42,7 +42,7 @@ import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 
 export interface BlogCreatePostScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface BlogCreatePostScreenEventProps {

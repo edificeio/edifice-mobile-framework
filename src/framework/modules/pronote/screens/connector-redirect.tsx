@@ -8,7 +8,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
 import redirect from '~/framework/modules/pronote/service/redirect';
@@ -16,7 +16,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import type { IEntcoreApp } from '~/framework/util/moduleTool';
 
 export interface IConnectorRedirectScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface IConnectorRedirectScreenNavigationParams {

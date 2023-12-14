@@ -13,7 +13,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallItalicText } from '~/framework/components/text';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import HtmlParserRN, { IHtmlParserRNOptions } from '~/framework/util/htmlParser/rn';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -23,7 +23,7 @@ import { IRemoteAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 
 export interface IHtmlContentViewProps extends ViewProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
   navigation?: any;
   html?: string;
   source?: string;
@@ -175,7 +175,7 @@ class HtmlContentView extends React.PureComponent<IHtmlContentViewProps, IHtmlCo
 }
 
 const mapStateToProps: (state: IGlobalState) => {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 } = state => {
   return { session: getSession() };
 };

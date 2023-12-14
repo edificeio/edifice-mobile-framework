@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getPublishableBlogListAction } from '~/framework/modules/blog/actions';
 import { moduleColor } from '~/framework/modules/blog/module-config';
@@ -17,7 +17,7 @@ import { getBlogWorkflowInformation } from '~/framework/modules/blog/rights';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export interface BlogSelectScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 export interface BlogSelectScreenEventProps {
   handleGetPublishableBlogList(): Promise<BlogList | undefined>;

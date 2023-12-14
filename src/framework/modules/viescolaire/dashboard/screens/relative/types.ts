@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession, IUser } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount, IUser } from '~/framework/modules/auth/model';
 import type {
   fetchCompetencesAction,
   fetchCompetencesDevoirsAction,
@@ -32,7 +32,7 @@ export interface DashboardRelativeScreenStoreProps {
   subjects: ISubject[];
   userChildren: IUserChild[];
   childId?: string;
-  session?: ISession;
+  session?: AuthLoggedAccount;
   structureId?: string;
   userId?: string;
 }

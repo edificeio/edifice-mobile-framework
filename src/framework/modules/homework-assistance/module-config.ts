@@ -9,7 +9,9 @@ export default new NavigableModuleConfig<'homeworkAssistance', IHomeworkAssistan
   name: 'homeworkAssistance',
   entcoreScope: ['homework-assistance'],
   matchEntcoreApp: '/homework-assistance',
-  hasRight: () => !!getHomeworkAssistanceWorkflowInformation(getSession()).send,
+  hasRight: () => {
+    const session = getSession();
+    return !!session && !!getHomeworkAssistanceWorkflowInformation(session).send},
 
   displayI18n: 'homeworkassistance-appname',
   displayAs: 'myAppsModule',

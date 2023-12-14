@@ -17,7 +17,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { AccountType, ISession } from '~/framework/modules/auth/model';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
@@ -32,7 +32,7 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface SchoolbookWordDetailsScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session: ISession | undefined;
+  session?: AuthLoggedAccount;
 }
 export interface SchoolbookWordDetailsScreenNavigationParams {
   notification?: ISchoolbookNotification;

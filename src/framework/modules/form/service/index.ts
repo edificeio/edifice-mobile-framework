@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import {
   DistributionStatus,
   IDistribution,
@@ -239,42 +239,42 @@ const sectionAdapter = (data: IBackendSection): ISection => {
 
 export const formService = {
   distributions: {
-    list: async (session: ISession) => {
+    list: async (session: AuthLoggedAccount) => {
       const api = '/formulaire/distributions/listMine';
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
       return distributions.map(distributionAdapter);
     },
-    listFromForm: async (session: ISession, formId: number) => {
+    listFromForm: async (session: AuthLoggedAccount, formId: number) => {
       const api = `/formulaire/distributions/forms/${formId}/listMine`;
       const distributions = (await fetchJSONWithCache(api)) as IBackendDistributionList;
       return distributions.map(distributionAdapter);
     },
   },
   distribution: {
-    get: async (session: ISession, distributionId: number) => {
+    get: async (session: AuthLoggedAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}`;
       const distribution = (await fetchJSONWithCache(api)) as IBackendDistribution;
       return distributionAdapter(distribution);
     },
-    add: async (session: ISession, distributionId: number) => {
+    add: async (session: AuthLoggedAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/add`;
       const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',
       })) as IBackendDistribution;
       return distributionAdapter(distribution);
     },
-    getResponses: async (session: ISession, distributionId: number) => {
+    getResponses: async (session: AuthLoggedAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/responses`;
       const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
       return responses.map(questionResponseAdapter);
     },
-    deleteQuestionResponses: async (session: ISession, distributionId: number, questionId: number) => {
+    deleteQuestionResponses: async (session: AuthLoggedAccount, distributionId: number, questionId: number) => {
       const api = `/formulaire/responses/${distributionId}/questions/${questionId}`;
       return signedFetchJson(`${session.platform.url}${api}`, {
         method: 'DELETE',
       }) as Promise<[]>;
     },
-    put: async (session: ISession, distribution: IDistribution) => {
+    put: async (session: AuthLoggedAccount, distribution: IDistribution) => {
       const api = `/formulaire/distributions/${distribution.id}`;
       const body = JSON.stringify(distribution);
       const distrib = (await signedFetchJson(`${session.platform.url}${api}`, {
@@ -283,14 +283,14 @@ export const formService = {
       })) as IBackendDistribution;
       return distributionAdapter(distrib);
     },
-    duplicate: async (session: ISession, distributionId: number) => {
+    duplicate: async (session: AuthLoggedAccount, distributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/duplicate`;
       const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'POST',
       })) as IBackendDistribution;
       return distributionAdapter(distribution);
     },
-    replace: async (session: ISession, distributionId: number, originalDistributionId: number) => {
+    replace: async (session: AuthLoggedAccount, distributionId: number, originalDistributionId: number) => {
       const api = `/formulaire/distributions/${distributionId}/replace/${originalDistributionId}`;
       const distribution = (await signedFetchJson(`${session.platform.url}${api}`, {
         method: 'DELETE',
@@ -299,41 +299,41 @@ export const formService = {
     },
   },
   forms: {
-    getReceived: async (session: ISession) => {
+    getReceived: async (session: AuthLoggedAccount) => {
       const api = '/formulaire/forms/sent';
       const forms = (await fetchJSONWithCache(api)) as IBackendFormList;
       return forms.map(formAdapter);
     },
   },
   form: {
-    get: async (session: ISession, id: number) => {
+    get: async (session: AuthLoggedAccount, id: number) => {
       const api = `/formulaire/forms/${id}`;
       const form = (await fetchJSONWithCache(api)) as IBackendForm;
       return formAdapter(form);
     },
-    getElementsCount: async (session: ISession, formId: number) => {
+    getElementsCount: async (session: AuthLoggedAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/elements/count`;
       const data = (await fetchJSONWithCache(api)) as { count: number };
       return data.count;
     },
-    getQuestions: async (session: ISession, formId: number) => {
+    getQuestions: async (session: AuthLoggedAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/questions`;
       const questions = (await fetchJSONWithCache(api)) as IBackendQuestionList;
       return questions.map(questionAdapter);
     },
-    getSections: async (session: ISession, formId: number) => {
+    getSections: async (session: AuthLoggedAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/sections`;
       const sections = (await fetchJSONWithCache(api)) as IBackendSectionList;
       return sections.map(sectionAdapter);
     },
-    hasResponderRight: async (session: ISession, formId: number) => {
+    hasResponderRight: async (session: AuthLoggedAccount, formId: number) => {
       const api = `/formulaire/forms/${formId}/rights`;
       const rights = (await fetchJSONWithCache(api)) as { action: string }[];
       return rights.some(r => r.action === 'fr-openent-formulaire-controllers-FormController|initResponderResourceRight');
     },
   },
   questions: {
-    getAllChoices: async (session: ISession, questionIds: number[]) => {
+    getAllChoices: async (session: AuthLoggedAccount, questionIds: number[]) => {
       let api = `/formulaire/questions/choices/all?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const headers = {
@@ -343,7 +343,7 @@ export const formService = {
       choices.sort(compareChoices);
       return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
     },
-    getChildren: async (session: ISession, questionIds: number[]) => {
+    getChildren: async (session: AuthLoggedAccount, questionIds: number[]) => {
       let api = `/formulaire/questions/children?`;
       questionIds.forEach((value, index) => (api += `${index}=${value}&`));
       const children = (await fetchJSONWithCache(api)) as IBackendQuestionList;
@@ -353,7 +353,7 @@ export const formService = {
   },
   question: {
     createResponse: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       questionId: number,
       distributionId: number,
       choiceId: number | null,
@@ -377,7 +377,7 @@ export const formService = {
       })) as IBackendQuestionResponse;
       return questionResponseAdapter(response);
     },
-    getChoices: async (session: ISession, questionId: number) => {
+    getChoices: async (session: AuthLoggedAccount, questionId: number) => {
       const api = `/formulaire/questions/${questionId}/choices`;
       const headers = {
         Accept: 'application/json;version=1.9',
@@ -386,14 +386,14 @@ export const formService = {
       choices.sort(compareChoices);
       return choices.map(choice => questionChoiceAdapter(choice, session.platform.url));
     },
-    getDistributionResponses: async (session: ISession, questionId: number, distributionId: number) => {
+    getDistributionResponses: async (session: AuthLoggedAccount, questionId: number, distributionId: number) => {
       const api = `/formulaire/questions/${questionId}/distributions/${distributionId}/responses`;
       const responses = (await fetchJSONWithCache(api)) as IBackendQuestionResponseList;
       return responses.map(questionResponseAdapter);
     },
   },
   responses: {
-    delete: async (session: ISession, formId: number, responses: IQuestionResponse[]) => {
+    delete: async (session: AuthLoggedAccount, formId: number, responses: IQuestionResponse[]) => {
       const api = `/formulaire/responses/${formId}`;
       const body = JSON.stringify(
         responses.map(r => {
@@ -414,7 +414,7 @@ export const formService = {
   },
   response: {
     put: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       responseId: number,
       distributionId: number,
       questionId: number,
@@ -437,12 +437,12 @@ export const formService = {
       })) as IBackendQuestionResponse;
       return questionResponseAdapter(response);
     },
-    getFiles: async (session: ISession, responseId: number) => {
+    getFiles: async (session: AuthLoggedAccount, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files/all`;
       const files = (await fetchJSONWithCache(api)) as IBackendResponseFileList;
       return files.map(responseFileAdapter);
     },
-    addFile: async (session: ISession, responseId: number, file: LocalFile) => {
+    addFile: async (session: AuthLoggedAccount, responseId: number, file: LocalFile) => {
       const api = `/formulaire/responses/${responseId}/files`;
       const { firstName, lastName } = session.user;
       if (!file.filename.startsWith(firstName)) {
@@ -468,7 +468,7 @@ export const formService = {
         SyncedFileWithId,
       );
     },
-    deleteFiles: async (session: ISession, responseId: number) => {
+    deleteFiles: async (session: AuthLoggedAccount, responseId: number) => {
       const api = `/formulaire/responses/${responseId}/files`;
       return fetchWithCache(api, {
         method: 'DELETE',
@@ -476,7 +476,7 @@ export const formService = {
     },
   },
   section: {
-    getQuestions: async (session: ISession, sectionId: number) => {
+    getQuestions: async (session: AuthLoggedAccount, sectionId: number) => {
       const api = `/formulaire/sections/${sectionId}/questions`;
       const questions = (await fetchJSONWithCache(api)) as IBackendQuestionList;
       questions.sort(compareSectionQuestions);

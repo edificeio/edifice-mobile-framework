@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { AccountType, ISession } from '~/framework/modules/auth/model';
+import type { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type { loadStoredStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import type { IAuthorizedViescoApps } from '~/framework/modules/viescolaire/dashboard/model';
 import type { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
@@ -17,7 +17,7 @@ export interface DashboardTeacherScreenStoreProps {
   courses: { [key: string]: Course[] };
   initialLoadingState: AsyncPagedLoadingState;
   structureIds: string[];
-  session?: ISession;
+  session?: AuthLoggedAccount;
   userId?: string;
   userType?: AccountType;
 }

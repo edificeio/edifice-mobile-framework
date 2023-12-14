@@ -8,12 +8,12 @@ import Snow from 'react-native-snow-bg';
 import { connect } from 'react-redux';
 
 import { IGlobalState } from '~/app/store';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { jingleBells } from '~/framework/modules/user/actions';
 
 interface SnowFlakesReduxProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
   isXmasActivated?: boolean;
   isFlakesFalling: boolean;
 }
@@ -87,6 +87,6 @@ const SnowFlakesConnected = connect((state: IGlobalState) => ({
 export default connect((state: IGlobalState) => ({
   session: getSession(),
   isXmasActivated: state.user.xmasTheme,
-}))(({ isXmasActivated, session }: { isXmasActivated?: boolean; session?: ISession }) => {
+}))(({ isXmasActivated, session }: { isXmasActivated?: boolean; session?: AuthLoggedAccount }) => {
   return session?.user?.id ? <SnowFlakesConnected key={isXmasActivated ? isXmasActivated.toString() : 'undefined'} /> : null;
 });

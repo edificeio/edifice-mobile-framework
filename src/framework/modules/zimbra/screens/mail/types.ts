@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type {
   fetchZimbraMailAction,
   fetchZimbraQuotaAction,
@@ -25,7 +25,7 @@ export interface ZimbraMailScreenStoreProps {
   quota: IQuota;
   rootFolders: IFolder[];
   mail?: IMail;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface ZimbraMailScreenDispatchProps {

@@ -1,4 +1,4 @@
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { SyncedFileWithId } from '~/framework/util/fileHandler';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
@@ -18,7 +18,7 @@ interface IBackendTicket {
 export const supportService = {
   ticket: {
     post: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       category: string,
       structure: string,
       subject: string,

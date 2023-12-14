@@ -2,14 +2,14 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { InfoCommentField } from '~/framework/components/commentField';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogPost } from '~/framework/modules/blog/reducer';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import { IResourceUriNotification } from '~/framework/util/notifications';
 
 export interface BlogPostDetailsScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 export interface BlogPostDetailsScreenEventProps {
   handleGetBlogPostDetails(blogPostId: { blogId: string; postId: string }, blogPostState?: string): Promise<BlogPost | undefined>;

@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type { fetchPresencesCallAction, fetchPresencesEventReasonsAction } from '~/framework/modules/viescolaire/presences/actions';
 import type { Call, Course, EventReason } from '~/framework/modules/viescolaire/presences/model';
 import type { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
@@ -15,7 +15,7 @@ export interface PresencesCallScreenNavParams {
 export interface PresencesCallScreenStoreProps {
   eventReasons: EventReason[];
   call?: Call;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface PresencesCallScreenDispatchProps {

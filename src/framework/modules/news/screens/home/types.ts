@@ -1,12 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ImageSourcePropType } from 'react-native';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { NewsItem, NewsThreadItem, NewsThreadItemRights } from '~/framework/modules/news/model';
 import { NewsNavigationParams, newsRouteNames } from '~/framework/modules/news/navigation';
 
 export interface NewsHomeScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 export interface NewsHomeScreenEventProps {
   handleGetNewsThreads(): Promise<NewsThreadItem[]>;

@@ -4,7 +4,7 @@ import DeviceInfo from 'react-native-device-info';
 import { I18n } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
+import { OAuth2ErrorCode } from '~/infra/oauth';
 
 import type { IAuthorizedAction, UserPrivateData } from './service';
 
@@ -233,20 +233,6 @@ export type UserChildrenFlattened = (UserChild & {
 export enum SessionType {
   PERMANENT,
   TEMPORARY,
-}
-
-/**
- * Current session information including authentification, rights & user info.
- */
-export interface ISession {
-  platform: Platform;
-  oauth2: OAuth2RessourceOwnerPasswordClient;
-  apps: IEntcoreApp[];
-  widgets: IEntcoreWidget[];
-  authorizedActions: IAuthorizedAction[];
-  user: AuthLoggedUserInfo;
-  type: SessionType; // Is Session remembering set on ?
-  federated: boolean;
 }
 
 /** Error codes as an enum, values can be string that backend returns */

@@ -1,4 +1,4 @@
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IField, ISources } from '~/framework/modules/mediacentre/components/AdvancedSearchModal';
 import { IResource, IResourceList, Source } from '~/framework/modules/mediacentre/reducer';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
@@ -86,7 +86,7 @@ const addSource = (sources: string[], value: boolean, name: string) => {
 
 export const mediacentreService = {
   favorites: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/mediacentre/favorites';
       const res = await fetchJSONWithCache(api);
       if (!Array.isArray(res.data)) return [];
@@ -96,7 +96,7 @@ export const mediacentreService = {
       }
       return favorites;
     },
-    add: async (session: ISession, id: string, resource: IResource) => {
+    add: async (session: AuthLoggedAccount, id: string, resource: IResource) => {
       const api = `/mediacentre/favorites?id=${id}`;
       const res: any = resource;
       if (resource.source === Source.SIGNET) {
@@ -107,7 +107,7 @@ export const mediacentreService = {
         body: JSON.stringify(res),
       });
     },
-    remove: async (session: ISession, id: string, source: Source) => {
+    remove: async (session: AuthLoggedAccount, id: string, source: Source) => {
       const api = `/mediacentre/favorites?id=${id}&source=${source}`;
       await fetchJSONWithCache(api, {
         method: 'DELETE',
@@ -115,7 +115,7 @@ export const mediacentreService = {
     },
   },
   search: {
-    getSimple: async (session: ISession, sources: string[], query: string) => {
+    getSimple: async (session: AuthLoggedAccount, sources: string[], query: string) => {
       const jsondata = {
         event: 'search',
         state: 'PLAIN_TEXT',
@@ -128,7 +128,7 @@ export const mediacentreService = {
       const response = await fetchJSONWithCache(api);
       return resourcesAdapter(concatResources(response));
     },
-    getAdvanced: async (session: ISession, fields: IField[], checkedSources: ISources) => {
+    getAdvanced: async (session: AuthLoggedAccount, fields: IField[], checkedSources: ISources) => {
       const sources: string[] = [];
       const jsondata = {
         event: 'search',
@@ -151,7 +151,7 @@ export const mediacentreService = {
     },
   },
   signets: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
       const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
       return resourcesAdapter(signetsResponse.data.signets.resources)
@@ -159,7 +159,7 @@ export const mediacentreService = {
         .concat(resourcesAdapter(mysignetsResponse).filter(resource => session.user.id && resource.owner_id !== session.user.id))
         .sort(compareResources);
     },
-    getOrientation: async (session: ISession) => {
+    getOrientation: async (session: AuthLoggedAccount) => {
       const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
       const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
       const resources = resourcesAdapter(signetsResponse.data.signets.resources).filter(resource =>
@@ -172,12 +172,12 @@ export const mediacentreService = {
       }
       return resources.sort(compareResources);
     },
-    searchSimple: async (session: ISession, query: string) => {
+    searchSimple: async (session: AuthLoggedAccount, query: string) => {
       const api = `/mediacentre/signets/search?query=${query}`;
       const resources = await fetchJSONWithCache(api);
       return resourcesAdapter(resources);
     },
-    searchAdvanced: async (session: ISession, fields: IField[]) => {
+    searchAdvanced: async (session: AuthLoggedAccount, fields: IField[]) => {
       const api = '/mediacentre/signets/advanced';
       const body = {};
       for (const field of fields) {
@@ -191,7 +191,7 @@ export const mediacentreService = {
     },
   },
   textbooks: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/mediacentre/textbooks';
       const res = await fetchJSONWithCache(api);
       return resourcesAdapter(res.data.textbooks);

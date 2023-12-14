@@ -9,7 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourceExplorer from '~/framework/components/explorer/resource-explorer';
 import { PageView } from '~/framework/components/page';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import config from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { getHomeworkWorkflowInformation } from '~/framework/modules/homework/rights';
@@ -29,7 +29,7 @@ export interface IHomeworkExplorerScreenDataProps {
   selectedDiaryId?: string;
   didInvalidate?: boolean;
   isFetching?: boolean;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface IHomeworkExplorerScreenEventProps {

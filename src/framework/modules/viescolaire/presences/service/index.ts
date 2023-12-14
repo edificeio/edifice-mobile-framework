@@ -1,7 +1,7 @@
 import moment, { Moment } from 'moment';
 import querystring from 'querystring';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import {
   Absence,
   Call,
@@ -543,7 +543,7 @@ const userChildAdapter = (data: BackendUserChild): PresencesUserChild => {
 
 export const presencesService = {
   absences: {
-    get: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+    get: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/presences/statements/absences?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&student_id=${studentId}`;
       const absences = (await fetchJSONWithCache(api)) as BackendAbsences;
       return absencesAdapter(absences);
@@ -551,7 +551,7 @@ export const presencesService = {
   },
   absence: {
     create: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       structureId: string,
       studentId: string,
       startDate: Moment,
@@ -571,7 +571,7 @@ export const presencesService = {
       });
     },
     createWithFile: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       structureId: string,
       studentId: string,
       startDate: Moment,
@@ -601,12 +601,12 @@ export const presencesService = {
     },
   },
   call: {
-    get: async (session: ISession, id: number) => {
+    get: async (session: AuthLoggedAccount, id: number) => {
       const api = `/presences/registers/${id}`;
       const call = (await fetchJSONWithCache(api)) as BackendCall;
       return callAdapter(call);
     },
-    create: async (session: ISession, course: Course, teacherId: string, allowMultipleSlots?: boolean) => {
+    create: async (session: AuthLoggedAccount, course: Course, teacherId: string, allowMultipleSlots?: boolean) => {
       const api = '/presences/registers';
       const body = JSON.stringify({
         course_id: course.id,
@@ -625,7 +625,7 @@ export const presencesService = {
       })) as { id: number };
       return call.id;
     },
-    updateState: async (session: ISession, id: number, state: CallState) => {
+    updateState: async (session: AuthLoggedAccount, id: number, state: CallState) => {
       const api = `/presences/registers/${id}/status`;
       const body = JSON.stringify({
         state_id: state,
@@ -638,7 +638,7 @@ export const presencesService = {
   },
   courses: {
     get: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       teacherId: string,
       structureId: string,
       startDate: string,
@@ -661,13 +661,13 @@ export const presencesService = {
     },
   },
   events: {
-    get: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+    get: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/presences/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=NO_REASON&type=UNREGULARIZED&type=REGULARIZED&type=LATENESS&type=DEPARTURE`;
       const events = (await fetchJSONWithCache(api)) as BackendHistoryEvents;
       return historyEventsAdapter(events);
     },
     getForgottenNotebooks: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       studentId: string,
       structureId: string,
       startDate: string,
@@ -677,7 +677,7 @@ export const presencesService = {
       const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
       return forgottenNotebooksAdapter(forgottenNotebooks);
     },
-    getIncidents: async (session: ISession, studentId: string, structureId: string, startDate: string, endDate: string) => {
+    getIncidents: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
       const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
       return incidentsAdapter(incidents);
@@ -685,7 +685,7 @@ export const presencesService = {
   },
   event: {
     create: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       studentId: string,
       callId: number,
       type: CallEventType,
@@ -710,14 +710,14 @@ export const presencesService = {
       })) as BackendEvent;
       return eventAdapter(event);
     },
-    delete: async (session: ISession, id: number) => {
+    delete: async (session: AuthLoggedAccount, id: number) => {
       const api = `/presences/events/${id}`;
       await fetchJSONWithCache(api, {
         method: 'DELETE',
       });
     },
     update: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       id: number,
       studentId: string,
       callId: number,
@@ -744,7 +744,7 @@ export const presencesService = {
     },
   },
   eventReasons: {
-    get: async (session: ISession, structureId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/presences/reasons?structureId=${structureId}&reasonTypeId=0`;
       const eventReasons = (await fetchJSONWithCache(api)) as BackendEventReasonList;
       return eventReasons.filter(reason => !reason.hidden && reason.id >= 0).map(eventReasonAdapter);
@@ -752,7 +752,7 @@ export const presencesService = {
   },
   eventReason: {
     update: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       id: number,
       studentId: string,
       structureId: string,
@@ -787,28 +787,28 @@ export const presencesService = {
     },
   },
   initialization: {
-    getStructureStatus: async (session: ISession, structureId: string) => {
+    getStructureStatus: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/presences/initialization/structures/${structureId}`;
       const data = (await fetchJSONWithCache(api)) as { initialized: boolean };
       return data.initialized;
     },
   },
   preferences: {
-    getRegister: async (session: ISession) => {
+    getRegister: async (session: AuthLoggedAccount) => {
       const api = '/userbook/preference/presences.register';
       const data = (await fetchJSONWithCache(api)) as { preference: string };
       return data.preference;
     },
   },
   settings: {
-    getAllowMultipleSlots: async (session: ISession, structureId: string) => {
+    getAllowMultipleSlots: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/presences/structures/${structureId}/settings/multiple-slots`;
       const data = (await fetchJSONWithCache(api)) as { allow_multiple_slots: boolean };
       return data.allow_multiple_slots;
     },
   },
   studentsEvents: {
-    get: async (session: ISession, structureId: string, studentIds: string[]) => {
+    get: async (session: AuthLoggedAccount, structureId: string, studentIds: string[]) => {
       const api = `/presences/structures/${structureId}/students/events`;
       const body = JSON.stringify({
         student_ids: studentIds,
@@ -824,7 +824,7 @@ export const presencesService = {
     },
   },
   userChildren: {
-    get: async (session: ISession, relativeId: string) => {
+    get: async (session: AuthLoggedAccount, relativeId: string) => {
       const api = `/presences/children?relativeId=${relativeId}`;
       const userChildren = (await fetchJSONWithCache(api)) as BackendUserChildren;
       return userChildren.map(userChildAdapter);
