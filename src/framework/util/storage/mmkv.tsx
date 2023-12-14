@@ -28,7 +28,11 @@ const migrateFromAsyncStorage = async (storage: IStorageBackend) => {
         }
       } catch (error) {
         Trackers.trackDebugEvent('Storage', 'MIGRATION ERROR', (error as Error | null)?.message || 'migrateFromAsyncStorage');
-        throw error;
+        console.warn(
+          `[Storage] migrateFromAsyncStorage: failed to migrate items ${
+            error instanceof Error ? `: ${(error as Error).message}` : ''
+          }`,
+        );
       }
     }
   }
