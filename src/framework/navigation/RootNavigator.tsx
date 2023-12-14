@@ -64,9 +64,14 @@ function RootNavigator(props: RootNavigatorProps) {
   // Get navigation state from redux state
   // Only if app is ready, and if the used is not logged in. (If logged, no navState goes to the timeline)
 
+  const session = props.connected ? (props.accounts as AuthLoggedAccountMap)[props.connected] : undefined;
+  const isMainNavigationAccessible = session && !requirement;
+
   const navigationState = React.useMemo(() => {
-    return appReady && !connected ? getAuthNavigationState(accounts, pending, showOnboarding, requirement) : undefined;
-  }, [accounts, appReady, connected, pending, requirement, showOnboarding]);
+    return appReady && !isMainNavigationAccessible
+      ? getAuthNavigationState(accounts, pending, showOnboarding, requirement)
+      : undefined;
+  }, [accounts, appReady, isMainNavigationAccessible, pending, requirement, showOnboarding]);
 
   // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
   React.useLayoutEffect(() => {
@@ -76,12 +81,11 @@ function RootNavigator(props: RootNavigatorProps) {
   }, [navigationState]);
 
   // Auth/Main switch
-  const session = props.connected ? (props.accounts as AuthLoggedAccountMap)[props.connected] : undefined;
   const mainNavigation = useMainNavigation(session?.rights.apps ?? [], session?.rights.widgets ?? []);
   const authNavigation = useAuthNavigation();
   const routes = React.useMemo(() => {
-    return session && !requirement ? mainNavigation : authNavigation;
-  }, [authNavigation, mainNavigation, requirement, session]);
+    return isMainNavigationAccessible ? mainNavigation : authNavigation;
+  }, [authNavigation, isMainNavigationAccessible, mainNavigation]);
 
   // === Render navigation container with initialState ===
 

@@ -622,12 +622,12 @@ export async function fetchRawUserRequirements(platform: Platform) {
  */
 export function getRequirementScenario(userRequirements: IUserRequirements) {
   // MOCK
-  // return a ? AuthRequirement.MUST_REVALIDATE_TERMS : undefined;
+  return AuthRequirement.MUST_VERIFY_MOBILE;
   // END MOCK
-  if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
-  if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
-  if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
-  if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
+  // if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
+  // if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+  // if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
+  // if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
 }
 
 export async function fetchUserInfo(platform: Platform) {

@@ -185,6 +185,8 @@ export const loginSteps = {
   },
 };
 
+const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
+
 /**
  * Manual login action with credentials by getting a fresh new token.
  * @param platform platform info to create the session on.
@@ -200,7 +202,7 @@ export const loginAction = (platform: Platform, credentials: IAuthCredentials) =
   const accountInfo = await loginSteps.finalizeLogin(platform, credentials.username, user.infos, user.publicInfos, requirement);
   if (requirement) {
     const context = await authService.getAuthContext(platform);
-    if (requirement === AuthRequirement.MUST_REVALIDATE_TERMS) {
+    if (requirementsThatNeedLegalUrls.includes(requirement)) {
       await dispatch(loadPlatformLegalUrlsAction(platform));
     }
     dispatch(actions.loginRequirement(accountInfo.user.id, accountInfo, requirement, context));
@@ -217,8 +219,6 @@ export const restoreAction = (platform: Platform) => async (dispatch: AuthDispat
 export const consumeAuthError = () => (dispatch: AuthDispatch) => {
   // dispatch(authActions.sessionErrorConsume());
 };
-
-const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
 /**
  * Fetch again the logged user requirements and updates the store.

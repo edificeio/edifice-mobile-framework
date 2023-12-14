@@ -71,6 +71,7 @@ export const getLoginRouteName = (platform?: Platform) => {
 };
 
 export const getNavActionForRequirement = (requirement: AuthRequirement) => {
+  console.debug('getNavActionForRequirement', requirement);
   switch (requirement) {
     case AuthRequirement.MUST_CHANGE_PASSWORD:
       return CommonActions.reset({
@@ -88,6 +89,18 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
         routes: [
           {
             name: authRouteNames.revalidateTerms,
+          },
+        ],
+      });
+    case AuthRequirement.MUST_VERIFY_MOBILE:
+      console.debug('AGAHAH');
+      return CommonActions.reset({
+        routes: [
+          {
+            name: authRouteNames.changeMobile,
+            params: {
+              // defaultMobile: action.defaultMobile,
+            },
           },
         ],
       });
