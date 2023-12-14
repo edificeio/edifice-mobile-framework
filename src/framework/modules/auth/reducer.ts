@@ -162,7 +162,7 @@ const reducer = createReducer(initialState, {
 
   [actionTypes.login]: (state, action) => {
     const { id, account } = action as unknown as ActionPayloads['login'];
-    return { ...state, accounts: { ...state.accounts, [id]: account }, connected: id, showOnboarding: false };
+    return { ...state, accounts: { [id]: account }, connected: id, showOnboarding: false };
   },
 
   [actionTypes.loginRequirement]: (state, action) => {
