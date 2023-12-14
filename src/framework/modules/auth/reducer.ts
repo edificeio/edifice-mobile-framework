@@ -169,7 +169,7 @@ const reducer = createReducer(initialState, {
     const { id, account, requirement, context } = action as unknown as ActionPayloads['loginRequirement'];
     return {
       ...state,
-      accounts: { ...state.accounts, [id]: account },
+      accounts: { [id]: account },
       connected: id,
       showOnboarding: false,
       requirement,
