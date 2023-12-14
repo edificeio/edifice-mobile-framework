@@ -34,7 +34,7 @@ jobs:
               "attachments": [
                 {
                   "pretext": "${{ job.status }}",
-                  "color": "9ECCFF",
+                  "color": "9ECCFF"
                 }
               ]
             }
