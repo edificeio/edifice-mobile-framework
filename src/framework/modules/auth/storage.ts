@@ -13,7 +13,7 @@ export interface AuthStorageData {
         account?: string;
         platform?: string;
       };
-  showOnboarding: boolean;
+  'show-onboarding': boolean;
 }
 
 export const authStorage = storage
@@ -29,7 +29,7 @@ export const getSavedStartup = () => {
   if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
   return { ...startup } as AuthStorageData['startup'];
 };
-export const getShowOnbording = () => authStorage.getBoolean('showOnboarding') ?? true;
+export const getShowOnbording = () => authStorage.getBoolean('show-onboarding') ?? true;
 
 /** read old auth values in storage */
 // export const getLegagyAuthInformation = () => {
