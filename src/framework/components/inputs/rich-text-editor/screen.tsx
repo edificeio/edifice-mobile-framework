@@ -5,7 +5,6 @@ import { Animated, Dimensions, Keyboard, KeyboardAvoidingView, Platform, ScrollV
 
 import { UI_SIZES } from '~/framework/components/constants';
 import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
-import { actions } from '~/framework/components/inputs/rich-text-editor/const';
 import { PageView } from '~/framework/components/page';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { isEmpty } from '~/framework/util/object';
@@ -42,7 +41,7 @@ export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<any>
 
 export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   const [emojiDuration, setEmojiDuration] = useState(240); // iOS Default
-  const [pageHeight, setPageHeight] = useState(257 + 45); // iOS Default
+  const [pageHeight, setPageHeight] = useState(257 + 50); // iOS Default
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [itemsSelected, setItemsSelected] = useState([]);
 
@@ -220,16 +219,6 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
           marginTop: -pageHeight,
         }}>
         <RichToolbar
-          actions={['image', 'separator', 'text-options']}
-          actions2={[
-            actions.setBold,
-            actions.setItalic,
-            actions.setUnderline,
-            actions.insertBulletsList,
-            actions.insertOrderedList,
-            actions.setSubscript,
-            actions.setSuperscript,
-          ]}
           memoActionsSelected={itemsSelected}
           disabledIconTint="#bfbfbf"
           editor={richText}

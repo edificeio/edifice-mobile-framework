@@ -6,8 +6,7 @@ import { RichToolbarMenuItemProps } from './types';
 
 export const RichToolbarMenuItem = (props: RichToolbarMenuItemProps) => {
   const handleSelected = () => {
-    console.log('change toolbar');
-    props.onSelected();
+    props.onSelected(props.menu);
   };
 
   return <RichToolbarItem {...props} onSelected={handleSelected} />;

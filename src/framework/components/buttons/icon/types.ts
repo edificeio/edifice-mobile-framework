@@ -4,5 +4,5 @@ export interface IconButtonProps extends TouchableOpacityProps {
   icon: string;
   color?: ColorValue;
   size?: number;
-  action: () => void;
+  action?: () => void;
 }

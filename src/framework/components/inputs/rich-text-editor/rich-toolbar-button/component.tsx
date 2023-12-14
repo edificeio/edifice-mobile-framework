@@ -5,8 +5,10 @@ import styles from './styles';
 import { RichToolbarButtonProps } from './types';
 
 export const RichToolbarButton = (props: RichToolbarButtonProps) => {
+  const { editor, action } = props;
   const handleSelected = () => {
-    props.action();
+    editor.showAndroidKeyboard();
+    editor.sendAction(action, 'result');
   };
 
   return (
