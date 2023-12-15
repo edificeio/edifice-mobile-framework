@@ -19,19 +19,19 @@ jobs:
         with:
           node-version: 16
 
-      - uses: connor-baer/action-sync-branch@main
+      - name: Sync branch
+        uses: connor-baer/action-sync-branch@main
         with:
           branch: phrase-translations
           token: ${{ secrets.PHRASE_TRANSLATIONS }}
           force: true
 
-      - name: Send Slack notification
-        uses: slackapi/slack-github-action@v1.24.0
-        with:
-          payload: |
-            {
-              "text": "Sync phrase-translations completed",
-              "color": "9ECCFF"
-            }
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
+          SLACK_CHANNEL: general
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_MESSAGE: 'Sync phrase-translations completed : ${{ job.status }}'
+          SLACK_TITLE: 'Sync phrase-translations'
+          SLACK_USERNAME: rtCamp
+          SLACK_WEBHOOK: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
