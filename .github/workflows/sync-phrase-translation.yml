@@ -26,7 +26,8 @@ jobs:
           token: ${{ secrets.PHRASE_TRANSLATIONS }}
           force: true
 
-      - name: Slack Notification
+      - name: Slack Notification on error
+        if: ${{ failure() }}
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_CHANNEL: general
