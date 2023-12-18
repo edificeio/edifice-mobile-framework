@@ -15,10 +15,7 @@ jobs:
 
       - name: Auto Merge Pull Request
         uses: pascalgn/automerge-action@v0.11.0
-        with:
-
         env:
-          BASE_BRANCHES: 'phrase-translations'
           GITHUB_TOKEN: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
           MERGE_LABELS: ''
           MERGE_METHOD: 'squash'
