@@ -704,7 +704,7 @@
   "mediaplayer-error-notsupported-text": "El contenido no se puede leer por varias razones posibles (formato incompatible, archivo dañado, archivo borrado)",
   "mediaplayer-error-notsupported-title": "No se puede leer el contenido",
   "moodle-moduleconfig-appname": "Moodle",
-  "myapp-accessweb": "Acceder a la versión web",
+  "myapp-accessweb": "Ver más apps",
   "myapp-appname": "Mis aplis",
   "myapp-infobubble-donotshow": "No volver a mostrar este mensaje",
   "myapp-infobubble-text": "Con {{appName}}, puede recibir todas las notificaciones en la pestaña Noticias. Al hacer clic en ciertas actividades, accederá a la versión en línea de la red social educativa.",
