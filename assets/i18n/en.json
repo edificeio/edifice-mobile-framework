@@ -704,7 +704,7 @@
   "mediaplayer-error-notsupported-text": "The content cannot be read for several possible reasons (non-compatible format, corrupted file, deleted file).",
   "mediaplayer-error-notsupported-title": "Unable to read content",
   "moodle-moduleconfig-appname": "Moodle",
-  "myapp-accessweb": "Access the web version",
+  "myapp-accessweb": "See other apps",
   "myapp-appname": "My apps",
   "myapp-infobubble-donotshow": "Do not show this message",
   "myapp-infobubble-text": "With {{appName}}, you will receive all your notifications in the News tab. When you click on specific activities, you will be redirected to the online version of your virtual learning environment.",
