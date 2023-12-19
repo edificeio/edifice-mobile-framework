@@ -4,6 +4,15 @@ on:
   pull_request:
     branches:
       - phrase-translations
+    types:
+      - edited
+      - labeled
+      - opened
+      - ready_for_review
+      - reopened
+      - synchronize
+      - unlabeled
+      - unlocked
 
 jobs:
   automerge:
