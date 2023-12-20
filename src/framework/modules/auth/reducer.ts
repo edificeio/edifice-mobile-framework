@@ -5,6 +5,7 @@ import type {
   AuthLoggedAccountMap,
   AuthMixedAccountMap,
   AuthRequirement,
+  AuthTokenSet,
   IAuthContext,
   LegalUrls,
 } from '~/framework/modules/auth/model';
@@ -19,7 +20,7 @@ export interface IAuthState {
   connected?: keyof IAuthState['accounts']; // Currently logged user if so
   requirement?: AuthRequirement; // Requirement for the current account
   deleted?: keyof IAuthState['accounts']; // Last account was deleted
-  showOnboarding: AuthStorageData['showOnboarding'];
+  showOnboarding: AuthStorageData['show-onboarding'];
   platformContexts: Record<string, IAuthContext>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
 
@@ -59,6 +60,7 @@ export const actionTypes = {
   login: moduleConfig.namespaceActionType('LOGIN'),
   loginRequirement: moduleConfig.namespaceActionType('LOGIN_REQUIREMENT'),
   updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
+  refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -74,12 +76,13 @@ export const actionTypes = {
 };
 
 export interface ActionPayloads {
-  authInit: Pick<AuthStorageData, 'accounts' | 'startup' | 'showOnboarding'> & { deviceId: IAuthState['deviceInfo']['uniqueId'] };
+  authInit: Pick<AuthStorageData, 'accounts' | 'startup' | 'show-onboarding'> & { deviceId: IAuthState['deviceInfo']['uniqueId'] };
   loadPfContext: { name: Platform['name']; context: IAuthContext };
   loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
   login: { id: string; account: AuthLoggedAccount };
   loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: IAuthContext };
   updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: IAuthContext };
+  refreshToken: { id: string; tokens: AuthTokenSet };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -98,7 +101,7 @@ export const actions = {
   authInit: (
     startup: AuthStorageData['startup'],
     accounts: AuthStorageData['accounts'],
-    showOnboarding: AuthStorageData['showOnboarding'],
+    showOnboarding: AuthStorageData['show-onboarding'],
     deviceId: IAuthState['deviceInfo']['uniqueId'],
   ) => ({ type: actionTypes.authInit, startup, accounts, showOnboarding, deviceId }),
 
@@ -127,6 +130,12 @@ export const actions = {
     context,
   }),
 
+  refreshToken: (id: string, tokens: AuthTokenSet) => ({
+    type: actionTypes.refreshToken,
+    id,
+    tokens,
+  }),
+
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
   // sessionPartial: (session: ISession) => ({ type: actionTypes.sessionPartial, session }),
   // sessionRefresh: (session: ISession) => ({ type: actionTypes.sessionRefresh, session }),
@@ -145,7 +154,7 @@ export const actions = {
 
 const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
-    const { accounts, startup, showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
+    const { accounts, startup, 'show-onboarding': showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
     const pending = startup.platform ? { platform: startup.platform } : undefined;
     return { ...initialState, accounts, showOnboarding, pending, deviceInfo: { ...state.deviceInfo, uniqueId: deviceId } };
   },
@@ -189,6 +198,11 @@ const reducer = createReducer(initialState, {
         platformContexts: { ...state.platformContexts, [account.platform.name]: context },
       };
     else return { ...state, accounts: { ...state.accounts, [id]: account }, requirement };
+  },
+
+  [actionTypes.refreshToken]: (state, action) => {
+    const { id, tokens } = action as unknown as ActionPayloads['refreshToken'];
+    return { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens } } };
   },
 
   // // Saves session info & consider user logged

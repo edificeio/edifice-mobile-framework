@@ -4,14 +4,16 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
+import { IGlobalState } from '~/app/store';
 import { IAuthState, actions, assertSession, getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { Platform } from '~/framework/util/appConf';
+import appConf, { Platform } from '~/framework/util/appConf';
 import { StorageSlice } from '~/framework/util/storage/slice';
 import { Trackers } from '~/framework/util/tracker';
 
 import {
   AuthError,
   AuthRequirement,
+  AuthSavedAccount,
   IAuthContext,
   IAuthCredentials,
   IChangePasswordError,
@@ -36,7 +38,7 @@ import {
   manageFirebaseToken,
   revalidateTerms,
 } from './service';
-import { getSavedAccounts, getSavedStartup, getShowOnbording } from './storage';
+import { readSavedAccounts, readSavedStartup, readShowOnbording, writeSingleAccount } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
@@ -56,13 +58,18 @@ type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 // }
 // export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPartialScenario | void;
 
+/**
+ * Init the auth state with walues read from the storage.
+ * @returns If exist, the startup account to try refresh session with.
+ */
 export const authInitAction = () => async (dispatch: AuthDispatch) => {
-  const startup = getSavedStartup();
-  const accounts = getSavedAccounts();
-  const showOnboarding = getShowOnbording();
+  const startup = readSavedStartup();
+  const accounts = readSavedAccounts();
+  const showOnboarding = readShowOnbording();
   const deviceId = await DeviceInfo.getUniqueId();
 
   dispatch(actions.authInit(startup, accounts, showOnboarding, deviceId));
+  return startup ? (startup.account ? accounts[startup.account] : undefined) : undefined;
 };
 
 /**
@@ -131,7 +138,17 @@ export const loginSteps = {
    * Loads the saved token oAuth2 from the storage.
    * @param platform
    */
-  loadToken: async (platform: Platform) => {},
+  loadToken: async (account: AuthSavedAccount) => {
+    const start = Date.now();
+    try {
+      authService.restoreSession(appConf.assertPlatformOfName(account.platform), account.tokens);
+    } catch (e) {
+      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.loadToken');
+      throw e;
+    } finally {
+      console.info(`[perf] loadToken in ${Date.now() - start}ms`);
+    }
+  },
   /**
    * Get one of the requirements needed by the user to access the app
    * @param platform
@@ -204,19 +221,10 @@ export const loginSteps = {
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
-/**
- * Manual login action with credentials by getting a fresh new token.
- * @param platform platform info to create the session on.
- * @param credentials login & password
- * @returns
- * @throws
- */
-export const loginAction = (platform: Platform, credentials: IAuthCredentials) => async (dispatch: AuthDispatch) => {
-  const activationScenario = await loginSteps.getToken(platform, credentials);
-  // if (activationScenario) return activationScenario;
+const performLogin = async (platform: Platform, loginUsed: string, dispatch: AuthDispatch) => {
   const requirement = await loginSteps.getRequirement(platform);
   const user = await loginSteps.getUserData(platform, requirement);
-  const accountInfo = await loginSteps.finalizeLogin(platform, credentials.username, user.infos, user.publicInfos, requirement);
+  const accountInfo = await loginSteps.finalizeLogin(platform, loginUsed, user.infos, user.publicInfos, requirement);
   if (requirement) {
     const context = await authService.getAuthContext(platform);
     const infos = await getRequirementAdditionalInfos(requirement, platform);
@@ -229,9 +237,39 @@ export const loginAction = (platform: Platform, credentials: IAuthCredentials) =
   } else {
     dispatch(actions.login(accountInfo.user.id, accountInfo));
   }
+  return accountInfo;
 };
 
-export const restoreAction = (platform: Platform) => async (dispatch: AuthDispatch) => {};
+/**
+ * Manual login action with credentials by getting a fresh new token.
+ * @param platform platform info to create the session on.
+ * @param credentials login & password
+ * @returns
+ * @throws
+ */
+export const loginAction =
+  (platform: Platform, credentials: IAuthCredentials) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+    const activationScenario = await loginSteps.getToken(platform, credentials);
+    // if (activationScenario) return activationScenario;
+    const session = await performLogin(platform, credentials.username, dispatch);
+    console.debug('loginAction end', getAuthState(getState()).showOnboarding);
+    writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+    return session;
+  };
+
+/**
+ * Automatic login action with given saved account information (and its serialized token).
+ * @param account stored accound information
+ * @returns
+ * @throws
+ */
+export const restoreAction = (account: AuthSavedAccount) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+  await loginSteps.loadToken(account);
+  const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
+  console.debug('restoreAction end', getAuthState(getState()).showOnboarding);
+  writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+  return session;
+};
 
 /**
  * Marks the current error as displayed.

@@ -208,8 +208,7 @@ export const redirectLoginNavAction = (
 };
 
 export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IAuthNavigationParams>) {
-  const hasMultiplePlatforms = appConf.platforms.length > 1;
-  if (hasMultiplePlatforms) {
+  if (appConf.hasMultiplePlatform) {
     navigation.navigate(authRouteNames.platforms);
   } else {
     const pf = appConf.platforms[0];

@@ -1,18 +1,14 @@
 import { storage } from '~/framework/util/storage';
 
-import { AuthSavedAccount } from './model';
+import { AuthLoggedAccount, AuthSavedAccount } from './model';
 import moduleConfig from './module-config';
 
 export interface AuthStorageData {
   accounts: Record<string, AuthSavedAccount>;
-  startup:
-    | {
-        platform?: string;
-      }
-    | {
-        account?: string;
-        platform?: string;
-      };
+  startup: {
+    account?: string;
+    platform?: string;
+  };
   'show-onboarding': boolean;
 }
 
@@ -22,14 +18,59 @@ export const authStorage = storage
   .setAppInit(function () {})
   .setSessionInit(function (session) {});
 
-export const getSavedAccounts = () => authStorage.getJSON('accounts') ?? {};
-export const getSavedStartup = () => {
+export const readSavedAccounts = () => authStorage.getJSON('accounts') ?? {};
+export const readSavedStartup = () => {
   let startup = authStorage.getJSON('startup');
   const oldCurrentPlatform = storage.global.getString('currentPlatform');
   if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
   return { ...startup } as AuthStorageData['startup'];
 };
-export const getShowOnbording = () => authStorage.getBoolean('show-onboarding') ?? true;
+export const readShowOnbording = () => authStorage.getBoolean('show-onboarding') ?? true;
+
+/** Converts an actual logged account into a serialisable saved account information */
+export const getSerializedAccountInfo = (account: AuthLoggedAccount) => {
+  return {
+    platform: account.platform.name,
+    tokens: account.tokens,
+    user: {
+      displayName: account.user.displayName,
+      id: account.user.id,
+      loginUsed: account.user.loginUsed,
+      type: account.user.type,
+      avatar: account.user.avatar,
+    },
+  } as AuthSavedAccount;
+};
+
+/**
+ * Save in storage a single account, replacing the others already present.
+ * @param account
+ * @param showOnboarding
+ */
+export const writeSingleAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
+  const savedAccount = getSerializedAccountInfo(account);
+  const savedAccounts: Record<string, AuthSavedAccount> = {
+    [account.user.id]: savedAccount,
+  };
+  const startup: AuthStorageData['startup'] = {
+    platform: account.platform.name,
+    account: account.user.id,
+  };
+  authStorage.setJSON('accounts', savedAccounts);
+  authStorage.setJSON('startup', startup);
+  console.debug('writeSingleAccount', showOnboarding);
+  authStorage.set('show-onboarding', showOnboarding);
+};
+
+/**
+ * Update the given account information in the storage
+ * @param account
+ */
+export const updateAccount = (savedAccount: AuthSavedAccount) => {
+  const savedAccounts = readSavedAccounts();
+  savedAccounts[savedAccount.user.id] = savedAccount;
+  authStorage.setJSON('accounts', savedAccounts);
+};
 
 /** read old auth values in storage */
 // export const getLegagyAuthInformation = () => {

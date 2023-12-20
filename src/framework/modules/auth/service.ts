@@ -14,6 +14,7 @@ import {
   AuthLoggedAccount,
   AuthLoggedUserInfo,
   AuthRequirement,
+  AuthTokenSet,
   IAuthContext,
   IAuthCredentials,
   LegalUrls,
@@ -173,29 +174,14 @@ export async function createSession(platform: Platform, credentials: { username:
   );
 }
 
-export function restoreSessionAvailable() {
-  return OAuth2RessourceOwnerPasswordClient.getStoredTokenStr();
-}
-
-export async function restoreSession(platform: Platform) {
+export async function restoreSession(platform: Platform, token: AuthTokenSet) {
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
   }
-  await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
+  OAuth2RessourceOwnerPasswordClient.connection.importToken(token);
   if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
     throw createAuthError(RuntimeAuthErrorCode.RESTORE_FAIL, 'Failed to restore saved session', '');
-  }
-}
-
-export async function saveSession() {
-  try {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) {
-      throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
-    }
-    await OAuth2RessourceOwnerPasswordClient.connection.saveToken();
-  } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Failed to save token', err as Error);
   }
 }
 
@@ -299,7 +285,7 @@ export const PLATFORM_STORAGE_KEY = 'currentPlatform';
 export async function loadCurrentPlatform() {
   const platformId = storage.global.getString(PLATFORM_STORAGE_KEY);
   if (platformId) {
-    const platform = appConf.platforms.find(_pf => _pf.name === platformId);
+    const platform = appConf.getPlatformByName(platformId);
     if (!platform)
       throw createAuthError(RuntimeAuthErrorCode.PLATFORM_NOT_EXISTS, '', `Loaded platform "${platformId}" doesn't exists.`);
     else return platform;
@@ -602,6 +588,7 @@ export async function verifyEmailCode(key: string) {
 }
 
 export async function getUserRequirements(platform: Platform) {
+  console.debug('getUserRequirements');
   const resp = await signedFetch(`${platform.url}/auth/user/requirements`);
   return resp.status === 404 ? null : (resp.json() as IUserRequirements);
 }

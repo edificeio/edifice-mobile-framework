@@ -9,8 +9,10 @@ import DeviceInfo from 'react-native-device-info';
 import { Source } from 'react-native-fast-image';
 
 import { I18n } from '~/app/i18n';
-import type { AuthTokenSet } from '~/framework/modules/auth/model';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { getStore } from '~/app/store';
+import type { AuthLoggedAccount, AuthSavedAccount, AuthTokenSet } from '~/framework/modules/auth/model';
+import { assertSession, actions as authActions, getSession, getState } from '~/framework/modules/auth/reducer';
+import { getSerializedAccountInfo, readSavedStartup, updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
@@ -333,8 +335,6 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...data,
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
-      // 4: Save token if asked
-      if (saveToken) await this.saveToken();
       await this.deleteQueryParamToken(); // Delete current queryParamToken here to ensure we'll not have previous one form another accounts.
       this.generateUniqueSesionIdentifier();
       return this.token!;
@@ -366,6 +366,10 @@ export class OAuth2RessourceOwnerPasswordClient {
     return this.getNewToken('password', { username, password }, saveToken);
   }
 
+  /**
+   * @deprecated
+   * @returns
+   */
   public static async getStoredTokenStr(): Promise<IOAuthToken | undefined> {
     const rawStoredToken = await getItemJson('token');
     if (!rawStoredToken) {
@@ -375,6 +379,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * @deprecated
    * Read stored token in local storage. No-op if no token is stored, return undefined.
    */
   public async loadToken(): Promise<IOAuthToken | undefined> {
@@ -391,6 +396,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * @deprecated
    * Saves given token information in local storage.
    */
   public async saveToken() {
@@ -398,13 +404,17 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * @deprecated
    * Remove given token information in local storage.
    */
   public async forgetToken() {
     await removeItem('token');
   }
 
-  /** */
+  /**
+   * Return a serialisable object representing the current tokens
+   * @returns the boect representing the token to be stored somewhere.
+   */
   public exportToken(): AuthTokenSet {
     if (!this.token) throw new Error('[oAuth] exportToken : no token');
     return {
@@ -412,6 +422,33 @@ export class OAuth2RessourceOwnerPasswordClient {
       refresh: { value: this.token.refresh_token },
       scope: this.token.scope.split(' '),
     };
+  }
+
+  public importToken(token: AuthTokenSet) {
+    this.token = {
+      access_token: token.access.value,
+      expires_at: new Date(token.access.expiresAt),
+      expires_in: 0,
+      token_type: token.access.type,
+      refresh_token: token.refresh.value,
+      scope: token.scope.join(' '),
+    };
+    this.generateUniqueSesionIdentifier();
+    return token;
+  }
+
+  public updateToken(token: AuthTokenSet) {
+    const userId = readSavedStartup().account;
+    if (userId) {
+      getStore().dispatch(authActions.refreshToken(userId, token)); // Update redux
+      let account = getState(getStore().getState()).accounts[userId]; // Get account in reducer
+      if (typeof account.platform === 'object') {
+        account = getSerializedAccountInfo(account as AuthLoggedAccount); // Get saved accoutn info if it's logged account
+      }
+      updateAccount(account as AuthSavedAccount); // Update Storage
+      this.importToken(token); // Update OAuth2 client
+    }
+    return token;
   }
 
   /**
@@ -452,11 +489,11 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...data,
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
-      // Save token
-      await this.saveToken();
-      this.generateUniqueSesionIdentifier();
+      // Update stored token
+      this.updateToken(this.exportToken());
       return this.token!;
     } catch (err) {
+      console.warn('[oAuth2] failed refresh token', err);
       throw err;
     }
   }
@@ -490,13 +527,15 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static getExpirationDate(seconds: number) {
     const expin = new Date();
-    expin.setSeconds(expin.getSeconds() + seconds);
+    // expin.setSeconds(expin.getSeconds() + seconds);
+    expin.setSeconds(expin.getSeconds() + 10);
     return expin;
   }
 
   /**
    * Removes the token in this connection.
    * It will be also removed from local storage.
+   * @deprecated
    */
   public async eraseToken() {
     await removeItem('token');

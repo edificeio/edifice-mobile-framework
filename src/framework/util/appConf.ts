@@ -119,6 +119,21 @@ export class AppConf {
 
   platforms: Platform[];
 
+  getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
+
+  assertPlatformOfName = (name: string) => {
+    return (
+      this.getPlatformByName(name) ??
+      (() => {
+        throw new Error('[assertPlatformOfName] no platform of name :' + name);
+      })()
+    );
+  };
+
+  get hasMultiplePlatform() {
+    return this.platforms.length > 1;
+  }
+
   webviewIdentifier: string;
 
   get i18nOTAEnabled() {
