@@ -34,5 +34,4 @@ jobs:
           SLACK_COLOR: ${{ job.status }}
           SLACK_MESSAGE: 'Sync phrase-translations completed : ${{ job.status }}'
           SLACK_TITLE: 'Sync phrase-translations'
-          SLACK_USERNAME: rtCamp
           SLACK_WEBHOOK: ${{ secrets.SLACK_MONITOR_MOBILE_URL }}
