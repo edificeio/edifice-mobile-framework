@@ -3,6 +3,7 @@
  */
 import CookieManager from '@react-native-cookies/cookies';
 import { encode as btoa } from 'base-64';
+import moment from 'moment';
 import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -11,7 +12,13 @@ import { Source } from 'react-native-fast-image';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import type { AuthLoggedAccount, AuthSavedAccount, AuthTokenSet } from '~/framework/modules/auth/model';
-import { assertSession, actions as authActions, getSession, getState } from '~/framework/modules/auth/reducer';
+import {
+  assertSession,
+  actions as authActions,
+  getCurrentQueryParamToken,
+  getSession,
+  getState,
+} from '~/framework/modules/auth/reducer';
 import { getSerializedAccountInfo, readSavedStartup, updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
@@ -527,9 +534,12 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private static getExpirationDate(seconds: number) {
     const expin = new Date();
-    // expin.setSeconds(expin.getSeconds() + seconds);
-    expin.setSeconds(expin.getSeconds() + 10);
+    expin.setSeconds(expin.getSeconds() + seconds);
     return expin;
+  }
+
+  private static getExpirationMoment(seconds: number) {
+    return moment().add(seconds, 'seconds');
   }
 
   /**
@@ -558,38 +568,36 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * QueryParam token management (for loginless redirection)
    */
-  private static QUERY_PARAM_TOKEN_EXPIRATION_DELTA = 60;
-
-  private static QUERY_PARAM_TOKEN_STORAGE_KEY = 'auth.queryParamToken';
+  private static QUERY_PARAM_TOKEN_EXPIRATION_PADDING = 60;
 
   public async getQueryParamToken() {
     try {
-      const nowDate = new Date();
-      // We apply a 60secs margin to the duration of the token to ensure validitiy will not be expired during the process.
-      nowDate.setSeconds(nowDate.getSeconds() + OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_EXPIRATION_DELTA);
-      let currentQueryParamToken = await getItemJson<IOAuthQueryParamToken>(
-        OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY,
-      );
-      if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
-        const session = assertSession();
+      // We apply a 60secs padding to the duration of the token to ensure validitiy will not be expired during the process.
+      const session = assertSession();
+      const nowMomentWithPadding = moment().add(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_EXPIRATION_PADDING, 'seconds');
+      let currentQueryParamToken = getCurrentQueryParamToken(); // Get current one from the store
+      if (!currentQueryParamToken || nowMomentWithPadding.isAfter(moment(currentQueryParamToken.expiresAt))) {
+        currentQueryParamToken = undefined;
         const url = `${session.platform.url}/auth/oauth2/token?type=queryparam`;
         const data = await this.request(url, {
           headers: urlSigner.getAuthHeader(),
         });
         currentQueryParamToken = {
-          ...data,
-          expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
+          type: 'QueryParam',
+          value: data.access_token,
+          expiresAt: OAuth2RessourceOwnerPasswordClient.getExpirationMoment(data.expires_in).format(),
         };
-        await setItemJson(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY, currentQueryParamToken);
+        getStore().dispatch(authActions.setQueryParamToken(session.user.id, currentQueryParamToken));
       }
-      return currentQueryParamToken?.access_token;
+      return currentQueryParamToken?.value;
     } catch (e) {
-      throw new Error('getQueryParamToken failed: ' + e.toString());
+      throw new Error('getQueryParamToken failed', { cause: e });
     }
   }
 
   public async deleteQueryParamToken() {
-    await removeItem(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY);
+    const session = assertSession();
+    getStore().dispatch(authActions.setQueryParamToken(session.user.id, undefined));
   }
 }
 

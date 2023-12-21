@@ -61,6 +61,7 @@ export const actionTypes = {
   loginRequirement: moduleConfig.namespaceActionType('LOGIN_REQUIREMENT'),
   updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
   refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
+  setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -83,6 +84,7 @@ export interface ActionPayloads {
   loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: IAuthContext };
   updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: IAuthContext };
   refreshToken: { id: string; tokens: AuthTokenSet };
+  setQueryParamToken: { id: string; token: AuthTokenSet['queryParam'] };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -134,6 +136,12 @@ export const actions = {
     type: actionTypes.refreshToken,
     id,
     tokens,
+  }),
+
+  setQueryParamToken: (id: string, token: AuthTokenSet['queryParam']) => ({
+    type: actionTypes.setQueryParamToken,
+    id,
+    token,
   }),
 
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
@@ -203,6 +211,14 @@ const reducer = createReducer(initialState, {
   [actionTypes.refreshToken]: (state, action) => {
     const { id, tokens } = action as unknown as ActionPayloads['refreshToken'];
     return { ...state, accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens } } };
+  },
+
+  [actionTypes.setQueryParamToken]: (state, action) => {
+    const { id, token } = action as unknown as ActionPayloads['setQueryParamToken'];
+    return {
+      ...state,
+      accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens: { ...state.accounts[id].tokens, queryParam: token } } },
+    };
   },
 
   // // Saves session info & consider user logged
@@ -285,6 +301,15 @@ export function getPlatformLegalUrls() {
   const state = getState(getStore().getState());
   const session = getSession();
   return session ? state.platformLegalUrls[session.platform.name] : undefined;
+}
+
+/**
+ * Gets the currently stored query param token. Do NOT refresh it if expired.
+ * Please use `getQueryParamToken` in `oauth.ts` instead.
+ * @returns
+ */
+export function getCurrentQueryParamToken() {
+  return getSession()?.tokens.queryParam;
 }
 
 /**

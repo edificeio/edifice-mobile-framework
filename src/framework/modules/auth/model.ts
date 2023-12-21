@@ -93,12 +93,18 @@ export interface AuthBearerToken extends AuthToken {
   expiresAt: DateTimeString;
 }
 
+export interface AuthQueryParamToken extends AuthToken {
+  type: 'QueryParam';
+  expiresAt: DateTimeString;
+}
+
 /**
  * A set of authentication tokens and scope information
  */
 export interface AuthTokenSet {
   access: AuthBearerToken;
   refresh: AuthToken;
+  queryParam?: AuthQueryParamToken;
   scope: string[];
 }
 
