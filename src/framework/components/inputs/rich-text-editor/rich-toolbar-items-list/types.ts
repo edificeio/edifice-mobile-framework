@@ -1,3 +1,3 @@
 export interface RichToolbarItemsListProps {
-  list: any[];
+  list: Element[];
 }

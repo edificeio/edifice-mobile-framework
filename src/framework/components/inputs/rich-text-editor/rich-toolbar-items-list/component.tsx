@@ -7,6 +7,8 @@ import styles from './styles';
 import { RichToolbarItemsListProps } from './types';
 
 export const RichToolbarItemsList = (props: RichToolbarItemsListProps) => {
+  const renderSpaceBetweenItem = () => <View style={styles.separator} />;
+
   return (
     <HorizontalList
       keyboardShouldPersistTaps="always"
@@ -15,7 +17,7 @@ export const RichToolbarItemsList = (props: RichToolbarItemsListProps) => {
       alwaysBounceHorizontal={false}
       showsHorizontalScrollIndicator={false}
       renderItem={({ item }) => item}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
+      ItemSeparatorComponent={renderSpaceBetweenItem}
       contentContainerStyle={styles.list}
     />
   );

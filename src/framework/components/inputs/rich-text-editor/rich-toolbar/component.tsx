@@ -7,7 +7,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { actions } from '~/framework/components/inputs/rich-text-editor/const';
 import { RichToolbarActionItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item/action/component';
 import { RichToolbarCustomItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item/custom/component';
-import { RichToolbarMenuItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item/menu/component';
 import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-items-list';
 import { RichToolbarSeparator } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-separator';
 import { NamedSVG } from '~/framework/components/picture';
@@ -108,7 +107,6 @@ export default class RichToolbar extends Component {
     this.editor = null;
     this.state = {
       items: [],
-      underMenu: [],
       animatedValueEnter: new Animated.Value(0),
       animatedValueExit: new Animated.Value(0),
       animatedValueOpacityExit: new Animated.Value(0),
@@ -186,21 +184,14 @@ export default class RichToolbar extends Component {
     this.setState({ items });
   }
 
-  setUnderMenu(menu) {
-    this.setState({ underMenu: menu });
-    this.startAnimation();
-  }
-
   render() {
-    if (!this.editor) return;
-    const { style, children } = this.props;
-    const vStyle = [styles.barContainer, style];
+    const { style } = this.props;
 
     console.log(this.state.items, 'items');
 
     const interpolatedValueEnter = this.state.animatedValueEnter.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, -41], // plage de valeurs pour la translation
+      outputRange: [0, -45], // plage de valeurs pour la translation
     });
 
     const interpolatedValueOpacityEnter = this.state.animatedValueEnter.interpolate({
@@ -211,12 +202,12 @@ export default class RichToolbar extends Component {
     const animatedStyleEnter = {
       flexDirection: 'row',
       transform: [{ translateY: interpolatedValueEnter }],
-      //opacity: interpolatedValueOpacityEnter,
+      opacity: interpolatedValueOpacityEnter,
     };
 
     const interpolatedValueExit = this.state.animatedValueExit.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, 41], // plage de valeurs pour la translation
+      outputRange: [0, 45], // plage de valeurs pour la translation
     });
 
     const interpolatedValueOpacityExit = this.state.animatedValueEnter.interpolate({
@@ -226,88 +217,32 @@ export default class RichToolbar extends Component {
 
     const animatedStyleExit = {
       transform: [{ translateY: interpolatedValueExit }],
-      //opacity: interpolatedValueOpacityExit,
+      opacity: interpolatedValueOpacityExit,
     };
 
     return (
       <View>
-        <View style={vStyle}>
+        <View style={style}>
           <Animated.View style={animatedStyleExit}>
             <RichToolbarItemsList
               list={[
-                <RichToolbarCustomItem icon="ui-image" fill={theme.palette.complementary.green.regular} />,
-                <RichToolbarSeparator />,
-                <RichToolbarMenuItem
-                  icon="ui-text-options"
-                  onSelected={this.setUnderMenu.bind(this)}
-                  menu={[
-                    <RichToolbarActionItem
-                      icon={`ui-${actions.setBold}`}
-                      action={actions.setBold}
-                      editor={this.editor}
-                      selected={this.state.items.includes(actions.setBold)}
-                    />,
-                    <RichToolbarActionItem
-                      icon={`ui-${actions.setItalic}`}
-                      action={actions.setItalic}
-                      editor={this.editor}
-                      selected={this.state.items.includes(actions.setItalic)}
-                    />,
-                    <RichToolbarActionItem
-                      icon={`ui-${actions.setUnderline}`}
-                      action={actions.setUnderline}
-                      editor={this.editor}
-                      selected={this.state.items.includes(actions.setUnderline)}
-                    />,
-                    <RichToolbarActionItem
-                      icon={`ui-${actions.insertBulletsList}`}
-                      action={actions.insertBulletsList}
-                      editor={this.editor}
-                      selected={this.state.items.includes(actions.insertBulletsList)}
-                    />,
-                    <RichToolbarActionItem
-                      icon={`ui-${actions.insertOrderedList}`}
-                      action={actions.insertOrderedList}
-                      editor={this.editor}
-                      selected={this.state.items.includes(actions.insertOrderedList)}
-                    />,
-                    <RichToolbarActionItem
-                      icon={`ui-${actions.setSubscript}`}
-                      action={actions.setSubscript}
-                      editor={this.editor}
-                      selected={this.state.items.includes(actions.setSubscript)}
-                    />,
-                    <RichToolbarActionItem
-                      icon={`ui-${actions.setSuperscript}`}
-                      action={actions.setSuperscript}
-                      editor={this.editor}
-                      selected={this.state.items.includes(actions.setSuperscript)}
-                    />,
-                  ]}
+                <RichToolbarCustomItem
+                  icon="ui-image"
+                  fill={theme.palette.complementary.green.regular}
+                  action={() => console.log('show bottomsheet add image')}
                 />,
+                <RichToolbarSeparator />,
+                <RichToolbarCustomItem icon="ui-text-options" action={this.startAnimation} />,
               ]}
             />
           </Animated.View>
           <Animated.View style={animatedStyleEnter}>
-            <TouchableOpacity
-              style={{
-                backgroundColor: theme.palette.primary.pale,
-                paddingHorizontal: UI_SIZES.spacing.minor,
-                paddingVertical: UI_SIZES.spacing.small,
-                flexDirection: 'row',
-                alignItems: 'center',
-              }}
-              onPress={() => this.inverseAnimation()}>
+            <TouchableOpacity style={styles.closeUnderMenu} onPress={() => this.inverseAnimation()}>
               <IconButton
                 icon="ui-close"
                 size={UI_SIZES.elements.icon.xxsmall}
                 color={theme.palette.grey.white}
-                style={{
-                  backgroundColor: theme.palette.primary.regular,
-                  padding: UI_SIZES.spacing.tiny,
-                  borderRadius: UI_SIZES.radius.huge,
-                  marginRight: UI_SIZES.spacing.minor,
-                }}
+                style={styles.closeUnderMenuCross}
               />
               <NamedSVG
                 fill={theme.palette.grey.black}
@@ -316,16 +251,53 @@ export default class RichToolbar extends Component {
                 height={UI_SIZES.elements.icon.small}
               />
             </TouchableOpacity>
-            <RichToolbarItemsList list={[this.state.underMenu]} />
+            <RichToolbarItemsList
+              list={[
+                <RichToolbarActionItem
+                  icon={`ui-${actions.setBold}`}
+                  action={actions.setBold}
+                  editor={this.editor}
+                  selected={this.state.items.includes(actions.setBold)}
+                />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.setItalic}`}
+                  action={actions.setItalic}
+                  editor={this.editor}
+                  selected={this.state.items.includes(actions.setItalic)}
+                />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.setUnderline}`}
+                  action={actions.setUnderline}
+                  editor={this.editor}
+                  selected={this.state.items.includes(actions.setUnderline)}
+                />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.insertBulletsList}`}
+                  action={actions.insertBulletsList}
+                  editor={this.editor}
+                  selected={this.state.items.includes(actions.insertBulletsList)}
+                />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.insertOrderedList}`}
+                  action={actions.insertOrderedList}
+                  editor={this.editor}
+                  selected={this.state.items.includes(actions.insertOrderedList)}
+                />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.setSubscript}`}
+                  action={actions.setSubscript}
+                  editor={this.editor}
+                  selected={this.state.items.includes(actions.setSubscript)}
+                />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.setSuperscript}`}
+                  action={actions.setSuperscript}
+                  editor={this.editor}
+                  selected={this.state.items.includes(actions.setSuperscript)}
+                />,
+              ]}
+            />
           </Animated.View>
-        </View>
-        <View style={{ height: this.props.heightPageToolbar, backgroundColor: 'red' }}>
-          {/* <RichToolbarPage
-            title="Titre de la page"
-            content={
-              <View></View>
-            }
-          /> */}
         </View>
       </View>
     );

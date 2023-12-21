@@ -1,13 +1,12 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
-import { UI_SIZES } from '~/framework/components/constants';
 import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
+import TextInput from '~/framework/components/inputs/text';
 import { PageView } from '~/framework/components/page';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { isEmpty } from '~/framework/util/object';
 
 import styles from './styles';
 import { RichTextEditorMode, RichTextEditorScreenProps } from './types';
@@ -28,9 +27,6 @@ const imageList = [
   'https://img.lesmao.vip/k/h256/R/MeiTu/1292.jpg',
 ];
 
-//const htmlIcon = require('~/framework/components/inputs/rich-text/img/html.png');
-const phizIcon = require('~/framework/components/inputs/rich-text-editor/img/indent.png');
-
 export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<any>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
@@ -40,44 +36,11 @@ export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<any>
 });
 
 export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
-  const [emojiDuration, setEmojiDuration] = useState(240); // iOS Default
-  const [pageHeight, setPageHeight] = useState(257 + 50); // iOS Default
-  const [emojiVisible, setEmojiVisible] = useState(false);
-  const [itemsSelected, setItemsSelected] = useState([]);
-
   const contentRef = useRef('');
   const headerHeight = useHeaderHeight();
   const richText = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
-
-  const translateAnim = useRef(new Animated.Value(pageHeight)).current;
-  const [showToolbarPage, setShowToolbarPage] = useState(false);
-
-  useEffect(() => {
-    if (showToolbarPage) {
-      setTimeout(() => {
-        Animated.timing(translateAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
-      }, 50);
-    }
-    if (!showToolbarPage) {
-      setTimeout(() => {
-        Animated.timing(translateAnim, {
-          toValue: pageHeight,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
-      }, 50);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showToolbarPage]);
-
-  function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
-  }
+  const opacityToolbar = useRef(new Animated.Value(0)).current;
 
   const getContent = () => contentRef.current;
 
@@ -91,7 +54,12 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
 
   const handleBlur = useCallback(() => {
     console.log('editor blur');
-  }, []);
+    Animated.timing(opacityToolbar, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [opacityToolbar]);
 
   const handleChange = useCallback((html: string) => {
     contentRef.current = html;
@@ -102,33 +70,14 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
     scrollRef.current!.scrollTo({ y: scrollY - 30, animated: true });
   }, []);
 
-  const handleEmoji = useCallback(() => {
-    Keyboard.dismiss();
-    richText.current?.blurContentEditor();
-    setEmojiVisible(true);
-  }, []);
-
   const handleFocus = useCallback(() => {
-    console.log('editor focus', itemsSelected);
-    if (!isEmpty(itemsSelected)) {
-      itemsSelected.forEach(action => richText.current?.sendAction(action, 'result'));
-    }
-    if (showToolbarPage) setShowToolbarPage(false);
-  }, [itemsSelected, showToolbarPage]);
-
-  const handleFontSize = useCallback(() => {
-    // 1=  10px, 2 = 13px, 3 = 16px, 4 = 18px, 5 = 24px, 6 = 32px, 7 = 48px;
-    const size = [1, 2, 3, 4, 5, 6, 7];
-    richText.current?.setFontSize(size[getRandomInt(size.length - 1)] as FontSize);
-  }, []);
-
-  const handleForeColor = useCallback(() => {
-    richText.current?.setForeColor('blue');
-  }, []);
-
-  const handleHiliteColor = useCallback(() => {
-    richText.current?.setHiliteColor('red');
-  }, []);
+    console.log('editor focus');
+    Animated.timing(opacityToolbar, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [opacityToolbar]);
 
   const handleHeightChange = useCallback((height: number) => {
     console.log('editor height change:', height);
@@ -138,54 +87,6 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
     // console.log(inputType, data)
   }, []);
 
-  const handleMessage = useCallback(({ type, id, msg }: { type: string; id: string; msg?: any }) => {
-    switch (type) {
-      case 'ImgClick':
-        richText.current?.commandDOM(`$('#${id}').src="${imageList[getRandomInt(imageList.length - 1)]}"`);
-        break;
-      case 'TitleClick':
-        // eslint-disable-next-line no-case-declarations
-        const color = ['red', 'blue', 'gray', 'yellow', 'coral'];
-        richText.current?.commandDOM(`$('#${id}').style.color='${color[getRandomInt(color.length - 1)]}'`);
-        break;
-      case 'SwitchImage':
-        break;
-    }
-    console.log('onMessage', type, id, msg);
-  }, []);
-
-  const handlePaste = useCallback((text: any) => {
-    alert(`Paste: ${text}`);
-  }, []);
-
-  const onInsertLink = useCallback(() => {
-    alert('Not implemented yet, but possible...');
-  }, []);
-
-  const onPressAddImage = useCallback(() => {
-    richText.current?.insertImage(
-      'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/100px-React-icon.svg.png',
-      'background: gray;',
-    );
-  }, []);
-
-  const onSelectAction = useCallback(
-    action => {
-      if (itemsSelected.includes(action)) {
-        const newArray = itemsSelected.filter(act => act !== action);
-        setItemsSelected(newArray);
-      } else {
-        setItemsSelected([...itemsSelected, action]);
-        setTimeout(() => {
-          Keyboard.dismiss();
-          richText.current?.blurContentEditor();
-          setShowToolbarPage(true);
-        }, 300);
-      }
-    },
-    [itemsSelected],
-  );
-
   //
   // Keyboard Management
   //
@@ -193,12 +94,12 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   const handleKeyboardHide = useCallback(() => {}, []);
 
   const handleKeyboardShow = useCallback(event => {
-    setEmojiDuration(event?.duration);
+    console.log(event?.duration, 'duration keyboard');
     // As event?.endCoordinates?.height returns a wrong value on Android,
     // We must calculate keyboard height differently
-    const height = Dimensions.get('screen').height;
-    setPageHeight(height - event?.endCoordinates?.screenY - Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }));
-    setEmojiVisible(false);
+    // const height = Dimensions.get('screen').height;
+    // setPageHeight(height - event?.endCoordinates?.screenY - Platform.select({ ios: UI_SIZES.screen.bottomInset, default: 0 }));
+    // setEmojiVisible(false);
   }, []);
 
   useEffect(() => {
@@ -213,38 +114,20 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
 
   const renderToolbar = () => {
     return (
-      <Animated.View
-        style={{
-          transform: [{ translateY: translateAnim }],
-          marginTop: -pageHeight,
-        }}>
-        <RichToolbar
-          memoActionsSelected={itemsSelected}
-          disabledIconTint="#bfbfbf"
-          editor={richText}
-          selectedIconTint="#2095F2"
-          style={styles.richBar}
-          foreColor={handleForeColor}
-          fontSize={handleFontSize}
-          hiliteColor={handleHiliteColor}
-          insertEmoji={handleEmoji}
-          onInsertLink={onInsertLink}
-          onPressAddImage={onPressAddImage}
-          onSelectAction={onSelectAction}
-          heightPageToolbar={pageHeight}
-          disabled={props.route.params.mode !== RichTextEditorMode.ENABLED}
-        />
+      <Animated.View style={{ transform: [{ translateY: 45 }], opacity: opacityToolbar }}>
+        <RichToolbar editor={richText} style={styles.richBar} />
       </Animated.View>
     );
   };
 
   return (
-    <PageView>
+    <PageView style={styles.page}>
       <KeyboardAvoidingView
         keyboardVerticalOffset={headerHeight}
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView keyboardDismissMode="none" nestedScrollEnabled ref={scrollRef} scrollEventThrottle={20} style={styles.scroll}>
+          <TextInput placeholder="test" />
           <RichEditor
             disabled={props.route.params.mode !== RichTextEditorMode.ENABLED}
             enterKeyHint="done"
@@ -253,7 +136,7 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
             initialContentHTML=""
             initialFocus={false}
             pasteAsPlainText
-            placeholder="please input content"
+            placeholder="Saisissez votre texte"
             ref={richText}
             style={styles.rich}
             useContainer
@@ -264,11 +147,9 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
             onFocus={handleFocus}
             onHeightChange={handleHeightChange}
             onInput={handleInput}
-            onMessage={handleMessage}
-            onPaste={handlePaste}
           />
         </ScrollView>
-        {props.route.params.mode !== RichTextEditorMode.PREVIEW ? renderToolbar() : null}
+        {renderToolbar()}
       </KeyboardAvoidingView>
     </PageView>
   );

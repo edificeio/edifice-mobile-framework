@@ -6,7 +6,6 @@ import { RichToolbar } from '~/framework/components/inputs/rich-text-editor/rich
 export enum RichToolBarItemTypes {
   ACTION = 'ACTION',
   CUSTOM = 'CUSTOM',
-  MENU = 'MENU',
   PAGE = 'PAGE',
   SEPARATOR = 'SEPARATOR',
 }

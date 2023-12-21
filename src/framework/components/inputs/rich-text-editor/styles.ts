@@ -1,8 +1,13 @@
 import { StyleSheet } from 'react-native';
 
+import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
+  page: {
+    padding: UI_SIZES.spacing.medium,
+    backgroundColor: theme.palette.grey.white,
+  },
   container: {
     marginBottom: UI_SIZES.screen.bottomInset,
     flex: 1,
