@@ -41,7 +41,6 @@ function createHTML(options = {}) {
     firstFocusEnd = true,
     useContainer = true,
     styleWithCSS = false,
-    baseUrl = '',
   } = options;
   //ERROR: HTML height not 100%;
   return `
@@ -50,7 +49,6 @@ function createHTML(options = {}) {
 <head>
     <title>RN Rich Text Editor</title>
     <meta name="viewport" content="user-scalable=1.0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
-    <base href="${baseUrl}" target="_blank">
     <style>
         ${initialCSSText}
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}

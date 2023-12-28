@@ -1,4 +1,3 @@
-import CookieManager from '@react-native-cookies/cookies';
 import React, { Component } from 'react';
 import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -6,7 +5,11 @@ import { WebView } from 'react-native-webview';
 import theme from '~/app/theme';
 import { actions, messages } from '~/framework/components/inputs/rich-text-editor/const';
 import { createHTML } from '~/framework/components/inputs/rich-text-editor/editor';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { openUrl } from '~/framework/util/linking';
+import { isEmpty } from '~/framework/util/object';
+import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth.ts';
 
 const PlatformIOS = Platform.OS === 'ios';
 
@@ -50,13 +53,18 @@ export default class RichEditor extends Component {
     that._onKeyboardWillShow = that._onKeyboardWillShow.bind(that);
     that._onKeyboardWillHide = that._onKeyboardWillHide.bind(that);
     that.init = that.init.bind(that);
-    that.setRef = that.setRef.bind(that);
+    that.handleLoadEnded = that.handleLoadEnded.bind(that);
+    that.handleShouldLoadRequest = that.handleShouldLoadRequest.bind(that);
     that.onViewLayout = that.onViewLayout.bind(that);
+    that.handleLoadEnded = that.handleLoadEnded.bind(that);
+    that.setRef = that.setRef.bind(that);
     that.unmount = false;
     that._keyOpen = false;
     that._focus = false;
     that.layout = {};
     that.selectionChangeListeners = [];
+    that.loaded = false;
+    that.pfUrl = getSession()?.platform?.url || '';
     const {
       editorStyle: { backgroundColor, color, placeholderColor, initialCSSText, cssText, contentCSSText, caretColor } = {},
       html,
@@ -101,13 +109,25 @@ export default class RichEditor extends Component {
             firstFocusEnd,
             useContainer,
             styleWithCSS,
-            baseUrl: getSession().platform.url,
           }),
+        baseUrl: that.pfUrl,
       },
-      keyboardHeight: 0,
       height: initialHeight,
+      keyboardHeight: 0,
+      loading: '',
+      oneSessionId: '',
     };
     that.focusListeners = [];
+    // Retrieve oneSessionId to view ENT resources properly
+    OAuth2RessourceOwnerPasswordClient?.connection
+      ?.getOneSessionId()
+      .then(osi => {
+        console.debug(`oneSessionId retrieved: ${osi}`);
+        this.setState({ loadind: false, oneSessionId: osi ?? '' });
+      })
+      .catch(err => {
+        console.warn(`Unable to retrieve oneSessionId: ${err.message}`);
+      });
   }
 
   componentDidMount() {
@@ -123,16 +143,6 @@ export default class RichEditor extends Component {
         Keyboard.addListener('keyboardDidHide', this._onKeyboardWillHide),
       ];
     }
-    CookieManager.set(getSession().platform.url, {
-      name: 'oneSessionId',
-      value: '55378059-287d-4653-ae11-276465484570:a5u7eEJh657rD65oPvit1QEqUWY=',
-      // path: '/',
-      // version: '1',
-    }).then(done => {
-      console.log('CookieManager.set =>', done);
-    });
-
-    // CookieManager.getAll().then(cookies => console.log('all cokies', cookies));
   }
 
   componentWillUnmount() {
@@ -142,30 +152,11 @@ export default class RichEditor extends Component {
 
   _onKeyboardWillShow(event) {
     this._keyOpen = true;
-    // console.log('!!!!', event);
-    /*const newKeyboardHeight = event.endCoordinates.height;
-        if (this.state.keyboardHeight === newKeyboardHeight) {
-            return;
-        }
-        if (newKeyboardHeight) {
-            this.setEditorAvailableHeightBasedOnKeyboardHeight(newKeyboardHeight);
-        }
-        this.setState({keyboardHeight: newKeyboardHeight});*/
   }
 
   _onKeyboardWillHide(event) {
     this._keyOpen = false;
-    // this.setState({keyboardHeight: 0});
   }
-
-  /*setEditorAvailableHeightBasedOnKeyboardHeight(keyboardHeight) {
-        const {top = 0, bottom = 0} = this.props.contentInset;
-        const {marginTop = 0, marginBottom = 0} = this.props.style;
-        const spacing = marginTop + marginBottom + top + bottom;
-
-        const editorAvailableHeight = Dimensions.get('window').height - keyboardHeight - spacing;
-        // this.setEditorHeight(editorAvailableHeight);
-    }*/
 
   onMessage(event) {
     const that = this;
@@ -280,16 +271,17 @@ export default class RichEditor extends Component {
   }
 
   renderWebView() {
-    const that = this;
+    let that = this;
     const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
-    const { html: viewHTML } = that.state;
-    console.log(getSession().oauth2.hasToken, 'token');
+    const { html: viewHTML, oneSessionId } = that.state;
     return (
       <>
         <WebView
-          useWebKit
+          injectedJavaScript={`document.cookie="oneSessionId=${oneSessionId}";true;`}
+          sharedCookiesEnabled
+          useWebKit={true}
           scrollEnabled={false}
-          hideKeyboardAccessoryView
+          hideKeyboardAccessoryView={true}
           keyboardDisplayRequiresUserAction={false}
           nestedScrollEnabled={!useContainer}
           style={[styles.webview, style]}
@@ -297,31 +289,14 @@ export default class RichEditor extends Component {
           ref={that.setRef}
           onMessage={that.onMessage}
           originWhitelist={['*']}
-          dataDetectorTypes="none"
+          dataDetectorTypes={'none'}
           domStorageEnabled={false}
           bounces={false}
-          javaScriptEnabled
+          javaScriptEnabled={true}
           source={viewHTML}
-          sharedCookiesEnabled
           onLoad={that.init}
-          onShouldStartLoadWithRequest={event => {
-            console.log(event.url);
-            if (event.url !== 'about:blank') {
-              this.webviewBridge?.stopLoading();
-              //openUrl(event.url);
-              return false;
-            }
-            return true;
-          }}
-          onLoadEnd={() => console.log('end')}
-          onHttpError={syntheticEvent => {
-            const { nativeEvent } = syntheticEvent;
-            console.warn('WebView received error status code: ', nativeEvent.statusCode);
-          }}
-          onError={syntheticEvent => {
-            const { nativeEvent } = syntheticEvent;
-            console.warn('WebView error: ', nativeEvent);
-          }}
+          onLoadEnd={that.handleLoadEnded}
+          onShouldStartLoadWithRequest={that.handleShouldLoadRequest}
         />
         {Platform.OS === 'android' && <TextInput ref={ref => (that._input = ref)} style={styles._input} />}
       </>
@@ -334,20 +309,21 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    const { height } = this.state;
-    this.props.initialContentHTML && this.setContentHTML(this.props.initialContentHTML);
-
+    // Waiting for oneSessionId to be retrieved
+    const { loading } = this.state;
+    const { useContainer, style } = this.props;
+    if (loading) return <LoadingIndicator />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
+    let { height } = this.state;
+    if (useContainer)
+      return (
+        <View style={[style, { height }]} onLayout={this.onViewLayout}>
+          {this.renderWebView()}
+        </View>
+      );
     // If set to false, it will not use a View wrapper
-    const { useContainer, style } = this.props;
-    return useContainer ? (
-      <View style={[style, { height }]} onLayout={this.onViewLayout}>
-        {this.renderWebView()}
-      </View>
-    ) : (
-      this.renderWebView()
-    );
+    return this.renderWebView();
   }
 
   //-------------------------------------------------------------------------------
@@ -485,11 +461,27 @@ export default class RichEditor extends Component {
     placeholder && that.setPlaceholder(placeholder);
     that.setDisable(disabled);
     editorInitializedCallback();
-
     // initial request focus
     initialFocus && !disabled && that.focusContentEditor();
     // no visible ?
     that.sendAction(actions.init);
+  }
+
+  handleLoadEnded() {
+    this.loaded = true;
+  }
+
+  handleShouldLoadRequest(event) {
+    const url = event.url;
+    console.debug(`Link selected: ${url}`);
+    if (url !== 'about:blank' && this.loaded) {
+      const pfUrl = this.pf;
+      if (!isEmpty(pfUrl) && url.startsWith(pfUrl)) {
+        alert('ENT URL DETECTED:' + pfUrl);
+      } else openUrl(url);
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -501,7 +493,6 @@ export default class RichEditor extends Component {
       this.contentResolve = resolve;
       this.contentReject = reject;
       this.sendAction(actions.content, 'postHtml');
-
       this.pendingContentHtml = setTimeout(() => {
         if (this.contentReject) {
           this.contentReject('timeout');
