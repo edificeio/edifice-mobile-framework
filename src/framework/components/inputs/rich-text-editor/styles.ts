@@ -4,9 +4,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
-  page: {
-    padding: UI_SIZES.spacing.medium,
-    backgroundColor: theme.palette.grey.white,
+  inputTitle: {
+    paddingBottom: UI_SIZES.spacing.small,
+    borderBottomWidth: 1,
+    borderColor: theme.palette.grey.cloudy,
   },
   container: {
     marginBottom: UI_SIZES.screen.bottomInset,
@@ -16,14 +17,14 @@ const styles = StyleSheet.create({
   content: {
     backgroundColor: 'white',
     color: 'black',
-    caretColor: 'red',
+    caretColor: 'black',
     placeholderColor: 'gray',
     contentCSSText: 'font-size: 16px; min-height: 200px;',
   },
   rich: {
     minHeight: 300,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#e3e3e3',
+    borderColor: 'transparent',
   },
   richBar: {
     borderColor: '#efefef',
@@ -32,6 +33,7 @@ const styles = StyleSheet.create({
   scroll: {
     backgroundColor: '#ffffff',
     flexGrow: 1,
+    padding: UI_SIZES.spacing.medium,
   },
   tib: {
     textAlign: 'center',

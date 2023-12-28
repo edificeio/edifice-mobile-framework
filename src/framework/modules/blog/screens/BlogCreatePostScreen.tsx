@@ -1,28 +1,22 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Keyboard, Platform, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
-import InputContainer from '~/framework/components/inputs/container';
-import MultilineTextInput from '~/framework/components/inputs/multiline';
-import { RichTextEditorMode } from '~/framework/components/inputs/rich-text-editor';
-import TextInput from '~/framework/components/inputs/text';
-import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
-import { KeyboardPageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
-import { BodyText, SmallBoldText } from '~/framework/components/text';
+import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
+import { ImagePicked } from '~/framework/components/menus/actions';
+import { NavBarAction } from '~/framework/components/navigation';
+import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import usePreventBack from '~/framework/hooks/prevent-back';
 import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
-import moduleConfig from '~/framework/modules/blog/module-config';
+import { sendBlogPostAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -33,22 +27,16 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
-import { Image } from '~/framework/util/media';
-import { isEmpty } from '~/framework/util/object';
-import { uppercaseFirstLetter } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 import { ILocalAttachment } from '~/ui/Attachment';
-import { AttachmentPicker } from '~/ui/AttachmentPicker';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
 }
 
 export interface BlogCreatePostScreenEventProps {
-  handleUploadPostImages(images: ImagePicked[], isPublic: boolean): Promise<SyncedFile[]>;
   handleSendBlogPost(blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
@@ -80,30 +68,36 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: UI_SIZES.spacing.medium,
   },
-  userInfos: {
-    marginBottom: UI_SIZES.spacing.large,
-    flexDirection: 'row',
-    alignItems: 'center',
+  inputTitle: {
+    paddingBottom: UI_SIZES.spacing.small,
+    borderBottomWidth: 1,
+    borderColor: theme.palette.grey.cloudy,
   },
-  thumbnailBlog: {
-    width: UI_SIZES.elements.avatar.lg,
-    aspectRatio: UI_SIZES.aspectRatios.square,
-    borderRadius: UI_SIZES.radius.medium,
+  container: {
+    marginBottom: UI_SIZES.screen.bottomInset,
+    flex: 1,
+    backgroundColor: theme.palette.grey.white,
   },
-  thumbnailNoBlog: {
-    backgroundColor: theme.palette.complementary.indigo.pale,
-    justifyContent: 'center',
-    alignItems: 'center',
+  content: {
+    backgroundColor: theme.palette.grey.white,
+    color: theme.palette.grey.black,
+    caretColor: theme.palette.grey.black,
+    placeholderColor: theme.palette.grey.fog,
+    contentCSSText: 'font-size: 16px; min-height: 200px;',
   },
-  blogTitle: {
-    color: theme.palette.grey.darkness,
-    marginLeft: UI_SIZES.spacing.minor,
+  rich: {
+    minHeight: 300,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: 'transparent',
   },
-  input: {
-    marginBottom: UI_SIZES.spacing.big,
+  richBar: {
+    borderColor: '#efefef',
+    borderTopWidth: StyleSheet.hairlineWidth,
   },
-  button: {
-    marginTop: UI_SIZES.spacing.large,
+  scroll: {
+    backgroundColor: theme.palette.grey.white,
+    flexGrow: 1,
+    padding: UI_SIZES.spacing.medium,
   },
 });
 
@@ -119,38 +113,68 @@ export const computeNavBar = ({
   }),
 });
 
-function PreventBack(props: { isEditing: boolean }) {
-  usePreventBack({
-    title: I18n.get('blog-createpost-confirmation-unsavedpublication'),
-    text: I18n.get('blog-createpost-unsavedpublication'),
-    showAlert: props.isEditing,
-  });
-  return null;
-}
+const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
+  const [loadingState, setLoadingState] = React.useState(false);
+  const [title, setTitle] = React.useState('');
+  const contentRef = React.useRef('');
+  const headerHeight = useHeaderHeight();
+  const richText = React.useRef<RichEditor>(null);
+  const scrollRef = React.useRef<ScrollView>(null);
+  const opacityToolbar = React.useRef(new Animated.Value(0)).current;
+  const transformToolbar = React.useRef(new Animated.Value(90)).current;
 
-export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScreenProps, BlogCreatePostScreenState> {
-  state: BlogCreatePostScreenState = {
-    sendLoadingState: false,
-    title: '',
-    content: '',
-    images: [],
-    thumbnailBlog: this.props.route.params.blog.thumbnail,
+  const getContent = () => contentRef.current;
+
+  const handleBlur = React.useCallback(() => {
+    Animated.timing(opacityToolbar, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(transformToolbar, {
+      toValue: 90,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [opacityToolbar, transformToolbar]);
+
+  const handleChange = React.useCallback((html: string) => {
+    contentRef.current = html;
+  }, []);
+
+  const handleCursorPosition = React.useCallback((scrollY: number) => {
+    // Positioning scroll bar
+    scrollRef.current!.scrollTo({ y: scrollY - 30, animated: true });
+  }, []);
+
+  const handleFocus = React.useCallback(() => {
+    console.log('editor focus');
+    Animated.timing(opacityToolbar, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(transformToolbar, {
+      toValue: 45,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [opacityToolbar, transformToolbar]);
+
+  const renderToolbar = () => {
+    return (
+      <Animated.View style={{ transform: [{ translateY: transformToolbar }], opacity: opacityToolbar }}>
+        <RichToolbar editor={richText} style={styles.richBar} />
+      </Animated.View>
+    );
   };
 
-  async doSend() {
-    Keyboard.dismiss();
+  const doSendPost = async () => {
     try {
-      this.setState({ sendLoadingState: true });
-      await this.doSendPost();
-    } finally {
-      this.setState({ sendLoadingState: false });
-    }
-  }
+      const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = props;
 
-  async doSendPost() {
-    try {
-      const { route, navigation, session, handleUploadPostImages, handleSendBlogPost, handleInitTimeline, dispatch } = this.props;
-      const { title, content, images } = this.state;
+      const content = getContent();
+
       const blog = route.params.blog;
       const blogId = blog && blog.id;
       if (!blog || !blogId) {
@@ -161,28 +185,11 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         throw new Error('[doSendPost] user has no post rights for this blog');
       }
 
-      // Upload post images (if added)
-      let uploadedPostImages: undefined | SyncedFile[];
-      if (images.length > 0) {
-        try {
-          uploadedPostImages = await handleUploadPostImages(images, blog.visibility === 'PUBLIC');
-        } catch (e: any) {
-          // Full storage management
-          // statusCode = 400 on iOS and code = 'ENOENT' on Android
-          if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
-            Alert.alert('', I18n.get('blog-createpost-fullstorage'));
-          } else {
-            Alert.alert('', I18n.get('blog-createpost-uploadattachments-error-text'));
-          }
-          throw new Error('handled');
-        }
-      }
-
       // Translate entered content to httml
       const htmlContent = content.replace(/\n/g, '<br>').trim();
 
       // Create and submit/publish post
-      await handleSendBlogPost(blog, title.trim(), htmlContent, uploadedPostImages);
+      await handleSendBlogPost(blog, title.trim(), htmlContent);
 
       // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;
@@ -213,152 +220,68 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
         Toast.showError(I18n.get('blog-createpost-publish-error-text'));
       }
     }
-  }
+  };
 
-  renderError() {
-    return <SmallBoldText>Error</SmallBoldText>; // ToDo: great error screen here
-  }
+  const doSend = async () => {
+    Keyboard.dismiss();
+    try {
+      setLoadingState(true);
+      await doSendPost();
+    } finally {
+      setLoadingState(false);
+    }
+  };
 
-  renderContent() {
+  React.useEffect(() => {
+    props.navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => <NavBarAction icon="ui-send" onPress={doSend} />,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title]);
+
+  const renderPostInfos = () => {
     return (
-      <>
-        {this.renderBlogInfos()}
-        {this.renderPostInfos()}
-        {this.renderPostMedia()}
-        {this.renderButton()}
-      </>
-    );
-  }
-
-  renderThumbnail() {
-    const { route } = this.props;
-    const blog = route.params.blog;
-    if (this.state.thumbnailBlog)
-      return (
-        <View>
-          <Image
-            source={blog?.thumbnail}
-            style={styles.thumbnailBlog}
-            onError={() => this.setState({ thumbnailBlog: undefined })}
-          />
-        </View>
-      );
-    return (
-      <View style={[styles.thumbnailBlog, styles.thumbnailNoBlog]}>
-        <NamedSVG name="blog" fill={theme.palette.complementary.indigo.regular} height={32} width={32} />
-      </View>
-    );
-  }
-
-  renderBlogInfos() {
-    const { route, session } = this.props;
-    if (!session) return <View style={styles.userInfos} />;
-    const blog = route.params.blog;
-    return (
-      <View style={styles.userInfos}>
-        {this.renderThumbnail()}
-        <BodyText style={styles.blogTitle}>{blog?.title}</BodyText>
-      </View>
-    );
-  }
-
-  renderPostInfos() {
-    const { title, content } = this.state;
-    const contentFieldRef: { current: any } = React.createRef();
-    return (
-      <>
-        <InputContainer
-          label={{ text: I18n.get('blog-createpost-post-title'), icon: 'ui-write' }}
-          input={
+      <PageView>
+        <KeyboardAvoidingView
+          keyboardVerticalOffset={headerHeight}
+          style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <ScrollView keyboardDismissMode="none" nestedScrollEnabled ref={scrollRef} scrollEventThrottle={20} style={styles.scroll}>
             <TextInput
-              placeholder={I18n.get('blog-createpost-post-title-placeholder')}
+              style={styles.inputTitle}
+              placeholder="Titre du billet"
+              autoCorrect={false}
+              spellCheck={false}
+              onChangeText={text => setTitle(text)}
               value={title}
-              onChangeText={text => this.setState({ title: text })}
-              returnKeyType="next"
-              onSubmitEditing={() => contentFieldRef?.current?.focus()}
             />
-          }
-          style={styles.input}
-        />
-        <TouchableOpacity
-          onPress={() =>
-            this.props.navigation.navigate(ModalsRouteNames.RichTextEditor, { content: null, mode: RichTextEditorMode.ENABLED })
-          }>
-          <View style={{ height: 200, backgroundColor: 'red' }} />
-        </TouchableOpacity>
-        <InputContainer
-          label={{ text: I18n.get('blog-createpost-postcontent'), icon: 'ui-textPage' }}
-          input={
-            <MultilineTextInput
-              placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
-              value={content}
-              onChangeText={text => this.setState({ content: text })}
-              numberOfLines={5}
-              ref={contentFieldRef}
+            <RichEditor
+              disabled={false}
+              enterKeyHint="done"
+              editorStyle={styles.content}
+              firstFocusEnd={false}
+              initialContentHTML=""
+              initialFocus={false}
+              pasteAsPlainText
+              placeholder="Saisissez votre texte"
+              ref={richText}
+              style={styles.rich}
+              useContainer
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onCursorPosition={handleCursorPosition}
+              onFocus={handleFocus}
             />
-          }
-          style={styles.input}
-        />
-      </>
-    );
-  }
-
-  renderPostMedia() {
-    const { images } = this.state;
-    return (
-      <View>
-        <AttachmentPicker
-          onlyImages
-          notifierId={uppercaseFirstLetter(moduleConfig.name)}
-          imageCallback={image => this.setState(prevState => ({ images: [...prevState.images, image] }))}
-          onAttachmentRemoved={images => this.setState({ images })}
-          attachments={images.map(image => ({
-            mime: image.type,
-            name: image.fileName,
-            uri: image.uri,
-          }))}
-        />
-      </View>
-    );
-  }
-
-  renderButton() {
-    const blog = this.props.route.params.blog;
-    const blogPostRight = blog && this.props.session && getBlogPostRight(blog, this.props.session);
-    const blogPostDisplayRight = blogPostRight && blogPostRight.displayRight;
-    const actionText =
-      blogPostDisplayRight &&
-      {
-        [createBlogPostResourceRight]: I18n.get('blog-createpost-create'),
-        [submitBlogPostResourceRight]: I18n.get('blog-createpost-submit'),
-        [publishBlogPostResourceRight]: I18n.get('blog-createpost-publish'),
-      }[blogPostDisplayRight];
-    return (
-      <PrimaryButton
-        text={actionText}
-        loading={this.state.sendLoadingState}
-        disabled={this.state.title.trim().length === 0 || this.state.content.trim().length === 0}
-        action={() => this.doSend()}
-        style={styles.button}
-      />
-    );
-  }
-
-  render() {
-    const isEditing = !isEmpty(this.state.title || this.state.content || this.state.images) && !this.state.sendLoadingState;
-    return (
-      <>
-        <PreventBack isEditing={isEditing} />
-        <KeyboardPageView scrollable={false} style={styles.page}>
-          {/* ToDo : don't use magic keywords like this. */}
-          <ScrollView alwaysBounceVertical={false} overScrollMode="never" contentContainerStyle={styles.scrollView}>
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>{this.renderContent()}</TouchableWithoutFeedback>
           </ScrollView>
-        </KeyboardPageView>
-      </>
+          {renderToolbar()}
+        </KeyboardAvoidingView>
+      </PageView>
     );
-  }
-}
+  };
+
+  return <>{renderPostInfos()}</>;
+};
 
 const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s => {
   return {
@@ -367,10 +290,6 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
-  handleUploadPostImages: async (images: ImagePicked[], isPublic: boolean) => {
-    const localFiles = images.map(img => imagePickedToLocalFile(img));
-    return dispatch(uploadBlogPostImagesAction(localFiles, isPublic)) as unknown as Promise<SyncedFile[]>;
-  },
   handleSendBlogPost: async (blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
     return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;
   },

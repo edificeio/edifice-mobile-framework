@@ -1,13 +1,13 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native';
 
 import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
-import TextInput from '~/framework/components/inputs/text';
 import { PageView } from '~/framework/components/page';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
+import { NavBarAction } from '../../navigation';
 import styles from './styles';
 import { RichTextEditorMode, RichTextEditorScreenProps } from './types';
 
@@ -31,7 +31,7 @@ export const computeNavBar = ({ navigation, route }: NativeStackScreenProps<any>
   ...navBarOptions({
     navigation,
     route,
-    title: 'editor',
+    title: 'Nouveau billet',
   }),
 });
 
@@ -41,6 +41,7 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
   const richText = useRef<RichEditor>(null);
   const scrollRef = useRef<ScrollView>(null);
   const opacityToolbar = useRef(new Animated.Value(0)).current;
+  const transformToolbar = useRef(new Animated.Value(90)).current;
 
   const getContent = () => contentRef.current;
 
@@ -59,7 +60,12 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [opacityToolbar]);
+    Animated.timing(transformToolbar, {
+      toValue: 90,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [opacityToolbar, transformToolbar]);
 
   const handleChange = useCallback((html: string) => {
     contentRef.current = html;
@@ -77,7 +83,12 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
       duration: 300,
       useNativeDriver: true,
     }).start();
-  }, [opacityToolbar]);
+    Animated.timing(transformToolbar, {
+      toValue: 45,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, [opacityToolbar, transformToolbar]);
 
   const handleHeightChange = useCallback((height: number) => {
     console.log('editor height change:', height);
@@ -112,22 +123,30 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
     };
   }, [handleKeyboardHide, handleKeyboardShow]);
 
+  useEffect(() => {
+    props.navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => <NavBarAction icon="ui-send" onPress={() => console.log(getContent())} />,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const renderToolbar = () => {
     return (
-      <Animated.View style={{ transform: [{ translateY: 45 }], opacity: opacityToolbar }}>
+      <Animated.View style={{ transform: [{ translateY: transformToolbar }], opacity: opacityToolbar }}>
         <RichToolbar editor={richText} style={styles.richBar} />
       </Animated.View>
     );
   };
 
   return (
-    <PageView style={styles.page}>
+    <PageView>
       <KeyboardAvoidingView
         keyboardVerticalOffset={headerHeight}
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView keyboardDismissMode="none" nestedScrollEnabled ref={scrollRef} scrollEventThrottle={20} style={styles.scroll}>
-          <TextInput placeholder="test" />
+          <TextInput style={styles.inputTitle} placeholder="Titre du billet" autoCorrect={false} spellCheck={false} />
           <RichEditor
             disabled={props.route.params.mode !== RichTextEditorMode.ENABLED}
             enterKeyHint="done"
