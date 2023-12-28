@@ -506,6 +506,20 @@ export class OAuth2RessourceOwnerPasswordClient {
 
   private static QUERY_PARAM_TOKEN_STORAGE_KEY = 'auth.queryParamToken';
 
+  public async getOneSessionId() {
+    try {
+      const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
+      const response = await fetch(request);
+      const cookie = response.headers.get('set-cookie') || undefined;
+      const match = cookie ? cookie.match(/oneSessionId=([^;]+)/) : undefined;
+      return match ? match[1] : undefined;
+    } catch (e) {
+      console.warn(`Unable to retrieve oneSessionId: ${e.message}`);
+      // We leave the catch and retruned value will be undefined
+      return undefined;
+    }
+  }
+
   public async getQueryParamToken() {
     try {
       const nowDate = new Date();
