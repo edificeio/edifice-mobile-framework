@@ -342,7 +342,6 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...data,
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
-      await this.deleteQueryParamToken(); // Delete current queryParamToken here to ensure we'll not have previous one form another accounts.
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
