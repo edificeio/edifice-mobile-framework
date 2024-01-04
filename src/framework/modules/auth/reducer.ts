@@ -62,6 +62,7 @@ export const actionTypes = {
   updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
   refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
   setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
+  authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -85,6 +86,12 @@ export interface ActionPayloads {
   updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: IAuthContext };
   refreshToken: { id: string; tokens: AuthTokenSet };
   setQueryParamToken: { id: string; token: AuthTokenSet['queryParam'] };
+  authError: {
+    account: NonNullable<IAuthState['pending']>['account'];
+    platform: NonNullable<IAuthState['pending']>['platform'];
+    login: NonNullable<IAuthState['pending']>['login'];
+    error: NonNullable<Required<IAuthState['pending']>>['error'];
+  };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -142,6 +149,19 @@ export const actions = {
     type: actionTypes.setQueryParamToken,
     id,
     token,
+  }),
+
+  authError: (
+    platform: Platform,
+    login: string,
+    error: NonNullable<Required<IAuthState['pending']>>['error'],
+    account?: string,
+  ) => ({
+    type: actionTypes.authError,
+    account,
+    platform,
+    login,
+    error,
   }),
 
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
@@ -218,6 +238,20 @@ const reducer = createReducer(initialState, {
     return {
       ...state,
       accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens: { ...state.accounts[id].tokens, queryParam: token } } },
+    };
+  },
+
+  [actionTypes.authError]: (state, action) => {
+    const { account, platform, login, error } = action as unknown as ActionPayloads['authError'];
+    return {
+      ...state,
+      pending: {
+        account,
+        platform,
+        login,
+        error,
+      },
+      connected: undefined,
     };
   },
 

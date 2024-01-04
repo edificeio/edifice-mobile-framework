@@ -11,7 +11,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { consumeAuthError } from '~/framework/modules/auth/actions';
+import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import { getAuthErrorCode } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
@@ -22,7 +22,7 @@ interface ILoginWayfScreenStoreProps {
   auth: IAuthState;
 }
 interface LoginWayfScreenDispatchProps {
-  handleConsumeError: (...args: Parameters<typeof consumeAuthError>) => void;
+  handleConsumeError: (...args: Parameters<typeof consumeAuthErrorAction>) => void;
 }
 interface ILoginWayfScreenProps
   extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginWayf>,
@@ -136,7 +136,7 @@ export default connect(
   dispatch =>
     bindActionCreators<LoginWayfScreenDispatchProps>(
       {
-        handleConsumeError: handleAction(consumeAuthError),
+        handleConsumeError: handleAction(consumeAuthErrorAction),
       },
       dispatch,
     ),

@@ -5,7 +5,7 @@
     "baseUrl": ".",
     "esModuleInterop": true,
     "jsx": "react",
-    "lib": ["es2022"],
+    "lib": ["es2022", "dom"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmit": true,

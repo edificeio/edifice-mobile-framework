@@ -11,7 +11,6 @@ import { StorageSlice } from '~/framework/util/storage/slice';
 import { Trackers } from '~/framework/util/tracker';
 
 import {
-  AuthError,
   AuthRequirement,
   AuthSavedAccount,
   IAuthContext,
@@ -125,8 +124,6 @@ export const loginSteps = {
     try {
       await createSession(platform, credentials);
     } catch (e) {
-      // If get token failed because of wrong login/pwd, it may be an activation or password reset scenario
-      const authError = (e as Error).name === 'EAUTH' ? (e as AuthError) : undefined;
       // if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {}
       Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.getToken');
       throw e;
@@ -249,12 +246,17 @@ const performLogin = async (platform: Platform, loginUsed: string, dispatch: Aut
  */
 export const loginAction =
   (platform: Platform, credentials: IAuthCredentials) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-    const activationScenario = await loginSteps.getToken(platform, credentials);
-    // if (activationScenario) return activationScenario;
-    const session = await performLogin(platform, credentials.username, dispatch);
-    console.debug('loginAction end', getAuthState(getState()).showOnboarding);
-    writeSingleAccount(session, getAuthState(getState()).showOnboarding);
-    return session;
+    try {
+      const activationScenario = await loginSteps.getToken(platform, credentials);
+      // if (activationScenario) return activationScenario;
+      const session = await performLogin(platform, credentials.username, dispatch);
+      console.debug('loginAction end', getAuthState(getState()).showOnboarding);
+      writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+      return session;
+    } catch (e) {
+      console.warn(`[Auth] Login error :`, e);
+      throw e;
+    }
   };
 
 /**
@@ -264,17 +266,22 @@ export const loginAction =
  * @throws
  */
 export const restoreAction = (account: AuthSavedAccount) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-  await loginSteps.loadToken(account);
-  const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
-  console.debug('restoreAction end', getAuthState(getState()).showOnboarding);
-  writeSingleAccount(session, getAuthState(getState()).showOnboarding);
-  return session;
+  try {
+    await loginSteps.loadToken(account);
+    const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
+    console.debug('restoreAction end', getAuthState(getState()).showOnboarding);
+    writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+    return session;
+  } catch (e) {
+    console.warn(`[Auth] Restore error :`, e);
+    throw e;
+  }
 };
 
 /**
  * Marks the current error as displayed.
  */
-export const consumeAuthError = () => (dispatch: AuthDispatch) => {
+export const consumeAuthErrorAction = () => (dispatch: AuthDispatch) => {
   // dispatch(authActions.sessionErrorConsume());
 };
 

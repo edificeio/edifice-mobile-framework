@@ -5,7 +5,7 @@ export namespace Error {
 
   export type ErrorTypes<ErrorClass> = ErrorClass extends Constructor<ErrorWithType<infer T>> ? T : EmptyEnum;
 
-  class ErrorWithType<Types = EmptyEnum> extends global.Error {
+  export class ErrorWithType<Types = EmptyEnum> extends global.Error {
     constructor(
       public type: Types,
       message?: ConstructorParameters<typeof global.Error>[0],
@@ -17,21 +17,24 @@ export namespace Error {
     }
   }
 
-  enum FetchErrorType {
+  export enum FetchErrorType {
+    NOT_AUTHENTICATED, // Signed request but no token available
     NETWORK_ERROR, // Server is unreachable or not responding
-    BAD_RESPONSE, // Response given but data is unintended
+    NOT_OK, // Response is not Http 2xx
+    BAD_RESPONSE, // Response is Http 2xx but given data is unintended
   }
 
   export const FetchError = ErrorWithType<FetchErrorType>;
 
-  const a = new FetchError(FetchErrorType.BAD_RESPONSE);
-
-  enum OAuth2ErrorType {
+  export enum OAuth2ErrorType {
     // App config related
+    OAUTH2_MISSING_CLIENT, // clientID / clientSecret not intialized
     OAUTH2_INVALID_CLIENT, // Invalid OAuth2 clientID / clientSecret
     OAUTH2_INVALID_GRANT, // Invalid OAuth2 grant (ex scope)
     // Credentials (login/pwd) related
     CREDENTIALS_MISMATCH, // Invalid login/pwd pair
+    // Refresh token related
+    REFRESH_INVALID, // Invalid refresh token
     // SAML (Federation)
     SAML_INVALID, // Invalid saml token
     SAML_MULTIPLE_VECTOR, // saml token corresponds to multiple accounts, need to login with given custom token
@@ -47,22 +50,15 @@ export namespace Error {
     UNKNOWN_DENIED, // User denied for non-specified reason
   }
 
-  const b = new FetchError(OAuth2ErrorType.ACCOUNT_BLOCKED);
-
   export const OAuth2Error = ErrorWithType<OAuth2ErrorType | ErrorTypes<typeof FetchError>>;
 
-  const c = new OAuth2Error(OAuth2ErrorType.OAUTH2_INVALID_GRANT);
-  const d = new OAuth2Error(FetchErrorType.BAD_RESPONSE);
-
-  enum LoginErrorType {
+  export enum LoginErrorType {
+    NO_SPECIFIED_PLATFORM,
+    INVALID_PLATFORM,
     ACCOUNT_INELIGIBLE_NOT_PREMIUM,
     ACCOUNT_INELIGIBLE_PRE_DELETED,
     TOO_MANY_ACCOUNTS,
   }
 
-  const e = new OAuth2Error(LoginErrorType.TOO_MANY_ACCOUNTS);
-
   export const LoginError = ErrorWithType<LoginErrorType | ErrorTypes<typeof OAuth2Error>>;
-
-  const f = new LoginError(LoginErrorType.TOO_MANY_ACCOUNTS);
 }

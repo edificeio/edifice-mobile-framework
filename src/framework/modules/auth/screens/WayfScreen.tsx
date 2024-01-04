@@ -15,11 +15,11 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import { getAuthErrorCode } from '~/framework/modules/auth/model';
+import { consumeAuthErrorAction, loginAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarTitle } from '~/framework/navigation/navBar';
+import { Error } from '~/framework/util/error';
 import { Trackers } from '~/framework/util/tracker';
 import { IOAuthToken, OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, initOAuth2 } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
@@ -299,7 +299,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.clearDatas(() => {
       this.error = error === OAuth2ErrorCode.BAD_CREDENTIALS ? OAuth2ErrorCode.BAD_SAML : error;
       this.setState({ mode: WAYFPageMode.ERROR });
-      this.props.dispatch(consumeAuthError());
+      this.props.dispatch(consumeAuthErrorAction());
     });
   }
 
@@ -332,13 +332,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if ((data as IOAuthToken).access_token) {
           this.login();
         } else {
-          const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-            OAuth2ErrorCode.BAD_RESPONSE,
-            'no access_token returned',
-            '',
-            { data },
-          ) as Error;
-          throw error;
+          throw new Error.FetchError(Error.FetchErrorType.BAD_RESPONSE, 'getOAuthToken: no access_token returned');
         }
       })
       .catch(error => {
@@ -390,13 +384,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           if ((data as IOAuthToken).access_token) {
             this.login();
           } else {
-            const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-              OAuth2ErrorCode.BAD_RESPONSE,
-              'no access_token returned',
-              '',
-              { data },
-            ) as Error;
-            throw error;
+            throw new Error.FetchError(Error.FetchErrorType.BAD_RESPONSE, 'loginWithCustomToken: no access_token returned');
           }
         })
         .catch(error => {
