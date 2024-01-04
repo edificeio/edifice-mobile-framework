@@ -155,6 +155,24 @@ export const submitBlogPostAction =
   };
 
 /**
+ * Edit a post for a given blog.
+ * Info: no reducer is used in this action.
+ */
+export const editBlogPostAction =
+  (blog: Blog, postId: string, postTitle: string, postContent: string) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const session = assertSession();
+    const blogId = blog.id;
+    const blogPostRight = getBlogPostRight(blog, session);
+    if (!blogPostRight) {
+      throw new Error('[editBlogPostAction] user has no post rights for this blog');
+    }
+
+    await blogService.post.edit(session, blogId, postId, postTitle, postContent);
+    await blogService.post.publish(session, blogId, postId);
+  };
+
+/**
  * Create and submit/publish a post for a given blog.
  * Info: no reducer is used in this action.
  */

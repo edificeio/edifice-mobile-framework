@@ -1,22 +1,20 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TextInput } from 'react-native';
+import { Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import { UI_SIZES } from '~/framework/components/constants';
 import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
-import { ImagePicked } from '~/framework/components/menus/actions';
-import { NavBarAction } from '~/framework/components/navigation';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { sendBlogPostAction } from '~/framework/modules/blog/actions';
+import { editBlogPostAction, sendBlogPostAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -27,79 +25,12 @@ import {
 } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { SyncedFile } from '~/framework/util/fileHandler';
 import { Trackers } from '~/framework/util/tracker';
-import { ILocalAttachment } from '~/ui/Attachment';
 
-export interface BlogCreatePostScreenDataProps {
-  session?: ISession;
-}
-
-export interface BlogCreatePostScreenEventProps {
-  handleSendBlogPost(blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]): Promise<string | undefined>;
-  handleInitTimeline(): Promise<void>;
-  dispatch: ThunkDispatch<any, any, any>;
-}
-
-export interface BlogCreatePostScreenNavParams {
-  blog: Blog;
-  referrer?: string;
-}
-
-export type BlogCreatePostScreenProps = BlogCreatePostScreenDataProps &
-  BlogCreatePostScreenEventProps &
-  NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogCreatePost>;
-
-export interface BlogCreatePostScreenState {
-  sendLoadingState: boolean;
-  title: string;
-  content: string;
-  images: ImagePicked[] | ILocalAttachment[];
-  thumbnailBlog: string | undefined;
-}
-
-const styles = StyleSheet.create({
-  page: {
-    backgroundColor: theme.palette.grey.white,
-    marginBottom: Platform.select({ ios: -UI_SIZES.screen.bottomInset, default: 0 }),
-  },
-  scrollView: {
-    flexGrow: 1,
-    padding: UI_SIZES.spacing.medium,
-  },
-  inputTitle: {
-    paddingBottom: UI_SIZES.spacing.small,
-    borderBottomWidth: 1,
-    borderColor: theme.palette.grey.cloudy,
-  },
-  container: {
-    marginBottom: UI_SIZES.screen.bottomInset,
-    flex: 1,
-    backgroundColor: theme.palette.grey.white,
-  },
-  content: {
-    backgroundColor: theme.palette.grey.white,
-    color: theme.palette.grey.black,
-    caretColor: theme.palette.grey.black,
-    placeholderColor: theme.palette.grey.fog,
-    contentCSSText: 'font-size: 16px; min-height: 200px;',
-  },
-  rich: {
-    minHeight: 300,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: 'transparent',
-  },
-  richBar: {
-    borderColor: '#efefef',
-    borderTopWidth: StyleSheet.hairlineWidth,
-  },
-  scroll: {
-    backgroundColor: theme.palette.grey.white,
-    flexGrow: 1,
-    padding: UI_SIZES.spacing.medium,
-  },
-});
+import styles from './styles';
+import { BlogCreatePostScreenDataProps, BlogCreatePostScreenEventProps, BlogCreatePostScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -108,14 +39,14 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('blog-createpost-title'),
+    title: '',
     titleStyle: { width: undefined },
   }),
 });
 
 const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
-  const [title, setTitle] = React.useState('');
+  const [title, setTitle] = React.useState(props.route.params.title ?? '');
   const contentRef = React.useRef('');
   const headerHeight = useHeaderHeight();
   const richText = React.useRef<RichEditor>(null);
@@ -167,6 +98,35 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         <RichToolbar editor={richText} style={styles.richBar} />
       </Animated.View>
     );
+  };
+
+  const doEditPost = async () => {
+    try {
+      console.log('edit post');
+      const { route, navigation, session, handleEditBlogPost, handleInitTimeline } = props;
+
+      const content = getContent();
+
+      const blog = route.params.blog;
+      const blogId = blog && blog.id;
+      if (!blog || !blogId) {
+        throw new Error('[doSendPost] failed to retrieve blog information');
+      }
+      const blogPostRight = blog && session && getBlogPostRight(blog, session);
+      if (!blogPostRight) {
+        throw new Error('[doSendPost] user has no post rights for this blog');
+      }
+
+      // Translate entered content to httml
+      const htmlContent = content.replace(/\n/g, '<br>').trim();
+
+      await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent);
+
+      navigation.goBack();
+      Toast.showSuccess(I18n.get('blog-createpost-publish-success'));
+    } catch (e: any) {
+      Toast.showError(I18n.get('blog-createpost-publish-error-text'));
+    }
   };
 
   const doSendPost = async () => {
@@ -226,7 +186,10 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
     Keyboard.dismiss();
     try {
       setLoadingState(true);
-      await doSendPost();
+      if (props.route.params.postId) await doEditPost();
+      else {
+        await doSendPost();
+      }
     } finally {
       setLoadingState(false);
     }
@@ -234,11 +197,24 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
 
   React.useEffect(() => {
     props.navigation.setOptions({
+      headerTitle: navBarTitle(props.route.params.postId ? 'Modifier le billet' : I18n.get('blog-createpost-title')),
       // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () => <NavBarAction icon="ui-send" onPress={doSend} />,
+      headerRight: () => (
+        <NavBarActionsGroup
+          elements={[
+            {
+              ...(loadingState ? (
+                <LoadingIndicator small customColor={theme.ui.text.inverse} />
+              ) : (
+                <NavBarAction icon={props.route.params.postId ? 'ui-save' : 'ui-send'} onPress={doSend} />
+              )),
+            },
+          ]}
+        />
+      ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title]);
+  }, [title, loadingState]);
 
   const renderPostInfos = () => {
     return (
@@ -261,7 +237,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
               enterKeyHint="done"
               editorStyle={styles.content}
               firstFocusEnd={false}
-              initialContentHTML=""
+              initialContentHTML={props.route.params.content ?? ''}
               initialFocus={false}
               pasteAsPlainText
               placeholder="Saisissez votre texte"
@@ -292,6 +268,9 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
   handleSendBlogPost: async (blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
     return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;
+  },
+  handleEditBlogPost: async (blog: Blog, postId: string, title: string, content: string) => {
+    return (await dispatch(editBlogPostAction(blog, postId, title, content))) as unknown as string | undefined;
   },
   handleInitTimeline: async () => {
     await dispatch(startLoadNotificationsAction());

@@ -200,7 +200,7 @@
   "blog-createpost-publish-success": "Votre billet a bien été publié.",
   "blog-createpost-submit": "Envoyer",
   "blog-createpost-submit-success": "Votre billet a bien été envoyé. Il sera publié une fois validé par le gestionnaire du blog.",
-  "blog-createpost-title": "Ajouter un billet",
+  "blog-createpost-title": "Nouveau billet",
   "blog-createpost-unsavedpublication": "Si vous quittez, le billet que vous avez rédigé sera perdu.",
   "blog-createpost-uploadattachments-error-text": "Erreur d'envoi des pièces jointes : verifiez votre accès à internet et que votre espace documentaire dispose d'assez d'espace libre",
   "blog-explorer-emptyscreen-button": "Créer un blog sur le web",

@@ -17,6 +17,7 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import { RichEditor } from '~/framework/components/inputs/rich-text-editor';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -50,7 +51,6 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
-import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
 import {
@@ -293,11 +293,24 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
       },
     });
-
     const menuData =
       session && (hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id)
         ? [
             menuItemOpenBrowser,
+            {
+              title: I18n.get('common-edit'),
+              icon: {
+                ios: 'pencil.line',
+                android: 'ic_edit',
+              },
+              action: () =>
+                navigation.navigate(blogRouteNames.blogCreatePost, {
+                  blog: this.state.blogInfos,
+                  title: this.state.blogPostData.title,
+                  content: this.state.blogPostData?.content,
+                  postId: this.state.blogPostData?._id,
+                }),
+            },
             deleteAction({
               action: () => {
                 Alert.alert(I18n.get('blog-postdetails-deletion-title'), I18n.get('blog-postdetails-deletion-text'), [
@@ -537,14 +550,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <HtmlContentView
-              html={blogPostContent}
-              onHtmlError={() => this.setState({ errorState: true })}
-              onDownload={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT', 'Read mode')}
-              onError={() => Trackers.trackEvent('Blog', 'DOWNLOAD ATTACHMENT ERROR', 'Read mode')}
-              onDownloadAll={() => Trackers.trackEvent('Blog', 'DOWNLOAD ALL ATTACHMENTS', 'Read mode')}
-              onOpen={() => Trackers.trackEvent('Blog', 'OPEN ATTACHMENT', 'Read mode')}
-            />
+            <RichEditor disabled initialContentHTML={blogPostContent} />
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (
