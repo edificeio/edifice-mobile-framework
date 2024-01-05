@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-12-15 17:15:24",
-  "notes": "Multi compte phase 1",
-  "version": "1.12.0-alpha.2(1120002)"
+  "last": "2024-01-05 19:59:33",
+  "notes": "chore: use new errors in login/oauth\nchore: ErrorWithType framework\nfix: login issue\nupdate(stack): Update some packages\nUpdated translations from Phrase (#119)\nupdate(stack): Update Some Packages\nchore: manage query param token\nupdate(stack): Update some packages\nMerge remote-tracking branch 'origin/dev/1.12.0' into dev/1.12.0\nchore: refresh token + automatic login\nfix: storage set booleans as numbers in mmkv\nUpdated translations from Phrase (#118)\nchore(build): Merge phrase translations removal.\nMerge pull request #117 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nchore(build): Github actions changes\nchore(build): Github actions changes\nMerge pull request #115 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nchore(build): Github actions changes\nMerge pull request #114 from opendigitaleducation/phrase-translations\nUpdated translations from Phrase\nchore(build): Auto merge phrase-translations PR Github Action\nchore(build): Reduce release notes size to avoid build error.\nchore(build): Reduce release notes size to avoid build error.\nrelease: 1.12.0-alpha.2(1120002)",
+  "version": "1.12.0-alpha.3(1120003)"
 }
