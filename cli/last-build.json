@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-11-23 15:26:55",
-  "notes": "Merge branch 'dev/1.11.3' into dev/1.12.0\nchore(i18n): Change auto import branch to dev/1.11.3 (Post MEP operation)\nMerge branch 'dev/1.11.3' into dev/1.12.0\nfeat(ios): MB-2306, Fix iOS Minimum Version to 13\nfeat(homework): MB-2308, wordings by override\nfeat(ios): MB-2306, Fix iOS Minimum Version to 13\nfeat(android): MB-2307, Fix Android Minimum Version to 6 (API 22)\nfix(conversation): MB-2278, green deletion confirmation toast\nupdate(stack): Update some packages.\nfeat(xmas): MB-2217, snowflakes\nupdate(stack): Update some packages.\nMerge branch 'dev/1.11.2' into dev/1.12.0\nrelease: 1.11.3(1110300)\nMerge branch 'dev/1.11.2' into dev/1.11.3\nchore(build): iOS Archive failed with Fastlane && Xcode 13.4.1.\nrelease: 1.11.2-rc.8(1110213)",
-  "version": "1.12.0-alpha.1(1120001)"
+  "last": "2024-01-05 19:37:22",
+  "notes": "chore(build): Change overrides repository url\nfeat(editor): change navbaraction state\nfeat(editor): new blog post && edit blog post\nfeat(editor): Manage oneSessionId on Editor opening\nfeat(editor): Retrieve oneSessionId cookie from oAuth2 token\nfeat(editor): change screen blogCreatePost with editor\nfeat(editor): add changes\nfeat(editor): add changes\nfeat(editor) changes\nRevert \"changes\"\nchanges\nMerge branch 'dev/1.12.0' into feat/rich-editor\nMerge branch 'dev/1.11.3' into dev/1.12.0\nfix(mediacentre): MO-344 prevent crash when filtering by resource type\nchore: replace Picture occurences with NamedSVG\nfix(diary): AMVS-385 fix a case where teachers with several structures could fetch slots from the wrong structure\nchore(homework): wordings by override\nrelease: 1.11.3-alpha.1(1110301)\nfix(build): Wrong version number (1.12.3) fix (1.12.0)\nrelease: 1.12.3-alpha.1(1120301)",
+  "version": "1.12.0-alpha.2(1120002)"
 }
