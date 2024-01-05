@@ -47,6 +47,7 @@ export const computeNavBar = ({
 const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
   const [title, setTitle] = React.useState(props.route.params.title ?? '');
+  const [contentHtml, setContentHtml] = React.useState(props.route.params.content ?? '');
   const contentRef = React.useRef('');
   const headerHeight = useHeaderHeight();
   const richText = React.useRef<RichEditor>(null);
@@ -71,6 +72,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
 
   const handleChange = React.useCallback((html: string) => {
     contentRef.current = html;
+    setContentHtml(html);
   }, []);
 
   const handleCursorPosition = React.useCallback((scrollY: number) => {
@@ -206,7 +208,11 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
               ...(loadingState ? (
                 <LoadingIndicator small customColor={theme.ui.text.inverse} />
               ) : (
-                <NavBarAction icon={props.route.params.postId ? 'ui-save' : 'ui-send'} onPress={doSend} />
+                <NavBarAction
+                  icon={props.route.params.postId ? 'ui-save' : 'ui-send'}
+                  disabled={title.length === 0 || contentHtml.length === 0}
+                  onPress={doSend}
+                />
               )),
             },
           ]}
@@ -214,7 +220,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, loadingState]);
+  }, [title, loadingState, contentHtml]);
 
   const renderPostInfos = () => {
     return (
