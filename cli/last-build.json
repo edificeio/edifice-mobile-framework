@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-01-05 19:37:22",
-  "notes": "chore(build): Change overrides repository url\nfeat(editor): change navbaraction state\nfeat(editor): new blog post && edit blog post\nfeat(editor): Manage oneSessionId on Editor opening\nfeat(editor): Retrieve oneSessionId cookie from oAuth2 token\nfeat(editor): change screen blogCreatePost with editor\nfeat(editor): add changes\nfeat(editor): add changes\nfeat(editor) changes\nRevert \"changes\"\nchanges\nMerge branch 'dev/1.12.0' into feat/rich-editor\nMerge branch 'dev/1.11.3' into dev/1.12.0\nfix(mediacentre): MO-344 prevent crash when filtering by resource type\nchore: replace Picture occurences with NamedSVG\nfix(diary): AMVS-385 fix a case where teachers with several structures could fetch slots from the wrong structure\nchore(homework): wordings by override\nrelease: 1.11.3-alpha.1(1110301)\nfix(build): Wrong version number (1.12.3) fix (1.12.0)\nrelease: 1.12.3-alpha.1(1120301)",
-  "version": "1.12.0-alpha.2(1120002)"
+  "last": "2024-01-06 21:19:37",
+  "notes": "release: 1.13.0(1130000)\nrelease: 1.12.0-alpha.2(1120002)",
+  "version": "1.13.0-alpha.1(1130001)"
 }
