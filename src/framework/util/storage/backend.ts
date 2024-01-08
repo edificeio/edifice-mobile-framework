@@ -16,7 +16,6 @@ export class StorageBackend extends StorageHandler<IStorageBackend> implements I
 
   getBoolean(key: StorageKey): boolean | undefined {
     const val = this.storage.getNumber(key);
-    console.debug('SB get boolean', key, val, typeof val);
     if (val === StorageBackend.BOOL_TRUE) return true;
     if (val === StorageBackend.BOOL_FALSE) return false;
     else return undefined;
@@ -32,7 +31,6 @@ export class StorageBackend extends StorageHandler<IStorageBackend> implements I
 
   set(key: StorageKey, value: string | number | boolean): void {
     if (typeof value === 'boolean') {
-      console.debug('SB set boolean', key, value, typeof value);
       return this.storage.set(key, value ? StorageBackend.BOOL_TRUE : StorageBackend.BOOL_FALSE);
     } else return this.storage.set(key, value);
   }

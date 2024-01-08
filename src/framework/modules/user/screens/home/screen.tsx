@@ -21,7 +21,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { logoutAction } from '~/framework/modules/auth/actions';
+import { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { AccountType, IAuthContext } from '~/framework/modules/auth/model';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -529,7 +529,7 @@ export default connect(
   dispatch =>
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
-        handleLogout: handleAction(logoutAction),
+        handleLogout: handleAction(manualLogoutAction),
       },
       dispatch,
     ),

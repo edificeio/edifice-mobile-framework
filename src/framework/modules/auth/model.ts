@@ -154,7 +154,7 @@ export interface AuthTokenSet {
  */
 export interface AuthSavedAccount {
   platform: string;
-  tokens: AuthTokenSet;
+  tokens?: AuthTokenSet;
   user: AuthSavedAccountUserInfo;
 }
 
@@ -328,7 +328,7 @@ export function createActivationError<T extends object>(
   description?: string,
   additionalData?: T,
 ): IActivationError & T {
-  const err: IActivationError = new Error('ACTIVATION: returned error') as any;
+  const err: IActivationError = new global.Error('ACTIVATION: returned error') as any;
   err.name = 'EACTIVATION';
   err.type = type;
   err.error = error;
@@ -373,7 +373,7 @@ export function createChangePasswordError<T extends object>(
   description?: string,
   additionalData?: T,
 ): IChangePasswordError & T {
-  const err: IChangePasswordError = new Error('CHANGE PWD: returned error') as any;
+  const err: IChangePasswordError = new global.Error('CHANGE PWD: returned error') as any;
   err.name = 'ECHANGEPWD';
   err.type = type;
   err.error = error;

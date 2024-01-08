@@ -65,6 +65,7 @@ export const actionTypes = {
   refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
   setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
   authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
+  logout: moduleConfig.namespaceActionType('LOGOUT'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -92,6 +93,7 @@ export interface ActionPayloads {
     account: NonNullable<IAuthState['pending']>['account'];
     error: NonNullable<Required<IAuthState['error']>>;
   };
+  logout: object;
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -155,6 +157,10 @@ export const actions = {
     type: actionTypes.authError,
     account,
     error,
+  }),
+
+  logout: () => ({
+    type: actionTypes.logout,
   }),
 
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
@@ -230,7 +236,10 @@ const reducer = createReducer(initialState, {
     const { id, token } = action as unknown as ActionPayloads['setQueryParamToken'];
     return {
       ...state,
-      accounts: { ...state.accounts, [id]: { ...state.accounts[id], tokens: { ...state.accounts[id].tokens, queryParam: token } } },
+      accounts: {
+        ...state.accounts,
+        [id]: { ...state.accounts[id], tokens: { ...state.accounts[id].tokens!, queryParam: token } },
+      },
     };
   },
 
@@ -240,6 +249,18 @@ const reducer = createReducer(initialState, {
       ...state,
       error,
       connected: undefined,
+    };
+  },
+
+  [actionTypes.logout]: (state, action) => {
+    const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthLoggedAccount | undefined;
+    if (!currentAccount) return state;
+    return {
+      ...state,
+      requirement: undefined,
+      connected: undefined,
+      pending: undefined,
+      error: undefined,
     };
   },
 

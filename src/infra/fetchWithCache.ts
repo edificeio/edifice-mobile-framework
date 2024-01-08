@@ -3,12 +3,11 @@ import CookieManager from '@react-native-cookies/cookies';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { getStore } from '~/app/store';
-import { sessionInvalidateAction } from '~/framework/modules/auth/actions';
-import { AuthError, RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
+import { quietLogoutAction } from '~/framework/modules/auth/actions';
 import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
-import { Platform } from '~/framework/util/appConf';
-import { getItemJson, getKeys, removeItems, setItemJson } from '~/framework/util/storage';
+import { getItemJson, setItemJson } from '~/framework/util/storage';
 
+import { CACHE_KEY_PREFIX } from './cache';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
 
 /** singleton boolean to prevent logout multiple time when parallel fetchs fails */
@@ -28,13 +27,12 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       if (isFailing) throw err;
       isFailing = true;
       // We consider assume here user user is logged out, but we don't really destroy his session => sessionInvalidate.
-      let platform: Platform;
       try {
-        platform = assertSession().platform;
-        await (getStore().dispatch as ThunkDispatch<any, any, any>)(sessionInvalidateAction(platform, err as AuthError));
-      } catch {
+        await (getStore().dispatch as ThunkDispatch<any, any, any>)(quietLogoutAction());
+        getStore().dispatch(authActions.authError({ info: new Error('session connot be refreshed', { cause: err }) }));
+      } catch (e) {
         // Cannot remove FCM token if we havn't platform. Just dispatch error in this case.
-        getStore().dispatch(authActions.sessionError((err as AuthError)?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
+        getStore().dispatch(authActions.authError({ info: new Error('cannot invalidate session', { cause: err }) }));
       }
       isFailing = false;
       throw err;
@@ -64,8 +62,6 @@ export async function signedFetchJson2(url: string | Request, init?: any): Promi
   }
   return signedFetchJson(session.platform.url + url, init);
 }
-
-const CACHE_KEY_PREFIX = 'request-';
 
 export const getCachedData = async <T>(path: string) => {
   let cachedData: undefined;
@@ -156,12 +152,4 @@ export async function fetchJSONWithCache(
     r => r.json(),
     cr => cr.body,
   ) as Promise<any>;
-}
-
-/**
- * Erase from MMKV all data that keeps requests cache.
- */
-export async function clearRequestsCache() {
-  const keys = (await getKeys()).filter(str => str.startsWith(CACHE_KEY_PREFIX));
-  await removeItems(keys);
 }

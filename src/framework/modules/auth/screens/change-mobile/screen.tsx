@@ -27,7 +27,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { logoutAction } from '~/framework/modules/auth/actions';
+import { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
@@ -332,7 +332,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeMobileScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      tryLogout: tryAction(logoutAction),
+      tryLogout: tryAction(manualLogoutAction),
       trySaveNewMobile: tryAction(profileUpdateAction),
     },
     dispatch,

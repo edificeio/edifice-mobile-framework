@@ -17,7 +17,7 @@ import { PageView, PageViewStyle } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { logoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
+import { manualLogoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
 import { LegalUrls } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformLegalUrls } from '~/framework/modules/auth/reducer';
@@ -30,7 +30,7 @@ export interface IRevalidateTermsScreenDataProps {
 }
 
 export interface IRevalidateTermsScreenEventProps {
-  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  tryLogout: (...args: Parameters<typeof manualLogoutAction>) => Promise<void>;
   tryRevalidate: (...args: Parameters<typeof revalidateTermsAction>) => ReturnType<ReturnType<typeof revalidateTermsAction>>;
 }
 
@@ -145,7 +145,7 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators<IRevalidateTermsScreenEventProps>(
       {
-        tryLogout: tryAction(logoutAction),
+        tryLogout: tryAction(manualLogoutAction),
         tryRevalidate: tryAction(revalidateTermsAction),
       },
       dispatch,

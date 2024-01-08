@@ -16,7 +16,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { logoutAction } from '~/framework/modules/auth/actions';
+import { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getEmailValidationInfos, requestEmailVerificationCode } from '~/framework/modules/auth/service';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
@@ -198,7 +198,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeEmailScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      tryLogout: tryAction(logoutAction),
+      tryLogout: tryAction(manualLogoutAction),
     },
     dispatch,
   );

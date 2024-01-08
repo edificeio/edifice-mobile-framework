@@ -1,7 +1,7 @@
 import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ILoginResult, changePasswordAction, logoutAction } from '~/framework/modules/auth/actions';
+import { ILoginResult, changePasswordAction, manualLogoutAction } from '~/framework/modules/auth/actions';
 import type { AuthLoggedAccount, IAuthContext } from '~/framework/modules/auth/model';
 import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IChangePasswordModel } from '~/framework/modules/user/actions';
@@ -25,7 +25,7 @@ export interface ChangePasswordScreenStoreProps {
 }
 
 export interface ChangePasswordScreenDispatchProps {
-  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  tryLogout: (...args: Parameters<typeof manualLogoutAction>) => Promise<void>;
   trySubmit: (...args: Parameters<typeof changePasswordAction>) => Promise<ILoginResult>;
 }
 

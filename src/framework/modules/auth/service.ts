@@ -588,7 +588,6 @@ export async function verifyEmailCode(key: string) {
 }
 
 export async function getUserRequirements(platform: Platform) {
-  console.debug('getUserRequirements');
   const resp = await signedFetch(`${platform.url}/auth/user/requirements`);
   return resp.status === 404 ? null : (resp.json() as IUserRequirements);
 }

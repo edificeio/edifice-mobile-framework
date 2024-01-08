@@ -735,6 +735,6 @@ export function initOAuth2(platform: Platform) {
   );
 }
 
-export function destroyOAuth2() {
+export function destroyOAuth2Legacy() {
   return OAuth2RessourceOwnerPasswordClient.connection?.eraseToken();
 }

@@ -19,7 +19,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { changePasswordAction, loadAuthContextAction, logoutAction } from '~/framework/modules/auth/actions';
+import { changePasswordAction, loadAuthContextAction, manualLogoutAction } from '~/framework/modules/auth/actions';
 import { IAuthContext, IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
 import { getPlatformContext, getSession } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -262,7 +262,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePass
   return bindActionCreators<ChangePasswordScreenDispatchProps>(
     {
       trySubmit: tryAction(changePasswordAction),
-      tryLogout: tryAction(logoutAction),
+      tryLogout: tryAction(manualLogoutAction),
     },
     dispatch,
   );

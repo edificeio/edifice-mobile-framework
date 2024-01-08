@@ -58,7 +58,6 @@ export const writeSingleAccount = (account: AuthLoggedAccount, showOnboarding: b
   };
   authStorage.setJSON('accounts', savedAccounts);
   authStorage.setJSON('startup', startup);
-  console.debug('writeSingleAccount', showOnboarding);
   authStorage.set('show-onboarding', showOnboarding);
 };
 
@@ -70,6 +69,19 @@ export const updateAccount = (savedAccount: AuthSavedAccount) => {
   const savedAccounts = readSavedAccounts();
   savedAccounts[savedAccount.user.id] = savedAccount;
   authStorage.setJSON('accounts', savedAccounts);
+};
+
+export const writeLogout = (account: AuthLoggedAccount) => {
+  const accounts = authStorage.getJSON('accounts');
+  if (accounts) {
+    const savedAccount = accounts[account.user.id];
+    if (savedAccount) {
+      savedAccount.tokens = undefined;
+      accounts[account.user.id] = savedAccount;
+    }
+    authStorage.setJSON('accounts', accounts);
+  }
+  authStorage.delete('startup');
 };
 
 /** read old auth values in storage */

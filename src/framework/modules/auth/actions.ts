@@ -1,4 +1,3 @@
-import { Alert } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -7,8 +6,11 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { IAuthState, actions, assertSession, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
+import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { StorageSlice } from '~/framework/util/storage/slice';
 import { Trackers } from '~/framework/util/tracker';
+import { clearRequestsCacheLegacy } from '~/infra/cache';
+import { destroyOAuth2Legacy } from '~/infra/oauth';
 
 import {
   AuthRequirement,
@@ -37,7 +39,7 @@ import {
   manageFirebaseToken,
   revalidateTerms,
 } from './service';
-import { readSavedAccounts, readSavedStartup, readShowOnbording, writeSingleAccount } from './storage';
+import { readSavedAccounts, readSavedStartup, readShowOnbording, writeLogout, writeSingleAccount } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
@@ -251,13 +253,12 @@ export const loginAction =
       const activationScenario = await loginSteps.getToken(platform, credentials);
       // if (activationScenario) return activationScenario;
       const session = await performLogin(platform, credentials.username, dispatch);
-      console.debug('loginAction end', getAuthState(getState()).showOnboarding);
       writeSingleAccount(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
       console.warn(`[Auth] Login error :`, e);
       dispatch(
-        actions.authError(credentials.username, {
+        actions.authError({
           key,
           info: e as Error,
         }),
@@ -276,7 +277,6 @@ export const restoreAction = (account: AuthSavedAccount) => async (dispatch: Aut
   try {
     await loginSteps.loadToken(account);
     const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
-    console.debug('restoreAction end', getAuthState(getState()).showOnboarding);
     writeSingleAccount(session, getAuthState(getState()).showOnboarding);
     return session;
   } catch (e) {
@@ -667,20 +667,23 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
 //   };
 // }
 
-// /** Action that erases the session without Tracking anything. */
-// function sessionDestroyAction(platform: Platform) {
-//   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-//     // Unregister the device token from the backend
-//     await removeFirebaseToken(platform);
-//     // Erase requests cache
-//     await clearRequestsCache();
-//     // Erase stored oauth2 token and cache information
-//     await destroyOAuth2();
-//     // Validate log out
-//     dispatch(authActions.sessionEnd());
-//     dispatch(createEndSessionAction()); // flush sessionReducers
-//   };
-// }
+/** Action that erases the session without Tracking anything. */
+export function quietLogoutAction() {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    // Unregister the device token from the backend
+    const account = assertSession();
+    await authService.removeFirebaseToken(account.platform);
+    // Erase requests cache
+    await clearRequestsCacheLegacy();
+    // Erase stored oauth2 token and cache information
+    await destroyOAuth2Legacy();
+    // Writes new storage values
+    writeLogout(account);
+    // Validate log out
+    dispatch(actions.logout());
+    dispatch(createEndSessionAction()); // flush sessionReducers
+  };
+}
 
 // /** Action that invalidates the session without Tracking anything in case of error.
 //  * This removes FCM and takes the user to the auth stack.
@@ -698,11 +701,9 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
 /** Clear the current session and track logout event.
  * Session must exist and this action will throw if no session is active.
  */
-export function logoutAction() {
+export function manualLogoutAction() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const platform = assertSession().platform;
-    // await dispatch(sessionDestroyAction(platform));
-    Alert.alert('Log out');
+    await dispatch(quietLogoutAction());
     Trackers.trackEvent('Auth', 'LOGOUT');
   };
 }
