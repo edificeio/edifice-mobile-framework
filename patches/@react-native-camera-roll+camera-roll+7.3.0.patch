@@ -1,5 +1,5 @@
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
-index ec922f9..877274d 100644
+index 6891fa3..9aee1eb 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 @@ -11,7 +11,7 @@ buildscript {
@@ -7,15 +7,28 @@ index ec922f9..877274d 100644
  
      dependencies {
 -      classpath("com.android.tools.build:gradle:4.2.2")
-+      classpath('com.android.tools.build:gradle:7.1.3')
++      classpath("com.android.tools.build:gradle:7.1.3")
      }
    }
  }
+diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
+index dbda53f..98fb413 100644
+--- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
++++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/AndroidManifest.xml
+@@ -1,6 +1,6 @@
+ 
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+-          package="com.reactnativecommunity.cameraroll">
++          >
+ 
+ </manifest>
+   
+\ No newline at end of file
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-index 53b6018..a82aa3d 100644
+index 7dc8983..e78b6ea 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-@@ -238,7 +238,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
+@@ -262,7 +262,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
                      }
                    });
          }
