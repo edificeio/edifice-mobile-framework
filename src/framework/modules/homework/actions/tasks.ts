@@ -5,7 +5,7 @@
 import moment from 'moment';
 
 import homeworkConfig from '~/framework/modules/homework/module-config';
-import { IHomeworkDay, IHomeworkTasks } from '~/framework/modules/homework/reducers/tasks';
+import { IHomeworkDay, IHomeworkTaskStatuses, IHomeworkTasks } from '~/framework/modules/homework/reducers/tasks';
 import { IState, asyncActionTypes, asyncFetchIfNeeded, asyncGetJson } from '~/infra/redux/async';
 
 /** Retuns the local state (global state -> homework -> tasks). Give the global state as parameter. */
@@ -13,7 +13,6 @@ const localState = globalState => homeworkConfig.getState(globalState).tasks;
 
 // ADAPTER ----------------------------------------------------------------------------------------
 
-// Data type of what is given by the backend.
 export interface IHomeworkTasksBackend {
   _id: string;
   title: string;
@@ -47,7 +46,6 @@ export interface IHomeworkTasksBackend {
   }[];
 }
 
-/** The adapter MUST returns a brand-new object */
 const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = data => {
   // Get all the backend homeworkDays.
   if (!data) return { byId: {}, ids: [] };
@@ -81,6 +79,7 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
         id: indextask.toString(),
         title: itemtask.title,
         taskId: itemtask._id,
+        finished: false,
       };
     });
     // Now we put the homeworkDay into the return value
@@ -97,6 +96,33 @@ const homeworkTasksAdapter: (data: IHomeworkTasksBackend) => IHomeworkTasks = da
     owner: data.owner,
     shared: data.shared,
   };
+  return ret;
+};
+
+export interface IHomeworkTaskStatusBackend {
+  userId: string;
+  homeworkId: string;
+  entryId: string;
+  finished: boolean;
+}
+
+export type IHomeworkTaskStatusesBackend = IHomeworkTaskStatusBackend[];
+
+const homeworkTaskStatusesAdapter: (data: IHomeworkTaskStatusesBackend) => IHomeworkTaskStatuses = data => {
+  const ret = data.map(taskStatus => ({ entryId: taskStatus.entryId, finished: taskStatus.finished }));
+  return ret;
+};
+
+const homeworkTasksData = (tasksData: IHomeworkTasks, taskStatusesData: IHomeworkTaskStatuses) => {
+  const ret = tasksData;
+  taskStatusesData?.forEach(taskStatus => {
+    ret?.ids?.forEach(id => {
+      ret?.byId[id]?.tasks?.ids?.forEach(taskId => {
+        const task = ret?.byId[id]?.tasks?.byId[taskId];
+        if (taskStatus?.entryId === task?.taskId) task.finished = taskStatus?.finished;
+      });
+    });
+  });
   return ret;
 };
 
@@ -132,13 +158,24 @@ export function homeworkTasksFetchError(diaryId: string, errmsg: string) {
  * Calls a fetch operation to get homework tasks from the backend for the given diaryId.
  * Dispatches HOMEWORK_TASKS_REQUESTED, HOMEWORK_TASKS_RECEIVED, and HOMEWORK_TASKS_FETCH_ERROR if an error occurs.
  */
-export function fetchHomeworkTasks(diaryId: string) {
+export function fetchHomeworkTasks(diaryId: string, entryId?: string, repeatId?: string) {
   return async dispatch => {
     dispatch(homeworkTasksRequested(diaryId));
 
     try {
-      const data = await asyncGetJson(`/homeworks/get/${diaryId}`, homeworkTasksAdapter);
-
+      const getTaskStatusesQueryParams = () => {
+        if (!entryId && !repeatId) return '';
+        let queryParams = '?';
+        if (entryId) queryParams = `${queryParams}entryid=${entryId}`;
+        if (repeatId) queryParams = entryId ? `${queryParams}&repeatid=${repeatId}` : `${queryParams}repeatid=${repeatId}`;
+        return queryParams;
+      };
+      const taskStatusesData = await asyncGetJson(
+        `/homeworks/${diaryId}/entry/status${getTaskStatusesQueryParams()}`,
+        homeworkTaskStatusesAdapter,
+      );
+      const tasksData = await asyncGetJson(`/homeworks/get/${diaryId}`, homeworkTasksAdapter);
+      const data = homeworkTasksData(tasksData, taskStatusesData);
       dispatch(homeworkTasksReceived(diaryId, data));
     } catch (errmsg) {
       dispatch(homeworkTasksFetchError(diaryId, errmsg as string));
