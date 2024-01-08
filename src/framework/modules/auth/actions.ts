@@ -245,7 +245,8 @@ const performLogin = async (platform: Platform, loginUsed: string, dispatch: Aut
  * @throws
  */
 export const loginAction =
-  (platform: Platform, credentials: IAuthCredentials) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+  (platform: Platform, credentials: IAuthCredentials, key: number) =>
+  async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       const activationScenario = await loginSteps.getToken(platform, credentials);
       // if (activationScenario) return activationScenario;
@@ -255,6 +256,12 @@ export const loginAction =
       return session;
     } catch (e) {
       console.warn(`[Auth] Login error :`, e);
+      dispatch(
+        actions.authError(credentials.username, {
+          key,
+          info: e as Error,
+        }),
+      );
       throw e;
     }
   };
@@ -274,6 +281,12 @@ export const restoreAction = (account: AuthSavedAccount) => async (dispatch: Aut
     return session;
   } catch (e) {
     console.warn(`[Auth] Restore error :`, e);
+    dispatch(
+      actions.authError({
+        key: undefined,
+        info: e as Error,
+      }),
+    );
     throw e;
   }
 };
@@ -281,8 +294,12 @@ export const restoreAction = (account: AuthSavedAccount) => async (dispatch: Aut
 /**
  * Marks the current error as displayed.
  */
-export const consumeAuthErrorAction = () => (dispatch: AuthDispatch) => {
-  // dispatch(authActions.sessionErrorConsume());
+export const consumeAuthErrorAction = (key: number) => (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+  const error = getAuthState(getState()).error;
+  if (error) {
+    error.key = key;
+    dispatch(actions.authError(error));
+  }
 };
 
 /**

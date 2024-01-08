@@ -1,6 +1,5 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
 import type {
-  AuthErrorDetails,
   AuthLoggedAccount,
   AuthLoggedAccountMap,
   AuthMixedAccountMap,
@@ -29,13 +28,16 @@ export interface IAuthState {
     account?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
     platform: string; // Platform id of the login task (duplicated the value in `account` if present)
     login?: string; // Manual login only : the login used for log in
-    error?: AuthErrorDetails & {
-      key?: number;
-    };
     activation?: {
       context?: IAuthContext;
       code: string;
     };
+  };
+
+  error?: {
+    // No need to affiliate the error to a platform since the `key` contains the render ID on the screen
+    key?: number;
+    info: Error;
   };
 
   deviceInfo: {
@@ -88,9 +90,7 @@ export interface ActionPayloads {
   setQueryParamToken: { id: string; token: AuthTokenSet['queryParam'] };
   authError: {
     account: NonNullable<IAuthState['pending']>['account'];
-    platform: NonNullable<IAuthState['pending']>['platform'];
-    login: NonNullable<IAuthState['pending']>['login'];
-    error: NonNullable<Required<IAuthState['pending']>>['error'];
+    error: NonNullable<Required<IAuthState['error']>>;
   };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
@@ -151,16 +151,9 @@ export const actions = {
     token,
   }),
 
-  authError: (
-    platform: Platform,
-    login: string,
-    error: NonNullable<Required<IAuthState['pending']>>['error'],
-    account?: string,
-  ) => ({
+  authError: (error: NonNullable<IAuthState['error']>, account?: string) => ({
     type: actionTypes.authError,
     account,
-    platform,
-    login,
     error,
   }),
 
@@ -242,15 +235,10 @@ const reducer = createReducer(initialState, {
   },
 
   [actionTypes.authError]: (state, action) => {
-    const { account, platform, login, error } = action as unknown as ActionPayloads['authError'];
+    const { error } = action as unknown as ActionPayloads['authError'];
     return {
       ...state,
-      pending: {
-        account,
-        platform,
-        login,
-        error,
-      },
+      error,
       connected: undefined,
     };
   },

@@ -1,6 +1,7 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { InteractionManager, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -17,13 +18,13 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthErrorAction, loginAction } from '~/framework/modules/auth/actions';
-import { AuthErrorCode, getAuthErrorCode } from '~/framework/modules/auth/model';
+// import { AuthErrorCode, getAuthErrorCode } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { Error } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { OAuth2ErrorCode } from '~/infra/oauth';
 
 import styles from './styles';
 import { LoginCredentialsScreenDispatchProps, LoginCredentialsScreenPrivateProps, LoginState } from './types';
@@ -42,57 +43,49 @@ export const computeNavBar = ({
 });
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
-  const { route, navigation } = props;
+  const { route, navigation, error, handleConsumeError } = props;
   const { platform } = route.params;
+
+  const [screenKey, setScreenKey] = React.useState(Math.random());
 
   const [login, setLogin] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
-  const [rememberMe, setRememberMe] = React.useState<boolean>(true); // We keep the logic for 1 year, after we delete
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
-  const [error, setError] = React.useState<AuthErrorCode>();
+  const errorType = React.useMemo(() => {
+    let currentError = error?.info;
+    let type: Error.ErrorTypes<typeof Error.LoginError> | undefined;
+    do {
+      if (currentError instanceof Error.ErrorWithType) type = currentError.type as Error.ErrorTypes<typeof Error.LoginError>;
+      currentError = currentError?.cause as Error;
+    } while (currentError);
+    return type;
+  }, [error]);
+
+  const showError = error?.key === screenKey || error?.key === undefined;
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);
   const mounted = React.useRef(false);
-  const unsubscribeBlur = React.useRef<any>(null);
-  const unsubscribeBlurTask = React.useRef<any>(null);
 
   const isSubmitDisabled = React.useMemo(() => !(login && password), [login, password]);
 
-  const consumeError = () => {
-    if (props.auth.error) {
-      setError(props.auth.error);
-      props.handleConsumeError();
-    }
-  };
-
-  const resetError = () => {
-    setError(undefined);
-  };
+  const resetError = React.useCallback(() => {
+    if (error && showError) setScreenKey(Math.random());
+    // setError(undefined);
+  }, [error, showError]);
 
   React.useEffect(() => {
     mounted.current = true;
-    const handleBlur = () => {
-      unsubscribeBlurTask.current = InteractionManager.runAfterInteractions(() => {
-        resetError();
-      });
-    };
-
-    unsubscribeBlur.current = props.navigation.addListener('blur', handleBlur);
+    handleConsumeError(screenKey);
 
     return () => {
       mounted.current = false;
-      unsubscribeBlur.current();
-      unsubscribeBlurTask.current?.cancel();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  React.useEffect(() => {
-    consumeError();
-  });
-
-  const doLogin = async () => {
+  const doLogin = React.useCallback(async () => {
     setLoginState(LoginState.RUNNING);
     try {
       const loginCredentials = {
@@ -100,7 +93,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         password: password.trim(),
       };
 
-      const redirect = await props.tryLogin(platform, loginCredentials, rememberMe);
+      const redirect = await props.tryLogin(platform, loginCredentials, screenKey);
 
       if (redirect) {
         redirectLoginNavAction(redirect, platform, navigation);
@@ -122,37 +115,99 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         setLoginState(LoginState.IDLE);
       }
     }
-  };
+  }, [login, navigation, password, platform, props, screenKey]);
 
-  const goToWeb = () => {
+  const goToWeb = React.useCallback(() => {
     openUrl(platform.url);
-  };
+  }, [platform.url]);
 
-  const onTextChange = () => {
+  const onTextChange = React.useCallback(() => {
     setTyping(true);
     resetError();
-  };
+  }, [resetError]);
 
-  const onLoginChanged = value => {
-    setLogin(value.trim().toLowerCase());
-    onTextChange();
-  };
+  const onLoginChanged = React.useCallback(
+    (value: string) => {
+      setLogin(value.trim().toLowerCase());
+      onTextChange();
+    },
+    [onTextChange],
+  );
 
-  const onPasswordChanged = value => {
-    setPassword(value);
-    onTextChange();
-  };
+  const onPasswordChanged = React.useCallback(
+    (value: string) => {
+      setPassword(value);
+      onTextChange();
+    },
+    [onTextChange],
+  );
 
-  const onSubmitEditingLogin = () => {
+  const onSubmitEditingLogin = React.useCallback(() => {
     if (inputPassword.current) inputPassword.current.focus();
-  };
+  }, []);
 
-  const onSubmitEditingPassword = () => {
+  const onSubmitEditingPassword = React.useCallback(() => {
     if (!isSubmitDisabled) doLogin();
-  };
+  }, [doLogin, isSubmitDisabled]);
+
+  const getAuthErrorText = React.useCallback((type?: Error.ErrorTypes<typeof Error.LoginError>) => {
+    switch (type) {
+      case Error.FetchErrorType.NOT_AUTHENTICATED:
+        return I18n.get('auth-error-notinitilized');
+      case Error.FetchErrorType.BAD_RESPONSE:
+        return I18n.get('auth-error-badresponse');
+      case Error.FetchErrorType.NETWORK_ERROR:
+        return I18n.get('auth-error-networkerror');
+      case Error.FetchErrorType.NOT_OK:
+        return I18n.get('auth-error-unknownresponse');
+
+      case Error.OAuth2ErrorType.OAUTH2_INVALID_CLIENT:
+        return I18n.get('auth-error-invalidclient', { version: DeviceInfo.getVersion() });
+      case Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT:
+        return I18n.get('auth-error-notinitilized');
+      case Error.OAuth2ErrorType.OAUTH2_INVALID_GRANT:
+        return I18n.get('auth-error-invalidgrant');
+      case Error.OAuth2ErrorType.PLATFORM_TOO_LOAD:
+        return I18n.get('auth-error-tooload');
+      case Error.OAuth2ErrorType.PLATFORM_UNAVAILABLE:
+        return I18n.get('auth-error-platformunavailable');
+      case Error.OAuth2ErrorType.REFRESH_INVALID:
+        return I18n.get('auth-error-restorefail');
+      case Error.OAuth2ErrorType.SECURITY_TOO_MANY_TRIES:
+        return I18n.get('auth-error-toomanytries');
+      case Error.OAuth2ErrorType.UNKNOWN_DENIED:
+        return I18n.get('auth-error-unknowndenied');
+      case Error.OAuth2ErrorType.CREDENTIALS_MISMATCH:
+        return I18n.get('auth-error-badcredentials');
+      case Error.OAuth2ErrorType.SAML_INVALID:
+        return I18n.get('auth-error-badsaml');
+      case Error.OAuth2ErrorType.PLATFORM_BLOCKED_TYPE:
+        return I18n.get('auth-error-blockedtype');
+      case Error.OAuth2ErrorType.ACCOUNT_BLOCKED:
+        return I18n.get('auth-error-blockeduser');
+
+      case Error.LoginErrorType.NO_SPECIFIED_PLATFORM:
+      case Error.LoginErrorType.INVALID_PLATFORM:
+        return I18n.get('auth-error-runtimeerror');
+      case Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM:
+        return I18n.get('auth-error-notpremium');
+      case Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED:
+        return I18n.get('auth-error-predeleted');
+
+      case Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR:
+      default:
+        return I18n.get('auth-error-unknownerror');
+    }
+  }, []);
 
   const renderError = React.useCallback(() => {
-    if (!error) return;
+    if (!error || !showError) {
+      return (
+        <View style={styles.boxError}>
+          <BodyText style={styles.userTextError}> </BodyText>
+        </View>
+      );
+    }
     return (
       <View style={[styles.boxError, styles.userError]}>
         <NamedSVG
@@ -161,10 +216,10 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-        <BodyText style={styles.userTextError}>{getAuthErrorCode(error, platform)}</BodyText>
+        <BodyText style={styles.userTextError}>{getAuthErrorText(errorType)}</BodyText>
       </View>
     );
-  }, [error, platform]);
+  }, [error, errorType, getAuthErrorText, showError]);
 
   const renderPlatform = React.useCallback(() => {
     const logoStyle = {
@@ -195,7 +250,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               autoCorrect={false}
               spellCheck={false}
               testID="login-identifier"
-              showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
+              showError={showError && error && errorType === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
             />
@@ -210,7 +265,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               ref={inputPassword}
               onChangeText={onPasswordChanged.bind(this)}
               value={password}
-              showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
+              showError={showError && error && errorType === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH}
               testID="login-password"
               onSubmitEditing={onSubmitEditingPassword}
               returnKeyType="send"
@@ -220,21 +275,39 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         />
       </View>
     );
-  }, [onLoginChanged, login, error, onPasswordChanged, password, onSubmitEditingPassword]);
+  }, [
+    onLoginChanged,
+    login,
+    error,
+    errorType,
+    onSubmitEditingLogin,
+    onPasswordChanged,
+    password,
+    showError,
+    onSubmitEditingPassword,
+  ]);
 
   const renderLoginButton = React.useCallback(() => {
-    if ((error === 'not_premium' || error === 'pre_deleted') && !typing)
+    if (
+      showError &&
+      error &&
+      !typing &&
+      (errorType === Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM ||
+        errorType === Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED)
+    ) {
       return <PrimaryButton action={goToWeb} text={I18n.get('LoginWeb')} iconRight="ui-externalLink" testID="login-opentoweb" />;
-    return (
-      <PrimaryButton
-        action={doLogin}
-        disabled={isSubmitDisabled}
-        text={I18n.get('auth-login-connect')}
-        loading={loginState === LoginState.RUNNING || loginState === LoginState.DONE}
-        testID="login-connect"
-      />
-    );
-  }, [error, typing, isSubmitDisabled, loginState, doLogin, goToWeb]);
+    } else {
+      return (
+        <PrimaryButton
+          action={doLogin}
+          disabled={isSubmitDisabled}
+          text={I18n.get('auth-login-connect')}
+          loading={loginState === LoginState.RUNNING || loginState === LoginState.DONE}
+          testID="login-connect"
+        />
+      );
+    }
+  }, [showError, error, typing, errorType, goToWeb, doLogin, isSubmitDisabled, loginState]);
 
   const renderPage = React.useCallback(() => {
     return (
@@ -274,7 +347,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     return {
-      auth: getAuthState(state),
+      error: getAuthState(state).error,
     };
   },
   dispatch =>

@@ -20,7 +20,8 @@ export interface LoginCredentialsScreenNavParams {
 }
 
 export interface LoginCredentialsScreenStoreProps {
-  auth: IAuthState;
+  // auth: IAuthState;
+  error: IAuthState['error'];
 }
 
 export interface LoginCredentialsScreenDispatchProps {
