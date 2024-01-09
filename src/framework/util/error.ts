@@ -22,6 +22,21 @@ export namespace Error {
     }
   }
 
+  export interface ErrorWithKey {
+    info: Error;
+    key?: number;
+  }
+
+  export const getDeepErrorType = <ErrorClass = ErrorWithType>(error?: ErrorWithKey) => {
+    let currentError = error?.info;
+    let type: Error.ErrorTypes<ErrorClass> | undefined;
+    do {
+      if (currentError instanceof Error.ErrorWithType) type = currentError.type as Error.ErrorTypes<ErrorClass>;
+      currentError = currentError?.cause as Error;
+    } while (currentError);
+    return type;
+  };
+
   export enum FetchErrorType {
     NOT_AUTHENTICATED = 'NOT_AUTHENTICATED', // Signed request but no token available
     NETWORK_ERROR = 'NETWORK_ERROR', // Server is unreachable or not responding

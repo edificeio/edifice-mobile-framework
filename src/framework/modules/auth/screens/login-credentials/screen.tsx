@@ -52,16 +52,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
-  const errorType = React.useMemo(() => {
-    let currentError = error?.info;
-    let type: Error.ErrorTypes<typeof Error.LoginError> | undefined;
-    do {
-      if (currentError instanceof Error.ErrorWithType) type = currentError.type as Error.ErrorTypes<typeof Error.LoginError>;
-      currentError = currentError?.cause as Error;
-    } while (currentError);
-    return type;
-  }, [error]);
-
+  const errorType = React.useMemo(() => Error.getDeepErrorType(error), [error]);
   const showError = error?.key === screenKey || error?.key === undefined;
 
   const inputLogin = React.useRef<any>(null);
