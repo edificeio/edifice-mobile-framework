@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2023-12-13 18:31:14",
-  "notes": "release: 1.11.4-rc.5(1110409)",
-  "version": "1.11.4-rc.6(1110410)"
+  "last": "2024-01-09 19:48:55",
+  "notes": "feat(homework): Check homework UI review\nfest(homework): Missing i18n addition\nfest(homework): Synchronize i18n\nfeat(homework): Check homework addition (report from 1.12.0)\nchore(stack): Upgrade some packeges\nchore(i18n): Phrase translations update\nchore(i18n): Restore phrase sun on dev/1.12.0\nRevert \"chore(i18n): Phrase syncrho on dev/1.11.5\"\nchore(i18n): Phrase syncrho on dev/1.11.5\nupdate(stack): Update packages\nrelease: 1.11.5(1110500)\nrelease: 1.11.4-rc.6(1110410)",
+  "version": "1.11.5-alpha.1(1110501)"
 }
