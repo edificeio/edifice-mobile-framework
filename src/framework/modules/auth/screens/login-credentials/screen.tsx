@@ -1,7 +1,6 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -142,53 +141,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   }, [doLogin, isSubmitDisabled]);
 
   const getAuthErrorText = React.useCallback((type?: Error.ErrorTypes<typeof Error.LoginError>) => {
-    switch (type) {
-      case Error.FetchErrorType.NOT_AUTHENTICATED:
-        return I18n.get('auth-error-notinitilized');
-      case Error.FetchErrorType.BAD_RESPONSE:
-        return I18n.get('auth-error-badresponse');
-      case Error.FetchErrorType.NETWORK_ERROR:
-        return I18n.get('auth-error-networkerror');
-      case Error.FetchErrorType.NOT_OK:
-        return I18n.get('auth-error-unknownresponse');
-
-      case Error.OAuth2ErrorType.OAUTH2_INVALID_CLIENT:
-        return I18n.get('auth-error-invalidclient', { version: DeviceInfo.getVersion() });
-      case Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT:
-        return I18n.get('auth-error-notinitilized');
-      case Error.OAuth2ErrorType.OAUTH2_INVALID_GRANT:
-        return I18n.get('auth-error-invalidgrant');
-      case Error.OAuth2ErrorType.PLATFORM_TOO_LOAD:
-        return I18n.get('auth-error-tooload');
-      case Error.OAuth2ErrorType.PLATFORM_UNAVAILABLE:
-        return I18n.get('auth-error-platformunavailable');
-      case Error.OAuth2ErrorType.REFRESH_INVALID:
-        return I18n.get('auth-error-restorefail');
-      case Error.OAuth2ErrorType.SECURITY_TOO_MANY_TRIES:
-        return I18n.get('auth-error-toomanytries');
-      case Error.OAuth2ErrorType.UNKNOWN_DENIED:
-        return I18n.get('auth-error-unknowndenied');
-      case Error.OAuth2ErrorType.CREDENTIALS_MISMATCH:
-        return I18n.get('auth-error-badcredentials');
-      case Error.OAuth2ErrorType.SAML_INVALID:
-        return I18n.get('auth-error-badsaml');
-      case Error.OAuth2ErrorType.PLATFORM_BLOCKED_TYPE:
-        return I18n.get('auth-error-blockedtype');
-      case Error.OAuth2ErrorType.ACCOUNT_BLOCKED:
-        return I18n.get('auth-error-blockeduser');
-
-      case Error.LoginErrorType.NO_SPECIFIED_PLATFORM:
-      case Error.LoginErrorType.INVALID_PLATFORM:
-        return I18n.get('auth-error-runtimeerror');
-      case Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM:
-        return I18n.get('auth-error-notpremium');
-      case Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED:
-        return I18n.get('auth-error-predeleted');
-
-      case Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR:
-      default:
-        return I18n.get('auth-error-unknownerror');
-    }
+    return Error.getAuthErrorText(type);
   }, []);
 
   const renderError = React.useCallback(() => {
