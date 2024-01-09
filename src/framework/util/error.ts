@@ -3,6 +3,7 @@
  * Be SURE to NOT reuse same values accross different categories.
  */
 
+import * as React from 'react';
 import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
@@ -86,7 +87,7 @@ export namespace Error {
 
   export const LoginError = ErrorWithType<LoginErrorType | ErrorTypes<typeof OAuth2Error>>;
 
-  export const getAuthErrorText = (type?: Error.ErrorTypes<typeof Error.LoginError>) => {
+  export const getAuthErrorText = <ErrorClass = ErrorWithType>(type?: Error.ErrorTypes<ErrorClass>) => {
     switch (type) {
       case Error.FetchErrorType.NOT_AUTHENTICATED:
         return I18n.get('auth-error-notinitilized');
@@ -136,3 +137,35 @@ export namespace Error {
     }
   };
 }
+
+const generateErrorKey = performance.now;
+
+/**
+ * Manage the raw error informatino and returns usable valeus like error message, type, and clear function.
+ * @param error error structure with info & key
+ * @param consumeError function to update the key whenever it's undefined
+ * @returns an object containing error information :
+ *  - errmsg : i18n translated message if the error needs to be displayed. If the given error has been cleared, contains `undefined`
+ *  - errtype : the enum type of the error, if any. If the given error has been cleared, contains `undefined`
+ *  - errkey : current key of the displaying context. Contains the timestamp of the last screen mount / error cleared
+ *  - errclear : function to call to clear the error (set state, so it does fire a re-render !).
+ */
+export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
+  error?: Error.ErrorWithKey,
+  consumeError?: (errorKey: number) => void,
+) => {
+  const [errkey, setErrkey] = React.useState(generateErrorKey);
+  const showError = error?.key === errkey || error?.key === undefined;
+  const errtype = React.useMemo(() => (showError ? Error.getDeepErrorType<ErrorClass>(error) : undefined), [error, showError]);
+  const errclear = React.useCallback(() => {
+    if (error && showError) setErrkey(Math.random());
+  }, [error, showError]);
+  const errmsg = React.useMemo(
+    () => (showError && error ? Error.getAuthErrorText<ErrorClass>(errtype) : undefined),
+    [error, errtype, showError],
+  );
+  React.useEffect(() => {
+    consumeError?.(errkey);
+  }, [consumeError, errkey]);
+  return { errmsg, errtype, errkey, errclear } as const;
+};

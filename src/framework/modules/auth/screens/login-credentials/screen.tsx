@@ -21,7 +21,7 @@ import { consumeAuthErrorAction, loginAction } from '~/framework/modules/auth/ac
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Error } from '~/framework/util/error';
+import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 
@@ -45,14 +45,12 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { route, navigation, error, handleConsumeError } = props;
   const { platform } = route.params;
 
-  const [screenKey, setScreenKey] = React.useState(Math.random());
-
   const [login, setLogin] = React.useState<string>('');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
-  const errorType = React.useMemo(() => Error.getDeepErrorType(error), [error]);
-  const showError = error?.key === screenKey || error?.key === undefined;
+
+  const { errmsg, errtype, errkey, errclear } = useErrorWithKey<typeof Error.LoginError>(error, handleConsumeError);
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);
@@ -60,19 +58,12 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
 
   const isSubmitDisabled = React.useMemo(() => !(login && password), [login, password]);
 
-  const resetError = React.useCallback(() => {
-    if (error && showError) setScreenKey(Math.random());
-    // setError(undefined);
-  }, [error, showError]);
-
   React.useEffect(() => {
     mounted.current = true;
-    handleConsumeError(screenKey);
 
     return () => {
       mounted.current = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const doLogin = React.useCallback(async () => {
@@ -83,7 +74,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         password: password.trim(),
       };
 
-      const redirect = await props.tryLogin(platform, loginCredentials, screenKey);
+      const redirect = await props.tryLogin(platform, loginCredentials, errkey);
 
       if (redirect) {
         redirectLoginNavAction(redirect, platform, navigation);
@@ -105,7 +96,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         setLoginState(LoginState.IDLE);
       }
     }
-  }, [login, navigation, password, platform, props, screenKey]);
+  }, [login, navigation, password, platform, props, errkey]);
 
   const goToWeb = React.useCallback(() => {
     openUrl(platform.url);
@@ -113,8 +104,8 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
 
   const onTextChange = React.useCallback(() => {
     setTyping(true);
-    resetError();
-  }, [resetError]);
+    errclear();
+  }, [errclear]);
 
   const onLoginChanged = React.useCallback(
     (value: string) => {
@@ -140,12 +131,8 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     if (!isSubmitDisabled) doLogin();
   }, [doLogin, isSubmitDisabled]);
 
-  const getAuthErrorText = React.useCallback((type?: Error.ErrorTypes<typeof Error.LoginError>) => {
-    return Error.getAuthErrorText(type);
-  }, []);
-
   const renderError = React.useCallback(() => {
-    if (!error || !showError) {
+    if (!errmsg) {
       return (
         <View style={styles.boxError}>
           <BodyText style={styles.userTextError}> </BodyText>
@@ -160,10 +147,10 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-        <BodyText style={styles.userTextError}>{getAuthErrorText(errorType)}</BodyText>
+        <BodyText style={styles.userTextError}>{errmsg}</BodyText>
       </View>
     );
-  }, [error, errorType, getAuthErrorText, showError]);
+  }, [errmsg]);
 
   const renderPlatform = React.useCallback(() => {
     const logoStyle = {
@@ -194,7 +181,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               autoCorrect={false}
               spellCheck={false}
               testID="login-identifier"
-              showError={showError && error && errorType === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH}
+              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
             />
@@ -209,7 +196,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               ref={inputPassword}
               onChangeText={onPasswordChanged.bind(this)}
               value={password}
-              showError={showError && error && errorType === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH}
+              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
               testID="login-password"
               onSubmitEditing={onSubmitEditingPassword}
               returnKeyType="send"
@@ -219,25 +206,14 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         />
       </View>
     );
-  }, [
-    onLoginChanged,
-    login,
-    error,
-    errorType,
-    onSubmitEditingLogin,
-    onPasswordChanged,
-    password,
-    showError,
-    onSubmitEditingPassword,
-  ]);
+  }, [onLoginChanged, login, errmsg, errtype, onSubmitEditingLogin, onPasswordChanged, password, onSubmitEditingPassword]);
 
   const renderLoginButton = React.useCallback(() => {
     if (
-      showError &&
-      error &&
       !typing &&
-      (errorType === Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM ||
-        errorType === Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED)
+      errmsg &&
+      (errtype === Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM ||
+        errtype === Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED)
     ) {
       return <PrimaryButton action={goToWeb} text={I18n.get('LoginWeb')} iconRight="ui-externalLink" testID="login-opentoweb" />;
     } else {
@@ -251,7 +227,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         />
       );
     }
-  }, [showError, error, typing, errorType, goToWeb, doLogin, isSubmitDisabled, loginState]);
+  }, [typing, errmsg, errtype, goToWeb, doLogin, isSubmitDisabled, loginState]);
 
   const renderPage = React.useCallback(() => {
     return (
