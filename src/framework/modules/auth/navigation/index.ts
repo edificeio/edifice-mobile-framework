@@ -252,7 +252,10 @@ export const getAuthNavigationState = (
 
   // 1. Onboarding
 
-  if (showOnboarding) routes.push({ name: authRouteNames.onboarding });
+  if (showOnboarding) {
+    routes.push({ name: authRouteNames.onboarding });
+    return;
+  }
 
   // 2. PlatformSelect
 

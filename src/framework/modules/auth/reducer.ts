@@ -81,7 +81,10 @@ export const actionTypes = {
 };
 
 export interface ActionPayloads {
-  authInit: Pick<AuthStorageData, 'accounts' | 'startup' | 'show-onboarding'> & { deviceId: IAuthState['deviceInfo']['uniqueId'] };
+  authInit: Pick<AuthStorageData, 'accounts' | 'startup'> & {
+    deviceId: IAuthState['deviceInfo']['uniqueId'];
+    showOnboarding: AuthStorageData['show-onboarding'];
+  };
   loadPfContext: { name: Platform['name']; context: IAuthContext };
   loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
   login: { id: string; account: AuthLoggedAccount };
@@ -181,7 +184,7 @@ export const actions = {
 
 const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
-    const { accounts, startup, 'show-onboarding': showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
+    const { accounts, startup, showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
     const pending = startup.platform ? { platform: startup.platform } : undefined;
     return { ...initialState, accounts, showOnboarding, pending, deviceInfo: { ...state.deviceInfo, uniqueId: deviceId } };
   },

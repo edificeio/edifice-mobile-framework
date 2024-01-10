@@ -64,7 +64,7 @@ function RootNavigator(props: RootNavigatorProps) {
   // Get navigation state from redux state
   // Only if app is ready, and if the used is not logged in. (If logged, no navState goes to the timeline)
 
-  const session = props.connected ? (props.accounts as AuthLoggedAccountMap)[props.connected] : undefined;
+  const session = connected ? (props.accounts as AuthLoggedAccountMap)[connected] : undefined;
   const isMainNavigationAccessible = session && !requirement;
 
   const navigationState = React.useMemo(() => {
