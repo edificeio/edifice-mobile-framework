@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-01-11 16:21:39",
-  "notes": "update(stack): Downgrade @react-native/metro-config due to ios build problems\nupdate(permissions): MB-2342, Use last react-native-permissions version\nupdate(stack): Update some packages\nupdate(stack): React Native 0.73.2 update\nupdate(stack): Update some packages\nrelease: 1.11.5-alpha.1(1110501)",
-  "version": "1.11.5-alpha.2(1110502)"
+  "last": "2024-01-11 18:12:50",
+  "notes": "release: 1.11.5-alpha.2(1110502)",
+  "version": "1.11.5-alpha.3(1110503)"
 }
