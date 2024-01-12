@@ -6,9 +6,10 @@ import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text
 import { PageView } from '~/framework/components/page';
 
 import styles from './styles';
+import { RichEditorFormProps } from './types';
 
-const RichEditorForm = props => {
-  const [contentHtml, setContentHtml] = React.useState('');
+const RichEditorForm = (props: RichEditorFormProps) => {
+  const [contentHtml, setContentHtml] = React.useState(props.initialContentHtml ?? '');
   const contentRef = React.useRef('');
   const headerHeight = useHeaderHeight();
   const richText = React.useRef<RichEditor>(null);
@@ -71,12 +72,13 @@ const RichEditorForm = props => {
           style={styles.container}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <ScrollView keyboardDismissMode="none" nestedScrollEnabled ref={scrollRef} scrollEventThrottle={20} style={styles.scroll}>
+            {props.elements}
             <RichEditor
               disabled={false}
               enterKeyHint="done"
               editorStyle={styles.content}
               firstFocusEnd={false}
-              initialContentHTML=""
+              initialContentHTML={props.initialContentHtml ?? ''}
               initialFocus={false}
               pasteAsPlainText
               placeholder="Saisissez votre texte"

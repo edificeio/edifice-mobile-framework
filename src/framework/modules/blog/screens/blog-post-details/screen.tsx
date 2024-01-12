@@ -300,11 +300,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             {
               title: I18n.get('common-edit'),
               icon: {
-                ios: 'pencil.line',
+                ios: 'pencil',
                 android: 'ic_edit',
               },
               action: () =>
-                navigation.navigate(blogRouteNames.blogCreatePost, {
+                navigation.navigate(blogRouteNames.blogEditPost, {
                   blog: this.state.blogInfos,
                   title: this.state.blogPostData.title,
                   content: this.state.blogPostData?.content,

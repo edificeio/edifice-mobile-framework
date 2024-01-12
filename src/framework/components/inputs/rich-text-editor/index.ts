@@ -4,9 +4,11 @@ import { createHTML, getContentCSS } from '~/framework/components/inputs/rich-te
 import { RichToolbar } from '~/framework/components/inputs/rich-text-editor/rich-toolbar';
 import RichTextEditorScreen, { computeNavBar } from '~/framework/components/inputs/rich-text-editor/screen';
 import { RichTextEditorMode, RichTextEditorScreenNavParams } from '~/framework/components/inputs/rich-text-editor/types';
+import RichEditorForm from './component';
 
 export {
   RichEditor,
+  RichEditorForm,
   RichTextEditorMode,
   RichTextEditorScreen,
   RichTextEditorScreenNavParams,

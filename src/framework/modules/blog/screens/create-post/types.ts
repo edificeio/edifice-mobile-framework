@@ -12,7 +12,6 @@ export interface BlogCreatePostScreenDataProps {
 
 export interface BlogCreatePostScreenEventProps {
   handleSendBlogPost(blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]): Promise<string | undefined>;
-  handleEditBlogPost(blog: Blog, postId: string, title: string, content: string): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
 }
@@ -20,9 +19,6 @@ export interface BlogCreatePostScreenEventProps {
 export interface BlogCreatePostScreenNavParams {
   blog: Blog;
   referrer?: string;
-  title?: string;
-  content?: string;
-  postId?: string;
 }
 
 export type BlogCreatePostScreenProps = BlogCreatePostScreenDataProps &

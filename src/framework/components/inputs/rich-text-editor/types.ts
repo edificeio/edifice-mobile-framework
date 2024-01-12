@@ -20,3 +20,8 @@ export interface RichTextEditorScreenNavParams {
 export type RichTextEditorScreenProps = RichTextEditorScreenDataProps &
   RichTextEditorScreenEventProps &
   NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.RichTextEditor>;
+
+export interface RichEditorFormProps {
+  elements: Element;
+  initialContentHtml: string;
+}
