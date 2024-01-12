@@ -114,7 +114,7 @@ export default class RichEditor extends Component {
       },
       height: initialHeight,
       keyboardHeight: 0,
-      loading: '',
+      loading: true,
       oneSessionId: '',
     };
     that.focusListeners = [];
