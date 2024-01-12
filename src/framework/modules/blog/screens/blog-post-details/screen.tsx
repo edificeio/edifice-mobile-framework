@@ -530,6 +530,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
+    console.debug('---------- HTML ----------');
+    console.debug(blogPostContent);
+    console.debug('---------- HTML ----------');
     return (
       <View style={styles.detailsMain}>
         <View style={styles.detailsPost}>

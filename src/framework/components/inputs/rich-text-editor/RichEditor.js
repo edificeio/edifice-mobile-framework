@@ -53,10 +53,8 @@ export default class RichEditor extends Component {
     that._onKeyboardWillShow = that._onKeyboardWillShow.bind(that);
     that._onKeyboardWillHide = that._onKeyboardWillHide.bind(that);
     that.init = that.init.bind(that);
-    that.handleLoadEnded = that.handleLoadEnded.bind(that);
     that.handleShouldLoadRequest = that.handleShouldLoadRequest.bind(that);
     that.onViewLayout = that.onViewLayout.bind(that);
-    that.handleLoadEnded = that.handleLoadEnded.bind(that);
     that.setRef = that.setRef.bind(that);
     that.unmount = false;
     that._keyOpen = false;
@@ -123,11 +121,14 @@ export default class RichEditor extends Component {
       ?.getOneSessionId()
       .then(osi => {
         console.debug(`oneSessionId retrieved: ${osi}`);
-        this.setState({ loadind: false, oneSessionId: osi ?? '' });
+        this.setState({ oneSessionId: osi ?? '' });
       })
-      .catch(err => {
-        console.warn(`Unable to retrieve oneSessionId: ${err.message}`);
-      });
+      .catch(err => console.warn(`Unable to retrieve oneSessionId: ${err.message}`))
+      .finally(() => this.setState({ loading: false }));
+    // IFrame video auto play bug fix
+    setTimeout(() => {
+      this.loaded = true;
+    }, 1000);
   }
 
   componentDidMount() {
@@ -279,7 +280,7 @@ export default class RichEditor extends Component {
         <WebView
           injectedJavaScript={`document.cookie="oneSessionId=${oneSessionId}";true;`}
           sharedCookiesEnabled
-          useWebKit={true}
+          useWebKit={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView={true}
           keyboardDisplayRequiresUserAction={false}
@@ -295,7 +296,6 @@ export default class RichEditor extends Component {
           javaScriptEnabled={true}
           source={viewHTML}
           onLoad={that.init}
-          onLoadEnd={that.handleLoadEnded}
           onShouldStartLoadWithRequest={that.handleShouldLoadRequest}
         />
         {Platform.OS === 'android' && <TextInput ref={ref => (that._input = ref)} style={styles._input} />}
@@ -465,10 +465,6 @@ export default class RichEditor extends Component {
     initialFocus && !disabled && that.focusContentEditor();
     // no visible ?
     that.sendAction(actions.init);
-  }
-
-  handleLoadEnded() {
-    this.loaded = true;
   }
 
   handleShouldLoadRequest(event) {
