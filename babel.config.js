@@ -5,6 +5,7 @@ module.exports = function (api) {
       plugins: [
         'transform-remove-console',
         'react-native-reanimated/plugin',
+        '@babel/plugin-transform-flow-strip-types',
         ['@babel/plugin-transform-private-methods', { loose: true }],
       ],
     };
@@ -12,6 +13,10 @@ module.exports = function (api) {
 
   return {
     presets: ['module:@react-native/babel-preset'],
-    plugins: ['react-native-reanimated/plugin', '@babel/plugin-transform-private-methods', { loose: true }],
+    plugins: [
+      'react-native-reanimated/plugin',
+      '@babel/plugin-transform-flow-strip-types',
+      ['@babel/plugin-transform-private-methods', { loose: true }],
+    ],
   };
 };
