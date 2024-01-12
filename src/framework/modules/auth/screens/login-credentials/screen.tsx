@@ -45,7 +45,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { route, navigation, error, handleConsumeError } = props;
   const { platform } = route.params;
 
-  const [login, setLogin] = React.useState<string>('');
+  const [login, setLogin] = React.useState<string>(route.params.login ?? '');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);

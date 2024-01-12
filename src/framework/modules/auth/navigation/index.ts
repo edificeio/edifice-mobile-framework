@@ -266,20 +266,42 @@ export const getAuthNavigationState = (
 
   // 2. Login Screen
 
-  // Get platform name from pending auth task
-  const platformName = pending && (pending.platform ?? (pending.account && accounts[pending.account]?.platform));
-  // Get the corresponding platform data
-  const platform = multiplePlatforms
-    ? platformName
-      ? allPlatforms.find(item => item.name === platformName)
+  let foundPlatform: string | Platform | undefined;
+  let login: string | undefined;
+
+  if (pending) {
+    const singleAccount = pending.account ? accounts[pending.account] : undefined;
+    foundPlatform = singleAccount ? singleAccount.platform : undefined;
+    login = singleAccount?.user.loginUsed;
+  } else {
+    const accountsAsArray = Object.values(accounts);
+    const hasSingleAccount = accountsAsArray.length === 1;
+    if (hasSingleAccount) {
+      const singleAccount = accountsAsArray[0];
+      foundPlatform = singleAccount && singleAccount.platform;
+      login = singleAccount.user.loginUsed;
+    }
+  }
+
+  const platform: Platform | undefined = multiplePlatforms
+    ? foundPlatform
+      ? typeof foundPlatform === 'string'
+        ? allPlatforms.find(item => item.name === foundPlatform)
+        : foundPlatform
       : undefined // Silenty go to the select page if the platform name has no correspondance.
     : allPlatforms[0];
+
+  // Get platform name from pending auth task
+
+  // Get the corresponding platform data
+
   // This is not the same screen depending of the platform data (federated or not)
   if (platform || !routes.length)
     routes.push({
       name: getLoginRouteName(platform),
       params: {
         platform,
+        login,
       },
     });
 

@@ -27,7 +27,6 @@ export interface IAuthState {
     // Current login task
     account?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
     platform: string; // Platform id of the login task (duplicated the value in `account` if present)
-    login?: string; // Manual login only : the login used for log in
     activation?: {
       context?: IAuthContext;
       code: string;
@@ -185,7 +184,10 @@ export const actions = {
 const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
     const { accounts, startup, showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
-    const pending = startup.platform ? { platform: startup.platform } : undefined;
+    const pending: IAuthState['pending'] = startup.platform ? { platform: startup.platform } : undefined;
+    if (pending && startup.account) {
+      pending.account = startup.account;
+    }
     return { ...initialState, accounts, showOnboarding, pending, deviceInfo: { ...state.deviceInfo, uniqueId: deviceId } };
   },
 
