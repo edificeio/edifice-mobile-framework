@@ -158,14 +158,18 @@ export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
   const showError = error?.key === errkey || error?.key === undefined;
   const errtype = React.useMemo(() => (showError ? Error.getDeepErrorType<ErrorClass>(error) : undefined), [error, showError]);
   const errclear = React.useCallback(() => {
-    if (error && showError) setErrkey(Math.random());
+    if (error && showError) setErrkey(generateErrorKey());
   }, [error, showError]);
   const errmsg = React.useMemo(
     () => (showError && error ? Error.getAuthErrorText<ErrorClass>(errtype) : undefined),
     [error, errtype, showError],
   );
   React.useEffect(() => {
-    consumeError?.(errkey);
-  }, [consumeError, errkey]);
+    if (error?.key === undefined) {
+      consumeError?.(errkey);
+    }
+    // only launch this once after screen mount to mark error key if undefined
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return { errmsg, errtype, errkey, errclear } as const;
 };
