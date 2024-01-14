@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-01-08 19:51:38",
-  "notes": "Merge commit 'c0510d2901fdbd2816e366019a61bd0dd2fee52d' into dev/1.12.0\nchore: MB-2026 logout v1\nchore: MB-2137 manual login + automatic showing errors\nfeat(homework): Check homework UI review\nfest(homework): Missing i18n addition\nfest(homework): Synchronize i18n\nfeat(homework): Check homework addition (report from 1.12.0)\nchore(stack): Upgrade some packeges\nrelease: 1.12.0-alpha.3(1120003)",
-  "version": "1.12.0-alpha.4(1120004)"
+  "last": "2024-01-14 23:06:08",
+  "notes": "chore: `yarn clean` added lines ? wtf ?\nchore: correct display of logged-out & login-error startup screens\nchore: fix useErrorWithKey\nMerge remote-tracking branch 'origin/dev/1.11.5' into dev/1.12.0\nchore: bring back `@babel/plugin-transform-flow-strip-types`\nchore(build): pod-install-dev && pod-install-rel commands addition\nrelease: 1.11.5-alpha.3(1110503)\nrelease: 1.11.5-alpha.2(1110502)\nMerge remote-tracking branch 'origin/dev/1.11.5' into dev/1.12.0\nupdate(stack): Downgrade @react-native/metro-config due to ios build problems\nupdate(permissions): MB-2342, Use last react-native-permissions version\nupdate(stack): Update some packages\nupdate(stack): React Native 0.73.2 update\nchore: fix showing onboarding\nupdate(stack): Update some packages\nrelease: 1.11.5-alpha.1(1110501)\nchore: refacto `useErrorWithKey`\nchore(error): centralize `getAuthErrorText`\nchore(error): centralize `getDeepErrorType`\nrelease: 1.12.0-alpha.4(1120004)",
+  "version": "1.12.0-alpha.5(1120005)"
 }
