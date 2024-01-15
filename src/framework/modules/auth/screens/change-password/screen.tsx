@@ -269,7 +269,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePass
 };
 
 const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => {
-  const { context, platform } = props;
+  const { context, session } = props;
+  const platform = session?.platform;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useConstructor(async () => {
