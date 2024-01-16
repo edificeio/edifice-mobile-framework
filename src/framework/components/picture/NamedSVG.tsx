@@ -231,12 +231,23 @@ const imports = {
 
 let importsCache = {};
 
-export const removeFromCache = (name: string) => {
-  delete importsCache[name];
+export const addToCache = async (name: string) => {
+  if (!importsCache[name]) {
+    let svg = null;
+    try {
+      svg = (await imports[name]()).default;
+    } finally {
+      if (svg) importsCache[name] = svg;
+    }
+  }
 };
 
 export const clearCache = () => {
   importsCache = {};
+};
+
+export const removeFromCache = (name: string) => {
+  delete importsCache[name];
 };
 
 export interface NamedSVGProps extends SvgProps {
@@ -244,7 +255,7 @@ export interface NamedSVGProps extends SvgProps {
   cached?: boolean;
 }
 
-export const NamedSVG = ({ name, cached, ...rest }: NamedSVGProps): JSX.Element | null => {
+export const NamedSVG = ({ name, cached, ...rest }: NamedSVGProps): React.JSX.Element | null => {
   const ImportedSVGRef = useRef<any>(importsCache[name]);
   const [loading, setLoading] = React.useState(false);
   useEffect((): void => {
@@ -257,15 +268,13 @@ export const NamedSVG = ({ name, cached, ...rest }: NamedSVGProps): JSX.Element 
           if (cached) {
             importsCache[name] = ImportedSVGRef.current;
           }
-        } catch (err) {
-          throw err;
         } finally {
           setLoading(false);
         }
       };
       importSVG();
     }
-  }, [name]);
+  }, [cached, name]);
   if (!loading && ImportedSVGRef.current) {
     const { current: ImportedSVG } = ImportedSVGRef;
     return <ImportedSVG {...rest} />;
