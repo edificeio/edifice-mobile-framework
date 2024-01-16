@@ -23,16 +23,28 @@
 /* Begin PBXBuildFile section */
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1D980C6C2B56C61800DB39D4 /* EcritureA-Italic.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C532B56C61800DB39D4 /* EcritureA-Italic.woff2 */; };
+		1D980C6D2B56C61800DB39D4 /* IBMPlexMono-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C542B56C61800DB39D4 /* IBMPlexMono-Bold.ttf */; };
+		1D980C6F2B56C61800DB39D4 /* Font-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C562B56C61800DB39D4 /* Font-Italic.ttf */; };
+		1D980C712B56C61800DB39D4 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C582B56C61800DB39D4 /* icomoon.ttf */; };
+		1D980C732B56C61800DB39D4 /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C5A2B56C61800DB39D4 /* Comfortaa-Bold.ttf */; };
+		1D980C742B56C61800DB39D4 /* Lora-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C5B2B56C61800DB39D4 /* Lora-Regular.ttf */; };
+		1D980C752B56C61800DB39D4 /* Font-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C5C2B56C61800DB39D4 /* Font-Regular.ttf */; };
+		1D980C762B56C61800DB39D4 /* Lora-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C5D2B56C61800DB39D4 /* Lora-Italic.ttf */; };
+		1D980C772B56C61800DB39D4 /* IBMPlexMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C5E2B56C61800DB39D4 /* IBMPlexMono-Regular.ttf */; };
+		1D980C792B56C61800DB39D4 /* Lora-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C602B56C61800DB39D4 /* Lora-Bold.ttf */; };
+		1D980C7C2B56C61800DB39D4 /* IBMPlexMono-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C632B56C61800DB39D4 /* IBMPlexMono-BoldItalic.ttf */; };
+		1D980C7D2B56C61800DB39D4 /* IBMPlexMono-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C642B56C61800DB39D4 /* IBMPlexMono-Italic.ttf */; };
+		1D980C7E2B56C61800DB39D4 /* Font-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C652B56C61800DB39D4 /* Font-BoldItalic.ttf */; };
+		1D980C7F2B56C61800DB39D4 /* Font-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C662B56C61800DB39D4 /* Font-Bold.ttf */; };
+		1D980C802B56C61800DB39D4 /* Lora-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C672B56C61800DB39D4 /* Lora-BoldItalic.ttf */; };
+		1D980C812B56C61800DB39D4 /* EcritureA-Regular.woff2 in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C682B56C61800DB39D4 /* EcritureA-Regular.woff2 */; };
+		1D980C852B56CB0E00DB39D4 /* OpenDyslexic-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C832B56CB0E00DB39D4 /* OpenDyslexic-Bold.ttf */; };
+		1D980C862B56CB0E00DB39D4 /* OpenDyslexic-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D980C842B56CB0E00DB39D4 /* OpenDyslexic-Regular.ttf */; };
 		7404C07422E8B012008546A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7404C07322E8B012008546A8 /* Assets.xcassets */; };
 		741ACC0D23B632380075BCE4 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 741ACC0C23B632380075BCE4 /* AppCenter-Config.plist */; };
 		745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 745D891422DE014D0038F1FA /* GoogleService-Info.plist */; };
 		74660EAE247BE64C00F74D20 /* DummySwiftFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */; };
-		74EC2C4926E63F04008EB301 /* icomoon.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74EC2C4026E63F04008EB301 /* icomoon.ttf */; };
-		91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF628D0D33A00A1A1C2 /* Font-Italic.ttf */; };
-		91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */; };
-		91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */; };
-		91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */; };
-		F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
 		F09C4A402B0400800075018F /* SplashScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A3F2B0400800075018F /* SplashScreen.xib */; };
 		F09C4A442B0400C30075018F /* SplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A412B0400C30075018F /* SplashScreen.png */; };
@@ -49,6 +61,24 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = appe/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 1; lastKnownFileType = sourcecode.c.objc; name = main.m; path = appe/main.m; sourceTree = "<group>"; };
 		1B95597B3CEBB7E33AE92F2C /* libPods-appe-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D980C532B56C61800DB39D4 /* EcritureA-Italic.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EcritureA-Italic.woff2"; sourceTree = "<group>"; };
+		1D980C542B56C61800DB39D4 /* IBMPlexMono-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Bold.ttf"; sourceTree = "<group>"; };
+		1D980C562B56C61800DB39D4 /* Font-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Italic.ttf"; sourceTree = "<group>"; };
+		1D980C582B56C61800DB39D4 /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
+		1D980C5A2B56C61800DB39D4 /* Comfortaa-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Comfortaa-Bold.ttf"; sourceTree = "<group>"; };
+		1D980C5B2B56C61800DB39D4 /* Lora-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lora-Regular.ttf"; sourceTree = "<group>"; };
+		1D980C5C2B56C61800DB39D4 /* Font-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Regular.ttf"; sourceTree = "<group>"; };
+		1D980C5D2B56C61800DB39D4 /* Lora-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lora-Italic.ttf"; sourceTree = "<group>"; };
+		1D980C5E2B56C61800DB39D4 /* IBMPlexMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Regular.ttf"; sourceTree = "<group>"; };
+		1D980C602B56C61800DB39D4 /* Lora-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lora-Bold.ttf"; sourceTree = "<group>"; };
+		1D980C632B56C61800DB39D4 /* IBMPlexMono-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-BoldItalic.ttf"; sourceTree = "<group>"; };
+		1D980C642B56C61800DB39D4 /* IBMPlexMono-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "IBMPlexMono-Italic.ttf"; sourceTree = "<group>"; };
+		1D980C652B56C61800DB39D4 /* Font-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-BoldItalic.ttf"; sourceTree = "<group>"; };
+		1D980C662B56C61800DB39D4 /* Font-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Bold.ttf"; sourceTree = "<group>"; };
+		1D980C672B56C61800DB39D4 /* Lora-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lora-BoldItalic.ttf"; sourceTree = "<group>"; };
+		1D980C682B56C61800DB39D4 /* EcritureA-Regular.woff2 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "EcritureA-Regular.woff2"; sourceTree = "<group>"; };
+		1D980C832B56CB0E00DB39D4 /* OpenDyslexic-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Bold.ttf"; sourceTree = "<group>"; };
+		1D980C842B56CB0E00DB39D4 /* OpenDyslexic-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenDyslexic-Regular.ttf"; sourceTree = "<group>"; };
 		1DFE6EE83479AB48105B003E /* Pods-appe-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe-tvOS.release.xcconfig"; path = "Target Support Files/Pods-appe-tvOS/Pods-appe-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		301566A10115CCDFC94DA2A6 /* Pods-appe-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-appe-tvOSTests/Pods-appe-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		42FDC4360830EB2D0044A292 /* Pods-appe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe.debug.xcconfig"; path = "Target Support Files/Pods-appe/Pods-appe.debug.xcconfig"; sourceTree = "<group>"; };
@@ -61,19 +91,13 @@
 		74660EAB247BE64B00F74D20 /* appe-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "appe-Bridging-Header.h"; sourceTree = "<group>"; };
 		74660EAC247BE64B00F74D20 /* appeTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "appeTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		74660EAD247BE64C00F74D20 /* DummySwiftFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummySwiftFile.swift; sourceTree = "<group>"; };
-		74EC2C4026E63F04008EB301 /* icomoon.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = icomoon.ttf; sourceTree = "<group>"; };
 		7DFD5F26543B345536ED6D5D /* Pods-appeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appeTests.debug.xcconfig"; path = "Target Support Files/Pods-appeTests/Pods-appeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		8513074532BD790A5E39FCEF /* Pods-appeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appeTests.release.xcconfig"; path = "Target Support Files/Pods-appeTests/Pods-appeTests.release.xcconfig"; sourceTree = "<group>"; };
-		91D2CEF628D0D33A00A1A1C2 /* Font-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Italic.ttf"; sourceTree = "<group>"; };
-		91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-BoldItalic.ttf"; sourceTree = "<group>"; };
-		91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Bold.ttf"; sourceTree = "<group>"; };
-		91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Font-Regular.ttf"; sourceTree = "<group>"; };
 		95CC73870D22D38A2E17B6AA /* libPods-appe-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4A5206ADA9B3A8E0AD26FB7 /* Pods-appe-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-appe-tvOSTests/Pods-appe-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		DAAB12508AD5F6829B136F0F /* Pods-appe.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe.release.xcconfig"; path = "Target Support Files/Pods-appe/Pods-appe.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Comfortaa-Bold.ttf"; sourceTree = "<group>"; };
 		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -142,12 +166,24 @@
 		74EC2C3F26E63F04008EB301 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */,
-				91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */,
-				91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */,
-				91D2CEF628D0D33A00A1A1C2 /* Font-Italic.ttf */,
-				91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */,
-				74EC2C4026E63F04008EB301 /* icomoon.ttf */,
+				1D980C832B56CB0E00DB39D4 /* OpenDyslexic-Bold.ttf */,
+				1D980C842B56CB0E00DB39D4 /* OpenDyslexic-Regular.ttf */,
+				1D980C5A2B56C61800DB39D4 /* Comfortaa-Bold.ttf */,
+				1D980C532B56C61800DB39D4 /* EcritureA-Italic.woff2 */,
+				1D980C682B56C61800DB39D4 /* EcritureA-Regular.woff2 */,
+				1D980C662B56C61800DB39D4 /* Font-Bold.ttf */,
+				1D980C652B56C61800DB39D4 /* Font-BoldItalic.ttf */,
+				1D980C562B56C61800DB39D4 /* Font-Italic.ttf */,
+				1D980C5C2B56C61800DB39D4 /* Font-Regular.ttf */,
+				1D980C542B56C61800DB39D4 /* IBMPlexMono-Bold.ttf */,
+				1D980C632B56C61800DB39D4 /* IBMPlexMono-BoldItalic.ttf */,
+				1D980C642B56C61800DB39D4 /* IBMPlexMono-Italic.ttf */,
+				1D980C5E2B56C61800DB39D4 /* IBMPlexMono-Regular.ttf */,
+				1D980C582B56C61800DB39D4 /* icomoon.ttf */,
+				1D980C602B56C61800DB39D4 /* Lora-Bold.ttf */,
+				1D980C672B56C61800DB39D4 /* Lora-BoldItalic.ttf */,
+				1D980C5D2B56C61800DB39D4 /* Lora-Italic.ttf */,
+				1D980C5B2B56C61800DB39D4 /* Lora-Regular.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -276,20 +312,32 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */,
 				7404C07422E8B012008546A8 /* Assets.xcassets in Resources */,
 				F0625946264574A4001AE555 /* InfoPlist.strings in Resources */,
+				1D980C792B56C61800DB39D4 /* Lora-Bold.ttf in Resources */,
+				1D980C7F2B56C61800DB39D4 /* Font-Bold.ttf in Resources */,
+				1D980C852B56CB0E00DB39D4 /* OpenDyslexic-Bold.ttf in Resources */,
+				1D980C752B56C61800DB39D4 /* Font-Regular.ttf in Resources */,
 				741ACC0D23B632380075BCE4 /* AppCenter-Config.plist in Resources */,
 				745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */,
-				91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */,
-				91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */,
-				91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */,
-				74EC2C4926E63F04008EB301 /* icomoon.ttf in Resources */,
+				1D980C7E2B56C61800DB39D4 /* Font-BoldItalic.ttf in Resources */,
+				1D980C802B56C61800DB39D4 /* Lora-BoldItalic.ttf in Resources */,
+				1D980C732B56C61800DB39D4 /* Comfortaa-Bold.ttf in Resources */,
+				1D980C6D2B56C61800DB39D4 /* IBMPlexMono-Bold.ttf in Resources */,
+				1D980C762B56C61800DB39D4 /* Lora-Italic.ttf in Resources */,
+				1D980C6F2B56C61800DB39D4 /* Font-Italic.ttf in Resources */,
+				1D980C7C2B56C61800DB39D4 /* IBMPlexMono-BoldItalic.ttf in Resources */,
+				1D980C6C2B56C61800DB39D4 /* EcritureA-Italic.woff2 in Resources */,
+				1D980C772B56C61800DB39D4 /* IBMPlexMono-Regular.ttf in Resources */,
 				F09C4A462B0400C30075018F /* SplashScreen@2x.png in Resources */,
 				F09C4A402B0400800075018F /* SplashScreen.xib in Resources */,
 				F09C4A452B0400C30075018F /* SplashScreen@3x.png in Resources */,
+				1D980C862B56CB0E00DB39D4 /* OpenDyslexic-Regular.ttf in Resources */,
 				F09C4A442B0400C30075018F /* SplashScreen.png in Resources */,
-				91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */,
+				1D980C742B56C61800DB39D4 /* Lora-Regular.ttf in Resources */,
+				1D980C812B56C61800DB39D4 /* EcritureA-Regular.woff2 in Resources */,
+				1D980C712B56C61800DB39D4 /* icomoon.ttf in Resources */,
+				1D980C7D2B56C61800DB39D4 /* IBMPlexMono-Italic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
