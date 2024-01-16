@@ -27,9 +27,18 @@ index a3f8cba..e85d698 100644
      "react": "*",
      "react-native": "*"
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
-index 08c6a68..07f96ac 100644
+index 08c6a68..35f2f45 100644
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
 +++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
+@@ -23,7 +23,7 @@ import {
+     StyleSheet,
+ } from 'react-native';
+ 
+-import { FlatList, ScrollView } from 'react-native-gesture-handler';
++import { GestureHandlerRootView, FlatList, ScrollView } from 'react-native-gesture-handler';
+ 
+ const { height: WINDOW_HEIGHT } = Dimensions.get('window');
+ 
 @@ -41,7 +41,8 @@ import {
      GET_DROPDOWN_DIRECTION,
      LANGUAGE,
@@ -78,7 +87,7 @@ index 08c6a68..07f96ac 100644
  
      /**
       * onPress badge.
-@@ -1808,14 +1813,19 @@ function Picker({
+@@ -1808,17 +1813,22 @@ function Picker({
       */
      const pointerEvents = useMemo(() => disabled ? "none" : "auto", [disabled]);
  
@@ -90,7 +99,8 @@ index 08c6a68..07f96ac 100644
 +    }, [arrowIconPosition, _ArrowComponent, _BodyComponent]);
 +
      return (
-         <>
+-        <>
++        <GestureHandlerRootView style={{ flex: 1 }}>
              <View style={_containerStyle} {...containerProps}>
                  <TouchableOpacity style={_style} onPress={__onPress} onLayout={__onLayout} {...props} ref={onRef} pointerEvents={pointerEvents} disabled={disabled} testID={testID}>
 -                    {_BodyComponent}
@@ -100,7 +110,11 @@ index 08c6a68..07f96ac 100644
 -
                  {DropDownBodyComponent}
              </View>
-         </>
+-        </>
++        </GestureHandlerRootView>
+     );
+ }
+ 
 diff --git a/node_modules/react-native-dropdown-picker/src/constants/index.js b/node_modules/react-native-dropdown-picker/src/constants/index.js
 index 23d34eb..2bbfe60 100644
 --- a/node_modules/react-native-dropdown-picker/src/constants/index.js
