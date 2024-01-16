@@ -9,4 +9,5 @@ export interface IOnboardingScreenProps extends NativeStackScreenProps<IAuthNavi
 
 export interface IOnboardingScreenState {
   buttonsWidth: number;
+  loading: boolean;
 }
