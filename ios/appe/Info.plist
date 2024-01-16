@@ -66,6 +66,28 @@
 		<string>Font-Italic.ttf</string>
 		<string>Font-Regular.ttf</string>
 		<string>Comfortaa-Bold.ttf</string>
+		<string>Arimo-Bold.ttf</string>
+		<string>Arimo-BoldItalic.ttf</string>
+		<string>Arimo-Italic.ttf</string>
+		<string>Arimo-Regular.ttf</string>
+		<string>EcritureA-Italic.woff2</string>
+		<string>EcritureA-Regular.woff2</string>
+		<string>IBMPlexMono-Bold.ttf</string>
+		<string>IBMPlexMono-BoldItalic.ttf</string>
+		<string>IBMPlexMono-Italic.ttf</string>
+		<string>IBMPlexMono-Regular.ttf</string>
+		<string>Lora-Bold.ttf</string>
+		<string>Lora-BoldItalic.ttf</string>
+		<string>Lora-Italic.ttf</string>
+		<string>Lora-Regular.ttf</string>
+		<string>Roboto-Bold.ttf</string>
+		<string>Roboto-BoldItalic.ttf</string>
+		<string>Roboto-Italic.ttf</string>
+		<string>Roboto-Regular.ttf</string>
+		<string>OpenDyslexic-Bold.otf</string>
+		<string>OpenDyslexic-BoldItalic.otf</string>
+		<string>OpenDyslexic-Italic.otf</string>
+		<string>OpenDyslexic-Regular.otf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
