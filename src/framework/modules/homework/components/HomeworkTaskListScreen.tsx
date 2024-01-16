@@ -315,8 +315,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
             ? ''
             : '-nocreationrights'
           : this.canCreateEntry()
-          ? '-notasks'
-          : '-notasks-nocreationrights'
+            ? '-notasks'
+            : '-notasks-nocreationrights'
       }`,
     );
     const buttonText = this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined;
@@ -366,7 +366,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
           finished={hasCheckHomeworkResourceRight ? item.finished : undefined}
           date={item.date}
           onPress={displayEntry}
-          style={isLastItem && styles.lastCard}
+          style={isLastItem ? styles.lastCard : undefined}
         />
       </>
     );

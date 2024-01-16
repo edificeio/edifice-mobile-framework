@@ -16,15 +16,15 @@ export const CheckboxButton = ({
   title,
   isChecked,
   isAllButton,
-  customListItemStyle,
   customCheckboxContainerStyle,
+  customListItemStyle,
 }: {
   onPress: () => any;
   title: string;
   isChecked: boolean;
   isAllButton?: boolean;
-  customListItemStyle?: ViewStyle;
   customCheckboxContainerStyle?: ViewStyle;
+  customListItemStyle?: ViewStyle;
 }) => {
   return (
     <TouchableOpacity onPress={onPress}>
@@ -40,6 +40,7 @@ export const CheckboxButton = ({
             customContainerStyle={customCheckboxContainerStyle}
           />
         }
+        style={customListItemStyle}
       />
     </TouchableOpacity>
   );

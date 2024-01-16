@@ -106,12 +106,12 @@ export namespace I18n {
   }
 
   // Get wordings array based on given key
-  export function getArray(key: string, options?: TOptions) {
+  export function getArray(key: string, options?: TOptions): string[] {
     const values = i18n.t(key, { ...options, returnObjects: true });
     if (typeof values === 'string') return [];
-    if (!showKeys) return values;
+    if (!showKeys) return values as string[];
     for (let i = 0; i < (values as string[]).length; i++) values[i] = `${key}.${i}`;
-    return values;
+    return values as string[];
   }
 
   // Get current language
@@ -154,13 +154,13 @@ export namespace I18n {
   };
 
   export async function init() {
-    // Initalize language
-    await setLanguage();
     // Initialize keys toggling
     if (canShowKeys) {
       const stored: boolean | undefined = await getItemJson(I18N_SHOW_KEYS_KEY);
       if (stored) showKeys = stored;
     }
+    // Initalize language
+    await setLanguage();
     // Initialize i18n depending on i18n OTA enabled or not
     if (appConf.i18nOTAEnabled) {
       await i18n

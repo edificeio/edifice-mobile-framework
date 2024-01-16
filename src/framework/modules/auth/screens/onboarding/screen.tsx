@@ -8,8 +8,9 @@ import { I18n } from '~/app/i18n';
 import { getButtonWidth } from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture/NamedSVG';
+import { NamedSVG, addToCache, removeFromCache } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import { navigateAfterOnboarding } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
@@ -20,13 +21,17 @@ import { IOnboardingScreenProps, IOnboardingScreenState } from './types';
 class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnboardingScreenState> {
   state = {
     buttonsWidth: 0,
+    loading: true,
   };
 
   showDiscoverLink = Platform.select(appConf.onboarding.showDiscoverLink);
 
   showAppName = appConf.onboarding.showAppName;
 
+  texts = I18n.getArray('user-onboarding-text');
+
   async componentDidMount() {
+    // Calculate button(s) width(s)
     let discoverWidth = 0;
     const joinWidth = await getButtonWidth({ text: I18n.get('user-onboarding-joinmynetwork'), type: 'primary' });
     if (this.showDiscoverLink)
@@ -35,13 +40,29 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
         icons: 1,
         type: 'secondary',
       });
-    this.setState({ buttonsWidth: Math.max(joinWidth, discoverWidth) });
+    // Preload onboarding images
+    let cached = 0;
+    const toCache = this.texts.length;
+    this.texts.map(async (_onboardingText, index) => {
+      addToCache(`onboarding-${index}`).then(() => {
+        cached++;
+        // All onboarding images have been cached => View can display onboarding
+        if (cached === toCache) this.setState({ buttonsWidth: Math.max(joinWidth, discoverWidth), loading: false });
+      });
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove onboarding images from cache
+    this.texts.map((_onboardingText, index) => {
+      removeFromCache(`onboarding-${index}`);
+    });
   }
 
   render() {
     const { navigation } = this.props;
-    const { buttonsWidth } = this.state;
-    const texts = I18n.getArray('user-onboarding-text');
+    const { buttonsWidth, loading } = this.state;
+    if (loading) return <LoadingIndicator />;
     return (
       <PageView style={styles.page} statusBar="light">
         <View style={styles.mainContainer}>
@@ -49,7 +70,7 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
             {this.showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
           </HeadingLText>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiper} activeDotStyle={[styles.swiper, styles.swiperActive]}>
-            {texts.map((onboardingText, index) => (
+            {this.texts.map((onboardingText, index) => (
               <View key={index} style={styles.swiperItem}>
                 <NamedSVG name={`onboarding-${index}`} style={styles.swiperItemImage} />
                 <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>

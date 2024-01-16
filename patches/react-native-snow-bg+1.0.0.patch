@@ -19,3 +19,20 @@ index 3bf2ad3..8d851fd 100644
        {!!scene &&
          new Array(snowflakesCount)
            .fill(true)
+diff --git a/node_modules/react-native-snow-bg/src/Snowflake.js b/node_modules/react-native-snow-bg/src/Snowflake.js
+index 4441c81..9eeede6 100644
+--- a/node_modules/react-native-snow-bg/src/Snowflake.js
++++ b/node_modules/react-native-snow-bg/src/Snowflake.js
+@@ -1,9 +1,9 @@
+-import React, {useRef, useEffect, useState} from 'react';
+-import {Animated, StyleSheet, Easing} from 'react-native';
++import React, { useEffect, useRef, useState } from 'react';
++import { Animated, Easing, StyleSheet } from 'react-native';
+ 
+ const styles = StyleSheet.create({
+   snowflake: {
+-    color: 'white',
++    color: '#AADAED',
+     position: 'absolute',
+   },
+ });

@@ -72,15 +72,15 @@ export function toSnakeCase(camelCase: string) {
 
 // From https://dev.to/cod3pineapple/1143-longest-common-subsequence-javascript-solution-5bgp
 export const findLongestCommonSubstring = function (a: string, b: string) {
-  var longest = '';
+  let longest = '';
   // loop through the first string
-  for (var i = 0; i < a.length; ++i) {
+  for (let i = 0; i < a.length; ++i) {
     // loop through the second string
-    for (var j = 0; j < b.length; ++j) {
+    for (let j = 0; j < b.length; ++j) {
       // if it's the same letter
       if (a[i] === b[j]) {
-        var str = a[i];
-        var k = 1;
+        let str = a[i];
+        let k = 1;
         // keep going until the letters no longer match, or we reach end
         while (
           i + k < a.length &&
@@ -172,6 +172,5 @@ export function createUUID() {
  * @returns The override name
  */
 export function getOverrideName() {
-  const overrideName = (RNConfigReader.BundleVersionOverride as string).replace(/\/test|\/prod/g, '');
-  return overrideName;
+  return (RNConfigReader.BundleVersionOverride as string).split('/')[0];
 }

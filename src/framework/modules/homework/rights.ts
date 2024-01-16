@@ -30,7 +30,6 @@ export const hasPermissionManager = (homework: IHomeworkDiary, right: string, se
 export const getHomeworkWorkflowInformation = (session: ISession) => {
   const userType = session?.user.type;
   const isRelativeOrStudent = userType === UserType.Relative || userType === UserType.Student;
-
   return {
     view: session.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
     create: session.authorizedActions.some(a => a.name === createHomeworkResourceRight),

@@ -25,11 +25,11 @@ import {
 } from 'react-native';
 
 import theme from '~/app/theme';
-import SnowFlakes from '~/framework/components/SnowFlakes';
 import { isModalModeOnThisRoute } from '~/framework/navigation/hideTabBarAndroid';
 import Notifier from '~/framework/util/notifier';
 import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
+import SnowFlakes from './SnowFlakes';
 import { UI_SIZES } from './constants';
 import { ToastHandler } from './toast/component';
 
@@ -79,14 +79,14 @@ export const PageView = (props: PageViewProps) => {
               android: <StatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />,
             }
           : statusBar === 'light'
-          ? {
-              ios: <StatusBar barStyle="dark-content" />,
-              android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
-            }
-          : /* statusBar === 'dark' */ {
-              ios: <StatusBar barStyle="light-content" />,
-              android: <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
-            },
+            ? {
+                ios: <StatusBar barStyle="dark-content" />,
+                android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
+              }
+            : /* statusBar === 'dark' */ {
+                ios: <StatusBar barStyle="light-content" />,
+                android: <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
+              },
       ),
     [statusBar],
   );
@@ -101,8 +101,8 @@ export const PageView = (props: PageViewProps) => {
         <Notifier id={route.name} />
         <View style={gutterStyle}>{children}</View>
         {isModal && showToast ? <ToastHandler /> : null}
+        {isModal && <SnowFlakes />}
       </>
-      <SnowFlakes />
     </PageViewStyle>
   );
 };

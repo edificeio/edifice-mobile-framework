@@ -107,7 +107,9 @@ const callPhoneNumber = tel => {
       if (supported) return Linking.openURL(`tel:${telWithoutSpaces}`);
       if (__DEV__) console.log(`L'appel du numéro ${telWithoutSpaces} n'est pas supporté.`);
     })
-    .catch(err => {if (__DEV__) console.error("Une erreur s'est produite lors de l'appel du numéro.", err);});
+    .catch(err => {
+      if (__DEV__) console.error("Une erreur s'est produite lors de l'appel du numéro.", err);
+    });
 };
 
 const UserProfileScreen = (props: ProfilePageProps) => {
@@ -173,7 +175,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const onNewMessage = () => {
     const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
-    if (userInfo?.type === UserType.Student && !isEmpty(family)) {
+    if (userInfo?.type === UserType.Student && !isEmpty(family) && session?.user.type !== UserType.Student) {
       const familyUser: any = [];
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
@@ -230,8 +232,37 @@ const UserProfileScreen = (props: ProfilePageProps) => {
     );
   };
 
+  const renderPersonFamily = user => {
+    if (
+      (!isMyProfile && (session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel)) ||
+      (isMyProfile && session?.user.type === UserType.Relative)
+    )
+      return (
+        <TouchableOpacity
+          key={user.relatedId}
+          style={styles.userFamily}
+          onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
+          <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
+          <NamedSVG
+            style={styles.userFamilyIcon}
+            name="ui-rafterRight"
+            width={UI_SIZES.dimensions.width.mediumPlus}
+            height={UI_SIZES.dimensions.height.mediumPlus}
+            fill={theme.palette.primary.regular}
+          />
+        </TouchableOpacity>
+      );
+    return (
+      <View key={user.relatedId} style={styles.userFamily}>
+        <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
+      </View>
+    );
+  };
+
   const renderFamily = () => {
     if (userInfo?.type !== UserType.Relative && userInfo?.type !== UserType.Student) return;
+    if (!isMyProfile && session?.user.type === UserType.Student && userInfo?.type === UserType.Relative) return;
+    if (!isMyProfile && session?.user.type === UserType.Student && userInfo?.type === UserType.Student) return;
     return (
       <View style={styles.bloc}>
         <HeadingSText style={family ? {} : styles.blocTitle}>
@@ -240,21 +271,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
             : I18n.get(family?.length! > 1 ? 'user-profile-children' : 'user-profile-child')}
         </HeadingSText>
         {!isEmpty(family) ? (
-          family?.map(user => (
-            <TouchableOpacity
-              key={user.relatedId}
-              style={styles.userFamily}
-              onPress={() => navigation.push(userRouteNames.profile, { userId: user.relatedId! })}>
-              <TextAvatar userId={user.relatedId!} text={user.relatedName!} isHorizontal />
-              <NamedSVG
-                style={styles.userFamilyIcon}
-                name="ui-rafterRight"
-                width={UI_SIZES.dimensions.width.mediumPlus}
-                height={UI_SIZES.dimensions.height.mediumPlus}
-                fill={theme.palette.primary.regular}
-              />
-            </TouchableOpacity>
-          ))
+          family?.map(user => renderPersonFamily(user))
         ) : (
           <View style={styles.emptyFamily}>
             <NamedSVG

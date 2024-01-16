@@ -3,17 +3,32 @@ import { StyleSheet } from 'react-native';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  textContainer: { paddingHorizontal: UI_SIZES.spacing.medium },
+  alertCard: {
+    marginTop: UI_SIZES.spacing.medium,
+  },
+  page: {
+    padding: UI_SIZES.spacing.medium,
+    paddingBottom: 0,
+  },
   toggleContainer: {
     flexDirection: 'row',
-    paddingTop: UI_SIZES.spacing.large,
-    paddingBottom: UI_SIZES.spacing.major,
+    marginTop: UI_SIZES.spacing.medium,
     justifyContent: 'space-between',
+  },
+  wishTextContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  xmasTree: {
+    position: 'absolute',
+    bottom: UI_SIZES.spacing.minor,
+    right: -UI_SIZES.spacing.small,
   },
   xmasTreeContainer: {
     flex: 1,
+    flexDirection: 'row',
   },
-  xmasTree: {
-    left: 120,
+  xmasTreeSubcontainer: {
+    flex: 1,
   },
 });
