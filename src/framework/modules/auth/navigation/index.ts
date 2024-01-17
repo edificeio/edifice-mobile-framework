@@ -4,7 +4,6 @@
 import { CommonActions, NavigationProp, ParamListBase, StackRouter } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { I18n } from '~/app/i18n';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/moduleConfig';
@@ -62,6 +61,14 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           context: action.context,
           credentials: action.credentials,
           rememberMe: action.rememberMe,
+        });
+      case 'reset':
+        return CommonActions.navigate(authRouteNames.changePassword, {
+          platform,
+          context: action.context,
+          credentials: action.credentials,
+          rememberMe: action.rememberMe,
+          useResetCode: true,
         });
       case PartialSessionScenario.MUST_CHANGE_PASSWORD:
         return CommonActions.reset({

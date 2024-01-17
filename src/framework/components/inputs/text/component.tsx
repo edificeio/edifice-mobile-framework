@@ -42,10 +42,10 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps
       toggleIconOn && toggleIconOff && isShowIconCallback
         ? UI_SIZES.spacing.medium + 2 * ICON_INPUT_SIZE + UI_SIZES.spacing.minor + 2 * UI_SIZES.spacing.small
         : toggleIconOn && toggleIconOff
-        ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small
-        : isShowIconCallback
-        ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
-        : UI_SIZES.spacing.medium,
+          ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + 2 * UI_SIZES.spacing.small
+          : isShowIconCallback
+            ? UI_SIZES.spacing.medium + ICON_INPUT_SIZE + UI_SIZES.spacing.minor
+            : UI_SIZES.spacing.medium,
     [toggleIconOn, toggleIconOff, isShowIconCallback],
   );
   // position icon success || error management if have toggle icon or not
