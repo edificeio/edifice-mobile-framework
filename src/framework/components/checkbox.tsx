@@ -6,12 +6,14 @@ import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 
 const styles = StyleSheet.create({
-  constainer: {
+  container: {
+    margin: UI_SIZES.spacing._LEGACY_tiny,
     width: getScaleWidth(UI_SIZES.dimensions.width.mediumPlus),
     height: getScaleWidth(UI_SIZES.dimensions.height.mediumPlus),
     borderRadius: UI_SIZES.radius.small,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: getScaleWidth(UI_SIZES.border.small),
   },
 });
 
@@ -29,11 +31,10 @@ export const Checkbox = ({
   const checkedContainerStyle = {
     backgroundColor: checked ? theme.palette.primary.regular : theme.ui.background.card,
     borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.graphite,
-    borderWidth: checked ? undefined : getScaleWidth(UI_SIZES.border.small),
   };
 
   return (
-    <TouchableOpacity onPress={() => onPress && onPress()} style={[styles.constainer, checkedContainerStyle, customContainerStyle]}>
+    <TouchableOpacity onPress={onPress} style={[styles.container, checkedContainerStyle, customContainerStyle]}>
       <NamedSVG
         name="ui-check"
         width={UI_SIZES.elements.icon.xsmall}

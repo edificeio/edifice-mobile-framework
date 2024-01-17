@@ -84,12 +84,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
         initialNumToRender={15} // Items are thin, 15 renders ok on iPhone 13
         ListHeaderComponent={
           notifFilters.length < 2 ? null : (
-            <CheckboxButton
-              onPress={() => this.doToggleAllFilters()}
-              title="timeline-filters-all"
-              isChecked={!someNotSet}
-              isAllButton
-            />
+            <CheckboxButton onPress={() => this.doToggleAllFilters()} title="timeline-filters-all" isChecked={!someNotSet} />
           )
         }
         renderItem={({ item }) => this.renderFilterItem(item)}

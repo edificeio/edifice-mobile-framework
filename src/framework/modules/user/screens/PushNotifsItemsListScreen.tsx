@@ -188,7 +188,6 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
               onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
               title="user-pushnotifssettings-all"
               isChecked={areAllChecked}
-              isAllButton
             />
           )
         }
