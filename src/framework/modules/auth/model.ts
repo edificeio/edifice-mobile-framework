@@ -355,9 +355,10 @@ export interface IForgotPayload {
 
 export interface IChangePasswordPayload {
   login: string;
-  oldPassword: string;
+  oldPassword?: string;
   newPassword: string;
   confirm: string;
+  resetCode?: string;
 }
 
 export interface IChangePasswordError extends Error {

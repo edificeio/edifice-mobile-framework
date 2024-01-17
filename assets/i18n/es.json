@@ -60,6 +60,7 @@
   "auth-changepassword-error-fields": "El formulario contiene errores",
   "auth-changepassword-error-regex": "La nueva contraseña no cumple los criterios de seguridad.",
   "auth-changepassword-error-submit": "Error al restablecer la contraseña.",
+  "auth-changepassword-login": "Usuario",
   "auth-changepassword-password-new": "Nueva contraseña",
   "auth-changepassword-password-new-confirm": "Confirmación de la nueva contraseña",
   "auth-changepassword-password-old": "Antigua contraseña",

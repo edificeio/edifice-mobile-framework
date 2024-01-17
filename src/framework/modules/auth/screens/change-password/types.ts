@@ -16,6 +16,7 @@ export interface ChangePasswordScreenProps {
 export interface ChangePasswordScreenNavParams {
   forceChange?: boolean;
   navCallback?: NavigationAction;
+  useResetCode?: boolean;
 }
 
 export interface ChangePasswordScreenStoreProps {

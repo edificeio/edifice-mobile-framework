@@ -114,7 +114,7 @@ const SchoolbookWordDetailsCard = (
   const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const isParent = userType === AccountType.Relative;
-  const isTeacher = userType === AccountType.Teacher;
+  const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
   const isStudent = userType === AccountType.Student;
   const isAuthorOtherTeacher = isTeacher && !isUserSchoolbookWordOwner;
   const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(report);

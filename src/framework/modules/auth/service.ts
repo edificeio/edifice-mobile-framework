@@ -332,8 +332,39 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
     if (!body.match) {
       throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
     }
+    return 'activate' as const;
   } catch (activationErr) {
     throw new global.Error('Activation match error', { cause: activationErr });
+  }
+}
+
+export async function ensureCredentialsMatchPwdResetCode(platform: Platform, credentials: IAuthCredentials) {
+  if (!platform) {
+    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
+  }
+  try {
+    const res = await fetch(`${platform.url}/auth/reset/match`, {
+      body: JSON.stringify({
+        login: credentials.username,
+        password: credentials.password,
+      }),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Device-Id': uniqueId(),
+      },
+      method: 'post',
+    });
+    if (!res.ok) {
+      throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match HTTP code not 200');
+    }
+    const body = await res.json();
+    if (!body.match) {
+      throw createAuthError(OAuth2ErrorCode.BAD_CREDENTIALS, '', 'Pwd reset credentials no match');
+    }
+    return 'reset' as const;
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match error', err as Error);
   }
 }
 

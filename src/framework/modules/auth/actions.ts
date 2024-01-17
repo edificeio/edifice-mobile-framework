@@ -709,19 +709,21 @@ export function manualLogoutAction() {
 }
 
 export interface IChangePasswordSubmitPayload {
-  oldPassword: string;
+  oldPassword?: string;
   password: string;
   confirmPassword: string;
   login: string;
   callback: string;
+  resetCode?: string;
 }
 
-export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean) {
+export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean, rememberMe?: boolean) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       // === 2 - prepare chg pwd payload
       const payload: IChangePasswordSubmitPayload = {
         oldPassword: p.oldPassword,
+        ...(p?.resetCode ? { resetCode: p?.resetCode } : {}),
         password: p.newPassword,
         confirmPassword: p.confirm,
         login: p.login,

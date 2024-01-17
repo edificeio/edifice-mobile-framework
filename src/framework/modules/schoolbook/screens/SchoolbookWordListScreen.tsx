@@ -71,7 +71,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === AccountType.Teacher;
+  const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
   const isParent = userType === AccountType.Relative;
   const hasSchoolbookWordCreationRights = session && getSchoolbookWorkflowInformation(session).create;
 

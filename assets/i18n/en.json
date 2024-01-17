@@ -60,6 +60,7 @@
   "auth-changepassword-error-fields": "The form contains errors",
   "auth-changepassword-error-regex": "The new password does not meet the security criteria.",
   "auth-changepassword-error-submit": "Error while resetting password",
+  "auth-changepassword-login": "Username",
   "auth-changepassword-password-new": "New password",
   "auth-changepassword-password-new-confirm": "Confirm new password",
   "auth-changepassword-password-old": "Old password",

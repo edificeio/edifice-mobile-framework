@@ -65,7 +65,7 @@ export const SchoolbookWordSummaryCard = ({
 }: ISchoolbookWordSummaryCardProps) => {
   const usersTextMaxLines = 1;
   const isParent = userType === AccountType.Relative;
-  const isTeacher = userType === AccountType.Teacher;
+  const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
   const isStudent = userType === AccountType.Student;
   const isWordAcknowledgedForParent = userId && getIsWordAcknowledgedForParent(userId, acknowledgments);
   const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(ackNumber, total);
