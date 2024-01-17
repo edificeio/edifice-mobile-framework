@@ -72,7 +72,7 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === UserType.Teacher;
+  const isTeacher = userType === UserType.Teacher || userType === UserType.Personnel;
   const isParent = userType === UserType.Relative;
   const hasSchoolbookWordCreationRights = session && getSchoolbookWorkflowInformation(session).create;
 
@@ -122,8 +122,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
                   ...(flushAfter
                     ? []
                     : schoolbookWords
-                    ? schoolbookWords.slice((computedPagingSize as number) * (pageToFetch + 1))
-                    : []),
+                      ? schoolbookWords.slice((computedPagingSize as number) * (pageToFetch + 1))
+                      : []),
                 ];
           });
         }
@@ -132,8 +132,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
             ? -1
             : pageToFetch + 1
           : flushAfter
-          ? 1
-          : undefined;
+            ? 1
+            : undefined;
         if (newNextPageToFetch) {
           setNextPageToFetch(prevState => {
             return isParent
