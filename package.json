@@ -49,7 +49,7 @@
     "prepare-minor": "node cli/prepare-build.js minor",
     "prepare-rev": "node cli/prepare-build.js rev",
     "prettier": "npx prettier --write src/**/*.{ts,tsx}",
-    "start": "&& rm -rf ./ios/.xcode.env.localwatchman watch-del-all && react-native start --reset-cache",
+    "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && react-native start --reset-cache",
     "tsc": "tsc -p tsconfig.json",
     "scaffold": "run(){ node cli/scaffold.js $@; }; run"
   },

@@ -31,10 +31,10 @@ public class MainActivity extends ReactActivity {
         super.onResume();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             Context ctx = this.getApplicationContext();
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.cancelAll();
-            }
+            try {
+                NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                if (notificationManager != null) notificationManager.cancelAll();
+            } catch(Exception e) { e.printStackTrace();}
         }
     }
 
