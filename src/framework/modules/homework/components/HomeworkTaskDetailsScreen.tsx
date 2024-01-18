@@ -201,10 +201,6 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCheckHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.check;
     const animationSource = require('ASSETS/animations/homework/done.json');
-
-    // Manage firstRender to avoid animation playing during first render
-    setTimeout(() => this.setState({ firstRender: false }), 5000);
-
     return (
       <PageView style={styles.page}>
         <View style={[styles.banner, { backgroundColor: bannerColor }]}>
@@ -243,7 +239,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
                   resizeMode="cover"
                   source={animationSource}
                   style={styles.confetti}
-                  onAnimationFinish={this.handleAnimationFinished}
+                  onAnimationFinish={() => this.handleAnimationFinished()}
                 />
               </View>
             ) : null}
