@@ -49,7 +49,7 @@ const SnowFlakes = ({ session, isXmasActivated, isFlakesFalling }: SnowFlakesRed
         Animated.timing(fadeAnimation, {
           toValue: 0,
           duration: 1000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }).start(() => {
           if (!wasFlaskesFalling.current) {
             setSnowfall(false);

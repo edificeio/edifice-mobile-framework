@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
 export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTaskDetailsScreenProps, object> {
   state = {
     checked: this.props.route.params.task.finished,
+    playAnimation: false,
   };
 
   async doDeleteDiaryEntry(diaryId: string, entryId: string, date: Moment) {
@@ -132,13 +133,16 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
       if (!diaryId || !taskId) {
         throw new Error('failed to call api (missing information)');
       }
-
       await handleToggleHomeworkEntryStatus(diaryId, taskId, finished);
       await handleGetHomeworkTasks(diaryId);
-      this.setState({ checked: !checked });
+      this.setState({ checked: !checked, playAnimation: !checked });
     } catch {
       Toast.showError(I18n.get('homework-taskdetails-status-error'));
     }
+  }
+
+  handleAnimationFinished() {
+    this.setState({ playAnimation: false });
   }
 
   updateNavBarTitle() {
@@ -188,7 +192,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
 
   render() {
     const { route, session } = this.props;
-    const { checked } = this.state;
+    const { checked, playAnimation } = this.state;
     const { date, title, content } = route.params.task;
     const dayOfTheWeek = getDayOfTheWeek(date);
     const dayColor = theme.color.homework.days[dayOfTheWeek].background;
@@ -197,6 +201,9 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
     const homeworkWorkflowInformation = session && getHomeworkWorkflowInformation(session);
     const hasCheckHomeworkResourceRight = homeworkWorkflowInformation && homeworkWorkflowInformation.check;
     const animationSource = require('ASSETS/animations/homework/done.json');
+
+    // Manage firstRender to avoid animation playing during first render
+    setTimeout(() => this.setState({ firstRender: false }), 5000);
 
     return (
       <PageView style={styles.page}>
@@ -228,9 +235,16 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
               customListItemStyle={styles.checkboxListItem}
               customContainerStyle={styles.checkboxContainer}
             />
-            {checked ? (
+            {playAnimation ? (
               <View pointerEvents="none" style={styles.confettiContainer}>
-                <LottieView source={animationSource} style={styles.confetti} resizeMode="cover" loop={false} autoPlay />
+                <LottieView
+                  autoPlay
+                  loop={false}
+                  resizeMode="cover"
+                  source={animationSource}
+                  style={styles.confetti}
+                  onAnimationFinish={this.handleAnimationFinished}
+                />
               </View>
             ) : null}
           </View>

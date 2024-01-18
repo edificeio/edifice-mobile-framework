@@ -48,7 +48,7 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
         delay: TOAST_PROGESS_ANIMATION_DELAY,
         easing: TOAST_PROGESS_ANIMATION_EASING,
         duration: duration - TOAST_PROGESS_ANIMATION_DELAY,
-        useNativeDriver: true,
+        useNativeDriver: false,
       }),
     [duration, progressValue],
   );
@@ -74,7 +74,7 @@ function useToastProgress(duration: ToastParams['props']['duration'], colorShade
       toValue: TOAST_PROGESS_ANIMATION_END_VALUE,
       easing: TOAST_PROGESS_ANIMATION_EASING,
       duration: remainingTime.current,
-      useNativeDriver: true,
+      useNativeDriver: false,
     });
     progressResumeAnimation.start();
     Toast.resume();

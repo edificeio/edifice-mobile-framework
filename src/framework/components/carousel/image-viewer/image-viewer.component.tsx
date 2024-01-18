@@ -71,7 +71,7 @@ export default class ImageViewer extends React.Component<Props, State> {
       Animated.timing(this.fadeAnim, {
         toValue: 1,
         duration: 200,
-        useNativeDriver: !!this.props.useNativeDriver,
+        useNativeDriver: false,
       }).start();
     }
   }
@@ -112,7 +112,7 @@ export default class ImageViewer extends React.Component<Props, State> {
         Animated.timing(this.fadeAnim, {
           toValue: 1,
           duration: 200,
-          useNativeDriver: !!nextProps.useNativeDriver,
+          useNativeDriver: false,
         }).start();
       },
     );
@@ -260,7 +260,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     const offsetXRTL = !I18nManager.isRTL ? offsetX : -offsetX;
 
     if (offsetXRTL < 0) {
-      if (this!.state!.currentShowIndex || 0 < this.props.imageUrls.length - 1) {
+      if (this!.state!.currentShowIndex || this.props.imageUrls.length - 1 > 0) {
         this.loadImageWindow((this!.state!.currentShowIndex || 0) + 1);
       }
     } else if (offsetXRTL > 0) {
@@ -294,7 +294,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     } else if (vxRTL < -0.7) {
       // 下一张
       this.goNext.call(this);
-      if (this.state.currentShowIndex || 0 < this.props.imageUrls.length - 1) {
+      if (this.state.currentShowIndex || this.props.imageUrls.length - 1 > 0) {
         this.loadImageWindow((this.state.currentShowIndex || 0) + 1);
       }
       return;
@@ -327,7 +327,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     Animated.timing(this.positionX, {
       toValue: this.positionXNumber,
       duration: this.props.pageAnimateTime,
-      useNativeDriver: !!this.props.useNativeDriver,
+      useNativeDriver: false,
     }).start();
 
     const { currentShowIndex } = this.state;
@@ -360,7 +360,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     Animated.timing(this.positionX, {
       toValue: this.positionXNumber,
       duration: this.props.pageAnimateTime,
-      useNativeDriver: !!this.props.useNativeDriver,
+      useNativeDriver: false,
     }).start();
 
     const { currentShowIndex } = this.state;
@@ -386,7 +386,7 @@ export default class ImageViewer extends React.Component<Props, State> {
     Animated.timing(this.positionX, {
       toValue: this.standardPositionX,
       duration: 150,
-      useNativeDriver: !!this.props.useNativeDriver,
+      useNativeDriver: false,
     }).start();
   }
 
