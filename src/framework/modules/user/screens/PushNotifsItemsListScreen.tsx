@@ -164,6 +164,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
     );
     items = deepmerge<IPushNotifsSettings>(items, pendingForType);
     const areAllChecked = Object.values(items).every(v => v);
+    const oneValueSelected = Object.values(items).includes(true);
     const subListData =
       Object.entries(items) && Object.entries(items).length > 0
         ? Object.entries(items).sort((a, b) =>
@@ -187,7 +188,8 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
             <CheckboxButton
               onPress={() => this.doTogglePushNotifSettingForAppType(type, !areAllChecked)}
               title="user-pushnotifssettings-all"
-              isChecked={areAllChecked}
+              checked={areAllChecked}
+              partialyChecked={oneValueSelected && !areAllChecked}
             />
           )
         }
@@ -200,7 +202,7 @@ export class PushNotifsItemsListScreen extends React.PureComponent<
       <CheckboxButton
         onPress={() => this.doTogglePushNotifSetting([item[0], !item[1]])}
         title={formatI18nNotifType(`timeline-notiftype-${item[0]}`)}
-        isChecked={item[1]}
+        checked={item[1]}
       />
     );
   }

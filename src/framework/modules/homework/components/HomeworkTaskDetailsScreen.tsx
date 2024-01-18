@@ -224,9 +224,9 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
             <CheckboxButton
               title="homework-taskdetails-status-done"
               onPress={() => this.doToggleDiaryEntryStatus(!checked)}
-              isChecked={checked}
+              checked={checked}
               customListItemStyle={styles.checkboxListItem}
-              customCheckboxContainerStyle={styles.checkboxContainer}
+              customContainerStyle={styles.checkboxContainer}
             />
             {checked ? (
               <View pointerEvents="none" style={styles.confettiContainer}>

@@ -1,9 +1,16 @@
 import * as React from 'react';
-import { ColorValue, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
+
+export interface CheckboxProps {
+  onPress: () => void;
+  checked: boolean;
+  partialyChecked?: boolean;
+  customContainerStyle?: ViewStyle;
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -17,30 +24,37 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Checkbox = ({
-  checked,
-  onPress,
-  customContainerStyle,
-  customCheckboxColor,
-}: {
-  checked: boolean;
-  onPress: () => void;
-  customContainerStyle?: ViewStyle;
-  customCheckboxColor?: ColorValue;
-}) => {
+export const Checkbox = ({ checked, partialyChecked, onPress, customContainerStyle }: CheckboxProps) => {
   const checkedContainerStyle = {
     backgroundColor: checked ? theme.palette.primary.regular : theme.ui.background.card,
-    borderColor: checked ? theme.palette.primary.regular : theme.palette.grey.graphite,
+    borderColor: checked || partialyChecked ? theme.palette.primary.regular : theme.palette.grey.graphite,
+  };
+
+  const renderStatus = () => {
+    if (partialyChecked)
+      return (
+        <NamedSVG
+          name="ui-checkbox-partial"
+          width={UI_SIZES.elements.icon.xsmall}
+          height={UI_SIZES.elements.icon.xsmall}
+          fill={theme.palette.primary.regular}
+        />
+      );
+    if (checked)
+      return (
+        <NamedSVG
+          name="ui-checkbox-check"
+          width={UI_SIZES.elements.icon.xsmall}
+          height={UI_SIZES.elements.icon.xsmall}
+          fill={theme.ui.text.inverse}
+        />
+      );
+    return;
   };
 
   return (
     <TouchableOpacity onPress={onPress} style={[styles.container, checkedContainerStyle, customContainerStyle]}>
-      <NamedSVG
-        name="ui-check"
-        width={UI_SIZES.elements.icon.xsmall}
-        height={UI_SIZES.elements.icon.xsmall}
-        fill={customCheckboxColor || theme.ui.text.inverse}
-      />
+      {renderStatus()}
     </TouchableOpacity>
   );
 };
