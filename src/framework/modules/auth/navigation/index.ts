@@ -13,7 +13,7 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { ILoginResult } from '~/framework/modules/auth/actions';
-import { AuthRequirement, ForgotMode, IAuthContext, IAuthCredentials } from '~/framework/modules/auth/model';
+import { AuthCredentials, AuthRequirement, ForgotMode, IAuthContext } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
@@ -50,7 +50,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: { platform: Platform };
   wayf: { platform: Platform };
-  activation: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
+  activation: { platform: Platform; context: IAuthContext; credentials: AuthCredentials; rememberMe?: boolean };
   forgot: { platform: Platform; mode: ForgotMode };
   revalidateTerms: object;
   changePassword: ChangePasswordScreenNavParams;

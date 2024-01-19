@@ -81,7 +81,7 @@ export interface DisplayUserPublicWithType extends DisplayUserPublic {
  */
 export interface AuthSavedAccountUserInfo extends DisplayUserPublicWithType {
   avatar?: Blob;
-  loginUsed: string;
+  loginUsed: string | undefined; // undefined if federation login
 }
 
 /**
@@ -336,14 +336,28 @@ export function createActivationError<T extends object>(
   return { ...err, ...additionalData } as IActivationError & T;
 }
 
-export interface IAuthCredentials {
+export interface AuthUsernameCredential {
   username: string;
-  password: string;
 }
 
-export interface IAuthUsernameCredential {
-  username: string;
+export interface AuthCredentials extends AuthUsernameCredential {
+  password: string;
 }
+export interface AuthSamlCredentials {
+  saml: string;
+}
+export interface AuthCustomTokenCredentials {
+  customToken: string;
+}
+export type AuthFederationCredentials = AuthSamlCredentials | AuthCustomTokenCredentials;
+export type AuthAnyCredentials = AuthCredentials | AuthFederationCredentials;
+
+export const credentialsAreLoginPassword = (credentials: AuthAnyCredentials): credentials is AuthCredentials =>
+  (credentials as AuthCredentials).username !== undefined && (credentials as AuthCredentials).password !== undefined;
+export const credentialsAreSaml = (credentials: AuthAnyCredentials): credentials is AuthSamlCredentials =>
+  (credentials as AuthSamlCredentials).saml !== undefined;
+export const credentialsAreCustomToken = (credentials: AuthAnyCredentials): credentials is AuthCustomTokenCredentials =>
+  (credentials as AuthCustomTokenCredentials).customToken !== undefined;
 
 export type ForgotMode = 'id' | 'password';
 

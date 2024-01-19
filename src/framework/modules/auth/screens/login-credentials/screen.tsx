@@ -16,7 +16,7 @@ import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
-import { consumeAuthErrorAction, loginAction } from '~/framework/modules/auth/actions';
+import { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
 // import { AuthErrorCode, getAuthErrorCode } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
@@ -273,7 +273,7 @@ export default connect(
   dispatch =>
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
-        tryLogin: tryAction(loginAction),
+        tryLogin: tryAction(loginCredentialsAction),
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },
       dispatch,

@@ -12,17 +12,21 @@ import { OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } f
 
 import {
   AccountType,
+  AuthCredentials,
+  AuthFederationCredentials,
   AuthLoggedAccount,
   AuthLoggedUserInfo,
   AuthRequirement,
   AuthTokenSet,
   IAuthContext,
-  IAuthCredentials,
   LegalUrls,
   SessionType,
   StructureNode,
   UserChild,
   UserChildren,
+  credentialsAreCustomToken,
+  credentialsAreLoginPassword,
+  credentialsAreSaml,
 } from './model';
 
 export interface IUserRequirements {
@@ -157,7 +161,7 @@ export function formatStructuresWithClasses(
   }));
 }
 
-export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
+export async function createSession(platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) {
   if (!platform) {
     throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
   }
@@ -166,11 +170,25 @@ export async function createSession(platform: Platform, credentials: { username:
     throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
   }
 
-  await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
-    credentials.username,
-    credentials.password,
-    false, // Do not save token until login is completely successful
-  );
+  if (credentialsAreLoginPassword(credentials)) {
+    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
+      credentials.username,
+      credentials.password,
+      false, // Do not save token until login is completely successful
+    );
+  } else if (credentialsAreSaml(credentials)) {
+    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithSAML(
+      credentials.saml,
+      false, // Do not save token until login is completely successful
+    );
+  } else if (credentialsAreCustomToken(credentials)) {
+    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithCustomToken(
+      credentials.customToken,
+      false, // Do not save token until login is completely successful
+    );
+  } else {
+    throw new global.Error(`[auth.createSession] given credentials are not recognisable.`);
+  }
 }
 
 export async function restoreSession(platform: Platform, token: AuthTokenSet) {
@@ -201,7 +219,7 @@ export async function forgetPreviousSession() {
 
 export function formatSession(
   platform: Platform,
-  loginUsed: string,
+  loginUsed: string | undefined,
   userinfo: IUserInfoBackend,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
@@ -308,7 +326,7 @@ export function forgetPlatform() {
   storage.global.delete(PLATFORM_STORAGE_KEY);
 }
 
-export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: IAuthCredentials) {
+export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: AuthCredentials) {
   if (!platform) {
     throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
   }
@@ -338,7 +356,7 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
   }
 }
 
-export async function ensureCredentialsMatchPwdResetCode(platform: Platform, credentials: IAuthCredentials) {
+export async function ensureCredentialsMatchPwdResetCode(platform: Platform, credentials: AuthCredentials) {
   if (!platform) {
     throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
   }

@@ -126,13 +126,13 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Use this returns always an error.
    * @param data
    */
-  public createAuthError(body: { error: string; cause?: Error }): InstanceType<typeof Error.OAuth2Error>;
-  public createAuthError<T extends object>(
+  public authErrorFactory(body: { error: string; error_description?: any }): InstanceType<typeof Error.OAuth2Error>;
+  public authErrorFactory(
     type: Error.ErrorTypes<typeof Error.OAuth2Error>,
     error: string,
     cause?: Error,
   ): InstanceType<typeof Error.OAuth2Error>;
-  public createAuthError<T extends object>(
+  public authErrorFactory(
     bodyOrType: { error: string; error_description?: string } | Error.ErrorTypes<typeof Error.OAuth2Error>,
     error?: string,
     cause?: Error,
@@ -160,6 +160,12 @@ export class OAuth2RessourceOwnerPasswordClient {
         }
       } else if (bodyOrType.error === 'quota_overflow') {
         type = Error.OAuth2ErrorType.PLATFORM_TOO_LOAD;
+      } else if (bodyOrType.error === 'multiple_vector_choice') {
+        type = Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR;
+        if (bodyOrType.error_description) {
+          const vectors = JSON.parse(bodyOrType.error_description);
+          return new Error.SamlMultipleVectorError(vectors, error, cause);
+        } else return new Error.OAuth2Error(type ?? Error.FetchErrorType.BAD_RESPONSE, error, cause);
       }
     }
     return new Error.OAuth2Error(type ?? Error.FetchErrorType.BAD_RESPONSE, error, cause);
@@ -248,7 +254,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     // 3: Check HTTP Status
     if (!response.ok) {
       const errdata = await this.parseResponseJSON(response);
-      throw this.createAuthError(errdata);
+      throw this.authErrorFactory(errdata);
     }
     // 4: Parse reponse
     let data: any;
@@ -259,7 +265,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     }
     // 5: Check if response is error
     if (data?.error) {
-      throw this.createAuthError(data);
+      throw this.authErrorFactory(data);
     }
     // 6: OK
     return data;

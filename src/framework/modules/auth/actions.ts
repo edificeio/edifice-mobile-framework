@@ -13,10 +13,11 @@ import { clearRequestsCacheLegacy } from '~/infra/cache';
 import { destroyOAuth2Legacy } from '~/infra/oauth';
 
 import {
+  AuthCredentials,
+  AuthFederationCredentials,
   AuthRequirement,
   AuthSavedAccount,
   IAuthContext,
-  IAuthCredentials,
   IChangePasswordError,
   IChangePasswordPayload,
   createChangePasswordError,
@@ -119,9 +120,9 @@ async function getRequirementAdditionalInfos(requirement: AuthRequirement, platf
 export const loginSteps = {
   /**
    * Get a new oAuth2 token set with given credentials
-   * If bad credentials provided, check if this not the activation code /
+   * If bad credentials provided, check if this not the activation code / reset code
    */
-  getToken: async (platform: Platform, credentials: IAuthCredentials) => {
+  getNewToken: async (platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) => {
     const start = Date.now();
     try {
       await createSession(platform, credentials);
@@ -197,7 +198,7 @@ export const loginSteps = {
    */
   finalizeLogin: async (
     platform: Platform,
-    loginUsed: string,
+    loginUsed: string | undefined,
     userInfo: IUserInfoBackend,
     publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
     requirement?: AuthRequirement,
@@ -220,7 +221,7 @@ export const loginSteps = {
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
-const performLogin = async (platform: Platform, loginUsed: string, dispatch: AuthDispatch) => {
+const performLogin = async (platform: Platform, loginUsed: string | undefined, dispatch: AuthDispatch) => {
   const requirement = await loginSteps.getRequirement(platform);
   const user = await loginSteps.getUserData(platform, requirement);
   const accountInfo = await loginSteps.finalizeLogin(platform, loginUsed, user.infos, user.publicInfos, requirement);
@@ -246,17 +247,44 @@ const performLogin = async (platform: Platform, loginUsed: string, dispatch: Aut
  * @returns
  * @throws
  */
-export const loginAction =
-  (platform: Platform, credentials: IAuthCredentials, key: number) =>
+export const loginCredentialsAction =
+  (platform: Platform, credentials: AuthCredentials, key: number) =>
   async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
-      const activationScenario = await loginSteps.getToken(platform, credentials);
+      const activationScenario = await loginSteps.getNewToken(platform, credentials);
       // if (activationScenario) return activationScenario;
       const session = await performLogin(platform, credentials.username, dispatch);
       writeSingleAccount(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
-      console.warn(`[Auth] Login error :`, e);
+      console.warn(`[Auth] Login credentials error :`, e);
+      dispatch(
+        actions.authError({
+          key,
+          info: e as Error,
+        }),
+      );
+      throw e;
+    }
+  };
+
+/**
+ * Manual login action with Federation.
+ * @param platform platform info to create the session on.
+ * @param saml saml assertion
+ * @returns
+ * @throws
+ */
+export const loginFederationAction =
+  (platform: Platform, credentials: AuthFederationCredentials, key: number) =>
+  async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+    try {
+      await loginSteps.getNewToken(platform, credentials);
+      const session = await performLogin(platform, undefined, dispatch);
+      writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+      return session;
+    } catch (e) {
+      console.warn(`[Auth] Login federation error :`, e);
       dispatch(
         actions.authError({
           key,
@@ -775,10 +803,10 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
     }
 
     // 4 === Login back to get renewed token
-    const credentials: IAuthCredentials = {
+    const credentials: AuthCredentials = {
       username: p.login,
       password: p.newPassword,
     };
-    await dispatch(loginAction(platform, credentials));
+    await dispatch(loginCredentialsAction(platform, credentials));
   };
 }

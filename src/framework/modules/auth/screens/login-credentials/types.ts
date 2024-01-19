@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ILoginResult, consumeAuthErrorAction, loginAction } from '~/framework/modules/auth/actions';
+import type { ILoginResult, consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
 import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IAuthState } from '~/framework/modules/auth/reducer';
 import type { Platform } from '~/framework/util/appConf';
@@ -26,7 +26,7 @@ export interface LoginCredentialsScreenStoreProps {
 }
 
 export interface LoginCredentialsScreenDispatchProps {
-  tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
+  tryLogin: (...args: Parameters<typeof loginCredentialsAction>) => Promise<ILoginResult>;
   handleConsumeError: (...args: Parameters<typeof consumeAuthErrorAction>) => void;
 }
 
