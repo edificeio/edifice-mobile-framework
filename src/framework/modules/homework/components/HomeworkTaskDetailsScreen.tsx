@@ -70,11 +70,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: UI_SIZES.spacing.medium,
     bottom: UI_SIZES.spacing.medium,
+    backgroundColor: theme.ui.background.card,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     shadowColor: theme.ui.shadowColor,
     shadowOpacity: 0.15,
     elevation: 4,
+    borderRadius: UI_SIZES.radius.mediumPlus,
   },
   checkboxContainer: {
     marginLeft: UI_SIZES.spacing.minor,
