@@ -12,8 +12,8 @@ import { PageView } from '~/framework/components/page';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import { navigateAfterOnboarding } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
-
 import { Image } from '~/framework/util/media';
+
 import styles from './styles';
 import { IOnboardingScreenProps, IOnboardingScreenState } from './types';
 
