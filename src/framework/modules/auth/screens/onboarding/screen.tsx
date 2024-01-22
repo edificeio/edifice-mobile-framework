@@ -8,20 +8,25 @@ import { I18n } from '~/app/i18n';
 import { getButtonWidth } from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
-import { NamedSVG, addToCache, removeFromCache } from '~/framework/components/picture/NamedSVG';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import { navigateAfterOnboarding } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
 
+import { Image } from '~/framework/util/media';
 import styles from './styles';
 import { IOnboardingScreenProps, IOnboardingScreenState } from './types';
+
+const renderOnboardingPics = {
+  'onboarding-0': require('ASSETS/images/onboarding/onboarding_0.png'),
+  'onboarding-1': require('ASSETS/images/onboarding/onboarding_1.png'),
+  'onboarding-2': require('ASSETS/images/onboarding/onboarding_2.png'),
+  'onboarding-3': require('ASSETS/images/onboarding/onboarding_3.png'),
+};
 
 class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnboardingScreenState> {
   state = {
     buttonsWidth: 0,
-    loading: true,
   };
 
   showDiscoverLink = Platform.select(appConf.onboarding.showDiscoverLink);
@@ -40,29 +45,12 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
         icons: 1,
         type: 'secondary',
       });
-    // Preload onboarding images
-    let cached = 0;
-    const toCache = this.texts.length;
-    this.texts.map(async (_onboardingText, index) => {
-      addToCache(`onboarding-${index}`).then(() => {
-        cached++;
-        // All onboarding images have been cached => View can display onboarding
-        if (cached === toCache) this.setState({ buttonsWidth: Math.max(joinWidth, discoverWidth), loading: false });
-      });
-    });
-  }
-
-  componentWillUnmount() {
-    // Remove onboarding images from cache
-    this.texts.map((_onboardingText, index) => {
-      removeFromCache(`onboarding-${index}`);
-    });
+    this.setState({ buttonsWidth: Math.max(joinWidth, discoverWidth) });
   }
 
   render() {
     const { navigation } = this.props;
-    const { buttonsWidth, loading } = this.state;
-    if (loading) return <LoadingIndicator />;
+    const { buttonsWidth } = this.state;
     return (
       <PageView style={styles.page} statusBar="light">
         <View style={styles.mainContainer}>
@@ -72,7 +60,8 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiper} activeDotStyle={[styles.swiper, styles.swiperActive]}>
             {this.texts.map((onboardingText, index) => (
               <View key={index} style={styles.swiperItem}>
-                <NamedSVG name={`onboarding-${index}`} style={styles.swiperItemImage} />
+                <Image source={renderOnboardingPics[`onboarding-${index}`]} style={styles.swiperItemImage} />
+
                 <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>
               </View>
             ))}
