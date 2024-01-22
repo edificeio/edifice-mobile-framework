@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-01-11 18:12:50",
-  "notes": "release: 1.11.5-alpha.2(1110502)",
-  "version": "1.11.5-alpha.3(1110503)"
+  "last": "2024-01-22 10:01:49",
+  "notes": "feat(onboarding): Unused svg files removal.\nfeat(onboarding): Unused svg files removal\nfeat(onboarding): MB-2434 , update onboarding pics\nMerge branch 'dev/1.11.5' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.11.5\nfix(homework): MB-2193 , fix shadow on android\nUpdated translations from Phrase (#130)\nfix(homework): MB-2193, Review LottieAnimation management\nfix(crash): MB-2410, Remove useNativeDriver:true for all animations\nfix(crash): MB-2411, Try/Catch addition when canceling pending notifications on Android\nMerge branch 'dev/1.11.5' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.11.5\nfeat(checkbox): MB-2198 , change checkbox component to add partialy status\nfix(crash): MB-2412, Add default onScrollToIndexFailed event handler on FlatList\nfix(chore): MB-2447, remove sound of noel theme to fix stop song in background when open app\nfeat(checkbox): fix checkbox color\nfix(schoolbook): MB-2265 , personnel can view schoolbook\nfeat(auth): MB-1165 use reset code from login form\nfix(crash): Crash after react-native-dropdown-picker update\nfix(onboarding): Precache onboarding images\nchore(build): iOS \"PhaseScriptExecution failed with a nonzero exit code\" error fix\nchore(build): pod-install-dev && pod-install-rel commands addition\nrelease: 1.11.5-alpha.3(1110503)",
+  "version": "1.11.5-rc.1(1110504)"
 }
