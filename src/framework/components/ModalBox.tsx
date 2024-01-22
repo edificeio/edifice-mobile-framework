@@ -49,8 +49,6 @@ export const ModalBox = React.forwardRef<ModalBoxHandle, ModalBoxProps>(({ conte
 
   return (
     <NativeModal
-      useNativeDriver
-      useNativeDriverForBackdrop
       backdropTransitionOutTiming={0}
       hideModalContentWhileAnimating
       isVisible={showModal}
