@@ -220,6 +220,12 @@ export default class RichEditor extends Component {
           const offsetY = Number.parseInt(Number.parseInt(data) + that.layout.y || 0);
           offsetY > 0 && onCursorPosition(offsetY);
           break;
+        case messages.IMAGE_CLICKED:
+          alert('Image :' + data);
+          break;
+        case messages.VIDEO_CLICKED:
+          alert('Video :' + data);
+          break;
         default:
           onMessage?.(message);
           break;
@@ -271,8 +277,32 @@ export default class RichEditor extends Component {
     this.webviewBridge = ref;
   }
 
+  getInjectedJavascript(oneSessionId) {
+    return `
+      document.cookie="oneSessionId=${oneSessionId}";
+      document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("click", function(event) {
+          var target = event.target;
+          var type = null;
+          var data = null;
+          if (target.tagName === "IMG") {
+            type = "${messages.IMAGE_CLICKED}";
+            data = target.src;
+          } else if (target.tagName === "VIDEO") {
+            type = "${messages.VIDEO_CLICKED}";
+            data = target.src;
+          }
+          if (type && data) {
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type, data }));
+          }
+        });
+      });
+      true;
+    `;
+  }
+
   renderWebView() {
-    let that = this;
+    const that = this;
     const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
     const { html: viewHTML, oneSessionId } = that.state;
     return (
@@ -282,7 +312,7 @@ export default class RichEditor extends Component {
           sharedCookiesEnabled
           useWebKit={false}
           scrollEnabled={false}
-          hideKeyboardAccessoryView={true}
+          hideKeyboardAccessoryView
           keyboardDisplayRequiresUserAction={false}
           nestedScrollEnabled={!useContainer}
           style={[styles.webview, style]}
@@ -290,10 +320,10 @@ export default class RichEditor extends Component {
           ref={that.setRef}
           onMessage={that.onMessage}
           originWhitelist={['*']}
-          dataDetectorTypes={'none'}
+          dataDetectorTypes="none"
           domStorageEnabled={false}
           bounces={false}
-          javaScriptEnabled={true}
+          javaScriptEnabled
           source={viewHTML}
           onLoad={that.init}
           onShouldStartLoadWithRequest={that.handleShouldLoadRequest}
@@ -315,7 +345,7 @@ export default class RichEditor extends Component {
     if (loading) return <LoadingIndicator />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
-    let { height } = this.state;
+    const { height } = this.state;
     if (useContainer)
       return (
         <View style={[style, { height }]} onLayout={this.onViewLayout}>
