@@ -32,6 +32,7 @@ export default React.forwardRef<RNFlatList, FlatListProps<any>>((props, ref) => 
       ref={syncRef}
       ListFooterComponent={realListFooterComponent}
       scrollIndicatorInsets={scrollIndicatorInsets || SCROLL_INDICATOR_INSETS} // 🍎 Hack to guarantee the scrollbar sticks to the right edge of the screen.
+      onScrollToIndexFailed={() => {}} // 🍎 Hack to avoid crash (scrollToIndex should be used in conjunction with getItemLayout or onScrollToIndexFailed).
     />
   );
 });

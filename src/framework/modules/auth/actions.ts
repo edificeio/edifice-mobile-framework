@@ -35,6 +35,7 @@ import {
   UserPrivateData,
   createSession,
   ensureCredentialsMatchActivationCode,
+  ensureCredentialsMatchPwdResetCode,
   ensureUserValidity,
   fetchUserInfo,
   fetchUserPublicInfo,
@@ -60,6 +61,12 @@ interface ILoginActionResultActivation {
   rememberMe?: boolean;
   context: IAuthContext;
 }
+interface ILoginActionResultReset {
+  action: 'reset';
+  credentials: IAuthCredentials;
+  rememberMe?: boolean;
+  context: IAuthContext;
+}
 interface ILoginActionResultPartialScenario {
   action: PartialSessionScenario;
   defaultMobile?: string;
@@ -68,7 +75,7 @@ interface ILoginActionResultPartialScenario {
   rememberMe?: boolean;
   context: IAuthContext;
 }
-export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPartialScenario | void;
+export type ILoginResult = ILoginActionResultActivation | ILoginActionResultReset | ILoginActionResultPartialScenario | void;
 
 /**
  *
@@ -144,9 +151,20 @@ function getTokenAction(platform: Platform, credentials?: IAuthCredentials, reme
       Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'getToken');
       if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {
         // ensureCredentialsMatchActivationCode is awaited before the two other because it throws auth errors
-        await ensureCredentialsMatchActivationCode(platform, credentials);
-        const [context] = await Promise.all([getAuthContext(platform), dispatch(getLegalUrlsAction(platform))]);
-        return { action: 'activate', context, credentials, rememberMe } as ILoginActionResultActivation;
+        try {
+          const response = await Promise.any([
+            ensureCredentialsMatchActivationCode(platform, credentials),
+            ensureCredentialsMatchPwdResetCode(platform, credentials),
+          ]);
+          const [context] = await Promise.all([getAuthContext(platform), dispatch(getLegalUrlsAction(platform))]);
+          return { action: response, context, credentials, rememberMe } as ILoginActionResultActivation;
+        } catch (err) {
+          if (err instanceof AggregateError) {
+            const ee = err.errors.find(eee => (eee as AuthError).type !== OAuth2ErrorCode.BAD_CREDENTIALS);
+            if (ee) throw ee;
+            else throw err.errors.at(0);
+          }
+        }
       }
       throw e;
     }
@@ -476,19 +494,21 @@ export function logoutAction() {
 }
 
 export interface IChangePasswordSubmitPayload {
-  oldPassword: string;
+  oldPassword?: string;
   password: string;
   confirmPassword: string;
   login: string;
   callback: string;
+  resetCode?: string;
 }
 
-export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean) {
+export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean, rememberMe?: boolean) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       // === 2 - prepare chg pwd payload
       const payload: IChangePasswordSubmitPayload = {
         oldPassword: p.oldPassword,
+        ...(p?.resetCode ? { resetCode: p?.resetCode } : {}),
         password: p.newPassword,
         confirmPassword: p.confirm,
         login: p.login,
@@ -540,8 +560,8 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       username: p.login,
       password: p.newPassword,
     };
-    const rememberMe = getSession()?.type === SessionType.PERMANENT;
-    const redirect = await dispatch(loginAction(platform, credentials, rememberMe));
+    const realRememberMe = rememberMe ?? getSession()?.type === SessionType.PERMANENT;
+    const redirect = await dispatch(loginAction(platform, credentials, realRememberMe));
     return redirect;
   };
 }

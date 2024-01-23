@@ -65,6 +65,14 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
           credentials: action.credentials,
           rememberMe: action.rememberMe,
         });
+      case 'reset':
+        return CommonActions.navigate(authRouteNames.changePassword, {
+          platform,
+          context: action.context,
+          credentials: action.credentials,
+          rememberMe: action.rememberMe,
+          useResetCode: true,
+        });
       case PartialSessionScenario.MUST_CHANGE_PASSWORD:
         return CommonActions.reset({
           // we reset instead of navigate to prevent the user from going back or something else

@@ -599,6 +599,7 @@ export const urlSigner = {
    */
   getAbsoluteUrl: (url?: string, pf?: Platform) => {
     if (!url) return undefined;
+    if (url?.startsWith('workspace')) url = `/${url}`;
     if (url.startsWith('//')) return `https:${url}`;
     if (url.startsWith('/')) {
       if (!pf) pf = assertSession().platform;

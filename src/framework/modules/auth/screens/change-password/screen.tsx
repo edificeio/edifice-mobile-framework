@@ -13,12 +13,18 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
+import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { changePasswordAction, loginAction, logoutAction } from '~/framework/modules/auth/actions';
-import { IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
+import {
+  IAuthCredentials,
+  IChangePasswordError,
+  IChangePasswordPayload,
+  createChangePasswordError,
+} from '~/framework/modules/auth/model';
 import { getAuthNavigationState, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
@@ -38,7 +44,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
   private mounted = false;
 
   public state: ChangePasswordScreenState = {
-    oldPassword: '',
+    oldPassword: this.props.route.params.useResetCode ? this.props.route.params.credentials.username : '',
     newPassword: '',
     confirm: '',
     typing: false,
@@ -57,12 +63,16 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
       if (!this.props.route.params.credentials) {
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
-      const payload = {
+      const payload: IChangePasswordPayload = {
         ...this.state,
         login: this.props.route.params.credentials.username,
       };
+      if (this.props.route.params.useResetCode) {
+        payload.resetCode = (this.props.route.params.credentials as IAuthCredentials).password;
+        delete payload.oldPassword;
+      }
       const { platform, forceChange } = this.props.route.params;
-      const redirect = await this.props.trySubmit(platform, payload, forceChange);
+      const redirect = await this.props.trySubmit(platform, payload, forceChange, this.props.route.params.rememberMe);
       try {
         redirectLoginNavAction(redirect, platform, this.props.navigation);
         setTimeout(() => {
@@ -115,6 +125,7 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
   public render() {
     const { error, submitState, oldPassword, newPassword, confirm, typing } = this.state;
     const authContext = this.props.route.params.context;
+    const isResetMode = this.props.route.params.useResetCode;
 
     const formModel = new ChangePasswordFormModel({
       passwordRegex: authContext.passwordRegex,
@@ -145,19 +156,39 @@ class ChangePasswordScreen extends React.PureComponent<ChangePasswordScreenPriva
             </View>
           ) : null}
           <InputContainer
-            label={{ text: I18n.get('auth-changepassword-password-old'), icon: 'ui-lock' }}
+            label={{
+              text: isResetMode ? I18n.get('auth-changepassword-login') : I18n.get('auth-changepassword-password-old'),
+              icon: isResetMode ? 'ui-user' : 'ui-lock',
+            }}
             input={
-              <PasswordInput
-                placeholder={I18n.get('auth-changepassword-placeholder')}
-                showIconCallback
-                showError={formModel.showOldPasswordError(oldPassword)}
-                value={oldPassword}
-                onChangeText={formModel.oldPassword.changeCallback(this.onChange('oldPassword'))}
-                annotation=" "
-                ref={this.inputOldPassword}
-                onSubmitEditing={() => this.inputNewPassword.current.focus()}
-                returnKeyType="next"
-              />
+              isResetMode ? (
+                <TextInput
+                  ref={this.inputOldPassword}
+                  onChangeText={formModel.oldPassword.changeCallback(this.onChange('oldPassword'))}
+                  value={oldPassword}
+                  keyboardType="email-address"
+                  disabled
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  spellCheck={false}
+                  testID="login-identifier"
+                  onSubmitEditing={() => this.inputNewPassword.current.focus()}
+                  returnKeyType="next"
+                  annotation=" "
+                />
+              ) : (
+                <PasswordInput
+                  placeholder={I18n.get('auth-changepassword-placeholder')}
+                  showIconCallback
+                  showError={formModel.showOldPasswordError(oldPassword)}
+                  value={oldPassword}
+                  onChangeText={formModel.oldPassword.changeCallback(this.onChange('oldPassword'))}
+                  annotation=" "
+                  ref={this.inputOldPassword}
+                  onSubmitEditing={() => this.inputNewPassword.current.focus()}
+                  returnKeyType="next"
+                />
+              )
             }
           />
           <InputContainer

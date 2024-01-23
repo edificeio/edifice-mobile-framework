@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
-const svgSize = UI_SIZES.screen.width * 0.8;
+const pictureSize = UI_SIZES.screen.width * 0.8;
 
 export default StyleSheet.create({
   buttons: {
@@ -40,8 +40,8 @@ export default StyleSheet.create({
     width: '80%',
   },
   swiperItemImage: {
-    width: svgSize,
-    height: svgSize,
+    width: pictureSize,
+    height: pictureSize,
     maxHeight: '60%',
     maxWidth: '80%',
     marginTop: UI_SIZES.spacing.tiny,

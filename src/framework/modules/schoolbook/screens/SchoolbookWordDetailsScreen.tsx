@@ -80,7 +80,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   const detailsCardRef: { current: any } = React.useRef();
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === UserType.Teacher;
+  const isTeacher = userType === UserType.Teacher || userType === UserType.Personnel;
   const isParent = userType === UserType.Relative;
 
   // EVENTS =====================================================================================

@@ -2,7 +2,7 @@ import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import * as React from 'react';
-import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, View } from 'react-native';
+import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';

@@ -46,15 +46,22 @@ index 0559ce5..2384960 100644
 +};
 \ No newline at end of file
 diff --git a/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js b/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
-index 33f0b87..76f640d 100644
+index 33f0b87..98b0452 100644
 --- a/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
 +++ b/node_modules/react-native-toast-message/lib/src/hooks/useSlideAnimation.js
+@@ -1,5 +1,5 @@
+ import React from 'react';
+-import { Animated, Platform } from 'react-native';
++import { Animated } from 'react-native';
+ import { additiveInverseArray } from '../utils/array';
+ import { useKeyboard } from './useKeyboard';
+ export function translateYOutputRangeFor({ position, height, topOffset, bottomOffset, keyboardHeight, keyboardOffset }) {
 @@ -9,7 +9,7 @@ export function translateYOutputRangeFor({ position, height, topOffset, bottomOf
      const outputRange = position === 'bottom' ? additiveInverseArray(range) : range;
      return outputRange;
  }
 -const useNativeDriver = Platform.select({ native: true, default: false });
-+const useNativeDriver = Platform.select({ ios: true, default: false });
++const useNativeDriver = false;
  export function useSlideAnimation({ position, height, topOffset, bottomOffset, keyboardOffset }) {
      const animatedValue = React.useRef(new Animated.Value(0));
      const { keyboardHeight } = useKeyboard();
@@ -101,10 +108,10 @@ index 12bff36..e81f28f 100644
 +    resume: () => void;
  };
 diff --git a/node_modules/react-native-toast-message/lib/src/useToast.js b/node_modules/react-native-toast-message/lib/src/useToast.js
-index 5794b67..f03747f 100644
+index 12a44a0..56234b2 100644
 --- a/node_modules/react-native-toast-message/lib/src/useToast.js
 +++ b/node_modules/react-native-toast-message/lib/src/useToast.js
-@@ -26,6 +26,8 @@ export function useToast({ defaultOptions }) {
+@@ -29,6 +29,8 @@ export function useToast({ defaultOptions }) {
      const [data, setData] = React.useState(DEFAULT_DATA);
      const initialOptions = mergeIfDefined(DEFAULT_OPTIONS, defaultOptions);
      const [options, setOptions] = React.useState(initialOptions);
@@ -113,7 +120,7 @@ index 5794b67..f03747f 100644
      const onAutoHide = React.useCallback(() => {
          log('Auto hiding');
          setIsVisible(false);
-@@ -62,7 +64,17 @@ export function useToast({ defaultOptions }) {
+@@ -68,7 +70,17 @@ export function useToast({ defaultOptions }) {
          // TODO: use a queue when Toast is already visible
          setIsVisible(true);
          onShow();
@@ -131,7 +138,7 @@ index 5794b67..f03747f 100644
      React.useEffect(() => {
          const { autoHide } = options;
          if (isVisible) {
-@@ -79,6 +91,8 @@ export function useToast({ defaultOptions }) {
+@@ -85,6 +97,8 @@ export function useToast({ defaultOptions }) {
          data,
          options,
          show,

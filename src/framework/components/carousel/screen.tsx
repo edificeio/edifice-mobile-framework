@@ -327,7 +327,6 @@ export function Carousel(props: ICarouselProps) {
         ref={imageViewerRef as React.RefObject<ImageViewer>}
         enableSwipeDown
         show
-        useNativeDriver
         imageUrls={dataAsImages}
         index={startIndex}
         onCancel={() => {

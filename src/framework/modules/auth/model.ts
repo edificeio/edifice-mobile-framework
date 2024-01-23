@@ -124,6 +124,7 @@ export interface ISession {
 /** Error codes as an enum, values can be string that backend returns */
 export enum RuntimeAuthErrorCode {
   ACTIVATION_ERROR = 'activation_error',
+  PWDRESET_ERROR = 'pwdreset_error',
   EMAILVALIDATIONINFOS_FAIL = 'emailvalidationinfos_fail',
   FIREBASE_ERROR = 'firebase_error',
   LOAD_I18N_ERROR = 'loadi18nerror',
@@ -244,9 +245,10 @@ export interface IForgotPayload {
 
 export interface IChangePasswordPayload {
   login: string;
-  oldPassword: string;
+  oldPassword?: string;
   newPassword: string;
   confirm: string;
+  resetCode?: string;
 }
 
 export interface IChangePasswordError extends Error {

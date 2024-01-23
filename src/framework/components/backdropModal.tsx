@@ -42,8 +42,7 @@ export const BackdropModal = ({
       justifyContent: 'flex-end',
       margin: 0,
     }}
-    swipeDirection={['down']}
-    useNativeDriverForBackdrop>
+    swipeDirection={['down']}>
     <View style={[{}, contentStyle]}>
       <View
         style={{
