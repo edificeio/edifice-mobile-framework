@@ -1,5 +1,5 @@
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
-index 6891fa3..9aee1eb 100644
+index 6891fa3..2142ebb 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/build.gradle
 @@ -11,7 +11,7 @@ buildscript {
@@ -7,7 +7,7 @@ index 6891fa3..9aee1eb 100644
  
      dependencies {
 -      classpath("com.android.tools.build:gradle:4.2.2")
-+      classpath("com.android.tools.build:gradle:7.1.3")
++      classpath('com.android.tools.build:gradle:7.1.3')
      }
    }
  }
@@ -25,10 +25,10 @@ index dbda53f..98fb413 100644
    
 \ No newline at end of file
 diff --git a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-index 7dc8983..e78b6ea 100644
+index d1188f6..3319b4c 100644
 --- a/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
 +++ b/node_modules/@react-native-camera-roll/camera-roll/android/src/main/java/com/reactnativecommunity/cameraroll/CameraRollModule.java
-@@ -262,7 +262,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
+@@ -239,7 +239,7 @@ public class CameraRollModule extends NativeCameraRollModuleSpec {
                      }
                    });
          }
