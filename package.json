@@ -71,6 +71,7 @@
     "@react-native-cookies/cookies": "6.2.1",
     "@react-native-firebase/app": "18.7.3",
     "@react-native-firebase/messaging": "18.7.3",
+    "@react-native-firebase/in-app-messaging": "18.7.3",
     "@react-native-menu/menu": "0.9.1",
     "@react-native-picker/picker": "2.6.1",
     "@react-native/metro-config": "0.73.3",
