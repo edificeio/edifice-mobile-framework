@@ -253,6 +253,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 />
               </>
             ) : null}
+            <LineButton
+              disabled={!!currentLoadingMenu}
+              title={I18n.get('user-page-editlang')}
+              onPress={() => navigation.navigate(userRouteNames.lang, {})}
+            />
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
