@@ -11,7 +11,7 @@
   "attachment-tryagain": "Réessayer",
   "auth-activation-activate": "Activer votre compte",
   "auth-activation-cgu": "Conditions générales d'utilisation",
-  "auth-activation-cgu-accept": "J'accepte la",
+  "auth-activation-cgu-accept": "J'accepte la ",
   "auth-activation-cgu-accept-and": " et les ",
   "auth-activation-email": "Courriel",
   "auth-activation-errorsubmit": "Nous n'avons pas pu activer votre compte. Veuillez réessayer ultérieurement.",
