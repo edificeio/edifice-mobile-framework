@@ -21,10 +21,10 @@
 		91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 91D2CEF928D0D33A00A1A1C2 /* Font-Regular.ttf */; };
 		F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */; };
 		F0625946264574A4001AE555 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = F062593E26454B14001AE555 /* InfoPlist.strings */; };
+		F06C18682B61837F00FBA3A2 /* splash-screen.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18652B61837F00FBA3A2 /* splash-screen.png */; };
+		F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */; };
+		F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */; };
 		F09C4A402B0400800075018F /* SplashScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A3F2B0400800075018F /* SplashScreen.xib */; };
-		F09C4A442B0400C30075018F /* SplashScreen.png in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A412B0400C30075018F /* SplashScreen.png */; };
-		F09C4A452B0400C30075018F /* SplashScreen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A422B0400C30075018F /* SplashScreen@3x.png */; };
-		F09C4A462B0400C30075018F /* SplashScreen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A432B0400C30075018F /* SplashScreen@2x.png */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
 
@@ -65,10 +65,10 @@
 		F062593D26454B14001AE555 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062593F26454B17001AE555 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		F062594026454B18001AE555 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		F06C18652B61837F00FBA3A2 /* splash-screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen.png"; path = "appe/images/splash-screen.png"; sourceTree = "<group>"; };
+		F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@3x.png"; path = "appe/images/splash-screen@3x.png"; sourceTree = "<group>"; };
+		F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@2x.png"; path = "appe/images/splash-screen@2x.png"; sourceTree = "<group>"; };
 		F09C4A3F2B0400800075018F /* SplashScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplashScreen.xib; sourceTree = "<group>"; };
-		F09C4A412B0400C30075018F /* SplashScreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = SplashScreen.png; path = appe/images/SplashScreen.png; sourceTree = "<group>"; };
-		F09C4A422B0400C30075018F /* SplashScreen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SplashScreen@3x.png"; path = "appe/images/SplashScreen@3x.png"; sourceTree = "<group>"; };
-		F09C4A432B0400C30075018F /* SplashScreen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "SplashScreen@2x.png"; path = "appe/images/SplashScreen@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,9 +118,9 @@
 		74264AB722DF7D2E00A0E2A6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				F09C4A412B0400C30075018F /* SplashScreen.png */,
-				F09C4A432B0400C30075018F /* SplashScreen@2x.png */,
-				F09C4A422B0400C30075018F /* SplashScreen@3x.png */,
+				F06C18652B61837F00FBA3A2 /* splash-screen.png */,
+				F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */,
+				F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */,
 				F09C4A3F2B0400800075018F /* SplashScreen.xib */,
 				74EC2C3F26E63F04008EB301 /* Fonts */,
 			);
@@ -261,18 +261,18 @@
 			files = (
 				F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */,
 				7404C07422E8B012008546A8 /* Assets.xcassets in Resources */,
+				F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */,
 				F0625946264574A4001AE555 /* InfoPlist.strings in Resources */,
 				741ACC0D23B632380075BCE4 /* AppCenter-Config.plist in Resources */,
+				F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */,
 				745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */,
 				91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */,
 				91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */,
 				91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */,
+				F06C18682B61837F00FBA3A2 /* splash-screen.png in Resources */,
 				7E6F88D42B17570A000B4E95 /* jingle_bells.mp3 in Resources */,
 				74EC2C4926E63F04008EB301 /* icomoon.ttf in Resources */,
-				F09C4A462B0400C30075018F /* SplashScreen@2x.png in Resources */,
 				F09C4A402B0400800075018F /* SplashScreen.xib in Resources */,
-				F09C4A452B0400C30075018F /* SplashScreen@3x.png in Resources */,
-				F09C4A442B0400C30075018F /* SplashScreen.png in Resources */,
 				91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,6 +314,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-appe/Pods-appe-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInAppMessaging/InAppMessagingDisplayResources.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf",
@@ -337,6 +338,7 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/InAppMessagingDisplayResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AntDesign.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Entypo.ttf",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EvilIcons.ttf",
@@ -370,10 +372,16 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-appe/Pods-appe-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Flipper-DoubleConversion/double-conversion.framework/double-conversion",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Flipper-Glog/glog.framework/glog",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework/OpenSSL",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/double-conversion.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/glog.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

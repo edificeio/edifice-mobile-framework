@@ -113,18 +113,23 @@ const CommentField = (props: CommentFieldProps, ref) => {
     if (inputRef.current) inputRef.current.clear();
     setComment('');
   };
-  const onChangeText = (value: string) => {
-    if (props.onChangeText)
-      props.onChangeText({
-        type: props.isResponse ? 'response' : 'comment',
-        isPublication: !props.commentId,
-        changed: (!props.commentId && value.trim() !== '') || (props.commentId !== undefined && value.trim() !== props.comment),
-        value,
-      });
-    setComment(value);
-  };
+  const onChangeText = React.useCallback(
+    (value: string) => {
+      if (props.onChangeText)
+        props.onChangeText({
+          type: props.isResponse ? 'response' : 'comment',
+          isPublication: !props.commentId,
+          changed: (!props.commentId && value.trim() !== '') || (props.commentId !== undefined && value.trim() !== props.comment),
+          value,
+        });
+      setComment(value);
+    },
+    [props.onChangeText, props.isResponse, props.commentId, props.comment],
+  );
   const setIsEditingFalse = () => {
-    if (props.comment) setComment(props.comment);
+    if (props.comment) {
+      setComment(props.comment);
+    }
     setIsEditing(false);
   };
   const isCommentUnchanged = () => comment.trim() === props.comment;
@@ -144,6 +149,12 @@ const CommentField = (props: CommentFieldProps, ref) => {
       });
     }
   }, [isEditing]);
+
+  React.useEffect(() => {
+    if (props.comment) {
+      setComment(props.comment);
+    }
+  }, [props.comment]);
 
   const { onEditableLayoutHeight } = props;
   const onLayoutCallback = React.useCallback(

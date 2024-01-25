@@ -27,28 +27,84 @@ index a3f8cba..e85d698 100644
      "react": "*",
      "react-native": "*"
 diff --git a/node_modules/react-native-dropdown-picker/src/components/Picker.js b/node_modules/react-native-dropdown-picker/src/components/Picker.js
-index 08c6a68..35f2f45 100644
+index 08c6a68..7eac59c 100644
 --- a/node_modules/react-native-dropdown-picker/src/components/Picker.js
 +++ b/node_modules/react-native-dropdown-picker/src/components/Picker.js
-@@ -23,7 +23,7 @@ import {
+@@ -1,52 +1,53 @@
+ import React, {
++    Fragment,
++    memo,
+     useCallback,
+-    useState,
+-    useRef,
+     useEffect,
+     useMemo,
+-    memo,
+-    Fragment,
++    useRef,
++    useState,
+ } from 'react';
+ 
+ import {
+-    View,
+-    SafeAreaView,
+-    TouchableOpacity,
+-    Text,
+-    Image,
+-    TextInput,
+-    Dimensions,
+-    Modal,
+     ActivityIndicator,
+     BackHandler,
++    Dimensions,
++    Image,
++    Modal,
+     Platform,
++    SafeAreaView,
      StyleSheet,
++    Text,
++    TextInput,
++    TouchableOpacity,
++    View,
  } from 'react-native';
  
--import { FlatList, ScrollView } from 'react-native-gesture-handler';
-+import { GestureHandlerRootView, FlatList, ScrollView } from 'react-native-gesture-handler';
+ import { FlatList, ScrollView } from 'react-native-gesture-handler';
  
  const { height: WINDOW_HEIGHT } = Dimensions.get('window');
  
-@@ -41,7 +41,8 @@ import {
+-import Colors from '../constants/colors';
+ import {
+-    SCHEMA,
+-    GET_TRANSLATION,
++    ARROW_ICON_POSITION,
++    ASCII_CODE,
+     BADGE_COLORS,
+     BADGE_DOT_COLORS,
+-    ASCII_CODE,
+-    TRANSLATIONS,
+-    MODE,
+-    LIST_MODE,
+     DROPDOWN_DIRECTION,
      GET_DROPDOWN_DIRECTION,
++    GET_TRANSLATION,
      LANGUAGE,
++    LIST_MODE,
++    MODE,
      RTL_DIRECTION,
 -    RTL_STYLE
 +    RTL_STYLE,
-+    ARROW_ICON_POSITION,
++    SCHEMA,
++    TRANSLATIONS,
  } from '../constants';
++import Colors from '../constants/colors';
  import THEMES from '../themes';
++import ListEmpty from './ListEmpty';
  import RenderBadgeItem from './RenderBadgeItem';
+ import RenderListItem from './RenderListItem';
+-import ListEmpty from './ListEmpty';
+ 
+ function Picker({
+     value = null,
 @@ -121,6 +122,7 @@ function Picker({
      showTickIcon = true,
      stickyHeader = false,
@@ -87,7 +143,7 @@ index 08c6a68..35f2f45 100644
  
      /**
       * onPress badge.
-@@ -1808,17 +1813,22 @@ function Picker({
+@@ -1808,14 +1813,19 @@ function Picker({
       */
      const pointerEvents = useMemo(() => disabled ? "none" : "auto", [disabled]);
  
@@ -99,8 +155,7 @@ index 08c6a68..35f2f45 100644
 +    }, [arrowIconPosition, _ArrowComponent, _BodyComponent]);
 +
      return (
--        <>
-+        <GestureHandlerRootView style={{ flex: 1 }}>
+         <>
              <View style={_containerStyle} {...containerProps}>
                  <TouchableOpacity style={_style} onPress={__onPress} onLayout={__onLayout} {...props} ref={onRef} pointerEvents={pointerEvents} disabled={disabled} testID={testID}>
 -                    {_BodyComponent}
@@ -110,11 +165,7 @@ index 08c6a68..35f2f45 100644
 -
                  {DropDownBodyComponent}
              </View>
--        </>
-+        </GestureHandlerRootView>
-     );
- }
- 
+         </>
 diff --git a/node_modules/react-native-dropdown-picker/src/constants/index.js b/node_modules/react-native-dropdown-picker/src/constants/index.js
 index 23d34eb..2bbfe60 100644
 --- a/node_modules/react-native-dropdown-picker/src/constants/index.js
