@@ -114,6 +114,38 @@ async function getRequirementAdditionalInfos(requirement: AuthRequirement, platf
   return { defaultMobile, defaultEmail };
 }
 
+const withMeasure = <Fn extends (...args: any[]) => any>(fn: Fn, tag?: string) => {
+  return (async (...args: any) => {
+    const start = Date.now();
+    try {
+      const ret = fn(...args);
+      if (ret instanceof Promise) return await ret;
+      else return ret;
+    } finally {
+      console.info(`[perf] ${tag ?? fn.toString()} in ${Date.now() - start}ms`);
+    }
+  }) as Fn;
+};
+
+const withErrorTracking = <Fn extends (...args: any[]) => any>(
+  fn: Fn,
+  category: string,
+  action: string,
+  name?: string,
+  value?: number,
+) => {
+  return (async (...args: any) => {
+    try {
+      const ret = fn(...args);
+      if (ret instanceof Promise) return await ret;
+      else return ret;
+    } catch (e) {
+      Trackers.trackDebugEvent(category, action, name, value);
+      throw e;
+    }
+  }) as Fn;
+};
+
 /**
  * Every step for login process is here.
  */
@@ -122,59 +154,47 @@ export const loginSteps = {
    * Get a new oAuth2 token set with given credentials
    * If bad credentials provided, check if this not the activation code / reset code
    */
-  getNewToken: async (platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) => {
-    const start = Date.now();
-    try {
+  getNewToken: withErrorTracking(
+    withMeasure(async (platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) => {
       await createSession(platform, credentials);
-    } catch (e) {
-      // if (credentials && authError?.type === OAuth2ErrorCode.BAD_CREDENTIALS) {}
-      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.getToken');
-      throw e;
-    } finally {
-      console.info(`[perf] getToken in ${Date.now() - start}ms`);
-    }
-  },
+    }),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.getToken',
+  ),
   /**
    * Loads the saved token oAuth2 from the storage.
    * @param platform
    */
-  loadToken: async (account: AuthSavedAccount) => {
-    const start = Date.now();
-    try {
+  loadToken: withErrorTracking(
+    withMeasure(async (account: AuthSavedAccount) => {
       authService.restoreSession(appConf.assertPlatformOfName(account.platform), account.tokens);
-    } catch (e) {
-      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.loadToken');
-      throw e;
-    } finally {
-      console.info(`[perf] loadToken in ${Date.now() - start}ms`);
-    }
-  },
+    }),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.loadToken',
+  ),
   /**
    * Get one of the requirements needed by the user to access the app
    * @param platform
    * @returns
    */
-  getRequirement: async (platform: Platform) => {
-    const start = Date.now();
-    try {
-      const userRequirements = await fetchRawUserRequirements(platform);
-      return getRequirementScenario(userRequirements);
-    } catch (e) {
-      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.getRequirements');
-      throw e;
-    } finally {
-      console.info(`[perf] getRequirement in ${Date.now() - start}ms`);
-    }
-  },
+  getRequirement: withErrorTracking(
+    withMeasure(async (platform: Platform) => {
+      return getRequirementScenario(await fetchRawUserRequirements(platform));
+    }),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.getRequirements',
+  ),
   /**
    * Retrives the user information from the backend
    * @param platform
    * @param requirement
    * @returns
    */
-  getUserData: async (platform: Platform, requirement?: AuthRequirement) => {
-    const start = Date.now();
-    try {
+  getUserData: withErrorTracking(
+    withMeasure(async (platform: Platform, requirement?: AuthRequirement) => {
       const infos = await fetchUserInfo(platform);
       ensureUserValidity(infos);
       DeviceInfo.getUniqueId().then(uniqueID => {
@@ -185,38 +205,35 @@ export const loginSteps = {
         ? { userdata: undefined, userPublicInfo: undefined }
         : await fetchUserPublicInfo(infos, platform);
       return { infos, publicInfos: { userData: userdata, userPublicInfo } };
-    } catch (e) {
-      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.getUserData');
-      throw e;
-    } finally {
-      console.info(`[perf] getUserData in ${Date.now() - start}ms`);
-    }
-  },
+    }),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.getUserData',
+  ),
   /**
    * Saves the new account information & registers tokens (fcm) into the backend
    * @param platform
    */
-  finalizeLogin: async (
-    platform: Platform,
-    loginUsed: string | undefined,
-    userInfo: IUserInfoBackend,
-    publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
-    requirement?: AuthRequirement,
-  ) => {
-    const start = Date.now();
-    try {
-      await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
-      const { userData, userPublicInfo } = publicInfo;
-      const sessionInfo = formatSession(platform, loginUsed, userInfo, userData, userPublicInfo);
-      await StorageSlice.sessionInitAllStorages(sessionInfo);
-      return sessionInfo;
-    } catch (e) {
-      Trackers.trackDebugEvent('Auth', 'LOGIN ERROR', 'loginSteps.confirmLogin');
-      throw e;
-    } finally {
-      console.info(`[perf] confirmLogin in ${Date.now() - start}ms`);
-    }
-  },
+  finalizeLogin: withErrorTracking(
+    withMeasure(
+      async (
+        platform: Platform,
+        loginUsed: string | undefined,
+        userInfo: IUserInfoBackend,
+        publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
+        requirement?: AuthRequirement,
+      ) => {
+        await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
+        const { userData, userPublicInfo } = publicInfo;
+        const sessionInfo = formatSession(platform, loginUsed, userInfo, userData, userPublicInfo);
+        await StorageSlice.sessionInitAllStorages(sessionInfo);
+        return sessionInfo;
+      },
+    ),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.confirmLogin',
+  ),
 };
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];

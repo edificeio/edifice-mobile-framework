@@ -317,11 +317,15 @@ export async function loadCurrentPlatform() {
 
 /**
  * Read and select the platform stored in MMKV.
+ * @deprecated
  */
 export function savePlatform(platform: Platform) {
   storage.global.set(PLATFORM_STORAGE_KEY, platform.name);
 }
 
+/**
+ * @deprecated
+ */
 export function forgetPlatform() {
   storage.global.delete(PLATFORM_STORAGE_KEY);
 }
