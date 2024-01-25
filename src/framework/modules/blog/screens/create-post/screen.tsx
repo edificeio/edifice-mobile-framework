@@ -45,13 +45,11 @@ export const computeNavBar = ({
 const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
   const [title, setTitle] = React.useState('');
-  const [contentHtml, setContentHtml] = React.useState('');
+  const [content, setContent] = React.useState('');
 
   const doSendPost = async () => {
     try {
       const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = props;
-
-      const content = '';
 
       const blog = route.params.blog;
       const blogId = blog && blog.id;
@@ -120,7 +118,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
               ...(loadingState ? (
                 <LoadingIndicator small customColor={theme.ui.text.inverse} />
               ) : (
-                <NavBarAction icon="ui-send" disabled={title.length === 0 || contentHtml.length === 0} onPress={doSend} />
+                <NavBarAction icon="ui-send" disabled={title.length === 0 || content.length === 0} onPress={doSend} />
               )),
             },
           ]}
@@ -128,7 +126,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, loadingState, contentHtml]);
+  }, [title, loadingState, content]);
 
   const renderPostInfos = () => {
     return (
@@ -144,6 +142,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
           />
         }
         initialContentHtml=""
+        onChangeText={value => setContent(value)}
       />
     );
   };

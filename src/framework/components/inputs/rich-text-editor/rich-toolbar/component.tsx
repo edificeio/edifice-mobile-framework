@@ -187,8 +187,6 @@ export default class RichToolbar extends Component {
   render() {
     const { style } = this.props;
 
-    console.log(this.state.items, 'items');
-
     const interpolatedValueEnter = this.state.animatedValueEnter.interpolate({
       inputRange: [0, 1],
       outputRange: [0, -45], // plage de valeurs pour la translation

@@ -32,10 +32,14 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     }).start();
   }, [opacityToolbar, transformToolbar]);
 
-  const handleChange = React.useCallback((html: string) => {
-    contentRef.current = html;
-    setContentHtml(html);
-  }, []);
+  const handleChange = React.useCallback(
+    (html: string) => {
+      contentRef.current = html;
+      setContentHtml(html);
+      props.onChangeText(html);
+    },
+    [props],
+  );
 
   const handleCursorPosition = React.useCallback((scrollY: number) => {
     // Positioning scroll bar

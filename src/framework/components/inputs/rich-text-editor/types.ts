@@ -24,4 +24,5 @@ export type RichTextEditorScreenProps = RichTextEditorScreenDataProps &
 export interface RichEditorFormProps {
   elements: Element;
   initialContentHtml: string;
+  onChangeText: (html: string) => void;
 }

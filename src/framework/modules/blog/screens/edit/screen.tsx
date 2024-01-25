@@ -37,13 +37,11 @@ export const computeNavBar = ({
 const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
   const [title, setTitle] = React.useState(props.route.params.title);
-  const [contentHtml, setContentHtml] = React.useState(props.route.params.content);
+  const [content, setContent] = React.useState(props.route.params.content);
 
   const doEditPost = async () => {
     try {
       const { route, navigation, session, handleEditBlogPost } = props;
-
-      const content = '';
 
       const blog = route.params.blog;
       const blogId = blog && blog.id;
@@ -95,7 +93,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       ),
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, loadingState, contentHtml]);
+  }, [title, loadingState, content]);
 
   const renderPostInfos = () => {
     return (
@@ -111,6 +109,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
           />
         }
         initialContentHtml={props.route.params.content}
+        onChangeText={value => setContent(value)}
       />
     );
   };
