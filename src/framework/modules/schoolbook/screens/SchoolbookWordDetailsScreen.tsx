@@ -145,7 +145,7 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
       if (!session) throw new Error('missing session');
       if (commentId) {
         await schoolbookService.word.updateReply(session, schoolbookWordId, commentId, comment);
-        detailsCardRef?.current?.cardSelectedCommentFieldRef()?.setIsEditingFalse();
+        // detailsCardRef?.current?.cardSelectedCommentFieldRef()?.setIsEditingFalse();
       } else {
         await schoolbookService.word.reply(session, schoolbookWordId, studentId, comment);
       }
@@ -271,21 +271,35 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
 
   // SCHOOLBOOK WORD DETAILS =========================================================================
 
+  const onPublishReply = React.useCallback(
+    (comment, commentId) => {
+      replyToSchoolbookWord(comment, commentId);
+    },
+    [replyToSchoolbookWord],
+  );
+
+  const onEditComment = React.useCallback(data => {
+    setInfoComment(data);
+  }, []);
+
+  const action = React.useCallback(
+    () => (isTeacher ? openSchoolbookWordReport() : isParent ? acknowledgeSchoolbookWord() : undefined),
+    [acknowledgeSchoolbookWord, isParent, isTeacher, openSchoolbookWordReport],
+  );
+
   const renderSchoolbookWordDetails = () => {
     return (
       <SchoolbookWordDetailsCard
         ref={detailsCardRef}
-        action={() => (isTeacher ? openSchoolbookWordReport() : isParent ? acknowledgeSchoolbookWord() : undefined)}
+        action={action}
         userType={userType}
         userId={userId}
         studentId={studentId}
         schoolbookWord={schoolbookWord}
         isPublishingReply={isPublishingReply}
         isAcknowledgingWord={isAcknowledgingWord}
-        onPublishReply={(comment, commentId) => replyToSchoolbookWord(comment, commentId)}
-        onEditComment={data => {
-          setInfoComment(data);
-        }}
+        onPublishReply={onPublishReply}
+        onEditComment={onEditComment}
       />
     );
   };

@@ -958,6 +958,8 @@
   "schoolbook-worddetails-recipientsmodal-text": "The note is sent to the following students and their parents and/or guardians.",
   "schoolbook-worddetails-recipientsmodal-title": "List of recipients",
   "schoolbook-worddetails-response": "Response",
+  "schoolbook-worddetails-response-confirmation-unsaved-modification": "You are going to undo the changes you made to the comment. Do you want to proceed?",
+  "schoolbook-worddetails-response-confirmation-unsaved-publication": "You are going to unsave your comment. Do you want to proceed?",
   "schoolbook-worddetails-responses": "Responses",
   "schoolbook-worddetails-students": "Students",
   "schoolbook-wordlist-acknowledge": "Return a read receipt",

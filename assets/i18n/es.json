@@ -960,6 +960,8 @@
   "schoolbook-worddetails-recipientsmodal-text": "El mensaje se envía a los siguientes alumnos y a sus responsables.",
   "schoolbook-worddetails-recipientsmodal-title": "Lista de destinatarios",
   "schoolbook-worddetails-response": "Respuesta",
+  "schoolbook-worddetails-response-confirmation-unsaved-modification": "Está a punto de cancelar los cambios del comentario. ¿Está seguro?",
+  "schoolbook-worddetails-response-confirmation-unsaved-publication": "Está a punto de cancelar la adición del comentario. ¿Está seguro?",
   "schoolbook-worddetails-responses": "Respuestas",
   "schoolbook-worddetails-students": "Alumnos",
   "schoolbook-wordlist-acknowledge": "Confirmar lectura",

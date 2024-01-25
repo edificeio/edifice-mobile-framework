@@ -30,9 +30,12 @@ target 'appe' do
   # Static libraries => use modular headers
   #
   pod 'Firebase', :modular_headers => true
+  pod 'FirebaseABTesting', :modular_headers => true
   pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
-
+  pod 'nanopb', :modular_headers => true
+  
   #
   # react-native-permissions : @see: https://github.com/zoontek/react-native-permissions#ios
   #
