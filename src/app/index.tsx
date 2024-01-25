@@ -4,6 +4,7 @@
  */
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import * as React from 'react';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -109,6 +110,9 @@ function App(props: AppProps) {
     if (Platform.OS !== 'ios') return;
     const type = 'notification';
     PushNotificationIOS.addEventListener(type, onRemoteNotification!);
+    inAppMessaging()
+      .setMessagesDisplaySuppressed(true)
+      .finally(() => console.debug('setMessagesDisplaySuppressed(true)'));
     return () => {
       if (Platform.OS !== 'ios') return;
       PushNotificationIOS.removeEventListener(type);

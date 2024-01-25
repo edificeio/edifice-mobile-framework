@@ -2,6 +2,7 @@
  * Startup is a conditionnaly rendered content based on app startup status.
  * It can render the SplashScreen, auth flow or main flow in function of token loading and status.
  */
+import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
@@ -28,11 +29,17 @@ import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
+inAppMessaging()
+  .setMessagesDisplaySuppressed(true)
+  .finally(() => console.debug('setMessagesDisplaySuppressed(true)'));
 
 function SplashScreenComponent() {
   React.useEffect(() => {
     return () => {
       SplashScreen.hide();
+      inAppMessaging()
+        .setMessagesDisplaySuppressed(false)
+        .finally(() => console.debug('setMessagesDisplaySuppressed(false)'));
     };
   }, []);
   return null;
