@@ -29,9 +29,6 @@ import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
 import { getTypedRootStack } from './navigators';
 import { StartupState, getState as getAppStartupState } from './redux';
-inAppMessaging()
-  .setMessagesDisplaySuppressed(true)
-  .finally(() => console.debug('setMessagesDisplaySuppressed(true)'));
 
 function SplashScreenComponent() {
   React.useEffect(() => {
