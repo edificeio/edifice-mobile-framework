@@ -110,9 +110,7 @@ function App(props: AppProps) {
     if (Platform.OS !== 'ios') return;
     const type = 'notification';
     PushNotificationIOS.addEventListener(type, onRemoteNotification!);
-    inAppMessaging()
-      .setMessagesDisplaySuppressed(true)
-      .finally(() => console.debug('setMessagesDisplaySuppressed(true)'));
+    inAppMessaging().setMessagesDisplaySuppressed(true).finally();
     return () => {
       if (Platform.OS !== 'ios') return;
       PushNotificationIOS.removeEventListener(type);
