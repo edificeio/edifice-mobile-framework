@@ -20,7 +20,7 @@ import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { changePasswordAction, loadAuthContextAction, manualLogoutAction } from '~/framework/modules/auth/actions';
-import { IAuthContext, IChangePasswordError, createChangePasswordError } from '~/framework/modules/auth/model';
+import { IChangePasswordError, PlatformAuthContext, createChangePasswordError } from '~/framework/modules/auth/model';
 import { getPlatformContext, getSession } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
@@ -36,7 +36,7 @@ import {
 } from './types';
 
 const keyboardPageViewScrollViewProps = { showsVerticalScrollIndicator: false, bounces: false };
-const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { context: IAuthContext }) => {
+const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { context: PlatformAuthContext }) => {
   const { navigation, route, session, context, tryLogout, trySubmit } = props;
   const { platform } = session ?? {};
 

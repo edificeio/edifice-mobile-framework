@@ -1,3 +1,4 @@
+import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
 
@@ -12,18 +13,21 @@ import { OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } f
 
 import {
   AccountType,
+  IActivationPayload as ActivationPayload,
   AuthCredentials,
   AuthFederationCredentials,
   AuthLoggedAccount,
   AuthLoggedUserInfo,
+  AuthPendingRedirection,
   AuthRequirement,
   AuthTokenSet,
-  IAuthContext,
   LegalUrls,
+  PlatformAuthContext,
   SessionType,
   StructureNode,
   UserChild,
   UserChildren,
+  createActivationError,
   credentialsAreCustomToken,
   credentialsAreLoginPassword,
   credentialsAreSaml,
@@ -354,15 +358,15 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
     if (!body.match) {
       throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
     }
-    return 'activate' as const;
+    return AuthPendingRedirection.ACTIVATE;
   } catch (activationErr) {
     throw new global.Error('Activation match error', { cause: activationErr });
   }
 }
 
-export async function ensureCredentialsMatchPwdResetCode(platform: Platform, credentials: AuthCredentials) {
+export async function ensureCredentialsMatchPwdRenewCode(platform: Platform, credentials: AuthCredentials) {
   if (!platform) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
+    throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
   }
   try {
     const res = await fetch(`${platform.url}/auth/reset/match`, {
@@ -378,15 +382,15 @@ export async function ensureCredentialsMatchPwdResetCode(platform: Platform, cre
       method: 'post',
     });
     if (!res.ok) {
-      throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match HTTP code not 200');
+      throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Renew match response not OK');
     }
     const body = await res.json();
     if (!body.match) {
-      throw createAuthError(OAuth2ErrorCode.BAD_CREDENTIALS, '', 'Pwd reset credentials no match');
+      throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
     }
-    return 'reset' as const;
+    return AuthPendingRedirection.RENEW_PASSWORD;
   } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match error', err as Error);
+    throw new global.Error('Pwd renew match error', { cause: err });
   }
 }
 
@@ -399,7 +403,7 @@ export async function getAuthContext(platform: Platform) {
   if (!res.ok) {
     throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Get Auth context response not OK');
   }
-  const activationContext: IAuthContext = await res.json();
+  const activationContext: PlatformAuthContext = await res.json();
   return activationContext;
 }
 
@@ -668,6 +672,7 @@ export async function fetchRawUserRequirements(platform: Platform) {
 export function getRequirementScenario(userRequirements: IUserRequirements) {
   if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
   if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+  // ToDo add case for terms initial validation (for federated accounts)
   if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
   if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
 }
@@ -747,4 +752,47 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
     if (e instanceof Error.ErrorWithType) throw e;
     else throw new global.Error('Failed to fetch user public info', { cause: e });
   }
+}
+
+interface IActivationSubmitPayload extends ActivationPayload {
+  callBack: string;
+  theme: string;
+}
+
+export async function activateAccount(platform: Platform, model: ActivationPayload) {
+  const theme = platform.webTheme;
+  const payload: IActivationSubmitPayload = {
+    acceptCGU: true,
+    activationCode: model.activationCode,
+    callBack: '',
+    login: model.login,
+    password: model.password,
+    confirmPassword: model.confirmPassword,
+    mail: model.mail || '',
+    phone: model.phone,
+    theme,
+  };
+  const formdata = new FormData();
+  for (const key in payload) {
+    formdata.append(key, payload[key]);
+  }
+  const res = await fetch(`${platform.url}/auth/activation/no-login`, {
+    body: formdata,
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+      'X-Device-Id': uniqueId(),
+    },
+    method: 'post',
+  });
+  if (!res.ok) {
+    throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'));
+  }
+  if (res.headers.get('content-type')?.indexOf('application/json') !== -1) {
+    const resBody = await res.json();
+    if (resBody.error) {
+      throw createActivationError('activation', resBody.error.message);
+    }
+  }
+  await CookieManager.clearAll();
 }

@@ -22,7 +22,7 @@ import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { manualLogoutAction } from '~/framework/modules/auth/actions';
-import { AccountType, IAuthContext } from '~/framework/modules/auth/model';
+import { AccountType, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
@@ -157,7 +157,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
 function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], focusedRef: React.MutableRefObject<boolean>) {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
-  const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
+  const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);

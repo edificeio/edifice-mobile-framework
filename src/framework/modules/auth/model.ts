@@ -1,53 +1,9 @@
 import type { Moment } from 'moment';
 
 import { Platform } from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
 import type { IAuthorizedAction, UserPrivateData } from './service';
-
-/** Error codes as an enum, values can be string that backend returns */
-// export enum RuntimeAuthErrorCode {
-//   ACTIVATION_ERROR = 'activation_error',
-//   EMAILVALIDATIONINFOS_FAIL = 'emailvalidationinfos_fail',
-//   FIREBASE_ERROR = 'firebase_error',
-//   LOAD_I18N_ERROR = 'loadi18nerror',
-//   MOBILEVALIDATIONINFOS_FAIL = 'mobilevalidationinfos_fail',
-//   NETWORK_ERROR = 'network_error',
-//   NO_TOKEN = 'no_token',
-//   NOT_PREMIUM = 'not_premium',
-//   PLATFORM_NOT_EXISTS = 'platform_not_exists',
-//   PRE_DELETED = 'pre_deleted',
-//   RESTORE_FAIL = 'restore_fail',
-//   RUNTIME_ERROR = 'runtime_error',
-//   UNKNOWN_ERROR = 'unknown_error',
-//   USERINFO_FAIL = 'userinfo_fail',
-//   USERPUBLICINFO_FAIL = 'userpublicinfo_fail',
-//   USERREQUIREMENTS_FAIL = 'userrequirements_fail',
-// }
-
-// export type AuthErrorCode = OAuth2ErrorCode | RuntimeAuthErrorCode;
-
-// export interface AuthErrorDetails {
-//   type: AuthErrorCode;
-//   error?: string;
-//   description?: string;
-// }
-// export type AuthError = Error & AuthErrorDetails;
-
-// export function createAuthError<T extends object>(
-//   type: AuthErrorCode,
-//   error: string,
-//   description?: string,
-//   additionalData?: T,
-// ): AuthError & T {
-//   const err: AuthError = new Error('AUTH: returned error') as any;
-//   err.name = 'EAUTH';
-//   err.type = type;
-//   err.error = error;
-//   err.description = description;
-//   return { ...err, ...additionalData } as AuthError & T;
-// }
 
 /**
  * Every profile type for accounts. Each account is of one type only.
@@ -189,6 +145,14 @@ export enum AuthRequirement {
 }
 
 /**
+ * Cases that make the user be redirected to a page
+ */
+export enum AuthPendingRedirection {
+  ACTIVATE = 'activate',
+  RENEW_PASSWORD = 'renew_password',
+}
+
+/**
  * Associates a saved account to each user id
  */
 export type AuthSavedAccountMap = Record<string, AuthSavedAccount>;
@@ -295,7 +259,7 @@ export enum SessionType {
 //   });
 // }
 
-export interface IAuthContext {
+export interface PlatformAuthContext {
   cgu: boolean;
   passwordRegex: string;
   passwordRegexI18n?: { [lang: string]: string };

@@ -7,13 +7,14 @@ import {
   ParamListBase,
   Router,
   StackActionType,
+  StackActions,
   StackNavigationState,
   StackRouter,
 } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { ILoginResult } from '~/framework/modules/auth/actions';
-import { AuthCredentials, AuthRequirement, ForgotMode, IAuthContext } from '~/framework/modules/auth/model';
+import { AuthCredentials, AuthPendingRedirection, AuthRequirement, ForgotMode } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
@@ -50,7 +51,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: { platform: Platform };
   wayf: { platform: Platform };
-  activation: { platform: Platform; context: IAuthContext; credentials: AuthCredentials; rememberMe?: boolean };
+  activation: { platform: Platform; credentials: AuthCredentials };
   forgot: { platform: Platform; mode: ForgotMode };
   revalidateTerms: object;
   changePassword: ChangePasswordScreenNavParams;
@@ -118,11 +119,40 @@ export const getNavActionForRequirement = (requirement: AuthRequirement) => {
   }
 };
 
+export const getNavActionForRedirect = (platform: Platform, pending: IAuthState['pending'] | undefined) => {
+  switch (pending?.redirect) {
+    case AuthPendingRedirection.ACTIVATE:
+      return StackActions.push(authRouteNames.activation, {
+        platform,
+        credentials: {
+          username: pending.loginUsed,
+          password: pending.code,
+        },
+      });
+    // // Uncomment this block to make a reset state instead of a push, making impossible to go back
+    // return CommonActions.reset({
+    //   routes: [
+    //     {
+    //       name: authRouteNames.activation,
+    //       params: {
+    //         platform,
+    //         credentials: {
+    //           username: pending.loginUsed,
+    //           password: pending.code,
+    //         },
+    //       },
+    //     },
+    //   ],
+    // });
+  }
+};
+
 /**
  * Returns
  * @param action
  * @param platform
  * @returns
+ * @deprecated
  */
 export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platform) => {
   if (action) {
@@ -196,6 +226,12 @@ export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platfo
   }
 };
 
+/**
+ * @deprecated
+ * @param action
+ * @param platform
+ * @param navigation
+ */
 export const redirectLoginNavAction = (
   action: ILoginResult,
   platform: Platform,
@@ -223,7 +259,7 @@ export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IA
  * @returns The new nav State (will be rehydrated)
  */
 const simulateNavAction = (
-  action: CommonActions.Action,
+  action: CommonActions.Action | StackActionType,
   state: Parameters<Router<StackNavigationState<ParamListBase>, CommonActions.Action | StackActionType>['getRehydratedState']>[0],
 ) => {
   // We must instaciate a throwaway StackRouter to perform the action on the state and get the resulting one.
@@ -270,9 +306,16 @@ export const getAuthNavigationState = (
   let login: string | undefined;
 
   if (pending) {
-    const singleAccount = pending.account ? accounts[pending.account] : undefined;
-    foundPlatform = singleAccount ? singleAccount.platform : undefined;
-    login = singleAccount?.user.loginUsed;
+    if (pending.redirect === undefined) {
+      // Session restore
+      const singleAccount = pending.account ? accounts[pending.account] : undefined;
+      foundPlatform = singleAccount ? singleAccount.platform : undefined;
+      login = singleAccount?.user.loginUsed;
+    } else if (pending.redirect === AuthPendingRedirection.ACTIVATE) {
+      // Activation
+      foundPlatform = pending.platform;
+      login = pending.loginUsed;
+    }
   } else {
     const accountsAsArray = Object.values(accounts);
     const hasSingleAccount = accountsAsArray.length === 1;
@@ -307,14 +350,19 @@ export const getAuthNavigationState = (
 
   // 3. Login redirection for requirements
 
-  let navRedirection: CommonActions.Action | undefined;
+  let navRedirection: CommonActions.Action | StackActionType | undefined;
   if (requirement) {
     navRedirection = getNavActionForRequirement(requirement);
+  } else if (platform && pending?.redirect === AuthPendingRedirection.ACTIVATE) {
+    navRedirection = getNavActionForRedirect(platform, pending);
   }
 
   // 4. Apply redirection if so
 
   if (!navRedirection) return { routes };
 
-  return simulateNavAction(navRedirection, { routes });
+  const ret = simulateNavAction(navRedirection, { routes });
+  // We must add `stale = false` into the resulting state to make React Navigation reinterpret and rehydrate this state if necessary.
+  // @see https://reactnavigation.org/docs/navigation-state/#partial-state-objects
+  return { ...ret, stale: true };
 };

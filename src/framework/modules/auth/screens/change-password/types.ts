@@ -2,7 +2,7 @@ import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { ILoginResult, changePasswordAction, manualLogoutAction } from '~/framework/modules/auth/actions';
-import type { AuthLoggedAccount, IAuthContext } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount, PlatformAuthContext } from '~/framework/modules/auth/model';
 import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IChangePasswordModel } from '~/framework/modules/user/actions';
 import type { Platform } from '~/framework/util/appConf';
@@ -22,7 +22,7 @@ export interface ChangePasswordScreenNavParams {
 export interface ChangePasswordScreenStoreProps {
   session?: AuthLoggedAccount;
   platform?: Platform;
-  context?: IAuthContext;
+  context?: PlatformAuthContext;
 }
 
 export interface ChangePasswordScreenDispatchProps {

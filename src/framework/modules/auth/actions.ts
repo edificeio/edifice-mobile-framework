@@ -6,6 +6,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { IAuthState, actions, assertSession, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { StorageSlice } from '~/framework/util/storage/slice';
 import { Trackers } from '~/framework/util/tracker';
@@ -13,13 +14,17 @@ import { clearRequestsCacheLegacy } from '~/infra/cache';
 import { destroyOAuth2Legacy } from '~/infra/oauth';
 
 import {
+  IActivationPayload as ActivationPayload,
   AuthCredentials,
   AuthFederationCredentials,
+  AuthPendingRedirection,
   AuthRequirement,
   AuthSavedAccount,
-  IAuthContext,
+  IActivationError,
   IChangePasswordError,
   IChangePasswordPayload,
+  PlatformAuthContext,
+  createActivationError,
   createChangePasswordError,
 } from './model';
 import * as authService from './service';
@@ -157,7 +162,7 @@ export const loginSteps = {
   getNewToken: withErrorTracking(
     withMeasure(async (platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) => {
       await createSession(platform, credentials);
-    }),
+    }, 'getNewToken'),
     'Auth',
     'LOGIN ERROR',
     'loginSteps.getToken',
@@ -169,7 +174,7 @@ export const loginSteps = {
   loadToken: withErrorTracking(
     withMeasure(async (account: AuthSavedAccount) => {
       authService.restoreSession(appConf.assertPlatformOfName(account.platform), account.tokens);
-    }),
+    }, 'loadToken'),
     'Auth',
     'LOGIN ERROR',
     'loginSteps.loadToken',
@@ -182,7 +187,7 @@ export const loginSteps = {
   getRequirement: withErrorTracking(
     withMeasure(async (platform: Platform) => {
       return getRequirementScenario(await fetchRawUserRequirements(platform));
-    }),
+    }, 'getRequirement'),
     'Auth',
     'LOGIN ERROR',
     'loginSteps.getRequirements',
@@ -205,7 +210,7 @@ export const loginSteps = {
         ? { userdata: undefined, userPublicInfo: undefined }
         : await fetchUserPublicInfo(infos, platform);
       return { infos, publicInfos: { userData: userdata, userPublicInfo } };
-    }),
+    }, 'getUserData'),
     'Auth',
     'LOGIN ERROR',
     'loginSteps.getUserData',
@@ -214,14 +219,13 @@ export const loginSteps = {
    * Saves the new account information & registers tokens (fcm) into the backend
    * @param platform
    */
-  finalizeLogin: withErrorTracking(
+  finalizeSession: withErrorTracking(
     withMeasure(
       async (
         platform: Platform,
         loginUsed: string | undefined,
         userInfo: IUserInfoBackend,
         publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
-        requirement?: AuthRequirement,
       ) => {
         await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
         const { userData, userPublicInfo } = publicInfo;
@@ -229,10 +233,37 @@ export const loginSteps = {
         await StorageSlice.sessionInitAllStorages(sessionInfo);
         return sessionInfo;
       },
+      'finalizeSession',
     ),
     'Auth',
     'LOGIN ERROR',
     'loginSteps.confirmLogin',
+  ),
+  /**
+   * Check password against activation and password renew codes.
+   */
+  checkActivationAndRenew: withErrorTracking(
+    withMeasure(async (platform: Platform, credentials: AuthCredentials) => {
+      try {
+        const response = await Promise.any([
+          authService.ensureCredentialsMatchActivationCode(platform, credentials),
+          authService.ensureCredentialsMatchPwdRenewCode(platform, credentials),
+        ]);
+        console.debug('REPSONSE', response);
+        return response;
+      } catch (e) {
+        if (e instanceof AggregateError) {
+          const ee = e.errors.find(
+            eee => Error.getDeepErrorType<typeof Error.LoginError>(eee as Error) !== Error.OAuth2ErrorType.CREDENTIALS_MISMATCH,
+          );
+          if (ee) throw ee;
+          else throw e.errors.at(0);
+        } else throw e;
+      }
+    }, 'checkActivationAndRenew'),
+    'Auth',
+    'LOGIN ERROR',
+    'loginSteps.checkActivationAndRenew',
   ),
 };
 
@@ -241,7 +272,7 @@ const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, Au
 const performLogin = async (platform: Platform, loginUsed: string | undefined, dispatch: AuthDispatch) => {
   const requirement = await loginSteps.getRequirement(platform);
   const user = await loginSteps.getUserData(platform, requirement);
-  const accountInfo = await loginSteps.finalizeLogin(platform, loginUsed, user.infos, user.publicInfos, requirement);
+  const accountInfo = await loginSteps.finalizeSession(platform, loginUsed, user.infos, user.publicInfos);
   if (requirement) {
     const context = await authService.getAuthContext(platform);
     const infos = await getRequirementAdditionalInfos(requirement, platform);
@@ -265,14 +296,29 @@ const performLogin = async (platform: Platform, loginUsed: string | undefined, d
  * @throws
  */
 export const loginCredentialsAction =
-  (platform: Platform, credentials: AuthCredentials, key: number) =>
+  (platform: Platform, credentials: AuthCredentials, key?: number) =>
   async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
-      const activationScenario = await loginSteps.getNewToken(platform, credentials);
-      // if (activationScenario) return activationScenario;
-      const session = await performLogin(platform, credentials.username, dispatch);
-      writeSingleAccount(session, getAuthState(getState()).showOnboarding);
-      return session;
+      // Nested try/catch block to handle CREDENTIALS_MISMATCH errors caused by activation/renew code use.
+      try {
+        await loginSteps.getNewToken(platform, credentials);
+        const session = await performLogin(platform, credentials.username, dispatch);
+        writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+        return session;
+      } catch (ee) {
+        if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH) {
+          switch (await loginSteps.checkActivationAndRenew(platform, credentials)) {
+            case AuthPendingRedirection.ACTIVATE:
+              dispatch(actions.redirectActivation(platform.name, credentials.username, credentials.password));
+              break;
+            case AuthPendingRedirection.RENEW_PASSWORD:
+              // Nothing, for the moment
+              break;
+          }
+        } else {
+          throw ee;
+        }
+      }
     } catch (e) {
       console.warn(`[Auth] Login credentials error :`, e);
       dispatch(
@@ -293,7 +339,7 @@ export const loginCredentialsAction =
  * @throws
  */
 export const loginFederationAction =
-  (platform: Platform, credentials: AuthFederationCredentials, key: number) =>
+  (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
   async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       await loginSteps.getNewToken(platform, credentials);
@@ -363,7 +409,7 @@ export const refreshRequirementsAction = () => async (dispatch: AuthDispatch) =>
     user.publicInfos.userData,
     user.publicInfos.userPublicInfo,
   );
-  let context: IAuthContext | undefined;
+  let context: PlatformAuthContext | undefined;
   if (requirement) {
     context = await getAuthContext(session.platform);
     if (requirementsThatNeedLegalUrls.includes(requirement)) {
@@ -597,81 +643,23 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
 //   };
 // }
 
-// interface IActivationSubmitPayload extends IActivationPayload {
-//   callBack: string;
-//   theme: string;
-// }
-
-// // ToDo : move following API calls to a service
-// export function activateAccountAction(platform: Platform, model: IActivationPayload, rememberMe?: boolean) {
-//   return async (dispatch: ThunkDispatch<any, any, any>, getState) => {
-//     try {
-//       // === 0 auto select the default theme
-//       const theme = platform.webTheme;
-//       if (!theme && __DEV__) console.debug('[User][Activation] activationAccount -> theme was not found:', platform.webTheme);
-//       // === 1 - prepare payload
-//       const payload: IActivationSubmitPayload = {
-//         acceptCGU: true,
-//         activationCode: model.activationCode,
-//         callBack: '',
-//         login: model.login,
-//         password: model.password,
-//         confirmPassword: model.confirmPassword,
-//         mail: model.mail || '',
-//         phone: model.phone,
-//         theme,
-//       };
-//       const formdata = new FormData();
-//       for (const key in payload) {
-//         formdata.append(key, payload[key]);
-//       }
-//       // === 2 - Send activation information
-//       const res = await fetch(`${platform.url}/auth/activation/no-login`, {
-//         body: formdata,
-//         headers: {
-//           Accept: 'application/json',
-//           'Content-Type': 'multipart/form-data',
-//           'X-Device-Id': uniqueId(),
-//         },
-//         method: 'post',
-//       });
-//       // === 3 - Check whether the activation was successful
-//       if (!res.ok) {
-//         throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'));
-//       }
-//       // a json response can contains an error field
-//       if (res.headers.get('content-type')?.indexOf('application/json') !== -1) {
-//         // checking response header
-//         const resBody = await res.json();
-//         if (resBody.error) {
-//           throw createActivationError('activation', resBody.error.message);
-//         }
-//       }
-
-//       // === Bonus : clear cookies. The backend sends back a Set-Cookie header that conflicts with the oAuth2 token.
-//       await CookieManager.clearAll();
-//       // ToDo : what to do if clearing the cookies doesn't work ? The user will be stuck with that cookie and will be logged to that account forever and ever ! 😱
-
-//       // === 4 - call thunk login using login/password
-//       const redirect = await dispatch(
-//         loginAction(
-//           platform,
-//           {
-//             username: model.login,
-//             password: model.password,
-//           },
-//           rememberMe,
-//         ),
-//       );
-//       // === 5 - Tracking
-//       Trackers.trackEvent('Auth', 'ACTIVATE');
-//       return redirect;
-//     } catch (e) {
-//       if ((e as IActivationError).name === 'EACTIVATION') throw e;
-//       else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '', e as object);
-//     }
-//   };
-// }
+export const activateAccountAction =
+  (platform: Platform, model: ActivationPayload) => async (dispatch: ThunkDispatch<any, any, any>, getState) => {
+    try {
+      await authService.activateAccount(platform, model);
+      Trackers.trackEvent('Auth', 'ACTIVATE');
+      dispatch(
+        loginCredentialsAction(platform, {
+          username: model.login,
+          password: model.password,
+        }),
+      );
+    } catch (e) {
+      console.warn(e);
+      if ((e as IActivationError).name === 'EACTIVATION') throw e;
+      else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '', e as object);
+    }
+  };
 
 // /**
 //  * Send reset mail for id or password

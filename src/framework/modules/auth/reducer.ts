@@ -1,12 +1,13 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
-import type {
+import {
   AuthLoggedAccount,
   AuthLoggedAccountMap,
   AuthMixedAccountMap,
+  AuthPendingRedirection,
   AuthRequirement,
   AuthTokenSet,
-  IAuthContext,
   LegalUrls,
+  PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { Platform } from '~/framework/util/appConf';
@@ -14,24 +15,29 @@ import createReducer from '~/framework/util/redux/reducerFactory';
 
 import type { AuthStorageData } from './storage';
 
+export interface AuthPendingRestore {
+  redirect: undefined;
+  account?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
+  platform: string; // Platform id of the login task (duplicated the value in `account` if present)
+}
+
+export interface AuthPendingActivation {
+  redirect: AuthPendingRedirection.ACTIVATE;
+  platform: string;
+  loginUsed: string;
+  code: string;
+}
+
 export interface IAuthState {
   accounts: AuthMixedAccountMap; // account list with populated info
   connected?: keyof IAuthState['accounts']; // Currently logged user if so
   requirement?: AuthRequirement; // Requirement for the current account
   deleted?: keyof IAuthState['accounts']; // Last account was deleted
   showOnboarding: AuthStorageData['show-onboarding'];
-  platformContexts: Record<string, IAuthContext>; // Platform contexts by pf name
+  platformContexts: Record<string, PlatformAuthContext>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
 
-  pending?: {
-    // Current login task
-    account?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
-    platform: string; // Platform id of the login task (duplicated the value in `account` if present)
-    activation?: {
-      context?: IAuthContext;
-      code: string;
-    };
-  };
+  pending?: AuthPendingRestore | AuthPendingActivation;
 
   error?: {
     // No need to affiliate the error to a platform since the `key` contains the render ID on the screen
@@ -65,6 +71,7 @@ export const actionTypes = {
   setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
   authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
   logout: moduleConfig.namespaceActionType('LOGOUT'),
+  redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -84,18 +91,19 @@ export interface ActionPayloads {
     deviceId: IAuthState['deviceInfo']['uniqueId'];
     showOnboarding: AuthStorageData['show-onboarding'];
   };
-  loadPfContext: { name: Platform['name']; context: IAuthContext };
+  loadPfContext: { name: Platform['name']; context: PlatformAuthContext };
   loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
   login: { id: string; account: AuthLoggedAccount };
-  loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: IAuthContext };
-  updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: IAuthContext };
+  loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
+  updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: PlatformAuthContext };
   refreshToken: { id: string; tokens: AuthTokenSet };
   setQueryParamToken: { id: string; token: AuthTokenSet['queryParam'] };
   authError: {
-    account: NonNullable<IAuthState['pending']>['account'];
+    account: keyof IAuthState['accounts'];
     error: NonNullable<Required<IAuthState['error']>>;
   };
   logout: object;
+  redirectActivation: { platformName: Platform['name']; login: string; code: string };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -118,7 +126,7 @@ export const actions = {
     deviceId: IAuthState['deviceInfo']['uniqueId'],
   ) => ({ type: actionTypes.authInit, startup, accounts, showOnboarding, deviceId }),
 
-  loadPfContext: (name: Platform['name'], context: IAuthContext) => ({ type: actionTypes.loadPfContext, name, context }),
+  loadPfContext: (name: Platform['name'], context: PlatformAuthContext) => ({ type: actionTypes.loadPfContext, name, context }),
 
   loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ type: actionTypes.loadPfLegalUrls, name, legalUrls }),
 
@@ -128,7 +136,7 @@ export const actions = {
     account,
   }),
 
-  loginRequirement: (id: string, account: AuthLoggedAccount, requirement: AuthRequirement, context: IAuthContext) => ({
+  loginRequirement: (id: string, account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
     type: actionTypes.loginRequirement,
     id,
     account,
@@ -136,7 +144,7 @@ export const actions = {
     context,
   }),
 
-  updateRequirement: (requirement: AuthRequirement | undefined, account: AuthLoggedAccount, context?: IAuthContext) => ({
+  updateRequirement: (requirement: AuthRequirement | undefined, account: AuthLoggedAccount, context?: PlatformAuthContext) => ({
     type: actionTypes.updateRequirement,
     requirement,
     account,
@@ -165,6 +173,13 @@ export const actions = {
     type: actionTypes.logout,
   }),
 
+  redirectActivation: (platformName: Platform['name'], login: string, code: string) => ({
+    type: actionTypes.redirectActivation,
+    platformName,
+    login,
+    code,
+  }),
+
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
   // sessionPartial: (session: ISession) => ({ type: actionTypes.sessionPartial, session }),
   // sessionRefresh: (session: ISession) => ({ type: actionTypes.sessionRefresh, session }),
@@ -184,9 +199,11 @@ export const actions = {
 const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
     const { accounts, startup, showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
-    const pending: IAuthState['pending'] = startup.platform ? { platform: startup.platform } : undefined;
+    const pending: AuthPendingRestore | undefined = startup.platform
+      ? { platform: startup.platform, redirect: undefined }
+      : undefined;
     if (pending && startup.account) {
-      pending.account = startup.account;
+      (pending as AuthPendingRestore).account = startup.account;
     }
     return { ...initialState, accounts, showOnboarding, pending, deviceInfo: { ...state.deviceInfo, uniqueId: deviceId } };
   },
@@ -269,6 +286,22 @@ const reducer = createReducer(initialState, {
     };
   },
 
+  [actionTypes.redirectActivation]: (state, action) => {
+    const { platformName, login, code } = action as unknown as ActionPayloads['redirectActivation'];
+    return {
+      ...state,
+      requirement: undefined,
+      connected: undefined,
+      error: undefined,
+      pending: {
+        redirect: AuthPendingRedirection.ACTIVATE as const,
+        platform: platformName,
+        loginUsed: login,
+        code,
+      },
+    };
+  },
+
   // // Saves session info & consider user logged
   // [actionTypes.sessionCreate]: (state, action) => {
   //   const { session }: ActionPayloads['sessionCreate'] = action as any;
@@ -339,16 +372,32 @@ export function getPlatform() {
   return getSession()?.platform;
 }
 
+/**
+ * get the platform context of the authentified user.
+ */
 export function getPlatformContext() {
   const state = getState(getStore().getState());
   const session = getSession();
   return session ? state.platformContexts[session.platform.name] : undefined;
 }
 
+/**
+ * get the platform context of the given platform
+ */
+export function getPlatformContextOf(platform?: Platform) {
+  const state = getState(getStore().getState());
+  return platform ? state.platformContexts[platform.name] : undefined;
+}
+
 export function getPlatformLegalUrls() {
   const state = getState(getStore().getState());
   const session = getSession();
   return session ? state.platformLegalUrls[session.platform.name] : undefined;
+}
+
+export function getPlatformLegalUrlsOf(platform?: Platform) {
+  const state = getState(getStore().getState());
+  return platform ? state.platformLegalUrls[platform.name] : undefined;
 }
 
 /**
