@@ -249,7 +249,6 @@ export const loginSteps = {
           authService.ensureCredentialsMatchActivationCode(platform, credentials),
           authService.ensureCredentialsMatchPwdRenewCode(platform, credentials),
         ]);
-        console.debug('REPSONSE', response);
         return response;
       } catch (e) {
         if (e instanceof AggregateError) {
@@ -312,7 +311,7 @@ export const loginCredentialsAction =
               dispatch(actions.redirectActivation(platform.name, credentials.username, credentials.password));
               break;
             case AuthPendingRedirection.RENEW_PASSWORD:
-              // Nothing, for the moment
+              dispatch(actions.redirectPasswordRenew(platform.name, credentials.username, credentials.password));
               break;
           }
         } else {

@@ -28,6 +28,13 @@ export interface AuthPendingActivation {
   code: string;
 }
 
+export interface AuthPendingPasswordRenew {
+  redirect: AuthPendingRedirection.RENEW_PASSWORD;
+  platform: string;
+  loginUsed: string;
+  code: string;
+}
+
 export interface IAuthState {
   accounts: AuthMixedAccountMap; // account list with populated info
   connected?: keyof IAuthState['accounts']; // Currently logged user if so
@@ -37,7 +44,7 @@ export interface IAuthState {
   platformContexts: Record<string, PlatformAuthContext>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
 
-  pending?: AuthPendingRestore | AuthPendingActivation;
+  pending?: AuthPendingRestore | AuthPendingActivation | AuthPendingPasswordRenew;
 
   error?: {
     // No need to affiliate the error to a platform since the `key` contains the render ID on the screen
@@ -72,6 +79,7 @@ export const actionTypes = {
   authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
   logout: moduleConfig.namespaceActionType('LOGOUT'),
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
+  redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -104,6 +112,7 @@ export interface ActionPayloads {
   };
   logout: object;
   redirectActivation: { platformName: Platform['name']; login: string; code: string };
+  redirectPasswordRenew: { platformName: Platform['name']; login: string; code: string };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -175,6 +184,13 @@ export const actions = {
 
   redirectActivation: (platformName: Platform['name'], login: string, code: string) => ({
     type: actionTypes.redirectActivation,
+    platformName,
+    login,
+    code,
+  }),
+
+  redirectPasswordRenew: (platformName: Platform['name'], login: string, code: string) => ({
+    type: actionTypes.redirectPasswordRenew,
     platformName,
     login,
     code,
@@ -295,6 +311,22 @@ const reducer = createReducer(initialState, {
       error: undefined,
       pending: {
         redirect: AuthPendingRedirection.ACTIVATE as const,
+        platform: platformName,
+        loginUsed: login,
+        code,
+      },
+    };
+  },
+
+  [actionTypes.redirectPasswordRenew]: (state, action) => {
+    const { platformName, login, code } = action as unknown as ActionPayloads['redirectPasswordRenew'];
+    return {
+      ...state,
+      requirement: undefined,
+      connected: undefined,
+      error: undefined,
+      pending: {
+        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
         platform: platformName,
         loginUsed: login,
         code,

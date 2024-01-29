@@ -1,5 +1,6 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Pressable, TextInput, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -14,23 +15,32 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
+import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { changePasswordAction, loadAuthContextAction, manualLogoutAction } from '~/framework/modules/auth/actions';
-import { IChangePasswordError, PlatformAuthContext, createChangePasswordError } from '~/framework/modules/auth/model';
-import { getPlatformContext, getSession } from '~/framework/modules/auth/reducer';
+import {
+  AuthCredentials,
+  IChangePasswordError,
+  IChangePasswordPayload,
+  PlatformAuthContext,
+  createChangePasswordError,
+} from '~/framework/modules/auth/model';
+import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';
 
+import { IAuthNavigationParams, authRouteNames } from '../../navigation';
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
 import {
   ChangePasswordScreenDispatchProps,
   ChangePasswordScreenPrivateProps,
+  ChangePasswordScreenProps,
   ChangePasswordScreenStoreProps,
   IFields,
 } from './types';
@@ -38,7 +48,8 @@ import {
 const keyboardPageViewScrollViewProps = { showsVerticalScrollIndicator: false, bounces: false };
 const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { context: PlatformAuthContext }) => {
   const { navigation, route, session, context, tryLogout, trySubmit } = props;
-  const { platform } = session ?? {};
+
+  const platform = route.params.platform ?? session?.platform;
 
   const forceChangeAlert = React.useMemo(
     () =>
@@ -59,7 +70,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     [context.passwordRegexI18n],
   );
 
-  const [oldPassword, setOldPassword] = React.useState('');
+  const [oldPassword, setOldPassword] = React.useState(route.params.useResetCode ? route.params.credentials?.username ?? '' : '');
   const [newPassword, setNewPassword] = React.useState('');
   const [confirm, setConfirm] = React.useState('');
   const [typing, setTyping] = React.useState(false);
@@ -70,15 +81,20 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     try {
       setError(undefined);
       setSumitState('RUNNING');
-      if (!session || !platform) {
+      const login = route.params.credentials?.username ?? session?.user.loginUsed;
+      if (!platform || !login) {
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }
-      const payload = {
+      const payload: IChangePasswordPayload = {
         oldPassword,
         newPassword,
         confirm,
-        login: session.user.loginUsed,
+        login,
       };
+      if (route.params.useResetCode) {
+        payload.resetCode = (route.params.credentials as AuthCredentials).password;
+        delete payload.oldPassword;
+      }
       await trySubmit(platform, payload, route.params.forceChange);
 
       try {
@@ -109,8 +125,10 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     newPassword,
     oldPassword,
     platform,
+    route.params.credentials,
     route.params.forceChange,
     route.params.navCallback,
+    route.params.useResetCode,
     session,
     tryLogout,
     trySubmit,
@@ -160,25 +178,47 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     };
   }, []);
 
+  const isResetMode = route.params.useResetCode;
+
   return (
     <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
       <Pressable onPress={onFormBlur} style={styles.pressable}>
         {forceChangeAlert}
         {passwordRules}
         <InputContainer
-          label={{ text: I18n.get('auth-changepassword-password-old'), icon: 'ui-lock' }}
+          label={{
+            text: isResetMode ? I18n.get('auth-changepassword-login') : I18n.get('auth-changepassword-password-old'),
+            icon: isResetMode ? 'ui-user' : 'ui-lock',
+          }}
           input={
-            <PasswordInput
-              placeholder={I18n.get('auth-changepassword-placeholder')}
-              showIconCallback
-              showError={formModel.showOldPasswordError(oldPassword)}
-              value={oldPassword}
-              onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
-              annotation=" "
-              ref={inputOldPassword}
-              onSubmitEditing={() => inputNewPassword.current?.focus()}
-              returnKeyType="next"
-            />
+            isResetMode ? (
+              <TextInput
+                ref={inputOldPassword}
+                onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
+                value={oldPassword}
+                keyboardType="email-address"
+                disabled
+                autoCapitalize="none"
+                autoCorrect={false}
+                spellCheck={false}
+                testID="login-identifier"
+                onSubmitEditing={() => inputNewPassword.current?.focus()}
+                returnKeyType="next"
+                annotation=" "
+              />
+            ) : (
+              <PasswordInput
+                placeholder={I18n.get('auth-changepassword-placeholder')}
+                showIconCallback
+                showError={formModel.showOldPasswordError(oldPassword)}
+                value={oldPassword}
+                onChangeText={formModel.oldPassword.changeCallback(onChange('oldPassword'))}
+                annotation=" "
+                ref={inputOldPassword}
+                onSubmitEditing={() => inputNewPassword.current?.focus()}
+                returnKeyType="next"
+              />
+            )
           }
         />
         <InputContainer
@@ -251,10 +291,14 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
 //
 //
 
-const mapStateToProps: (state: IGlobalState) => ChangePasswordScreenStoreProps = state => {
+const mapStateToProps: (
+  state: IGlobalState,
+  props: ChangePasswordScreenProps &
+    NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>,
+) => ChangePasswordScreenStoreProps = (state, props) => {
   return {
     session: getSession(),
-    context: getPlatformContext(),
+    context: props.route.params.platform ? getPlatformContextOf(props.route.params.platform) : getPlatformContext(),
   };
 };
 
@@ -269,8 +313,8 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePass
 };
 
 const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => {
-  const { context, session } = props;
-  const platform = session?.platform;
+  const { context, session, route } = props;
+  const platform = route.params.platform ?? session?.platform;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   useConstructor(async () => {

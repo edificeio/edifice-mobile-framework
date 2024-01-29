@@ -144,6 +144,15 @@ export const getNavActionForRedirect = (platform: Platform, pending: IAuthState[
     //     },
     //   ],
     // });
+    case AuthPendingRedirection.RENEW_PASSWORD:
+      return StackActions.push(authRouteNames.changePassword, {
+        platform,
+        credentials: {
+          username: pending.loginUsed,
+          password: pending.code,
+        },
+        useResetCode: true,
+      });
   }
 };
 
@@ -311,8 +320,8 @@ export const getAuthNavigationState = (
       const singleAccount = pending.account ? accounts[pending.account] : undefined;
       foundPlatform = singleAccount ? singleAccount.platform : undefined;
       login = singleAccount?.user.loginUsed;
-    } else if (pending.redirect === AuthPendingRedirection.ACTIVATE) {
-      // Activation
+    } else {
+      // Activation && password renew
       foundPlatform = pending.platform;
       login = pending.loginUsed;
     }
@@ -353,7 +362,10 @@ export const getAuthNavigationState = (
   let navRedirection: CommonActions.Action | StackActionType | undefined;
   if (requirement) {
     navRedirection = getNavActionForRequirement(requirement);
-  } else if (platform && pending?.redirect === AuthPendingRedirection.ACTIVATE) {
+  } else if (
+    platform &&
+    (pending?.redirect === AuthPendingRedirection.ACTIVATE || pending?.redirect === AuthPendingRedirection.RENEW_PASSWORD)
+  ) {
     navRedirection = getNavActionForRedirect(platform, pending);
   }
 
