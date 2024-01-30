@@ -33,9 +33,7 @@ function SplashScreenComponent() {
   React.useEffect(() => {
     return () => {
       SplashScreen.hide();
-      inAppMessaging()
-        .setMessagesDisplaySuppressed(false)
-        .finally(() => console.debug('setMessagesDisplaySuppressed(false)'));
+      inAppMessaging().setMessagesDisplaySuppressed(false).finally();
     };
   }, []);
   return null;

@@ -12,7 +12,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
-import { isEmpty } from '~/framework/util/object';
 
 import { isModalModeOnThisRoute } from './hideTabBarAndroid';
 
@@ -31,29 +30,27 @@ const styles = StyleSheet.create({
 });
 
 export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) =>
-  /*(
-  <HeaderTitle testID={testID}>{title ?? ''}</HeaderTitle>
-);*/
-  !isEmpty(title) && Platform.OS === 'android'
-    ? () => (
-        <BodyBoldText
-          numberOfLines={1}
-          style={[styles.navBarTitleStyle, styles.navBarTitleStyleAndroid, style ?? {}]}
-          testID={testID}>
-          {title}
-        </BodyBoldText>
-      )
-    : () => (
-        <HeaderTitle
-          style={[
-            styles.navBarTitleStyle,
-            { maxWidth: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 4 * UI_SIZES.elements.navbarMargin },
-            style ?? {},
-          ]}
-          testID={testID}>
-          {title ?? ''}
-        </HeaderTitle>
-      );
+  Platform.select({
+    android: () => (
+      <BodyBoldText
+        numberOfLines={1}
+        style={[styles.navBarTitleStyle, styles.navBarTitleStyleAndroid, style ?? {}]}
+        testID={testID}>
+        {title ?? ''}
+      </BodyBoldText>
+    ),
+    default: () => (
+      <HeaderTitle
+        style={[
+          styles.navBarTitleStyle,
+          { maxWidth: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 4 * UI_SIZES.elements.navbarMargin },
+          style ?? {},
+        ]}
+        testID={testID}>
+        {title ?? ''}
+      </HeaderTitle>
+    ),
+  });
 
 export const navBarOptions: (props: {
   route: RouteProp<IAuthNavigationParams, string>;
