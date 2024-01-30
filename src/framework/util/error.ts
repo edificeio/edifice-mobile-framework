@@ -242,7 +242,7 @@ export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
 ) => {
   const [errkey, setErrkey] = React.useState(Error.generateErrorKey);
   const showError = error?.key === errkey || error?.key === undefined;
-  const errtype = React.useMemo(() => (showError ? Error.getDeepErrorType(error) : undefined), [error, showError]);
+  const errtype = React.useMemo(() => (showError ? Error.getDeepErrorType<ErrorClass>(error) : undefined), [error, showError]);
   const errclear = React.useCallback(() => {
     if (error && showError) setErrkey(Error.generateErrorKey());
   }, [error, showError]);
