@@ -276,8 +276,11 @@ export default class RichEditor extends Component {
     this.webviewBridge = ref;
   }
 
-  getInjectedJavascript(oneSessionId) {
-    return `
+  renderWebView() {
+    const that = this;
+    const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
+    const { html: viewHTML, oneSessionId } = that.state;
+    /*const js = `
       document.cookie="oneSessionId=${oneSessionId}";
       document.addEventListener("DOMContentLoaded", function() {
         document.addEventListener("click", function(event) {
@@ -287,9 +290,11 @@ export default class RichEditor extends Component {
           if (target.tagName === "IMG") {
             type = "${messages.IMAGE_CLICKED}";
             data = target.src;
+            alert(data+' tapped');
           } else if (target.tagName === "VIDEO") {
             type = "${messages.VIDEO_CLICKED}";
             data = target.src;
+            alert(data+' tapped');
           }
           if (type && data) {
             window.ReactNativeWebView.postMessage(JSON.stringify({ type, data }));
@@ -297,17 +302,12 @@ export default class RichEditor extends Component {
         });
       });
       true;
-    `;
-  }
-
-  renderWebView() {
-    const that = this;
-    const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
-    const { html: viewHTML, oneSessionId } = that.state;
+    `;*/
+    const js = `document.cookie="oneSessionId=${oneSessionId}"; true;`;
     return (
       <>
         <WebView
-          injectedJavaScript={`document.cookie="oneSessionId=${oneSessionId}";true;`}
+          injectedJavaScript={js}
           sharedCookiesEnabled
           useWebKit={false}
           scrollEnabled={false}

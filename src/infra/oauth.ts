@@ -12,6 +12,7 @@ import { I18n } from '~/app/i18n';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
 import { Platform } from '~/framework/util/appConf';
 import { ModuleArray } from '~/framework/util/moduleTool';
+import { isEmpty } from '~/framework/util/object';
 import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
@@ -506,25 +507,38 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * oneSessionId management (for rich editor)
+   */
+  private oneSessionId?: string = undefined;
+
+  public async getOneSessionId() {
+    try {
+      // Call token-as-cookie
+      const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
+      const response = await fetch(request);
+      const cookie = response.headers.get('set-cookie') || undefined;
+      // Continue if set-cookie header found
+      // Otherwise, last oneSessionId will be returned
+      if (!isEmpty(cookie)) {
+        // Extract oneSessionId from set-cookie header
+        const match = cookie!.match(/oneSessionId=([^;]+)/);
+        // Update oneSessionId if found
+        // Otherwise, last oneSessionId will be returned
+        if (!isEmpty(match)) this.oneSessionId = match![1];
+      }
+    } catch (e) {
+      console.warn('Unable to retrieve oneSessionId => ', e);
+      // We leave the catch and returned value will be last oneSessionId
+    }
+    return this.oneSessionId;
+  }
+
+  /**
    * QueryParam token management (for loginless redirection)
    */
   private static QUERY_PARAM_TOKEN_EXPIRATION_DELTA = 60;
 
   private static QUERY_PARAM_TOKEN_STORAGE_KEY = 'auth.queryParamToken';
-
-  public async getOneSessionId() {
-    try {
-      const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
-      const response = await fetch(request);
-      const cookie = response.headers.get('set-cookie') || undefined;
-      const match = cookie ? cookie.match(/oneSessionId=([^;]+)/) : undefined;
-      return match ? match[1] : undefined;
-    } catch (e) {
-      console.warn(`Unable to retrieve oneSessionId: ${e.message}`);
-      // We leave the catch and retruned value will be undefined
-      return undefined;
-    }
-  }
 
   public async getQueryParamToken() {
     try {
