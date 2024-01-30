@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { RichToolbarItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item/component';
+import { RichToolbarItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar/rich-toolbar-item/component';
 
 import { RichToolbarCustomItemProps } from './types';
 

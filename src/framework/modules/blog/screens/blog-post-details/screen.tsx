@@ -553,7 +553,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditor disabled initialContentHTML={blogPostContent} />
+            <RichEditor disabled initialContentHTML="<h1>Test titre 1</h1>" />
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (

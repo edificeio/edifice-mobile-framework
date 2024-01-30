@@ -23,8 +23,6 @@ const styles = StyleSheet.create({
   },
   rich: {
     minHeight: 300,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: 'transparent',
   },
   richBar: {
     borderColor: '#efefef',

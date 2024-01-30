@@ -1,12 +1,13 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Keyboard, TextInput } from 'react-native';
+import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import MultilineTextInput from '~/framework/components/inputs/multiline';
 import { RichEditorForm } from '~/framework/components/inputs/rich-text-editor';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
@@ -99,11 +100,12 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
     return (
       <RichEditorForm
         elements={
-          <TextInput
+          <MultilineTextInput
             style={styles.inputTitle}
             placeholder={I18n.get('blog-editpost-inputtitle')}
             autoCorrect={false}
             spellCheck={false}
+            numberOfLines={1}
             onChangeText={text => setTitle(text)}
             value={title}
           />

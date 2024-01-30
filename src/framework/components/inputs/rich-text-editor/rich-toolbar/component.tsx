@@ -5,10 +5,10 @@ import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
 import { actions } from '~/framework/components/inputs/rich-text-editor/const';
-import { RichToolbarActionItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item/action/component';
-import { RichToolbarCustomItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-item/custom/component';
-import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-items-list';
-import { RichToolbarSeparator } from '~/framework/components/inputs/rich-text-editor/rich-toolbar-separator';
+import { RichToolbarActionItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar/rich-toolbar-item/action/component';
+import { RichToolbarCustomItem } from '~/framework/components/inputs/rich-text-editor/rich-toolbar/rich-toolbar-item/custom/component';
+import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text-editor/rich-toolbar/rich-toolbar-items-list';
+import { RichToolbarSeparator } from '~/framework/components/inputs/rich-text-editor/rich-toolbar/rich-toolbar-separator';
 import { NamedSVG } from '~/framework/components/picture';
 
 import styles from './styles';
