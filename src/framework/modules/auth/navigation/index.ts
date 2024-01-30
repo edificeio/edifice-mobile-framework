@@ -52,7 +52,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   loginWayf: { platform: Platform };
   wayf: { platform: Platform };
   activation: { platform: Platform; credentials: AuthCredentials };
-  forgot: { platform: Platform; mode: ForgotMode };
+  forgot: { platform: Platform; mode: ForgotMode; login?: string };
   revalidateTerms: object;
   changePassword: ChangePasswordScreenNavParams;
   changePasswordModal: ChangePasswordScreenNavParams;

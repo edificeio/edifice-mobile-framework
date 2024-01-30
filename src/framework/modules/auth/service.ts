@@ -21,6 +21,7 @@ import {
   AuthPendingRedirection,
   AuthRequirement,
   AuthTokenSet,
+  ForgotMode,
   LegalUrls,
   PlatformAuthContext,
   SessionType,
@@ -795,4 +796,35 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
     }
   }
   await CookieManager.clearAll();
+}
+
+// ToDo : type def for response type
+export async function forgot<Mode extends 'password'>(platform: Platform, mode: Mode, payload: { login: string }, deviceId: string);
+export async function forgot<Mode extends 'id'>(
+  platform: Platform,
+  mode: Mode,
+  payload: { mail: string } | { mail: string; firstName: string; structureId: string },
+  deviceId: string,
+);
+export async function forgot<Mode extends ForgotMode>(
+  platform: Platform,
+  mode: Mode,
+  payload: { login: string } | { mail: string } | { mail: string; firstName: string; structureId: string },
+  deviceId: string,
+) {
+  const realPayload = { ...payload, service: 'mail' };
+  const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;
+  const res = await fetch(api, {
+    body: JSON.stringify(realPayload),
+    method: 'POST',
+    headers: {
+      'X-Device-Id': deviceId,
+      'Content-Type': 'application/json',
+    },
+  });
+  const resStatus = res.status;
+  const resJson = await res.json();
+  const ok = resStatus >= 200 && resStatus < 300;
+  const response = { ...resJson, ok };
+  return response;
 }

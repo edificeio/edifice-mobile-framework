@@ -20,9 +20,11 @@ import {
   AuthPendingRedirection,
   AuthRequirement,
   AuthSavedAccount,
+  ForgotMode,
   IActivationError,
   IChangePasswordError,
   IChangePasswordPayload,
+  IForgotPayload,
   PlatformAuthContext,
   createActivationError,
   createChangePasswordError,
@@ -660,44 +662,40 @@ export const activateAccountAction =
     }
   };
 
-// /**
-//  * Send reset mail for id or password
-//  * @param platform
-//  * @param userInfo
-//  * @param forgotMode
-//  * @returns
-//  * ToDo : type the return value
-//  */
-// export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgotMode: ForgotMode) {
-//   return async (dispatch: ThunkDispatch<any, any, any>) => {
-//     const payLoad =
-//       forgotMode === 'id'
-//         ? {
-//             mail: userInfo.login,
-//             firstName: userInfo.firstName,
-//             structureId: userInfo.structureId,
-//             service: 'mail',
-//           }
-//         : {
-//             login: userInfo.login,
-//             service: 'mail',
-//           };
-//     const api = `${platform.url}/auth/forgot-${forgotMode === 'id' ? 'id' : 'password'}`;
-//     const res = await fetch(api, {
-//       body: JSON.stringify(payLoad),
-//       method: 'POST',
-//       headers: {
-//         'X-Device-Id': uniqueId(),
-//         'Content-Type': 'application/json',
-//       },
-//     });
-//     const resStatus = res.status;
-//     const resJson = await res.json();
-//     const ok = resStatus >= 200 && resStatus < 300;
-//     const response = { ...resJson, ok };
-//     return response;
-//   };
-// }
+/**
+ * Send reset mail for id or password
+ * @param platform
+ * @param userInfo
+ * @param forgotMode
+ * @returns
+ */
+export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgotMode: ForgotMode) {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => {
+    const deviceId = getAuthState(getState()).deviceInfo.uniqueId;
+    if (!deviceId) throw new global.Error('forgotAction: deviceId is undefined.');
+    if (forgotMode === 'id') {
+      return authService.forgot<'id'>(
+        platform,
+        forgotMode,
+        {
+          mail: userInfo.login,
+          firstName: userInfo.firstName,
+          structureId: userInfo.structureId,
+        },
+        deviceId,
+      );
+    } else {
+      return authService.forgot<'password'>(
+        platform,
+        forgotMode,
+        {
+          login: userInfo.login,
+        },
+        deviceId,
+      );
+    }
+  };
+}
 
 /** Action that erases the session without Tracking anything. */
 export function quietLogoutAction() {

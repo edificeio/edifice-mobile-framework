@@ -245,7 +245,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
             <View style={styles.boxTextForgot}>
               <DefaultButton
                 text={I18n.get('auth-login-forgot-password')}
-                action={() => navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' })}
+                action={() => navigation.navigate(authRouteNames.forgot, { platform, mode: 'password', login: route.params.login })}
                 testID="login-forgot-password"
                 style={styles.forgotPasswordButton}
               />
