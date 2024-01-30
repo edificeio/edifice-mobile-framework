@@ -3,7 +3,6 @@
  */
 import {
   CommonActions,
-  NavigationProp,
   ParamListBase,
   Router,
   StackActionType,
@@ -13,7 +12,6 @@ import {
 } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-import { ILoginResult } from '~/framework/modules/auth/actions';
 import { AuthCredentials, AuthPendingRedirection, AuthRequirement, ForgotMode } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
@@ -157,101 +155,9 @@ export const getNavActionForRedirect = (platform: Platform, pending: IAuthState[
 };
 
 /**
- * Returns
- * @param action
- * @param platform
- * @returns
- * @deprecated
- */
-export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platform) => {
-  if (action) {
-    switch (action.action) {
-      case 'activate':
-        return CommonActions.navigate(authRouteNames.activation, {
-          platform,
-          context: action.context,
-          credentials: action.credentials,
-          rememberMe: action.rememberMe,
-        });
-      case AuthRequirement.MUST_CHANGE_PASSWORD:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.changePassword,
-              params: {
-                platform,
-                context: action.context,
-                credentials: action.credentials,
-                rememberMe: action.rememberMe,
-                forceChange: true,
-              },
-            },
-          ],
-        });
-      case AuthRequirement.MUST_REVALIDATE_TERMS:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.revalidateTerms,
-              params: {
-                platform,
-                credentials: action.credentials,
-                rememberMe: action.rememberMe,
-              },
-            },
-          ],
-        });
-      case AuthRequirement.MUST_VERIFY_MOBILE:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.changeMobile,
-              params: {
-                platform,
-                defaultMobile: action.defaultMobile,
-                rememberMe: action.rememberMe,
-              },
-            },
-          ],
-        });
-      case AuthRequirement.MUST_VERIFY_EMAIL:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.changeEmail,
-              params: {
-                platform,
-                defaultEmail: action.defaultEmail,
-                rememberMe: action.rememberMe,
-              },
-            },
-          ],
-        });
-    }
-  }
-};
-
-/**
- * @deprecated
- * @param action
- * @param platform
+ * Dispatch the right nav action after onboarding, depending on platform configuration
  * @param navigation
  */
-export const redirectLoginNavAction = (
-  action: ILoginResult,
-  platform: Platform,
-  navigation: NavigationProp<IAuthNavigationParams>,
-) => {
-  const navAction = getRedirectLoginNavAction(action, platform);
-  if (navAction) {
-    navigation.dispatch(navAction);
-  }
-};
-
 export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IAuthNavigationParams>) {
   if (appConf.hasMultiplePlatform) {
     navigation.navigate(authRouteNames.platforms);

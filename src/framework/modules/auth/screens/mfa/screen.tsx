@@ -17,7 +17,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { loginCredentialsAction, refreshRequirementsAction } from '~/framework/modules/auth/actions';
-import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   IEntcoreEmailValidationState,
@@ -244,13 +244,12 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       }
     } else {
       try {
-        const redirect = await tryRefreshRequirements();
-        redirectLoginNavAction(redirect, platform, navigation);
+        await tryRefreshRequirements();
       } catch {
         Toast.showError(I18n.get('auth-mfa-error-text'));
       }
     }
-  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryRefreshRequirements, platform]);
+  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryRefreshRequirements]);
 
   useEffect(() => setResendTimer(), []);
 

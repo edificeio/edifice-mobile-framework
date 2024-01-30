@@ -18,7 +18,7 @@ import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
 // import { AuthErrorCode, getAuthErrorCode } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Error, useErrorWithKey } from '~/framework/util/error';
@@ -42,7 +42,7 @@ export const computeNavBar = ({
 });
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
-  const { route, navigation, error, handleConsumeError } = props;
+  const { route, navigation, error, handleConsumeError, tryLogin } = props;
   const { platform } = route.params;
 
   const [login, setLogin] = React.useState<string>(route.params.login ?? '');
@@ -74,21 +74,16 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         password: password.trim(),
       };
 
-      const redirect = await props.tryLogin(platform, loginCredentials, errkey);
-
-      if (redirect) {
-        redirectLoginNavAction(redirect, platform, navigation);
+      await tryLogin(platform, loginCredentials, errkey);
+      if (mounted) {
+        setTyping(false);
+        setLoginState(LoginState.DONE);
         setTimeout(() => {
           if (mounted) {
             setTyping(false);
             setLoginState(LoginState.IDLE);
           }
         }, 500);
-      } else {
-        if (mounted) {
-          setTyping(false);
-          setLoginState(LoginState.DONE);
-        }
       }
     } catch {
       if (mounted) {
@@ -96,7 +91,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         setLoginState(LoginState.IDLE);
       }
     }
-  }, [login, navigation, password, platform, props, errkey]);
+  }, [login, password, tryLogin, platform, errkey]);
 
   const goToWeb = React.useCallback(() => {
     openUrl(platform.url);
