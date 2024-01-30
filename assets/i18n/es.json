@@ -1398,6 +1398,8 @@
   "workspace-filelist-emptyscreen-owner-title": "No hay nada en su estantería personal",
   "workspace-filelist-emptyscreen-protected-text": "Aquí están disponibles todas las fotos, videos y documentos que se han utilizado en la red educativa.",
   "workspace-filelist-emptyscreen-protected-title": "No hay nada en la estantería",
+  "workspace-filelist-emptyscreen-root-text": "",
+  "workspace-filelist-emptyscreen-root-title": "Espacio documental",
   "workspace-filelist-emptyscreen-shared-text": "Aquí están disponibles todos los documentos que ha compartido con otros y también los que se han compartido con usted.",
   "workspace-filelist-emptyscreen-shared-title": "Ningún recurso compartido",
   "workspace-filelist-emptyscreen-subfolder-text": "No hay ningún documento en esta carpeta.",
