@@ -108,7 +108,7 @@ export default class RichEditor extends Component {
             styleWithCSS,
             primaryColor,
           }),
-        baseUrl: that.pfUrl,
+        baseUrl: '', //that.pfUrl,
       },
       height: initialHeight,
       keyboardHeight: 0,
@@ -310,7 +310,7 @@ export default class RichEditor extends Component {
         <WebView
           injectedJavaScript={js}
           sharedCookiesEnabled
-          useWebKit={false}
+          useWebKit //={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView
           keyboardDisplayRequiresUserAction={false}
@@ -324,6 +324,7 @@ export default class RichEditor extends Component {
           domStorageEnabled={false}
           bounces={false}
           javaScriptEnabled
+          originWhitelist={['*']}
           source={viewHTML}
           onLoad={that.init}
           onShouldStartLoadWithRequest={that.handleShouldLoadRequest}

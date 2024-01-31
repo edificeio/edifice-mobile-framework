@@ -25,6 +25,7 @@
 		F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */; };
 		F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */; };
 		F09C4A402B0400800075018F /* SplashScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A3F2B0400800075018F /* SplashScreen.xib */; };
+		F0F434F92B6ACBA800A3E721 /* comfortaa_bold.woff in Resources */ = {isa = PBXBuildFile; fileRef = F0F434F82B6ACA0E00A3E721 /* comfortaa_bold.woff */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +70,7 @@
 		F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@3x.png"; path = "appe/images/splash-screen@3x.png"; sourceTree = "<group>"; };
 		F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@2x.png"; path = "appe/images/splash-screen@2x.png"; sourceTree = "<group>"; };
 		F09C4A3F2B0400800075018F /* SplashScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplashScreen.xib; sourceTree = "<group>"; };
+		F0F434F82B6ACA0E00A3E721 /* comfortaa_bold.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = comfortaa_bold.woff; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 		74EC2C3F26E63F04008EB301 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				F0F434F82B6ACA0E00A3E721 /* comfortaa_bold.woff */,
 				F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */,
 				91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */,
 				91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */,
@@ -259,6 +262,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0F434F92B6ACBA800A3E721 /* comfortaa_bold.woff in Resources */,
 				F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */,
 				7404C07422E8B012008546A8 /* Assets.xcassets in Resources */,
 				F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */,

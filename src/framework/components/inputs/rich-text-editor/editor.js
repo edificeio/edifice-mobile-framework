@@ -1,3 +1,27 @@
+import { Platform } from 'react-native';
+import RNFS from 'react-native-fs';
+
+async function loadBase64FromAssets(assetPath) {
+  try {
+    let base64String = '';
+    if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(assetPath, 'base64');
+    else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${assetPath}`, 'base64');
+    console.debug(`${assetPath} font loaded ==>`);
+    console.debug(base64String);
+    console.debug('<==');
+    return base64String;
+  } catch (error) {
+    console.error('Error loading base64 from assets:', error);
+    return null;
+  }
+}
+
+let comfortaa = null;
+
+async function initEditor() {
+  comfortaa = await loadBase64FromAssets('comfortaa_bold.woff');
+}
+
 function createHTML(options = {}) {
   const {
     backgroundColor = '#FFF',
@@ -30,6 +54,10 @@ function createHTML(options = {}) {
     <title>RN Rich Text Editor</title>
     <meta name="viewport" content="user-scalable=1.0,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
     <style>
+        @font-face {
+          font-family: 'comfortaa';
+          src: url(data:font/woff;base64,${comfortaa}) format('woff');
+        }
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}
         html, body { margin: 0; padding: 0;font-family: Arial, Helvetica, sans-serif; font-size:1em; height: 100%}    
         body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${backgroundColor};caret-color: ${caretColor};}
@@ -51,7 +79,7 @@ function createHTML(options = {}) {
         hr{display: block;height: 0; border: 0;border-top: 1px solid #ccc; margin: 15px 0; padding: 0;}
         pre{padding: 10px 5px 10px 10px;margin: 15px 0;display: block;line-height: 18px;background: #F0F0F0;border-radius: 6px;font-size: 13px; font-family: 'monaco', 'Consolas', "Liberation Mono", Courier, monospace; word-break: break-all; word-wrap: break-word;overflow-x: auto;}
         pre code {display: block;font-size: inherit;white-space: pre-wrap;color: inherit;}
-        h1 {font-size: 26px; line-height: 36px;}
+        h1 {font-size: 26px; line-height: 36px; font-family: comfortaa, sans-serif;}
         h2 {font-size: 22px; line-height: 30px;}
         h1, h2, a {color: ${primaryColor}}
         ${cssText}
@@ -728,4 +756,4 @@ function createHTML(options = {}) {
 }
 
 const HTML = createHTML();
-export { HTML, createHTML };
+export { HTML, createHTML, initEditor };
