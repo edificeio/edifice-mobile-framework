@@ -2,6 +2,7 @@
  * Startup is a conditionnaly rendered content based on app startup status.
  * It can render the SplashScreen, auth flow or main flow in function of token loading and status.
  */
+import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import { NavigationContainer } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
@@ -12,6 +13,7 @@ import { Dispatch } from 'redux';
 import { useAppStartup } from '~/app/startup';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import SnowFlakes from '~/framework/components/SnowFlakes';
 import { RootToastHandler } from '~/framework/components/toast';
 import { ILoginResult } from '~/framework/modules/auth/actions';
 import { ISession } from '~/framework/modules/auth/model';
@@ -19,10 +21,9 @@ import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
 import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
+import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
-import SnowFlakes from '~/framework/components/SnowFlakes';
-import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
@@ -33,6 +34,7 @@ function SplashScreenComponent() {
   React.useEffect(() => {
     return () => {
       SplashScreen.hide();
+      inAppMessaging().setMessagesDisplaySuppressed(false).finally();
     };
   }, []);
   return null;

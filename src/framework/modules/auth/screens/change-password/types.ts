@@ -20,6 +20,7 @@ export interface ChangePasswordScreenNavParams {
   rememberMe?: boolean;
   forceChange?: boolean;
   navCallback?: NavigationAction;
+  useResetCode?: boolean;
 }
 
 export interface ChangePasswordScreenStoreProps {

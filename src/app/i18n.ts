@@ -106,12 +106,12 @@ export namespace I18n {
   }
 
   // Get wordings array based on given key
-  export function getArray(key: string, options?: TOptions) {
+  export function getArray(key: string, options?: TOptions): string[] {
     const values = i18n.t(key, { ...options, returnObjects: true });
     if (typeof values === 'string') return [];
-    if (!showKeys) return values;
+    if (!showKeys) return values as string[];
     for (let i = 0; i < (values as string[]).length; i++) values[i] = `${key}.${i}`;
-    return values;
+    return values as string[];
   }
 
   // Get current language

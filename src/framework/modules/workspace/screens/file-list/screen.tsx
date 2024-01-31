@@ -225,106 +225,104 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
     }
   };
 
-  const getNavBarActions = (): { actionIcon: string; menuActions: MenuAction[] } => {
-    if (isSelectionActive) {
-      const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
-      const menuActions = [
-        ...(selectedFiles.length === 1 && filter === Filter.OWNER
-          ? [
-              {
-                title: I18n.get('workspace-filelist-menuaction-rename'),
-                action: () => openModal(WorkspaceModalType.RENAME),
-                icon: {
-                  ios: 'pencil',
-                  android: 'ic_pencil',
-                },
-              },
-            ]
-          : []),
-        ...(filter !== Filter.TRASH
-          ? [
-              {
-                title: I18n.get('workspace-filelist-menuaction-copy'),
-                action: () => openModal(WorkspaceModalType.COPY),
-                icon: {
-                  ios: 'square.on.square',
-                  android: 'ic_content_copy',
-                },
-              },
-            ]
-          : []),
-        ...(filter === Filter.OWNER
-          ? [
-              {
-                title: I18n.get('workspace-filelist-menuaction-move'),
-                action: () => openModal(WorkspaceModalType.MOVE),
-                icon: {
-                  ios: 'arrow.up.square',
-                  android: 'ic_move_to_inbox',
-                },
-              },
-            ]
-          : []),
-        ...(filter === Filter.TRASH
-          ? [
-              {
-                title: I18n.get('workspace-filelist-menuaction-restore'),
-                action: restoreSelectedFiles,
-                icon: {
-                  ios: 'arrow.uturn.backward.circle',
-                  android: 'ic_restore',
-                },
-              },
-            ]
-          : []),
-        ...(Platform.OS !== 'ios' && !isFolderSelected
-          ? [
-              {
-                title: I18n.get('workspace-filelist-menuaction-download'),
-                action: () => openModal(WorkspaceModalType.DOWNLOAD),
-                icon: {
-                  ios: 'square.and.arrow.down',
-                  android: 'ic_download',
-                },
-              },
-            ]
-          : []),
-        ...((selectedFiles.length >= 1 && filter === Filter.OWNER) || filter === Filter.TRASH
-          ? [
-              deleteAction({
-                action: () => (filter === Filter.TRASH ? alertPermanentDeletion(selectedFiles) : trashFiles(selectedFiles)),
-              }),
-            ]
-          : []),
-      ];
-      return { actionIcon: 'ui-options', menuActions };
-    }
-    if (filter === Filter.OWNER || (filter === Filter.SHARED && parentId !== Filter.SHARED)) {
-      const menuActions = [
-        cameraAction({ callback: uploadFile }),
-        galleryAction({ callback: uploadFile, multiple: true }),
-        documentAction({ callback: uploadFile }),
-        ...(filter === Filter.OWNER
-          ? [
-              {
-                title: I18n.get('workspace-filelist-menuaction-createfolder'),
-                action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
-                icon: {
-                  ios: 'folder.badge.plus',
-                  android: 'ic_create_new_folder',
-                },
-              },
-            ]
-          : []),
-      ];
-      return { actionIcon: 'ui-plus', menuActions };
-    }
-    return { actionIcon: '', menuActions: [] };
-  };
-
   React.useEffect(() => {
+    const getNavBarActions = (): { actionIcon: string; menuActions: MenuAction[] } => {
+      if (isSelectionActive) {
+        const isFolderSelected = props.files.filter(file => selectedFiles.includes(file.id)).some(file => file.isFolder);
+        const menuActions = [
+          ...(selectedFiles.length === 1 && filter === Filter.OWNER
+            ? [
+                {
+                  title: I18n.get('workspace-filelist-menuaction-rename'),
+                  action: () => openModal(WorkspaceModalType.RENAME),
+                  icon: {
+                    ios: 'pencil',
+                    android: 'ic_pencil',
+                  },
+                },
+              ]
+            : []),
+          ...(filter !== Filter.TRASH
+            ? [
+                {
+                  title: I18n.get('workspace-filelist-menuaction-copy'),
+                  action: () => openModal(WorkspaceModalType.COPY),
+                  icon: {
+                    ios: 'square.on.square',
+                    android: 'ic_content_copy',
+                  },
+                },
+              ]
+            : []),
+          ...(filter === Filter.OWNER
+            ? [
+                {
+                  title: I18n.get('workspace-filelist-menuaction-move'),
+                  action: () => openModal(WorkspaceModalType.MOVE),
+                  icon: {
+                    ios: 'arrow.up.square',
+                    android: 'ic_move_to_inbox',
+                  },
+                },
+              ]
+            : []),
+          ...(filter === Filter.TRASH
+            ? [
+                {
+                  title: I18n.get('workspace-filelist-menuaction-restore'),
+                  action: restoreSelectedFiles,
+                  icon: {
+                    ios: 'arrow.uturn.backward.circle',
+                    android: 'ic_restore',
+                  },
+                },
+              ]
+            : []),
+          ...(Platform.OS !== 'ios' && !isFolderSelected
+            ? [
+                {
+                  title: I18n.get('workspace-filelist-menuaction-download'),
+                  action: () => openModal(WorkspaceModalType.DOWNLOAD),
+                  icon: {
+                    ios: 'square.and.arrow.down',
+                    android: 'ic_download',
+                  },
+                },
+              ]
+            : []),
+          ...((selectedFiles.length >= 1 && filter === Filter.OWNER) || filter === Filter.TRASH
+            ? [
+                deleteAction({
+                  action: () => (filter === Filter.TRASH ? alertPermanentDeletion(selectedFiles) : trashFiles(selectedFiles)),
+                }),
+              ]
+            : []),
+        ];
+        return { actionIcon: 'ui-options', menuActions };
+      }
+      if (filter === Filter.OWNER || (filter === Filter.SHARED && parentId !== Filter.SHARED)) {
+        const menuActions = [
+          cameraAction({ callback: uploadFile }),
+          galleryAction({ callback: uploadFile, multiple: true }),
+          documentAction({ callback: uploadFile }),
+          ...(filter === Filter.OWNER
+            ? [
+                {
+                  title: I18n.get('workspace-filelist-menuaction-createfolder'),
+                  action: () => openModal(WorkspaceModalType.CREATE_FOLDER),
+                  icon: {
+                    ios: 'folder.badge.plus',
+                    android: 'ic_create_new_folder',
+                  },
+                },
+              ]
+            : []),
+        ];
+        return { actionIcon: 'ui-plus', menuActions };
+      }
+      return { actionIcon: '', menuActions: [] };
+    };
     const { actionIcon, menuActions } = getNavBarActions();
-
     props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerLeft: ({ tintColor }) => (
@@ -345,15 +343,19 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
         </PopupMenu>
       ),
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parentId, isSelectionActive, selectedFiles]);
-
-  React.useEffect(() => {
-    props.navigation.setOptions({
-      headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-filelist-title')),
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parentId]);
+  }, [
+    alertPermanentDeletion,
+    filter,
+    isSelectionActive,
+    parentId,
+    props.files,
+    props.navigation,
+    props.route.params.title,
+    restoreSelectedFiles,
+    selectedFiles,
+    trashFiles,
+    uploadFile,
+  ]);
 
   const renderEmpty = () => {
     const image = parentId === Filter.TRASH ? 'empty-trash' : 'empty-workspace';
@@ -475,6 +477,10 @@ const WorkspaceFileListScreen = (props: IWorkspaceFileListScreenProps) => {
   };
 
   UNSTABLE_usePreventRemove(isSelectionActive, () => setSelectedFiles([]));
+
+  props.navigation.setOptions({
+    headerTitle: navBarTitle(props.route.params.title ?? I18n.get('workspace-filelist-title')),
+  });
 
   return <PageView>{renderPage()}</PageView>;
 };

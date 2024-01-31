@@ -9,7 +9,7 @@ import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import ModalBox from '~/framework/components/ModalBox';
 import UserList from '~/framework/components/UserList';
 import { ContentCardHeader, ResourceView } from '~/framework/components/card';
-import CommentField from '~/framework/components/commentField';
+import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
 import { Picture } from '~/framework/components/picture';
@@ -114,7 +114,7 @@ const SchoolbookWordDetailsCard = (
   const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
   const isParent = userType === UserType.Relative;
-  const isTeacher = userType === UserType.Teacher;
+  const isTeacher = userType === UserType.Teacher || userType === UserType.Personnel;
   const isStudent = userType === UserType.Student;
   const isAuthorOtherTeacher = isTeacher && !isUserSchoolbookWordOwner;
   const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(report);
@@ -328,57 +328,88 @@ const SchoolbookWordDetailsCard = (
     android: KeyboardAvoidingFlatList,
   })!;
 
+  const refSetup = React.useCallback(listComponentRef => {
+    flatListRef.current = listComponentRef;
+  }, []);
+
+  const onContentSizeChange = React.useCallback((width, height) => {
+    setContentHeight(height);
+  }, []);
+
+  const renderItem = React.useCallback(
+    ({ item, index }) => {
+      const isFirstItem = index === 0;
+      return (
+        <View style={{ marginTop: isFirstItem ? UI_SIZES.spacing.medium : undefined }}>
+          <CommentField
+            ref={element => (commentFieldRefs[item.id] = element)}
+            index={index}
+            isPublishingComment={isPublishingReply}
+            onPublishComment={(comment, commentId) => {
+              onPublishReply(comment, commentId);
+            }}
+            onChangeText={data => onEditComment(data)}
+            editCommentCallback={() => {
+              const otherSchoolbookWordResponses = responses?.filter(response => response.id !== item.id);
+              setEditedCommentId(item.id?.toString());
+              otherSchoolbookWordResponses?.forEach(otherSchoolbookWordResponse => {
+                commentFieldRefs[otherSchoolbookWordResponse.id]?.setIsEditingFalse();
+              });
+            }}
+            comment={item.comment}
+            commentId={item.id}
+            commentAuthorId={item.owner}
+            commentAuthor={item.parentName}
+            commentDate={item.modified}
+            isResponse
+            onEditableLayoutHeight={val => {
+              editorOffsetRef.current = val;
+            }}
+          />
+        </View>
+      );
+    },
+    [isPublishingReply, onEditComment, onPublishReply, responses],
+  );
+
+  const keyExtractor = React.useCallback(item => item.id?.toString(), []);
+
+  const onLayout = React.useCallback(({ nativeEvent }) => setViewHeight(nativeEvent?.layout?.height), []);
+
+  const style = React.useMemo(
+    () => ({
+      marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined,
+    }),
+    [doesContentExceedView, isBottomSheetVisible],
+  );
+
+  const scrollIndicatorInsets = React.useMemo(
+    () => ({
+      right: 0.001,
+      bottom: doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : undefined,
+    }),
+    [doesContentExceedView, isBottomSheetVisible],
+  );
+
+  const onPublishComment = React.useCallback((comment: string) => onPublishReply(comment), [onPublishReply]);
+
+  const onChangeText = React.useCallback((data: InfoCommentField) => onEditComment(data), [onEditComment]);
+
   return (
     <>
       <ListComponent
-        ref={listComponentRef => {
-          flatListRef.current = listComponentRef;
-        }}
-        onContentSizeChange={(width, height) => {
-          setContentHeight(height);
-        }}
+        ref={refSetup}
+        onContentSizeChange={onContentSizeChange}
         removeClippedSubviews={false}
         data={word?.reply && responses ? responses : []}
-        renderItem={({ item, index }) => {
-          const isFirstItem = index === 0;
-          return (
-            <View style={{ marginTop: isFirstItem ? UI_SIZES.spacing.medium : undefined }}>
-              <CommentField
-                ref={element => (commentFieldRefs[item.id] = element)}
-                index={index}
-                isPublishingComment={isPublishingReply}
-                onPublishComment={(comment, commentId) => onPublishReply(comment, commentId)}
-                onChangeText={data => onEditComment(data)}
-                editCommentCallback={() => {
-                  const otherSchoolbookWordResponses = responses?.filter(response => response.id !== item.id);
-                  setEditedCommentId(item.id?.toString());
-                  otherSchoolbookWordResponses?.forEach(otherSchoolbookWordResponse => {
-                    commentFieldRefs[otherSchoolbookWordResponse.id]?.setIsEditingFalse();
-                  });
-                }}
-                comment={item.comment}
-                commentId={item.id}
-                commentAuthorId={item.owner}
-                commentAuthor={item.parentName}
-                commentDate={item.modified}
-                isResponse
-                onEditableLayoutHeight={val => {
-                  editorOffsetRef.current = val;
-                }}
-              />
-            </View>
-          );
-        }}
-        keyExtractor={item => item.id?.toString()}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
         ListHeaderComponent={resourceView}
-        onLayout={({ nativeEvent }) => setViewHeight(nativeEvent?.layout?.height)}
+        onLayout={onLayout}
         keyboardShouldPersistTaps="handled"
         bottomInset={!isBottomSheetVisible}
-        style={{ marginBottom: doesContentExceedView && isBottomSheetVisible ? -UI_SIZES.radius.mediumPlus : undefined }}
-        scrollIndicatorInsets={{
-          right: 0.001,
-          bottom: doesContentExceedView && isBottomSheetVisible ? UI_SIZES.radius.mediumPlus : undefined,
-        }}
+        style={style}
+        scrollIndicatorInsets={scrollIndicatorInsets}
       />
       {isParent ? (
         !isWordAcknowledged ? (
@@ -393,8 +424,8 @@ const SchoolbookWordDetailsCard = (
             ref={bottomEditorSheetRef}
             displayShadow={doesContentExceedView}
             isPublishingComment={isPublishingReply}
-            onPublishComment={comment => onPublishReply(comment)}
-            onChangeText={data => onEditComment(data)}
+            onPublishComment={onPublishComment}
+            onChangeText={onChangeText}
             isResponse
           />
         ) : null

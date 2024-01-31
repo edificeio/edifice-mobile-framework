@@ -4,6 +4,7 @@
  */
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import inAppMessaging from '@react-native-firebase/in-app-messaging';
 import * as React from 'react';
 import { AppState, AppStateStatus, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
@@ -84,12 +85,11 @@ interface AppProps extends IStoreProp {}
 
 function App(props: AppProps) {
   const currentState = useAppState();
-  useTrackers();
-  useNavigationDevPlugins();
 
   const onRemoteNotification =
     Platform.OS === 'ios'
-      ? React.useCallback(notification => {
+      ? // eslint-disable-next-line react-hooks/rules-of-hooks
+        React.useCallback(notification => {
           const isClicked = notification.getData().userInteraction === 1;
           if (isClicked || currentState.current === 'active') {
             setCurrentBadgeValue(0);
@@ -99,17 +99,23 @@ function App(props: AppProps) {
           // Use the appropriate result based on what you needed to do for this notification
           const result = PushNotificationIOS.FetchResult.NoData;
           notification.finish(result);
+          // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [])
       : undefined;
+
+  useTrackers();
+  useNavigationDevPlugins();
 
   React.useEffect(() => {
     if (Platform.OS !== 'ios') return;
     const type = 'notification';
     PushNotificationIOS.addEventListener(type, onRemoteNotification!);
+    inAppMessaging().setMessagesDisplaySuppressed(true).finally();
     return () => {
       if (Platform.OS !== 'ios') return;
       PushNotificationIOS.removeEventListener(type);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

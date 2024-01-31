@@ -16,6 +16,7 @@ export default StyleSheet.create({
   custom: { opacity: UI_VALUES.opacity.explorer, position: 'absolute', width: '100%', height: '100%' },
   empyItemTouchableStyle: { opacity: UI_VALUES.opacity.transparent },
   image: {
+    backgroundColor: theme.palette.grey.white,
     position: 'absolute',
     width: '100%',
     height: '100%',

@@ -77,6 +77,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
     const { notifFilters } = this.props;
     const { selectedFilters } = this.state;
     const someNotSet = Object.values(selectedFilters).some(value => !value);
+    const oneValueSelected = Object.values(selectedFilters).includes(true);
     return (
       <FlatList
         // data
@@ -87,8 +88,8 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
             <CheckboxButton
               onPress={() => this.doToggleAllFilters()}
               title="timeline-filters-all"
-              isChecked={!someNotSet}
-              isAllButton
+              checked={!someNotSet}
+              partialyChecked={oneValueSelected && someNotSet}
             />
           )
         }
@@ -99,7 +100,7 @@ export class TimelineFiltersScreen extends React.PureComponent<ITimelineFiltersS
 
   renderFilterItem(item: NotificationFilter) {
     const { selectedFilters } = this.state;
-    return <CheckboxButton onPress={() => this.doToggleFilter(item)} title={item.i18n} isChecked={selectedFilters[item.type]} />;
+    return <CheckboxButton onPress={() => this.doToggleFilter(item)} title={item.i18n} checked={selectedFilters[item.type]} />;
   }
 
   mounted: boolean = false;

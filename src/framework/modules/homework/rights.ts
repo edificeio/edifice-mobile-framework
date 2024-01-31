@@ -7,6 +7,7 @@ import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
 import { ISession } from '~/framework/modules/auth/model';
+import { UserType } from '~/framework/modules/auth/service';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -26,10 +27,16 @@ export const hasPermissionManager = (homework: IHomeworkDiary, right: string, se
   return homework && (homework.owner.userId === session.user.id || resourceHasRight(homework, right, session));
 };
 
-export const getHomeworkWorkflowInformation = (session: ISession) => ({
-  view: session.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
-  create: session.authorizedActions.some(a => a.name === createHomeworkResourceRight),
-});
+export const getHomeworkWorkflowInformation = (session: ISession) => {
+  const userType = session?.user.type;
+  const isRelativeOrStudent = userType === UserType.Relative || userType === UserType.Student;
+  return {
+    view: session.authorizedActions.some(a => a.name === viewHomeworkResourceRight),
+    create: session.authorizedActions.some(a => a.name === createHomeworkResourceRight),
+    //Todo: replace with resourceRight from backend
+    check: isRelativeOrStudent,
+  };
+};
 
 export default () =>
   registerTimelineWorkflow(session => {

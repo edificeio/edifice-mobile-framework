@@ -5,6 +5,7 @@ import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import { getDayOfTheWeek, today } from '~/framework/util/date';
 import HtmlToText from '~/infra/htmlConverter/text';
@@ -13,6 +14,7 @@ export interface IHomeworkCardProps {
   title: string;
   content: string;
   date: Moment;
+  finished: boolean;
   onPress: () => void;
   style?: ViewStyle;
 }
@@ -31,6 +33,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 5,
   },
+  status: {
+    marginLeft: UI_SIZES.spacing.minor,
+  },
   viewArrow: {
     justifyContent: 'center',
     marginLeft: UI_SIZES.spacing.small,
@@ -38,9 +43,13 @@ const styles = StyleSheet.create({
   viewTexts: {
     flex: 1,
   },
+  viewTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
-const HomeworkCard = ({ title, content, onPress, date, style }: IHomeworkCardProps) => {
+const HomeworkCard = ({ title, content, finished, onPress, date, style }: IHomeworkCardProps) => {
   const isPastDate = date.isBefore(today(), 'day');
   const dayOfTheWeek = getDayOfTheWeek(date);
   const dayColor = theme.color.homework.days[dayOfTheWeek]?.accent ?? theme.palette.grey.stone;
@@ -50,7 +59,18 @@ const HomeworkCard = ({ title, content, onPress, date, style }: IHomeworkCardPro
   return (
     <TouchableOpacity onPress={onPress} style={[styles.item, style]}>
       <View style={styles.viewTexts}>
-        {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
+        <View style={styles.viewTitle}>
+          {title ? <BodyBoldText numberOfLines={1}>{title}</BodyBoldText> : null}
+          {finished === undefined ? null : (
+            <NamedSVG
+              fill={finished ? theme.palette.status.success.regular : theme.palette.grey.stone}
+              name={`ui-${finished ? 'check' : 'clock'}`}
+              style={styles.status}
+              width={UI_SIZES.elements.icon.xsmall}
+              height={UI_SIZES.elements.icon.xsmall}
+            />
+          )}
+        </View>
         {formattedContent ? (
           <SmallText style={{ marginTop: UI_SIZES.spacing.tiny }} numberOfLines={2}>
             {formattedContent}

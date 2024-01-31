@@ -341,8 +341,39 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
     if (!body.match) {
       throw createAuthError(OAuth2ErrorCode.BAD_CREDENTIALS, '', 'Activation credentials no match');
     }
+    return 'activate' as const;
   } catch (activationErr) {
     throw createAuthError(RuntimeAuthErrorCode.ACTIVATION_ERROR, '', 'Activation match error', activationErr as Error);
+  }
+}
+
+export async function ensureCredentialsMatchPwdResetCode(platform: Platform, credentials: IAuthCredentials) {
+  if (!platform) {
+    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
+  }
+  try {
+    const res = await fetch(`${platform.url}/auth/reset/match`, {
+      body: JSON.stringify({
+        login: credentials.username,
+        password: credentials.password,
+      }),
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Device-Id': uniqueId(),
+      },
+      method: 'post',
+    });
+    if (!res.ok) {
+      throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match HTTP code not 200');
+    }
+    const body = await res.json();
+    if (!body.match) {
+      throw createAuthError(OAuth2ErrorCode.BAD_CREDENTIALS, '', 'Pwd reset credentials no match');
+    }
+    return 'reset' as const;
+  } catch (err) {
+    throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match error', err as Error);
   }
 }
 
@@ -393,7 +424,7 @@ export class FcmService {
       if (tokens instanceof Array) {
         return tokens;
       } else {
-        if (__DEV__) console.debug("not an array?", tokens)
+        if (__DEV__) console.debug('not an array?', tokens);
       }
     } catch {
       // TODO: Manage error
