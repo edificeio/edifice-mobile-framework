@@ -2,6 +2,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import * as React from 'react';
 import { Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
 import { PageView } from '~/framework/components/page';
 
@@ -70,7 +71,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const renderPostInfos = () => {
     return (
-      <PageView>
+      <PageView style={styles.page}>
         <KeyboardAvoidingView
           keyboardVerticalOffset={headerHeight}
           style={styles.container}
@@ -85,7 +86,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
               initialContentHTML={props.initialContentHtml ?? ''}
               initialFocus={false}
               pasteAsPlainText
-              placeholder="Saisissez votre texte"
+              placeholder={I18n.get('editor-new-placeholder')}
               ref={richText}
               style={styles.rich}
               useContainer

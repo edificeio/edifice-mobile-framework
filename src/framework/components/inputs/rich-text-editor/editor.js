@@ -20,6 +20,7 @@ function createHTML(options = {}) {
     firstFocusEnd = true,
     useContainer = true,
     styleWithCSS = false,
+    primaryColor = '',
   } = options;
   //ERROR: HTML height not 100%;
   return `
@@ -36,7 +37,7 @@ function createHTML(options = {}) {
           !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
         .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;${contentCSSText}}
-        [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor};}
+        [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor}; font-style: italic}
         [placeholder]:empty:focus:before { content: attr(placeholder);color: ${placeholderColor};display:block;}
         video {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}
         img {max-width: 98%;vertical-align: middle;}
@@ -50,6 +51,9 @@ function createHTML(options = {}) {
         hr{display: block;height: 0; border: 0;border-top: 1px solid #ccc; margin: 15px 0; padding: 0;}
         pre{padding: 10px 5px 10px 10px;margin: 15px 0;display: block;line-height: 18px;background: #F0F0F0;border-radius: 6px;font-size: 13px; font-family: 'monaco', 'Consolas', "Liberation Mono", Courier, monospace; word-break: break-all; word-wrap: break-word;overflow-x: auto;}
         pre code {display: block;font-size: inherit;white-space: pre-wrap;color: inherit;}
+        h1 {font-size: 26px; line-height: 36px;}
+        h2 {font-size: 22px; line-height: 30px;}
+        h1, h2, a {color: ${primaryColor}}
         ${cssText}
     </style>
 </head>

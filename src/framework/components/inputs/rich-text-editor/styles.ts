@@ -4,38 +4,29 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
-  inputTitle: {
-    paddingBottom: UI_SIZES.spacing.small,
-    borderBottomWidth: 1,
-    borderColor: theme.palette.grey.cloudy,
+  page: {
+    backgroundColor: theme.palette.grey.white,
   },
   container: {
     marginBottom: UI_SIZES.screen.bottomInset,
     flex: 1,
-    backgroundColor: 'white',
   },
   content: {
-    backgroundColor: 'white',
-    color: 'black',
-    caretColor: 'black',
-    placeholderColor: 'gray',
-    contentCSSText: 'font-size: 16px; min-height: 200px;',
+    color: theme.palette.grey.black,
+    placeholderColor: theme.palette.grey.stone,
+    contentCSSText: 'font-size: 16px; line-height: 24px; min-height: 200px; margin-top: 12px',
+    primaryColor: theme.palette.primary.regular,
   },
   rich: {
     minHeight: 300,
   },
   richBar: {
-    borderColor: '#efefef',
+    borderColor: theme.palette.grey.cloudy,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
   scroll: {
-    backgroundColor: '#ffffff',
     flexGrow: 1,
     padding: UI_SIZES.spacing.medium,
-  },
-  tib: {
-    textAlign: 'center',
-    color: 'green',
   },
 });
 

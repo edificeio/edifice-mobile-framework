@@ -3,6 +3,7 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, Keyboard, KeyboardAvoidingView, Platform, ScrollView, TextInput } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import { RichEditor, RichToolbar } from '~/framework/components/inputs/rich-text-editor';
 import { PageView } from '~/framework/components/page';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -155,7 +156,7 @@ export default function RichTextEditorScreen(props: RichTextEditorScreenProps) {
             initialContentHTML=""
             initialFocus={false}
             pasteAsPlainText
-            placeholder="Saisissez votre texte"
+            placeholder={I18n.get('editor-new-placeholder')}
             ref={richText}
             style={styles.rich}
             useContainer
