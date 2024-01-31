@@ -11,7 +11,7 @@ import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
 import { StorageSlice } from '~/framework/util/storage/slice';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCacheLegacy } from '~/infra/cache';
-import { destroyOAuth2Legacy } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, destroyOAuth2Legacy } from '~/infra/oauth';
 
 import {
   IActivationPayload as ActivationPayload,
@@ -368,6 +368,10 @@ export const loginFederationAction =
 export const restoreAction = (account: AuthSavedAccount) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
   try {
     await loginSteps.loadToken(account);
+    if (!OAuth2RessourceOwnerPasswordClient.connection) {
+      throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+    }
+    await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
     const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
     writeSingleAccount(session, getAuthState(getState()).showOnboarding);
     return session;
