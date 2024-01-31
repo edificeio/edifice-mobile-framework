@@ -3,7 +3,7 @@
  * It can render the SplashScreen, auth flow or main flow in function of token loading and status.
  */
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationState } from '@react-navigation/native';
 import * as React from 'react';
 import { Platform, StatusBar } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
@@ -75,13 +75,6 @@ function RootNavigator(props: RootNavigatorProps) {
       : undefined;
   }, [accounts, appReady, isMainNavigationAccessible, pending, requirement, showOnboarding]);
 
-  // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
-  React.useLayoutEffect(() => {
-    // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
-    if (navigationState && navigationRef.isReady()) navigationRef.reset(navigationState);
-    console.debug('[Navigation] Reset root navigator state', navigationState);
-  }, [navigationState]);
-
   // Auth/Main switch
   const mainNavigation = useMainNavigation(session?.rights.apps ?? [], session?.rights.widgets ?? []);
   const authNavigation = useAuthNavigation();
@@ -94,10 +87,21 @@ function RootNavigator(props: RootNavigatorProps) {
   const trackNavState = useNavigationTracker();
   const manageNavSnow = useNavigationSnowHandler(dispatch);
 
-  const onStateChange = React.useCallback(() => {
-    trackNavState();
-    manageNavSnow();
-  }, [manageNavSnow, trackNavState]);
+  // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
+  React.useLayoutEffect(() => {
+    // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
+    if (navigationState && navigationRef.isReady()) navigationRef.reset(navigationState);
+    console.debug('[Navigation] Reset root navigator state', navigationState);
+    trackNavState(navigationState);
+  }, [navigationState, trackNavState]);
+
+  const onStateChange = React.useCallback(
+    (state: NavigationState | undefined) => {
+      trackNavState(state);
+      manageNavSnow();
+    },
+    [manageNavSnow, trackNavState],
+  );
 
   const ret = React.useMemo(() => {
     return (

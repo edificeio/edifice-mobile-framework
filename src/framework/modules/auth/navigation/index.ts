@@ -277,10 +277,10 @@ export const getAuthNavigationState = (
 
   // 4. Apply redirection if so
 
-  if (!navRedirection) return { routes };
+  if (!navRedirection) return { stale: true as const, routes, index: routes.length - 1 };
 
   const ret = simulateNavAction(navRedirection, { routes });
   // We must add `stale = false` into the resulting state to make React Navigation reinterpret and rehydrate this state if necessary.
   // @see https://reactnavigation.org/docs/navigation-state/#partial-state-objects
-  return { ...ret, stale: true };
+  return { ...ret, stale: true as const };
 };
