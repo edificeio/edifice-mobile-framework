@@ -58,7 +58,7 @@ async function initEditor() {
 function createHTML(options = {}) {
   const {
     backgroundColor = '#FFF',
-    color = '#000033',
+    color = '#4A4A4A',
     caretColor = '',
     placeholderColor = '#a9a9a9',
     contentCSSText = '',
@@ -89,7 +89,7 @@ function createHTML(options = {}) {
     <style>
         ${fontFaces}
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}
-        html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%}    
+        html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%;}    
         body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${backgroundColor};caret-color: ${caretColor};}
         .content {font-family: Font;color: ${color}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
@@ -114,6 +114,9 @@ function createHTML(options = {}) {
         h1, h2, a {color: ${primaryColor}}
         strong, b {font-weight: 700;}
         em {font-style: italic;}
+        .download-attachments, .attachments {background-color: #FAFAFA; padding: 12px; border-radius: 12px; border: 1px solid #F2F2F2;}
+        .download-attachments h2, .download-attachments a {color: ${color}; text-decoration: none;}
+        .download-attachments h2 {margin: 0 0 12px 0; font-size: 12px; line-height: 20px}
         ${cssText}
     </style>
 </head>
