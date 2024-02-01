@@ -108,7 +108,7 @@ export default class RichEditor extends Component {
             styleWithCSS,
             primaryColor,
           }),
-        baseUrl: '', //that.pfUrl,
+        baseUrl: that.pfUrl,
       },
       height: initialHeight,
       keyboardHeight: 0,
