@@ -27,8 +27,6 @@ async function loadFont(fontPath, fontFace) {
 
 async function initEditor() {
   await loadFont('comfortaa_bold.woff', 'comfoorta-bold');
-  console.debug('FONT FACES =');
-  console.debug(fontFaces);
 }
 
 function createHTML(options = {}) {
