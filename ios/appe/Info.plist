@@ -54,7 +54,7 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>L'appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
+	<string>L&apos;appareil photo sera utilisé pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>La galerie photos sera utilisée pour envoyer des photos à votre réseau éducatif et pour choisir votre photo de profil.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -68,18 +68,6 @@
 		<string>Font-Italic.ttf</string>
 		<string>Font-Regular.ttf</string>
 		<string>Comfortaa-Bold.ttf</string>
-		<string>EcritureA-Italic.woff2</string>
-		<string>EcritureA-Regular.woff2</string>
-		<string>IBMPlexMono-Bold.ttf</string>
-		<string>IBMPlexMono-BoldItalic.ttf</string>
-		<string>IBMPlexMono-Italic.ttf</string>
-		<string>IBMPlexMono-Regular.ttf</string>
-		<string>Lora-Bold.ttf</string>
-		<string>Lora-BoldItalic.ttf</string>
-		<string>Lora-Italic.ttf</string>
-		<string>Lora-Regular.ttf</string>
-		<string>OpenDyslexic-Regular.ttf</string>
-		<string>OpenDyslexic-Bold.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

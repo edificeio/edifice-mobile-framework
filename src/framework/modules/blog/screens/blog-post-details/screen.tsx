@@ -553,7 +553,34 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditor disabled initialContentHTML={blogPostContent} editorStyle={styles.editorStyle} />
+            <RichEditor
+              disabled
+              initialContentHTML='<p>sans-serif classique</p>
+<p><strong>sans-serif bold</strong></p>
+<p><strong><em>sans-serif bold italic</em></strong></p>
+<p><em>sans-serif italic</em></p>
+
+<p><span style="font-family: Lora">serif classique</span></p>
+<p><strong><span style="font-family: Lora">serif bold</span></strong></p>
+<p><strong><em><span style="font-family: Lora">serif bold italic</span></em></strong></p>
+<p><em><span style="font-family: Lora">serif italic</span></em></p>
+
+<p><span style="font-family: IBM Plex Mono">monoscript classique</span></p>
+<p><strong><span style="font-family: IBM Plex Mono">monoscript bold</span></strong></p>
+<p><strong><em><span style="font-family: IBM Plex Mono">monoscript bold italic</span></em></strong></p>
+<p><em><span style="font-family: IBM Plex Mono">monoscript italic</span></em></p>
+
+<p><span style="font-family: Ecriture A">cursive classique</span></p>
+<p><strong><em><span style="font-family: Ecriture A">cursive bold</span></em></strong></p>
+<p><strong><em><span style="font-family: Ecriture A">cursive bold italic</span></em></strong></p>
+<p><em><span style="font-family: Ecriture A">cursive italic</span></em></p>
+
+<p><span style="font-family: OpenDyslexic">opendyslexic classique</span></p>
+<p><strong><span style="font-family: OpenDyslexic">opendyslexic bold</span></strong></p>
+<p><strong><em><span style="font-family: OpenDyslexic">opendyslexic bold italic</span></em></strong></p>
+<p><em><span style="font-family: OpenDyslexic">opendyslexic italic</span></em></p>'
+              editorStyle={styles.editorStyle}
+            />
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (

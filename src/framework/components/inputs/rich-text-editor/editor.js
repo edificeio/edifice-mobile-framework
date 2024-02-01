@@ -4,7 +4,9 @@ import RNFS from 'react-native-fs';
 const fonts = [];
 let fontFaces = '';
 
-async function loadFont(fontFile, fontFamily) {
+async function loadFont(fontInfo) {
+  const { fontFile, fontFamily, bold, italic, cursive } = fontInfo;
+
   try {
     // Load font from assets
     let base64String = '';
@@ -17,6 +19,9 @@ async function loadFont(fontFile, fontFamily) {
         @font-face {
           font-family: '${fontFamily}';
           src: url(data:font/woff;base64,${base64String}) format('woff');
+          ${bold ? 'font-weight: 700;' : ''}
+          ${italic ? 'font-style: italic;' : ''}
+          ${cursive ? 'size-adjust: 187.5%;' : ''}
         }
     `;
     console.debug(`${fontFamily} font loaded from ${fontFile}`);
@@ -26,7 +31,33 @@ async function loadFont(fontFile, fontFamily) {
 }
 
 async function initEditor() {
-  await loadFont('comfortaa_bold.woff', 'comfoorta-bold');
+  const fontItems = [
+    // OpenDyslexic
+    { fontFile: 'opendyslexic_regular.woff', fontFamily: 'OpenDyslexic' },
+    { fontFile: 'opendyslexic_bold.woff', fontFamily: 'OpenDyslexic', bold: true },
+    { fontFile: 'opendyslexic_bolditalic.woff', fontFamily: 'OpenDyslexic', bold: true, italic: true },
+    { fontFile: 'opendyslexic_italic.woff', fontFamily: 'OpenDyslexic', italic: true },
+    //Lora
+    { fontFile: 'lora_regular.woff', fontFamily: 'Lora' },
+    { fontFile: 'lora_bold.woff', fontFamily: 'Lora', bold: true },
+    { fontFile: 'lora_bolditalic.woff', fontFamily: 'Lora', bold: true, italic: true },
+    { fontFile: 'lora_italic.woff', fontFamily: 'Lora', italic: true },
+    //IBM Plex Mono
+    { fontFile: 'ibmplexmono_regular.woff', fontFamily: 'IBM Plex Mono' },
+    { fontFile: 'ibmplexmono_bold.woff', fontFamily: 'IBM Plex Mono', bold: true },
+    { fontFile: 'ibmplexmono_bolditalic.woff', fontFamily: 'IBM Plex Mono', bold: true, italic: true },
+    { fontFile: 'ibmplexmono_italic.woff', fontFamily: 'IBM Plex Mono', italic: true },
+    //Font
+    { fontFile: 'font_regular.woff', fontFamily: 'Font' },
+    { fontFile: 'font_bold.woff', fontFamily: 'Font', bold: true },
+    { fontFile: 'font_bolditalic.woff', fontFamily: 'Font', bold: true, italic: true },
+    { fontFile: 'font_italic.woff', fontFamily: 'Font', italic: true },
+    //Ecriture A
+    { fontFile: 'ecriturea_regular.woff', fontFamily: 'Ecriture A', cursive: true },
+    { fontFile: 'ecriturea_italic.woff', fontFamily: 'Ecriture A', italic: true, cursive: true },
+  ];
+
+  await Promise.all(fontItems.map(loadFont));
 }
 
 function createHTML(options = {}) {
@@ -63,9 +94,9 @@ function createHTML(options = {}) {
     <style>
         ${fontFaces}
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}
-        html, body { margin: 0; padding: 0;font-family: Arial, Helvetica, sans-serif; font-size:1em; height: 100%}    
+        html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%}    
         body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${backgroundColor};caret-color: ${caretColor};}
-        .content {font-family: Arial, Helvetica, sans-serif;color: ${color}; width: 100%;${
+        .content {font-family: Font;color: ${color}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
         .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;${contentCSSText}}
@@ -75,7 +106,7 @@ function createHTML(options = {}) {
         img {max-width: 98%;vertical-align: middle;}
         table {width: 100% !important;}
         table td {width: inherit;}
-        table span { font-size: 12px !important; }
+        table span { font-size: 12px !important;}
         .x-todo li {list-style:none;}
         .x-todo-box {position: relative; left: -24px;}
         .x-todo-box input{position: absolute;}
@@ -83,9 +114,11 @@ function createHTML(options = {}) {
         hr{display: block;height: 0; border: 0;border-top: 1px solid #ccc; margin: 15px 0; padding: 0;}
         pre{padding: 10px 5px 10px 10px;margin: 15px 0;display: block;line-height: 18px;background: #F0F0F0;border-radius: 6px;font-size: 13px; font-family: 'monaco', 'Consolas', "Liberation Mono", Courier, monospace; word-break: break-all; word-wrap: break-word;overflow-x: auto;}
         pre code {display: block;font-size: inherit;white-space: pre-wrap;color: inherit;}
-        h1 {font-size: 26px; line-height: 36px; font-family: comfoorta-bold;}
+        h1 {font-size: 26px; line-height: 36px;}
         h2 {font-size: 22px; line-height: 30px;}
         h1, h2, a {color: ${primaryColor}}
+        strong, b {font-weight: 700;}
+        em {font-style: italic;}
         ${cssText}
     </style>
 </head>
