@@ -314,6 +314,8 @@ export default class RichEditor extends Component {
           scrollEnabled={false}
           hideKeyboardAccessoryView
           keyboardDisplayRequiresUserAction={false}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           nestedScrollEnabled={!useContainer}
           style={[styles.webview, style]}
           {...rest}

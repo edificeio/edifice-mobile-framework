@@ -4,24 +4,24 @@ import RNFS from 'react-native-fs';
 const fonts = [];
 let fontFaces = '';
 
-async function loadFont(fontPath, fontFace) {
+async function loadFont(fontFile, fontFamily) {
   try {
     // Load font from assets
     let base64String = '';
-    if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(fontPath, 'base64');
-    else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fontPath}`, 'base64');
+    if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`fonts/${fontFile}`, 'base64');
+    else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fontFile}`, 'base64');
     // Add it to supported fonts
     fonts.push(base64String);
     // Update font faces declarations
     fontFaces += `
         @font-face {
-          font-family: '${fontFace}';
+          font-family: '${fontFamily}';
           src: url(data:font/woff;base64,${base64String}) format('woff');
         }
     `;
-    console.debug(`${fontFace} font loaded from ${fontPath}`);
+    console.debug(`${fontFamily} font loaded from ${fontFile}`);
   } catch (error) {
-    console.error('Error loading base64 from assets:', error);
+    console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
   }
 }
 
