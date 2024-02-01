@@ -1,19 +1,15 @@
 import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 
-const fonts = [];
 let fontFaces = '';
 
 async function loadFont(fontInfo) {
   const { fontFile, fontFamily, bold, italic, cursive } = fontInfo;
-
   try {
     // Load font from assets
     let base64String = '';
     if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`fonts/${fontFile}`, 'base64');
     else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fontFile}`, 'base64');
-    // Add it to supported fonts
-    fonts.push(base64String);
     // Update font faces declarations
     fontFaces += `
         @font-face {
@@ -56,7 +52,6 @@ async function initEditor() {
     { fontFile: 'ecriturea_regular.woff', fontFamily: 'Ecriture A', cursive: true },
     { fontFile: 'ecriturea_italic.woff', fontFamily: 'Ecriture A', italic: true, cursive: true },
   ];
-
   await Promise.all(fontItems.map(loadFont));
 }
 
