@@ -14,7 +14,7 @@ import { urlSigner } from '~/infra/oauth';
 
 export type TrackEventArgs = [string, string, string?, number?];
 export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
-export type DoTrackArg = undefined | TrackEventOfModuleArgs;
+export type DoTrackArgLegacy = undefined | TrackEventOfModuleArgs;
 
 export abstract class AbstractTracker<OptionsType> {
   debugName: string;
@@ -309,7 +309,7 @@ export class ConcreteTrackerSet {
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
-    console.debug('[Tracking] Event :', category, action, name, value);
+    console.debug('[Tracking] Event :', [category, action, name, value].join(' | '));
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
@@ -332,7 +332,7 @@ export class ConcreteTrackerSet {
   }
 
   async setCustomDimension(id: number, name: string, value: string) {
-    console.debug('[Tracking] SetDimension :', id, name, value);
+    console.debug('[Tracking] Set Dimension :', id, '|', name, '|', value);
     await Promise.all(this._trackers.map(t => t.setCustomDimension(id, name, value)));
   }
 
@@ -346,3 +346,8 @@ export const Trackers = new ConcreteTrackerSet(
   new ConcreteAppCenterTracker('AppCenter', undefined),
   new ConcreteEntcoreTracker('Entcore', undefined),
 );
+
+export const TRACKING_ACTION_SUFFIX_SUCCESS = 'Succès';
+export const TRACKING_ACTION_SUFFIX_FAILURE = 'Échec';
+export const trackingActionAddSuffix = (str: string, suffix: false | true | string) =>
+  str + ' – ' + (suffix === true ? TRACKING_ACTION_SUFFIX_SUCCESS : suffix === false ? TRACKING_ACTION_SUFFIX_FAILURE : suffix);

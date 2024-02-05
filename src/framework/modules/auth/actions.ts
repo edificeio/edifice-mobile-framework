@@ -311,10 +311,10 @@ export const loginCredentialsAction =
           switch (await loginSteps.checkActivationAndRenew(platform, credentials)) {
             case AuthPendingRedirection.ACTIVATE:
               dispatch(actions.redirectActivation(platform.name, credentials.username, credentials.password));
-              break;
+              return AuthPendingRedirection.ACTIVATE;
             case AuthPendingRedirection.RENEW_PASSWORD:
               dispatch(actions.redirectPasswordRenew(platform.name, credentials.username, credentials.password));
-              break;
+              return AuthPendingRedirection.RENEW_PASSWORD;
           }
         } else {
           throw ee;

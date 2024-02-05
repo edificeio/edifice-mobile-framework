@@ -17,14 +17,16 @@ import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
-// import { AuthErrorCode, getAuthErrorCode } from '~/framework/modules/auth/model';
+import moduleConfig from '~/framework/modules/auth/module-config';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
+import { AuthPendingRedirection } from '../../model';
 import styles from './styles';
 import { LoginCredentialsScreenDispatchProps, LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
@@ -254,7 +256,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         </View>
       </ScrollView>
     );
-  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, platform]);
+  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, platform, route.params.login]);
 
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };
@@ -268,7 +270,19 @@ export default connect(
   dispatch =>
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
-        tryLogin: tryAction(loginCredentialsAction),
+        tryLogin: tryAction(loginCredentialsAction, {
+          track: res => [
+            moduleConfig,
+            res instanceof global.Error
+              ? trackingActionAddSuffix('Login credentials', false)
+              : res === AuthPendingRedirection.ACTIVATE
+                ? trackingActionAddSuffix('Login credentials', 'Activation')
+                : res === AuthPendingRedirection.RENEW_PASSWORD
+                  ? trackingActionAddSuffix('Login credentials', 'Renouvellement')
+                  : trackingActionAddSuffix('Login credentials', true),
+            res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
+          ],
+        }),
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },
       dispatch,

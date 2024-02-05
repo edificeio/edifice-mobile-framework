@@ -9,7 +9,7 @@ import type { Reducer } from 'redux';
 import { IGlobalState } from '~/app/store';
 import type { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
-import { toSnakeCase } from '~/framework/util/string';
+import { toCamelCase, toSnakeCase } from '~/framework/util/string';
 
 import type { IStorageSlice, StorageTypeMap } from './storage/types';
 
@@ -176,7 +176,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.namespaceActionType = actionType => this.actionTypesPrefix + actionType;
     this.getState = (globalState: IGlobalState) => globalState[this.reducerName];
     // Tracking
-    this.trackingName = trackingName ?? this.name;
+    this.trackingName = trackingName ?? toCamelCase(this.name, true);
     // Storage
     this.storageName = storageName ?? this.name;
     // Rest
