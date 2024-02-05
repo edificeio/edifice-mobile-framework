@@ -91,6 +91,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
               ref={richText}
               style={styles.rich}
               useContainer
+              useComposition={false}
               onBlur={handleBlur}
               onChange={handleChange}
               onCursorPosition={handleCursorPosition}

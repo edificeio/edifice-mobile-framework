@@ -82,6 +82,7 @@ export default class RichEditor extends Component {
       initialFocus,
       disabled,
       styleWithCSS,
+      useComposition,
     } = props;
     that.state = {
       html: {
@@ -108,6 +109,7 @@ export default class RichEditor extends Component {
             useContainer,
             styleWithCSS,
             primaryColor,
+            useComposition,
           }),
         baseUrl: that.pfUrl,
       },

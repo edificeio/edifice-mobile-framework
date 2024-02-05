@@ -78,6 +78,8 @@ function createHTML(options = {}) {
     useContainer = true,
     styleWithCSS = false,
     primaryColor = '',
+    // Enable/Disable composition
+    useComposition = true,
   } = options;
   //ERROR: HTML height not 100%;
   return `
@@ -732,11 +734,15 @@ function createHTML(options = {}) {
                 }
             });
             addEventListener(content, 'compositionstart', function(event){
-                compositionStatus = 1;
+                if(${useComposition}){
+                    compositionStatus = 1;
+                }
             })
             addEventListener(content, 'compositionend', function (event){
-                compositionStatus = 0;
-                paragraphStatus && formatParagraph(true);
+                if(${useComposition}){
+                    compositionStatus = 0;
+                    paragraphStatus && formatParagraph(true);
+                }
             })
 
             var message = function (event){
