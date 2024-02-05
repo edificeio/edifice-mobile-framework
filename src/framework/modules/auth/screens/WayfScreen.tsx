@@ -23,7 +23,7 @@ import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/r
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
 import { tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -162,12 +162,14 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private contentComponents = [
     // WAYFPageMode.EMPTY: Display empty screen
     () => {
+      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'));
       return (
         <EmptyScreen svgImage="empty-content" text={I18n.get('auth-wayf-empty-text')} title={I18n.get('auth-wayf-empty-title')} />
       );
     },
     // WAYFPageMode.ERROR: Display error message
     () => {
+      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
@@ -344,6 +346,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     const saml = this.samlResponse;
     this.clearDatas(async () => {
       if (!saml) return;
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'SAML'));
       this.displayLoading();
       try {
         await this.props.tryLogin(this.props.route.params.platform, { saml }, this.state.errkey);
@@ -444,6 +447,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Called each time WebView navigation state changes
   // See WebView onNavigationStateChange property
   onNavigationStateChange(navigationState: WebViewNavigation) {
+    Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Url'), navigationState.url);
     // Update WebView back history flag
     this.webviewCanGoBack = navigationState.canGoBack;
     // Track new url
