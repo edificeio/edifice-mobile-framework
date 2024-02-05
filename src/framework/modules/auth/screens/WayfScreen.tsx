@@ -517,6 +517,7 @@ export default connect(
               res instanceof global.Error && errtype !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
                 ? errtype?.toString() ?? res.toString()
                 : undefined,
+              res instanceof Error.SamlMultipleVectorError ? res.data.users.length : undefined,
             ];
           },
         }),
