@@ -4,17 +4,16 @@
 import { Moment } from 'moment';
 import { EmitterSubscription, Vibration } from 'react-native';
 import RNShake from 'react-native-shake';
+import Sound from 'react-native-sound';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import Sound from 'react-native-sound';
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
 import { actionTypes } from '~/framework/modules/user/reducer';
 import { addTime, today } from '~/framework/util/date';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
-import { Trackers } from '~/framework/util/tracker';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
@@ -53,14 +52,13 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
       if (isUpdatingPhoto) {
         refreshSelfAvatarUniqueKey();
       }
-      Trackers.trackEvent('Profile', 'UPDATE');
     } catch (e) {
       dispatch(authActions.profileUpdateError());
 
       if ((e as Error).message.match(/loginAlias/)) {
-        Trackers.trackEvent('Profile', 'UPDATE ERROR', 'user-profilechange-login-error');
+        // Tracking was here
       } else {
-        Trackers.trackEvent('Profile', 'UPDATE ERROR', `${isUpdatingPhoto ? 'Avatar' : 'Profile'}ChangeError`);
+        // Tracking was here
       }
     }
   };

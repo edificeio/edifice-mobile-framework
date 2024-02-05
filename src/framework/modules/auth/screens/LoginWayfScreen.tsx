@@ -16,7 +16,6 @@ import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Error } from '~/framework/util/error';
 import { handleAction } from '~/framework/util/redux/actions';
-import { Trackers } from '~/framework/util/tracker';
 
 interface ILoginWayfScreenStoreProps {
   auth: IAuthState;
@@ -98,7 +97,6 @@ export class LoginWAYFPage extends React.Component<ILoginWayfScreenProps, ILogin
             <PrimaryButton
               text={I18n.get('auth-wayf-main-button')}
               action={() => {
-                Trackers.trackEvent('Auth', 'WAYF', 'Display');
                 navigation.navigate(authRouteNames.wayf, { platform: route.params.platform });
               }}
               testID="onboarding-login"

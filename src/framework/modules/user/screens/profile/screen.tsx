@@ -37,7 +37,6 @@ import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image, formatSource } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
-import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
 import { hobbiesItems, renderEmoji } from '.';
@@ -139,7 +138,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       setUpdatingAvatar(true);
       const sc = await onUploadAvatar(lc);
       await onUpdateAvatar(sc.url);
-      Trackers.trackEvent('Profile', 'EDIT_AVATAR');
     } catch (err: any) {
       if (err.message === 'Error picking image') {
         onPickFileError('profileOne');

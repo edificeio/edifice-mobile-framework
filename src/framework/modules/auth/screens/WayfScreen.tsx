@@ -21,7 +21,6 @@ import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
-import { Trackers } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -152,14 +151,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private contentComponents = [
     // WAYFPageMode.EMPTY: Display empty screen
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
       return (
         <EmptyScreen svgImage="empty-content" text={I18n.get('auth-wayf-empty-text')} title={I18n.get('auth-wayf-empty-title')} />
       );
     },
     // WAYFPageMode.ERROR: Display error message
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
@@ -172,7 +169,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     },
     // WAYFPageMode.LOADING: Display loading indicator
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'LOADING');
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
@@ -183,7 +179,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     },
     // case WAYFPageMode.SELECT: Display user selection
     (dropdownOpened: boolean) => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'SELECT');
       return (
         <TouchableWithoutFeedback
           style={STYLES.selectBackDrop}
@@ -223,7 +218,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     },
     // case WAYFPageMode.WEBVIEW: Display WebView
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'WEBVIEW');
       return (
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
@@ -339,7 +333,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     const saml = this.samlResponse;
     this.clearDatas(async () => {
       if (!saml) return;
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'SAML');
       this.displayLoading();
       try {
         await this.props.dispatch(loginFederationAction(this.props.route.params.platform, { saml }, this.state.errkey));
@@ -372,7 +365,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Login with selected token
   async loginWithCustomToken() {
     if (!this.dropdownValue) return;
-    Trackers.trackDebugEvent('Auth', 'WAYF', 'CUSTOM_TOKEN');
     this.displayLoading();
     try {
       await this.props.dispatch(
@@ -446,7 +438,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     // Update WebView back history flag
     this.webviewCanGoBack = navigationState.canGoBack;
     // Track new url
-    Trackers.trackDebugEvent('Auth', 'WAYF', navigationState.url);
   }
 
   // Called each time WebView url is about to change
