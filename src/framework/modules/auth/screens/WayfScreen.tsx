@@ -6,6 +6,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { ShouldStartLoadRequest, WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -21,8 +22,12 @@ import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
+import { tryAction } from '~/framework/util/redux/actions';
+import { trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
+
+import moduleConfig from '../module-config';
 
 enum WAYFPageMode {
   EMPTY = 0,
@@ -32,7 +37,13 @@ enum WAYFPageMode {
   WEBVIEW = 4,
 }
 
-export interface IWayfScreenProps extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.wayf> {
+interface WAYFScreenDispatchProps {
+  tryLogin: (...args: Parameters<typeof loginFederationAction>) => ReturnType<ReturnType<typeof loginFederationAction>>;
+}
+
+export interface IWayfScreenProps
+  extends WAYFScreenDispatchProps,
+    NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.wayf> {
   auth: IAuthState;
   dispatch: ThunkDispatch<any, any, any>;
 }
@@ -335,7 +346,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       if (!saml) return;
       this.displayLoading();
       try {
-        await this.props.dispatch(loginFederationAction(this.props.route.params.platform, { saml }, this.state.errkey));
+        await this.props.tryLogin(this.props.route.params.platform, { saml }, this.state.errkey);
       } catch (error) {
         const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
         if (error instanceof Error.SamlMultipleVectorError && errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR) {
@@ -367,9 +378,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     if (!this.dropdownValue) return;
     this.displayLoading();
     try {
-      await this.props.dispatch(
-        loginFederationAction(this.props.route.params.platform, { customToken: this.dropdownValue }, this.state.errkey),
-      );
+      await this.props.tryLogin(this.props.route.params.platform, { customToken: this.dropdownValue }, this.state.errkey);
     } catch (error) {
       const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
       if (errtype) {
@@ -482,8 +491,32 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   }
 }
 
-export default connect((state: any, props: any) => {
-  return {
-    auth: getAuthState(state),
-  };
-})(WayfScreen);
+export default connect(
+  (state: any, props: any) => {
+    return {
+      auth: getAuthState(state),
+    };
+  },
+  dispatch =>
+    bindActionCreators<WAYFScreenDispatchProps>(
+      {
+        tryLogin: tryAction(loginFederationAction, {
+          track: res => {
+            const errtype = res instanceof global.Error ? Error.getDeepErrorType<typeof Error.LoginError>(res) : undefined;
+            return [
+              moduleConfig,
+              res instanceof global.Error
+                ? errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
+                  ? trackingActionAddSuffix('Login fédéré', 'Multiple')
+                  : trackingActionAddSuffix('Login fédéré', false)
+                : trackingActionAddSuffix('Login fédéré', true),
+              res instanceof global.Error && errtype !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
+                ? errtype?.toString() ?? res.toString()
+                : undefined,
+            ];
+          },
+        }),
+      },
+      dispatch,
+    ),
+)(WayfScreen);
