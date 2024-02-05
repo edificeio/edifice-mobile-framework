@@ -17,7 +17,7 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import { RichEditor } from '~/framework/components/inputs/rich-text-editor';
+import { RichEditor } from '~/framework/components/inputs/rich-text';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';

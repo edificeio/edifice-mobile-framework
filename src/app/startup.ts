@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { initEditor } from '~/framework/components/inputs/rich-text-editor/editor';
+import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { loginAction } from '~/framework/modules/auth/actions';
 import { RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
 import { actions } from '~/framework/modules/auth/reducer';

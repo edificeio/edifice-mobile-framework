@@ -8,7 +8,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
-import { RichEditorForm } from '~/framework/components/inputs/rich-text-editor';
+import { RichEditorForm } from '~/framework/components/inputs/rich-text';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import Toast from '~/framework/components/toast';
