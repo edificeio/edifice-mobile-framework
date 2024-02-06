@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 
 let fontFaces = '';
+let attachmentIcon = '';
 
 async function loadFont(fontInfo) {
   const { fontFile, fontFamily, bold, italic, cursive } = fontInfo;
@@ -23,6 +24,19 @@ async function loadFont(fontInfo) {
     console.debug(`${fontFamily} font loaded from ${fontFile}`);
   } catch (error) {
     console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
+  }
+}
+
+async function loadIcon() {
+  try {
+    let base64String = '';
+    if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`images/attachment.svg`, 'base64');
+    else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/attachment.svg`, 'base64');
+
+    attachmentIcon += `data:image/svg+xml;base64,${base64String}`;
+    console.debug(`Pic font loaded from ${attachmentIcon}`);
+  } catch (error) {
+    console.error(`Error loading pic`, error);
   }
 }
 
@@ -53,6 +67,7 @@ async function initEditor() {
     { fontFile: 'ecriturea_italic.woff', fontFamily: 'Ecriture A', italic: true, cursive: true },
   ];
   await Promise.all(fontItems.map(loadFont));
+  await loadIcon();
 }
 
 function createHTML(options = {}) {
@@ -121,8 +136,9 @@ function createHTML(options = {}) {
         .download-attachments h2 {margin: 0 0 12px 0; font-size: 12px; line-height: 20px}
         .attachments {display: flex; flex-direction: column;}
         .attachments::before {content: "Pièces jointes";margin-bottom: 12px; font-size: 12px; font-weight: 700;}
-        .attachments a { padding: 10px 12px; border:  1px solid #F2F2F2; border-radius: 16px; display: flex;}
-        .attachments a::before {content: url(${''}); height: 20px; width: 20px; background-color: yellow; margin-right: 8px;}
+        .attachments a { padding: 10px 12px; border:  1px solid #F2F2F2; border-radius: 16px; display: flex; align-items: center; margin-bottom: 12px; background-color: #FFF;}
+        .attachments a:last-child {margin-bottom: 0;}
+        .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: 22px 22px; height: 22px; width: 22px; margin-right: 8px;}
         .download-attachments .attachments {padding: 0; border: none;}
         .download-attachments .attachments::before {display: none;}
         ${cssText}
