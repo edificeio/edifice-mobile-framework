@@ -10,6 +10,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { StorageObject } from '~/framework/util/storage';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
+import { initEditor } from '../framework/components/inputs/rich-text/editor/editor';
 import { I18n } from './i18n';
 
 const initFeatures = async () => {
@@ -40,6 +41,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
     } catch (e) {
       console.warn('[Startup] Startup failed. Cause :', e);
     } finally {
+      initEditor().finally(null);
       dispatch(appReadyAction());
     }
   });
