@@ -45,7 +45,6 @@ export default StyleSheet.create({
   },
   editorStyle: {
     color: theme.palette.grey.black,
-    primaryColor: theme.palette.primary.regular,
   },
   footerNoComment: {
     height: 0,

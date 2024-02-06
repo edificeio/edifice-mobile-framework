@@ -1,26 +1,36 @@
 import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 
+import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
+import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
+import { TextSizeStyle } from '~/framework/components/text';
+
 let fontFaces = '';
 let attachmentIcon = '';
+
+async function loadBase64(androidFolder, nameFile) {
+  let base64String = '';
+  if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`${androidFolder}/${nameFile}`, 'base64');
+  else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${nameFile}`, 'base64');
+
+  return base64String;
+}
 
 async function loadFont(fontInfo) {
   const { fontFile, fontFamily, bold, italic, cursive } = fontInfo;
   try {
-    // Load font from assets
-    let base64String = '';
-    if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`fonts/${fontFile}`, 'base64');
-    else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fontFile}`, 'base64');
-    // Update font faces declarations
+    const base64Font = await loadBase64('fonts', fontFile);
     fontFaces += `
         @font-face {
           font-family: '${fontFamily}';
-          src: url(data:font/woff;base64,${base64String}) format('woff');
+          src: url(data:font/woff;base64,${base64Font}) format('woff');
           ${bold ? 'font-weight: 700;' : ''}
           ${italic ? 'font-style: italic;' : ''}
           ${cursive ? 'size-adjust: 187.5%;' : ''}
         }
     `;
+
     console.debug(`${fontFamily} font loaded from ${fontFile}`);
   } catch (error) {
     console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
@@ -29,12 +39,10 @@ async function loadFont(fontInfo) {
 
 async function loadIcon() {
   try {
-    let base64String = '';
-    if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`images/attachment.svg`, 'base64');
-    else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/attachment.svg`, 'base64');
+    const base64Icon = await loadBase64('images', 'attachment.svg');
+    attachmentIcon += `data:image/svg+xml;base64,${base64Icon}`;
 
-    attachmentIcon += `data:image/svg+xml;base64,${base64String}`;
-    console.debug(`Pic font loaded from ${attachmentIcon}`);
+    console.debug(`Pic loaded from ${attachmentIcon}`);
   } catch (error) {
     console.error(`Error loading pic`, error);
   }
@@ -92,7 +100,6 @@ function createHTML(options = {}) {
     firstFocusEnd = true,
     useContainer = true,
     styleWithCSS = false,
-    primaryColor = '',
     // Enable/Disable composition
     useComposition = true,
   } = options;
@@ -126,19 +133,20 @@ function createHTML(options = {}) {
         hr{display: block;height: 0; border: 0;border-top: 1px solid #ccc; margin: 15px 0; padding: 0;}
         pre{padding: 10px 5px 10px 10px;margin: 15px 0;display: block;line-height: 18px;background: #F0F0F0;border-radius: 6px;font-size: 13px; font-family: 'monaco', 'Consolas', "Liberation Mono", Courier, monospace; word-break: break-all; word-wrap: break-word;overflow-x: auto;}
         pre code {display: block;font-size: inherit;white-space: pre-wrap;color: inherit;}
-        h1 {font-size: 26px; line-height: 36px;}
-        h2 {font-size: 22px; line-height: 30px;}
-        h1, h2, a {color: ${primaryColor}}
+
+        h1 {font-size: ${TextSizeStyle.Huge.fontSize}px; line-height: ${TextSizeStyle.Huge.lineHeight}px;}
+        h2 {font-size: ${TextSizeStyle.Bigger.fontSize}px; line-height: ${TextSizeStyle.Bigger.lineHeight}px;}
+        h1, h2, a {color: ${theme.palette.primary.regular}}
         strong, b {font-weight: 700;}
         em {font-style: italic;}
-        .download-attachments, .attachments {background-color: #FAFAFA; padding: 12px; border-radius: 12px; border: 1px solid #F2F2F2;}
+        .download-attachments, .attachments {background-color: ${theme.palette.grey.fog}; padding: ${UI_SIZES.spacing.small}px; border-radius: ${UI_SIZES.radius.newCard}px; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl};}
         .download-attachments h2, .download-attachments a, .attachments a {color: ${color}; text-decoration: none;}
-        .download-attachments h2 {margin: 0 0 12px 0; font-size: 12px; line-height: 20px}
+        .download-attachments h2 {margin: 0 0 ${UI_SIZES.spacing.small}px 0; font-size: ${getScaleFontSize(12)}px; line-height: ${getScaleFontSize(20)}px}
         .attachments {display: flex; flex-direction: column;}
-        .attachments::before {content: "Pièces jointes";margin-bottom: 12px; font-size: 12px; font-weight: 700;}
-        .attachments a { padding: 10px 12px; border:  1px solid #F2F2F2; border-radius: 16px; display: flex; align-items: center; margin-bottom: 12px; background-color: #FFF;}
+        .attachments::before {content: ${I18n.get('attachment-attachments')};margin-bottom: ${UI_SIZES.spacing.small}px; font-size: ${getScaleFontSize(12)}px; font-weight: 700;}
+        .attachments a { padding: ${UI_SIZES.spacing.minor}px ${UI_SIZES.spacing.small}px; border:  ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; border-radius: ${UI_SIZES.radius.mediumPlus}px; display: flex; align-items: center; margin-bottom: ${UI_SIZES.spacing.small}px; background-color: ${theme.palette.grey.white};}
         .attachments a:last-child {margin-bottom: 0;}
-        .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: 22px 22px; height: 22px; width: 22px; margin-right: 8px;}
+        .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: ${UI_SIZES.elements.icon.medium}px ${UI_SIZES.elements.icon.medium}px; height: ${UI_SIZES.elements.icon.medium}px; width: ${UI_SIZES.elements.icon.medium}px; margin-right: ${UI_SIZES.spacing.minor}px;}
         .download-attachments .attachments {padding: 0; border: none;}
         .download-attachments .attachments::before {display: none;}
         ${cssText}

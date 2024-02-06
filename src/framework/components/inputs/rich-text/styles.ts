@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
     color: theme.palette.grey.black,
     placeholderColor: theme.palette.grey.stone,
     contentCSSText: 'font-size: 16px; line-height: 24px; min-height: 200px; margin-top: 12px',
-    primaryColor: theme.palette.primary.regular,
   },
   rich: {
     minHeight: 300,

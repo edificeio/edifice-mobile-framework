@@ -86,6 +86,7 @@ export const UI_SIZES = {
   },
   elements: {
     border: {
+      thin: 1,
       default: 2,
       large: 4,
     },
@@ -93,6 +94,7 @@ export const UI_SIZES = {
       xxsmall: getScaleWidth(12),
       xsmall: getScaleWidth(16),
       small: getScaleWidth(20),
+      medium: getScaleWidth(22),
       default: getScaleWidth(24),
     },
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
