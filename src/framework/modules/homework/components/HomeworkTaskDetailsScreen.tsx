@@ -16,7 +16,7 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { HeadingSText, TextSizeStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import HomeworkDayCheckpoint from '~/framework/modules/homework/components/HomeworkDayCheckpoint';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
@@ -40,7 +40,7 @@ const dayImages = {
 
 export interface HomeworkTaskDetailsScreenDataProps {
   diaryInformation?: IHomeworkDiary;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface HomeworkTaskDetailsScreenEventProps {

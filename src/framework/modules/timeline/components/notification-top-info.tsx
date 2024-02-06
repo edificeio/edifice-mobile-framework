@@ -8,8 +8,8 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { TextFontStyle, TextSizeStyle } from '~/framework/components/text';
-import { ISession } from '~/framework/modules/auth/model';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { APPBADGES } from '~/framework/modules/timeline/app-badges';
 import appConf from '~/framework/util/appConf';
 import {
@@ -20,7 +20,7 @@ import {
 } from '~/framework/util/notifications';
 import HtmlContentView from '~/ui/HtmlContentView';
 
-const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: ISession }) => {
+const NotificationTopInfo = ({ notification, session }: { notification: ITimelineNotification; session: AuthLoggedAccount }) => {
   const message = notification && notification.message;
   const type = notification && notification.type;
   const date = notification && notification.date;
@@ -84,7 +84,7 @@ const NotificationTopInfo = ({ notification, session }: { notification: ITimelin
 };
 
 const mapStateToProps = (s: IGlobalState) => {
-  const session = getAuthState(s).session;
+  const session = getSession();
   if (!session) throw new Error('[NotificationTopInfo] session not provided');
   return {
     session,

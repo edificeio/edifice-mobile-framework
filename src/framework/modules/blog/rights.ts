@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { registerTimelineWorkflow } from '~/framework/modules/timeline/timeline-modules';
 import { navigate } from '~/framework/navigation/helper';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -29,7 +29,7 @@ export const deleteBlogResourceRight = 'org-entcore-blog-controllers-BlogControl
 
 export const addBlogFolderResourceRight = 'org.entcore.blog.controllers.FoldersController|add';
 
-export const getBlogPostRight = (blog: Blog, session: ISession) => {
+export const getBlogPostRight = (blog: Blog, session: AuthLoggedAccount) => {
   const hasPublishRight = resourceHasRight(blog, publishBlogPostResourceRight, session);
   const hasSubmitRight = resourceHasRight(blog, submitBlogPostResourceRight, session);
   const hasCreateRight = resourceHasRight(blog, createBlogPostResourceRight, session);
@@ -47,21 +47,21 @@ export const getBlogPostRight = (blog: Blog, session: ISession) => {
   } else return undefined;
 };
 
-export const hasPermissionManager = (blog: Blog, session: ISession) => {
+export const hasPermissionManager = (blog: Blog, session: AuthLoggedAccount) => {
   return blog && (blog.author.userId === session.user.id || resourceHasRight(blog, deleteBlogResourceRight, session));
 };
 
-export const getBlogWorkflowInformation = (session: ISession) => ({
+export const getBlogWorkflowInformation = (session: AuthLoggedAccount) => ({
   blog: {
-    list: session.authorizedActions.some(a => a.name === listBlogsResourceRight),
-    print: session.authorizedActions.some(a => a.name === printBlogResourceRight),
-    view: session.authorizedActions.some(a => a.name === viewBlogResourceRight),
-    create: session.authorizedActions.some(a => a.name === createBlogResourceRight),
-    createPublic: session.authorizedActions.some(a => a.name === createPublicBlogResourceRight),
-    publish: session.authorizedActions.some(a => a.name === publishBlogResourceRight),
+    list: session.rights.authorizedActions.some(a => a.name === listBlogsResourceRight),
+    print: session.rights.authorizedActions.some(a => a.name === printBlogResourceRight),
+    view: session.rights.authorizedActions.some(a => a.name === viewBlogResourceRight),
+    create: session.rights.authorizedActions.some(a => a.name === createBlogResourceRight),
+    createPublic: session.rights.authorizedActions.some(a => a.name === createPublicBlogResourceRight),
+    publish: session.rights.authorizedActions.some(a => a.name === publishBlogResourceRight),
   },
   folder: {
-    add: session.authorizedActions.some(a => a.name === addBlogFolderResourceRight),
+    add: session.rights.authorizedActions.some(a => a.name === addBlogFolderResourceRight),
   },
 });
 

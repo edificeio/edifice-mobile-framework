@@ -1,7 +1,6 @@
 import moment from 'moment';
 
-import { ISession, IUser } from '~/framework/modules/auth/model';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountType, AuthLoggedAccount, IUser } from '~/framework/modules/auth/model';
 import { IClassGroups, ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
@@ -83,13 +82,13 @@ const userAdapter = (data: IBackendUser): IUser => {
     displayName: data.displayName,
     id: data.id,
     login: '',
-    type: data.type as UserType,
+    type: data.type as AccountType,
   };
 };
 
 export const viescoService = {
   classGroups: {
-    get: async (session: ISession, classes: string[], studentId?: string) => {
+    get: async (session: AuthLoggedAccount, classes: string[], studentId?: string) => {
       let api = `/viescolaire/group/from/class?classes=${classes.join('&classes=')}`;
       if (studentId) api += `&student=${studentId}`;
       const classGroups = (await fetchJSONWithCache(api)) as IBackendClassGroupsList;
@@ -97,21 +96,21 @@ export const viescoService = {
     },
   },
   schoolYear: {
-    get: async (session: ISession, structureId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/viescolaire/settings/periode/schoolyear?structureId=${structureId}`;
       const schoolYear = (await fetchJSONWithCache(api)) as IBackendSchoolYear;
       return schoolYearAdapter(schoolYear);
     },
   },
   teachers: {
-    get: async (session: ISession, structureId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/viescolaire/user/list?profile=Teacher&structureId=${structureId}`;
       const teachers = (await fetchJSONWithCache(api)) as IBackendUserList;
       return teachers.map(userAdapter);
     },
   },
   terms: {
-    get: async (session: ISession, structureId: string, groupId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string, groupId: string) => {
       const api = `/viescolaire/periodes?idEtablissement=${structureId}&idGroupe=${groupId}`;
       const terms = (await fetchJSONWithCache(api)) as IBackendTermList;
       return terms.map(termAdapter);

@@ -8,7 +8,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { zimbraService } from '~/framework/modules/zimbra/service';
 
 const styles = StyleSheet.create({
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 });
 
 interface ICreateFolderModalProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
   creationCallback: () => void;
 }
 

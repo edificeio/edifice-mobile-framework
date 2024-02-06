@@ -70,6 +70,12 @@ export function toSnakeCase(camelCase: string) {
   return str;
 }
 
+export function toCamelCase(kebabCase: string, uppercased?: boolean): string {
+  return kebabCase
+    .split(/[-_]/)
+    .reduce((acc, word, index) => acc + (index !== 0 || uppercased ? uppercaseFirstLetter(word) : word), '');
+}
+
 // From https://dev.to/cod3pineapple/1143-longest-common-subsequence-javascript-solution-5bgp
 export const findLongestCommonSubstring = function (a: string, b: string) {
   let longest = '';

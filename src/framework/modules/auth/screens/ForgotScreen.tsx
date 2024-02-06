@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScreenState> {
   // fully controlled component
   public state: IForgotScreenState = {
-    login: '',
+    login: this.props.route.params.login ?? '',
     showStructurePicker: false,
     editing: false,
     structures: [],
@@ -115,7 +115,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
       const structureId = selectedStructure && selectedStructure.structureId;
       const result = await this.props.trySubmit(route.params.platform, { login, firstName, structureId }, forgotMode);
       this.setState({ editing: false, forgotState: 'DONE', result });
-    } catch {
+    } catch (e) {
+      console.warn(e);
       this.setState({
         forgotState: 'IDLE',
         editing: false,
@@ -149,8 +150,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
     const errorText = hasStructures
       ? I18n.get('auth-forgot-severalemails')
       : errorMsg
-      ? I18n.get(`auth-forgot-${errorMsg.replace(/\./g, '')}${forgotMode === 'id' ? '-id' : ''}`)
-      : I18n.get('auth-forgot-error-unknown');
+        ? I18n.get(`auth-forgot-${errorMsg.replace(/\./g, '')}${forgotMode === 'id' ? '-id' : ''}`)
+        : I18n.get('auth-forgot-error-unknown');
     const isSuccess =
       result &&
       !containsKey(result, 'error') &&
@@ -229,7 +230,6 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                     <View
                       style={[
                         styles.inputWrapper,
-                        // Strangely, eslint considers this style is inline-defined.
                         // eslint-disable-next-line react-native/no-inline-styles
                         {
                           backgroundColor: structureName ? theme.palette.complementary.blue.regular : undefined,
@@ -238,8 +238,8 @@ export class ForgotPage extends React.PureComponent<IForgotPageProps, IForgotScr
                             isError && !editing
                               ? theme.palette.status.failure.regular
                               : showStructurePicker
-                              ? theme.palette.complementary.blue.regular
-                              : theme.palette.grey.grey,
+                                ? theme.palette.complementary.blue.regular
+                                : theme.palette.grey.grey,
                         },
                       ]}>
                       <TextInputLine

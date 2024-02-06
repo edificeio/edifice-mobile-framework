@@ -1,14 +1,17 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ILoginResult, loginAction } from '~/framework/modules/auth/actions';
-import { ISession } from '~/framework/modules/auth/model';
+import { ILoginResult, loginCredentialsAction, refreshRequirementsAction } from '~/framework/modules/auth/actions';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthMFAScreenDispatchProps {
-  tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
+  tryLogin: (...args: Parameters<typeof loginCredentialsAction>) => Promise<ILoginResult>;
+  tryRefreshRequirements: (
+    ...args: Parameters<typeof refreshRequirementsAction>
+  ) => ReturnType<ReturnType<typeof refreshRequirementsAction>>;
   tryUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => Promise<void>;
 }
 
@@ -27,7 +30,7 @@ export interface AuthMFAScreenNavParams {
 export interface AuthMFAScreenProps {}
 
 export interface AuthMFAScreenStoreProps {
-  session: ISession | undefined;
+  session?: AuthLoggedAccount;
 }
 
 export interface AuthMFAScreenPrivateProps

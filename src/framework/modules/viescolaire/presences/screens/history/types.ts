@@ -1,7 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession, UserChild } from '~/framework/modules/auth/model';
-import type { UserType } from '~/framework/modules/auth/service';
+import type { AccountType, AuthLoggedAccount, UserChild } from '~/framework/modules/auth/model';
 import type { ISchoolYear, ITerm } from '~/framework/modules/viescolaire/common/model';
 import type {
   fetchPresencesAbsenceStatementsAction,
@@ -30,9 +29,9 @@ export interface PresencesHistoryScreenStoreProps {
   children?: UserChild[];
   classes?: string[];
   selectedChildId?: string;
-  session?: ISession;
+  session?: AuthLoggedAccount;
   userId?: string;
-  userType?: UserType;
+  userType?: AccountType;
 }
 
 export interface PresencesHistoryScreenDispatchProps {

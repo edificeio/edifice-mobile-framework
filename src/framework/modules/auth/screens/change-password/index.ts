@@ -1,5 +1,5 @@
-import ChangePasswordScreen from './screen';
+import ChangePasswordScreenOLD from './screen';
 import { ChangePasswordScreenNavParams, ChangePasswordScreenProps } from './types';
 
 export { ChangePasswordScreenNavParams, ChangePasswordScreenProps };
-export default ChangePasswordScreen;
+export default ChangePasswordScreenOLD;

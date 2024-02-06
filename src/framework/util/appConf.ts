@@ -2,10 +2,10 @@
  * AppConfTool
  * AppConf Loader
  */
-import { ImageStyle, PlatformOSType } from 'react-native';
+import type { ImageStyle, PlatformOSType } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
-import { PictureProps } from '~/framework/components/picture';
+import type { PictureProps } from '~/framework/components/picture';
 
 // Platforms ======================================================================================
 
@@ -118,6 +118,21 @@ export class AppConf {
   };
 
   platforms: Platform[];
+
+  getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
+
+  assertPlatformOfName = (name: string) => {
+    return (
+      this.getPlatformByName(name) ??
+      (() => {
+        throw new Error('[assertPlatformOfName] no platform of name :' + name);
+      })()
+    );
+  };
+
+  get hasMultiplePlatform() {
+    return this.platforms.length > 1;
+  }
 
   webviewIdentifier: string;
 

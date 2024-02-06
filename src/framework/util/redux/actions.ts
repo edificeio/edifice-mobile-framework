@@ -1,11 +1,13 @@
-import { AnyAction } from 'redux';
+import type { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { DoTrackArg, Trackers } from '~/framework/util/tracker';
+import { DoTrackArgLegacy, TrackEventOfModuleArgs, Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 
-interface TryActionOptions<Args extends any[]> {
-  track?: DoTrackArg | ((...args: Args) => DoTrackArg);
+export interface TryActionOptions<Args extends any[], ReturnType> {
+  track?:
+    | TrackEventOfModuleArgs
+    | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackEventOfModuleArgs | undefined);
 }
 
 /** must declare correct type for bindActionCreators since built-in types are unusable.
@@ -32,16 +34,36 @@ declare module 'redux' {
 function performAction<Args extends any[], R, E>(
   action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
   onCatch: (e: unknown) => void,
-  opts?: TryActionOptions<Args>,
+  opts?: TryActionOptions<Args, R>,
 ) {
   return ((...args: Args) =>
     async (dispatch: ThunkDispatch<IGlobalState, E, AnyAction>) => {
       try {
         const ret = await dispatch(action(...args));
-        if (opts?.track) Trackers.trackEventOfModule(opts.track[0], opts.track[1], opts.track[2] + ' - Succès', opts.track[3]);
+        const trackOpt =
+          opts?.track &&
+          (typeof opts.track === 'function'
+            ? opts.track(ret, ...args)
+            : ([
+                opts.track[0],
+                opts.track[1],
+                opts.track[2] && trackingActionAddSuffix(opts.track[2], true),
+                opts.track[3],
+              ] as TrackEventOfModuleArgs));
+        if (trackOpt) Trackers.trackEventOfModule(...trackOpt);
         return ret;
       } catch (e) {
-        if (opts?.track) Trackers.trackEventOfModule(opts.track[0], opts.track[1], opts.track[2] + ' - Échec', opts.track[3]);
+        const trackOpt =
+          opts?.track &&
+          (typeof opts.track === 'function'
+            ? opts.track(e as Error, ...args)
+            : ([
+                opts.track[0],
+                opts.track[1],
+                opts.track[2] && trackingActionAddSuffix(opts.track[2], false),
+                opts.track[3],
+              ] as TrackEventOfModuleArgs));
+        if (trackOpt) Trackers.trackEventOfModule(...trackOpt);
         onCatch(e);
       }
     }) as unknown as (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>;
@@ -57,7 +79,7 @@ function performAction<Args extends any[], R, E>(
  */
 export function tryAction<Args extends any[], R, E>(
   action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
-  opts?: TryActionOptions<Args>,
+  opts?: TryActionOptions<Args, R>,
 ) {
   return performAction(
     action,
@@ -79,7 +101,7 @@ export function tryAction<Args extends any[], R, E>(
  */
 export function handleAction<Args extends any[], R, E>(
   action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
-  opts?: TryActionOptions<Args>,
+  opts?: TryActionOptions<Args, R>,
 ) {
   return performAction(
     action,
@@ -101,7 +123,7 @@ export function handleAction<Args extends any[], R, E>(
 export const tryActionLegacy =
   <Args extends any[], R, E>(
     action: (...args: Args) => ThunkAction<R, IGlobalState, E, AnyAction>,
-    trackInfo?: DoTrackArg | ((...args: Args) => DoTrackArg),
+    trackInfo?: DoTrackArgLegacy | ((...args: Args) => DoTrackArgLegacy),
     throwback?: boolean,
   ) =>
   (...args: Args) =>

@@ -3,7 +3,8 @@
  */
 
 import { Moment } from 'moment';
-import { UserType } from '~/framework/modules/auth/service';
+
+import { AccountType } from '../../auth/model';
 
 export enum HobbieVisibility {
   PRIVE = 'PRIVE',
@@ -20,7 +21,7 @@ export interface InfoPerson {
   id: string;
   login: string;
   displayName: string;
-  type: UserType;
+  type: AccountType;
   visibleInfos: string[];
   schools: {
     exports: null | any;

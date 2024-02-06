@@ -21,15 +21,15 @@ import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { logoutAction } from '~/framework/modules/auth/actions';
-import { IAuthContext } from '~/framework/modules/auth/model';
+import { manualLogoutAction } from '~/framework/modules/auth/actions';
+import { AccountType, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
-import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import AddAccountList from '~/framework/modules/user/components/account-list/add';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
@@ -157,7 +157,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
 function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], focusedRef: React.MutableRefObject<boolean>) {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
-  const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
+  const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
@@ -214,7 +214,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     },
     [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
   );
-  const canEditPersonalInfo = session?.user.type !== UserType.Student;
+  const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
   return React.useMemo(
@@ -253,6 +253,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 />
               </>
             ) : null}
+            <LineButton
+              disabled={!!currentLoadingMenu}
+              title={I18n.get('user-page-editlang')}
+              onPress={() => navigation.navigate(userRouteNames.lang, {})}
+            />
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
@@ -302,7 +307,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @returns the React Elements of the account button and list
  */
 function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accountListRef, data: any) {
-  const canManageAccounts = session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel;
+  const canManageAccounts = session?.user.type === AccountType.Teacher || session?.user.type === AccountType.Personnel;
   const showAccountList = React.useCallback(() => {
     accountListRef.current?.present();
   }, [accountListRef]);
@@ -529,7 +534,7 @@ export default connect(
   dispatch =>
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
-        handleLogout: handleAction(logoutAction),
+        handleLogout: handleAction(manualLogoutAction),
       },
       dispatch,
     ),

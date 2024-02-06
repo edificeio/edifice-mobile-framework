@@ -1,7 +1,7 @@
 import * as React from 'react';
 
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/diary/module-config';
 import DiaryHomeworkScreen, { computeNavBar as homeworkNavBar } from '~/framework/modules/viescolaire/diary/screens/homework';
 import DiaryHomeworkListScreen, {
@@ -24,7 +24,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     const screens: React.ReactElement[] = [];
     const session = getSession();
 
-    if (session?.user.type === UserType.Teacher) {
+    if (session?.user.type === AccountType.Teacher) {
       screens.push(
         <Stack.Screen
           key={diaryRouteNames.timetable}

@@ -11,7 +11,7 @@ import { ModalBoxHandle } from '~/framework/components/ModalBox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { CaptionBoldText, HeadingXSText } from '~/framework/components/text';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchZimbraQuotaAction, fetchZimbraRootFoldersAction } from '~/framework/modules/zimbra/actions';
 import { IFolder, IQuota, SystemFolder } from '~/framework/modules/zimbra/model';
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
 interface CustomDrawerContentStoreProps {
   folders: IFolder[];
   quota: IQuota;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 interface CustomDrawerContentDispatchProps {

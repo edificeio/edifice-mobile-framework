@@ -7,7 +7,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_SIZES } from '~/framework/components/constants';
 import { BodyText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { FolderButton } from '~/framework/modules/zimbra/components/FolderButton';
 import { IFolder } from '~/framework/modules/zimbra/model';
 import { zimbraService } from '~/framework/modules/zimbra/service';
@@ -25,7 +25,7 @@ interface IMoveMailsModalProps {
   folders: IFolder[];
   mailFolders: string[];
   mailIds: string[];
-  session?: ISession;
+  session?: AuthLoggedAccount;
   successCallback: () => any;
 }
 

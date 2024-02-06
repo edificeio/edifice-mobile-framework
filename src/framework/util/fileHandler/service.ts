@@ -16,7 +16,7 @@ import RNFS, {
   UploadProgressCallbackResult,
 } from 'react-native-fs';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { assertPermissions } from '~/framework/util/permissions';
 import { getSafeFileName } from '~/framework/util/string';
 import { urlSigner } from '~/infra/oauth';
@@ -55,7 +55,7 @@ const mimeAliases = {
 const fileTransferService = {
   /** Upload a file to the given url. This function returns more information than `uploadFile` to better handle file suring upload. */
   startUploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -99,7 +99,7 @@ const fileTransferService = {
 
   /** Upload a file to the given url. */
   uploadFile: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     file: LocalFile,
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -115,7 +115,7 @@ const fileTransferService = {
   },
 
   startUploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -126,7 +126,7 @@ const fileTransferService = {
   },
 
   uploadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     files: LocalFile[],
     params: IUploadParams,
     adapter: (data: any) => SyncedFileType['df'],
@@ -140,7 +140,7 @@ const fileTransferService = {
 
   /** Download a file that exists in the server. This function returns more information than `downloadFile` to better handle file suring download. */
   startDownloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -237,7 +237,7 @@ const fileTransferService = {
 
   /** Download a file that exists in the server. */
   downloadFile: async <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     file: IDistantFile,
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -245,14 +245,14 @@ const fileTransferService = {
   ) => {
     try {
       const job = await fileTransferService.startDownloadFile(session, file, params, callbacks, syncedFileClass);
-      return job.promise;
+      return await job.promise;
     } catch (e) {
       throw e;
     }
   },
 
   startDownloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,
@@ -262,7 +262,7 @@ const fileTransferService = {
   },
 
   downloadFiles: <SyncedFileType extends SyncedFile<IAnyDistantFile> = SyncedFile<IAnyDistantFile>>(
-    session: ISession,
+    session: AuthLoggedAccount,
     files: IDistantFile[],
     params: IDownloadParams,
     callbacks?: IDownloadCallbaks,

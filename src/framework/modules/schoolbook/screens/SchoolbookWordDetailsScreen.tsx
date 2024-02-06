@@ -17,9 +17,8 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { ISession } from '~/framework/modules/auth/model';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import SchoolbookWordDetailsCard from '~/framework/modules/schoolbook/components/SchoolbookWordDetailsCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import { ISchoolbookNotification } from '~/framework/modules/schoolbook/notif-handler';
@@ -33,7 +32,7 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface SchoolbookWordDetailsScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session: ISession | undefined;
+  session?: AuthLoggedAccount;
 }
 export interface SchoolbookWordDetailsScreenNavigationParams {
   notification?: ISchoolbookNotification;
@@ -80,8 +79,8 @@ const SchoolbookWordDetailsScreen = (props: SchoolbookWordDetailsScreenProps) =>
   const detailsCardRef: { current: any } = React.useRef();
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === UserType.Teacher || userType === UserType.Personnel;
-  const isParent = userType === UserType.Relative;
+  const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
+  const isParent = userType === AccountType.Relative;
 
   // EVENTS =====================================================================================
 

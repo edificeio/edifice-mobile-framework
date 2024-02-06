@@ -5,8 +5,7 @@
 import { Alert, Linking } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import { assertSession } from '~/framework/modules/auth/reducer';
-import { urlSigner } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
 export interface OpenUrlCustomLabels {
   title?: string;
@@ -41,9 +40,8 @@ export async function openUrl(
 
     if (autoLogin) {
       try {
-        const session = assertSession();
         if (urlSigner.getIsUrlSignable(finalUrl)) {
-          const customToken = await session.oauth2.getQueryParamToken();
+          const customToken = await OAuth2RessourceOwnerPasswordClient.connection?.getQueryParamToken();
           if (customToken && finalUrl) {
             // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
             const urlObj = new URL(finalUrl);

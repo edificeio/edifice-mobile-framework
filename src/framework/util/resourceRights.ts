@@ -1,4 +1,4 @@
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 export interface IResource {
   shared?: { userId?: string; groupId?: string; [key: string]: boolean | string | undefined }[];
@@ -6,7 +6,7 @@ export interface IResource {
   owner?: { userId: string; displayName?: string };
 }
 
-export const resourceHasRight = (resource: IResource, key: string, session: ISession) => {
+export const resourceHasRight = (resource: IResource, key: string, session: AuthLoggedAccount) => {
   if (resource.author?.userId === session.user.id || resource.owner?.userId === session.user.id) return true;
   let hasRight = false;
   resource.shared?.forEach(sharedEntry => {
@@ -27,7 +27,7 @@ export const resourceRightFilter = (
     author: { userId: string; username: string; login: string };
   }[],
   key: string,
-  session: ISession,
+  session: AuthLoggedAccount,
 ) => {
   return resources.filter(resource => resourceHasRight(resource, key, session));
 };

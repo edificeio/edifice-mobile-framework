@@ -7,9 +7,11 @@ import { ColorValue } from 'react-native';
 import type { Reducer } from 'redux';
 
 import { IGlobalState } from '~/app/store';
-import { PictureProps } from '~/framework/components/picture';
+import type { PictureProps } from '~/framework/components/picture';
 import { updateAppBadges } from '~/framework/modules/timeline/app-badges';
-import { toSnakeCase } from '~/framework/util/string';
+import { toCamelCase, toSnakeCase } from '~/framework/util/string';
+
+import type { IStorageSlice, StorageTypeMap } from './storage/types';
 
 //  8888888888          888                                              d8888
 //  888                 888                                             d88888
@@ -90,11 +92,15 @@ interface IModuleConfigRedux<State> extends IModuleConfigDeclarationRedux {
 interface IModuleConfigTracking {
   trackingName: string; // Name used for tracking category. Computed from `name` if not specified.
 }
+interface IModuleConfigStorage {
+  storageName: string; // Name used for storage namespace. Equals to `name` if not specified.
+}
 // All information config available about a module
 export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> &
   IModuleConfigRights &
   IModuleConfigRedux<State> &
-  IModuleConfigTracking & {
+  IModuleConfigTracking &
+  IModuleConfigStorage & {
     init: (matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => void;
     isReady: boolean;
     assignValues: (values: IModuleConfigDeclaration<Name>) => void;
@@ -103,7 +109,8 @@ export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> 
 export type IModuleConfigDeclaration<Name extends string> = IModuleConfigBase<Name> &
   IModuleConfigDeclarationRights &
   Partial<IModuleConfigDeclarationRedux> &
-  Partial<IModuleConfigTracking>;
+  Partial<IModuleConfigTracking> &
+  Partial<IModuleConfigStorage>;
 export type IUnkownModuleConfig = IModuleConfig<string, unknown>;
 export type IAnyModuleConfig = IModuleConfig<string, any>;
 
@@ -135,6 +142,8 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
 
   trackingName: IModuleConfig<Name, State>['trackingName'];
 
+  storageName: IModuleConfig<Name, State>['storageName'];
+
   constructor(decl: IModuleConfigDeclaration<Name>) {
     const {
       name,
@@ -145,6 +154,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
       actionTypesPrefix,
       reducerName,
       trackingName,
+      storageName,
       ...rest
     } = decl;
     // Base
@@ -166,7 +176,9 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     this.namespaceActionType = actionType => this.actionTypesPrefix + actionType;
     this.getState = (globalState: IGlobalState) => globalState[this.reducerName];
     // Tracking
-    this.trackingName = trackingName ?? this.name;
+    this.trackingName = trackingName ?? toCamelCase(this.name, true);
+    // Storage
+    this.storageName = storageName ?? this.name;
     // Rest
     Object.assign(this, rest);
   }
@@ -200,32 +212,64 @@ export interface IModuleBase<Name extends string, ConfigType extends IModuleConf
 export interface IModuleRedux<State> {
   reducer: Reducer<State>;
 }
-export interface IModule<Name extends string, ConfigType extends IModuleConfig<Name, State>, State>
-  extends IModuleBase<Name, ConfigType, State>,
-    IModuleRedux<State> {
+export interface IModuleStorage<
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
+> {
+  storage?: IStorageSlice<ModuleStorageSliceTypeMap>;
+  sessionStorage?: IStorageSlice<ModuleSessionStorageSliceTypeMap>;
+}
+export interface IModule<
+  Name extends string,
+  ConfigType extends IModuleConfig<Name, State>,
+  State,
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
+> extends IModuleBase<Name, ConfigType, State>,
+    IModuleRedux<State>,
+    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {
   // ToDo add Module methods here
 }
 
-export interface IModuleDeclaration<Name extends string, ConfigType extends IModuleConfig<Name, State>, State>
-  extends IModuleBase<Name, ConfigType, State>,
-    IModuleRedux<State> {}
+export interface IModuleDeclaration<
+  Name extends string,
+  ConfigType extends IModuleConfig<Name, State>,
+  State,
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
+> extends IModuleBase<Name, ConfigType, State>,
+    IModuleRedux<State>,
+    IModuleStorage<ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap> {}
 
 /**
  * Use this class constructor to init a module from its definition.
  * Note: before being intantiated, EVERY dependant module MUST have registered their things in its module map.
  * ToDo: make a resolution algorithm to make things easier ?
  */
-export class Module<Name extends string, ConfigType extends IModuleConfig<Name, State>, State>
-  implements IModule<Name, ConfigType, State>
+export class Module<
+  Name extends string,
+  ConfigType extends IModuleConfig<Name, State>,
+  State,
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
+> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap>
 {
   // Gathered from declaration
   config: ConfigType;
 
   reducer: Reducer<State>;
 
-  constructor(moduleDeclaration: IModuleDeclaration<Name, ConfigType, State>) {
+  storage?: IStorageSlice<ModuleStorageSliceTypeMap> | undefined;
+
+  sessionStorage?: IStorageSlice<ModuleSessionStorageSliceTypeMap> | undefined;
+
+  constructor(
+    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap>,
+  ) {
     this.config = moduleDeclaration.config;
     this.reducer = moduleDeclaration.reducer;
+    this.storage = moduleDeclaration.storage;
+    this.sessionStorage = moduleDeclaration.sessionStorage;
   }
 
   init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
@@ -241,7 +285,7 @@ export class Module<Name extends string, ConfigType extends IModuleConfig<Name, 
 
   get() {
     if (!this.isReady) throw new Error(`Try to get non-initialized module '${this.config.name}'`);
-    return this as Required<Module<Name, ConfigType, State>>;
+    return this as Required<Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap>>;
   }
 }
 

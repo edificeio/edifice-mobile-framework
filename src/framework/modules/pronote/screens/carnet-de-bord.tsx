@@ -17,7 +17,7 @@ import { PageView } from '~/framework/components/page';
 import type { PictureProps } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadCarnetDeBordAction } from '~/framework/modules/pronote/actions/carnet-de-bord';
 import {
@@ -39,10 +39,10 @@ import { tryActionLegacy } from '~/framework/util/redux/actions';
 import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 export interface CarnetDeBordScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
   data: ICarnetDeBordStateData;
   error?: Error | PronoteCdbInitError;
-  structures?: ISession['user']['structures'];
+  structures?: AuthLoggedAccount['user']['structures'];
 }
 export interface CarnetDeBordScreenEventProps {
   handleLoadData: () => Promise<ICarnetDeBord[]>;
@@ -180,7 +180,7 @@ CarnetDeBordScreen.getRenderContent =
     isStructureShown: boolean,
     navigation: CarnetDeBordScreenProps['navigation'],
     structures: CarnetDeBordScreenProps['structures'],
-    session?: ISession,
+    session?: AuthLoggedAccount,
   ) =>
   (refreshControl: ScrollViewProps['refreshControl']) => {
     return (
@@ -302,10 +302,10 @@ CarnetDeBordScreen.getRenderContent =
                               })
                           : I18n.get('pronote-noinfo')
                         : vsco.Date
-                        ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
-                          ? displayDate(vsco.Date, 'short') + I18n.get('common-space') + vsco.Date.format('LT')
-                          : displayDate(vsco.Date, 'short')
-                        : I18n.get('pronote-noinfo'),
+                          ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
+                            ? displayDate(vsco.Date, 'short') + I18n.get('common-space') + vsco.Date.format('LT')
+                            : displayDate(vsco.Date, 'short')
+                          : I18n.get('pronote-noinfo'),
                   }
                 );
               })()}

@@ -1,6 +1,6 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { InteractionManager, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -16,22 +16,24 @@ import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
-import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import { AuthErrorCode, getAuthErrorCode } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
+import moduleConfig from '~/framework/modules/auth/module-config';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { OAuth2ErrorCode } from '~/infra/oauth';
+import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
+import { AuthPendingRedirection } from '../../model';
 import styles from './styles';
-import { LoginHomeScreenDispatchProps, LoginHomeScreenPrivateProps, LoginState } from './types';
+import { LoginCredentialsScreenDispatchProps, LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginHome>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginCredentials>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -41,58 +43,32 @@ export const computeNavBar = ({
   }),
 });
 
-const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
-  const { route, navigation } = props;
+const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
+  const { route, navigation, error, handleConsumeError, tryLogin } = props;
   const { platform } = route.params;
 
-  const [login, setLogin] = React.useState<string>('');
+  const [login, setLogin] = React.useState<string>(route.params.login ?? '');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
-  const [rememberMe, setRememberMe] = React.useState<boolean>(true); // We keep the logic for 1 year, after we delete
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
-  const [error, setError] = React.useState<AuthErrorCode>();
+
+  const { errmsg, errtype, errkey, errclear } = useErrorWithKey<typeof Error.LoginError>(error, handleConsumeError);
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);
   const mounted = React.useRef(false);
-  const unsubscribeBlur = React.useRef<any>(null);
-  const unsubscribeBlurTask = React.useRef<any>(null);
 
   const isSubmitDisabled = React.useMemo(() => !(login && password), [login, password]);
 
-  const consumeError = () => {
-    if (props.auth.error) {
-      setError(props.auth.error);
-      props.handleConsumeError();
-    }
-  };
-
-  const resetError = () => {
-    setError(undefined);
-  };
-
   React.useEffect(() => {
     mounted.current = true;
-    const handleBlur = () => {
-      unsubscribeBlurTask.current = InteractionManager.runAfterInteractions(() => {
-        resetError();
-      });
-    };
-
-    unsubscribeBlur.current = props.navigation.addListener('blur', handleBlur);
 
     return () => {
       mounted.current = false;
-      unsubscribeBlur.current();
-      unsubscribeBlurTask.current?.cancel();
     };
   }, []);
 
-  React.useEffect(() => {
-    consumeError();
-  });
-
-  const doLogin = async () => {
+  const doLogin = React.useCallback(async () => {
     setLoginState(LoginState.RUNNING);
     try {
       const loginCredentials = {
@@ -100,21 +76,16 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
         password: password.trim(),
       };
 
-      const redirect = await props.tryLogin(platform, loginCredentials, rememberMe);
-
-      if (redirect) {
-        redirectLoginNavAction(redirect, platform, navigation);
+      await tryLogin(platform, loginCredentials, errkey);
+      if (mounted) {
+        setTyping(false);
+        setLoginState(LoginState.DONE);
         setTimeout(() => {
           if (mounted) {
             setTyping(false);
             setLoginState(LoginState.IDLE);
           }
         }, 500);
-      } else {
-        if (mounted) {
-          setTyping(false);
-          setLoginState(LoginState.DONE);
-        }
       }
     } catch {
       if (mounted) {
@@ -122,37 +93,49 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
         setLoginState(LoginState.IDLE);
       }
     }
-  };
+  }, [login, password, tryLogin, platform, errkey]);
 
-  const goToWeb = () => {
+  const goToWeb = React.useCallback(() => {
     openUrl(platform.url);
-  };
+  }, [platform.url]);
 
-  const onTextChange = () => {
+  const onTextChange = React.useCallback(() => {
     setTyping(true);
-    resetError();
-  };
+    errclear();
+  }, [errclear]);
 
-  const onLoginChanged = value => {
-    setLogin(value.trim().toLowerCase());
-    onTextChange();
-  };
+  const onLoginChanged = React.useCallback(
+    (value: string) => {
+      setLogin(value.trim().toLowerCase());
+      onTextChange();
+    },
+    [onTextChange],
+  );
 
-  const onPasswordChanged = value => {
-    setPassword(value);
-    onTextChange();
-  };
+  const onPasswordChanged = React.useCallback(
+    (value: string) => {
+      setPassword(value);
+      onTextChange();
+    },
+    [onTextChange],
+  );
 
-  const onSubmitEditingLogin = () => {
+  const onSubmitEditingLogin = React.useCallback(() => {
     if (inputPassword.current) inputPassword.current.focus();
-  };
+  }, []);
 
-  const onSubmitEditingPassword = () => {
+  const onSubmitEditingPassword = React.useCallback(() => {
     if (!isSubmitDisabled) doLogin();
-  };
+  }, [doLogin, isSubmitDisabled]);
 
   const renderError = React.useCallback(() => {
-    if (!error) return;
+    if (!errmsg) {
+      return (
+        <View style={styles.boxError}>
+          <BodyText style={styles.userTextError}> </BodyText>
+        </View>
+      );
+    }
     return (
       <View style={[styles.boxError, styles.userError]}>
         <NamedSVG
@@ -161,10 +144,10 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
           width={UI_SIZES.elements.icon.default}
           height={UI_SIZES.elements.icon.default}
         />
-        <BodyText style={styles.userTextError}>{getAuthErrorCode(error, platform)}</BodyText>
+        <BodyText style={styles.userTextError}>{errmsg}</BodyText>
       </View>
     );
-  }, [error, platform]);
+  }, [errmsg]);
 
   const renderPlatform = React.useCallback(() => {
     const logoStyle = {
@@ -195,7 +178,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
               autoCorrect={false}
               spellCheck={false}
               testID="login-identifier"
-              showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
+              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
             />
@@ -210,7 +193,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
               ref={inputPassword}
               onChangeText={onPasswordChanged.bind(this)}
               value={password}
-              showError={error && error === OAuth2ErrorCode.BAD_CREDENTIALS}
+              showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
               testID="login-password"
               onSubmitEditing={onSubmitEditingPassword}
               returnKeyType="send"
@@ -220,21 +203,28 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
         />
       </View>
     );
-  }, [onLoginChanged, login, error, onPasswordChanged, password, onSubmitEditingPassword]);
+  }, [onLoginChanged, login, errmsg, errtype, onSubmitEditingLogin, onPasswordChanged, password, onSubmitEditingPassword]);
 
   const renderLoginButton = React.useCallback(() => {
-    if ((error === 'not_premium' || error === 'pre_deleted') && !typing)
+    if (
+      !typing &&
+      errmsg &&
+      (errtype === Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM ||
+        errtype === Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED)
+    ) {
       return <PrimaryButton action={goToWeb} text={I18n.get('LoginWeb')} iconRight="ui-externalLink" testID="login-opentoweb" />;
-    return (
-      <PrimaryButton
-        action={doLogin}
-        disabled={isSubmitDisabled}
-        text={I18n.get('auth-login-connect')}
-        loading={loginState === LoginState.RUNNING || loginState === LoginState.DONE}
-        testID="login-connect"
-      />
-    );
-  }, [error, typing, isSubmitDisabled, loginState, doLogin, goToWeb]);
+    } else {
+      return (
+        <PrimaryButton
+          action={doLogin}
+          disabled={isSubmitDisabled}
+          text={I18n.get('auth-login-connect')}
+          loading={loginState === LoginState.RUNNING || loginState === LoginState.DONE}
+          testID="login-connect"
+        />
+      );
+    }
+  }, [typing, errmsg, errtype, goToWeb, doLogin, isSubmitDisabled, loginState]);
 
   const renderPage = React.useCallback(() => {
     return (
@@ -252,7 +242,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
             <View style={styles.boxTextForgot}>
               <DefaultButton
                 text={I18n.get('auth-login-forgot-password')}
-                action={() => navigation.navigate(authRouteNames.forgot, { platform, mode: 'password' })}
+                action={() => navigation.navigate(authRouteNames.forgot, { platform, mode: 'password', login: route.params.login })}
                 testID="login-forgot-password"
                 style={styles.forgotPasswordButton}
               />
@@ -266,7 +256,7 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
         </View>
       </ScrollView>
     );
-  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, platform]);
+  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, platform, route.params.login]);
 
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };
@@ -274,15 +264,27 @@ const LoginScreen = (props: LoginHomeScreenPrivateProps) => {
 export default connect(
   (state: IGlobalState) => {
     return {
-      auth: getAuthState(state),
+      error: getAuthState(state).error,
     };
   },
   dispatch =>
-    bindActionCreators<LoginHomeScreenDispatchProps>(
+    bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
-        tryLogin: tryAction(loginAction),
-        handleConsumeError: handleAction(consumeAuthError),
+        tryLogin: tryAction(loginCredentialsAction, {
+          track: res => [
+            moduleConfig,
+            res instanceof global.Error
+              ? trackingActionAddSuffix('Login credentials', false)
+              : res === AuthPendingRedirection.ACTIVATE
+                ? trackingActionAddSuffix('Login credentials', 'Activation')
+                : res === AuthPendingRedirection.RENEW_PASSWORD
+                  ? trackingActionAddSuffix('Login credentials', 'Renouvellement')
+                  : trackingActionAddSuffix('Login credentials', true),
+            res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
+          ],
+        }),
+        handleConsumeError: handleAction(consumeAuthErrorAction),
       },
       dispatch,
     ),
-)(LoginScreen);
+)(LoginCredentialsScreen);

@@ -19,9 +19,8 @@ import { linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
-import { ISession } from '~/framework/modules/auth/model';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { SchoolbookWordSummaryCard } from '~/framework/modules/schoolbook/components/SchoolbookWordSummaryCard';
 import { SchoolbookNavigationParams, schoolbookRouteNames } from '~/framework/modules/schoolbook/navigation';
 import {
@@ -47,7 +46,7 @@ const styles = {
 
 export interface ISchoolbookWordListScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session: ISession | undefined;
+  session?: AuthLoggedAccount;
 }
 export type ISchoolbookWordListScreenProps = ISchoolbookWordListScreenDataProps &
   NativeStackScreenProps<SchoolbookNavigationParams, typeof schoolbookRouteNames.home>;
@@ -72,8 +71,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   const session = props.session;
   const userId = session?.user?.id;
   const userType = session?.user?.type;
-  const isTeacher = userType === UserType.Teacher || userType === UserType.Personnel;
-  const isParent = userType === UserType.Relative;
+  const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
+  const isParent = userType === AccountType.Relative;
   const hasSchoolbookWordCreationRights = session && getSchoolbookWorkflowInformation(session).create;
 
   // EVENTS =====================================================================================

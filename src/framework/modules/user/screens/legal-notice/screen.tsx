@@ -15,7 +15,6 @@ import { getLegalUrlsAction } from '~/framework/modules/auth/actions';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { UserLegalNoticeScreenPrivateProps } from './types';
@@ -50,7 +49,6 @@ function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
       if (!props.urls) return; // ToDo error popup here
       const selectedLegalTitle = I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`);
       const selectedLegalUrl = props.urls[legalItem];
-      Trackers.trackEvent('Profile', 'READ NOTICE', legalItem);
       openPDFReader({ title: selectedLegalTitle, src: selectedLegalUrl });
     },
     [props.urls],

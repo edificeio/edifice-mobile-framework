@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { ISession } from '~/framework/modules/auth/model';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { FastImage } from '~/framework/util/media';
 import { Connection } from '~/infra/Connection';
 
@@ -259,7 +259,7 @@ export interface IAvatarProps {
   size: Size;
   width?: number;
   fallback?: ImageURISource;
-  session: ISession;
+  session: AuthLoggedAccount;
 }
 
 class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'loading' | 'success' | 'failed' }> {
@@ -276,8 +276,8 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
       ? typeof idProp === 'string'
         ? idProp
         : (idProp as { id: string; isGroup: boolean }).id
-        ? (idProp as { id: string; isGroup: boolean })
-        : undefined
+          ? (idProp as { id: string; isGroup: boolean })
+          : undefined
       : undefined;
   }
 
@@ -473,7 +473,7 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
 }
 
 export default connect((state: IGlobalState) => {
-  const session = getAuthState(state).session;
+  const session = getSession();
   if (!session) throw new Error('[Avatar] session must exist');
   return { session };
 })(Avatar);

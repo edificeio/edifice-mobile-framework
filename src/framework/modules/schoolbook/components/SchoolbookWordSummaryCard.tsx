@@ -9,7 +9,6 @@ import CardTopContent from '~/framework/components/card/top-content';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionItalicText, CaptionText, SmallText } from '~/framework/components/text';
-import { UserType } from '~/framework/modules/auth/service';
 import {
   IAcknowledgment,
   IResponse,
@@ -21,6 +20,7 @@ import { displayPastDate } from '~/framework/util/date';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
+import { AccountType } from '../../auth/model';
 import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
@@ -34,7 +34,7 @@ const responsesString = (responses: number) =>
 
 export interface ISchoolbookWordSummaryCardProps {
   action: () => void;
-  userType: UserType | undefined;
+  userType: AccountType | undefined;
   userId: string | undefined;
   acknowledgments: IAcknowledgment[];
   owner: string;
@@ -64,9 +64,9 @@ export const SchoolbookWordSummaryCard = ({
   total,
 }: ISchoolbookWordSummaryCardProps) => {
   const usersTextMaxLines = 1;
-  const isParent = userType === UserType.Relative;
-  const isTeacher = userType === UserType.Teacher || userType === UserType.Personnel;
-  const isStudent = userType === UserType.Student;
+  const isParent = userType === AccountType.Relative;
+  const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
+  const isStudent = userType === AccountType.Student;
   const isWordAcknowledgedForParent = userId && getIsWordAcknowledgedForParent(userId, acknowledgments);
   const isWordAcknowledgedForTeacher = getIsWordAcknowledgedForTeacher(ackNumber, total);
   const isWordAcknowledgedForStudent = getIsWordAcknowledgedForStudent(acknowledgments);

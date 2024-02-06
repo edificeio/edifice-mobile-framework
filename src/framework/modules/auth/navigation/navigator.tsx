@@ -15,8 +15,10 @@ import AuthAccountSelectionScreen, {
 } from '~/framework/modules/auth/screens/account-selection';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
-import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
-import LoginHomeScreen, { computeNavBar as authLoginHomeNavBar } from '~/framework/modules/auth/screens/login-home';
+import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
+import LoginCredentialsScreen, {
+  computeNavBar as authLoginCredentialsNavBar,
+} from '~/framework/modules/auth/screens/login-credentials';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
@@ -39,7 +41,11 @@ export default function () {
         component={AuthAccountSelectionScreen}
         options={authAccountSelectionNavBar}
       />
-      <Stack.Screen name={authRouteNames.loginHome} component={LoginHomeScreen} options={authLoginHomeNavBar} />
+      <Stack.Screen
+        name={authRouteNames.loginCredentials}
+        component={LoginCredentialsScreen}
+        options={authLoginCredentialsNavBar}
+      />
       <Stack.Screen
         name={authRouteNames.loginWayf}
         component={LoginWayfScreen}
@@ -79,7 +85,7 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.changePassword}
-        component={ChangePasswordScreen}
+        component={ChangePasswordScreenOLD}
         options={{
           headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
         }}
@@ -87,7 +93,7 @@ export default function () {
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen
           name={authRouteNames.changePasswordModal}
-          component={ChangePasswordScreen}
+          component={ChangePasswordScreenOLD}
           options={{
             headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
           }}

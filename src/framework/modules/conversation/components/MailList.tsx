@@ -506,18 +506,18 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
                           },
                         ]
                       : !isFolderDrafts && !isFolderOutbox
-                      ? [
-                          {
-                            action: async row => {
-                              this.toggleRead(item.unread, item.id);
-                              row[item.key]?.closeRow();
+                        ? [
+                            {
+                              action: async row => {
+                                this.toggleRead(item.unread, item.id);
+                                row[item.key]?.closeRow();
+                              },
+                              backgroundColor: theme.palette.secondary.regular,
+                              actionText: I18n.get(`conversation-maillist-mark${item.unread ? 'read' : 'unread'}`),
+                              actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
                             },
-                            backgroundColor: theme.palette.secondary.regular,
-                            actionText: I18n.get(`conversation-maillist-mark${item.unread ? 'read' : 'unread'}`),
-                            actionIcon: item.unread ? 'ui-eye' : 'ui-eyeSlash',
-                          },
-                        ]
-                      : [],
+                          ]
+                        : [],
                     right: [
                       {
                         action: async row => {

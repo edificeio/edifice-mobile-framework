@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type {
   fetchPresencesCallAction,
   fetchPresencesCoursesAction,
@@ -23,7 +23,7 @@ export interface PresencesCallListScreenStoreProps {
   registerId: string;
   registerPreference: string;
   structureIds: string[];
-  session?: ISession;
+  session?: AuthLoggedAccount;
   teacherId?: string;
 }
 

@@ -16,8 +16,8 @@ import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { loginAction } from '~/framework/modules/auth/actions';
-import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { loginCredentialsAction, refreshRequirementsAction } from '~/framework/modules/auth/actions';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   IEntcoreEmailValidationState,
@@ -77,10 +77,9 @@ export const computeNavBar = ({
 };
 
 const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
-  const { tryLogin, tryUpdateProfile, navigation, route } = props;
+  const { tryRefreshRequirements, tryUpdateProfile, navigation, route } = props;
 
   const platform = props.route.params.platform;
-  const rememberMe = props.route.params.rememberMe;
   const modificationType = route.params.modificationType;
   const mfaRedirectionRoute = route.params.mfaRedirectionRoute;
   const isEmailMFA = route.params.isEmailMFA;
@@ -126,20 +125,20 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
         title: I18n.get('auth-mfa-email-title'),
       }
     : isMobileMFA
-    ? {
-        feedback: I18n.get(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
-        message: I18n.get('auth-mfa-mobile-message'),
-        messageSent: `${I18n.get('auth-mfa-mobile-message-sent')} ${mobile}.`,
-        resendToast: I18n.get('auth-mfa-mobile-toast'),
-        title: I18n.get('auth-mfa-mobile-title'),
-      }
-    : {
-        feedback: I18n.get(`auth-mfa-feedback-${codeState.toLowerCase()}`),
-        message: I18n.get('auth-mfa-message'),
-        messageSent: `${I18n.get('auth-mfa-message-sent')} ${mobile}.`,
-        resendToast: I18n.get('auth-mfa-toast'),
-        title: I18n.get('auth-mfa-title'),
-      };
+      ? {
+          feedback: I18n.get(`auth-mfa-mobile-feedback-${codeState.toLowerCase()}`),
+          message: I18n.get('auth-mfa-mobile-message'),
+          messageSent: `${I18n.get('auth-mfa-mobile-message-sent')} ${mobile}.`,
+          resendToast: I18n.get('auth-mfa-mobile-toast'),
+          title: I18n.get('auth-mfa-mobile-title'),
+        }
+      : {
+          feedback: I18n.get(`auth-mfa-feedback-${codeState.toLowerCase()}`),
+          message: I18n.get('auth-mfa-message'),
+          messageSent: `${I18n.get('auth-mfa-message-sent')} ${mobile}.`,
+          resendToast: I18n.get('auth-mfa-toast'),
+          title: I18n.get('auth-mfa-title'),
+        };
 
   const setResendTimer = () => {
     setIsResendDisabled(true);
@@ -172,8 +171,8 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           validationState?.state === 'valid'
             ? CodeState.CODE_CORRECT
             : validationState?.ttl === 0 || validationState?.tries === 0
-            ? CodeState.CODE_EXPIRED
-            : CodeState.CODE_WRONG;
+              ? CodeState.CODE_EXPIRED
+              : CodeState.CODE_WRONG;
         const isCodeAlreadyExpired = codeState === CodeState.CODE_EXPIRED && state === CodeState.CODE_EXPIRED;
         if (!isCodeAlreadyExpired) startAnimation(state);
         setCodeState(state);
@@ -245,13 +244,12 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       }
     } else {
       try {
-        const redirect = await tryLogin(platform, undefined, rememberMe);
-        redirectLoginNavAction(redirect, platform, navigation);
+        await tryRefreshRequirements();
       } catch {
         Toast.showError(I18n.get('auth-mfa-error-text'));
       }
     }
-  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryLogin, platform, rememberMe]);
+  }, [isModifyingEmail, isModifyingMobile, tryUpdateProfile, email, mobile, navigation, tryRefreshRequirements]);
 
   useEffect(() => setResendTimer(), []);
 
@@ -312,8 +310,8 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
                       borderColor: isCodeStateDisplayed
                         ? codeStateColor
                         : isFocused
-                        ? theme.palette.grey.graphite
-                        : theme.palette.grey.stone,
+                          ? theme.palette.grey.graphite
+                          : theme.palette.grey.stone,
                     },
                   ]}
                   onLayout={getCellOnLayoutHandler(index)}>
@@ -376,7 +374,8 @@ const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = state 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScreenDispatchProps = dispatch => {
   return bindActionCreators<AuthMFAScreenDispatchProps>(
     {
-      tryLogin: tryAction(loginAction),
+      tryLogin: tryAction(loginCredentialsAction),
+      tryRefreshRequirements: tryAction(refreshRequirementsAction),
       tryUpdateProfile: tryAction(profileUpdateAction),
     },
     dispatch,

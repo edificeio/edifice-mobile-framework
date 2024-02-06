@@ -3,14 +3,25 @@
  */
 import CookieManager from '@react-native-cookies/cookies';
 import { encode as btoa } from 'base-64';
+import moment from 'moment';
 import querystring from 'querystring';
 import { ImageRequireSource, ImageURISource } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { Source } from 'react-native-fast-image';
 
 import { I18n } from '~/app/i18n';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { getStore } from '~/app/store';
+import type { AuthLoggedAccount, AuthSavedAccount, AuthTokenSet } from '~/framework/modules/auth/model';
+import {
+  assertSession,
+  actions as authActions,
+  getCurrentQueryParamToken,
+  getSession,
+  getState,
+} from '~/framework/modules/auth/reducer';
+import { getSerializedAccountInfo, readSavedStartup, updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
 import { isEmpty } from '~/framework/util/object';
 import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
@@ -44,36 +55,6 @@ export interface IOAuthQueryParamToken {
 }
 
 export type OAuthCustomTokens = IOAuthCustomToken[];
-
-export enum OAuth2ErrorCode {
-  // Response errors
-  BAD_CREDENTIALS = 'bad_credentials',
-  BAD_SAML = 'bad_saml',
-  BLOCKED_TYPE = 'blocked_type',
-  BLOCKED_USER = 'blocked_user',
-  INVALID_CLIENT = 'invalid_client',
-  INVALID_GRANT = 'invalid_grant',
-  MULTIPLE_VECTOR = 'multiple_vector_choice',
-  PLATFORM_UNAVAILABLE = 'platform_unavailable',
-  TOO_LOAD = 'too_load',
-  TOO_MANY_TRIES = 'too_many_tries',
-  UNKNOWN_DENIED = 'unknown_denied',
-  UNKNOWN_RESPONSE = 'unknown_response',
-  // Non-response errors
-  BAD_RESPONSE = 'bad_response',
-  NETWORK_ERROR = 'network_error',
-  PARSE_ERROR = 'parse_error',
-  // Not initialized
-  NOT_INITIALIZED = 'not_initilized',
-}
-
-export interface OAuthErrorDetails {
-  type: OAuth2ErrorCode;
-  error?: string;
-  description?: string;
-}
-
-export type OAuthError = Error & OAuthErrorDetails;
 
 export const sanitizeScope = (scopes: string[]) => (Array.isArray(scopes) ? scopes.join(' ').trim() : scopes || '');
 
@@ -146,57 +127,49 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Use this returns always an error.
    * @param data
    */
-  public createAuthError(body: { error: string; error_description?: string }): OAuthError;
-  public createAuthError<T extends object>(
-    type: OAuth2ErrorCode,
+  public authErrorFactory(body: { error: string; error_description?: any }): InstanceType<typeof Error.OAuth2Error>;
+  public authErrorFactory(
+    type: Error.ErrorTypes<typeof Error.OAuth2Error>,
     error: string,
-    description?: string,
-    additionalData?: T,
-  ): OAuthError & T;
-  public createAuthError<T extends object>(
-    bodyOrType: { error: string; error_description?: string } | OAuth2ErrorCode,
+    cause?: Error,
+  ): InstanceType<typeof Error.OAuth2Error>;
+  public authErrorFactory(
+    bodyOrType: { error: string; error_description?: string } | Error.ErrorTypes<typeof Error.OAuth2Error>,
     error?: string,
-    description?: string,
-    additionalData?: T,
-  ): OAuthError & T {
-    const err: OAuthError = new Error('EAUTH: returned error') as any;
-    err.name = 'EAUTH';
-    if (bodyOrType && typeof bodyOrType === 'object' && bodyOrType.hasOwnProperty('error')) {
-      // create from body
-      Object.assign(err, bodyOrType);
+    cause?: Error,
+  ): InstanceType<typeof Error.OAuth2Error> {
+    let type: Error.ErrorTypes<typeof Error.OAuth2Error> | undefined;
+
+    if (bodyOrType && typeof bodyOrType === 'object' && Object.hasOwn(bodyOrType, 'error')) {
       if (bodyOrType.error === 'invalid_client') {
-        err.type = OAuth2ErrorCode.INVALID_CLIENT;
+        type = Error.OAuth2ErrorType.OAUTH2_INVALID_CLIENT;
       } else if (bodyOrType.error === 'invalid_grant') {
-        err.type = OAuth2ErrorCode.INVALID_GRANT;
+        type = Error.OAuth2ErrorType.OAUTH2_INVALID_GRANT;
       } else if (bodyOrType.error === 'access_denied') {
         if (bodyOrType.error_description === 'auth.error.authenticationFailed') {
-          err.type = OAuth2ErrorCode.BAD_CREDENTIALS;
+          type = Error.OAuth2ErrorType.CREDENTIALS_MISMATCH;
         } else if (bodyOrType.error_description === 'auth.error.blockedUser') {
-          err.type = OAuth2ErrorCode.BLOCKED_USER;
+          type = Error.OAuth2ErrorType.ACCOUNT_BLOCKED;
         } else if (bodyOrType.error_description === 'auth.error.blockedProfileType') {
-          err.type = OAuth2ErrorCode.BLOCKED_TYPE;
+          type = Error.OAuth2ErrorType.PLATFORM_BLOCKED_TYPE;
         } else if (bodyOrType.error_description === 'auth.error.global') {
-          err.type = OAuth2ErrorCode.PLATFORM_UNAVAILABLE;
+          type = Error.OAuth2ErrorType.PLATFORM_UNAVAILABLE;
         } else if (bodyOrType.error_description === 'auth.error.ban') {
-          err.type = OAuth2ErrorCode.TOO_MANY_TRIES;
+          type = Error.OAuth2ErrorType.SECURITY_TOO_MANY_TRIES;
         } else {
-          err.type = OAuth2ErrorCode.UNKNOWN_DENIED;
+          type = Error.OAuth2ErrorType.UNKNOWN_DENIED;
         }
       } else if (bodyOrType.error === 'quota_overflow') {
-        err.type = OAuth2ErrorCode.TOO_LOAD;
-      } else {
-        err.type = OAuth2ErrorCode.UNKNOWN_RESPONSE;
+        type = Error.OAuth2ErrorType.PLATFORM_TOO_LOAD;
+      } else if (bodyOrType.error === 'multiple_vector_choice') {
+        type = Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR;
+        if (bodyOrType.error_description) {
+          const vectors = JSON.parse(bodyOrType.error_description);
+          return new Error.SamlMultipleVectorError(vectors, error, cause);
+        } else return new Error.OAuth2Error(type ?? Error.FetchErrorType.BAD_RESPONSE, error, cause);
       }
-    } else if (bodyOrType && typeof bodyOrType !== 'object' && error) {
-      // create from type
-      err.type = bodyOrType as unknown as OAuth2ErrorCode;
-      err.error = error;
-      err.description = description;
-      additionalData && Object.assign(err, additionalData);
-    } else {
-      throw new Error(`[getAuthError] Bad parameter: ${bodyOrType}`);
     }
-    return err as OAuthError & T;
+    return new Error.OAuth2Error(type ?? Error.FetchErrorType.BAD_RESPONSE, error, cause);
   }
 
   /**
@@ -208,11 +181,7 @@ export class OAuth2RessourceOwnerPasswordClient {
     try {
       return await response.json();
     } catch (e) {
-      const err: OAuthError = new Error('EAUTH: invalid Json oauth response') as OAuthError;
-      err.name = 'EAUTH';
-      err.type = OAuth2ErrorCode.UNKNOWN_RESPONSE;
-      err.description = 'Body is not JSON data.';
-      throw err;
+      throw new Error.FetchError(Error.FetchErrorType.BAD_RESPONSE, undefined, e as Error);
     }
   }
 
@@ -229,7 +198,10 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   public signRequest(requestInfo: RequestInfo, init?: RequestInit) {
     if (!this.hasToken) {
-      throw new Error('EAUTH: Unable to sign request without active access token.');
+      throw new Error.FetchError(
+        Error.FetchErrorType.NOT_AUTHENTICATED,
+        'EAUTH: Unable to sign request without active access token.',
+      );
     }
     if (this.token!.token_type.toLowerCase() === 'bearer') {
       const req = new Request(requestInfo, {
@@ -246,7 +218,10 @@ export class OAuth2RessourceOwnerPasswordClient {
       });
       return req;
     } else {
-      throw new Error('EAUTH: Only Bearer token type supported. Given ' + this.token!.token_type);
+      throw new Error.FetchError(
+        Error.FetchErrorType.NOT_AUTHENTICATED,
+        'EAUTH: Only Bearer token type supported. Given ' + this.token!.token_type,
+      );
     }
   }
 
@@ -273,27 +248,25 @@ export class OAuth2RessourceOwnerPasswordClient {
         method: options.method,
       });
     } catch (err) {
-      if (err instanceof Error) (err as OAuthError).type = OAuth2ErrorCode.NETWORK_ERROR;
-      throw err;
+      throw new Error.FetchError(Error.FetchErrorType.NETWORK_ERROR, undefined, { cause: err });
     } finally {
       CookieManager.clearAll();
     }
     // 3: Check HTTP Status
     if (!response.ok) {
       const errdata = await this.parseResponseJSON(response);
-      throw this.createAuthError(errdata);
+      throw this.authErrorFactory(errdata);
     }
     // 4: Parse reponse
     let data: any;
     try {
       data = await this.parseResponseJSON(response);
     } catch (err) {
-      if (err instanceof Error) (err as OAuthError).type = OAuth2ErrorCode.PARSE_ERROR;
-      throw err;
+      throw new Error.FetchError(Error.FetchErrorType.BAD_RESPONSE, undefined, { cause: err });
     }
     // 5: Check if response is error
     if (data?.error) {
-      throw this.createAuthError(data);
+      throw this.authErrorFactory(data);
     }
     // 6: OK
     return data;
@@ -304,7 +277,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    */
   private async getNewToken(grantType: string, parms: any, saveToken: boolean = true): Promise<IOAuthToken> {
     if (!this.clientInfo) {
-      throw this.createAuthError(OAuth2ErrorCode.NOT_INITIALIZED, 'no client info provided');
+      throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
     }
     // 1: Build request
     const body = {
@@ -327,15 +300,12 @@ export class OAuth2RessourceOwnerPasswordClient {
       });
       // 3: Build token from data
       if (!Object.hasOwn(data, 'access_token')) {
-        throw this.createAuthError(OAuth2ErrorCode.BAD_RESPONSE, 'no access_token returned', '', { data });
+        throw new Error.FetchError(Error.FetchErrorType.BAD_RESPONSE, 'no access_token returned');
       }
       this.token = {
         ...data,
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
-      // 4: Save token if asked
-      if (saveToken) await this.saveToken();
-      await this.deleteQueryParamToken(); // Delete current queryParamToken here to ensure we'll not have previous one form another accounts.
       this.generateUniqueSesionIdentifier();
       return this.token!;
     } catch (err) {
@@ -366,6 +336,10 @@ export class OAuth2RessourceOwnerPasswordClient {
     return this.getNewToken('password', { username, password }, saveToken);
   }
 
+  /**
+   * @deprecated
+   * @returns
+   */
   public static async getStoredTokenStr(): Promise<IOAuthToken | undefined> {
     const rawStoredToken = await getItemJson('token');
     if (!rawStoredToken) {
@@ -375,6 +349,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * @deprecated
    * Read stored token in local storage. No-op if no token is stored, return undefined.
    */
   public async loadToken(): Promise<IOAuthToken | undefined> {
@@ -391,6 +366,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * @deprecated
    * Saves given token information in local storage.
    */
   public async saveToken() {
@@ -398,6 +374,7 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * @deprecated
    * Remove given token information in local storage.
    */
   public async forgetToken() {
@@ -405,13 +382,56 @@ export class OAuth2RessourceOwnerPasswordClient {
   }
 
   /**
+   * Return a serialisable object representing the current tokens
+   * @returns the boect representing the token to be stored somewhere.
+   */
+  public exportToken(): AuthTokenSet {
+    if (!this.token) throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] exportToken : no token');
+    return {
+      access: { value: this.token.access_token, type: 'Bearer', expiresAt: this.token.expires_at.toString() },
+      refresh: { value: this.token.refresh_token },
+      scope: this.token.scope.split(' '),
+    };
+  }
+
+  public importToken(token: AuthTokenSet) {
+    this.token = {
+      access_token: token.access.value,
+      expires_at: new Date(token.access.expiresAt),
+      expires_in: 0,
+      token_type: token.access.type,
+      refresh_token: token.refresh.value,
+      scope: token.scope.join(' '),
+    };
+    this.generateUniqueSesionIdentifier();
+    return token;
+  }
+
+  public updateToken(token: AuthTokenSet) {
+    const userId = readSavedStartup().account;
+    if (userId) {
+      getStore().dispatch(authActions.refreshToken(userId, token)); // Update redux
+      let account = getState(getStore().getState()).accounts[userId]; // Get account in reducer
+      if (typeof account.platform === 'object') {
+        account = getSerializedAccountInfo(account as AuthLoggedAccount); // Get saved accoutn info if it's logged account
+      }
+      updateAccount(account as AuthSavedAccount); // Update Storage
+      this.importToken(token); // Update OAuth2 client
+    }
+    return token;
+  }
+
+  /**
    * Refresh the user access token.
    */
   public async refreshToken(): Promise<IOAuthToken> {
     if (!this.clientInfo) {
-      throw this.createAuthError(OAuth2ErrorCode.NOT_INITIALIZED, 'no client info provided');
+      throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
     }
-    if (!this.token || !this.token.refresh_token) throw new Error('[oAuth] refreshToken: No refresh token provided.');
+    if (!this.token) {
+      throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] refreshToken : no token');
+    }
+    if (!this.token.refresh_token) throw new Error.OAuth2Error(Error.OAuth2ErrorType.REFRESH_INVALID);
 
     // 1: Build request
     const body = {
@@ -433,8 +453,8 @@ export class OAuth2RessourceOwnerPasswordClient {
         headers,
         method: 'POST',
       });
-      if (!data.hasOwnProperty('access_token')) {
-        throw this.createAuthError(OAuth2ErrorCode.BAD_RESPONSE, 'no access_token returned', '', { data });
+      if (!Object.hasOwn(data, 'access_token')) {
+        throw new Error.FetchError(Error.FetchErrorType.BAD_RESPONSE, 'no access_token returned');
       }
       // 3: Construct the token with received data
       this.token = {
@@ -442,11 +462,11 @@ export class OAuth2RessourceOwnerPasswordClient {
         ...data,
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
-      // Save token
-      await this.saveToken();
-      this.generateUniqueSesionIdentifier();
+      // Update stored token
+      this.updateToken(this.exportToken());
       return this.token!;
     } catch (err) {
+      console.warn('[oAuth2] failed refresh token', err);
       throw err;
     }
   }
@@ -462,7 +482,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Is stored token actually expired ?
    */
   public getIsTokenExpired() {
-    if (!this.hasToken) throw new Error('[isExpired]: No token');
+    if (!this.hasToken) throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, 'getIsTokenExpired: no token');
     return new Date() > this.token!.expires_at;
   }
 
@@ -470,7 +490,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Returns time before expiring in milliseconds (date.getTime())
    */
   public getTokenExpiresIn() {
-    if (!this.hasToken) throw new Error('[expiresIn]: No token');
+    if (!this.hasToken) throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, 'getTokenExpiresIn: no token');
     return this.token!.expires_at.getTime() - Date.now();
   }
 
@@ -484,9 +504,14 @@ export class OAuth2RessourceOwnerPasswordClient {
     return expin;
   }
 
+  private static getExpirationMoment(seconds: number) {
+    return moment().add(seconds, 'seconds');
+  }
+
   /**
    * Removes the token in this connection.
    * It will be also removed from local storage.
+   * @deprecated
    */
   public async eraseToken() {
     await removeItem('token');
@@ -536,38 +561,36 @@ export class OAuth2RessourceOwnerPasswordClient {
   /**
    * QueryParam token management (for loginless redirection)
    */
-  private static QUERY_PARAM_TOKEN_EXPIRATION_DELTA = 60;
-
-  private static QUERY_PARAM_TOKEN_STORAGE_KEY = 'auth.queryParamToken';
+  private static QUERY_PARAM_TOKEN_EXPIRATION_PADDING = 60;
 
   public async getQueryParamToken() {
     try {
-      const nowDate = new Date();
-      // We apply a 60secs margin to the duration of the token to ensure validitiy will not be expired during the process.
-      nowDate.setSeconds(nowDate.getSeconds() + OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_EXPIRATION_DELTA);
-      let currentQueryParamToken = await getItemJson<IOAuthQueryParamToken>(
-        OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY,
-      );
-      if (!currentQueryParamToken || !currentQueryParamToken.expires_at || nowDate > new Date(currentQueryParamToken.expires_at)) {
-        const session = assertSession();
+      // We apply a 60secs padding to the duration of the token to ensure validitiy will not be expired during the process.
+      const session = assertSession();
+      const nowMomentWithPadding = moment().add(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_EXPIRATION_PADDING, 'seconds');
+      let currentQueryParamToken = getCurrentQueryParamToken(); // Get current one from the store
+      if (!currentQueryParamToken || nowMomentWithPadding.isAfter(moment(currentQueryParamToken.expiresAt))) {
+        currentQueryParamToken = undefined;
         const url = `${session.platform.url}/auth/oauth2/token?type=queryparam`;
         const data = await this.request(url, {
           headers: urlSigner.getAuthHeader(),
         });
         currentQueryParamToken = {
-          ...data,
-          expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
+          type: 'QueryParam',
+          value: data.access_token,
+          expiresAt: OAuth2RessourceOwnerPasswordClient.getExpirationMoment(data.expires_in).format(),
         };
-        await setItemJson(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY, currentQueryParamToken);
+        getStore().dispatch(authActions.setQueryParamToken(session.user.id, currentQueryParamToken));
       }
-      return currentQueryParamToken?.access_token;
+      return currentQueryParamToken?.value;
     } catch (e) {
-      throw new Error('getQueryParamToken failed: ' + e.toString());
+      throw new global.Error('getQueryParamToken failed', { cause: e });
     }
   }
 
   public async deleteQueryParamToken() {
-    await removeItem(OAuth2RessourceOwnerPasswordClient.QUERY_PARAM_TOKEN_STORAGE_KEY);
+    const session = assertSession();
+    getStore().dispatch(authActions.setQueryParamToken(session.user.id, undefined));
   }
 }
 
@@ -648,7 +671,10 @@ export const urlSigner = {
    */
   getDummySignedRequest: () => {
     if (!OAuth2RessourceOwnerPasswordClient.connection)
-      throw new Error('[oAuth2] urlSigner.getDummySignedRequest: no active token');
+      throw new Error.FetchError(
+        Error.FetchErrorType.NOT_AUTHENTICATED,
+        '[oAuth2] urlSigner.getDummySignedRequest: no active token',
+      );
     return OAuth2RessourceOwnerPasswordClient.connection.signRequest('<dummy request>');
   },
 
@@ -658,7 +684,8 @@ export const urlSigner = {
    */
   getAuthHeader: () => {
     const ret = { Authorization: urlSigner.getDummySignedRequest().headers.get('Authorization') };
-    if (!ret.Authorization) throw new Error('[oAuth2] urlSigner.getAuthHeader: empty auth header');
+    if (!ret.Authorization)
+      throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth2] urlSigner.getAuthHeader: empty auth header');
     return ret as { Authorization: string };
   },
 
@@ -666,7 +693,8 @@ export const urlSigner = {
    * Returns a signed request from an url or a request
    */
   signRequest: (requestInfo: RequestInfo) => {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signRequest: no token');
+    if (!OAuth2RessourceOwnerPasswordClient.connection)
+      throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] signRequest: no token');
 
     if (requestInfo instanceof Request) {
       return urlSigner.getIsUrlSignable(requestInfo.url)
@@ -697,10 +725,11 @@ export const urlSigner = {
     if (Array.isArray(URISource)) {
       return URISource.map(urlSigner.signURISource);
     }
-    if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('[oAuth] signURISource: no token');
+    if (!OAuth2RessourceOwnerPasswordClient.connection)
+      throw new Error.FetchError(Error.FetchErrorType.NOT_AUTHENTICATED, '[oAuth] signURISource: no token');
 
     if (typeof URISource === 'object') {
-      if (!URISource.uri) throw new Error('[oAuth] signURISource: no uri');
+      if (!URISource.uri) throw new global.Error('[oAuth] signURISource: no uri');
       if (URISource.isLocal) return URISource;
       const absUri = urlSigner.getAbsoluteUrl(URISource.uri)!;
       if (urlSigner.getIsUrlSignable(absUri)) {
@@ -741,6 +770,6 @@ export function initOAuth2(platform: Platform) {
   );
 }
 
-export function destroyOAuth2() {
+export function destroyOAuth2Legacy() {
   return OAuth2RessourceOwnerPasswordClient.connection?.eraseToken();
 }

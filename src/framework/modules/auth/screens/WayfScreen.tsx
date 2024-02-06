@@ -4,7 +4,9 @@ import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import { ShouldStartLoadRequest, WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -15,14 +17,17 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { consumeAuthError, loginAction } from '~/framework/modules/auth/actions';
-import { getAuthErrorCode } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
+import { consumeAuthErrorAction, loginFederationAction } from '~/framework/modules/auth/actions';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarTitle } from '~/framework/navigation/navBar';
-import { Trackers } from '~/framework/util/tracker';
-import { IOAuthToken, OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, OAuthCustomTokens, initOAuth2 } from '~/infra/oauth';
+import { Error } from '~/framework/util/error';
+import { tryAction } from '~/framework/util/redux/actions';
+import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
+import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
+
+import moduleConfig from '../module-config';
 
 enum WAYFPageMode {
   EMPTY = 0,
@@ -32,7 +37,13 @@ enum WAYFPageMode {
   WEBVIEW = 4,
 }
 
-export interface IWayfScreenProps extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.wayf> {
+interface WAYFScreenDispatchProps {
+  tryLogin: (...args: Parameters<typeof loginFederationAction>) => ReturnType<ReturnType<typeof loginFederationAction>>;
+}
+
+export interface IWayfScreenProps
+  extends WAYFScreenDispatchProps,
+    NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.wayf> {
   auth: IAuthState;
   dispatch: ThunkDispatch<any, any, any>;
 }
@@ -42,6 +53,8 @@ interface IWayfScreenState {
   dropdownOpened: boolean;
   // Current display mode: Error Message | Loading Indicator | User Selection | WebView
   mode: WAYFPageMode;
+  // error key as it functions in `useErrorWithKey`
+  errkey: number;
 }
 
 // Styles sheet
@@ -55,9 +68,14 @@ const STYLES = StyleSheet.create({
   },
   // help: { marginTop: UI_SIZES.spacing.large, textAlign: 'center' },
   safeView: { flex: 1, backgroundColor: theme.ui.background.card },
-  select: { borderColor: theme.palette.primary.regular, borderWidth: 1 },
+  select: { borderColor: theme.palette.primary.regular, borderWidth: 1, marginTop: UI_SIZES.spacing.medium },
   selectBackDrop: { flex: 1 },
-  selectContainer: { borderColor: theme.palette.primary.regular, borderWidth: 1, maxHeight: 120 },
+  selectContainer: {
+    borderColor: theme.palette.primary.regular,
+    borderWidth: 1,
+    maxHeight: 120,
+    marginTop: UI_SIZES.spacing.medium,
+  },
   selectPlaceholder: { color: theme.ui.text.light },
   selectText: { color: theme.ui.text.light },
   text: { textAlign: 'center' },
@@ -93,7 +111,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private authUrl: string | undefined = undefined;
 
   // Error if any
-  private error: string = '';
+  private error: Error.ErrorTypes<typeof Error.LoginError> | undefined;
 
   // Flag first webview page loading completion
   private isFirstLoadFinished = false;
@@ -144,19 +162,19 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private contentComponents = [
     // WAYFPageMode.EMPTY: Display empty screen
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
+      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'));
       return (
         <EmptyScreen svgImage="empty-content" text={I18n.get('auth-wayf-empty-text')} title={I18n.get('auth-wayf-empty-title')} />
       );
     },
     // WAYFPageMode.ERROR: Display error message
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', `ERROR: ${this.error}`);
+      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={STYLES.errorMsg}>
-            {this.error ? getAuthErrorCode(this.error, this.props.route.params.platform) : ''}
+            {this.error ? Error.getAuthErrorText<typeof Error.LoginError>(this.error) : ''}
           </SmallText>
           <PrimaryButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
@@ -164,7 +182,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     },
     // WAYFPageMode.LOADING: Display loading indicator
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'LOADING');
       return (
         <View style={STYLES.container}>
           <PFLogo pf={this.props.route.params.platform} />
@@ -175,7 +192,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     },
     // case WAYFPageMode.SELECT: Display user selection
     (dropdownOpened: boolean) => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'SELECT');
       return (
         <TouchableWithoutFeedback
           style={STYLES.selectBackDrop}
@@ -215,7 +231,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     },
     // case WAYFPageMode.WEBVIEW: Display WebView
     () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'WEBVIEW');
       return (
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
@@ -246,7 +261,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.authUrl = pfConf?.auth;
     this.pfUrl = pfConf?.url;
     this.wayfUrl = pfConf?.wayf;
-    this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW };
+    this.state = { dropdownOpened: false, mode: WAYFPageMode.WEBVIEW, errkey: Error.generateErrorKey() };
     this.backActions.forEach(action => {
       action.bind(this);
     });
@@ -255,9 +270,16 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   componentDidUpdate(prevProps: IWayfScreenProps) {
     const { auth } = this.props;
+    const errorType = Error.getDeepErrorType<typeof Error.LoginError>(auth.error);
     // Detect && display potential login error sent after checkVersionThenLogin(false) call
-    if (auth?.error?.length && auth?.error?.length > 0 && auth.error !== this.error) {
-      this.displayError(auth.error);
+    if (
+      (auth.error?.key === undefined || auth.error.key === this.state.errkey) &&
+      errorType?.length &&
+      errorType?.length > 0 &&
+      errorType !== this.error &&
+      errorType !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
+    ) {
+      this.displayError(errorType);
     }
     // Update page title
     this.props.navigation.setOptions({
@@ -274,7 +296,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     CookieManager.clearAll(true)
       .then(_success => {
         // Clear some stuff
-        this.error = '';
+        this.error = undefined;
         this.dropdownItems = [];
         this.dropdownValue = null;
         this.samlResponse = undefined;
@@ -295,11 +317,11 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   }
 
   // Display error message
-  displayError(error: string) {
+  displayError(error: Error.ErrorTypes<typeof Error.LoginError>) {
     this.clearDatas(() => {
-      this.error = error === OAuth2ErrorCode.BAD_CREDENTIALS ? OAuth2ErrorCode.BAD_SAML : error;
+      this.error = error === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH ? Error.OAuth2ErrorType.SAML_INVALID : error;
       this.setState({ mode: WAYFPageMode.ERROR });
-      this.props.dispatch(consumeAuthError());
+      if (this.state.errkey === undefined) this.props.dispatch(consumeAuthErrorAction(this.state.errkey));
     });
   }
 
@@ -319,89 +341,53 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     this.clearDatas(() => this.setState({ dropdownOpened: false, mode: WAYFPageMode.WEBVIEW }));
   }
 
-  // Get oAuth token with received SAML response
-  getOAuthToken() {
-    Trackers.trackDebugEvent('Auth', 'WAYF', 'SAML');
-    this.displayLoading();
-    // Call oauth2 token api
-    initOAuth2(this.props.route.params.platform);
-    OAuth2RessourceOwnerPasswordClient.connection
-      ?.getNewTokenWithSAML(this.samlResponse!)
-      .then(data => {
-        // Manage unique user, otherwise send error
-        if ((data as IOAuthToken).access_token) {
-          this.login();
-        } else {
-          const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-            OAuth2ErrorCode.BAD_RESPONSE,
-            'no access_token returned',
-            '',
-            { data },
-          ) as Error;
-          throw error;
-        }
-      })
-      .catch(error => {
-        // Manage multiple users, otherwise display received error
-        if (error.error === OAuth2ErrorCode.MULTIPLE_VECTOR) {
+  // Login with obtained saml assertion
+  loginWithSaml() {
+    const saml = this.samlResponse;
+    this.clearDatas(async () => {
+      if (!saml) return;
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'SAML'));
+      this.displayLoading();
+      try {
+        await this.props.tryLogin(this.props.route.params.platform, { saml }, this.state.errkey);
+      } catch (error) {
+        const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
+        if (error instanceof Error.SamlMultipleVectorError && errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
-            const data = JSON.parse(error.error_description);
-            (data.users as OAuthCustomTokens).forEach(token => {
+
+            (error.data.users as OAuthCustomTokens).forEach(token => {
               this.dropdownItems.push({ label: token.structureName, value: token.key });
             });
-            // Display users selection
+            this.setState({ errkey: Error.generateErrorKey() }); // clear error
             this.displaySelect();
-          } catch {
+            return;
+          } catch (e) {
             // Malformed multiple users error description
-            this.displayError(OAuth2ErrorCode.BAD_RESPONSE);
+            this.displayError(Error.FetchErrorType.BAD_RESPONSE);
           }
-        } else this.displayError(error.type);
-      });
-  }
-
-  // Login with current oAuth token
-  login() {
-    this.clearDatas(async () => {
-      Trackers.trackDebugEvent('Auth', 'WAYF', 'LOGIN');
-      this.displayLoading();
-      this.samlResponse = undefined;
-      try {
-        const redirect = await this.props.dispatch(loginAction(this.props.route.params.platform));
-        if (redirect) {
-          redirectLoginNavAction(redirect, this.props.route.params.platform, this.props.navigation);
         }
-      } catch {
-        // TODO: handle error
+        if (errtype) {
+          this.displayError(errtype);
+        }
+      } finally {
+        this.samlResponse = undefined;
       }
     });
   }
 
   // Login with selected token
-  loginWithCustomToken() {
-    Trackers.trackDebugEvent('Auth', 'WAYF', 'CUSTOM_TOKEN');
+  async loginWithCustomToken() {
+    if (!this.dropdownValue) return;
     this.displayLoading();
-    // Call oauth2 token api with selected custom token
-    if (this.dropdownValue)
-      OAuth2RessourceOwnerPasswordClient.connection
-        ?.getNewTokenWithCustomToken(this.dropdownValue)
-        .then(data => {
-          // Manage unique user, otherwise send error
-          if ((data as IOAuthToken).access_token) {
-            this.login();
-          } else {
-            const error = OAuth2RessourceOwnerPasswordClient.connection?.createAuthError(
-              OAuth2ErrorCode.BAD_RESPONSE,
-              'no access_token returned',
-              '',
-              { data },
-            ) as Error;
-            throw error;
-          }
-        })
-        .catch(error => {
-          this.displayError(error.type);
-        });
+    try {
+      await this.props.tryLogin(this.props.route.params.platform, { customToken: this.dropdownValue }, this.state.errkey);
+    } catch (error) {
+      const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
+      if (errtype) {
+        this.displayError(errtype);
+      }
+    }
   }
 
   // Navbar back handler
@@ -433,7 +419,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   onLoadStart() {
     setTimeout(() => {
       if (!this.isFirstLoadFinished) {
-        this.error = 'wayftoolong';
+        this.error = Error.FetchErrorType.TIMEOUT;
         this.setState({ mode: WAYFPageMode.ERROR });
       }
     }, 20000);
@@ -454,17 +440,17 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       const index = components[1].indexOf('"');
       // Call oauth2 token api with received SAML if any
       if (index > 0) this.samlResponse = components[1].substring(0, index);
-      if (this.samlResponse) this.getOAuthToken();
+      if (this.samlResponse) this.loginWithSaml();
     }
   }
 
   // Called each time WebView navigation state changes
   // See WebView onNavigationStateChange property
   onNavigationStateChange(navigationState: WebViewNavigation) {
+    Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Url'), navigationState.url);
     // Update WebView back history flag
     this.webviewCanGoBack = navigationState.canGoBack;
     // Track new url
-    Trackers.trackDebugEvent('Auth', 'WAYF', navigationState.url);
   }
 
   // Called each time WebView url is about to change
@@ -477,7 +463,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       console.debug('WAYFScreen::onShouldStartLoadWithRequest: url = ', url);
     }
     // If current url is outside the WAYF
-    if (this.isFirstLoadFinished && !url.startsWith(this.wayfUrl)) {
+    if (this.wayfUrl && this.isFirstLoadFinished && !url.startsWith(this.wayfUrl)) {
       // Allow navigation to SP-Initiated WAYFs via auth config field
       if (this.authUrl && url.startsWith(this.authUrl)) {
         if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: authUrl received => Navigation allowed');
@@ -489,7 +475,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       if (this.pfUrl && url.startsWith(this.pfUrl)) {
         if (!this.samlResponse) {
           if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
-          this.props.navigation.replace(authRouteNames.loginHome, { platform: this.props.route.params.platform });
+          this.props.navigation.replace(authRouteNames.loginCredentials, { platform: this.props.route.params.platform });
         }
         return false;
       }
@@ -509,8 +495,33 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   }
 }
 
-export default connect((state: any, props: any) => {
-  return {
-    auth: getAuthState(state),
-  };
-})(WayfScreen);
+export default connect(
+  (state: any, props: any) => {
+    return {
+      auth: getAuthState(state),
+    };
+  },
+  dispatch =>
+    bindActionCreators<WAYFScreenDispatchProps>(
+      {
+        tryLogin: tryAction(loginFederationAction, {
+          track: res => {
+            const errtype = res instanceof global.Error ? Error.getDeepErrorType<typeof Error.LoginError>(res) : undefined;
+            return [
+              moduleConfig,
+              res instanceof global.Error
+                ? errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
+                  ? trackingActionAddSuffix('Login fédéré', 'Multiple')
+                  : trackingActionAddSuffix('Login fédéré', false)
+                : trackingActionAddSuffix('Login fédéré', true),
+              res instanceof global.Error && errtype !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
+                ? errtype?.toString() ?? res.toString()
+                : undefined,
+              res instanceof Error.SamlMultipleVectorError ? res.data.users.length : undefined,
+            ];
+          },
+        }),
+      },
+      dispatch,
+    ),
+)(WayfScreen);

@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Moment } from 'moment';
 
-import { ISession, UserChild } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount, UserChild } from '~/framework/modules/auth/model';
 import { IConfig, IService } from '~/framework/modules/homework-assistance/model';
 import { HomeworkAssistanceNavigationParams } from '~/framework/modules/homework-assistance/navigation';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
@@ -18,7 +18,7 @@ export interface HomeworkAssistanceRequestScreenProps {
   structureName: string;
   children?: IChild[];
   config?: IConfig;
-  session?: ISession;
+  session?: AuthLoggedAccount;
   addRequest: (
     service: IService,
     phoneNumber: string,

@@ -1,14 +1,16 @@
 import theme from '~/app/theme';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import { PresencesReduxState } from './reducer';
+import { AccountType } from '../../auth/model';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
   return (
-    !!userType && entcoreApp.address === '/presences' && [UserType.Student, UserType.Relative, UserType.Teacher].includes(userType)
+    !!userType &&
+    entcoreApp.address === '/presences' &&
+    [AccountType.Student, AccountType.Relative, AccountType.Teacher].includes(userType)
   );
 }
 

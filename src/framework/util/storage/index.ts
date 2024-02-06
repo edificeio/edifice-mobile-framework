@@ -1,56 +1,93 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNConfigReader from 'react-native-config-reader';
-import { MMKV } from 'react-native-mmkv';
+import { StorageHandler } from './handler';
+import { mmkvStorageHelper } from './mmkv';
+import { StorageSlice } from './slice';
+import { IStorageBackend, IStorageSlice, StorageKey, StorageTypeMap } from './types';
 
-import { getOverrideName } from './string';
-import { Trackers } from './tracker';
+/**
+ * Use MMKV as the storage technology.
+ */
+const defaultStorage = mmkvStorageHelper;
 
-export namespace Storage {
+/**
+ * Storage API
+ */
+export const storage = {
   /**
-   * Create new MMKV storage (encrypted)
+   * defines a storage space that is a predefined subsection of the global storage with optional init phases.
+   * @returns the storage created
    */
-  export const storage = new MMKV({ id: getOverrideName(), encryptionKey: RNConfigReader.CFBundleIdentifier });
+  create: <Types extends { [key: StorageKey]: any }>() => {
+    return new StorageSlice<Types, IStorageBackend>(defaultStorage);
+  },
+
+  /**
+   * defines a storage space that encompass another with additional prefixes and/or init phases.
+   * @param subStorage
+   * @returns
+   */
+  compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageSlice<StorageTypeMap>>(subStorage: Storage) => {
+    return new StorageSlice<Types, Storage>(subStorage);
+  },
+
+  /**
+   * Access to the global storage directly.
+   */
+  global: defaultStorage,
+};
+
+/// OLD CODE BELOW
+
+export const StorageObject = {
+  //
+  //
+  //
+  //
+  // === Legacy zone ===
+  //
+  //
+  //
+  //
 
   /**
    * Set item JSON
    * - Convert data into JSON string
    * - Save data and key within storage
    */
-  export const setItemJson = async <T>(key: string, data: T) => {
+  setItemJson: async <T>(key: string, data: T) => {
     try {
-      storage.set(key, JSON.stringify(data));
+      defaultStorage.set(key, JSON.stringify(data));
     } catch (error) {
       console.warn(
         `[Storage] setItemJson: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'setItemJson ERROR', (error as Error | null)?.message || '');
     }
-  };
+  },
 
   /**
    * Set item JSON
    * - Convert data into JSON string
    * - Save data and key within storage
    */
-  export const setItem = async <T extends string | number | boolean>(key: string, data: T) => {
+  setItem: async <T extends string | number | boolean>(key: string, data: T) => {
     try {
-      storage.set(key, data);
+      defaultStorage.set(key, data);
     } catch (error) {
       console.warn(
         `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'setItem ERROR', (error as Error | null)?.message || '');
     }
-  };
+  },
 
   /**
    * Get item JSON
    * - Retrieve stored item via key
    * - Parse and return item
    */
-  export const getItemJson = async <T>(key: string) => {
+  getItemJson: async <T>(key: string) => {
     try {
-      const item = storage.getString(key);
+      const item = defaultStorage.getString(key);
       const parsedItem = item && JSON.parse(item);
       return parsedItem as T | undefined;
     } catch (error) {
@@ -60,16 +97,16 @@ export namespace Storage {
       Trackers.trackDebugEvent('Storage', 'getItemJson ERROR', (error as Error | null)?.message || '');
       return null;
     }
-  };
+  },
 
   /**
    * Get item JSON
    * - Retrieve stored item via key
    * - Parse and return item
    */
-  export const getItem = async <T extends string | number | boolean>(key: string) => {
+  getItem: async <T extends string | number | boolean>(key: string) => {
     try {
-      const item = storage.getString(key);
+      const item = defaultStorage.getString(key);
       return item as T | undefined;
     } catch (error) {
       console.warn(
@@ -78,33 +115,33 @@ export namespace Storage {
       Trackers.trackDebugEvent('Storage', 'getItem ERROR', (error as Error | null)?.message || '');
       return null;
     }
-  };
+  },
 
   /**
    * Remove item
    * - Find stored item via key
    * - Remove item from storage
    */
-  export const removeItem = async (key: string) => {
+  removeItem: async (key: string) => {
     try {
-      storage.delete(key);
+      defaultStorage.delete(key);
     } catch (error) {
       console.warn(
         `[Storage] removeItemJson: failed to remove key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'removeItem ERROR', (error as Error | null)?.message || '');
     }
-  };
+  },
 
   /**
    * Remove items
    * - Find all items via provided keys
    * - Remove each item from storage
    */
-  export const removeItems = async (keys: string[]) => {
+  removeItems: async (keys: string[]) => {
     try {
       for (const key of keys) {
-        storage.delete(key);
+        defaultStorage.delete(key);
       }
     } catch (error) {
       console.warn(
@@ -112,105 +149,68 @@ export namespace Storage {
       );
       Trackers.trackDebugEvent('Storage', 'removeItems ERROR', (error as Error | null)?.message || '');
     }
-  };
+  },
 
   /**
    * Get keys
    * - Find all existing keys within storage
    * - Return keys
    */
-  export const getKeys = async () => {
+  getKeys: async () => {
     try {
-      const keys = storage.getAllKeys();
+      const keys = defaultStorage.getAllKeys();
       return keys;
     } catch (error) {
       console.warn(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
       Trackers.trackDebugEvent('Storage', 'getKeys ERROR', (error as Error | null)?.message || '');
       return null;
     }
-  };
+  },
 
   /**
    * Migrate item JSON
    * - Get notifications filter setting to migrate (via its current key)
    * - Return setting and remove it from storage
    */
-  export const migrateItemJson = async <ItemType>(oldKey: string): Promise<ItemType | undefined> => {
-    const notifFilterSetting: ItemType | undefined = await getItemJson(oldKey);
+  migrateItemJson: async <ItemType>(oldKey: string): Promise<ItemType | undefined> => {
+    const notifFilterSetting: ItemType | undefined = await StorageObject.getItemJson(oldKey);
     if (notifFilterSetting) {
-      await removeItem(oldKey);
+      await StorageObject.removeItem(oldKey);
       return notifFilterSetting;
     } else return undefined;
-  };
-
-  /**
-   * Migrate from AsyncStorage
-   * - Find all existing AsyncStorage keys
-   * - Launch migration script if some keys remain
-   * - Get each key's value, add it to MMKV and remove it from AsyncStorage
-   */
-  const migrateFromAsyncStorage = async () => {
-    const keys = await AsyncStorage.getAllKeys();
-    if (keys.length > 0) {
-      for (const key of keys) {
-        try {
-          const value = await AsyncStorage.getItem(key);
-          if (value !== null) {
-            storage.set(key, value);
-            AsyncStorage.removeItem(key);
-          }
-        } catch (error) {
-          Trackers.trackDebugEvent('Storage', 'MIGRATION ERROR', (error as Error | null)?.message || 'migrateFromAsyncStorage');
-          console.warn(
-            `[Storage] migrateFromAsyncStorage: failed to migrate items ${
-              error instanceof Error ? `: ${(error as Error).message}` : ''
-            }`,
-          );
-        }
-      }
-    }
-  };
+  },
 
   /**
    * Initiate storage
    */
-  export const init = async () => {
-    await migrateFromAsyncStorage();
-  };
-}
-
-export const setItemJson = async <T>(key: string, data: T) => {
-  await Storage.setItemJson(key, data);
+  init: async () => {
+    await StorageHandler.initAllStorages();
+  },
 };
 
-export const setItem = async <T extends string | number | boolean>(key: string, data: T) => {
-  await Storage.setItem(key, data);
+export const setItemJson = async <T>(key: string, data: T) => {
+  await StorageObject.setItemJson(key, data);
 };
 
 export const getItemJson = async <T>(key: string) => {
-  const parsedItem = await Storage.getItemJson(key);
+  const parsedItem = await StorageObject.getItemJson(key);
   return parsedItem as T | undefined;
 };
 
-export const getItem = async <T extends string | number | boolean>(key: string) => {
-  const item = await Storage.getItem(key);
-  return item as T | undefined;
-};
-
 export const removeItem = async (key: string) => {
-  await Storage.removeItem(key);
+  await StorageObject.removeItem(key);
 };
 
 export const removeItems = async (keys: string[]) => {
-  await Storage.removeItems(keys);
+  await StorageObject.removeItems(keys);
 };
 
 export const getKeys = async () => {
-  const keys = await Storage.getKeys();
+  const keys = await StorageObject.getKeys();
   return keys;
 };
 
 export const migrateItemJson = async <ItemType>(oldKey: string) => {
-  const settingsToMigrate = await Storage.migrateItemJson(oldKey);
+  const settingsToMigrate = await StorageObject.migrateItemJson(oldKey);
   return settingsToMigrate as ItemType | undefined;
 };

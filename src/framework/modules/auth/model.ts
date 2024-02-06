@@ -1,25 +1,169 @@
-import DeviceInfo from 'react-native-device-info';
+import type { Moment } from 'moment';
 
-import { I18n } from '~/app/i18n';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
-import { IAuthorizedAction, UserPrivateData, UserType } from './service';
+import type { IAuthorizedAction, UserPrivateData } from './service';
 
 /**
- * Describes a generic user (public info)
+ * Every profile type for accounts. Each account is of one type only.
+ * Parent teachers have two accounts, one for each type.
  */
-
-export interface IUserProfile {
-  displayName: string;
-  photo?: string;
+export enum AccountType {
+  Student = 'Student',
+  Relative = 'Relative',
+  Teacher = 'Teacher',
+  Personnel = 'Personnel',
+  Guest = 'Guest',
 }
 
-export interface IUser extends IUserProfile {
-  id: string;
+/**
+ * Describes minimal info to display a user
+ */
+export interface DisplayUserPublic {
+  id: string; // id is used to get avatar
+  displayName: string;
+}
+
+/**
+ * Describes minimal info to display a user, but with account type hint
+ */
+export interface DisplayUserPublicWithType extends DisplayUserPublic {
+  type: AccountType;
+}
+
+/**
+ * Represent user information that a seved account contains
+ */
+export interface AuthSavedAccountUserInfo extends DisplayUserPublicWithType {
+  avatar?: Blob;
+  loginUsed: string | undefined; // undefined if federation login
+}
+
+/**
+ * Describes the contact information of a user
+ */
+export interface AuthUserContactDetails {
+  email?: string;
+  mobile?: string;
+  homePhone?: string;
+}
+
+/**
+ * Describes all visible values from logged user profile.
+ */
+export interface AuthLoggedUserProfile extends AuthSavedAccountUserInfo, AuthUserContactDetails {
+  birthDate?: Moment;
+  firstName: string;
+  lastName: string;
+  login?: string; // May be same as loginUsed if real login was used to log in
+  loginAlias?: string; // May be same as loginUsed if alias was used to log in
+  photo?: string; // = avatar url if defined. Keep in mind `avatar` property stores the Blob data of the image.
+}
+
+/**
+ * Describes all data thet is tied to the logged user
+ */
+export interface AuthLoggedUserInfo extends AuthLoggedUserProfile {
+  groups: string[];
+  uniqueId?: string;
+  children?: UserChildren;
+  relatives?: UserPrivateData['parents'];
+  classes?: string[];
+  structures?: UserStructureWithClasses[];
+}
+
+export type DateTimeString = string;
+
+/**
+ * A generic token information
+ */
+export interface AuthToken {
+  value: string;
+}
+
+/**
+ * A Bearer token used for authentication
+ */
+export interface AuthBearerToken extends AuthToken {
+  type: 'Bearer';
+  expiresAt: DateTimeString;
+}
+
+export interface AuthQueryParamToken extends AuthToken {
+  type: 'QueryParam';
+  expiresAt: DateTimeString;
+}
+
+/**
+ * A set of authentication tokens and scope information
+ */
+export interface AuthTokenSet {
+  access: AuthBearerToken;
+  refresh: AuthToken;
+  queryParam?: AuthQueryParamToken;
+  scope: string[];
+}
+
+/**
+ * Every info a saved account contains
+ */
+export interface AuthSavedAccount {
+  platform: string;
+  tokens?: AuthTokenSet;
+  user: AuthSavedAccountUserInfo;
+}
+
+export interface AuthLoggedAccountRights {
+  apps: IEntcoreApp[];
+  widgets: IEntcoreWidget[];
+  authorizedActions: IAuthorizedAction[];
+}
+
+/**
+ * Every info the logged account contains
+ */
+export interface AuthLoggedAccount {
+  platform: Platform;
+  tokens: AuthTokenSet;
+  user: AuthLoggedUserInfo;
+  rights: AuthLoggedAccountRights;
+  type: SessionType;
+  federated: boolean;
+}
+
+/**
+ * All possible requirements after a user log in.
+ * Formerly "partial session scenarios".
+ */
+export enum AuthRequirement {
+  MUST_CHANGE_PASSWORD = 1,
+  MUST_REVALIDATE_TERMS,
+  MUST_VALIDATE_TERMS,
+  MUST_VERIFY_MOBILE,
+  MUST_VERIFY_EMAIL,
+}
+
+/**
+ * Cases that make the user be redirected to a page
+ */
+export enum AuthPendingRedirection {
+  ACTIVATE = 'activate',
+  RENEW_PASSWORD = 'renew_password',
+}
+
+/**
+ * Associates a saved account to each user id
+ */
+export type AuthSavedAccountMap = Record<string, AuthSavedAccount>;
+
+export type AuthLoggedAccountMap = Record<string, AuthLoggedAccount>;
+
+export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthLoggedAccount>;
+
+export interface IUser extends DisplayUserPublic {
   login: string;
-  type: UserType;
+  type: AccountType;
 }
 
 export interface StructureNode {
@@ -54,16 +198,11 @@ export interface UserStructureWithClasses extends StructureNode {
   classes: string[];
 }
 
-export interface LoggedUserContactDetails {
-  email?: string;
-  mobile?: string;
-}
-
 /**
  * Describes all editable profile values as text-only, without verifications.
  */
-export interface ILoggedUserProfile extends IUserProfile, LoggedUserContactDetails {
-  birthDate?: moment.Moment;
+export interface ILoggedUserProfile extends DisplayUserPublic, AuthUserContactDetails {
+  birthDate?: Moment;
   firstName: string;
   lastName: string;
   homePhone?: string; // It's not in LoggedUserContactDetails because there is no logic associed with it unlike mobile.
@@ -103,89 +242,24 @@ export type UserChildrenFlattened = (UserChild & {
 })[];
 
 export enum SessionType {
-  PERMANENT,
-  TEMPORARY,
+  PERMANENT, // Session is to be saved to the storage
+  TEMPORARY, // Session not saved, preventing auto-login
 }
 
-/**
- * Current session information including authentification, rights & user info.
- */
-export interface ISession {
-  platform: Platform;
-  oauth2: OAuth2RessourceOwnerPasswordClient;
-  apps: IEntcoreApp[];
-  widgets: IEntcoreWidget[];
-  authorizedActions: IAuthorizedAction[];
-  user: ILoggedUser;
-  type: SessionType; // Is Session remembering set on ?
-  federated: boolean;
-}
+// export function getAuthErrorCode(error: InstanceType<typeof Error.LoginError>, platform: Platform) {
+//   return I18n.get('auth-error-' + error.replaceAll('_', ''), {
+//     version: DeviceInfo.getVersion(),
+//     errorcode: error,
+//     currentplatform: platform.url,
+//     defaultValue: I18n.get('auth-error-other', {
+//       version: DeviceInfo.getVersion(),
+//       errorcode: error,
+//       currentplatform: platform.url,
+//     }),
+//   });
+// }
 
-/** Error codes as an enum, values can be string that backend returns */
-export enum RuntimeAuthErrorCode {
-  ACTIVATION_ERROR = 'activation_error',
-  PWDRESET_ERROR = 'pwdreset_error',
-  EMAILVALIDATIONINFOS_FAIL = 'emailvalidationinfos_fail',
-  FIREBASE_ERROR = 'firebase_error',
-  LOAD_I18N_ERROR = 'loadi18nerror',
-  MOBILEVALIDATIONINFOS_FAIL = 'mobilevalidationinfos_fail',
-  NETWORK_ERROR = 'network_error',
-  NO_TOKEN = 'no_token',
-  NOT_PREMIUM = 'not_premium',
-  PLATFORM_NOT_EXISTS = 'platform_not_exists',
-  PRE_DELETED = 'pre_deleted',
-  RESTORE_FAIL = 'restore_fail',
-  RUNTIME_ERROR = 'runtime_error',
-  UNKNOWN_ERROR = 'unknown_error',
-  USERINFO_FAIL = 'userinfo_fail',
-  USERPUBLICINFO_FAIL = 'userpublicinfo_fail',
-  USERREQUIREMENTS_FAIL = 'userrequirements_fail',
-}
-
-export type AuthErrorCode = OAuth2ErrorCode | RuntimeAuthErrorCode;
-
-export interface AuthErrorDetails {
-  type: AuthErrorCode;
-  error?: string;
-  description?: string;
-}
-export type AuthError = Error & AuthErrorDetails;
-
-export function createAuthError<T extends object>(
-  type: AuthErrorCode,
-  error: string,
-  description?: string,
-  additionalData?: T,
-): AuthError & T {
-  const err: AuthError = new Error('AUTH: returned error') as any;
-  err.name = 'EAUTH';
-  err.type = type;
-  err.error = error;
-  err.description = description;
-  return { ...err, ...additionalData } as AuthError & T;
-}
-
-export function getAuthErrorCode(error: AuthErrorCode, platform: Platform) {
-  return I18n.get('auth-error-' + error.replaceAll('_', ''), {
-    version: DeviceInfo.getVersion(),
-    errorcode: error,
-    currentplatform: platform.url,
-    defaultValue: I18n.get('auth-error-other', {
-      version: DeviceInfo.getVersion(),
-      errorcode: error,
-      currentplatform: platform.url,
-    }),
-  });
-}
-
-export enum PartialSessionScenario {
-  MUST_CHANGE_PASSWORD = 'must-change-password',
-  MUST_REVALIDATE_TERMS = 'must-revalidate-terms',
-  MUST_VERIFY_MOBILE = 'must-verify-mobile',
-  MUST_VERIFY_EMAIL = 'must-verify-email',
-}
-
-export interface IAuthContext {
+export interface PlatformAuthContext {
   cgu: boolean;
   passwordRegex: string;
   passwordRegexI18n?: { [lang: string]: string };
@@ -218,7 +292,7 @@ export function createActivationError<T extends object>(
   description?: string,
   additionalData?: T,
 ): IActivationError & T {
-  const err: IActivationError = new Error('ACTIVATION: returned error') as any;
+  const err: IActivationError = new global.Error('ACTIVATION: returned error') as any;
   err.name = 'EACTIVATION';
   err.type = type;
   err.error = error;
@@ -226,14 +300,28 @@ export function createActivationError<T extends object>(
   return { ...err, ...additionalData } as IActivationError & T;
 }
 
-export interface IAuthCredentials {
+export interface AuthUsernameCredential {
   username: string;
-  password: string;
 }
 
-export interface IAuthUsernameCredential {
-  username: string;
+export interface AuthCredentials extends AuthUsernameCredential {
+  password: string;
 }
+export interface AuthSamlCredentials {
+  saml: string;
+}
+export interface AuthCustomTokenCredentials {
+  customToken: string;
+}
+export type AuthFederationCredentials = AuthSamlCredentials | AuthCustomTokenCredentials;
+export type AuthAnyCredentials = AuthCredentials | AuthFederationCredentials;
+
+export const credentialsAreLoginPassword = (credentials: AuthAnyCredentials): credentials is AuthCredentials =>
+  (credentials as AuthCredentials).username !== undefined && (credentials as AuthCredentials).password !== undefined;
+export const credentialsAreSaml = (credentials: AuthAnyCredentials): credentials is AuthSamlCredentials =>
+  (credentials as AuthSamlCredentials).saml !== undefined;
+export const credentialsAreCustomToken = (credentials: AuthAnyCredentials): credentials is AuthCustomTokenCredentials =>
+  (credentials as AuthCustomTokenCredentials).customToken !== undefined;
 
 export type ForgotMode = 'id' | 'password';
 
@@ -264,7 +352,7 @@ export function createChangePasswordError<T extends object>(
   description?: string,
   additionalData?: T,
 ): IChangePasswordError & T {
-  const err: IChangePasswordError = new Error('CHANGE PWD: returned error') as any;
+  const err: IChangePasswordError = new global.Error('CHANGE PWD: returned error') as any;
   err.name = 'ECHANGEPWD';
   err.type = type;
   err.error = error;

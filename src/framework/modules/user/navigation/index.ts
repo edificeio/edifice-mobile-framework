@@ -1,17 +1,17 @@
 import { ParamListBase } from '@react-navigation/native';
 
 import moduleConfig from '~/framework/modules/user/module-config';
-import { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
+import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
 import type { UserAccountOnboardingScreenNavParams } from '~/framework/modules/user/screens/account-onboarding';
 import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
-import { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
+import type { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
 import type { UserLegalNoticeScreenNavParams } from '~/framework/modules/user/screens/legal-notice';
-import { UserMulticomptePagesScreenNavParams } from '~/framework/modules/user/screens/multicompte-pages';
+import type { UserMulticomptePagesScreenNavParams } from '~/framework/modules/user/screens/multicompte-pages';
 import type { ProfileScreenNavigationParams } from '~/framework/modules/user/screens/profile';
-import { UserEditDescriptionScreenNavParams } from '~/framework/modules/user/screens/profile/edit-description';
-import { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
-import { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/screens/profile/edit-moodmotto';
+import type { UserEditDescriptionScreenNavParams } from '~/framework/modules/user/screens/profile/edit-description';
+import type { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
+import type { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 import type { UserXmasScreenNavParams } from '~/framework/modules/user/screens/xmas';

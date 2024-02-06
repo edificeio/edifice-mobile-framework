@@ -5,7 +5,7 @@
 import moment, { Moment } from 'moment';
 import { ImageURISource } from 'react-native';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 // Types
 
@@ -123,7 +123,7 @@ export const isEnrichedNotification = (n: ITimelineNotification) =>
 export const getAsEnrichedNotification = (n: ITimelineNotification) =>
   isEnrichedNotification(n) ? (n as IEnrichedNotification) : undefined;
 
-export const isMyNotification = (n: ISenderNotification, u: ISession) => n.sender.id === u.user.id;
+export const isMyNotification = (n: ISenderNotification, u: AuthLoggedAccount) => n.sender.id === u.user.id;
 
 // Adapter
 

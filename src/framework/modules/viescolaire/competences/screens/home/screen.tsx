@@ -13,8 +13,8 @@ import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-sc
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
@@ -75,7 +75,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       });
       await props.tryFetchSubjects(structureId);
       let childClasses = classes?.[0];
-      if (userType === UserType.Relative) {
+      if (userType === AccountType.Relative) {
         const children = await props.tryFetchUserChildren(structureId, userId);
         childClasses = children.find(c => c.id === childId)?.classId;
       }
@@ -150,7 +150,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   const openAssessment = (assessment: IDevoir) => {
     const { childId, classes, navigation, userChildren, userType } = props;
-    const studentClass = userType === UserType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.classId;
+    const studentClass = userType === AccountType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.classId;
 
     navigation.navigate(competencesRouteNames.assessment, {
       assessment,
@@ -290,7 +290,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   return (
     <PageView>
-      {props.userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
+      {props.userType === AccountType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
       {renderPage()}
     </PageView>
   );
@@ -307,7 +307,7 @@ export default connect(
     return {
       averages: competencesState.averages.data,
       classes: session?.user.classes,
-      childId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
+      childId: userType === AccountType.Student ? userId : dashboardState.selectedChildId,
       competences: competencesState.competences.data,
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       dropdownItems: {
@@ -333,7 +333,7 @@ export default connect(
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
       structureId:
-        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
+        userType === AccountType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,
       userChildren: competencesState.userChildren.data,
       userId,

@@ -4,7 +4,7 @@
 import deepmerge from 'deepmerge';
 import queryString from 'query-string';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
 import { IEntcoreNotificationType } from '~/framework/modules/timeline/reducer/notif-definitions/notif-types';
 import {
@@ -17,21 +17,21 @@ import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 // Notifications
 
 export const registeredNotificationsService = {
-  list: async (session: ISession) => {
+  list: async (session: AuthLoggedAccount) => {
     const api = '/timeline/registeredNotifications';
     return fetchJSONWithCache(api) as Promise<IEntcoreNotificationType[]>;
   },
 };
 
 export const notifFiltersService = {
-  list: async (session: ISession) => {
+  list: async (session: AuthLoggedAccount) => {
     const api = '/timeline/types';
     return fetchJSONWithCache(api) as Promise<string[]>;
   },
 };
 
 export const notificationsService = {
-  page: async (session: ISession, page: number, filters: string[]) => {
+  page: async (session: AuthLoggedAccount, page: number, filters: string[]) => {
     const url = '/timeline/lastNotifications';
     const query = {
       page,
@@ -52,7 +52,7 @@ export const notificationsService = {
     // Run the notification adapter for each received notification
     return entcoreNotifications.results.map(n => notificationAdapter(n) as ITimelineNotification);
   },
-  report: async (session: ISession, id: string) => {
+  report: async (session: AuthLoggedAccount, id: string) => {
     const api = `${session.platform.url}/timeline/${id}/report`;
     const method = 'PUT';
     return signedFetchJson(api, { method });
@@ -62,11 +62,11 @@ export const notificationsService = {
 // Flash Messages
 
 export const flashMessagesService = {
-  list: async (session: ISession) => {
+  list: async (session: AuthLoggedAccount) => {
     const api = '/timeline/flashmsg/listuser';
     return fetchJSONWithCache(api) as Promise<IEntcoreFlashMessage[]>;
   },
-  dismiss: async (session: ISession, flashMessageId: number) => {
+  dismiss: async (session: AuthLoggedAccount, flashMessageId: number) => {
     const api = `/timeline/flashmsg/${flashMessageId}/markasread`;
     return fetchJSONWithCache(api, { method: 'PUT' }) as any;
   },
@@ -97,17 +97,17 @@ export interface IEntcoreTimelinePreferenceContent {
 }
 
 export const pushNotifsService = {
-  _getPrefs: async (session: ISession) => {
+  _getPrefs: async (session: AuthLoggedAccount) => {
     const api = '/userbook/preference/timeline';
     const response = (await fetchJSONWithCache(api)) as IEntcoreTimelinePreference;
     const prefs = JSON.parse(response.preference) as IEntcoreTimelinePreferenceContent | null;
     return prefs;
   },
-  _getConfig: async (session: ISession) => {
+  _getConfig: async (session: AuthLoggedAccount) => {
     const prefs = await pushNotifsService._getPrefs(session);
     return prefs?.config ?? {};
   },
-  list: async (session: ISession) => {
+  list: async (session: AuthLoggedAccount) => {
     const notifPrefs = {} as IPushNotifsSettings;
     const data = await pushNotifsService._getConfig(session);
     for (const k in data) {
@@ -117,7 +117,7 @@ export const pushNotifsService = {
     }
     return notifPrefs;
   },
-  set: async (session: ISession, changes: PushNotifsSettingsStateData) => {
+  set: async (session: AuthLoggedAccount, changes: PushNotifsSettingsStateData) => {
     const api = '/userbook/preference/timeline';
     const method = 'PUT';
     const notifPrefsUpdated = {} as { 'push-notif': boolean };

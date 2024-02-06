@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IConfig, IExclusion, IService } from '~/framework/modules/homework-assistance/model';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 
@@ -91,14 +91,14 @@ const homeworkAssistanceServicesAdapter = (services: IBackendHomeworkAssistanceS
 
 export const homeworkAssistanceService = {
   config: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/homework-assistance/config';
       const config = (await fetchJSONWithCache(api)) as IBackendHomeworkAssistanceConfig;
       return homeworkAssistanceConfigAdapter(config) as IConfig;
     },
   },
   services: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/homework-assistance/services/all';
       const services = (await fetchJSONWithCache(api)) as IBackendHomeworkAssistanceServices;
       return homeworkAssistanceServicesAdapter(services);
@@ -106,7 +106,7 @@ export const homeworkAssistanceService = {
   },
   service: {
     addRequest: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       service: IService,
       phoneNumber: string,
       date: Moment,

@@ -12,7 +12,7 @@ node_require('react-native-permissions/scripts/setup.rb')
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled(["Debug"], { 'Flipper' => '0.203.0' })
 
 linkage = ENV['USE_FRAMEWORKS']
 
@@ -25,7 +25,6 @@ target 'appe' do
 
   config = use_native_modules!
   $RNFirebaseAsStaticFramework = true
-  $FirebaseSDKVersion = "10.20.0"
 
   #
   # Static libraries => use modular headers

@@ -1,9 +1,11 @@
+/* eslint-disable react/jsx-max-depth */
 import styled from '@emotion/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { KeyboardAvoidingView, Platform as RNPlatform, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -12,11 +14,13 @@ import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
-import { ILoginResult, activateAccountAction } from '~/framework/modules/auth/actions';
+import { useConstructor } from '~/framework/hooks/constructor';
+import { activateAccountAction, loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
 import {
   ActivationFormModel,
   InputEmail,
@@ -25,30 +29,36 @@ import {
   InputPhone,
   ValueChangeArgs,
 } from '~/framework/modules/auth/components/ActivationForm';
-import { IActivationError, IActivationPayload, LegalUrls } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames, redirectLoginNavAction } from '~/framework/modules/auth/navigation';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { Platform } from '~/framework/util/appConf';
+import {
+  IActivationPayload as ActivationPayload,
+  IActivationError,
+  LegalUrls,
+  PlatformAuthContext,
+} from '~/framework/modules/auth/model';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getPlatformContextOf, getPlatformLegalUrlsOf } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
+import { Loading } from '~/ui/Loading';
 
 // TYPES ---------------------------------------------------------------------------
 
 type IFields = 'login' | 'password' | 'confirmPassword' | 'phone' | 'mail';
 
-export interface IActivationPageState extends IActivationPayload {
+export interface ActivationScreenState extends ActivationPayload {
   typing: boolean;
   acceptCGU: boolean;
   error?: string;
   activationState: 'IDLE' | 'RUNNING' | 'DONE';
 }
-export interface IActivationPageDataProps {
+export interface ActivationScreenStoreProps {
   legalUrls?: LegalUrls;
+  context?: PlatformAuthContext;
 }
-export interface IActivationPageEventProps {
-  trySubmit: (platform: Platform, payload: IActivationPayload, rememberMe?: boolean) => Promise<ILoginResult>;
+export interface ActivationScreenDispatchProps {
+  trySubmit: (...args: Parameters<typeof activateAccountAction>) => ReturnType<ReturnType<typeof activateAccountAction>>;
 }
-export type IActivationPageProps = IActivationPageEventProps &
-  IActivationPageDataProps &
+export type ActivationScreenProps = ActivationScreenDispatchProps &
+  ActivationScreenStoreProps &
   NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.activation>;
 
 // Activation Page Component -------------------------------------------------------------
@@ -101,11 +111,14 @@ const ButtonWrapper = styled.View<{ error: any; typing: boolean }>({
   marginTop: UI_SIZES.spacing.small,
 });
 
-export class ActivationPage extends React.PureComponent<IActivationPageProps, IActivationPageState> {
+export class ActivationScreen extends React.PureComponent<
+  ActivationScreenProps & { context: PlatformAuthContext; legalUrls: LegalUrls },
+  ActivationScreenState
+> {
   private mounted = false;
 
   // fully controller component
-  public state: IActivationPageState = {
+  public state: ActivationScreenState = {
     typing: false,
     acceptCGU: false,
     activationState: 'IDLE',
@@ -120,16 +133,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   private doActivation = async () => {
     try {
       this.setState({ typing: false, activationState: 'RUNNING', error: undefined });
-      const redirect = await this.props.trySubmit(this.props.route.params.platform, this.state, this.props.route.params.rememberMe);
-      if (redirect) {
-        redirectLoginNavAction(redirect, this.props.route.params.platform, this.props.navigation);
-        setTimeout(() => {
-          // We set timeout to let the app time to navigate before resetting the state of this screen in background
-          if (this.mounted) this.setState({ typing: false, activationState: 'IDLE', error: undefined });
-        }, 500);
-      } else {
-        if (this.mounted) this.setState({ typing: false, activationState: 'DONE', error: undefined });
-      }
+      await this.props.trySubmit(this.props.route.params.platform, this.state);
     } catch (e) {
       const activationError = e as IActivationError;
       if (this.mounted) this.setState({ typing: false, error: activationError.error, activationState: 'IDLE' });
@@ -138,7 +142,7 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
 
   private onFieldChange = (key: IFields) => {
     return (valueChange: ValueChangeArgs<string>) => {
-      const newState: Partial<IActivationPageState> = {
+      const newState: Partial<ActivationScreenState> = {
         [key]: valueChange.value,
         typing: true,
       };
@@ -152,11 +156,12 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
 
   public render() {
     const { password, confirmPassword, mail, phone, acceptCGU, typing, error, activationState } = this.state;
-    const authContext = this.props.route.params.context;
+    const { platform } = this.props.route.params;
+    const { context } = this.props;
     const formModel = new ActivationFormModel({
-      ...authContext,
-      phoneRequired: authContext?.mandatory?.phone ?? false,
-      emailRequired: authContext?.mandatory?.mail ?? false,
+      ...context,
+      phoneRequired: context?.mandatory?.phone ?? false,
+      emailRequired: context?.mandatory?.mail ?? false,
       password: () => password,
     });
     const isNotValid = !acceptCGU || !formModel.validate({ ...this.state });
@@ -176,11 +181,11 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
                 <FormWrapper>
                   <FormContainer>
                     <LogoWrapper>
-                      <PFLogo pf={this.props.route.params.platform} />
+                      <PFLogo pf={platform} />
                     </LogoWrapper>
                     {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
-                    {authContext.passwordRegexI18n?.[I18n.getLanguage()] ? (
-                      <AlertCard type="info" text={authContext.passwordRegexI18n[I18n.getLanguage()]} style={styles.alertCard} />
+                    {context.passwordRegexI18n?.[I18n.getLanguage()] ? (
+                      <AlertCard type="info" text={context.passwordRegexI18n[I18n.getLanguage()]} style={styles.alertCard} />
                     ) : null}
                     <InputPassword password={password} form={formModel} onChange={this.onFieldChange('password')} />
                     <InputPasswordConfirm
@@ -238,14 +243,34 @@ export class ActivationPage extends React.PureComponent<IActivationPageProps, IA
   }
 }
 
+const ActivationScreenLoader = (props: ActivationScreenProps) => {
+  const { context, legalUrls, route } = props;
+  const platform = route.params.platform;
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  useConstructor(async () => {
+    if (!context && platform) {
+      dispatch(loadAuthContextAction(platform));
+    }
+    if (!legalUrls && platform) {
+      dispatch(loadPlatformLegalUrlsAction(platform));
+    }
+  });
+
+  if (!platform) return <EmptyConnectionScreen />;
+  if (!context || !legalUrls) return <Loading />;
+  else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} />;
+};
+
 export default connect(
-  (state: IGlobalState) => {
+  (state: IGlobalState, props: ActivationScreenProps) => {
     return {
-      legalUrls: getAuthState(state).legalUrls,
+      context: getPlatformContextOf(props.route.params.platform),
+      legalUrls: getPlatformLegalUrlsOf(props.route.params.platform),
     };
   },
   dispatch => {
-    const dprops = bindActionCreators<IActivationPageEventProps>(
+    const dprops = bindActionCreators<ActivationScreenDispatchProps>(
       {
         trySubmit: tryAction(activateAccountAction),
       },
@@ -253,4 +278,4 @@ export default connect(
     );
     return dprops;
   },
-)(ActivationPage);
+)(ActivationScreenLoader);

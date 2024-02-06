@@ -19,8 +19,8 @@ import { PageView, pageGutterSize } from '~/framework/components/page';
 import SwipeableList from '~/framework/components/swipeableList';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { getSession } from '~/framework/modules/auth/reducer';
 import {
   dismissFlashMessageAction,
   loadNotificationsPageAction,
@@ -56,7 +56,7 @@ import {
 export interface ITimelineScreenDataProps {
   flashMessages: FlashMessagesStateData;
   notifications: NotificationsState;
-  session: ISession;
+  session: AuthLoggedAccount;
 }
 export interface ITimelineScreenEventProps {
   dispatch: ThunkDispatch<any, any, any>;
@@ -240,22 +240,22 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
               },
             ]
           : item.type === ITimelineItemType.FLASHMSG
-          ? [
-              {
-                action: async row => {
-                  try {
-                    await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
-                    row[item.data.id]?.closeRow();
-                  } catch {
-                    /* empty */
-                  } // Do nothing, just to prevent error
+            ? [
+                {
+                  action: async row => {
+                    try {
+                      await this.doDismissFlashMessage((item.data as IEntcoreFlashMessage).id);
+                      row[item.data.id]?.closeRow();
+                    } catch {
+                      /* empty */
+                    } // Do nothing, just to prevent error
+                  },
+                  actionColor: theme.palette.status.failure.regular,
+                  actionText: I18n.get('timeline-close'),
+                  actionIcon: 'ui-close',
                 },
-                actionColor: theme.palette.status.failure.regular,
-                actionText: I18n.get('timeline-close'),
-                actionIcon: 'ui-close',
-              },
-            ]
-          : undefined
+              ]
+            : undefined
         : undefined,
     };
   }
@@ -443,7 +443,7 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
 
 const mapStateToProps: (s: IGlobalState) => ITimelineScreenDataProps = s => {
   const ts = moduleConfig.getState(s);
-  const session = getAuthState(s).session;
+  const session = getSession();
   if (session === undefined) throw new Error('TimelineScreen : session not defined');
   return {
     flashMessages: ts.flashMessages.data,

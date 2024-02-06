@@ -15,7 +15,6 @@ import usePreventBack from '~/framework/hooks/prevent-back';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { userService } from '~/framework/modules/user/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
 import type { UserEditDescriptionScreenProps } from './types';
@@ -63,7 +62,6 @@ const UserEditDescriptionScreen = (props: UserEditDescriptionScreenProps) => {
         newMotto: motto,
         newHobbies: hobbies,
       });
-      Trackers.trackEvent('Profile', 'EDIT_DESCRIPTION');
       Toast.showSuccess(I18n.get('user-profile-toast-editAboutSuccess'));
     } catch {
       Toast.showError(I18n.get('toast-error-text'));

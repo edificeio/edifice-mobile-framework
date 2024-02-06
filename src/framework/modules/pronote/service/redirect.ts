@@ -1,5 +1,5 @@
 import { I18n } from '~/app/i18n';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { openUrl } from '~/framework/util/linking';
 import { signedFetch } from '~/infra/fetchWithCache';
 
@@ -10,7 +10,7 @@ const profileMap = {
   PERSONNEL: 'direction',
 };
 
-const getRedirectUrl = (session: ISession, connectorAddress: string, pageId?: string) => {
+const getRedirectUrl = (session: AuthLoggedAccount, connectorAddress: string, pageId?: string) => {
   const getSlash = (link: string) => {
     const service = decodeURIComponent(link);
     return service.charAt(service.length - 1) === '/' ? '' : '%2F';
@@ -24,7 +24,7 @@ const getRedirectUrl = (session: ISession, connectorAddress: string, pageId?: st
   return link;
 };
 
-export default async (session: ISession, connectorAddress: string, pageId?: string, dryRun?: boolean) => {
+export default async (session: AuthLoggedAccount, connectorAddress: string, pageId?: string, dryRun?: boolean) => {
   const intermediateResponse = await signedFetch(getRedirectUrl(session, connectorAddress, pageId));
   const finalUrl = intermediateResponse.headers.get('location');
   if (dryRun) return finalUrl ?? undefined;
