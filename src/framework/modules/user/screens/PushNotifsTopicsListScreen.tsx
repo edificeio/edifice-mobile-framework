@@ -122,7 +122,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
     items = Object.fromEntries(
       Object.entries(items).filter(item => {
         const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
-        return this.props.session.apps.find(app => !app.name || app.name === notifFilter?.['app-name']);
+        return this.props.session?.rights.apps.find(app => !app.name || app.name === notifFilter?.['app-name']);
       }),
     );
     const mainListData =

@@ -28,7 +28,7 @@ export const loadNotificationsDefinitionsAction = () => async (dispatch: Dispatc
     // 1b. Filter notif filters (That sounds odd...) + get app info
     let detailedFilters = computeNotificationFilterList(filters, notificationTypes);
     // 1c. Keep only userauthorized filters
-    detailedFilters = getAuthorizedNotificationFilterList(detailedFilters, session.apps);
+    detailedFilters = getAuthorizedNotificationFilterList(detailedFilters, session.rights.apps);
     // 2. Validate data
     dispatch(notifFiltersAsyncActions.receipt(detailedFilters));
   } catch (e) {

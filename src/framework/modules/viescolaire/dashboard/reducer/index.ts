@@ -33,7 +33,11 @@ export const actionTypes = {
 
 const reducer = combineReducers({
   selectedChildId: createSessionReducer(initialState.selectedChildId, {
-    [authActionTypes.sessionCreate]: (state, action) => {
+    [authActionTypes.login]: (state, action) => {
+      const children = getFlattenedChildren(action.session.user.children);
+      return children?.find(child => child.classesNames.length)?.id ?? null;
+    },
+    [authActionTypes.loginRequirement]: (state, action) => {
       const children = getFlattenedChildren(action.session.user.children);
       return children?.find(child => child.classesNames.length)?.id ?? null;
     },
@@ -43,7 +47,10 @@ const reducer = combineReducers({
     },
   }),
   selectedStructureId: createSessionReducer(initialState.selectedStructureId, {
-    [authActionTypes.sessionCreate]: (state, action) => {
+    [authActionTypes.login]: (state, action) => {
+      return action.session.user.structures[0]?.id;
+    },
+    [authActionTypes.loginRequirement]: (state, action) => {
       return action.session.user.structures[0]?.id;
     },
     [actionTypes.selectStructure]: (state, action) => {

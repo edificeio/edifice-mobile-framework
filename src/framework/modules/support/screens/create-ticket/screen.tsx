@@ -191,7 +191,7 @@ export default connect(
   (state: IGlobalState) => {
     const session = getSession();
     const apps =
-      session?.apps
+      session?.rights.apps
         ?.filter(app => app.address && app.name)
         .map(app => {
           const translation = I18n.get('support-createticket-category-' + app.displayName.toLowerCase());
