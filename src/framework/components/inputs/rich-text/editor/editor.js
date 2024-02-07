@@ -80,12 +80,6 @@ async function initEditor() {
 
 function createHTML(options = {}) {
   const {
-    backgroundColor = '#FFF',
-    color = '#4A4A4A',
-    caretColor = '',
-    placeholderColor = '#a9a9a9',
-    contentCSSText = '',
-    cssText = '',
     pasteAsPlainText = false,
     pasteListener = false,
     keyDownListener = false,
@@ -104,6 +98,9 @@ function createHTML(options = {}) {
     useComposition = true,
   } = options;
   //ERROR: HTML height not 100%;
+
+  const placeholderColor = theme.palette.grey.stone;
+
   return `
 <!DOCTYPE html>
 <html>
@@ -114,11 +111,11 @@ function createHTML(options = {}) {
         ${fontFaces}
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}
         html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%;}    
-        body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${backgroundColor};caret-color: ${caretColor};}
-        .content {font-family: Font;color: ${color}; width: 100%;${
+        body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${theme.palette.grey.white};}
+        .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
-        .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;${contentCSSText}}
+        .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;$font-size: 16px; line-height: 24px; min-height: 200px; margin-top: 12px;}
         [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor}; font-style: italic}
         [placeholder]:empty:focus:before { content: attr(placeholder);color: ${placeholderColor};display:block;}
         video {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}
@@ -129,8 +126,6 @@ function createHTML(options = {}) {
         .x-todo li {list-style:none;}
         .x-todo-box {position: relative; left: -24px;}
         .x-todo-box input{position: absolute;}
-        blockquote{border-left: 6px solid #ddd;padding: 5px 0 5px 10px;margin: 15px 0 15px 15px;}
-        hr{display: block;height: 0; border: 0;border-top: 1px solid #ccc; margin: 15px 0; padding: 0;}
         pre{padding: 10px 5px 10px 10px;margin: 15px 0;display: block;line-height: 18px;background: #F0F0F0;border-radius: 6px;font-size: 13px; font-family: 'monaco', 'Consolas', "Liberation Mono", Courier, monospace; word-break: break-all; word-wrap: break-word;overflow-x: auto;}
         pre code {display: block;font-size: inherit;white-space: pre-wrap;color: inherit;}
 
@@ -140,7 +135,7 @@ function createHTML(options = {}) {
         strong, b {font-weight: 700;}
         em {font-style: italic;}
         .download-attachments, .attachments {background-color: ${theme.palette.grey.fog}; padding: ${UI_SIZES.spacing.small}px; border-radius: ${UI_SIZES.radius.newCard}px; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl};}
-        .download-attachments h2, .download-attachments a, .attachments a {color: ${color}; text-decoration: none;}
+        .download-attachments h2, .download-attachments a, .attachments a {color: ${theme.palette.grey.black}; text-decoration: none;}
         .download-attachments h2 {margin: 0 0 ${UI_SIZES.spacing.small}px 0; font-size: ${getScaleFontSize(12)}px; line-height: ${getScaleFontSize(20)}px}
         .attachments {display: flex; flex-direction: column;}
         .attachments::before {content: ${I18n.get('attachment-attachments')};margin-bottom: ${UI_SIZES.spacing.small}px; font-size: ${getScaleFontSize(12)}px; font-weight: 700;}
@@ -149,7 +144,6 @@ function createHTML(options = {}) {
         .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: ${UI_SIZES.elements.icon.medium}px ${UI_SIZES.elements.icon.medium}px; height: ${UI_SIZES.elements.icon.medium}px; width: ${UI_SIZES.elements.icon.medium}px; margin-right: ${UI_SIZES.spacing.minor}px;}
         .download-attachments .attachments {padding: 0; border: none;}
         .download-attachments .attachments::before {display: none;}
-        ${cssText}
     </style>
 </head>
 <body>

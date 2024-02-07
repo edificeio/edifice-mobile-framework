@@ -11,11 +11,6 @@ const styles = StyleSheet.create({
     marginBottom: UI_SIZES.screen.bottomInset,
     flex: 1,
   },
-  content: {
-    color: theme.palette.grey.black,
-    placeholderColor: theme.palette.grey.stone,
-    contentCSSText: 'font-size: 16px; line-height: 24px; min-height: 200px; margin-top: 12px',
-  },
   rich: {
     minHeight: 300,
   },

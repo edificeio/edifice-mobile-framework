@@ -65,7 +65,6 @@ export default class RichEditor extends Component {
     that.loaded = false;
     that.pfUrl = getSession()?.platform?.url || '';
     const {
-      editorStyle: { backgroundColor, color, placeholderColor, cssText, contentCSSText, caretColor } = {},
       html,
       pasteAsPlainText,
       onPaste,
@@ -89,12 +88,6 @@ export default class RichEditor extends Component {
         html:
           html ||
           createHTML({
-            backgroundColor,
-            color,
-            caretColor,
-            placeholderColor,
-            cssText,
-            contentCSSText,
             pasteAsPlainText,
             pasteListener: !!onPaste,
             keyUpListener: !!onKeyUp,
