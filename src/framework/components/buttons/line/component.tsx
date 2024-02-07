@@ -88,7 +88,7 @@ export const LineButton = ({
   };
 
   return (
-    <Container {...(onPress ? { onPress: onPress } : {})} disabled={loading || disabled}>
+    <Container {...(onPress ? { onPress } : {})} disabled={loading || disabled}>
       <View
         style={[
           styles.container,
@@ -120,7 +120,8 @@ export const ButtonLineGroup = ({
         <ButtonLineGroup
           allowFirst={index === 0}
           allowLast={index === childrenAsArray.length - 1}
-          allowAlone={childrenAsArray.length === 1}>
+          allowAlone={childrenAsArray.length === 1}
+          key={(node as React.ReactElement).key}>
           {/* must cast this as ReactElement becasue ReactFragment type doesn't allow props (even though props does exist)*/}
           {(node as React.ReactElement).props.children}
         </ButtonLineGroup>
