@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { getFlattenedChildren } from '~/framework/modules/auth/model';
-import { actionTypes as authActionTypes } from '~/framework/modules/auth/reducer';
+import { ActionPayloads, actionTypes as authActionTypes } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { setItemJson } from '~/framework/util/storage';
@@ -34,11 +34,13 @@ export const actionTypes = {
 const reducer = combineReducers({
   selectedChildId: createSessionReducer(initialState.selectedChildId, {
     [authActionTypes.login]: (state, action) => {
-      const children = getFlattenedChildren(action.session.user.children);
+      const { account } = action as unknown as ActionPayloads['login'];
+      const children = getFlattenedChildren(account.user.children);
       return children?.find(child => child.classesNames.length)?.id ?? null;
     },
     [authActionTypes.loginRequirement]: (state, action) => {
-      const children = getFlattenedChildren(action.session.user.children);
+      const { account } = action as unknown as ActionPayloads['loginRequirement'];
+      const children = getFlattenedChildren(account.user.children);
       return children?.find(child => child.classesNames.length)?.id ?? null;
     },
     [actionTypes.selectChild]: (state, action) => {
@@ -48,10 +50,12 @@ const reducer = combineReducers({
   }),
   selectedStructureId: createSessionReducer(initialState.selectedStructureId, {
     [authActionTypes.login]: (state, action) => {
-      return action.session.user.structures[0]?.id;
+      const { account } = action as unknown as ActionPayloads['login'];
+      return account.user.structures?.[0]?.id;
     },
     [authActionTypes.loginRequirement]: (state, action) => {
-      return action.session.user.structures[0]?.id;
+      const { account } = action as unknown as ActionPayloads['loginRequirement'];
+      return account.user.structures?.[0]?.id;
     },
     [actionTypes.selectStructure]: (state, action) => {
       setItemJson<string>(getStructureStorageKey(action.userId ?? 'global'), action.structureId);
