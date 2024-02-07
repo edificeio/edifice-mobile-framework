@@ -48,7 +48,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={callNavBar}
           initialParams={{}}
         />,
-        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Group key={presencesRouteNames.declareEvent} screenOptions={{ presentation: 'fullScreenModal' }}>
           <Stack.Screen
             key={presencesRouteNames.declareEvent}
             name={presencesRouteNames.declareEvent}
@@ -68,7 +68,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={historyNavBar}
           initialParams={{}}
         />,
-        <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Group key={presencesRouteNames.eventList} screenOptions={{ presentation: 'modal' }}>
           <Stack.Screen
             key={presencesRouteNames.eventList}
             name={presencesRouteNames.eventList}
@@ -80,7 +80,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
       );
       if (session?.user.type === AccountType.Relative) {
         screens.push(
-          <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+          <Stack.Group key={presencesRouteNames.declareAbsence} screenOptions={{ presentation: 'fullScreenModal' }}>
             <Stack.Screen
               key={presencesRouteNames.declareAbsence}
               name={presencesRouteNames.declareAbsence}

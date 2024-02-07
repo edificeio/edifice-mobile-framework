@@ -103,27 +103,27 @@ function RootNavigator(props: RootNavigatorProps) {
     [manageNavSnow, trackNavState],
   );
 
+  const screenOptions = React.useMemo(() => ({ headerShown: true }), []);
+
   const ret = React.useMemo(() => {
     return (
       <>
         <SplashScreenComponent key={appReady} />
         {appReady ? (
-          <>
-            <NavigationContainer ref={navigationRef} initialState={navigationState} onStateChange={onStateChange}>
-              <AppPushNotificationHandlerComponent>
-                <RootStack.Navigator screenOptions={{ headerShown: true }}>
-                  {routes}
-                  {modals}
-                </RootStack.Navigator>
-              </AppPushNotificationHandlerComponent>
-              <RootToastHandler />
-              <SnowFlakes />
-            </NavigationContainer>
-          </>
+          <NavigationContainer ref={navigationRef} initialState={navigationState} onStateChange={onStateChange}>
+            <AppPushNotificationHandlerComponent>
+              <RootStack.Navigator screenOptions={screenOptions}>
+                {routes}
+                {modals}
+              </RootStack.Navigator>
+            </AppPushNotificationHandlerComponent>
+            <RootToastHandler />
+            <SnowFlakes />
+          </NavigationContainer>
         ) : null}
       </>
     );
-  }, [appReady, navigationState, onStateChange, routes]);
+  }, [appReady, navigationState, onStateChange, routes, screenOptions]);
 
   return ret;
 }
