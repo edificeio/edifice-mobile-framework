@@ -9,18 +9,22 @@ import { TextSizeStyle } from '~/framework/components/text';
 let fontFaces = '';
 let attachmentIcon = '';
 
-async function loadBase64(androidFolder, nameFile) {
-  let base64String = '';
-  if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`${androidFolder}/${nameFile}`, 'base64');
-  else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${nameFile}`, 'base64');
+const base64Type = {
+  FONT: 'fonts',
+  IMAGE: 'images',
+};
 
+async function loadBase64File(fileName, type) {
+  let base64String = '';
+  if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`${type}/${fileName}`, 'base64');
+  else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fileName}`, 'base64');
   return base64String;
 }
 
 async function loadFont(fontInfo) {
   const { fontFile, fontFamily, bold, italic, cursive } = fontInfo;
   try {
-    const base64Font = await loadBase64('fonts', fontFile);
+    const base64Font = await loadBase64File(fontFile, base64Type.FONT);
     fontFaces += `
         @font-face {
           font-family: '${fontFamily}';
@@ -30,21 +34,20 @@ async function loadFont(fontInfo) {
           ${cursive ? 'size-adjust: 187.5%;' : ''}
         }
     `;
-
     console.debug(`${fontFamily} font loaded from ${fontFile}`);
   } catch (error) {
     console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
   }
 }
 
-async function loadIcon() {
+async function loadIcon(iconFile) {
   try {
-    const base64Icon = await loadBase64('images', 'attachment.svg');
-    attachmentIcon += `data:image/svg+xml;base64,${base64Icon}`;
-
-    console.debug(`Pic loaded from ${attachmentIcon}`);
+    const base64Icon = await loadBase64File(iconFile, base64Type.IMAGE);
+    console.debug(`Icon loaded from ${iconFile}`);
+    return `data:image/svg+xml;base64,${base64Icon}`;
   } catch (error) {
     console.error(`Error loading pic`, error);
+    return null;
   }
 }
 
@@ -75,7 +78,7 @@ async function initEditor() {
     { fontFile: 'ecriturea_italic.woff', fontFamily: 'Ecriture A', italic: true, cursive: true },
   ];
   await Promise.all(fontItems.map(loadFont));
-  await loadIcon();
+  attachmentIcon = await loadIcon('attachment.svg');
 }
 
 function createHTML(options = {}) {
@@ -200,8 +203,8 @@ function createHTML(options = {}) {
         function _postMessage(data){
             exports.window.postMessage(JSON.stringify(data));
         }
-        function postAction(data){
-            editor.content.contentEditable === 'true' && _postMessage(data);
+        function postAction(data, force = false){
+            (editor.content.contentEditable === 'true' || force) && _postMessage(data);
         };
 
         exports.isRN && (
@@ -728,7 +731,7 @@ function createHTML(options = {}) {
                     else ele.removeAttribute('checked');
                 }
                 if (ele.nodeName === 'A' && ele.getAttribute('href')) {
-                    postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')});
+                    postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
                 }
             }
             addEventListener(content, 'touchcancel', handleSelecting);
