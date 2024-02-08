@@ -3,13 +3,12 @@ import RNFS from 'react-native-fs';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
+import { UI_SIZES, getScaleFontSize, getScaleWidth } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
-import { getScaleWidth } from '../../../constants';
 
 let fontFaces = '';
 let attachmentIcon = '';
-let playIcon = '';
+const playIcon = '';
 let audioIcon = '';
 
 const base64Type = {
@@ -82,7 +81,6 @@ async function initEditor() {
   ];
   await Promise.all(fontItems.map(loadFont));
   attachmentIcon = await loadIcon('attachment.svg');
-  playIcon = await loadIcon('play.svg');
   audioIcon = await loadIcon('audio.svg');
 }
 
