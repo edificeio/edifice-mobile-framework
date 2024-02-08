@@ -61,7 +61,11 @@ export default class RichEditor extends Component {
     that.selectionChangeListeners = [];
     that.pfUrl = getSession()?.platform?.url || '';
     that.htmlLoaded = false;
+    that.imageUrls = [];
+    that._onAudioTouched = that._onAudioTouched.bind(that);
+    that._onImageTouched = that._onImageTouched.bind(that);
     that._onLinkTouched = that._onLinkTouched.bind(that);
+    that._onVideoTouched = that._onVideoTouched.bind(that);
     const {
       html,
       pasteAsPlainText,
@@ -121,6 +125,7 @@ export default class RichEditor extends Component {
     // IFrame video auto play bug fix
     setTimeout(() => {
       that.htmlLoaded = true;
+      this.sendAction(actions.content, 'init');
     }, 1000);
   }
 
@@ -157,6 +162,10 @@ export default class RichEditor extends Component {
     this.keyboardEventListeners.forEach(eventListener => eventListener.remove());
   }
 
+  _getAbsoluteUrl(url) {
+    return url.startsWith('/') ? this.pfUrl + url : url;
+  }
+
   _onKeyboardWillShow(event) {
     this._keyOpen = true;
   }
@@ -165,11 +174,27 @@ export default class RichEditor extends Component {
     this._keyOpen = false;
   }
 
+  _onAudioTouched(url) {
+    alert('AUDIO TOUCHED: ' + url);
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2435
+  }
+
+  _onImageTouched(url, imageUrls) {
+    alert('IMAGE TOUCHED: ' + url);
+    console.debug('IMAGE URLS:', imageUrls); // imageUrls contains all images urls
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2436
+  }
+
   _onLinkTouched(url) {
     alert('LINK TOUCHED: ' + url);
     // TODO: LEA
-    // V1: Redirection vers le responsive (Lien relatif => ajouter this.pfUrl)
+    // V1: Redirection vers le responsive (Lien relatif => ajouter pfUrl)
     // V2: https://edifice-community.atlassian.net/browse/MB-2437
+  }
+
+  _onVideoTouched(url) {
+    alert('VIDEO TOUCHED: ' + url);
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2435
   }
 
   onMessage(event) {
@@ -191,7 +216,7 @@ export default class RichEditor extends Component {
           }
           break;
         case messages.LINK_TOUCHED:
-          that._onLinkTouched(data);
+          that._onLinkTouched(that._getAbsoluteUrl(data));
           break;
         case messages.LOG:
           console.log('FROM EDIT:', ...data);
@@ -232,6 +257,18 @@ export default class RichEditor extends Component {
         case messages.OFFSET_Y:
           const offsetY = Number.parseInt(Number.parseInt(data) + that.layout.y || 0);
           offsetY > 0 && onCursorPosition(offsetY);
+          break;
+        case messages.AUDIO_TOUCHED:
+          that._onAudioTouched(that._getAbsoluteUrl(data));
+          break;
+        case messages.IMAGE_TOUCHED:
+          that._onImageTouched(that._getAbsoluteUrl(data), that.imageUrls);
+          break;
+        case messages.IMAGE_URLS:
+          that.imageUrls = data.map(url => that._getAbsoluteUrl(url));
+          break;
+        case messages.VIDEO_TOUCHED:
+          that._onVideoTouched(that._getAbsoluteUrl(data));
           break;
         default:
           onMessage?.(message);
@@ -274,7 +311,7 @@ export default class RichEditor extends Component {
         <WebView
           injectedJavaScript={js}
           sharedCookiesEnabled
-          useWebKit
+          useWebKit={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView
           keyboardDisplayRequiresUserAction={false}

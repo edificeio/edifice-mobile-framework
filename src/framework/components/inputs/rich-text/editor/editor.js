@@ -480,6 +480,7 @@ function createHTML(options = {}) {
                     if (url){
                         exec('insertHTML', "<img style='"+ (style || '')+"' src='"+ url +"'/>");
                         Actions.UPDATE_HEIGHT();
+                        Actions.GET_IMAGE_URLS();
                     }
                 }
             },
@@ -499,6 +500,7 @@ function createHTML(options = {}) {
                         var html = "<br><div style='"+ (style || '')+"'><video src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
                         exec('insertHTML', html);
                         Actions.UPDATE_HEIGHT();
+                        Actions.DISABLE_VIDEOS();
                     }
                 }
             },
@@ -531,7 +533,6 @@ function createHTML(options = {}) {
                 focus: function() { focusCurrent(); },
                 postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
                 setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
-
                 setContentStyle: function(styles) {
                     styles = styles || {};
                     var bgColor = styles.backgroundColor, color = styles.color, pColor = styles.placeholderColor;
@@ -549,12 +550,15 @@ function createHTML(options = {}) {
                         }
                     }
                 },
-
                 commandDOM: function (command){
                     try {new Function("$", command)(exports.document.querySelector.bind(exports.document))} catch(e){console.log(e.message)};
                 },
                 command: function (command){
                     try {new Function("$", command)(exports.document)} catch(e){console.log(e.message)};
+                },
+                init: function() {
+                    Actions.DISABLE_VIDEOS();
+                    Actions.GET_IMAGE_URLS();
                 }
             },
 
@@ -595,6 +599,27 @@ function createHTML(options = {}) {
                         _postMessage({type: 'OFFSET_Y', data: offsetY});
                     }
                 }
+            },
+
+            DISABLE_VIDEOS: function() {
+                var videos = document.getElementsByTagName('video');
+                for (var i = 0; i < videos.length; i++) {
+                    const video = videos[i];
+                    video.autoplay = false;
+                    video.controls = false;
+                    //video.poster='${attachmentIcon}';
+                    //video.style.width = "100%";
+                    //video.style.height = "150px";
+                }
+            },
+
+            GET_IMAGE_URLS: function() {
+                var images = document.getElementsByTagName('img');
+                var imageUrls = [];
+                for (var i = 0; i < images.length; i++) {
+                    imageUrls.push(images[i].src);
+                }
+                postAction({type: 'IMAGE_URLS', data: imageUrls}, true);
             }
         };
 
@@ -732,6 +757,15 @@ function createHTML(options = {}) {
                 }
                 if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
+                }
+                if (ele.nodeName === 'AUDIO' && ele.getAttribute('src')) {
+                    postAction({type: 'AUDIO_TOUCHED', data: ele.getAttribute('src')}, true);
+                }
+                if (ele.nodeName === 'IMG' && ele.getAttribute('src')) {
+                    postAction({type: 'IMAGE_TOUCHED', data: ele.getAttribute('src')}, true);
+                }
+                if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
+                    postAction({type: 'VIDEO_TOUCHED', data: ele.getAttribute('src')}, true);
                 }
             }
             addEventListener(content, 'touchcancel', handleSelecting);
