@@ -81,7 +81,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     try {
       setError(undefined);
       setSumitState('RUNNING');
-      const login = route.params.credentials?.username ?? session?.user.loginUsed;
+      const login = route.params.credentials?.username ?? session?.user.loginUsed ?? session?.user.login;
       if (!platform || !login) {
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }

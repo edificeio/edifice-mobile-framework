@@ -1,4 +1,5 @@
 import { storage } from '~/framework/util/storage';
+import type { IOAuthToken } from '~/infra/oauth';
 
 import { AuthLoggedAccount, AuthSavedAccount } from './model';
 import moduleConfig from './module-config';
@@ -8,6 +9,8 @@ export interface AuthStorageData {
   startup: {
     account?: string;
     platform?: string;
+    /** @deprecated used to migrate pre-1.12 automatic connections */
+    anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
 }
@@ -23,6 +26,8 @@ export const readSavedStartup = () => {
   let startup = authStorage.getJSON('startup');
   const oldCurrentPlatform = storage.global.getString('currentPlatform');
   if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
+  const oldCurrentToken = storage.global.getString('token');
+  if (!startup?.account && oldCurrentToken) startup = { ...startup, anonymousToken: JSON.parse(oldCurrentToken) };
   return { ...startup } as AuthStorageData['startup'];
 };
 export const readShowOnbording = () => authStorage.getBoolean('show-onboarding') ?? true;

@@ -1,5 +1,7 @@
 import { IGlobalState, Reducers, getStore } from '~/app/store';
 import {
+  ANONYMOUS_ACCOUNT_ID,
+  AccountType,
   AuthLoggedAccount,
   AuthLoggedAccountMap,
   AuthMixedAccountMap,
@@ -215,13 +217,41 @@ export const actions = {
 const reducer = createReducer(initialState, {
   [actionTypes.authInit]: (state, action) => {
     const { accounts, startup, showOnboarding, deviceId } = action as unknown as ActionPayloads['authInit'];
+    let realAccounts = { ...accounts };
     const pending: AuthPendingRestore | undefined = startup.platform
       ? { platform: startup.platform, redirect: undefined }
       : undefined;
     if (pending && startup.account) {
       (pending as AuthPendingRestore).account = startup.account;
     }
-    return { ...initialState, accounts, showOnboarding, pending, deviceInfo: { ...state.deviceInfo, uniqueId: deviceId } };
+    if (pending && startup.anonymousToken) {
+      (pending as AuthPendingRestore).account = ANONYMOUS_ACCOUNT_ID;
+      realAccounts = {
+        ...realAccounts,
+        [ANONYMOUS_ACCOUNT_ID]: {
+          platform: pending.platform,
+          user: { displayName: '', id: '', loginUsed: '', type: AccountType.Guest },
+          tokens: {
+            access: {
+              type: startup.anonymousToken.token_type as 'Bearer',
+              value: startup.anonymousToken.access_token,
+              expiresAt: startup.anonymousToken.expires_at.toString(),
+            },
+            refresh: {
+              value: startup.anonymousToken.refresh_token,
+            },
+            scope: startup.anonymousToken.scope.split(' '),
+          },
+        },
+      };
+    }
+    return {
+      ...initialState,
+      accounts: realAccounts,
+      showOnboarding,
+      pending,
+      deviceInfo: { ...state.deviceInfo, uniqueId: deviceId },
+    };
   },
 
   [actionTypes.loadPfContext]: (state, action) => {
