@@ -5,26 +5,33 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { IActivationPayload } from '~/framework/modules/auth/model';
 import { TextInputLine } from '~/ui/forms/TextInputLine';
-import { ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
+import { IValidatorContext, ValidatorBuilder, ValueChange, ValueChangeArgs, ValueGetter } from '~/utils/form';
 
-export { ValueChangeArgs };
+export type { ValueChangeArgs };
 //
 // Form model: describe fields and validations for each field
 //
 export class ActivationFormModel {
+  login: IValidatorContext<string>;
+
+  password: IValidatorContext<string>;
+
+  confirm: IValidatorContext<string>;
+
+  email: IValidatorContext<string>;
+
+  phone: IValidatorContext<string>;
+
   constructor(
     private args: { passwordRegex: string; password: ValueGetter<string>; emailRequired: boolean; phoneRequired: boolean },
-  ) {}
+  ) {
+    this.login = new ValidatorBuilder().withRequired(true).build<string>();
+    this.password = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();
+    this.confirm = new ValidatorBuilder().withRequired(true).withCompareString(this.args.password, true).build<string>();
+    this.email = new ValidatorBuilder().withRequired(this.args.emailRequired).withEmail().build<string>();
+    this.phone = new ValidatorBuilder().withRequired(this.args.phoneRequired).withPhone().build<string>();
+  }
 
-  login = new ValidatorBuilder().withRequired(true).build<string>();
-
-  password = new ValidatorBuilder().withRequired(true).withRegex(this.args.passwordRegex).build<string>();
-
-  confirm = new ValidatorBuilder().withRequired(true).withCompareString(this.args.password, true).build<string>();
-
-  email = new ValidatorBuilder().withRequired(this.args.emailRequired).withEmail().build<string>();
-
-  phone = new ValidatorBuilder().withRequired(this.args.phoneRequired).withPhone().build<string>();
   //
 
   inputLogin?: TextInput;

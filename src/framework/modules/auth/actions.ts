@@ -569,7 +569,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       };
       const formdata = new FormData();
       for (const key in payload) {
-        formdata.append(key, payload[key as keyof IChangePasswordSubmitPayload]);
+        if (payload[key as keyof IChangePasswordSubmitPayload]) formdata.append(key, payload[key]);
       }
       // === 3 - Send change password information
       const deviceId = getAuthState(getState()).deviceInfo.uniqueId;
