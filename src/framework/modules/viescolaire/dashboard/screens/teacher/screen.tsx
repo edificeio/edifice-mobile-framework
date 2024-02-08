@@ -186,13 +186,13 @@ export default connect(
   (state: IGlobalState) => {
     const presencesState = presencesConfig.getState(state);
     const session = getSession();
-    const hasPresencesApp = session?.apps.some(app => app.address === '/presences');
+    const hasPresencesApp = session?.rights.apps.some(app => app.address === '/presences');
 
     return {
       authorizedViescoApps: {
-        competences: session?.apps.some(app => app.address === '/competences'),
-        diary: session?.apps.some(app => app.address === '/diary'),
-        edt: session?.apps.some(app => app.address === '/edt'),
+        competences: session?.rights.apps.some(app => app.address === '/competences'),
+        diary: session?.rights.apps.some(app => app.address === '/diary'),
+        edt: session?.rights.apps.some(app => app.address === '/edt'),
         presences: hasPresencesApp,
       },
       courses: presencesState.courses.data,

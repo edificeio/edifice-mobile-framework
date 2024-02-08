@@ -233,6 +233,9 @@ export const loginSteps = {
         const { userData, userPublicInfo } = publicInfo;
         const sessionInfo = formatSession(platform, loginUsed, userInfo, userData, userPublicInfo);
         await StorageSlice.sessionInitAllStorages(sessionInfo);
+        Trackers.setUserId(sessionInfo.user.id);
+        Trackers.setCustomDimension(1, 'Profile', sessionInfo.user.type.toString());
+        Trackers.setCustomDimension(3, 'Project', new URL(sessionInfo.platform.url).hostname);
         return sessionInfo;
       },
       'finalizeSession',
@@ -434,7 +437,6 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
   await dispatch(refreshRequirementsAction());
 };
 
-
 export const activateAccountAction =
   (platform: Platform, model: ActivationPayload) => async (dispatch: ThunkDispatch<any, any, any>, getState) => {
     try {
@@ -585,7 +587,6 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
           }
         }
       }
-
     } catch (e) {
       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
       else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));

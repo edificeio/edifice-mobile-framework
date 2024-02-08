@@ -5,8 +5,6 @@ import { WebView } from 'react-native-webview';
 import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { openUrl } from '~/framework/util/linking';
-import { isEmpty } from '~/framework/util/object';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth.ts';
 
 import { actions, messages } from './const';
@@ -54,7 +52,6 @@ export default class RichEditor extends Component {
     that._onKeyboardWillShow = that._onKeyboardWillShow.bind(that);
     that._onKeyboardWillHide = that._onKeyboardWillHide.bind(that);
     that.init = that.init.bind(that);
-    that.handleShouldLoadRequest = that.handleShouldLoadRequest.bind(that);
     that.onViewLayout = that.onViewLayout.bind(that);
     that.setRef = that.setRef.bind(that);
     that.unmount = false;
@@ -62,8 +59,13 @@ export default class RichEditor extends Component {
     that._focus = false;
     that.layout = {};
     that.selectionChangeListeners = [];
-    that.loaded = false;
     that.pfUrl = getSession()?.platform?.url || '';
+    that.htmlLoaded = false;
+    that.imageUrls = [];
+    that._onAudioTouched = that._onAudioTouched.bind(that);
+    that._onImageTouched = that._onImageTouched.bind(that);
+    that._onLinkTouched = that._onLinkTouched.bind(that);
+    that._onVideoTouched = that._onVideoTouched.bind(that);
     const {
       html,
       pasteAsPlainText,
@@ -122,7 +124,8 @@ export default class RichEditor extends Component {
       .finally(() => this.setState({ loading: false }));
     // IFrame video auto play bug fix
     setTimeout(() => {
-      this.loaded = true;
+      that.htmlLoaded = true;
+      this.sendAction(actions.content, 'init');
     }, 1000);
   }
 
@@ -141,9 +144,26 @@ export default class RichEditor extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const { editorStyle, disabled, placeholder } = this.props;
+    if (prevProps.editorStyle !== editorStyle) {
+      editorStyle && this.setContentStyle(editorStyle);
+    }
+    if (disabled !== prevProps.disabled) {
+      this.setDisable(disabled);
+    }
+    if (placeholder !== prevProps.placeholder) {
+      this.setPlaceholder(placeholder);
+    }
+  }
+
   componentWillUnmount() {
     this.unmount = true;
     this.keyboardEventListeners.forEach(eventListener => eventListener.remove());
+  }
+
+  _getAbsoluteUrl(url) {
+    return url.startsWith('/') ? this.pfUrl + url : url;
   }
 
   _onKeyboardWillShow(event) {
@@ -152,6 +172,29 @@ export default class RichEditor extends Component {
 
   _onKeyboardWillHide(event) {
     this._keyOpen = false;
+  }
+
+  _onAudioTouched(url) {
+    alert('AUDIO TOUCHED: ' + url);
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2435
+  }
+
+  _onImageTouched(url, imageUrls) {
+    alert('IMAGE TOUCHED: ' + url);
+    console.debug('IMAGE URLS:', imageUrls); // imageUrls contains all images urls
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2436
+  }
+
+  _onLinkTouched(url) {
+    alert('LINK TOUCHED: ' + url);
+    // TODO: LEA
+    // V1: Redirection vers le responsive (Lien relatif => ajouter pfUrl)
+    // V2: https://edifice-community.atlassian.net/browse/MB-2437
+  }
+
+  _onVideoTouched(url) {
+    alert('VIDEO TOUCHED: ' + url);
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2435
   }
 
   onMessage(event) {
@@ -173,7 +216,7 @@ export default class RichEditor extends Component {
           }
           break;
         case messages.LINK_TOUCHED:
-          onLink?.(data);
+          that._onLinkTouched(that._getAbsoluteUrl(data));
           break;
         case messages.LOG:
           console.log('FROM EDIT:', ...data);
@@ -215,11 +258,17 @@ export default class RichEditor extends Component {
           const offsetY = Number.parseInt(Number.parseInt(data) + that.layout.y || 0);
           offsetY > 0 && onCursorPosition(offsetY);
           break;
-        case messages.IMAGE_CLICKED:
-          alert('Image :' + data);
+        case messages.AUDIO_TOUCHED:
+          that._onAudioTouched(that._getAbsoluteUrl(data));
           break;
-        case messages.VIDEO_CLICKED:
-          alert('Video :' + data);
+        case messages.IMAGE_TOUCHED:
+          that._onImageTouched(that._getAbsoluteUrl(data), that.imageUrls);
+          break;
+        case messages.IMAGE_URLS:
+          that.imageUrls = data.map(url => that._getAbsoluteUrl(url));
+          break;
+        case messages.VIDEO_TOUCHED:
+          that._onVideoTouched(that._getAbsoluteUrl(data));
           break;
         default:
           onMessage?.(message);
@@ -241,30 +290,10 @@ export default class RichEditor extends Component {
     }
   }
 
-  /**
-   * @param {String} type
-   * @param {String} action
-   * @param {any} data
-   * @param [options]
-   * @private
-   */
   sendAction(type, action, data, options) {
     const jsonString = JSON.stringify({ type, name: action, data, options });
     if (!this.unmount && this.webviewBridge) {
       this.webviewBridge.postMessage(jsonString);
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const { editorStyle, disabled, placeholder } = this.props;
-    if (prevProps.editorStyle !== editorStyle) {
-      editorStyle && this.setContentStyle(editorStyle);
-    }
-    if (disabled !== prevProps.disabled) {
-      this.setDisable(disabled);
-    }
-    if (placeholder !== prevProps.placeholder) {
-      this.setPlaceholder(placeholder);
     }
   }
 
@@ -276,36 +305,13 @@ export default class RichEditor extends Component {
     const that = this;
     const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
     const { html: viewHTML, oneSessionId } = that.state;
-    /*const js = `
-      document.cookie="oneSessionId=${oneSessionId}";
-      document.addEventListener("DOMContentLoaded", function() {
-        document.addEventListener("click", function(event) {
-          var target = event.target;
-          var type = null;
-          var data = null;
-          if (target.tagName === "IMG") {
-            type = "${messages.IMAGE_CLICKED}";
-            data = target.src;
-            alert(data+' tapped');
-          } else if (target.tagName === "VIDEO") {
-            type = "${messages.VIDEO_CLICKED}";
-            data = target.src;
-            alert(data+' tapped');
-          }
-          if (type && data) {
-            window.ReactNativeWebView.postMessage(JSON.stringify({ type, data }));
-          }
-        });
-      });
-      true;
-    `;*/
     const js = `document.cookie="oneSessionId=${oneSessionId}"; true;`;
     return (
       <>
         <WebView
           injectedJavaScript={js}
           sharedCookiesEnabled
-          useWebKit //={false}
+          useWebKit={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView
           keyboardDisplayRequiresUserAction={false}
@@ -324,7 +330,7 @@ export default class RichEditor extends Component {
           originWhitelist={['*']}
           source={viewHTML}
           onLoad={that.init}
-          onShouldStartLoadWithRequest={that.handleShouldLoadRequest}
+          onShouldStartLoadWithRequest={() => !that.htmlLoaded}
         />
         {Platform.OS === 'android' && <TextInput ref={ref => (that._input = ref)} style={styles._input} />}
       </>
@@ -361,11 +367,6 @@ export default class RichEditor extends Component {
     this.selectionChangeListeners = [...this.selectionChangeListeners, listener];
   }
 
-  /**
-   * Subsequent versions will be deleted, please use onFocus
-   * @deprecated remove
-   * @param listener
-   */
   setContentFocusHandler(listener) {
     this.focusListeners.push(listener);
   }
@@ -395,10 +396,6 @@ export default class RichEditor extends Component {
     this.sendAction(actions.content, 'focus');
   }
 
-  /**
-   * open android keyboard
-   * @platform android
-   */
   showAndroidKeyboard() {
     const that = this;
     if (Platform.OS === 'android') {
@@ -407,19 +404,21 @@ export default class RichEditor extends Component {
     }
   }
 
-  /**
-   * @param attributes
-   * @param [style]
-   */
+  insertAudio(attributes, style) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2363
+    // + editor.js - "audio:"
+    this.sendAction(actions.insertVideo, 'result', attributes, style);
+  }
+
   insertImage(attributes, style) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2357
+    // + editor.js - "image:"
     this.sendAction(actions.insertImage, 'result', attributes, style);
   }
 
-  /**
-   * @param attributes
-   * @param [style]
-   */
   insertVideo(attributes, style) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2360
+    // + editor.js - "video:"
     this.sendAction(actions.insertVideo, 'result', attributes, style);
   }
 
@@ -432,6 +431,7 @@ export default class RichEditor extends Component {
   }
 
   insertLink(title, url) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2404
     if (url) {
       this.showAndroidKeyboard();
       this.sendAction(actions.insertLink, 'result', { title, url });
@@ -495,23 +495,6 @@ export default class RichEditor extends Component {
     that.sendAction(actions.init);
   }
 
-  handleShouldLoadRequest(event) {
-    const url = event.url;
-    console.debug(`Link selected: ${url}`);
-    if (url !== 'about:blank' && this.loaded) {
-      const pfUrl = this.pf;
-      if (!isEmpty(pfUrl) && url.startsWith(pfUrl)) {
-        alert('ENT URL DETECTED:' + pfUrl);
-      } else openUrl(url);
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * @deprecated please use onChange
-   * @returns {Promise}
-   */
   async getContentHtml() {
     return new Promise((resolve, reject) => {
       this.contentResolve = resolve;

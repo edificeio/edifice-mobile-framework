@@ -120,7 +120,6 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
   const refuseEmailVerification = useCallback(async () => {
     try {
       await tryLogout();
-      // navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.showError(I18n.get('auth-change-email-error-text'));
     }

@@ -9,18 +9,22 @@ import { TextSizeStyle } from '~/framework/components/text';
 let fontFaces = '';
 let attachmentIcon = '';
 
-async function loadBase64(androidFolder, nameFile) {
-  let base64String = '';
-  if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`${androidFolder}/${nameFile}`, 'base64');
-  else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${nameFile}`, 'base64');
+const base64Type = {
+  FONT: 'fonts',
+  IMAGE: 'images',
+};
 
+async function loadBase64File(fileName, type) {
+  let base64String = '';
+  if (Platform.OS === 'android') base64String = await RNFS.readFileAssets(`${type}/${fileName}`, 'base64');
+  else base64String = await RNFS.readFile(`${RNFS.MainBundlePath}/${fileName}`, 'base64');
   return base64String;
 }
 
 async function loadFont(fontInfo) {
   const { fontFile, fontFamily, bold, italic, cursive } = fontInfo;
   try {
-    const base64Font = await loadBase64('fonts', fontFile);
+    const base64Font = await loadBase64File(fontFile, base64Type.FONT);
     fontFaces += `
         @font-face {
           font-family: '${fontFamily}';
@@ -30,21 +34,20 @@ async function loadFont(fontInfo) {
           ${cursive ? 'size-adjust: 187.5%;' : ''}
         }
     `;
-
     console.debug(`${fontFamily} font loaded from ${fontFile}`);
   } catch (error) {
     console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
   }
 }
 
-async function loadIcon() {
+async function loadIcon(iconFile) {
   try {
-    const base64Icon = await loadBase64('images', 'attachment.svg');
-    attachmentIcon += `data:image/svg+xml;base64,${base64Icon}`;
-
-    console.debug(`Pic loaded from ${attachmentIcon}`);
+    const base64Icon = await loadBase64File(iconFile, base64Type.IMAGE);
+    console.debug(`Icon loaded from ${iconFile}`);
+    return `data:image/svg+xml;base64,${base64Icon}`;
   } catch (error) {
     console.error(`Error loading pic`, error);
+    return null;
   }
 }
 
@@ -75,7 +78,7 @@ async function initEditor() {
     { fontFile: 'ecriturea_italic.woff', fontFamily: 'Ecriture A', italic: true, cursive: true },
   ];
   await Promise.all(fontItems.map(loadFont));
-  await loadIcon();
+  attachmentIcon = await loadIcon('attachment.svg');
 }
 
 function createHTML(options = {}) {
@@ -200,8 +203,8 @@ function createHTML(options = {}) {
         function _postMessage(data){
             exports.window.postMessage(JSON.stringify(data));
         }
-        function postAction(data){
-            editor.content.contentEditable === 'true' && _postMessage(data);
+        function postAction(data, force = false){
+            (editor.content.contentEditable === 'true' || force) && _postMessage(data);
         };
 
         exports.isRN && (
@@ -404,8 +407,8 @@ function createHTML(options = {}) {
                 return flag;
              }},
             line: { result: function() { return exec('insertHorizontalRule'); }},
-            redo: { result: function() { return exec('redo'); }},
-            undo: { result: function() { return exec('undo'); }},
+            redo: { state: function() { return queryCommandState('redo'); } , result: function() { return exec('redo'); }},
+            undo: { state: function() { return queryCommandState('undo'); } , result: function() { return exec('undo'); }},
             indent: { result: function() { return exec('indent'); }},
             outdent: { result: function() { return exec('outdent'); }},
             outdent: { result: function() { return exec('outdent'); }},
@@ -418,17 +421,8 @@ function createHTML(options = {}) {
             fontSize: { state: function() { return queryCommandValue('fontSize'); }, result: function(size) { return exec('fontSize', size); }},
             fontName: { result: function(name) { return exec('fontName', name); }},
             link: {
-                // result: function(data) {
-                //     data = data || {};
-                //     var title = data.title;
-                //     title = title || window.getSelection().toString();
-                //     // title = title || window.prompt('Enter the link title');
-                //     var url = data.url || window.prompt('Enter the link URL');
-                //     if (url){
-                //         exec('insertHTML', "<a href='"+ url +"'>"+(title || url)+"</a>");
-                //     }
-                // }
                 result: function(data) {
+                    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2404
                     var sel = document.getSelection();
                     data = data || {};
                     var url = data.url || window.prompt('Enter the link URL');
@@ -472,14 +466,6 @@ function createHTML(options = {}) {
                     }
                 }
             },
-            image: {
-                result: function(url, style) {
-                    if (url){
-                        exec('insertHTML', "<img style='"+ (style || '')+"' src='"+ url +"'/>");
-                        Actions.UPDATE_HEIGHT();
-                    }
-                }
-            },
             html: {
                 result: function (html){
                     if (html){
@@ -489,13 +475,36 @@ function createHTML(options = {}) {
                 }
             },
             text: { result: function (text){ text && exec('insertText', text); }},
+            audio: {
+                result: function(url, style) {
+                    if (url) {
+                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2363
+                        var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
+                        var html = "<br><div style='"+ (style || '')+"'><audio src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
+                        exec('insertHTML', html);
+                        Actions.UPDATE_HEIGHT();
+                    }
+                }
+            },
+            image: {
+                result: function(url, style) {
+                    if (url){
+                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2357
+                        exec('insertHTML', "<img style='"+ (style || '')+"' src='"+ url +"'/>");
+                        Actions.UPDATE_HEIGHT();
+                        Actions.GET_IMAGE_URLS();
+                    }
+                }
+            },
             video: {
                 result: function(url, style) {
                     if (url) {
+                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2360
                         var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
                         var html = "<br><div style='"+ (style || '')+"'><video src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
                         exec('insertHTML', html);
                         Actions.UPDATE_HEIGHT();
+                        Actions.DISABLE_VIDEOS();
                     }
                 }
             },
@@ -528,7 +537,6 @@ function createHTML(options = {}) {
                 focus: function() { focusCurrent(); },
                 postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
                 setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
-
                 setContentStyle: function(styles) {
                     styles = styles || {};
                     var bgColor = styles.backgroundColor, color = styles.color, pColor = styles.placeholderColor;
@@ -546,12 +554,15 @@ function createHTML(options = {}) {
                         }
                     }
                 },
-
                 commandDOM: function (command){
                     try {new Function("$", command)(exports.document.querySelector.bind(exports.document))} catch(e){console.log(e.message)};
                 },
                 command: function (command){
                     try {new Function("$", command)(exports.document)} catch(e){console.log(e.message)};
+                },
+                init: function() {
+                    Actions.DISABLE_VIDEOS();
+                    Actions.GET_IMAGE_URLS();
                 }
             },
 
@@ -592,6 +603,27 @@ function createHTML(options = {}) {
                         _postMessage({type: 'OFFSET_Y', data: offsetY});
                     }
                 }
+            },
+
+            DISABLE_VIDEOS: function() {
+                var videos = document.getElementsByTagName('video');
+                for (var i = 0; i < videos.length; i++) {
+                    const video = videos[i];
+                    video.autoplay = false;
+                    video.controls = false;
+                    //video.poster='${attachmentIcon}';
+                    //video.style.width = "100%";
+                    //video.style.height = "150px";
+                }
+            },
+
+            GET_IMAGE_URLS: function() {
+                var images = document.getElementsByTagName('img');
+                var imageUrls = [];
+                for (var i = 0; i < images.length; i++) {
+                    imageUrls.push(images[i].src);
+                }
+                postAction({type: 'IMAGE_URLS', data: imageUrls}, true);
             }
         };
 
@@ -728,7 +760,16 @@ function createHTML(options = {}) {
                     else ele.removeAttribute('checked');
                 }
                 if (ele.nodeName === 'A' && ele.getAttribute('href')) {
-                    postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')});
+                    postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
+                }
+                if (ele.nodeName === 'AUDIO' && ele.getAttribute('src')) {
+                    postAction({type: 'AUDIO_TOUCHED', data: ele.getAttribute('src')}, true);
+                }
+                if (ele.nodeName === 'IMG' && ele.getAttribute('src')) {
+                    postAction({type: 'IMAGE_TOUCHED', data: ele.getAttribute('src')}, true);
+                }
+                if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
+                    postAction({type: 'VIDEO_TOUCHED', data: ele.getAttribute('src')}, true);
                 }
             }
             addEventListener(content, 'touchcancel', handleSelecting);

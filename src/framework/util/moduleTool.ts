@@ -274,6 +274,8 @@ export class Module<
 
   init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
     if (!this.config.isReady) throw new Error(`Try to init module with non-initialized config '${this.config.name}'`);
+    // Debug : Uncomment the following line to print every module init phase and know which one is generating warnings/errors.
+    // console.debug('[Module] init module', this.config.name);
     this.handleInit(matchingApps, matchingWidgets);
   }
 

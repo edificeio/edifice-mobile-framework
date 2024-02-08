@@ -1,20 +1,20 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
+import { ScrollView, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
+import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
+import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
+import { NamedSVG } from '~/framework/components/picture';
 import { HeadingXSText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { isEmpty } from '~/framework/util/object';
 
 import styles from './styles';
 import type { UserStructuresScreenPrivateProps } from './types';
-import { ScrollView, View } from 'react-native';
-import { NamedSVG } from '~/framework/components/picture';
-import { UI_SIZES } from '~/framework/components/constants';
-import theme from '~/app/theme';
-import { isEmpty } from '~/framework/util/object';
-import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 
 export const computeNavBar = ({
   navigation,
@@ -33,7 +33,7 @@ const UserStructuresScreen = (props: UserStructuresScreenPrivateProps) => {
     <PageView style={styles.page}>
       <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
         {route.params.structures.map(structure => (
-          <View style={styles.section}>
+          <View style={styles.section} key={structure.id}>
             <View style={styles.title}>
               <NamedSVG
                 name="ui-school"
@@ -46,7 +46,7 @@ const UserStructuresScreen = (props: UserStructuresScreenPrivateProps) => {
             </View>
             <ButtonLineGroup>
               {!isEmpty(structure.classes) ? (
-                structure.classes.map(className => <LineButton icon="ui-class" title={className} />)
+                structure.classes.map(className => <LineButton icon="ui-class" title={className} key={className} />)
               ) : (
                 <LineButton icon="ui-class" title={I18n.get('user-profile-classEmpty')} />
               )}

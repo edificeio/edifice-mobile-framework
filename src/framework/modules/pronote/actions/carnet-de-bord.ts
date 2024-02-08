@@ -12,7 +12,7 @@ export const loadCarnetDeBordAction = () => async (dispatch: Dispatch, getState:
     const session = assertSession();
     const children = getFlattenedChildren(session.user.children);
     dispatch(carnetDeBordAsyncActions.request());
-    const matchingApps = moduleConfig.getMatchingEntcoreApps(session.apps);
+    const matchingApps = moduleConfig.getMatchingEntcoreApps(session.rights.apps);
     const data = await carnetDeBordService.get(session, children ?? [], matchingApps);
     dispatch(carnetDeBordAsyncActions.receipt(data));
     return data;

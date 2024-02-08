@@ -2,22 +2,26 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { connect, useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { ListItem } from '~/framework/components/listItem';
 import { PageView } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { Icon } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { getLegalUrlsAction } from '~/framework/modules/auth/actions';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { useConstructor } from '~/framework/hooks/constructor';
+import { loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
+import { getPlatform, getPlatformLegalUrls } from '~/framework/modules/auth/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { Loading } from '~/ui/Loading';
 
 import styles from './styles';
-import type { UserLegalNoticeScreenPrivateProps } from './types';
+import type { UserLegalNoticeScreenPrivateProps, UserLegalNoticeScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -32,26 +36,16 @@ export const computeNavBar = ({
 
 const LEGAL_ITEMS = ['userCharter', 'cgu', 'personalDataProtection', 'cookies'];
 
-function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
-  const dispatch = useDispatch();
-
-  // Try to update legal urls
-  React.useEffect(() => {
-    const fetchlegalUrls = async () => {
-      if (props?.session?.platform) dispatch(getLegalUrlsAction(props?.session?.platform));
-    };
-    fetchlegalUrls().catch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+function UserLegalNoticeScreen(
+  props: UserLegalNoticeScreenPrivateProps & Pick<Required<UserLegalNoticeScreenPrivateProps>, 'legalUrls'>,
+) {
   const openLegalItem = React.useCallback(
     (legalItem: string) => {
-      if (!props.urls) return; // ToDo error popup here
       const selectedLegalTitle = I18n.get(`user-legalnotice-${legalItem.toLowerCase()}`);
-      const selectedLegalUrl = props.urls[legalItem];
+      const selectedLegalUrl = props.legalUrls[legalItem];
       openPDFReader({ title: selectedLegalTitle, src: selectedLegalUrl });
     },
-    [props.urls],
+    [props.legalUrls],
   );
 
   const renderLegalItem = React.useCallback(
@@ -69,7 +63,25 @@ function UserLegalNoticeScreen(props: UserLegalNoticeScreenPrivateProps) {
   return <PageView>{LEGAL_ITEMS.map(legalItem => renderLegalItem(legalItem))}</PageView>;
 }
 
-export default connect((state: IGlobalState) => {
-  const authState = getAuthState(state);
-  return { session: authState.session, urls: authState.legalUrls };
-})(UserLegalNoticeScreen);
+const UserLegalNoticeScreenLoader = (props: UserLegalNoticeScreenPrivateProps) => {
+  const { legalUrls } = props;
+  const platform = getPlatform();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
+  useConstructor(async () => {
+    if (/* !legalUrls && */ platform) {
+      // here we re-fetch legalUrl every time we enter this screen to ensure we have updated versions
+      dispatch(loadPlatformLegalUrlsAction(platform));
+    }
+  });
+
+  if (!platform) return <EmptyConnectionScreen />;
+  if (!legalUrls) return <Loading />;
+  else return <UserLegalNoticeScreen {...props} legalUrls={legalUrls} />;
+};
+
+export default connect((state: IGlobalState, props: UserLegalNoticeScreenProps) => {
+  return {
+    legalUrls: getPlatformLegalUrls(),
+  };
+})(UserLegalNoticeScreenLoader);

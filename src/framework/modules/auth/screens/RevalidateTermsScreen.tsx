@@ -66,7 +66,7 @@ const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
   const doRefuseTerms = React.useCallback(async () => {
     try {
       tryLogout();
-    } catch {
+    } catch (e) {
       if (__DEV__) console.warn('refuseTerms: could not refuse terms', e);
     }
   }, [tryLogout]);
