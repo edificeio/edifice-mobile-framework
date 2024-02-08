@@ -90,8 +90,8 @@ function RootNavigator(props: RootNavigatorProps) {
   // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
   React.useLayoutEffect(() => {
     // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
-    if (navigationState && navigationRef.isReady()) navigationRef.reset(navigationState);
     console.debug('[Navigation] Reset root navigator state', navigationState);
+    if (navigationState && navigationRef.isReady()) navigationRef.reset(navigationState);
     trackNavState(navigationState);
   }, [navigationState, trackNavState]);
 

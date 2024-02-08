@@ -201,47 +201,45 @@ export const getAuthNavigationState = (
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
 
-  // 1. Onboarding
+  // 1 - Onboarding
 
-  if (showOnboarding) {
+  if (!pending && showOnboarding) {
     routes.push({ name: authRouteNames.onboarding });
     return;
   }
 
-  // 2. PlatformSelect
+  // 2 - Platform Select / Account Select
 
-  const multiplePlatforms = allPlatforms.length > 1;
-  if (multiplePlatforms) {
+  const accountsAsArray = Object.values(accounts);
+  const multipleAccounts = accountsAsArray.length > 1;
+  if (multipleAccounts) {
+    // Push account select here
+  } else if (appConf.hasMultiplePlatform) {
     routes.push({ name: authRouteNames.platforms });
-  }
+  } // if single account && single platform, do not push any routes
 
-  // 2. Login Screen
+  // 3 - Login Screen
 
-  let foundPlatform: string | Platform | undefined;
+  // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
+  let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
   let login: string | undefined;
-
   if (pending) {
+    foundPlatform = pending.platform;
     if (pending.redirect === undefined) {
       // Session restore
-      const singleAccount = pending.account ? accounts[pending.account] : undefined;
-      foundPlatform = singleAccount ? singleAccount.platform : undefined;
-      login = singleAccount?.user.loginUsed;
+      const loggingAccount = pending.account ? accounts[pending.account] : undefined;
+      if (loggingAccount) {
+        foundPlatform = loggingAccount.platform;
+        login = loggingAccount.user.loginUsed;
+      }
     } else {
       // Activation && password renew
-      foundPlatform = pending.platform;
       login = pending.loginUsed;
-    }
-  } else {
-    const accountsAsArray = Object.values(accounts);
-    const hasSingleAccount = accountsAsArray.length === 1;
-    if (hasSingleAccount) {
-      const singleAccount = accountsAsArray[0];
-      foundPlatform = singleAccount && singleAccount.platform;
-      login = singleAccount.user.loginUsed;
     }
   }
 
-  const platform: Platform | undefined = multiplePlatforms
+  // 3.2 – Get the actual platform object to be loaded
+  const platform: Platform | undefined = appConf.hasMultiplePlatform
     ? foundPlatform
       ? typeof foundPlatform === 'string'
         ? allPlatforms.find(item => item.name === foundPlatform)
@@ -249,11 +247,7 @@ export const getAuthNavigationState = (
       : undefined // Silenty go to the select page if the platform name has no correspondance.
     : allPlatforms[0];
 
-  // Get platform name from pending auth task
-
-  // Get the corresponding platform data
-
-  // This is not the same screen depending of the platform data (federated or not)
+  // 3.3 – Put the platform route into the stack
   if (platform || !routes.length)
     routes.push({
       name: getLoginRouteName(platform),
@@ -263,24 +257,22 @@ export const getAuthNavigationState = (
       },
     });
 
-  // 3. Login redirection for requirements
+  // 4 – Requirement & login redirections
 
+  // 4.1 – Get corresponding nav action action
   let navRedirection: CommonActions.Action | StackActionType | undefined;
   if (requirement) {
     navRedirection = getNavActionForRequirement(requirement);
-  } else if (
-    platform &&
-    (pending?.redirect === AuthPendingRedirection.ACTIVATE || pending?.redirect === AuthPendingRedirection.RENEW_PASSWORD)
-  ) {
+  } else if (platform && pending?.redirect !== undefined) {
     navRedirection = getNavActionForRedirect(platform, pending);
   }
 
-  // 4. Apply redirection if so
-
-  if (!navRedirection) return { stale: true as const, routes, index: routes.length - 1 };
-
-  const ret = simulateNavAction(navRedirection, { routes });
+  // 4.2 – Apply redirection
   // We must add `stale = false` into the resulting state to make React Navigation reinterpret and rehydrate this state if necessary.
   // @see https://reactnavigation.org/docs/navigation-state/#partial-state-objects
-  return { ...ret, stale: true as const };
+  if (navRedirection) {
+    return { ...simulateNavAction(navRedirection, { routes }), stale: true as const };
+  } else {
+    return { stale: true as const, routes, index: routes.length - 1 };
+  }
 };

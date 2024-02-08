@@ -13,7 +13,7 @@ import moduleConfig from '~/framework/modules/auth/module-config';
 import { Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
-import type { AuthStorageData } from './storage';
+import { AuthStorageData, getSerializedLoggedOutAccountInfo } from './storage';
 
 export interface AuthPendingRestore {
   redirect: undefined;
@@ -295,9 +295,10 @@ const reducer = createReducer(initialState, {
     if (!currentAccount) return state;
     return {
       ...state,
+      accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
       requirement: undefined,
       connected: undefined,
-      pending: undefined,
+      pending: { redirect: undefined, platform: currentAccount.platform.name, account: currentAccount.user.id },
       error: undefined,
     };
   },

@@ -33,9 +33,9 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
         ],
       });
       await initFeatures();
-      const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch
-      if (startupAccount) {
-        await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAction>>); // TS-issue with dispatch
+      const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch async
+      if (startupAccount && startupAccount.tokens) {
+        await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAction>>); // TS-issue with dispatch async
       }
     } catch (e) {
       console.warn('[Startup] Startup failed. Cause :', e);

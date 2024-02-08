@@ -19,7 +19,7 @@ import {
   getSession,
   getState,
 } from '~/framework/modules/auth/reducer';
-import { getSerializedAccountInfo, readSavedStartup, updateAccount } from '~/framework/modules/auth/storage';
+import { getSerializedLoggedInAccountInfo, readSavedStartup, updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
@@ -412,7 +412,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       getStore().dispatch(authActions.refreshToken(userId, token)); // Update redux
       let account = getState(getStore().getState()).accounts[userId]; // Get account in reducer
       if (typeof account.platform === 'object') {
-        account = getSerializedAccountInfo(account as AuthLoggedAccount); // Get saved accoutn info if it's logged account
+        account = getSerializedLoggedInAccountInfo(account as AuthLoggedAccount); // Get saved accoutn info if it's logged account
       }
       updateAccount(account as AuthSavedAccount); // Update Storage
       this.importToken(token); // Update OAuth2 client
