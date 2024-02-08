@@ -5,9 +5,12 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
+import { getScaleWidth } from '../../../constants';
 
 let fontFaces = '';
 let attachmentIcon = '';
+let playIcon = '';
+let audioIcon = '';
 
 const base64Type = {
   FONT: 'fonts',
@@ -79,6 +82,8 @@ async function initEditor() {
   ];
   await Promise.all(fontItems.map(loadFont));
   attachmentIcon = await loadIcon('attachment.svg');
+  playIcon = await loadIcon('play.svg');
+  audioIcon = await loadIcon('audio.svg');
 }
 
 function createHTML(options = {}) {
@@ -147,6 +152,10 @@ function createHTML(options = {}) {
         .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: ${UI_SIZES.elements.icon.medium}px ${UI_SIZES.elements.icon.medium}px; height: ${UI_SIZES.elements.icon.medium}px; width: ${UI_SIZES.elements.icon.medium}px; margin-right: ${UI_SIZES.spacing.minor}px;}
         .download-attachments .attachments {padding: 0; border: none;}
         .download-attachments .attachments::before {display: none;}
+        .audio-wrapper {background-color: ${theme.palette.grey.fog}; padding: ${UI_SIZES.spacing.minor}px ${UI_SIZES.spacing.small}px; border-radius: ${UI_SIZES.spacing.big}px; display: flex; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; align-items: center;}
+        .audio-wrapper::before {content: ""; background-image: url(${audioIcon}); background-size: contain; background-repeat: no-repeat; height: ${getScaleWidth(36)}px; width: ${getScaleWidth(285)}px;}
+        .audio-wrapper:active {opacity: 0.7;}
+        .audio-wrapper audio {display: none;}
     </style>
 </head>
 <body>
@@ -762,8 +771,9 @@ function createHTML(options = {}) {
                 if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
                 }
-                if (ele.nodeName === 'AUDIO' && ele.getAttribute('src')) {
-                    postAction({type: 'AUDIO_TOUCHED', data: ele.getAttribute('src')}, true);
+                if (ele.getAttribute('class') === 'audio-wrapper') {
+                    var audioSrc = ele.querySelector('audio').getAttribute('src');
+                    postAction({type: 'AUDIO_TOUCHED', data: audioSrc}, true);
                 }
                 if (ele.nodeName === 'IMG' && ele.getAttribute('src')) {
                     postAction({type: 'IMAGE_TOUCHED', data: ele.getAttribute('src')}, true);
