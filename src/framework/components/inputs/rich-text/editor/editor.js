@@ -490,6 +490,7 @@ function createHTML(options = {}) {
                         var html = "<br><div style='"+ (style || '')+"'><audio src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
                         exec('insertHTML', html);
                         Actions.UPDATE_HEIGHT();
+                        Actions.FORMAT_AUDIOS();
                     }
                 }
             },
@@ -511,7 +512,7 @@ function createHTML(options = {}) {
                         var html = "<br><div style='"+ (style || '')+"'><video src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
                         exec('insertHTML', html);
                         Actions.UPDATE_HEIGHT();
-                        Actions.DISABLE_VIDEOS();
+                        Actions.FORMAT_VIDEOS();
                     }
                 }
             },
@@ -568,7 +569,8 @@ function createHTML(options = {}) {
                     try {new Function("$", command)(exports.document)} catch(e){console.log(e.message)};
                 },
                 init: function() {
-                    Actions.DISABLE_VIDEOS();
+                    Actions.FORMAT_AUDIOS();
+                    Actions.FORMAT_VIDEOS();
                     Actions.GET_IMAGE_URLS();
                 }
             },
@@ -612,7 +614,16 @@ function createHTML(options = {}) {
                 }
             },
 
-            DISABLE_VIDEOS: function() {
+            FORMAT_AUDIOS: function() {
+                var audios = document.getElementsByTagName('audios');
+                for (var i = 0; i < audios.length; i++) {
+                    const audio = audio[i];
+                    video.autoplay = false;
+                    video.controls = false;
+                }
+            },
+
+            FORMAT_VIDEOS: function() {
                 var videos = document.getElementsByTagName('video');
                 for (var i = 0; i < videos.length; i++) {
                     const video = videos[i];
