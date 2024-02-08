@@ -196,7 +196,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           [ModificationType.PASSWORD]: {
             platform: session?.platform,
             context: authContextRef?.current,
-            credentials: { username: session?.user.login },
+            credentials: { username: session?.user.loginUsed },
             navCallback: CommonActions.goBack(),
           } as ChangePasswordScreenNavParams,
         };

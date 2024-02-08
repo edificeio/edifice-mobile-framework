@@ -220,7 +220,7 @@ const CommentField = (props: CommentFieldProps, ref) => {
     <View style={wrapperStyle} onLayout={onLayoutCallback}>
       {/* 1st row : comment content // editor */}
       <View style={[styles.row, { alignItems: props.commentId ? 'flex-start' : 'flex-end' }]}>
-        <SingleAvatar size={isIdleExistingComment ? 24 : 36} userId={props.commentAuthorId || session.user.id} />
+        <SingleAvatar size={isIdleExistingComment ? 24 : 36} userId={props.commentAuthorId || session?.user.id} />
         <View style={styles.col}>
           {isIdleExistingComment && props.commentAuthor && props.commentDate ? (
             <View style={styles.row}>

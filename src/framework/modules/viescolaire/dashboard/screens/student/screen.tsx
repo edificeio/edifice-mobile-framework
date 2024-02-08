@@ -238,10 +238,10 @@ export default connect(
 
     return {
       authorizedViescoApps: {
-        competences: session?.apps.some(app => app.address === '/competences'),
-        diary: session?.apps.some(app => app.address === '/diary'),
-        edt: session?.apps.some(app => app.address === '/edt'),
-        presences: session?.apps.some(app => app.address === '/presences'),
+        competences: session?.rights.apps.some(app => app.address === '/competences'),
+        diary: session?.rights.apps.some(app => app.address === '/diary'),
+        edt: session?.rights.apps.some(app => app.address === '/edt'),
+        presences: session?.rights.apps.some(app => app.address === '/presences'),
       },
       classes: session?.user.classes,
       competences: competencesState.competences.data,

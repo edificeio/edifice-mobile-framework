@@ -135,7 +135,11 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
   ]);
 
   const doRefuseTerms = React.useCallback(() => {
-    tryLogout();
+    try {
+      tryLogout();
+    } catch (e) {
+      console.warn('Error while refusing terms:', e);
+    }
   }, [tryLogout]);
 
   const formModel = React.useMemo(
@@ -275,21 +279,6 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     </KeyboardPageView>
   );
 };
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 const mapStateToProps: (
   state: IGlobalState,

@@ -203,7 +203,6 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const refuseMobileVerification = useCallback(async () => {
     try {
       await tryLogout();
-      // navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }
