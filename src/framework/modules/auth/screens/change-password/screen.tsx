@@ -29,12 +29,12 @@ import {
   PlatformAuthContext,
   createChangePasswordError,
 } from '~/framework/modules/auth/model';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';
 
-import { IAuthNavigationParams, authRouteNames } from '../../navigation';
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
 import {

@@ -15,6 +15,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
+import { AccountType } from '~/framework/modules/auth/model';
 import {
   IConcernedStudent,
   IWordReport,
@@ -29,7 +30,6 @@ import {
 import HtmlContentView from '~/ui/HtmlContentView';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { AccountType } from '../../auth/model';
 import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>

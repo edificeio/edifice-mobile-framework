@@ -9,12 +9,11 @@ import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sh
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
+import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import styles from '~/framework/modules/auth/screens/account-selection/styles';
 import { AuthAccountSelectionScreenPrivateProps } from '~/framework/modules/auth/screens/account-selection/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
-import HandleAccountList from '../../components/handle-account-list';
 
 export const computeNavBar = ({
   navigation,

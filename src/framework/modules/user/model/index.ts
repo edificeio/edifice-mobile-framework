@@ -4,7 +4,7 @@
 
 import { Moment } from 'moment';
 
-import { AccountType } from '../../auth/model';
+import { AccountType } from '~/framework/modules/auth/model';
 
 export enum HobbieVisibility {
   PRIVE = 'PRIVE',

@@ -1,10 +1,9 @@
 import moment from 'moment';
 
+import { AccountType } from '~/framework/modules/auth/model';
 import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
 import { hobbiesItems } from '~/framework/modules/user/screens/profile';
 import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
-
-import { AccountType } from '../../auth/model';
 
 interface BackendInfoPerson {
   id: string;
@@ -78,7 +77,7 @@ export const userService = {
       const api = id ? `/userbook/api/person?id=${id}` : `/userbook/api/person`;
       const backendPerson = (await fetchJSONWithCache(api)) as BackendPerson;
 
-      const person = backendPerson.result.map(person => infoPersonAdapter(person));
+      const person = backendPerson.result.map(p => infoPersonAdapter(p));
       return person as InfoPerson[];
     },
     put: async (userId: string, body) => {

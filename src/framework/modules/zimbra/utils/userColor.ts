@@ -1,10 +1,9 @@
 import { ColorValue } from 'react-native';
 
 import theme from '~/app/theme';
+import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { zimbraService } from '~/framework/modules/zimbra/service';
-
-import { AccountType } from '../../auth/model';
 
 export const getProfileColor = (userType?: string): ColorValue => {
   switch (userType) {
