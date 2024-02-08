@@ -407,8 +407,8 @@ function createHTML(options = {}) {
                 return flag;
              }},
             line: { result: function() { return exec('insertHorizontalRule'); }},
-            redo: { result: function() { return exec('redo'); }},
-            undo: { result: function() { return exec('undo'); }},
+            redo: { state: function() { return queryCommandState('redo'); } , result: function() { return exec('redo'); }},
+            undo: { state: function() { return queryCommandState('undo'); } , result: function() { return exec('undo'); }},
             indent: { result: function() { return exec('indent'); }},
             outdent: { result: function() { return exec('outdent'); }},
             outdent: { result: function() { return exec('outdent'); }},
@@ -421,17 +421,8 @@ function createHTML(options = {}) {
             fontSize: { state: function() { return queryCommandValue('fontSize'); }, result: function(size) { return exec('fontSize', size); }},
             fontName: { result: function(name) { return exec('fontName', name); }},
             link: {
-                // result: function(data) {
-                //     data = data || {};
-                //     var title = data.title;
-                //     title = title || window.getSelection().toString();
-                //     // title = title || window.prompt('Enter the link title');
-                //     var url = data.url || window.prompt('Enter the link URL');
-                //     if (url){
-                //         exec('insertHTML', "<a href='"+ url +"'>"+(title || url)+"</a>");
-                //     }
-                // }
                 result: function(data) {
+                    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2404
                     var sel = document.getSelection();
                     data = data || {};
                     var url = data.url || window.prompt('Enter the link URL');
@@ -475,15 +466,6 @@ function createHTML(options = {}) {
                     }
                 }
             },
-            image: {
-                result: function(url, style) {
-                    if (url){
-                        exec('insertHTML', "<img style='"+ (style || '')+"' src='"+ url +"'/>");
-                        Actions.UPDATE_HEIGHT();
-                        Actions.GET_IMAGE_URLS();
-                    }
-                }
-            },
             html: {
                 result: function (html){
                     if (html){
@@ -493,9 +475,31 @@ function createHTML(options = {}) {
                 }
             },
             text: { result: function (text){ text && exec('insertText', text); }},
+            audio: {
+                result: function(url, style) {
+                    if (url) {
+                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2363
+                        var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
+                        var html = "<br><div style='"+ (style || '')+"'><audio src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
+                        exec('insertHTML', html);
+                        Actions.UPDATE_HEIGHT();
+                    }
+                }
+            },
+            image: {
+                result: function(url, style) {
+                    if (url){
+                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2357
+                        exec('insertHTML', "<img style='"+ (style || '')+"' src='"+ url +"'/>");
+                        Actions.UPDATE_HEIGHT();
+                        Actions.GET_IMAGE_URLS();
+                    }
+                }
+            },
             video: {
                 result: function(url, style) {
                     if (url) {
+                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2360
                         var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
                         var html = "<br><div style='"+ (style || '')+"'><video src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
                         exec('insertHTML', html);

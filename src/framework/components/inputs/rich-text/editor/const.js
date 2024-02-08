@@ -25,6 +25,7 @@ export const actions = {
   insertLink: 'link',
   insertText: 'text',
   insertHTML: 'html',
+  insertAudio: 'audio',
   insertImage: 'image',
   insertVideo: 'video',
   fontSize: 'fontSize',

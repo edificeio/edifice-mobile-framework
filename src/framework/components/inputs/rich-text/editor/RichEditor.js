@@ -404,11 +404,21 @@ export default class RichEditor extends Component {
     }
   }
 
+  insertAudio(attributes, style) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2363
+    // + editor.js - "audio:"
+    this.sendAction(actions.insertVideo, 'result', attributes, style);
+  }
+
   insertImage(attributes, style) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2357
+    // + editor.js - "image:"
     this.sendAction(actions.insertImage, 'result', attributes, style);
   }
 
   insertVideo(attributes, style) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2360
+    // + editor.js - "video:"
     this.sendAction(actions.insertVideo, 'result', attributes, style);
   }
 
@@ -421,6 +431,7 @@ export default class RichEditor extends Component {
   }
 
   insertLink(title, url) {
+    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2404
     if (url) {
       this.showAndroidKeyboard();
       this.sendAction(actions.insertLink, 'result', { title, url });
