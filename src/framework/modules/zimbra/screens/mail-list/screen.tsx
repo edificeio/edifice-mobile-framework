@@ -334,7 +334,7 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
                 ) : null}
                 {folderPath === '/Trash' ? (
                   <View style={styles.rightMargin}>
-                    <NavBarAction icon="ui-redo" onPress={() => moveModalRef.current?.doShowModal()} />
+                    <NavBarAction icon="ui-restore" onPress={() => moveModalRef.current?.doShowModal()} />
                   </View>
                 ) : null}
                 <NavBarAction

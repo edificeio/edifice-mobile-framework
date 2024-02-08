@@ -132,6 +132,7 @@ export const UI_SIZES = {
     mediumPlus: getScaleWidth(16),
     large: getScaleWidth(21),
     extraLarge: getScaleWidth(24),
+    big: getScaleWidth(32),
     huge: getScaleWidth(48),
   },
   screen: {

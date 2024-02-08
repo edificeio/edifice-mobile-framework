@@ -214,6 +214,7 @@ export default class RichToolbar extends Component {
     });
 
     const animatedStyleExit = {
+      flexDirection: 'row',
       transform: [{ translateY: interpolatedValueExit }],
       opacity: interpolatedValueOpacityExit,
     };
@@ -224,15 +225,20 @@ export default class RichToolbar extends Component {
           <Animated.View style={animatedStyleExit}>
             <RichToolbarItemsList
               list={[
+                <RichToolbarActionItem icon={`ui-${actions.undo}`} action={actions.undo} editor={this.editor} />,
+                <RichToolbarActionItem icon={`ui-${actions.redo}`} action={actions.redo} editor={this.editor} />,
+                <RichToolbarSeparator />,
                 <RichToolbarCustomItem
                   icon="ui-image"
                   fill={theme.palette.complementary.green.regular}
                   action={() => console.log('show bottomsheet add image')}
                 />,
-                <RichToolbarSeparator />,
                 <RichToolbarCustomItem icon="ui-text-options" action={this.startAnimation} />,
               ]}
             />
+            <View>
+              <RichToolbarActionItem icon="ui-keyboardHide" action={actions.keyboard} editor={this.editor} />
+            </View>
           </Animated.View>
           <Animated.View style={animatedStyleEnter}>
             <TouchableOpacity style={styles.closeUnderMenu} onPress={() => this.inverseAnimation()}>
