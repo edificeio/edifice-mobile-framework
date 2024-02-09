@@ -36,7 +36,7 @@ export interface DisplayUserPublicWithType extends DisplayUserPublic {
  * Represent user information that a seved account contains
  */
 export interface AuthSavedAccountUserInfo extends DisplayUserPublicWithType {
-  avatar?: Blob;
+  avatarCache?: string;
   loginUsed: string | undefined; // undefined if federation login
 }
 
@@ -56,9 +56,9 @@ export interface AuthLoggedUserProfile extends AuthSavedAccountUserInfo, AuthUse
   birthDate?: Moment;
   firstName: string;
   lastName: string;
-  login?: string; // May be same as loginUsed if real login was used to log in
-  loginAlias?: string; // May be same as loginUsed if alias was used to log in
-  photo?: string; // = avatar url if defined. Keep in mind `avatar` property stores the Blob data of the image.
+  login: string; // May be same as loginUsed if real login was used to log in
+  loginAlias?: string; // May be same as loginUsed if alias was used to log in. May be undefined for federation / migrated accounts
+  avatar?: string; // = avatar url if defined. Keep in mind `avatarCache` property stores the local image cache of the online image.
 }
 
 /**
@@ -215,14 +215,14 @@ export interface UserStructureWithClasses extends StructureNode {
 }
 
 /**
- * Describes all editable profile values as text-only, without verifications.
+ * Describes all editable profile values.
  */
 export interface ILoggedUserProfile extends DisplayUserPublic, AuthUserContactDetails {
   birthDate?: Moment;
   firstName: string;
   lastName: string;
-  homePhone?: string; // It's not in LoggedUserContactDetails because there is no logic associed with it unlike mobile.
   loginAlias?: string;
+  avatar?: string;
 }
 
 /**
