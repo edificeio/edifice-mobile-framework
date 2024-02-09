@@ -13,7 +13,7 @@ export default class ChangePasswordFormModel {
 
   constructor(
     private args: {
-      passwordRegex: RegExp;
+      passwordRegex: RegExp | string;
       oldPassword: ValueGetter<string>;
       newPassword: ValueGetter<string>;
     },

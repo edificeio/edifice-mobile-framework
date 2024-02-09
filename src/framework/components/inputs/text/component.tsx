@@ -11,6 +11,8 @@ import { TextInputProps } from './types';
 
 const ICON_INPUT_SIZE = UI_SIZES.elements.icon.small;
 
+export type TextInputType = RNTextInput;
+
 const TextInput = forwardRef<RNTextInput, TextInputProps>((props: TextInputProps, ref) => {
   const {
     annotation,

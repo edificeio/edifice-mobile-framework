@@ -16,6 +16,7 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
+import { TextInputType } from '~/framework/components/inputs/text/component';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
@@ -163,9 +164,9 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
   const errorText = React.useMemo(() => (errorKey ? I18n.get(errorKey) : typing ? undefined : error), [error, errorKey, typing]);
   const isSubmitLoading = submitState === 'RUNNING';
 
-  const inputOldPassword = React.useRef<TextInput>();
-  const inputNewPassword = React.useRef<TextInput>();
-  const inputConfirmPassword = React.useRef<TextInput>();
+  const inputOldPassword = React.useRef<TextInputType>(null);
+  const inputNewPassword = React.useRef<TextInputType>(null);
+  const inputConfirmPassword = React.useRef<TextInputType>(null);
 
   const onFormBlur = React.useCallback(() => {
     inputOldPassword.current?.blur();
