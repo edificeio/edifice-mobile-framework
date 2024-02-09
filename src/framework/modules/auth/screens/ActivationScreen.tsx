@@ -50,6 +50,7 @@ export interface ActivationScreenState extends ActivationPayload {
   error?: string;
   activationState: 'IDLE' | 'RUNNING' | 'DONE';
 }
+export interface ActivationPrivateProps {}
 export interface ActivationScreenStoreProps {
   legalUrls?: LegalUrls;
   context?: PlatformAuthContext;
@@ -57,7 +58,8 @@ export interface ActivationScreenStoreProps {
 export interface ActivationScreenDispatchProps {
   trySubmit: (...args: Parameters<typeof activateAccountAction>) => ReturnType<ReturnType<typeof activateAccountAction>>;
 }
-export type ActivationScreenProps = ActivationScreenDispatchProps &
+export type ActivationScreenProps = ActivationPrivateProps &
+  ActivationScreenDispatchProps &
   ActivationScreenStoreProps &
   NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.activation>;
 
@@ -263,7 +265,10 @@ const ActivationScreenLoader = (props: ActivationScreenProps) => {
 };
 
 export default connect(
-  (state: IGlobalState, props: ActivationScreenProps) => {
+  (
+    state: IGlobalState,
+    props: ActivationPrivateProps & NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.activation>,
+  ) => {
     return {
       context: getPlatformContextOf(props.route.params.platform),
       legalUrls: getPlatformLegalUrlsOf(props.route.params.platform),

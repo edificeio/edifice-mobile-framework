@@ -9,7 +9,6 @@ import type {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import type { IChangePasswordModel } from '~/framework/modules/user/actions';
 import type { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'oldPassword' | 'newPassword' | 'confirm';
