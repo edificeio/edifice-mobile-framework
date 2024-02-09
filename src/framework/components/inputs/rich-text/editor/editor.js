@@ -5,15 +5,18 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleFontSize, getScaleWidth } from '~/framework/components/constants';
 import { TextSizeStyle } from '~/framework/components/text';
+import { getSession } from '~/framework/modules/auth/reducer';
 
-let fontFaces = '';
-let attachmentIcon = '';
 let audioIcon = '';
+let attachmentIcon = '';
+let fontFaces = '';
 
 const base64Type = {
   FONT: 'fonts',
   IMAGE: 'images',
 };
+
+const pfUrl = getSession()?.platform?.url || '';
 
 async function loadBase64File(fileName, type) {
   let base64String = '';
@@ -627,11 +630,15 @@ function createHTML(options = {}) {
                 var videos = document.getElementsByTagName('video');
                 for (var i = 0; i < videos.length; i++) {
                     const video = videos[i];
+                    const videoSrc = video.getAttribute('src');
+                    const videoRes = video.getAttribute('data-video-resolution');
                     video.autoplay = false;
                     video.controls = false;
-                    //video.poster='${attachmentIcon}';
-                    //video.style.width = "100%";
-                    //video.style.height = "150px";
+                    video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
+                    // TODO: LEA - Calculate video width/height depending on design values
+                    // videoRes contains string like '640x320'
+                    video.style.height = '200px';
+                    video.style.width = '300px';
                 }
             },
 
