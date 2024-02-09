@@ -19,13 +19,14 @@ import {
   AuthFederationCredentials,
   AuthPendingRedirection,
   AuthRequirement,
-  AuthSavedAccount,
+  AuthSavedAccountWithTokens,
   ForgotMode,
   IActivationError,
   IChangePasswordError,
   IChangePasswordPayload,
   IForgotPayload,
   PlatformAuthContext,
+  accountIsLogged,
   createActivationError,
   createChangePasswordError,
 } from './model';
@@ -47,7 +48,14 @@ import {
   manageFirebaseToken,
   revalidateTerms,
 } from './service';
-import { readSavedAccounts, readSavedStartup, readShowOnbording, writeLogout, writeSingleAccount } from './storage';
+import {
+  getSerializedLoggedInAccountInfo,
+  readSavedAccounts,
+  readSavedStartup,
+  readShowOnbording,
+  writeLogout,
+  writeSingleAccount,
+} from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
@@ -71,14 +79,21 @@ type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
  * Init the auth state with walues read from the storage.
  * @returns If exist, the startup account to try refresh session with.
  */
-export const authInitAction = () => async (dispatch: AuthDispatch) => {
+export const authInitAction = () => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
   const startup = readSavedStartup();
   const accounts = readSavedAccounts();
   const showOnboarding = readShowOnbording();
   const deviceId = await DeviceInfo.getUniqueId();
 
   dispatch(actions.authInit(startup, accounts, showOnboarding, deviceId));
-  return startup ? (startup.account ? accounts[startup.account] : undefined) : undefined;
+  const authState = getAuthState(getState());
+  const ret =
+    authState.pending && authState.pending.redirect === undefined && authState.pending.account
+      ? authState.accounts[authState.pending.account]
+      : undefined;
+  if (accountIsLogged(ret)) {
+    return getSerializedLoggedInAccountInfo(ret);
+  } else return ret;
 };
 
 /**
@@ -174,7 +189,7 @@ export const loginSteps = {
    * @param platform
    */
   loadToken: withErrorTracking(
-    withMeasure(async (account: AuthSavedAccount) => {
+    withMeasure(async (account: AuthSavedAccountWithTokens) => {
       authService.restoreSession(appConf.assertPlatformOfName(account.platform), account.tokens);
     }, 'loadToken'),
     'Auth',
@@ -368,27 +383,28 @@ export const loginFederationAction =
  * @returns
  * @throws
  */
-export const restoreAction = (account: AuthSavedAccount) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-  try {
-    await loginSteps.loadToken(account);
-    if (!OAuth2RessourceOwnerPasswordClient.connection) {
-      throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+export const restoreAction =
+  (account: AuthSavedAccountWithTokens) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+    try {
+      await loginSteps.loadToken(account);
+      if (!OAuth2RessourceOwnerPasswordClient.connection) {
+        throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
+      }
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
+      const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
+      writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+      return session;
+    } catch (e) {
+      console.warn(`[Auth] Restore error :`, e);
+      dispatch(
+        actions.authError({
+          key: undefined,
+          info: e as Error,
+        }),
+      );
+      throw e;
     }
-    await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
-    const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
-    writeSingleAccount(session, getAuthState(getState()).showOnboarding);
-    return session;
-  } catch (e) {
-    console.warn(`[Auth] Restore error :`, e);
-    dispatch(
-      actions.authError({
-        key: undefined,
-        info: e as Error,
-      }),
-    );
-    throw e;
-  }
-};
+  };
 
 /**
  * Marks the current error as displayed.

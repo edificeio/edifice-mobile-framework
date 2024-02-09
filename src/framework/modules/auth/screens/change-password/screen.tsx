@@ -29,12 +29,12 @@ import {
   PlatformAuthContext,
   createChangePasswordError,
 } from '~/framework/modules/auth/model';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';
 
-import { IAuthNavigationParams, authRouteNames } from '../../navigation';
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
 import {
@@ -81,7 +81,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     try {
       setError(undefined);
       setSumitState('RUNNING');
-      const login = route.params.credentials?.username ?? session?.user.loginUsed;
+      const login = route.params.credentials?.username ?? session?.user.loginUsed ?? session?.user.login;
       if (!platform || !login) {
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }

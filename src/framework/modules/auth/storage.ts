@@ -1,4 +1,5 @@
 import { storage } from '~/framework/util/storage';
+import type { IOAuthToken } from '~/infra/oauth';
 
 import { AuthLoggedAccount, AuthSavedAccount } from './model';
 import moduleConfig from './module-config';
@@ -8,6 +9,8 @@ export interface AuthStorageData {
   startup: {
     account?: string;
     platform?: string;
+    /** @deprecated used to migrate pre-1.12 automatic connections */
+    anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
 }
@@ -23,15 +26,16 @@ export const readSavedStartup = () => {
   let startup = authStorage.getJSON('startup');
   const oldCurrentPlatform = storage.global.getString('currentPlatform');
   if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
+  const oldCurrentToken = storage.global.getString('token');
+  if (!startup?.account && oldCurrentToken) startup = { ...startup, anonymousToken: JSON.parse(oldCurrentToken) };
   return { ...startup } as AuthStorageData['startup'];
 };
 export const readShowOnbording = () => authStorage.getBoolean('show-onboarding') ?? true;
 
 /** Converts an actual logged account into a serialisable saved account information */
-export const getSerializedAccountInfo = (account: AuthLoggedAccount) => {
+export const getSerializedLoggedOutAccountInfo = (account: AuthLoggedAccount) => {
   return {
     platform: account.platform.name,
-    tokens: account.tokens,
     user: {
       displayName: account.user.displayName,
       id: account.user.id,
@@ -42,13 +46,21 @@ export const getSerializedAccountInfo = (account: AuthLoggedAccount) => {
   } as AuthSavedAccount;
 };
 
+/** Converts an actual logged account into a serialisable saved account information */
+export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => {
+  return {
+    ...getSerializedLoggedOutAccountInfo(account),
+    tokens: account.tokens,
+  } as AuthSavedAccount;
+};
+
 /**
  * Save in storage a single account, replacing the others already present.
  * @param account
  * @param showOnboarding
  */
 export const writeSingleAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
-  const savedAccount = getSerializedAccountInfo(account);
+  const savedAccount = getSerializedLoggedInAccountInfo(account);
   const savedAccounts: Record<string, AuthSavedAccount> = {
     [account.user.id]: savedAccount,
   };
@@ -72,6 +84,7 @@ export const updateAccount = (savedAccount: AuthSavedAccount) => {
 };
 
 export const writeLogout = (account: AuthLoggedAccount) => {
+  // Remove token for loegged out account
   const accounts = authStorage.getJSON('accounts');
   if (accounts) {
     const savedAccount = accounts[account.user.id];
@@ -81,7 +94,9 @@ export const writeLogout = (account: AuthLoggedAccount) => {
     }
     authStorage.setJSON('accounts', accounts);
   }
-  authStorage.delete('startup');
+  // Remove account id in startup object
+  const newStartup = { platform: authStorage.getJSON('startup')?.platform, account: account.user.id };
+  authStorage.setJSON('startup', newStartup);
 };
 
 /** read old auth values in storage */

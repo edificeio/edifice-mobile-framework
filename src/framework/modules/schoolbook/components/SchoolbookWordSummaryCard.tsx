@@ -9,6 +9,7 @@ import CardTopContent from '~/framework/components/card/top-content';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionItalicText, CaptionText, SmallText } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 import {
   IAcknowledgment,
   IResponse,
@@ -20,7 +21,6 @@ import { displayPastDate } from '~/framework/util/date';
 import { ArticleContainer } from '~/ui/ContainerContent';
 import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
 
-import { AccountType } from '../../auth/model';
 import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>

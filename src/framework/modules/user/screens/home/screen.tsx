@@ -196,7 +196,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           [ModificationType.PASSWORD]: {
             platform: session?.platform,
             context: authContextRef?.current,
-            credentials: { username: session?.user.loginUsed },
+            credentials: { username: session?.user.loginUsed ?? session?.user.login },
             navCallback: CommonActions.goBack(),
           } as ChangePasswordScreenNavParams,
         };
@@ -212,7 +212,15 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         Toast.showError(I18n.get('user-page-error-text'));
       }
     },
-    [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
+    [
+      fetchAuthContext,
+      fetchMFAValidationInfos,
+      focusedRef,
+      navigation,
+      session?.platform,
+      session?.user.login,
+      session?.user.loginUsed,
+    ],
   );
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;

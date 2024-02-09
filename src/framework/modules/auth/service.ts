@@ -303,6 +303,10 @@ export function formatSession(
   };
 }
 
+/**
+ * Old storage key used before 1.12 for selected platform
+ * @deprecated
+ */
 export const PLATFORM_STORAGE_KEY = 'currentPlatform';
 
 /**

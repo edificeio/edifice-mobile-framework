@@ -114,6 +114,10 @@ export interface AuthSavedAccount {
   user: AuthSavedAccountUserInfo;
 }
 
+export interface AuthSavedAccountWithTokens extends AuthSavedAccount {
+  tokens: AuthTokenSet;
+}
+
 export interface AuthLoggedAccountRights {
   apps: IEntcoreApp[];
   widgets: IEntcoreWidget[];
@@ -131,6 +135,16 @@ export interface AuthLoggedAccount {
   type: SessionType;
   federated: boolean;
 }
+
+export const accountIsLogged = (account: AuthLoggedAccount | AuthSavedAccount | undefined): account is AuthLoggedAccount => {
+  // account that have rights object is currenty logged in.
+  return account !== undefined && (account as AuthLoggedAccount).rights !== undefined;
+};
+
+export const accountIsLoggable = (account: AuthSavedAccount | undefined): account is AuthSavedAccountWithTokens => {
+  // account that have rights object is currenty logged in.
+  return account !== undefined && (account as AuthSavedAccount).tokens !== undefined;
+};
 
 /**
  * All possible requirements after a user log in.
@@ -151,6 +165,8 @@ export enum AuthPendingRedirection {
   ACTIVATE = 'activate',
   RENEW_PASSWORD = 'renew_password',
 }
+
+export const ANONYMOUS_ACCOUNT_ID = 'migration';
 
 /**
  * Associates a saved account to each user id

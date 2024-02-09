@@ -3,6 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 // import { loginAction } from '~/framework/modules/auth/actions';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction, restoreAction } from '~/framework/modules/auth/actions';
+import { accountIsLoggable } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { Error } from '~/framework/util/error';
@@ -34,9 +35,9 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
         ],
       });
       await initFeatures();
-      const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch
-      if (startupAccount) {
-        await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAction>>); // TS-issue with dispatch
+      const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch async
+      if (startupAccount && accountIsLoggable(startupAccount)) {
+        await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAction>>); // TS-issue with dispatch async
       }
     } catch (e) {
       console.warn('[Startup] Startup failed. Cause :', e);

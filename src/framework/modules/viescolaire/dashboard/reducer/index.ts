@@ -38,7 +38,7 @@ const reducer = combineReducers({
       const children = getFlattenedChildren(account.user.children);
       return children?.find(child => child.classesNames.length)?.id ?? null;
     },
-    [authActionTypes.loginRequirement]: (state, action) => {
+    [authActionTypes.updateRequirement]: (state, action) => {
       const { account } = action as unknown as ActionPayloads['loginRequirement'];
       const children = getFlattenedChildren(account.user.children);
       return children?.find(child => child.classesNames.length)?.id ?? null;
@@ -53,8 +53,8 @@ const reducer = combineReducers({
       const { account } = action as unknown as ActionPayloads['login'];
       return account.user.structures?.[0]?.id;
     },
-    [authActionTypes.loginRequirement]: (state, action) => {
-      const { account } = action as unknown as ActionPayloads['loginRequirement'];
+    [authActionTypes.updateRequirement]: (state, action) => {
+      const { account } = action as unknown as ActionPayloads['updateRequirement'];
       return account.user.structures?.[0]?.id;
     },
     [actionTypes.selectStructure]: (state, action) => {
