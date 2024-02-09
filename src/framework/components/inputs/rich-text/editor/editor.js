@@ -575,6 +575,7 @@ function createHTML(options = {}) {
                     Actions.FORMAT_AUDIOS();
                     Actions.FORMAT_VIDEOS();
                     Actions.GET_IMAGE_URLS();
+                    Actions.UPDATE_HEIGHT();
                 }
             },
 
@@ -637,8 +638,8 @@ function createHTML(options = {}) {
                     video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
                     // TODO: LEA - Calculate video width/height depending on design values
                     // videoRes contains string like '640x320'
-                    video.style.height = '200px';
-                    video.style.width = '300px';
+                    video.style.height = '300px';
+                    video.style.width = '100%';
                 }
             },
 
