@@ -545,6 +545,16 @@ export function manualLogoutAction() {
   };
 }
 
+export interface IChangePasswordModel {
+  oldPassword: string;
+  newPassword: string;
+  confirm: string;
+}
+
+export interface IChangePasswordUserInfo {
+  login: string;
+}
+
 export interface IChangePasswordSubmitPayload {
   oldPassword?: string;
   password: string;
