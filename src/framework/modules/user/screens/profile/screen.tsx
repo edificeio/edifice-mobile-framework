@@ -214,13 +214,13 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   }, []);
 
   const renderUserCard = () => {
-    const avatar = isMyProfile ? session?.user.photo : userInfo?.photo;
+    const avatar = isMyProfile ? session?.user.avatar : userInfo?.avatar;
     return (
       <UserCard
         id={avatar && formatSource(`${session?.platform.url}${avatar}`)}
         displayName={userInfo?.displayName}
         type={userInfo?.type}
-        hasAvatar={!!session?.user.photo}
+        hasAvatar={!!session?.user.avatar}
         updatingAvatar={updatingAvatar}
         onChangeAvatar={onChangeAvatar.bind(this)}
         onDeleteAvatar={onDeleteAvatar.bind(this)}
@@ -574,7 +574,7 @@ const UserProfileScreenConnected = connect(
     onUploadAvatarError: () => dispatch(uploadAvatarError()),
     onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
     onUpdateAvatar: (imageWorkspaceUrl: string) =>
-      dispatch(profileUpdateAction({ photo: imageWorkspaceUrl })) as unknown as Promise<void>,
+      dispatch(profileUpdateAction({ avatar: imageWorkspaceUrl })) as unknown as Promise<void>,
   }),
 )(UserProfileScreen);
 

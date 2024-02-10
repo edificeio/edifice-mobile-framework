@@ -17,11 +17,9 @@ import { getItemJson, setItemJson } from '~/framework/util/storage';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
-export type UpdatableProfileValues = Partial<ILoggedUserProfile>;
-
-export function profileUpdateAction(newValues: UpdatableProfileValues) {
+export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
-    const isUpdatingPhoto = newValues.photo !== undefined;
+    const isUpdatingPhoto = newValues.avatar !== undefined;
 
     const session = assertSession();
 
@@ -29,18 +27,17 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
       if (newValues[key] !== undefined) {
         if (
           key.match(/Valid/) ||
-          newValues[key as keyof UpdatableProfileValues] === session.user[key] ||
+          newValues[key as keyof Partial<ILoggedUserProfile>] === session.user[key] ||
           key === 'updatingAvatar'
         ) {
-          delete newValues[key as keyof UpdatableProfileValues];
+          delete newValues[key as keyof Partial<ILoggedUserProfile>];
         }
       }
     }
 
-    dispatch(authActions.profileUpdateRequest(newValues));
     try {
       const userId = session.user.id;
-      const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.photo } : newValues;
+      const updatedValues = isUpdatingPhoto ? { ...newValues, avatar: newValues.avatar } : newValues;
       const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         method: 'PUT',
         body: JSON.stringify(updatedValues),
@@ -48,13 +45,11 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);
       }
-      dispatch(authActions.profileUpdateSuccess(newValues));
+      dispatch(authActions.profileUpdate(userId, newValues));
       if (isUpdatingPhoto) {
         refreshSelfAvatarUniqueKey();
       }
     } catch (e) {
-      dispatch(authActions.profileUpdateError());
-
       if ((e as Error).message.match(/loginAlias/)) {
         // Tracking was here
       } else {

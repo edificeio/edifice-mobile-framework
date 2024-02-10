@@ -98,7 +98,7 @@ useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
  */
 function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session']) {
   const userProfilePicture = React.useMemo(() => {
-    const uri = session?.platform && session?.user.photo ? new URL(`${session.platform.url}${session.user.photo}`) : undefined;
+    const uri = session?.platform && session?.user.avatar ? new URL(`${session.platform.url}${session.user.avatar}`) : undefined;
     if (uri) {
       const uti = OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier();
       if (uti) uri.searchParams.append('uti', uti);
@@ -109,7 +109,7 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
         ...formatSource(uri.href),
       } as ImageURISource)
     );
-  }, [session?.platform, session?.user.photo]);
+  }, [session?.platform, session?.user.avatar]);
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
     return !userProfilePicture ? (

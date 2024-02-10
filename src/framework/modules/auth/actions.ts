@@ -545,6 +545,16 @@ export function manualLogoutAction() {
   };
 }
 
+export interface IChangePasswordModel {
+  oldPassword: string;
+  newPassword: string;
+  confirm: string;
+}
+
+export interface IChangePasswordUserInfo {
+  login: string;
+}
+
 export interface IChangePasswordSubmitPayload {
   oldPassword?: string;
   password: string;
@@ -569,7 +579,7 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       };
       const formdata = new FormData();
       for (const key in payload) {
-        formdata.append(key, payload[key as keyof IChangePasswordSubmitPayload]);
+        if (payload[key as keyof IChangePasswordSubmitPayload]) formdata.append(key, payload[key]);
       }
       // === 3 - Send change password information
       const deviceId = getAuthState(getState()).deviceInfo.uniqueId;

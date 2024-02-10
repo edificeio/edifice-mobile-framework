@@ -1,26 +1,31 @@
 import { TextInput } from 'react-native';
 
-import { IChangePasswordModel } from '~/framework/modules/user/actions';
-import { ValidatorBuilder, ValueGetter } from '~/utils/form';
+import { IValidatorContext, ValidatorBuilder, ValueGetter } from '~/utils/form';
+
+import { IChangePasswordModel } from '../../../actions';
 
 export default class ChangePasswordFormModel {
+  oldPassword: IValidatorContext<string>;
+
+  newPassword: IValidatorContext<string>;
+
+  confirm: IValidatorContext<string>;
+
   constructor(
     private args: {
-      passwordRegex: string;
+      passwordRegex: RegExp | string;
       oldPassword: ValueGetter<string>;
       newPassword: ValueGetter<string>;
     },
-  ) {}
-
-  oldPassword = new ValidatorBuilder().withRequired(true).build<string>();
-
-  newPassword = new ValidatorBuilder()
-    .withRequired(true)
-    .withRegex(this.args.passwordRegex)
-    .withCompareString(this.args.oldPassword, false)
-    .build<string>();
-
-  confirm = new ValidatorBuilder().withRequired(true).withCompareString(this.args.newPassword, true).build<string>();
+  ) {
+    this.oldPassword = new ValidatorBuilder().withRequired(true).build<string>();
+    this.newPassword = new ValidatorBuilder()
+      .withRequired(true)
+      .withRegex(this.args.passwordRegex)
+      .withCompareString(this.args.oldPassword, false)
+      .build<string>();
+    this.confirm = new ValidatorBuilder().withRequired(true).withCompareString(this.args.newPassword, true).build<string>();
+  }
 
   inputOldPassword?: TextInput;
 

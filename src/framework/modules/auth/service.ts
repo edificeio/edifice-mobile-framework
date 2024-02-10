@@ -259,7 +259,7 @@ export function formatSession(
     classes: userinfo.classes,
     structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
     uniqueId: userinfo.uniqueId,
-    photo: userPublicInfo?.photo,
+    avatar: userPublicInfo?.photo,
     mobile: userPrivateData?.mobile,
     email: userPrivateData?.email,
     homePhone: userPrivateData?.homePhone,

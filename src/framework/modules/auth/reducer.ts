@@ -10,6 +10,7 @@ import {
   AuthTokenSet,
   LegalUrls,
   PlatformAuthContext,
+  accountIsLogged,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { Platform } from '~/framework/util/appConf';
@@ -82,6 +83,7 @@ export const actionTypes = {
   logout: moduleConfig.namespaceActionType('LOGOUT'),
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
   redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
+  profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
 
   // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
   // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
@@ -115,6 +117,7 @@ export interface ActionPayloads {
   logout: object;
   redirectActivation: { platformName: Platform['name']; login: string; code: string };
   redirectPasswordRenew: { platformName: Platform['name']; login: string; code: string };
+  profileUpdate: { id: string; user: Partial<AuthLoggedAccount['user']> };
 
   // sessionCreate: Pick<Required<IAuthState>, 'session'>;
   // sessionPartial: Pick<Required<IAuthState>, 'session'>;
@@ -196,6 +199,12 @@ export const actions = {
     platformName,
     login,
     code,
+  }),
+
+  profileUpdate: (id: string, user: Partial<AuthLoggedAccount['user']>) => ({
+    type: actionTypes.profileUpdate,
+    id,
+    user,
   }),
 
   // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
@@ -363,6 +372,13 @@ const reducer = createReducer(initialState, {
         code,
       },
     };
+  },
+
+  [actionTypes.profileUpdate]: (state, action) => {
+    const { id, user } = action as unknown as ActionPayloads['profileUpdate'];
+    const account = state.accounts[id] as AuthLoggedAccount;
+    if (!account || !accountIsLogged(account)) return state;
+    return { ...state, accounts: { ...state.accounts, [id]: { ...account, user: { ...account.user, ...user } } } };
   },
 
   // // Saves session info & consider user logged

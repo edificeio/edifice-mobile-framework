@@ -27,7 +27,7 @@ export interface ProfileScreenNavigationParams {
   userId?: string;
   newHobbies?: HobbieItem[];
   newDescription?: string;
-  newDescriptionVisibility: boolean;
+  newDescriptionVisibility?: boolean;
   newMood?: string;
   newMotto?: string;
 }

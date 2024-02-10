@@ -35,7 +35,7 @@ export interface InfoPerson {
   relatedType: null | string;
   userId: string;
   motto: string;
-  photo: string;
+  avatar: string;
   mood: string;
   health: string;
   address: string;
