@@ -157,6 +157,7 @@ function createHTML(options = {}) {
         table, th, td {border: ${UI_SIZES.elements.border.default}px solid ${theme.palette.grey.grey}; border-collapse: collapse;}
         th, td {padding: ${UI_SIZES.spacing._LEGACY_tiny}px ${UI_SIZES.spacing.tiny}px;}
         th {text-align: left; background-color: ${theme.palette.grey.pearl};}
+        iframe {border: none; max-width: 100%; height: auto;}
     </style>
 </head>
 <body>
