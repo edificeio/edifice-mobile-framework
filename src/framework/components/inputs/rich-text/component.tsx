@@ -64,7 +64,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const renderToolbar = () => {
     return (
-      <Animated.View style={{ transform: [{ translateY: transformToolbar }], opacity: opacityToolbar }}>
+      <Animated.View style={{ transform: [{ translateY: transformToolbar }], opacity: opacityToolbar, marginTop: -45 }}>
         <RichToolbar editor={richText} style={styles.richBar} />
       </Animated.View>
     );

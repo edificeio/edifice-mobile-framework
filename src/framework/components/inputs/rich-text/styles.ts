@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rich: {
-    minHeight: 300,
+    minHeight: '90%',
   },
   richBar: {
     borderColor: theme.palette.grey.cloudy,
@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     padding: UI_SIZES.spacing.medium,
+    paddingBottom: 0,
   },
 });
 
