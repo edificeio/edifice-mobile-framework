@@ -186,6 +186,9 @@ function createHTML(options = {}) {
         function createElement(tag) {
             return document.createElement(tag);
         };
+        function queryCommandEnabled(command) {
+            return document.queryCommandEnabled(command);
+        }
         function queryCommandState(command) {
             return document.queryCommandState(command);
         };
@@ -418,8 +421,8 @@ function createHTML(options = {}) {
                 return flag;
              }},
             line: { result: function() { return exec('insertHorizontalRule'); }},
-            redo: { state: function() { return queryCommandState('redo'); } , result: function() { return exec('redo'); }},
-            undo: { state: function() { return queryCommandState('undo'); } , result: function() { return exec('undo'); }},
+            redo: { state: function() { return queryCommandEnabled('redo'); }, result: function() { return exec('redo'); }},
+            undo: { state: function() { return queryCommandEnabled('undo'); }, result: function() { return exec('undo'); }},
             indent: { result: function() { return exec('indent'); }},
             outdent: { result: function() { return exec('outdent'); }},
             outdent: { result: function() { return exec('outdent'); }},
@@ -702,7 +705,7 @@ function createHTML(options = {}) {
             function handler() {
                 var activeTools = [];
                 for(var k in actionsHandler){
-                    const state =  Actions[k].state() 
+                    const state =  Actions[k].state();
                     if ( state ){
                         activeTools.push(typeof state === "boolean" ? k : {type: k, value: Actions[k].state()});
                     }
