@@ -17,7 +17,6 @@ import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/co
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import { RichEditor } from '~/framework/components/inputs/rich-text';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -52,6 +51,7 @@ import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
 
+import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import styles from './styles';
 import {
   BlogPostCommentLoadingState,
@@ -553,7 +553,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditor disabled initialContentHTML={blogPostContent} editorStyle={styles.editorStyle} />
+            <RichEditorViewer content={blogPostContent} />
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (

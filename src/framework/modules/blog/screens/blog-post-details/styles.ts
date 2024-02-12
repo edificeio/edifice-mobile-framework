@@ -43,9 +43,6 @@ export default StyleSheet.create({
   detailsTextNbComments: {
     color: theme.ui.text.light,
   },
-  editorStyle: {
-    color: theme.palette.grey.black,
-  },
   footerNoComment: {
     height: 0,
   },
