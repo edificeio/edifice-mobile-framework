@@ -4,8 +4,9 @@ import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
 import { LoadingIndicator } from '~/framework/components/loading';
+import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth.ts';
+import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth.ts';
 
 import { actions, messages } from './const';
 import { createHTML } from './editor';
@@ -175,8 +176,10 @@ export default class RichEditor extends Component {
   }
 
   _onAudioTouched(url) {
-    alert('AUDIO TOUCHED: ' + url);
-    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2435
+    openMediaPlayer({
+      type: MediaType.AUDIO,
+      source: urlSigner.signURISource(url),
+    });
   }
 
   _onImageTouched(url, imageUrls) {
@@ -193,8 +196,10 @@ export default class RichEditor extends Component {
   }
 
   _onVideoTouched(url) {
-    alert('VIDEO TOUCHED: ' + url);
-    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2435
+    openMediaPlayer({
+      type: MediaType.VIDEO,
+      source: urlSigner.signURISource(url),
+    });
   }
 
   onMessage(event) {

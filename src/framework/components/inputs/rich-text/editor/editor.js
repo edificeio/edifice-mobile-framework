@@ -642,6 +642,7 @@ function createHTML(options = {}) {
                     const videoSrc = video.getAttribute('src');
                     const videoRes = video.getAttribute('data-video-resolution');
                     video.autoplay = false;
+                    video.controls = false;
                     video.style.backgroundColor = '#000';
                     video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
                     video.style.width = width + 'px';
