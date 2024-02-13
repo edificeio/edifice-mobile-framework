@@ -4,6 +4,7 @@ import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEdito
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 
 export interface RichToolbarItemProps {
+  disabled?: boolean;
   editor: RichEditor;
   icon: string;
   toolbar: RichToolbar;

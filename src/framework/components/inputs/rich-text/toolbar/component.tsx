@@ -225,8 +225,18 @@ export default class RichToolbar extends Component {
           <Animated.View style={animatedStyleExit}>
             <RichToolbarItemsList
               list={[
-                <RichToolbarActionItem icon={`ui-${actions.undo}`} action={actions.undo} editor={this.editor} />,
-                <RichToolbarActionItem icon={`ui-${actions.redo}`} action={actions.redo} editor={this.editor} />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.undo}`}
+                  action={actions.undo}
+                  editor={this.editor}
+                  disabled={!this.state.items.includes(actions.undo)}
+                />,
+                <RichToolbarActionItem
+                  icon={`ui-${actions.redo}`}
+                  action={actions.redo}
+                  editor={this.editor}
+                  disabled={!this.state.items.includes(actions.redo)}
+                />,
                 <RichToolbarSeparator />,
                 <RichToolbarCustomItem
                   icon="ui-image"

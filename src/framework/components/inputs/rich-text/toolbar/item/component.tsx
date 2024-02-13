@@ -9,14 +9,17 @@ import styles from './styles';
 import { RichToolbarItemProps } from './types';
 
 export const RichToolbarItem = (props: RichToolbarItemProps) => {
+  const renderColor = () => {
+    if (props.disabled) return theme.palette.grey.stone;
+    if (props.fill) return props.fill;
+    return theme.palette.grey.black;
+  };
   return (
-    <TouchableOpacity onPress={props.onSelected} style={[styles.item, props.selected ? styles.itemSelected : {}]}>
-      <NamedSVG
-        name={props.icon}
-        fill={props.fill ?? theme.palette.grey.black}
-        height={UI_SIZES.elements.icon.small}
-        width={UI_SIZES.elements.icon.small}
-      />
+    <TouchableOpacity
+      disabled={props.disabled}
+      onPress={props.onSelected}
+      style={[styles.item, props.selected ? styles.itemSelected : {}]}>
+      <NamedSVG name={props.icon} fill={renderColor()} height={UI_SIZES.elements.icon.small} width={UI_SIZES.elements.icon.small} />
     </TouchableOpacity>
   );
 };

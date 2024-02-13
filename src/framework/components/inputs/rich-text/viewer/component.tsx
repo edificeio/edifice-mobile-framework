@@ -5,5 +5,5 @@ import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEdito
 import { RichEditorViewerProps } from './types';
 
 export const RichEditorViewer = (props: RichEditorViewerProps) => {
-  return <RichEditor disabled initialContentHTML={props.content} />;
+  return <RichEditor disabled useContainer initialContentHTML={props.content} />;
 };
