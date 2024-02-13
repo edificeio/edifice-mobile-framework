@@ -37,7 +37,7 @@ export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
 
     try {
       const userId = session.user.id;
-      const updatedValues = isUpdatingPhoto ? { ...newValues, avatar: newValues.avatar } : newValues;
+      const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.avatar } : newValues;
       const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         method: 'PUT',
         body: JSON.stringify(updatedValues),

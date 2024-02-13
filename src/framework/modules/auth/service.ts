@@ -675,8 +675,8 @@ export async function fetchRawUserRequirements(platform: Platform) {
  * @returns the first flag encountered (until there is none).
  */
 export function getRequirementScenario(userRequirements: IUserRequirements) {
-  if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
   if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+  if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
   // ToDo add case for terms initial validation (for federated accounts)
   if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
   if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
