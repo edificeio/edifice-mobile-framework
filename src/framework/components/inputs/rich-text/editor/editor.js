@@ -157,7 +157,8 @@ function createHTML(options = {}) {
         table, th, td {border: ${UI_SIZES.elements.border.default}px solid ${theme.palette.grey.grey}; border-collapse: collapse;}
         th, td {padding: ${UI_SIZES.spacing._LEGACY_tiny}px ${UI_SIZES.spacing.tiny}px;}
         th {text-align: left; background-color: ${theme.palette.grey.pearl};}
-        iframe {border: none; max-width: 100%; height: auto;}
+        iframe {border: none; max-width: 100%;}
+        video {border-radius: ${UI_SIZES.radius.small}px;}
     </style>
 </head>
 <body>
@@ -633,17 +634,23 @@ function createHTML(options = {}) {
 
             FORMAT_VIDEOS: function() {
                 var videos = document.getElementsByTagName('video');
+                var iframes = document.getElementsByTagName('iframe');
+                const width = ${UI_SIZES.screen.width - UI_SIZES.spacing.medium * 2};
+
                 for (var i = 0; i < videos.length; i++) {
                     const video = videos[i];
                     const videoSrc = video.getAttribute('src');
                     const videoRes = video.getAttribute('data-video-resolution');
                     video.autoplay = false;
-                    video.controls = false;
+                    video.style.backgroundColor = '#000';
                     video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
-                    // TODO: LEA - Calculate video width/height depending on design values
-                    // videoRes contains string like '640x320'
-                    video.style.height = '300px';
-                    video.style.width = '100%';
+                    video.style.width = width + 'px';
+                    video.style.height = width * 9 / 16 + 'px';
+                }
+                for (var i = 0; i < iframes.length; i++) {
+                    const iframe = iframes[i];
+                    iframe.style.width = width + 'px';
+                    iframe.style.height = width * 9 / 16 + 'px';
                 }
             },
 
