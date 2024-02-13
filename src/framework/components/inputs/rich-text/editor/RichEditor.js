@@ -3,6 +3,7 @@ import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
+import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -183,9 +184,11 @@ export default class RichEditor extends Component {
   }
 
   _onImageTouched(url, imageUrls) {
-    alert('IMAGE TOUCHED: ' + url);
-    console.debug('IMAGE URLS:', imageUrls); // imageUrls contains all images urls
-    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2436
+    const images = imageUrls.map(imgSrc => ({
+      type: 'image',
+      src: { uri: imgSrc },
+    }));
+    openCarousel({ data: images, startIndex: imageUrls.indexOf(url) });
   }
 
   _onLinkTouched(url) {
