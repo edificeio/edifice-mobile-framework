@@ -669,7 +669,7 @@ function createHTML(options = {}) {
                     imageUrls.push(images[i].src);
                 }
                 postAction({type: 'IMAGE_URLS', data: imageUrls}, true);
-            }
+            },
 
             DISCARD_CHANGES: function() {
                 var playButtons = document.querySelectorAll(".play-button");
