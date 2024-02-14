@@ -7,6 +7,7 @@ import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { openUrl } from '~/framework/util/linking';
 import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth.ts';
 
 import { actions, messages } from './const';
@@ -192,9 +193,8 @@ export default class RichEditor extends Component {
   }
 
   _onLinkTouched(url) {
-    alert('LINK TOUCHED: ' + url);
+    openUrl(url);
     // TODO: LEA
-    // V1: Redirection vers le responsive (Lien relatif => ajouter pfUrl)
     // V2: https://edifice-community.atlassian.net/browse/MB-2437
   }
 

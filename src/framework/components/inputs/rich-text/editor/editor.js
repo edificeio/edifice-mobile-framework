@@ -646,12 +646,12 @@ function createHTML(options = {}) {
                     video.style.backgroundColor = '#000';
                     video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
                     video.style.width = width + 'px';
-                    video.style.height = width * 9 / 16 + 'px';
+                    video.style.height = width * 10 / 16 + 'px';
                 }
                 for (var i = 0; i < iframes.length; i++) {
                     const iframe = iframes[i];
                     iframe.style.width = width + 'px';
-                    iframe.style.height = width * 9 / 16 + 'px';
+                    iframe.style.height = width * 10 / 16 + 'px';
                 }
             },
 
