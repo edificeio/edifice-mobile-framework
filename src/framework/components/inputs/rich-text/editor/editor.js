@@ -796,18 +796,14 @@ function createHTML(options = {}) {
                     // Set whether the checkbox is selected by default
                     if (ele.checked) ele.setAttribute('checked', '');
                     else ele.removeAttribute('checked');
-                }
-                if (ele.nodeName === 'A' && ele.getAttribute('href')) {
+                } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
-                }
-                if (ele.getAttribute('class') === 'audio-wrapper') {
+                } else if (ele.getAttribute('class') === 'audio-wrapper') {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');
                     postAction({type: 'AUDIO_TOUCHED', data: audioSrc}, true);
-                }
-                if (ele.nodeName === 'IMG' && ele.getAttribute('src')) {
+                } else if (ele.nodeName === 'IMG' && ele.getAttribute('src') && ele.getAttribute('class') !== 'play-button') {
                     postAction({type: 'IMAGE_TOUCHED', data: ele.getAttribute('src')}, true);
-                }
-                if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
+                } else if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
                     postAction({type: 'VIDEO_TOUCHED', data: ele.getAttribute('src')}, true);
                 }
             }
