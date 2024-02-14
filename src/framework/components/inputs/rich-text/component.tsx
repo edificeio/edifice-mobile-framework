@@ -11,6 +11,7 @@ import RichToolbar from './toolbar/component';
 import { RichEditorFormProps } from './types';
 
 const RichEditorForm = (props: RichEditorFormProps) => {
+  // TODO: LEA => contentHTML utile?
   const [contentHtml, setContentHtml] = React.useState(props.initialContentHtml ?? '');
   const contentRef = React.useRef('');
   const headerHeight = useHeaderHeight();
@@ -19,6 +20,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const opacityToolbar = React.useRef(new Animated.Value(0)).current;
   const transformToolbar = React.useRef(new Animated.Value(90)).current;
 
+  // TODO: LEA => getContent utile?
   const getContent = () => contentRef.current;
 
   const handleBlur = React.useCallback(() => {
@@ -70,6 +72,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     );
   };
 
+  // TODO: LEA => Pourquoi ne pas mettre ça dans render direct? En plus Post, c'est blog.
   const renderPostInfos = () => {
     return (
       <PageView style={styles.page}>
@@ -82,7 +85,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             <RichEditor
               disabled={false}
               enterKeyHint="done"
-              editorStyle={styles.content}
+              editorStyle={styles.content} // TODO: LEA => c'est pas container?
               firstFocusEnd={false}
               initialContentHTML={props.initialContentHtml ?? ''}
               initialFocus={false}

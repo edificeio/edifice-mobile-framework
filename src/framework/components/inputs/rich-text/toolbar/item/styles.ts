@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     padding: UI_SIZES.spacing.minor,
     borderRadius: UI_SIZES.radius.medium,
   },
+  // TODO: LEA => selected pour coller à la prop?
   itemSelected: {
     backgroundColor: theme.palette.primary.pale,
   },
