@@ -268,7 +268,7 @@
   },
   "ode": {
     "override": {
-      "url": "https://github.com/opendigitaleducation/edifice-mobile-config.git",
+      "url": "https://github.com/edificeio/edifice-mobile-config.git",
       "defaultBranch": "master"
     }
   }
