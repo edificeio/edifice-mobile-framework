@@ -159,6 +159,7 @@ function createHTML(options = {}) {
         th {text-align: left; background-color: ${theme.palette.grey.pearl};}
         iframe {border: none; max-width: 100%;}
         video {border-radius: ${UI_SIZES.radius.small}px;}
+        .play-button {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer;}
     </style>
 </head>
 <body>
@@ -633,10 +634,8 @@ function createHTML(options = {}) {
             },
 
             FORMAT_VIDEOS: function() {
-                var videos = document.getElementsByTagName('video');
-                var iframes = document.getElementsByTagName('iframe');
                 const width = ${UI_SIZES.screen.width - UI_SIZES.spacing.medium * 2};
-
+                var videos = document.getElementsByTagName('video');
                 for (var i = 0; i < videos.length; i++) {
                     const video = videos[i];
                     const videoSrc = video.getAttribute('src');
@@ -644,10 +643,18 @@ function createHTML(options = {}) {
                     video.autoplay = false;
                     video.controls = false;
                     video.style.backgroundColor = '#000';
-                    video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
                     video.style.width = width + 'px';
                     video.style.height = width * 10 / 16 + 'px';
+                    video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
+                    var playButton = document.createElement("img");
+                    playButton.src = "${attachmentIcon}";
+                    playButton.classList.add("play-button");
+                    video.parentNode.insertBefore(playButton, video);
+                    playButton.addEventListener("click", function() {
+                        postAction({type: 'VIDEO_TOUCHED', data: videoSrc}, true);
+                    });
                 }
+                var iframes = document.getElementsByTagName('iframe');
                 for (var i = 0; i < iframes.length; i++) {
                     const iframe = iframes[i];
                     iframe.style.width = width + 'px';
@@ -662,6 +669,13 @@ function createHTML(options = {}) {
                     imageUrls.push(images[i].src);
                 }
                 postAction({type: 'IMAGE_URLS', data: imageUrls}, true);
+            }
+
+            DISCARD_CHANGES: function() {
+                var playButtons = document.querySelectorAll(".play-button");
+                playButtons.forEach(function(playButton) {
+                    playButton.parentNode.removeChild(playButton); // Remove play buttons
+                });
             }
         };
 
@@ -796,18 +810,14 @@ function createHTML(options = {}) {
                     // Set whether the checkbox is selected by default
                     if (ele.checked) ele.setAttribute('checked', '');
                     else ele.removeAttribute('checked');
-                }
-                if (ele.nodeName === 'A' && ele.getAttribute('href')) {
+                } else if (ele.nodeName === 'A' && ele.getAttribute('href')) {
                     postAction({type: 'LINK_TOUCHED', data: ele.getAttribute('href')}, true);
-                }
-                if (ele.getAttribute('class') === 'audio-wrapper') {
+                } else if (ele.getAttribute('class') === 'audio-wrapper') {
                     var audioSrc = ele.querySelector('audio').getAttribute('src');
                     postAction({type: 'AUDIO_TOUCHED', data: audioSrc}, true);
-                }
-                if (ele.nodeName === 'IMG' && ele.getAttribute('src')) {
+                } else if (ele.nodeName === 'IMG' && ele.getAttribute('src') && ele.getAttribute('class') !== 'play-button') {
                     postAction({type: 'IMAGE_TOUCHED', data: ele.getAttribute('src')}, true);
-                }
-                if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
+                } else if (ele.nodeName === 'VIDEO' && ele.getAttribute('src')) {
                     postAction({type: 'VIDEO_TOUCHED', data: ele.getAttribute('src')}, true);
                 }
             }
