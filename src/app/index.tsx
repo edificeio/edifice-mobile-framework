@@ -1,7 +1,3 @@
-/**
- * Entry point of the app
- * (formerly App.tsx)
- */
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
@@ -11,6 +7,7 @@ import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
+import { ZendeskConfig } from 'react-native-zendesk-unified';
 import { Provider } from 'react-redux';
 
 import AppModules from '~/app/modules';
@@ -31,9 +28,6 @@ import { IStoreProp, Reducers, connectWithStore } from './store';
 const FlipperAsyncStorage = __DEV__ ? require('rn-flipper-async-storage-advanced').default : undefined;
 const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage /> : null;
 
-/**
- * Code that listens to App State changes
- */
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
   const currentState = React.useRef<AppStateStatus>();
@@ -82,6 +76,13 @@ interface AppProps extends IStoreProp {}
 function App(props: AppProps) {
   const currentState = useAppState();
 
+  const zendeskConfig: ZendeskConfig = {
+    appId: '6284805bbec39478e7b8ed4d44736cd4eda7c48aaa34b241',
+    clientId: 'mobile_sdk_client_e42a4a0cec9bfd95768f',
+    zendeskUrl: 'https://one-opendigitaleducation.zendesk.com/',
+    accountKey: 'dummy',
+  };
+
   const onRemoteNotification =
     Platform.OS === 'ios'
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -119,7 +120,9 @@ function App(props: AppProps) {
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={props.store}>
           <BottomSheetModalProvider>
+            {/*<ZendeskProvider zendeskConfig={zendeskConfig}>*/}
             <Navigation />
+            {/*</ZendeskProvider>*/}
           </BottomSheetModalProvider>
         </Provider>
       </SafeAreaProvider>

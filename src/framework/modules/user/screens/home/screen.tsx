@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
+import { useZendesk } from 'react-native-zendesk-unified';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -158,17 +159,20 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
+
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
     return authContextRef.current;
   }, [session]);
+
   const fetchMFAValidationInfos = React.useCallback(async () => {
     const requirements = await getUserRequirements(session?.platform!);
     const needMfa = requirements?.needMfa;
     if (needMfa) await getMFAValidationInfos();
     return needMfa;
   }, [session]);
+
   const editUserInformation = React.useCallback(
     async (modificationType: ModificationType) => {
       try {
@@ -222,9 +226,54 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       session?.user.loginUsed,
     ],
   );
+
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
+
+  //
+  // Zendesk stuff
+  //
+  const zendesk = useZendesk();
+
+  const loadHealthCheck = React.useCallback(async () => {
+    try {
+      const healthCheckResult = await zendesk.healthCheck();
+      console.debug('Zendesk health check: ', healthCheckResult);
+    } catch (error) {
+      Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
+    }
+  }, [zendesk]);
+
+  React.useEffect(() => {
+    try {
+      loadHealthCheck();
+      zendesk.changeTheme('#FC5E29');
+      zendesk.setAnonymousIdentity({
+        email: 'mobile@edifice.io',
+        name: 'Edifice Mobile',
+      });
+      zendesk.setHelpCenterLocaleOverride('fr');
+    } catch (error) {
+      Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
+    }
+  }, []);
+
+  const openHelpCenter = async () => {
+    try {
+      await zendesk.openHelpCenter({
+        labels: [
+          /* "test" */
+        ],
+        groupType: 'category',
+        groupIds: [360002895040],
+        showContactOptions: false,
+      });
+    } catch (error) {
+      Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
+    }
+  };
+
   return React.useMemo(
     () => (
       <>
@@ -279,6 +328,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 }}
               />
             ) : null}
+            <LineButton
+              title={I18n.get('user-help-title')}
+              onPress={() => {
+                openHelpCenter();
+              }}
+            />
             {showWhoAreWe ? (
               <LineButton
                 title={I18n.get('user-whoarewe-title')}
