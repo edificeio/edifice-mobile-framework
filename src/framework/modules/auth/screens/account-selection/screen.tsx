@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import SecondaryButton from '~/framework/components/buttons/secondary';
@@ -10,6 +10,8 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
+import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
+import { AccountType } from '~/framework/modules/auth/model';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import styles from '~/framework/modules/auth/screens/account-selection/styles';
 import { AuthAccountSelectionScreenPrivateProps } from '~/framework/modules/auth/screens/account-selection/types';
@@ -35,17 +37,15 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   };
   const data = [
     {
-      avatar: new Blob(),
-      id: '111',
-      name: 'FirstName LastName',
-      type: 'Personnel',
+      id: '0afae690-7a12-4419-bbb5-ae6ebaed4fe0',
+      displayName: 'Ablusse Dumby',
+      type: AccountType.Teacher,
       selected: true,
     },
     {
-      avatar: new Blob(),
-      id: '123',
-      name: 'Secondary Account',
-      type: 'Teacher',
+      id: '9f09224b-a0b4-427b-a311-60600d520364',
+      displayName: 'Ron Ron Ron WIIIISELEY Super Plus Ultra Madafaka',
+      type: AccountType.Student,
       selected: false,
     },
   ];
@@ -58,9 +58,13 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           <HeadingXSText>{I18n.get('auth-accountselection-heading')}</HeadingXSText>
           <SmallText style={styles.description}>{I18n.get('auth-accountselection-description')}</SmallText>
         </View>
-        <View style={{ borderWidth: 0.5, width: '100%', height: 160, justifyContent: 'center', alignItems: 'center' }}>
-          <HeadingXSText>UserList</HeadingXSText>
-        </View>
+        <LargeHorizontalUserList
+          keyExtractor={item => item.id}
+          data={data}
+          onItemPress={(item, index) => {
+            Alert.alert('pressed ' + item.displayName + ' ' + index + ' ' + item.type.toString());
+          }}
+        />
       </View>
       <View style={styles.bottomContainer}>
         <SecondaryButton

@@ -96,7 +96,7 @@ module.exports = {
     ],
     'react-native/no-single-element-style-arrays': 2,
     'react-native/no-unused-styles': 2,
-    'react/prop-types': 2,
+    'react/prop-types': 0,
     semi: 2,
     'import/no-cycle': [
       'error', // can be 'warn'

@@ -1,7 +1,16 @@
 import * as React from 'react';
+import { FlatList as RNFlatList } from 'react-native';
 
-import FlatList, { FlatListProps } from '~/framework/components/list/flat-list';
+import FlatList from '~/framework/components/list/flat-list';
 
-export default function HorizontalList<ItemT>(props: FlatListProps<ItemT>) {
-  return <FlatList horizontal {...props} showsHorizontalScrollIndicator={false} />;
-}
+import styles from './styles';
+import { HorizontalListProps } from './types';
+
+export const HorizontalList = React.forwardRef(function <ItemT>(
+  props: HorizontalListProps<ItemT>,
+  ref: React.Ref<RNFlatList<ItemT>> | null | undefined,
+) {
+  const { style, ...listProps } = props;
+  const realStyle = React.useMemo(() => [styles.list, style], [style]);
+  return <FlatList ref={ref} {...listProps} style={realStyle} horizontal showsHorizontalScrollIndicator={false} />;
+});

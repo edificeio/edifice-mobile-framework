@@ -9,7 +9,7 @@ import { AccountListItemProps } from '~/framework/components/list/account/item/t
 import { SmallBoldText, SmallText } from '~/framework/components/text';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-const AccountListItem = ({ avatar, id, name, type, selected }: AccountListItemProps) => {
+const AccountListItem = ({ id, displayName, type, selected }: AccountListItemProps) => {
   const containerBackgroundColor = { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card };
   const typeColor = { color: theme.color.profileTypes[type] };
   const typeText = I18n.get(`user-profiletypes-${type}`.toLowerCase());
@@ -31,11 +31,11 @@ const AccountListItem = ({ avatar, id, name, type, selected }: AccountListItemPr
   return (
     <TouchableOpacity style={[styles.container, containerBackgroundColor]} onPress={onSelectAccount}>
       <View>
-        <Avatar size={Size.large} />
+        <Avatar size={Size.large} id={id} />
         <View style={styles.avatarContour} />
       </View>
       <View style={styles.textContainer}>
-        <SmallText numberOfLines={numberOfLines}>{name}</SmallText>
+        <SmallText numberOfLines={numberOfLines}>{displayName}</SmallText>
         <SmallBoldText numberOfLines={numberOfLines} style={typeColor}>
           {typeText}
         </SmallBoldText>

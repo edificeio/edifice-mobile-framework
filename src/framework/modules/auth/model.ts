@@ -32,6 +32,8 @@ export interface DisplayUserPublicWithType extends DisplayUserPublic {
   type: AccountType;
 }
 
+export const isUserWithType = (u: DisplayUserPublic): u is DisplayUserPublicWithType => !!(u as DisplayUserPublicWithType).type;
+
 /**
  * Represent user information that a seved account contains
  */
