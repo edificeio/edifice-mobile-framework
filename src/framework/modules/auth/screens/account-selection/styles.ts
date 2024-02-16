@@ -16,7 +16,7 @@ export default StyleSheet.create({
   },
   page: {
     paddingVertical: UI_SIZES.spacing.big,
-    paddingHorizontal: UI_SIZES.spacing.large,
+    // paddingHorizontal: UI_SIZES.spacing.large,
   },
   textContainer: {
     marginVertical: UI_SIZES.spacing.big,

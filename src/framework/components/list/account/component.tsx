@@ -23,7 +23,7 @@ const AccountList = ({ data, description, title }: AccountListProps, ref) => {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const onAddAccount = () => navigation.navigate(userRouteNames.accountOnboarding, {});
   const renderItem = ({ item }) => (
-    <AccountListItem avatar={item.avatar} id={item.id} name={item.name} type={item.type} selected={item.selected} />
+    <AccountListItem id={item.id} displayName={item.displayName} type={item.type} selected={item.selected} />
   );
 
   return (

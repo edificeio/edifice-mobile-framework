@@ -1,9 +1,9 @@
 import { AccountType } from '~/framework/modules/auth/model';
 
 export interface AccountListItemProps {
-  avatar: Blob;
+  // avatar: Blob;
   id: string;
-  name: string;
+  displayName: string;
   type: AccountType;
   selected?: boolean;
 }

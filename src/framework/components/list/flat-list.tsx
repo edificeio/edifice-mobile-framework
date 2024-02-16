@@ -15,12 +15,20 @@ export default React.forwardRef<RNFlatList, FlatListProps<any>>((props, ref) => 
   const { bottomInset = true, ListFooterComponent, scrollIndicatorInsets, ...otherProps } = props;
 
   const realListFooterComponent = React.useMemo(() => {
-    return bottomInset ? (
-      <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }}>{ListFooterComponent}</View>
+    const footer =
+      ListFooterComponent &&
+      (React.isValidElement(ListFooterComponent)
+        ? ListFooterComponent
+        : (() => {
+            const FooterAsComponent = ListFooterComponent as React.ComponentType;
+            return <FooterAsComponent />;
+          })());
+    return bottomInset && !props.horizontal ? (
+      <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }}>{footer ?? null}</View>
     ) : (
       ListFooterComponent
     );
-  }, [bottomInset, ListFooterComponent]);
+  }, [bottomInset, props.horizontal, ListFooterComponent]);
 
   const listRef = React.useRef(null);
   const syncRef = useSyncRef(ref, listRef);
