@@ -177,7 +177,7 @@
   "blog-createpost-create-mediafield": "Ajouter des photos à votre billet",
   "blog-createpost-create-success": "Votre billet a bien été enregistré.",
   "blog-createpost-fullstorage": "Votre espace de stockage est plein. Vous ne pouvez plus importer de documents.",
-  "blog-createpost-inputtitle": "Modifier le billet",
+  "blog-createpost-inputtitle": "Titre du billet",
   "blog-createpost-post-title": "Titre du billet",
   "blog-createpost-post-title-placeholder": "Écrivez le titre",
   "blog-createpost-postcontent": "Contenu du billet",

@@ -11,17 +11,11 @@ import RichToolbar from './toolbar/component';
 import { RichEditorFormProps } from './types';
 
 const RichEditorForm = (props: RichEditorFormProps) => {
-  // TODO: LEA => contentHTML utile?
-  const [contentHtml, setContentHtml] = React.useState(props.initialContentHtml ?? '');
-  const contentRef = React.useRef('');
   const headerHeight = useHeaderHeight();
   const richText = React.useRef<RichEditor>(null);
   const scrollRef = React.useRef<ScrollView>(null);
   const opacityToolbar = React.useRef(new Animated.Value(0)).current;
   const transformToolbar = React.useRef(new Animated.Value(90)).current;
-
-  // TODO: LEA => getContent utile?
-  const getContent = () => contentRef.current;
 
   const handleBlur = React.useCallback(() => {
     Animated.timing(opacityToolbar, {
@@ -38,8 +32,6 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleChange = React.useCallback(
     (html: string) => {
-      contentRef.current = html;
-      setContentHtml(html);
       props.onChangeText(html);
     },
     [props],

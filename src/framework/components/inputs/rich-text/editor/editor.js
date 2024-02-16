@@ -9,7 +9,10 @@ import { getSession } from '~/framework/modules/auth/reducer';
 
 let audioIcon = '';
 let attachmentIcon = '';
+let playIcon = '';
 let fontFaces = '';
+
+const playIconSize = getScaleWidth(40);
 
 const base64Type = {
   FONT: 'fonts',
@@ -84,6 +87,7 @@ async function initEditor() {
   await Promise.all(fontItems.map(loadFont));
   attachmentIcon = await loadIcon('attachment.svg');
   audioIcon = await loadIcon('audio.svg');
+  playIcon = await loadIcon('play.svg');
 }
 
 function createHTML(options = {}) {
@@ -123,11 +127,10 @@ function createHTML(options = {}) {
         .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
         }-webkit-overflow-scrolling: touch;padding-left: 0;padding-right: 0;}
-        .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;$font-size: 16px; line-height: 24px; min-height: 200px; margin-top: 12px;}
+ .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;$font-size: 16px; line-height: 24px; overflow-x: hidden; max-width: 100%; margin-top: 12px;}
         [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor}; font-style: italic}
         [placeholder]:empty:focus:before { content: attr(placeholder);color: ${placeholderColor};display:block;}
-        video {max-width: 98%;margin-left:auto;margin-right:auto;display: block;}
-        img {max-width: 98%;vertical-align: middle;}
+        img {max-width: 100%;vertical-align: middle;}
         .x-todo li {list-style:none;}
         .x-todo-box {position: relative; left: -24px;}
         .x-todo-box input{position: absolute;}
@@ -153,13 +156,13 @@ function createHTML(options = {}) {
         .audio-wrapper::before {content: ""; background-image: url(${audioIcon}); background-size: contain; background-repeat: no-repeat; height: ${getScaleWidth(36)}px; width: ${getScaleWidth(285)}px;}
         .audio-wrapper:active {opacity: 0.7;}
         .audio-wrapper audio {display: none;}
-        table {min-width: 100%;}
+        table {min-width: 100%; max-width: 100%;}
         table, th, td {border: ${UI_SIZES.elements.border.default}px solid ${theme.palette.grey.grey}; border-collapse: collapse;}
         th, td {padding: ${UI_SIZES.spacing._LEGACY_tiny}px ${UI_SIZES.spacing.tiny}px;}
         th {text-align: left; background-color: ${theme.palette.grey.pearl};}
         iframe {border: none; max-width: 100%;}
+        .video-wrapper::before {content: ""; background-image: url(${playIcon}); background-size: ${playIconSize}px ${playIconSize}px; height: ${playIconSize}px; width: ${playIconSize}px; position: absolute; top: 0; left: 0; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%);}
         video {border-radius: ${UI_SIZES.radius.small}px;}
-        .play-button {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); cursor: pointer;}
     </style>
 </head>
 <body>
@@ -646,13 +649,6 @@ function createHTML(options = {}) {
                     video.style.width = width + 'px';
                     video.style.height = width * 10 / 16 + 'px';
                     video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
-                    var playButton = document.createElement("img");
-                    playButton.src = "${attachmentIcon}";
-                    playButton.classList.add("play-button");
-                    video.parentNode.insertBefore(playButton, video);
-                    playButton.addEventListener("click", function() {
-                        postAction({type: 'VIDEO_TOUCHED', data: videoSrc}, true);
-                    });
                 }
                 var iframes = document.getElementsByTagName('iframe');
                 for (var i = 0; i < iframes.length; i++) {
@@ -670,13 +666,6 @@ function createHTML(options = {}) {
                 }
                 postAction({type: 'IMAGE_URLS', data: imageUrls}, true);
             },
-
-            DISCARD_CHANGES: function() {
-                var playButtons = document.querySelectorAll(".play-button");
-                playButtons.forEach(function(playButton) {
-                    playButton.parentNode.removeChild(playButton); // Remove play buttons
-                });
-            }
         };
 
         var init = function init(settings) {
