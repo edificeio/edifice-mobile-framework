@@ -5,7 +5,6 @@ import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
-import { useZendesk } from 'react-native-zendesk-unified';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -41,6 +40,7 @@ import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/n
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { formatSource } from '~/framework/util/media';
 import { handleAction } from '~/framework/util/redux/actions';
+import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 

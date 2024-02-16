@@ -7,7 +7,6 @@ import DeviceInfo from 'react-native-device-info';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as RNLocalize from 'react-native-localize';
 import { SafeAreaProvider, initialWindowMetrics } from 'react-native-safe-area-context';
-import { ZendeskConfig } from 'react-native-zendesk-unified';
 import { Provider } from 'react-redux';
 
 import AppModules from '~/app/modules';
@@ -19,6 +18,7 @@ import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/bad
 import { isEmpty } from '~/framework/util/object';
 import { FlipperMMKVElement } from '~/framework/util/storage/mmkv';
 import { Trackers } from '~/framework/util/tracker';
+import { ZendeskConfig, ZendeskProvider } from '~/framework/util/zendesk';
 import { AllModulesBackup } from '~/infra/oauth';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
@@ -116,19 +116,19 @@ function App(props: AppProps) {
   }, []);
 
   return (
-    <GestureHandlerRootView style={UI_STYLES.flex1}>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <Provider store={props.store}>
-          <BottomSheetModalProvider>
-            {/*<ZendeskProvider zendeskConfig={zendeskConfig}>*/}
-            <Navigation />
-            {/*</ZendeskProvider>*/}
-          </BottomSheetModalProvider>
-        </Provider>
-      </SafeAreaProvider>
-      {FlipperAsyncStorageElement}
-      {FlipperMMKVElement}
-    </GestureHandlerRootView>
+    <ZendeskProvider zendeskConfig={zendeskConfig}>
+      <GestureHandlerRootView style={UI_STYLES.flex1}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <Provider store={props.store}>
+            <BottomSheetModalProvider>
+              <Navigation />
+            </BottomSheetModalProvider>
+          </Provider>
+        </SafeAreaProvider>
+        {FlipperAsyncStorageElement}
+        {FlipperMMKVElement}
+      </GestureHandlerRootView>
+    </ZendeskProvider>
   );
 }
 

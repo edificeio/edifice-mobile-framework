@@ -35,6 +35,13 @@ target 'appe' do
   pod 'FirebaseInstallations', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
   pod 'nanopb', :modular_headers => true
+
+  #
+  # Zendesk stuff
+  #
+  pod 'ZendeskAnswerBotSDK'
+  pod 'ZendeskChatSDK'
+  pod 'ZendeskSupportSDK'
   
   #
   # react-native-permissions : @see: https://github.com/zoontek/react-native-permissions#ios
