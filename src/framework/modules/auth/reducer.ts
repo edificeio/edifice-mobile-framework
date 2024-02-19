@@ -325,7 +325,7 @@ const reducer = createReducer(initialState, {
     return {
       ...state,
       error,
-      connected: undefined,
+      // connected: undefined, // This is a test : a priori, there is no need to erase this field as it will be undefined before any login task
     };
   },
 

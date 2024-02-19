@@ -23,7 +23,7 @@ import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/componen
 import Toast from '~/framework/components/toast';
 import { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { AccountType, PlatformAuthContext } from '~/framework/modules/auth/model';
-import { authRouteNames } from '~/framework/modules/auth/navigation';
+import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { userCanAddAccount } from '~/framework/modules/auth/rights/business';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
@@ -319,15 +319,19 @@ function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], acco
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
   const canManageAccounts = userCanAddAccount(session);
+  const navigation = useNavigation<NavigationProp<UserNavigationParams & IAuthNavigationParams>>();
   const showAccountList = React.useCallback(() => {
     accountListRef.current?.present();
   }, [accountListRef]);
+  const addAccount = React.useCallback(() => {
+    navigation.navigate(authRouteNames.addAccountModal, {});
+  }, [navigation]);
 
   return React.useMemo(() => {
     return canManageAccounts && accountsArray ? (
       accountsArray.length === 1 ? (
         <>
-          <AddAccountButton action={showAccountList} style={styles.accountButton} />
+          <AddAccountButton action={addAccount} style={styles.accountButton} />
           <AddAccountList ref={accountListRef} data={accountsArray} />
         </>
       ) : (
@@ -337,7 +341,7 @@ function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], acco
         </>
       )
     ) : null;
-  }, [accountsArray, canManageAccounts, showAccountList]);
+  }, [accountsArray, addAccount, canManageAccounts, showAccountList]);
 }
 
 /**
