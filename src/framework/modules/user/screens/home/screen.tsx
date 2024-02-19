@@ -24,7 +24,8 @@ import Toast from '~/framework/components/toast';
 import { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { AccountType, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
+import { userCanAddAccount } from '~/framework/modules/auth/rights/business';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
@@ -314,45 +315,29 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @param accountListRef
  * @returns the React Elements of the account button and list
  */
-function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accountListRef, data: any) {
-  const canManageAccounts = session?.user.type === AccountType.Teacher || session?.user.type === AccountType.Personnel;
+function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accounts: UserHomeScreenPrivateProps['accounts']) {
+  const accountListRef = React.useRef<BottomSheetModalMethods>(null);
+  const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
+  const canManageAccounts = userCanAddAccount(session);
   const showAccountList = React.useCallback(() => {
     accountListRef.current?.present();
   }, [accountListRef]);
 
   return React.useMemo(() => {
-    // const data = [
-    //   {
-    //     avatar: new Blob(),
-    //     id: session?.user.id,
-    //     name: session?.user.displayName,
-    //     type: session?.user.type,
-    //     selected: true,
-    //   },
-    //   {
-    //     avatar: new Blob(),
-    //     id: '123',
-    //     name: 'Secondary Account',
-    //     type: 'Teacher',
-    //     selected: false,
-    //   },
-    // ];
-
-    const hasSingleAccount = data?.length === 1;
-    return data ? (
-      hasSingleAccount ? (
+    return canManageAccounts && accountsArray ? (
+      accountsArray.length === 1 ? (
         <>
           <AddAccountButton action={showAccountList} style={styles.accountButton} />
-          <AddAccountList ref={accountListRef} data={data} />
+          <AddAccountList ref={accountListRef} data={accountsArray} />
         </>
       ) : (
         <>
           <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
-          <ChangeAccountList ref={accountListRef} data={data} />
+          <ChangeAccountList ref={accountListRef} data={accountsArray} />
         </>
       )
     ) : null;
-  }, [accountListRef, data, showAccountList]);
+  }, [accountsArray, canManageAccounts, showAccountList]);
 }
 
 /**
@@ -475,12 +460,10 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
-  const { handleLogout, session, route } = props;
+  const { handleLogout, session, accounts } = props;
   const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
-  const data = route.params.data;
 
   const scrollViewRef = React.useRef(null);
-  const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   // Manages focus to send to others features in this screen.
   // We must store it in a Ref because of async operations.
   const focusedRef = React.useRef(useIsFocused());
@@ -497,7 +480,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(session, accountListRef, data);
+  const accountsButton = useAccountsFeature(session, accounts);
   const logoutButton = useLogoutFeature(handleLogout);
   const toggleKeysButton = useToggleKeysFeature();
   const versionDetails = useVersionDetailsFeature(session);
@@ -537,6 +520,7 @@ export default connect(
   (state: IGlobalState) => {
     return {
       session: getSession(),
+      accounts: getAuthState(state).accounts,
     };
   },
   dispatch =>

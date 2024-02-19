@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { IAuthState } from '~/framework/modules/auth/reducer';
 import type { UserNavigationParams } from '~/framework/modules/user/navigation';
 
 export enum ModificationType {
@@ -16,6 +17,7 @@ export interface UserHomeScreenNavParams {}
 
 export interface UserHomeScreenStoreProps {
   session?: AuthLoggedAccount;
+  accounts: IAuthState['accounts'];
 }
 
 export interface UserHomeScreenDispatchProps {

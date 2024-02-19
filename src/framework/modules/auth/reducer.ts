@@ -479,6 +479,16 @@ export function getPlatformLegalUrlsOf(platform?: Platform) {
   return platform ? state.platformLegalUrls[platform.name] : undefined;
 }
 
+export function getAccountsNumber() {
+  const state = getState(getStore().getState());
+  return Object.keys(state.accounts).length;
+}
+
+export function getAccounts() {
+  const state = getState(getStore().getState());
+  return Object.values(state.accounts);
+}
+
 /**
  * Gets the currently stored query param token. Do NOT refresh it if expired.
  * Please use `getQueryParamToken` in `oauth.ts` instead.
