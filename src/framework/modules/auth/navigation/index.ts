@@ -19,6 +19,7 @@ import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/aut
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import { AuthDiscoveryClassScreenNavParams } from '~/framework/modules/auth/screens/discovery-class';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/screens/login-credentials/types';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/onboarding-add-account';
@@ -46,6 +47,7 @@ export const authRouteNames = {
   mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
   addAccountModal: `${moduleConfig.name}/add-account-modal` as 'addAccountModal',
   onboardingAddAccount: `${moduleConfig.name}/onboarding-add-account` as 'onboardingAddAccount',
+  discoveryClass: `${moduleConfig.name}/discovery-class` as 'discoveryClass',
 };
 
 export interface IAuthNavigationParams extends ParamListBase {
@@ -64,6 +66,7 @@ export interface IAuthNavigationParams extends ParamListBase {
   mfaModal: AuthMFAScreenNavParams;
   addAccountModal: AuthAddAccountModalScreenNavParams;
   onboardingAddAccount: AuthOnboardingAddAccountScreenNavParams;
+  discoveryClass: AuthDiscoveryClassScreenNavParams;
 }
 
 /**

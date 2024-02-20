@@ -19,6 +19,7 @@ import AuthAddAccountModalScreen, {
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
+import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
 import LoginCredentialsScreen, {
   computeNavBar as authLoginCredentialsNavBar,
 } from '~/framework/modules/auth/screens/login-credentials';
@@ -131,6 +132,12 @@ export default function () {
         name={authRouteNames.onboardingAddAccount}
         component={AuthOnboardingAddAccountScreen}
         options={onboardingAddAccountNavBar}
+        initialParams={undefined}
+      />
+      <Stack.Screen
+        name={authRouteNames.discoveryClass}
+        component={AuthDiscoveryClassScreen}
+        options={discoveryClassNavBar}
         initialParams={undefined}
       />
     </Stack.Group>

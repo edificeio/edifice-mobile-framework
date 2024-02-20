@@ -58,7 +58,7 @@ export const HeadingFontStyle = Platform.select({
   },
 })! as { [key in HeadingFontStyleKey]: TextStyle };
 
-type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Huge' | 'Giant';
+type TextSizeStyleKey = 'Small' | 'Normal' | 'Medium' | 'Big' | 'Bigger' | 'Huge' | 'Giant';
 export const TextSizeStyle = {
   Small: {
     fontSize: getScaleFontSize(12),
@@ -75,6 +75,10 @@ export const TextSizeStyle = {
   Big: {
     fontSize: getScaleFontSize(18),
     lineHeight: getScaleFontSize(26),
+  },
+  Bigger: {
+    fontSize: getScaleFontSize(22),
+    lineHeight: getScaleFontSize(30),
   },
   Huge: {
     fontSize: getScaleFontSize(26),
@@ -98,6 +102,11 @@ export const HeadingXLText = styled.Text({
 export const HeadingLText = styled.Text({
   ...HeadingFontStyle.Bold,
   ...TextSizeStyle.Huge,
+});
+
+export const HeadingMText = styled.Text({
+  ...HeadingFontStyle.Bold,
+  ...TextSizeStyle.Bigger,
 });
 
 export const HeadingSText = styled.Text({
