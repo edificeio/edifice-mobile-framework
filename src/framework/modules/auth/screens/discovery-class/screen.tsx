@@ -9,7 +9,9 @@ import { HeadingMText, SmallText } from '~/framework/components/text';
 import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
+import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
+import { Trackers } from '~/framework/util/tracker';
 import styles from './styles';
 
 export const computeNavBar = ({
@@ -30,6 +32,11 @@ const renderDiscoveryClassPics = {
 };
 
 export default function AuthDiscoveryClassScreen() {
+  const onPressButton = () => {
+    Trackers.trackEvent('onboarding', 'Inscription classe découverte');
+    openUrl(I18n.get('auth-discovery-class-buttonlink'));
+  };
+
   return (
     <PageView style={styles.page}>
       <HeadingMText style={styles.title}>{I18n.get('auth-discovery-class-heading')}</HeadingMText>
@@ -47,7 +54,8 @@ export default function AuthDiscoveryClassScreen() {
       </View>
       <PrimaryButton
         text={I18n.get('auth-discovery-class-button')}
-        url={I18n.get('auth-discovery-class-buttonlink')}
+        iconRight="pictos-external-link"
+        action={onPressButton}
         style={styles.button}
       />
     </PageView>
