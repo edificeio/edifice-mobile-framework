@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-02-13 16:03:44",
-  "notes": "feat(editor) MB-2472 , style iframe & video\nfeat(editor) MB-2463 ; add undo/redo state\nfeat(editor): Review undo/redo state management (i.e. use queryCommandEnabled instead of queryCommandState)\nfeat(editor) MB-2472 ; css iframe\nfeat(editor) edit height of editor\nfeat(editor) MB-2500 , add RichEditorViewer\nrelease: 1.13.0-alpha.3(1130004)",
-  "version": "1.13.0-alpha.4(1130005)"
+  "last": "2024-02-21 18:15:19",
+  "notes": "Merge branch 'dev/1.12.0' into dev/1.13.0\nMerge branch 'dev/1.13.0' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.13.0\nfeat(editor): MB-2430 fix horizontal scroll in editor\nchore: MB-1796 new user/account horizontal list components\nchore: update unused eslint `react/prop-types` rule\nchore: use nodenext in tsconfig\nMerge branch 'dev/1.12.0' into dev/1.13.0\nchore(overrides): Update overrides url to edificeio\nfeat(editor): Fix typo\nfeat(editor): Code review + comments\nMerge branch 'dev/1.13.0' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.13.0\nfeat(editor): link management\nfeat(editor): Add play button under video elements\nfeat(editor): Add play button under video elements\nfeat(editor): MB-2436, open carousel when clic on images in editor\nMerge branch 'dev/1.13.0' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.13.0\nfeat(editor): MB-2435 , show player audio & video\nMerge branch 'dev/1.12.0' into dev/1.13.0\nrelease: 1.13.0-alpha.4(1130005)",
+  "version": "1.13.0-alpha.5(1130006)"
 }
