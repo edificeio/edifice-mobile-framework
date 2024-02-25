@@ -15,11 +15,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthCredentials, AuthPendingRedirection, AuthRequirement, ForgotMode } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
+import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/add-account-modal';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import { AuthDiscoveryClassScreenNavParams } from '~/framework/modules/auth/screens/discovery-class';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/screens/login-credentials/types';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
+import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/onboarding-add-account';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
@@ -42,6 +45,9 @@ export const authRouteNames = {
   changeMobile: `${moduleConfig.name}/changeMobile` as 'changeMobile',
   mfa: `${moduleConfig.name}/mfa` as 'mfa',
   mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
+  addAccountModal: `${moduleConfig.name}/add-account-modal` as 'addAccountModal',
+  onboardingAddAccount: `${moduleConfig.name}/onboarding-add-account` as 'onboardingAddAccount',
+  discoveryClass: `${moduleConfig.name}/discovery-class` as 'discoveryClass',
 };
 
 export interface IAuthNavigationParams extends ParamListBase {
@@ -58,6 +64,9 @@ export interface IAuthNavigationParams extends ParamListBase {
   changeMobile: AuthChangeMobileScreenNavParams;
   mfa: AuthMFAScreenNavParams;
   mfaModal: AuthMFAScreenNavParams;
+  addAccountModal: AuthAddAccountModalScreenNavParams;
+  onboardingAddAccount: AuthOnboardingAddAccountScreenNavParams;
+  discoveryClass: AuthDiscoveryClassScreenNavParams;
 }
 
 /**
@@ -173,7 +182,7 @@ export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IA
  * @param state nav state (can be stale) to apply the nav action on
  * @returns The new nav State (will be rehydrated)
  */
-const simulateNavAction = (
+export const simulateNavAction = (
   action: CommonActions.Action | StackActionType,
   state: Parameters<Router<StackNavigationState<ParamListBase>, CommonActions.Action | StackActionType>['getRehydratedState']>[0],
 ) => {

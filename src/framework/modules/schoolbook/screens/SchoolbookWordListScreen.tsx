@@ -73,7 +73,8 @@ const SchoolbookWordListScreen = (props: ISchoolbookWordListScreenProps) => {
   const userType = session?.user?.type;
   const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
   const isParent = userType === AccountType.Relative;
-  const hasSchoolbookWordCreationRights = session && getSchoolbookWorkflowInformation(session).create;
+  // add isTeacher bc relative have right in session.rights.authorizedActions and we don't want to display context menu for them
+  const hasSchoolbookWordCreationRights = session && getSchoolbookWorkflowInformation(session).create && isTeacher;
 
   // EVENTS =====================================================================================
 

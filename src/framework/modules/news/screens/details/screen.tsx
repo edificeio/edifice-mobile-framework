@@ -44,7 +44,7 @@ import { NewsThreadItemReduce } from '~/framework/modules/news/screens/home';
 import { newsUriCaptureFunction } from '~/framework/modules/news/service';
 import { clearConfirmNavigationEvent, handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { displayDate } from '~/framework/util/date';
+import { displayDate, today } from '~/framework/util/date';
 import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 import HtmlContentView from '~/ui/HtmlContentView';
@@ -334,7 +334,11 @@ const NewsDetailsScreen = (props: NewsDetailsScreenProps) => {
   );
 
   const renderPage = useCallback(() => {
-    if (loadingState === (AsyncPagedLoadingState.INIT_FAILED || AsyncPagedLoadingState.REFRESH_FAILED)) return renderError();
+    if (
+      loadingState === (AsyncPagedLoadingState.INIT_FAILED || AsyncPagedLoadingState.REFRESH_FAILED) ||
+      (news?.expirationDate && today().isAfter(news.expirationDate))
+    )
+      return renderError();
     return (
       <>
         <ListComponent

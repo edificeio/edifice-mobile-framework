@@ -4,6 +4,7 @@ import { trigger } from 'react-native-haptic-feedback';
 enum FeedbackType {
   ERROR_DISPLAYED = 0,
   TAB_PRESSED = ERROR_DISPLAYED + 1,
+  HOMEWORK_DONE = ERROR_DISPLAYED + 1,
 }
 
 const HapticFeebackType = [
@@ -30,5 +31,9 @@ export default class Feedback {
 
   static tabPressed() {
     this.feedback(FeedbackType.TAB_PRESSED);
+  }
+
+  static homeworkDone() {
+    this.feedback(FeedbackType.HOMEWORK_DONE);
   }
 }

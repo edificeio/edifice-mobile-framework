@@ -26,6 +26,7 @@ import {
   hasPermissionManager,
 } from '~/framework/modules/homework/rights';
 import { getDayOfTheWeek } from '~/framework/util/date';
+import Feedback from '~/framework/util/feedback/feedback';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
 
@@ -138,6 +139,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
       await handleToggleHomeworkEntryStatus(diaryId, taskId, finished);
       await handleGetHomeworkTasks(diaryId);
       this.setState({ checked: !checked, playAnimation: !checked });
+      Feedback.homeworkDone();
     } catch {
       Toast.showError(I18n.get('homework-taskdetails-status-error'));
     }

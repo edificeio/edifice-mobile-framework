@@ -1,7 +1,7 @@
-import { AccountListItemProps } from '~/framework/components/list/account/item/types';
+import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 
 export interface AccountListProps {
-  data: AccountListItemProps[];
+  data: (AuthSavedAccount | AuthLoggedAccount)[];
   description: string;
   title: string;
 }
