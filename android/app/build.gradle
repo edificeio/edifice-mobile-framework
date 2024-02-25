@@ -138,13 +138,18 @@ dependencies {
     implementation("com.facebook.react:flipper-integration")
     implementation("com.fasterxml.jackson.core:jackson-core:2.11.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
-    implementation("com.google.android.gms:play-services-base:18.2.0")
+    implementation("com.google.android.gms:play-services-base:18.3.0")
     // Fix Duplicate class
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     // Zendesk
-    api group: 'com.zendesk', name: 'answerbot', version: '3.2.0'
-    api group: 'com.zendesk', name: 'chat', version: '3.4.0'
-    api group: 'com.zendesk', name: 'support', version: '5.2.0'
+    implementation("com.zendesk:answerbot:3.2.0")
+    implementation("com.zendesk:chat:3.4.0")
+    implementation("com.zendesk:messaging:5.4.0")
+    implementation("com.zendesk:support:5.2.0")
+    //api group: 'com.zendesk', name: 'answerbot', version: '3.2.0'
+    //api group: 'com.zendesk', name: 'chat', version: '3.4.0'
+    //api group: 'com.zendesk', name: 'messaging', version: '5.4.0'
+    //api group: 'com.zendesk', name: 'support', version: '5.2.0'
     // Packages
     implementation project(':react-native-action-sheet')
 

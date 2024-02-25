@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-max-depth */
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
