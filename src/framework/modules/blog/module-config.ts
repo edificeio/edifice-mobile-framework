@@ -1,9 +1,10 @@
 import theme from '~/app/theme';
+import appConf from '~/framework/util/appConf';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 import type reducer from './reducer';
 
-export const moduleColor = theme.palette.complementary.indigo;
+export const moduleColor = appConf.is1d ? theme.palette.complementary.orange : theme.palette.complementary.indigo;
 
 export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   name: 'blog',

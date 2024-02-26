@@ -325,7 +325,7 @@ const reducer = createReducer(initialState, {
     return {
       ...state,
       error,
-      connected: undefined,
+      // connected: undefined, // This is a test : a priori, there is no need to erase this field as it will be undefined before any login task
     };
   },
 
@@ -477,6 +477,16 @@ export function getPlatformLegalUrls() {
 export function getPlatformLegalUrlsOf(platform?: Platform) {
   const state = getState(getStore().getState());
   return platform ? state.platformLegalUrls[platform.name] : undefined;
+}
+
+export function getAccountsNumber() {
+  const state = getState(getStore().getState());
+  return Object.keys(state.accounts).length;
+}
+
+export function getAccounts() {
+  const state = getState(getStore().getState());
+  return Object.values(state.accounts);
 }
 
 /**

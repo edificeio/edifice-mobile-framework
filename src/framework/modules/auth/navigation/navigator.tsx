@@ -13,18 +13,26 @@ import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthAccountSelectionScreen, {
   computeNavBar as authAccountSelectionNavBar,
 } from '~/framework/modules/auth/screens/account-selection';
+import AuthAddAccountModalScreen, {
+  computeNavBar as addAccountModalNavBar,
+} from '~/framework/modules/auth/screens/add-account-modal';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
+import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
 import LoginCredentialsScreen, {
   computeNavBar as authLoginCredentialsNavBar,
 } from '~/framework/modules/auth/screens/login-credentials';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
+import AuthOnboardingAddAccountScreen, {
+  computeNavBar as onboardingAddAccountNavBar,
+} from '~/framework/modules/auth/screens/onboarding-add-account';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
+import appConf from '~/framework/util/appConf';
 import { IAuthNavigationParams, authRouteNames } from '.';
 
 const Stack = getTypedRootStack<IAuthNavigationParams>();
@@ -114,9 +122,29 @@ export default function () {
       <Stack.Screen name={authRouteNames.mfa} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen name={authRouteNames.mfaModal} component={AuthMFAScreen} options={mfaNavBar} initialParams={{}} />
+        <Stack.Screen
+          name={authRouteNames.addAccountModal}
+          component={AuthAddAccountModalScreen}
+          options={addAccountModalNavBar}
+          initialParams={undefined}
+        />
       </Stack.Group>
+      <Stack.Screen
+        name={authRouteNames.onboardingAddAccount}
+        component={AuthOnboardingAddAccountScreen}
+        options={onboardingAddAccountNavBar}
+        initialParams={undefined}
+      />
+      {appConf.onboarding.showDiscoveryClass ? (
+        <Stack.Screen
+          name={authRouteNames.discoveryClass}
+          component={AuthDiscoveryClassScreen}
+          options={discoveryClassNavBar}
+          initialParams={undefined}
+        />
+      ) : null}
     </Stack.Group>
   );
 }
 
-setModalModeForRoutes([authRouteNames.changePasswordModal, authRouteNames.mfaModal]);
+setModalModeForRoutes([authRouteNames.changePasswordModal, authRouteNames.mfaModal, authRouteNames.addAccountModal]);

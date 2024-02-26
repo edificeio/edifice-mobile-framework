@@ -99,6 +99,7 @@ export interface IAppConfDeclaration {
   };
   onboarding?: {
     showDiscoverLink?: PlatformOSType[];
+    showDiscoveryClass?: boolean;
     showAppName?: boolean;
   };
   platforms: IPlatformAccessDeclaration[];
@@ -114,6 +115,7 @@ export class AppConf {
 
   onboarding: {
     showDiscoverLink: { [p in PlatformOSType]?: boolean };
+    showDiscoveryClass: boolean;
     showAppName: boolean;
   };
 
@@ -164,6 +166,7 @@ export class AppConf {
     } else {
       onboarding.showDiscoverLink = { ios: true, android: true };
     }
+    onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
     this.onboarding = onboarding as AppConf['onboarding'];
 

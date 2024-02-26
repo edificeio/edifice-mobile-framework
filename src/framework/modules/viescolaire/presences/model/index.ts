@@ -41,6 +41,7 @@ export enum CallState {
 export interface CallStudent {
   events: CallEvent[];
   exempted: boolean;
+  exemption_attendance: boolean;
   forgottenNotebook: boolean;
   group: string;
   groupName: string;
