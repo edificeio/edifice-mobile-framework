@@ -75,14 +75,14 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
       if (allowMultipleSlots && registerPreference) {
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }*/
-      /*for (const id of structureIds) {
+      for (const id of structureIds) {
         const initialized = await presencesService.initialization.getStructureStatus(session, id);
         if (initialized) initializedStructureIds.push(id);
       }
       if (!initializedStructureIds.length) {
         setInitialized(false);
         throw new Error();
-      }*/
+      }
       await props.tryFetchCourses(teacherId, structureIds, date, false);
     } catch {
       throw new Error();
