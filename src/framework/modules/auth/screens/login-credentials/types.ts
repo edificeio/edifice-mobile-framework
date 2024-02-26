@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
-import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IAuthState } from '~/framework/modules/auth/reducer';
 import type { Platform } from '~/framework/util/appConf';
 
@@ -33,4 +33,4 @@ export interface LoginCredentialsScreenDispatchProps {
 export type LoginCredentialsScreenPrivateProps = LoginCredentialsScreenProps &
   LoginCredentialsScreenStoreProps &
   LoginCredentialsScreenDispatchProps &
-  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginCredentials>;
+  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginCredentials>;

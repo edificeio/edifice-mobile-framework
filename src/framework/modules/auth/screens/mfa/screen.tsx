@@ -17,7 +17,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { loginCredentialsAction, refreshRequirementsAction } from '~/framework/modules/auth/actions';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   IEntcoreEmailValidationState,
@@ -62,7 +62,7 @@ export const computeNavBar = ({
   navigation,
   route,
 }: NativeStackScreenProps<
-  IAuthNavigationParams,
+  AuthNavigationParams,
   typeof authRouteNames.mfa | typeof authRouteNames.mfaModal
 >): NativeStackNavigationOptions => {
   const routeParams = route.params;

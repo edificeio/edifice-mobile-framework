@@ -21,6 +21,7 @@ import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/s
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/screens/login-credentials/types';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
+import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/onboarding';
 import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/onboarding-add-account';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -29,41 +30,63 @@ import { IAuthState, getPlatform, getSession } from '../reducer';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
-  accountSelection: `${moduleConfig.name}/accountSelection` as 'accountSelection',
+  // Login stack (normal version)
+  onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
+  platforms: `${moduleConfig.name}/platforms` as 'platforms',
   loginCredentials: `${moduleConfig.name}/login/credentials` as 'loginCredentials',
   loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
   wayf: `${moduleConfig.name}/wayf` as 'wayf',
-  onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
-  platforms: `${moduleConfig.name}/platforms` as 'platforms',
   activation: `${moduleConfig.name}/activation` as 'activation',
-  forgot: `${moduleConfig.name}/forgot` as 'forgot',
-  revalidateTerms: `${moduleConfig.name}/revalidateTerms` as 'revalidateTerms',
   changePassword: `${moduleConfig.name}/changePassword` as 'changePassword',
+  forgot: `${moduleConfig.name}/forgot` as 'forgot',
+  accountSelection: `${moduleConfig.name}/accountSelection` as 'accountSelection', // This screen is exclusive to normal login stack
+  // Login stack (add account version)
+  addAccountOnboarding: `${moduleConfig.name}/add-account/onboarding` as 'addAccountOnboarding',
+  addAccountPlatforms: `${moduleConfig.name}/add-account/platforms` as 'addAccountPlatforms',
+  addAccountLoginCredentials: `${moduleConfig.name}/add-account/login/credentials` as 'addAccountLoginCredentials',
+  addAccountLoginWayf: `${moduleConfig.name}/add-account/login/wayf` as 'addAccountLoginWayf',
+  addAccountWayf: `${moduleConfig.name}/add-account/wayf` as 'addAccountWayf',
+  addAccountActivation: `${moduleConfig.name}/add-account/activation` as 'addAccountActivation',
+  addAccountChangePassword: `${moduleConfig.name}/add-account/changePassword` as 'addAccountChangePassword',
+  addAccountForgot: `${moduleConfig.name}/add-account/forgot` as 'addAccountForgot',
+  // Exclusive logged screen (normal auth stack)
+  addAccountModal: `${moduleConfig.name}/add-account/modal` as 'addAccountModal', // This is the add acount stack parent screen.
+  revalidateTerms: `${moduleConfig.name}/revalidateTerms` as 'revalidateTerms',
   changePasswordModal: `${moduleConfig.name}/changePasswordModal` as 'changePasswordModal',
   changeEmail: `${moduleConfig.name}/changeEmail` as 'changeEmail',
   changeMobile: `${moduleConfig.name}/changeMobile` as 'changeMobile',
   mfa: `${moduleConfig.name}/mfa` as 'mfa',
   mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
-  addAccountModal: `${moduleConfig.name}/add-account-modal` as 'addAccountModal',
-  onboardingAddAccount: `${moduleConfig.name}/onboarding-add-account` as 'onboardingAddAccount',
 };
 
-export interface IAuthNavigationParams extends ParamListBase {
+export interface AuthNavigationParams extends ParamListBase {
+  // Normal auth stack
+  onboarding: AuthOnboardingScreenNavParams;
+  platforms: undefined;
   accountSelection: AuthAccountSelectionScreenNavParams;
   loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: { platform: Platform };
   wayf: { platform: Platform };
   activation: { platform: Platform; credentials: AuthCredentials };
-  forgot: { platform: Platform; mode: ForgotMode; login?: string };
-  revalidateTerms: object;
   changePassword: ChangePasswordScreenNavParams;
+  forgot: { platform: Platform; mode: ForgotMode; login?: string };
+  // Add account stack
+  addAccountModal: AuthAddAccountModalScreenNavParams;
+  addAccountOnboarding: AuthOnboardingAddAccountScreenNavParams;
+  addAccountPlatforms: undefined;
+  addAccountLoginCredentials: LoginCredentialsScreenNavParams;
+  addAccountLoginWayf: { platform: Platform };
+  addAccountWayf: { platform: Platform };
+  addAccountActivation: { platform: Platform; credentials: AuthCredentials };
+  addAccountChangePassword: ChangePasswordScreenNavParams;
+  addAccountForgot: { platform: Platform; mode: ForgotMode; login?: string };
+  // Exclusive logged screen
+  revalidateTerms: object;
   changePasswordModal: ChangePasswordScreenNavParams;
   changeEmail: AuthChangeEmailScreenNavParams;
   changeMobile: AuthChangeMobileScreenNavParams;
   mfa: AuthMFAScreenNavParams;
   mfaModal: AuthMFAScreenNavParams;
-  addAccountModal: AuthAddAccountModalScreenNavParams;
-  onboardingAddAccount: AuthOnboardingAddAccountScreenNavParams;
 }
 
 /**
@@ -73,6 +96,10 @@ export interface IAuthNavigationParams extends ParamListBase {
  */
 export const getLoginRouteName = (platform?: Platform) => {
   return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginCredentials;
+};
+
+export const getAddAccountLoginRouteName = (platform?: Platform) => {
+  return platform?.wayf ? authRouteNames.addAccountLoginWayf : authRouteNames.addAccountLoginCredentials;
 };
 
 export const getNavActionForRequirement = (requirement: AuthRequirement) => {
@@ -164,7 +191,7 @@ export const getNavActionForRedirect = (platform: Platform, pending: IAuthState[
  * Dispatch the right nav action after onboarding, depending on platform configuration
  * @param navigation
  */
-export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IAuthNavigationParams>) {
+export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<AuthNavigationParams>) {
   if (appConf.hasMultiplePlatform) {
     navigation.navigate(authRouteNames.platforms);
   } else {
@@ -172,6 +199,21 @@ export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IA
     navigation.navigate(getLoginRouteName(pf), { platform: pf }); // Auto-select first platform if not defined));
   }
 }
+
+export const getOnboardingNextScreen = () => {
+  return appConf.hasMultiplePlatform
+    ? CommonActions.navigate({ name: authRouteNames.platforms })
+    : CommonActions.navigate({ name: getLoginRouteName(appConf.platforms[0]), params: { platform: appConf.platforms[0] } });
+};
+
+export const getAddAccountOnboardingNextScreen = () => {
+  return appConf.hasMultiplePlatform
+    ? CommonActions.navigate({ name: authRouteNames.addAccountPlatforms })
+    : CommonActions.navigate({
+        name: getAddAccountLoginRouteName(appConf.platforms[0]),
+        params: { platform: appConf.platforms[0] },
+      });
+};
 
 /**
  * Simulate a nav action from the given nav state and returns the resulting nav state

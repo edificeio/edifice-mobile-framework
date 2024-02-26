@@ -1,3 +1,5 @@
-import OnboardingScreen from './screen';
+import AuthOnboardingScreen from './screen';
 
-export default OnboardingScreen;
+export default AuthOnboardingScreen;
+export { computeNavBar } from './screen';
+export type { AuthOnboardingScreenNavParams, AuthOnboardingScreenProps } from './types';

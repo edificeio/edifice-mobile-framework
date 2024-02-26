@@ -1,12 +1,7 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ThunkDispatch } from 'redux-thunk';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import type { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
-export interface IOnboardingScreenProps extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.onboarding> {
-  dispatch: ThunkDispatch<any, any, any>;
-}
+export type AuthOnboardingScreenNavParams = undefined;
 
-export interface IOnboardingScreenState {
-  buttonsWidth: number;
-}
+export type AuthOnboardingScreenProps = NativeStackScreenProps<AuthNavigationParams, 'onboarding'>;

@@ -23,23 +23,22 @@ import LoginCredentialsScreen, {
   computeNavBar as authLoginCredentialsNavBar,
 } from '~/framework/modules/auth/screens/login-credentials';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
-import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
-import AuthOnboardingAddAccountScreen, {
-  computeNavBar as onboardingAddAccountNavBar,
-} from '~/framework/modules/auth/screens/onboarding-add-account';
+import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
-import { IAuthNavigationParams, authRouteNames } from '.';
+import { AuthNavigationParams, authRouteNames } from '.';
 
-const Stack = getTypedRootStack<IAuthNavigationParams>();
+const Stack = getTypedRootStack<AuthNavigationParams>();
+
+// Auth Stack used when user is logged out, or managing the current logged account.
 
 export default function () {
   return (
     <Stack.Group screenOptions={navBarOptions}>
+      <Stack.Screen name={authRouteNames.onboarding} component={AuthOnboardingScreen} options={onboardingNavBar} />
       <Stack.Group screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={authRouteNames.onboarding} component={OnboardingScreen} />
         <Stack.Screen name={authRouteNames.platforms} component={PlatformSelectScreen} />
       </Stack.Group>
       <Stack.Screen
@@ -127,12 +126,6 @@ export default function () {
           initialParams={undefined}
         />
       </Stack.Group>
-      <Stack.Screen
-        name={authRouteNames.onboardingAddAccount}
-        component={AuthOnboardingAddAccountScreen}
-        options={onboardingAddAccountNavBar}
-        initialParams={undefined}
-      />
     </Stack.Group>
   );
 }

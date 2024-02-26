@@ -12,7 +12,7 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Error } from '~/framework/util/error';
 import { handleAction } from '~/framework/util/redux/actions';
@@ -25,7 +25,7 @@ interface LoginWayfScreenDispatchProps {
   handleConsumeError: (...args: Parameters<typeof consumeAuthErrorAction>) => void;
 }
 interface ILoginWayfScreenProps
-  extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginWayf>,
+  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginWayf>,
     ILoginWayfScreenStoreProps,
     LoginWayfScreenDispatchProps {}
 
