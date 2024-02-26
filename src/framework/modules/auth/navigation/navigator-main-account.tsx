@@ -19,6 +19,7 @@ import AuthAddAccountModalScreen, {
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
+import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
 import LoginCredentialsScreen, {
   computeNavBar as authLoginCredentialsNavBar,
 } from '~/framework/modules/auth/screens/login-credentials';
@@ -27,6 +28,7 @@ import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/frame
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
+import appConf from '~/framework/util/appConf';
 
 import { AuthNavigationParams, authRouteNames } from '.';
 
@@ -126,6 +128,14 @@ export default function () {
           initialParams={undefined}
         />
       </Stack.Group>
+      {appConf.onboarding.showDiscoveryClass ? (
+        <Stack.Screen
+          name={authRouteNames.discoveryClass}
+          component={AuthDiscoveryClassScreen}
+          options={discoveryClassNavBar}
+          initialParams={undefined}
+        />
+      ) : null}
     </Stack.Group>
   );
 }

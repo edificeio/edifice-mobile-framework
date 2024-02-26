@@ -10,6 +10,7 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { PageView } from '~/framework/components/page';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
 import { Image } from '~/framework/util/media';
 
@@ -23,20 +24,54 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
 
   showDiscoverLink = Platform.select(appConf.onboarding.showDiscoverLink);
 
+  showDiscoveryClass = appConf.onboarding.showDiscoveryClass;
+
   showAppName = appConf.onboarding.showAppName;
 
   async componentDidMount() {
     // Calculate button(s) width(s)
     let discoverWidth = 0;
-    const joinWidth = await getButtonWidth({ text: I18n.get('user-onboarding-joinmynetwork'), type: 'primary' });
+    const joinWidth = await getButtonWidth({ text: I18n.get('user-onboarding-joinmynetwork'), type: 'primary', bold: true });
     if (this.showDiscoverLink)
       discoverWidth = await getButtonWidth({
         text: I18n.get('user-onboarding-discover'),
         icons: 1,
         type: 'secondary',
+        bold: true,
       });
+    if (this.showDiscoveryClass)
+      discoverWidth = await getButtonWidth({
+        text: I18n.get('user-onboarding-discoveryclass'),
+        type: 'secondary',
+        bold: true,
+      });
+
     this.setState({ buttonsWidth: Math.max(joinWidth, discoverWidth) });
   }
+
+  renderSecondaryButton = () => {
+    const buttonStyles = [styles.discoverButton, { width: this.state.buttonsWidth }];
+    if (this.showDiscoveryClass)
+      return (
+        <SecondaryButton
+          text={I18n.get('user-onboarding-discoveryclass')}
+          action={() => this.props.navigation.navigate(authRouteNames.discoveryClass, {})}
+          style={buttonStyles}
+          testID="onboarding-discoveryclass"
+        />
+      );
+    if (this.showDiscoverLink)
+      return (
+        <SecondaryButton
+          text={I18n.get('user-onboarding-discover')}
+          url={I18n.get('user-onboarding-discoverlink')}
+          requireSession={false}
+          style={buttonStyles}
+          testID="onboarding-discover"
+        />
+      );
+    return null;
+  };
 
   render() {
     const { navigation, texts, pictures, nextScreenAction } = this.props;
@@ -68,15 +103,7 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
           />
           {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
-          {this.showDiscoverLink ? (
-            <SecondaryButton
-              text={I18n.get('user-onboarding-discover')}
-              url={I18n.get('user-onboarding-discoverlink')}
-              requireSession={false}
-              style={[styles.discoverButton, { width: buttonsWidth }]}
-              testID="onboarding-discover"
-            />
-          ) : null}
+          {this.renderSecondaryButton()}
         </View>
       </PageView>
     );

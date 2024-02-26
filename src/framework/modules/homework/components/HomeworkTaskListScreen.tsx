@@ -320,7 +320,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
       }`,
     );
     const buttonText = this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined;
-    return this.noFutureHomeworkHiddenPast() ? (
+
+    return this.noFutureHomeworkHiddenPast() || !this.hasHomework() ? (
       <EmptyScreen svgImage="empty-hammock" title={title} text={text} buttonText={buttonText} buttonAction={this.addEntry} />
     ) : null;
   }

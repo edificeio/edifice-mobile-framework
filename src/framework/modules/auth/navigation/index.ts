@@ -27,6 +27,7 @@ import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import { IAuthState, getPlatform, getSession } from '../reducer';
+import { AuthDiscoveryClassScreenNavParams } from '../screens/discovery-class';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
@@ -57,6 +58,7 @@ export const authRouteNames = {
   changeMobile: `${moduleConfig.name}/changeMobile` as 'changeMobile',
   mfa: `${moduleConfig.name}/mfa` as 'mfa',
   mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
+  discoveryClass: `${moduleConfig.name}/discovery-class` as 'discoveryClass',
 };
 
 export interface AuthNavigationParams extends ParamListBase {
@@ -87,6 +89,7 @@ export interface AuthNavigationParams extends ParamListBase {
   changeMobile: AuthChangeMobileScreenNavParams;
   mfa: AuthMFAScreenNavParams;
   mfaModal: AuthMFAScreenNavParams;
+  discoveryClass: AuthDiscoveryClassScreenNavParams;
 }
 
 /**
