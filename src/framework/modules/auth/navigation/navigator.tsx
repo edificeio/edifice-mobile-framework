@@ -32,7 +32,6 @@ import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid'
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
-import appConf from '~/framework/util/appConf';
 import { IAuthNavigationParams, authRouteNames } from '.';
 
 const Stack = getTypedRootStack<IAuthNavigationParams>();
@@ -135,14 +134,12 @@ export default function () {
         options={onboardingAddAccountNavBar}
         initialParams={undefined}
       />
-      {appConf.onboarding.showDiscoveryClass ? (
-        <Stack.Screen
-          name={authRouteNames.discoveryClass}
-          component={AuthDiscoveryClassScreen}
-          options={discoveryClassNavBar}
-          initialParams={undefined}
-        />
-      ) : null}
+      <Stack.Screen
+        name={authRouteNames.discoveryClass}
+        component={AuthDiscoveryClassScreen}
+        options={discoveryClassNavBar}
+        initialParams={undefined}
+      />
     </Stack.Group>
   );
 }
