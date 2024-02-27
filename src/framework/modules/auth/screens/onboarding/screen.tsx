@@ -3,10 +3,10 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getOnboardingNextScreen } from '~/framework/modules/auth/navigation/router-main-account';
 import OnboardingScreen from '~/framework/modules/auth/templates/onboarding';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import { getOnboardingNextScreen } from '../../navigation/router-main-account';
 import type { AuthOnboardingScreenProps } from './types';
 
 export const computeNavBar = ({

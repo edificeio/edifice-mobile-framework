@@ -3,16 +3,16 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getAddAccountOnboardingNextScreen } from '~/framework/modules/auth/navigation/router-add-account';
 import AuthIntroductionScreen from '~/framework/modules/auth/templates/introduction';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import { getAddAccountOnboardingNextScreen } from '../../navigation/router-add-account';
 import type { AuthOnboardingAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountOnboarding>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.onboarding>): NativeStackNavigationOptions => ({
   headerShown: false,
   ...navBarOptions({
     navigation,

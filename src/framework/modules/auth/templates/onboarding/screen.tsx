@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Platform, View } from 'react-native';
 import deviceInfoModule from 'react-native-device-info';
 import Swiper from 'react-native-swiper';
-import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { getButtonWidth } from '~/framework/components/buttons/default';
@@ -110,5 +109,5 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
   }
 }
 
-const OnboardingScreenConnected = connect()(OnboardingScreen);
+const OnboardingScreenConnected = OnboardingScreen;
 export default OnboardingScreenConnected;

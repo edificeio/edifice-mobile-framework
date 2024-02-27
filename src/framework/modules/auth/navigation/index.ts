@@ -17,6 +17,7 @@ import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/module
 import { Platform } from '~/framework/util/appConf';
 
 import type { AuthDiscoveryClassScreenNavParams } from '../screens/discovery-class';
+import type { AuthPlatformsScreenNavParams } from '../screens/platforms';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
@@ -50,10 +51,15 @@ export const authRouteNames = {
   discoveryClass: `${moduleConfig.name}/discovery-class` as 'discoveryClass',
 };
 
+export interface AuthNavigationTemplatesParams extends ParamListBase {
+  onboarding: undefined;
+  platforms: undefined;
+}
+
 export interface AuthNavigationParams extends ParamListBase {
   // Normal auth stack
   onboarding: AuthOnboardingScreenNavParams;
-  platforms: undefined;
+  platforms: AuthPlatformsScreenNavParams;
   accountSelection: AuthAccountSelectionScreenNavParams;
   loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: { platform: Platform };
@@ -64,7 +70,6 @@ export interface AuthNavigationParams extends ParamListBase {
   // Add account stack
   addAccountModal: AuthAddAccountModalScreenNavParams;
   addAccountOnboarding: AuthOnboardingAddAccountScreenNavParams;
-  addAccountPlatforms: undefined;
   addAccountLoginCredentials: LoginCredentialsScreenNavParams;
   addAccountLoginWayf: { platform: Platform };
   addAccountWayf: { platform: Platform };

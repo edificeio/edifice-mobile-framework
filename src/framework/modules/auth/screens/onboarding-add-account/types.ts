@@ -4,4 +4,4 @@ import type { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
 export type AuthOnboardingAddAccountScreenNavParams = undefined;
 
-export type AuthOnboardingAddAccountScreenPrivateProps = NativeStackScreenProps<AuthNavigationParams, 'addAccountOnboarding'>;
+export type AuthOnboardingAddAccountScreenPrivateProps = NativeStackScreenProps<AuthNavigationParams, 'onboarding'>;

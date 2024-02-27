@@ -1,7 +1,7 @@
 import { CommonActions, StackActionType } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationTemplatesParams } from '~/framework/modules/auth/navigation';
 
 export interface AuthOnboardingScreenProps {
   pictures: any[];
@@ -12,7 +12,7 @@ export interface AuthOnboardingScreenProps {
 export type AuthOnboardingScreenNavParams = undefined;
 
 export interface AuthOnboardingScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.onboarding>,
+  extends NativeStackScreenProps<AuthNavigationTemplatesParams, 'onboarding'>,
     AuthOnboardingScreenProps {}
 
 export interface AuthOnboardingScreenState {

@@ -7,7 +7,6 @@ import { I18n } from '~/app/i18n';
 import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
 import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
-import PlatformSelectScreen from '~/framework/modules/auth/screens/PlatformSelectScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthAccountSelectionScreen, {
@@ -25,6 +24,7 @@ import LoginCredentialsScreen, {
 } from '~/framework/modules/auth/screens/login-credentials';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding';
+import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/platforms';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
@@ -40,9 +40,8 @@ export default function () {
   return (
     <Stack.Group screenOptions={navBarOptions}>
       <Stack.Screen name={authRouteNames.onboarding} component={AuthOnboardingScreen} options={onboardingNavBar} />
-      <Stack.Group screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={authRouteNames.platforms} component={PlatformSelectScreen} />
-      </Stack.Group>
+      <Stack.Screen name={authRouteNames.platforms} component={AuthPlatformsScreen} options={platformsNavBar} />
+
       <Stack.Screen
         name={authRouteNames.accountSelection}
         component={AuthAccountSelectionScreen}
