@@ -5,7 +5,6 @@ import { IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-import { getAddAccountLoginRouteName } from './router-add-account';
 import { getLoginRouteName, getNavActionForRedirect } from './router-main-account';
 
 export const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
