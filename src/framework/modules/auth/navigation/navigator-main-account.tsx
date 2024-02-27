@@ -19,9 +19,6 @@ import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
 import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
-import LoginCredentialsScreen, {
-  computeNavBar as authLoginCredentialsNavBar,
-} from '~/framework/modules/auth/screens/login-credentials';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding';
 import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/platforms';
@@ -31,6 +28,7 @@ import { getTypedRootStack } from '~/framework/navigation/navigators';
 import appConf from '~/framework/util/appConf';
 
 import { AuthNavigationParams, authRouteNames } from '.';
+import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../screens/login-credentials';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 
@@ -41,17 +39,18 @@ export default function () {
     <Stack.Group screenOptions={navBarOptions}>
       <Stack.Screen name={authRouteNames.onboarding} component={AuthOnboardingScreen} options={onboardingNavBar} />
       <Stack.Screen name={authRouteNames.platforms} component={AuthPlatformsScreen} options={platformsNavBar} />
+      <Stack.Screen
+        name={authRouteNames.loginCredentials}
+        component={AuthLoginCredentialsScreen}
+        options={loginCredentialsNavBar}
+      />
 
       <Stack.Screen
         name={authRouteNames.accountSelection}
         component={AuthAccountSelectionScreen}
         options={authAccountSelectionNavBar}
       />
-      <Stack.Screen
-        name={authRouteNames.loginCredentials}
-        component={LoginCredentialsScreen}
-        options={authLoginCredentialsNavBar}
-      />
+
       <Stack.Screen
         name={authRouteNames.loginWayf}
         component={LoginWayfScreen}

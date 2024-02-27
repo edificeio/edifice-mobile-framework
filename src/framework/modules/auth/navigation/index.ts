@@ -10,10 +10,10 @@ import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/aut
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
-import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/screens/login-credentials/types';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/onboarding';
 import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/onboarding-add-account';
+import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
 import { Platform } from '~/framework/util/appConf';
 
 import type { AuthDiscoveryClassScreenNavParams } from '../screens/discovery-class';

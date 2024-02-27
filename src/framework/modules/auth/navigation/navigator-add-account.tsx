@@ -8,9 +8,6 @@ import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen'
 import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
-import LoginCredentialsScreen, {
-  computeNavBar as authLoginCredentialsNavBar,
-} from '~/framework/modules/auth/screens/login-credentials';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding-add-account';
 import AuthPlatformsAddAccountScreen, {
   computeNavBar as platformsAddAccountNavBar,
@@ -19,6 +16,7 @@ import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { AuthNavigationParams, authRouteNames } from '.';
+import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../screens/login-credentials-add-account';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 
@@ -37,12 +35,12 @@ export default function () {
         component={AuthPlatformsAddAccountScreen}
         options={platformsAddAccountNavBar}
       />
-
       <Stack.Screen
-        name={authRouteNames.addAccountLoginCredentials}
-        component={LoginCredentialsScreen}
-        options={authLoginCredentialsNavBar}
+        name={authRouteNames.addAccountLoginCredentials as typeof authRouteNames.loginCredentials}
+        component={AuthLoginCredentialsScreen}
+        options={loginCredentialsNavBar}
       />
+
       <Stack.Screen
         name={authRouteNames.addAccountLoginWayf}
         component={LoginWayfScreen}

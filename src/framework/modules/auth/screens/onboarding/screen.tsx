@@ -18,7 +18,6 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('auth-onboarding-title'),
   }),
 });
 

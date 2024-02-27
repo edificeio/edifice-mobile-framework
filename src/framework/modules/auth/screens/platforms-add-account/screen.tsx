@@ -1,7 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 
-import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAddAccountLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/router-add-account';
 import AuthPlatformGridScreen from '~/framework/modules/auth/templates/platform-grid';
@@ -17,7 +16,6 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('auth-platforms-add-account-title'),
   }),
 });
 

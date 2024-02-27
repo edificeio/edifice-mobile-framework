@@ -1,7 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 
-import { I18n } from '~/app/i18n';
 import { StatusBar } from '~/framework/components/status-bar';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/router-main-account';
@@ -18,7 +17,6 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('auth-platforms-title'),
   }),
 });
 
