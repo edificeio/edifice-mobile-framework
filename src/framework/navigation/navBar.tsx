@@ -11,7 +11,7 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
-import { IAuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
 import { isModalModeOnThisRoute } from './hideTabBarAndroid';
 
@@ -53,7 +53,7 @@ export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) 
   });
 
 export const navBarOptions: (props: {
-  route: RouteProp<IAuthNavigationParams, string>;
+  route: RouteProp<AuthNavigationParams, string>;
   navigation: NativeStackNavigationProp<ParamListBase>;
   title?: string;
   titleStyle?: TextStyle;

@@ -20,10 +20,46 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
     };
   }
 
-  public render() {
-    const { callState, isSelected, student, onPress } = this.props;
+  renderInfo() {
+    const { student } = this.props;
+
+    if (student.exemption_attendance)
+      return <NamedSVG name="ui-block" width={20} height={20} fill={theme.palette.status.warning.regular} />;
+    if (student.lastCourseAbsent)
+      return (
+        <NamedSVG
+          name="ui-error-past"
+          width={20}
+          height={20}
+          fill={theme.palette.status.failure.regular}
+          style={styles.lastCourseAbsentPicture}
+        />
+      );
+  }
+
+  renderStatus() {
+    const { callState, student } = this.props;
     const eventTypes = student.events.map(event => event.typeId);
 
+    if (!eventTypes.length)
+      return (
+        <NamedSVG
+          name="ui-success_outline"
+          width={32}
+          height={32}
+          fill={callState === CallState.DONE ? theme.palette.status.success.regular : theme.palette.grey.cloudy}
+        />
+      );
+    if (eventTypes.includes(CallEventType.ABSENCE))
+      return <NamedSVG name="ui-error" width={32} height={32} fill={theme.palette.status.failure.regular} />;
+    if (eventTypes.includes(CallEventType.LATENESS))
+      return <NamedSVG name="ui-clock-alert" width={32} height={32} fill={theme.palette.status.warning.regular} />;
+    if (eventTypes.includes(CallEventType.DEPARTURE))
+      return <NamedSVG name="ui-leave" width={32} height={32} fill={theme.palette.status.warning.regular} />;
+  }
+
+  public render() {
+    const { isSelected, student, onPress } = this.props;
     return (
       <TouchableOpacity onPress={onPress} style={[styles.container, isSelected && styles.containerSelected]}>
         <View style={styles.leftContainer}>
@@ -31,35 +67,9 @@ export default class StudentListItem extends React.PureComponent<StudentListItem
           <BodyText numberOfLines={1} style={styles.nameText}>
             {student.name}
           </BodyText>
-          {student.lastCourseAbsent ? (
-            <NamedSVG
-              name="ui-error-past"
-              width={20}
-              height={20}
-              fill={theme.palette.status.failure.regular}
-              style={styles.lastCourseAbsentPicture}
-            />
-          ) : null}
+          {this.renderInfo()}
         </View>
-        <View style={styles.statusesContainer}>
-          {!eventTypes.length ? (
-            <NamedSVG
-              name="ui-success_outline"
-              width={32}
-              height={32}
-              fill={callState === CallState.DONE ? theme.palette.status.success.regular : theme.palette.grey.cloudy}
-            />
-          ) : null}
-          {eventTypes.includes(CallEventType.ABSENCE) ? (
-            <NamedSVG name="ui-error" width={32} height={32} fill={theme.palette.status.failure.regular} />
-          ) : null}
-          {eventTypes.includes(CallEventType.LATENESS) ? (
-            <NamedSVG name="ui-clock-alert" width={32} height={32} fill={theme.palette.status.warning.regular} />
-          ) : null}
-          {eventTypes.includes(CallEventType.DEPARTURE) ? (
-            <NamedSVG name="ui-leave" width={32} height={32} fill={theme.palette.status.warning.regular} />
-          ) : null}
-        </View>
+        <View style={styles.statusesContainer}>{this.renderStatus()}</View>
       </TouchableOpacity>
     );
   }

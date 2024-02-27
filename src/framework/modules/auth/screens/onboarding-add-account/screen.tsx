@@ -1,23 +1,18 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import PrimaryButton from '~/framework/components/buttons/primary';
-import { getScaleWidth } from '~/framework/components/constants';
-import { PageView } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
-import { HeadingSText, SmallText } from '~/framework/components/text';
-import { IAuthNavigationParams, authRouteNames, navigateAfterOnboarding } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames, getAddAccountOnboardingNextScreen } from '~/framework/modules/auth/navigation';
+import AuthIntroductionScreen from '~/framework/modules/auth/templates/introduction';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import styles from './styles';
 import type { AuthOnboardingAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.onboardingAddAccount>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountOnboarding>): NativeStackNavigationOptions => ({
+  headerShown: false,
   ...navBarOptions({
     navigation,
     route,
@@ -26,24 +21,14 @@ export const computeNavBar = ({
 });
 
 export default function AuthOnboardingAddAccountScreen(props: AuthOnboardingAddAccountScreenPrivateProps) {
-  const onNavigate = React.useCallback(() => {
-    navigateAfterOnboarding(props.navigation);
-  }, [props.navigation]);
   return (
-    <PageView style={styles.page}>
-      <View style={styles.topContainer}>
-        <NamedSVG name="multi-account" width={getScaleWidth(130)} height={getScaleWidth(130)} />
-        <HeadingSText style={styles.title}>{I18n.get('user-accountonboarding-heading')}</HeadingSText>
-        <SmallText style={styles.description}>{I18n.get('user-accountonboarding-description')}</SmallText>
-      </View>
-      <View style={styles.bottomContainer}>
-        <PrimaryButton
-          text={I18n.get('user-accountonboarding-button')}
-          iconRight="ui-arrowRight"
-          style={styles.button}
-          action={onNavigate}
-        />
-      </View>
-    </PageView>
+    <AuthIntroductionScreen
+      {...props}
+      nextScreenAction={getAddAccountOnboardingNextScreen()}
+      svgName="multi-account"
+      title={I18n.get('user-accountonboarding-heading')}
+      description={I18n.get('user-accountonboarding-description')}
+      buttonText={I18n.get('user-accountonboarding-button')}
+    />
   );
 }

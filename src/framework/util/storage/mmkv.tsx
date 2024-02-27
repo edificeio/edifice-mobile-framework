@@ -9,6 +9,8 @@ import { Trackers } from '~/framework/util/tracker';
 import { StorageBackend } from './backend';
 import type { IStorageBackend } from './types';
 
+const MIGRATION_KEYS_IGNORE: RegExp[] = [/^@phrase_pref_/, /^@phrase_cache_/];
+
 /**
  * Migrate from AsyncStorage
  * - Find all existing AsyncStorage keys
@@ -21,6 +23,9 @@ const migrateFromAsyncStorage = async (storage: IStorageBackend) => {
   if (hasRemainingKeys) {
     for (const key of keys) {
       try {
+        if (MIGRATION_KEYS_IGNORE.find(pattern => pattern.test(key))) {
+          continue;
+        }
         const value = await AsyncStorage.getItem(key);
         if (value !== null) {
           storage.set(key, value);

@@ -17,7 +17,7 @@ import SnowFlakes from '~/framework/components/SnowFlakes';
 import { RootToastHandler } from '~/framework/components/toast';
 import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import { getAuthNavigationState } from '~/framework/modules/auth/navigation';
-import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
+import useAuthNavigation from '~/framework/modules/auth/navigation/navigator-main-account';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';

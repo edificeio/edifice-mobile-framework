@@ -19,7 +19,7 @@ import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { Error, useErrorWithKey } from '~/framework/util/error';
@@ -33,7 +33,7 @@ import { LoginCredentialsScreenDispatchProps, LoginCredentialsScreenPrivateProps
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginCredentials>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.loginCredentials>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,

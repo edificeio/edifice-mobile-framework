@@ -379,6 +379,7 @@ const callAdapter = (data: BackendCall): Call => {
     students: data.students.map(student => ({
       events: student.events.map(eventAdapter),
       exempted: student.exempted,
+      exemption_attendance: student.exemptions[0] ? !student.exemptions[0].attendance : false,
       forgottenNotebook: student.forgotten_notebook,
       group: student.group,
       groupName: student.group_name,
@@ -677,7 +678,13 @@ export const presencesService = {
       const forgottenNotebooks = (await fetchJSONWithCache(api)) as BackendForgottenNotebooks;
       return forgottenNotebooksAdapter(forgottenNotebooks);
     },
-    getIncidents: async (session: AuthLoggedAccount, studentId: string, structureId: string, startDate: string, endDate: string) => {
+    getIncidents: async (
+      session: AuthLoggedAccount,
+      studentId: string,
+      structureId: string,
+      startDate: string,
+      endDate: string,
+    ) => {
       const api = `/incidents/students/${studentId}/events?structure_id=${structureId}&start_at=${startDate}&end_at=${endDate}&type=INCIDENT&type=PUNISHMENT`;
       const incidents = (await fetchJSONWithCache(api)) as BackendIncidents;
       return incidentsAdapter(incidents);

@@ -35,7 +35,7 @@ import {
   LegalUrls,
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContextOf, getPlatformLegalUrlsOf } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
@@ -61,7 +61,7 @@ export interface ActivationScreenDispatchProps {
 export type ActivationScreenProps = ActivationPrivateProps &
   ActivationScreenDispatchProps &
   ActivationScreenStoreProps &
-  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.activation>;
+  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.activation>;
 
 // Activation Page Component -------------------------------------------------------------
 
@@ -267,7 +267,7 @@ const ActivationScreenLoader = (props: ActivationScreenProps) => {
 export default connect(
   (
     state: IGlobalState,
-    props: ActivationPrivateProps & NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.activation>,
+    props: ActivationPrivateProps & NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.activation>,
   ) => {
     return {
       context: getPlatformContextOf(props.route.params.platform),

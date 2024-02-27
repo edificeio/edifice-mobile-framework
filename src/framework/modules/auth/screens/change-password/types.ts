@@ -8,7 +8,7 @@ import type {
   AuthUsernameCredential,
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
-import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { Platform } from '~/framework/util/appConf';
 
 export type IFields = 'oldPassword' | 'newPassword' | 'confirm';
@@ -39,7 +39,7 @@ export interface ChangePasswordScreenDispatchProps {
 export type ChangePasswordScreenPrivateProps = ChangePasswordScreenProps &
   ChangePasswordScreenStoreProps &
   ChangePasswordScreenDispatchProps &
-  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>;
+  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>;
 
 export interface ChangePasswordScreenState extends IChangePasswordModel {
   typing: boolean;

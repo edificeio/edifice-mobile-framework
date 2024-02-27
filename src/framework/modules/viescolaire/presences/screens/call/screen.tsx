@@ -170,6 +170,8 @@ const PresencesCallScreen = (props: PresencesCallScreenPrivateProps) => {
             hasPresencesManagementRights === true &&
             props.eventReasons.some(reason => reason.reasonTypeId === CallEventType.ABSENCE)
           }
+          exemption_attendance={student?.exemption_attendance}
+          lastCourseAbsent={student?.lastCourseAbsent}
           createAbsence={createAbsence}
           deleteAbsence={deleteAbsence}
           dismissBottomSheet={dismissBottomSheet}

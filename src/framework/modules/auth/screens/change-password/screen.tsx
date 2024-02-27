@@ -30,7 +30,7 @@ import {
   PlatformAuthContext,
   createChangePasswordError,
 } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
@@ -284,7 +284,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
 const mapStateToProps: (
   state: IGlobalState,
   props: ChangePasswordScreenProps &
-    NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>,
+    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>,
 ) => ChangePasswordScreenStoreProps = (state, props) => {
   return {
     session: getSession(),

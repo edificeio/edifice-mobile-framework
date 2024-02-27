@@ -12,7 +12,7 @@ import { HeadingXSText, SmallText } from '~/framework/components/text';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import { AccountType } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import styles from '~/framework/modules/auth/screens/account-selection/styles';
 import { AuthAccountSelectionScreenPrivateProps } from '~/framework/modules/auth/screens/account-selection/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -20,7 +20,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.accountSelection>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accountSelection>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
       navigation,
