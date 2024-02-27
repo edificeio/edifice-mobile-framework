@@ -10,7 +10,7 @@ import { NamedSVG } from '~/framework/components/picture';
 
 import { RichToolbarActionItem } from './item/action/component';
 import { RichToolbarCustomItem } from './item/custom/component';
-import { RichToolbarSeparator } from './rich-toolbar-separator';
+import { RichToolbarSeparator } from './item/separator';
 import styles from './styles';
 
 // const showAnimation = (ref, to) => {
@@ -106,7 +106,7 @@ export default class RichToolbar extends Component {
     super(props);
     this.editor = null;
     this.state = {
-      items: [],
+      selectedItems: [],
       animatedValueEnter: new Animated.Value(0),
       animatedValueExit: new Animated.Value(0),
       animatedValueOpacityExit: new Animated.Value(0),
@@ -180,13 +180,11 @@ export default class RichToolbar extends Component {
     }).start();
   };
 
-  setSelectedItems(items) {
-    this.setState({ items });
+  setSelectedItems(selectedItems) {
+    this.setState({ selectedItems });
   }
 
   render() {
-    const { style } = this.props;
-
     const interpolatedValueEnter = this.state.animatedValueEnter.interpolate({
       inputRange: [0, 1],
       outputRange: [0, -45], // plage de valeurs pour la translation
@@ -221,7 +219,7 @@ export default class RichToolbar extends Component {
 
     return (
       <View>
-        <View style={style}>
+        <View style={styles.container}>
           <Animated.View style={animatedStyleExit}>
             <RichToolbarItemsList
               list={[
@@ -229,13 +227,13 @@ export default class RichToolbar extends Component {
                   icon={`ui-${actions.undo}`}
                   action={actions.undo}
                   editor={this.editor}
-                  disabled={!this.state.items.includes(actions.undo)}
+                  disabled={!this.state.selectedItems.includes(actions.undo)}
                 />,
                 <RichToolbarActionItem
                   icon={`ui-${actions.redo}`}
                   action={actions.redo}
                   editor={this.editor}
-                  disabled={!this.state.items.includes(actions.redo)}
+                  disabled={!this.state.selectedItems.includes(actions.redo)}
                 />,
                 <RichToolbarSeparator />,
                 <RichToolbarCustomItem
@@ -251,7 +249,7 @@ export default class RichToolbar extends Component {
             </View>
           </Animated.View>
           <Animated.View style={animatedStyleEnter}>
-            <TouchableOpacity style={styles.closeUnderMenu} onPress={() => this.inverseAnimation()}>
+            <TouchableOpacity style={styles.closeUnderMenu} onPress={this.inverseAnimation}>
               <IconButton
                 icon="ui-close"
                 size={UI_SIZES.elements.icon.xxsmall}
@@ -271,43 +269,43 @@ export default class RichToolbar extends Component {
                   icon={`ui-${actions.setBold}`}
                   action={actions.setBold}
                   editor={this.editor}
-                  selected={this.state.items.includes(actions.setBold)}
+                  selected={this.state.selectedItems.includes(actions.setBold)}
                 />,
                 <RichToolbarActionItem
                   icon={`ui-${actions.setItalic}`}
                   action={actions.setItalic}
                   editor={this.editor}
-                  selected={this.state.items.includes(actions.setItalic)}
+                  selected={this.state.selectedItems.includes(actions.setItalic)}
                 />,
                 <RichToolbarActionItem
                   icon={`ui-${actions.setUnderline}`}
                   action={actions.setUnderline}
                   editor={this.editor}
-                  selected={this.state.items.includes(actions.setUnderline)}
+                  selected={this.state.selectedItems.includes(actions.setUnderline)}
                 />,
                 <RichToolbarActionItem
                   icon={`ui-${actions.insertBulletsList}`}
                   action={actions.insertBulletsList}
                   editor={this.editor}
-                  selected={this.state.items.includes(actions.insertBulletsList)}
+                  selected={this.state.selectedItems.includes(actions.insertBulletsList)}
                 />,
                 <RichToolbarActionItem
                   icon={`ui-${actions.insertOrderedList}`}
                   action={actions.insertOrderedList}
                   editor={this.editor}
-                  selected={this.state.items.includes(actions.insertOrderedList)}
+                  selected={this.state.selectedItems.includes(actions.insertOrderedList)}
                 />,
                 <RichToolbarActionItem
                   icon={`ui-${actions.setSubscript}`}
                   action={actions.setSubscript}
                   editor={this.editor}
-                  selected={this.state.items.includes(actions.setSubscript)}
+                  selected={this.state.selectedItems.includes(actions.setSubscript)}
                 />,
                 <RichToolbarActionItem
                   icon={`ui-${actions.setSuperscript}`}
                   action={actions.setSuperscript}
                   editor={this.editor}
-                  selected={this.state.items.includes(actions.setSuperscript)}
+                  selected={this.state.selectedItems.includes(actions.setSuperscript)}
                 />,
               ]}
             />

@@ -9,6 +9,6 @@ export interface RichToolbarItemProps {
   icon: string;
   toolbar: RichToolbar;
   selected: boolean;
-  onSelected: () => void;
   fill?: ColorValue;
+  onSelected: () => void;
 }

@@ -4,6 +4,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 const styles = StyleSheet.create({
+  container: {
+    borderColor: theme.palette.grey.cloudy,
+    borderTopWidth: StyleSheet.hairlineWidth,
+  },
   closeUnderMenu: {
     backgroundColor: theme.palette.primary.pale,
     paddingHorizontal: UI_SIZES.spacing.minor,
