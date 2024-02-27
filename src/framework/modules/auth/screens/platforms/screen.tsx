@@ -2,6 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
+import { StatusBar } from '~/framework/components/status-bar';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/router-main-account';
 import AuthPlatformGridScreen from '~/framework/modules/auth/templates/platform-grid';
@@ -22,5 +23,10 @@ export const computeNavBar = ({
 });
 
 export default function AuthPlatformsScreen(props: AuthPlatformsScreenPrivateProps) {
-  return <AuthPlatformGridScreen {...props} getNextRoute={getLoginNextScreenNavAction} />;
+  return (
+    <>
+      <StatusBar type="light" />
+      <AuthPlatformGridScreen {...props} getNextRoute={getLoginNextScreenNavAction} />
+    </>
+  );
 }

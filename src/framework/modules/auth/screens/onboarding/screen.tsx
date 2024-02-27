@@ -2,6 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
+import { StatusBar } from '~/framework/components/status-bar';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getOnboardingNextScreen } from '~/framework/modules/auth/navigation/router-main-account';
 import OnboardingScreen from '~/framework/modules/auth/templates/onboarding';
@@ -30,11 +31,14 @@ const onboardingPics = [
 
 export default function AuthOnboardingScreen(props: AuthOnboardingScreenProps) {
   return (
-    <OnboardingScreen
-      {...props}
-      pictures={onboardingPics}
-      texts={I18n.getArray('user-onboarding-text')}
-      nextScreenAction={getOnboardingNextScreen()}
-    />
+    <>
+      <StatusBar type="light" />
+      <OnboardingScreen
+        {...props}
+        pictures={onboardingPics}
+        texts={I18n.getArray('user-onboarding-text')}
+        nextScreenAction={getOnboardingNextScreen()}
+      />
+    </>
   );
 }

@@ -76,7 +76,7 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
     const { navigation, texts, pictures, nextScreenAction } = this.props;
     const { buttonsWidth } = this.state;
     return (
-      <PageView style={styles.page} statusBar="light">
+      <PageView style={styles.page} statusBar="none">
         <View style={styles.mainContainer}>
           <HeadingLText style={styles.title} testID="onboarding-title">
             {this.showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}

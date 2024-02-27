@@ -30,7 +30,7 @@ export function AuthPlatformGridScreen(props: AuthPlatformGridScreenPrivateProps
   const { navigation, getNextRoute } = props;
   const onOpenItem = React.useCallback((item: Platform) => navigation.dispatch(getNextRoute(item)), [getNextRoute, navigation]);
   return (
-    <PageView>
+    <PageView statusBar="none">
       <GridList
         data={appConf.platforms}
         renderItem={({ item }) => (
