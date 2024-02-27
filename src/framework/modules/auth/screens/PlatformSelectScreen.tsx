@@ -11,8 +11,10 @@ import { TouchableSelectorPictureCard } from '~/framework/components/card/pictur
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText, SmallText } from '~/framework/components/text';
-import { AuthNavigationParams, authRouteNames, getLoginRouteName } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
+
+import { getLoginRouteName } from '../navigation/router-main-account';
 
 // Props definition -------------------------------------------------------------------------------
 
