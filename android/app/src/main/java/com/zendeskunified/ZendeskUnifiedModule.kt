@@ -1,30 +1,29 @@
 package com.zendeskunified
 
+import android.content.Intent
+import android.util.Log
+import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
-import android.content.Intent
-import android.util.Log
-import java.util.Locale
+import zendesk.answerbot.AnswerBot
+import zendesk.answerbot.AnswerBotEngine
 import zendesk.chat.Chat
-import zendesk.chat.ChatEngine
 import zendesk.chat.ChatConfiguration
+import zendesk.chat.ChatEngine
 import zendesk.chat.PreChatFormFieldStatus
+import zendesk.classic.messaging.MessagingActivity
 import zendesk.core.AnonymousIdentity
 import zendesk.core.JwtIdentity
 import zendesk.core.Zendesk
-import zendesk.support.Support
 import zendesk.support.CustomField
+import zendesk.support.Support
 import zendesk.support.guide.HelpCenterActivity
 import zendesk.support.guide.ViewArticleActivity
 import zendesk.support.request.RequestActivity
 import zendesk.support.requestlist.RequestListActivity
-import zendesk.classic.messaging.MessagingActivity
-import zendesk.answerbot.AnswerBotEngine
-import zendesk.answerbot.AnswerBot
+import java.util.Locale
 
 class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
@@ -105,15 +104,17 @@ class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
     options: ReadableMap,
     promise: Promise
   ) {
-    val labels = options.getArray("labels")
+    val labels = options.getArray("labels")?.toArrayList()?.toList() as List<String>
     val groupType = options?.getString("groupType")
-    val groupIds = options?.getArray("groupIds")
+    var groupIds = (options?.getArray("groupIds")?.toArrayList()?.toList() as List<Double>)?.map {it.toLong()}
     val showContactOptions = options?.getBoolean("showContactOptions")
 
+    if (groupIds == null) groupIds = listOf<Long>()
+
     openHelpCenter(
-      labels = labels?.toArrayList() as List<String>,
+      labels,
       groupType,
-      groupIds = groupIds?.toArrayList() as List<Long>,
+      groupIds,
       showContactOptions
     )
   }
@@ -253,6 +254,8 @@ class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
   private fun openHelpCenter(labels: List<String>, groupType: String?, groupIds: List<Long>, showContactOptions: Boolean?) {
     val helpCenterConfig = HelpCenterActivity.builder()
 
+    val articleConfig = ViewArticleActivity.builder()
+
     if (labels.isNotEmpty()) {
       helpCenterConfig.withLabelNames(labels)
     }
@@ -266,11 +269,12 @@ class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
     }
 
     if (showContactOptions != null) {
+      articleConfig.withContactUsButtonVisible(showContactOptions)
       helpCenterConfig.withContactUsButtonVisible(showContactOptions)
       helpCenterConfig.withShowConversationsMenuButton(showContactOptions)
     }
 
-    val intent: Intent = helpCenterConfig.intent(context)
+    val intent: Intent = helpCenterConfig.intent(context, articleConfig.config())
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
 
     context.startActivity(intent)
