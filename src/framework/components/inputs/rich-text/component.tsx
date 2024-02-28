@@ -1,9 +1,15 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import * as React from 'react';
-import { Animated, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
+import DefaultButton from '~/framework/components/buttons/default';
+import { UI_SIZES } from '~/framework/components/constants';
+import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
+import { NamedSVG } from '~/framework/components/picture';
+import { BodyText } from '~/framework/components/text';
 
 import RichEditor from './editor/RichEditor';
 import styles from './styles';
@@ -16,6 +22,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const scrollRef = React.useRef<ScrollView>(null);
   const opacityToolbar = React.useRef(new Animated.Value(0)).current;
   const transformToolbar = React.useRef(new Animated.Value(90)).current;
+  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
 
   const handleBlur = React.useCallback(() => {
     Animated.timing(opacityToolbar, {
@@ -56,10 +63,46 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     }).start();
   }, [opacityToolbar, transformToolbar]);
 
+  const showBottomSheet = () => {
+    bottomSheetModalRef.current?.present();
+  };
+
+  const renderBottomSheet = () => {
+    return (
+      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={() => {}}>
+        <DefaultButton
+          iconLeft="ui-image"
+          text={I18n.get('pickfile-image')}
+          contentColor={theme.palette.complementary.green.regular}
+          disabled
+        />
+        <TouchableOpacity onPress={() => {}}>
+          <NamedSVG
+            height={UI_SIZES.elements.icon.default}
+            width={UI_SIZES.elements.icon.default}
+            name="ui-camera"
+            fill={theme.palette.grey.black}
+          />
+          <BodyText>{I18n.get('pickfile-take')}</BodyText>
+        </TouchableOpacity>
+        <View />
+        <TouchableOpacity onPress={() => {}}>
+          <NamedSVG
+            height={UI_SIZES.elements.icon.default}
+            width={UI_SIZES.elements.icon.default}
+            name="ui-smartphone"
+            fill={theme.palette.grey.black}
+          />
+          <BodyText>{I18n.get('pickfile-pick')}</BodyText>
+        </TouchableOpacity>
+      </BottomSheetModal>
+    );
+  };
+
   const renderToolbar = () => {
     return (
       <Animated.View style={{ transform: [{ translateY: transformToolbar }], opacity: opacityToolbar, marginTop: -45 }}>
-        <RichToolbar editor={richText} />
+        <RichToolbar editor={richText} showBottomSheet={showBottomSheet} />
       </Animated.View>
     );
   };
@@ -94,6 +137,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             />
           </ScrollView>
           {renderToolbar()}
+          {renderBottomSheet()}
         </KeyboardAvoidingView>
       </PageView>
     );

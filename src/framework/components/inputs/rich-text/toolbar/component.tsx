@@ -239,7 +239,7 @@ export default class RichToolbar extends Component {
                 <RichToolbarCustomItem
                   icon="ui-image"
                   fill={theme.palette.complementary.green.regular}
-                  action={() => console.log('show bottomsheet add image')}
+                  action={() => this.props.showBottomSheet()}
                 />,
                 <RichToolbarCustomItem icon="ui-text-options" action={this.startAnimation} />,
               ]}
