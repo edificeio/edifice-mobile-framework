@@ -11,13 +11,13 @@ import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/sc
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
-import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/onboarding';
 import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/onboarding-add-account';
+import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/onboarding-main-account';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
 import { Platform } from '~/framework/util/appConf';
 
 import type { AuthDiscoveryClassScreenNavParams } from '../screens/discovery-class';
-import type { AuthPlatformsScreenNavParams } from '../screens/platforms';
+import type { AuthPlatformsScreenNavParams } from '../screens/platforms-main-account';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
