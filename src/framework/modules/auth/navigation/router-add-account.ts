@@ -1,9 +1,27 @@
-import { CommonActions, StackActionType } from '@react-navigation/native';
+import { CommonActions, NavigationState, PartialState, StackActionType } from '@react-navigation/native';
 
-import { authRouteNames, getLoginRouteName, getNavActionForRedirect, simulateNavAction } from '~/framework/modules/auth/navigation';
+import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
+
+import { getLoginRouteName, getNavActionForRedirect } from './router-main-account';
+
+export const getAddAccountLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {
+  return platform.wayf
+    ? { name: authRouteNames.addAccountLoginWayf, params: { platform } }
+    : { name: authRouteNames.addAccountLoginCredentials, params: { platform } };
+};
+
+export const getAddAccountLoginNextScreenNavAction = (platform: Platform) => {
+  return CommonActions.navigate(getAddAccountLoginNextScreen(platform));
+};
+
+export const getAddAccountOnboardingNextScreen = () => {
+  return appConf.hasMultiplePlatform
+    ? CommonActions.navigate({ name: authRouteNames.addAccountPlatforms })
+    : CommonActions.navigate(getAddAccountLoginNextScreen(appConf.platforms[0]));
+};
 
 export const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
   const routes = [] as RouteStack;

@@ -55,6 +55,20 @@ async function useScaffoldScreen(template, vars) {
   );
 }
 
+async function useScaffoldTemplate(template, vars) {
+  const varsArray = Object.entries(vars).map(([k, v]) => `${k}=${v}`);
+  await cmd(
+    'node_modules/scaffolder-cli/dist/index.js',
+    'create',
+    template,
+    '--path-prefix',
+    `/src/framework/modules/${vars.moduleName}/templates`,
+    '-f',
+    vars.screenName,
+    ...varsArray,
+  );
+}
+
 function moduleCommandYargs(command, help) {
   return [
     `${command} <module-name>`,
@@ -112,6 +126,34 @@ function screenCommandYargs(command, help) {
   ];
 }
 
+function templateCommandYargs(command, help) {
+  return [
+    `${command} <module-name> <screen-name>`,
+    help,
+    yargs => {
+      yargs.positional('moduleName', {
+        type: 'string',
+        describe: 'what module name the new screen belongs to. Use kebab-case.',
+      });
+      yargs.positional('screenName', {
+        type: 'string',
+        describe: 'what module screen to create. Use kebab-case.',
+      });
+    },
+    async function (argv) {
+      try {
+        await useScaffoldTemplate(command, { moduleName: argv.moduleName, screenName: argv.screenName });
+
+        console.info(
+          `\x1b[32mTemplate \`${argv.screenName}\` created in module \`${argv.moduleName}\`. You have to add it manually to a module screen to make it visible in the app. \x1b[0m`,
+        );
+      } catch {
+        console.error(`\x1b[1m\x1b[31mAn error has occured. See the error message above. \n\x1b[0m`);
+      }
+    },
+  ];
+}
+
 /**
  * Main script.
  * Parse command args & execute
@@ -138,6 +180,10 @@ const main = () => {
     .command(...screenCommandYargs('screen', 'Generates screen <screen-name> in module <module-name>.'))
     .command(
       ...screenCommandYargs('screen-redux', 'Generates screen <screen-name> in module <module-name> with redux integration.'),
+    )
+    .command(...templateCommandYargs('template', 'Generates template <screen-name> in module <module-name>.'))
+    .command(
+      ...templateCommandYargs('template-redux', 'Generates template <screen-name> in module <module-name> with redux integration.'),
     )
     .help()
     .demandCommand().argv;
