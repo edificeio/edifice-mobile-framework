@@ -19,7 +19,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture';
 import { SmallActionText, SmallText, TextSizeStyle } from '~/framework/components/text';
-import { AuthLoggedAccount } from '~/framework/modules//auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';

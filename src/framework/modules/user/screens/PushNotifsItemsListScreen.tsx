@@ -19,7 +19,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { AuthLoggedAccount } from '~/framework/modules//auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { updatePushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
