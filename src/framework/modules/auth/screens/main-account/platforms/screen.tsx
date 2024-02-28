@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { StatusBar } from '~/framework/components/status-bar';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/router-main-account';
+import { getLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/main-account/router';
 import AuthPlatformGridScreen from '~/framework/modules/auth/templates/platform-grid';
 import { navBarOptions } from '~/framework/navigation/navBar';
 

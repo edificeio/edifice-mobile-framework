@@ -10,25 +10,25 @@ import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthAccountSelectionScreen, {
-  computeNavBar as authAccountSelectionNavBar,
+    computeNavBar as authAccountSelectionNavBar,
 } from '~/framework/modules/auth/screens/account-selection';
 import AuthAddAccountModalScreen, {
-  computeNavBar as addAccountModalNavBar,
+    computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/add-account-modal';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
 import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
+import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/main-account/onboarding';
+import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/main-account/platforms';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
-import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding-main-account';
-import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/platforms-main-account';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import appConf from '~/framework/util/appConf';
 
-import { AuthNavigationParams, authRouteNames } from '.';
-import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../screens/login-credentials-main-account';
+import { AuthNavigationParams, authRouteNames } from '..';
+import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../../screens/main-account/login-credentials';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 

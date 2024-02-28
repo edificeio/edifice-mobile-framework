@@ -5,7 +5,7 @@ import { IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-import { getLoginRouteName, getNavActionForRedirect } from './router-main-account';
+import { getLoginRouteName, getNavActionForRedirect } from '../main-account/router';
 
 export const getAddAccountLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {
   return platform.wayf

@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import * as React from 'react';
 
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getAddAccountLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/router-add-account';
+import { getAddAccountLoginNextScreenNavAction } from '~/framework/modules/auth/navigation/add-account/router';
 import AuthPlatformGridScreen from '~/framework/modules/auth/templates/platform-grid';
 import { navBarOptions } from '~/framework/navigation/navBar';
 

@@ -3,9 +3,9 @@ import { CommonActions, NavigationState, PartialState, StackActionType, StackAct
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-import { authRouteNames, simulateNavAction } from '.';
-import { AuthPendingRedirection, AuthRequirement } from '../model';
-import { IAuthState, getPlatform, getSession } from '../reducer';
+import { authRouteNames, simulateNavAction } from '..';
+import { AuthPendingRedirection, AuthRequirement } from '../../model';
+import { IAuthState, getPlatform, getSession } from '../../reducer';
 
 /** @deprecated */
 export const getLoginRouteName = (platform?: Platform) => {

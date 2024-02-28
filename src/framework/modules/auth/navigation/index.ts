@@ -6,18 +6,18 @@ import { CommonActions, ParamListBase, Router, StackActionType, StackNavigationS
 import { AuthCredentials, ForgotMode } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
+import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/add-account/onboarding';
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/add-account-modal';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
-import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/onboarding-add-account';
-import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/onboarding-main-account';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
 import { Platform } from '~/framework/util/appConf';
 
 import type { AuthDiscoveryClassScreenNavParams } from '../screens/discovery-class';
-import type { AuthPlatformsScreenNavParams } from '../screens/platforms-main-account';
+import type { AuthPlatformsScreenNavParams } from '../screens/main-account/platforms';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {

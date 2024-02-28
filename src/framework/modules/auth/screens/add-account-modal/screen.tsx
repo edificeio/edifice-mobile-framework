@@ -4,8 +4,8 @@ import { useSelector } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import useAuthNavigation from '~/framework/modules/auth/navigation/navigator-add-account';
-import { getAddAccountNavigationState } from '~/framework/modules/auth/navigation/router-add-account';
+import useAuthNavigation from '~/framework/modules/auth/navigation/add-account/navigator';
+import { getAddAccountNavigationState } from '~/framework/modules/auth/navigation/add-account/router';
 import { getState } from '~/framework/modules/auth/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';

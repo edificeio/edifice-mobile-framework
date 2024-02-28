@@ -8,15 +8,15 @@ import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen'
 import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
-import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/onboarding-add-account';
+import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/add-account/onboarding';
 import AuthPlatformsAddAccountScreen, {
-  computeNavBar as platformsAddAccountNavBar,
-} from '~/framework/modules/auth/screens/platforms-add-account';
+    computeNavBar as platformsAddAccountNavBar,
+} from '~/framework/modules/auth/screens/add-account/platforms';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
-import { AuthNavigationParams, authRouteNames } from '.';
-import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../screens/login-credentials-add-account';
+import { AuthNavigationParams, authRouteNames } from '..';
+import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../../screens/add-account/login-credentials';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 
