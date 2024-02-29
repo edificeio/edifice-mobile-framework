@@ -32,13 +32,15 @@ namespace LocalFile {
   export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
 
-const resize = async pic => {
+const compress = async pic => {
   if (!pic.uri) return;
+  if (pic.type === 'image/gif') return pic;
   try {
     let result;
-    await ImageResizer.createResizedImage(pic.uri, pic.width / 2, pic.height / 2, 'JPEG', 80, 0, undefined, false, {
+    const maxDimension = 1080;
+    await ImageResizer.createResizedImage(pic.uri, maxDimension, maxDimension, 'JPEG', 80, 0, undefined, false, {
       mode: 'contain',
-      onlyScaleDown: false,
+      onlyScaleDown: true,
     })
       .then(response => {
         result = {
@@ -128,7 +130,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            pickedFiles = await Promise.all(res.assets.map(resize));
+            pickedFiles = await Promise.all(res.assets.map(compress));
             resolve();
           }
         };
@@ -160,7 +162,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            pickedFiles.push(await resize(res.assets[0]));
+            pickedFiles.push(await compress(res.assets[0]));
             resolve();
           }
         };
