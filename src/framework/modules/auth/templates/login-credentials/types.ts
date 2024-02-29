@@ -11,7 +11,9 @@ export enum LoginState {
   DONE = 'DONE',
 }
 
-export interface LoginCredentialsScreenProps {}
+export interface LoginCredentialsScreenProps {
+  goToForgotRoute: (platform: Platform) => void;
+}
 
 export interface LoginCredentialsScreenNavParams {
   platform: Platform;
