@@ -1,23 +1,23 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { View } from 'react-native';
-import { I18n } from '~/app/i18n';
 
+import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { PageView } from '~/framework/components/page';
 import { HeadingMText, SmallText } from '~/framework/components/text';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
+
 import styles from './styles';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.discoveryClass>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.discoveryClass>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,

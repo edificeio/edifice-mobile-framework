@@ -3,7 +3,7 @@ import type { Moment } from 'moment';
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 
-import type { IAuthorizedAction, UserPrivateData } from './service';
+import type { IAuthorizedAction, UserPrivateData } from '../service';
 
 /**
  * Every profile type for accounts. Each account is of one type only.

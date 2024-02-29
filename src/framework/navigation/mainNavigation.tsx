@@ -25,7 +25,7 @@ import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { IconProps, Picture, PictureProps } from '~/framework/components/picture';
-import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
+import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
 import { getIsXmasActive } from '~/framework/modules/user/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import Feedback from '~/framework/util/feedback/feedback';

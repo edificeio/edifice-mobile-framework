@@ -19,7 +19,7 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { manualLogoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
 import { LegalUrls } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformLegalUrls } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -36,7 +36,7 @@ export interface IRevalidateTermsScreenEventProps {
 
 export type IRevalidateTermsScreenProps = IRevalidateTermsScreenEventProps &
   IRevalidateTermsScreenDataProps &
-  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.revalidateTerms>;
+  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.revalidateTerms>;
 
 // COMPONENT ======================================================================================
 

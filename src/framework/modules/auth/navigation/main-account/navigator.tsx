@@ -7,53 +7,50 @@ import { I18n } from '~/app/i18n';
 import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
 import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
-import PlatformSelectScreen from '~/framework/modules/auth/screens/PlatformSelectScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthAccountSelectionScreen, {
   computeNavBar as authAccountSelectionNavBar,
 } from '~/framework/modules/auth/screens/account-selection';
-import AuthAddAccountModalScreen, {
-  computeNavBar as addAccountModalNavBar,
-} from '~/framework/modules/auth/screens/add-account-modal';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
 import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
-import LoginCredentialsScreen, {
-  computeNavBar as authLoginCredentialsNavBar,
-} from '~/framework/modules/auth/screens/login-credentials';
+import AuthAddAccountModalScreen, {
+  computeNavBar as addAccountModalNavBar,
+} from '~/framework/modules/auth/screens/main-account/add-account-modal';
+import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/main-account/onboarding';
+import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/main-account/platforms';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
-import OnboardingScreen from '~/framework/modules/auth/screens/onboarding';
-import AuthOnboardingAddAccountScreen, {
-  computeNavBar as onboardingAddAccountNavBar,
-} from '~/framework/modules/auth/screens/onboarding-add-account';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
-
 import appConf from '~/framework/util/appConf';
-import { IAuthNavigationParams, authRouteNames } from '.';
 
-const Stack = getTypedRootStack<IAuthNavigationParams>();
+import { AuthNavigationParams, authRouteNames } from '..';
+import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../../screens/main-account/login-credentials';
+
+const Stack = getTypedRootStack<AuthNavigationParams>();
+
+// Auth Stack used when user is logged out, or managing the current logged account.
 
 export default function () {
   return (
     <Stack.Group screenOptions={navBarOptions}>
-      <Stack.Group screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={authRouteNames.onboarding} component={OnboardingScreen} />
-        <Stack.Screen name={authRouteNames.platforms} component={PlatformSelectScreen} />
-      </Stack.Group>
+      <Stack.Screen name={authRouteNames.onboarding} component={AuthOnboardingScreen} options={onboardingNavBar} />
+      <Stack.Screen name={authRouteNames.platforms} component={AuthPlatformsScreen} options={platformsNavBar} />
+      <Stack.Screen
+        name={authRouteNames.loginCredentials}
+        component={AuthLoginCredentialsScreen}
+        options={loginCredentialsNavBar}
+      />
+
       <Stack.Screen
         name={authRouteNames.accountSelection}
         component={AuthAccountSelectionScreen}
         options={authAccountSelectionNavBar}
       />
-      <Stack.Screen
-        name={authRouteNames.loginCredentials}
-        component={LoginCredentialsScreen}
-        options={authLoginCredentialsNavBar}
-      />
+
       <Stack.Screen
         name={authRouteNames.loginWayf}
         component={LoginWayfScreen}
@@ -129,12 +126,6 @@ export default function () {
           initialParams={undefined}
         />
       </Stack.Group>
-      <Stack.Screen
-        name={authRouteNames.onboardingAddAccount}
-        component={AuthOnboardingAddAccountScreen}
-        options={onboardingAddAccountNavBar}
-        initialParams={undefined}
-      />
       {appConf.onboarding.showDiscoveryClass ? (
         <Stack.Screen
           name={authRouteNames.discoveryClass}

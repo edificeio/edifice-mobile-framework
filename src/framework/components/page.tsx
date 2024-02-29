@@ -19,7 +19,6 @@ import {
   SafeAreaView,
   ScrollView,
   ScrollViewProps,
-  StatusBar,
   StyleSheet,
   View,
   ViewProps,
@@ -32,12 +31,13 @@ import DEPRECATED_ConnectionTrackingBar from '~/ui/ConnectionTrackingBar';
 
 import SnowFlakes from './SnowFlakes';
 import { UI_SIZES } from './constants';
+import { StatusBar } from './status-bar';
 import { ToastHandler } from './toast/component';
 
 export interface PageViewProps extends ViewProps {
   gutters?: true | 'both' | 'vertical' | 'horizontal' | 'none';
   showNetworkBar?: boolean;
-  statusBar?: 'primary' | 'light' | 'dark';
+  statusBar?: 'primary' | 'light' | 'dark' | 'none';
   showToast?: boolean;
 }
 
@@ -60,7 +60,7 @@ export const PageViewStyle = styled.View({
   backgroundColor: theme.ui.background.page,
 });
 export const PageView = (props: PageViewProps) => {
-  const { children, gutters, showNetworkBar = true, statusBar = 'primary', showToast = true, ...viewProps } = props;
+  const { children, gutters, showNetworkBar = true, statusBar, showToast = true, ...viewProps } = props;
   const route = useRoute();
 
   const gutterStyle = React.useMemo(
@@ -72,23 +72,7 @@ export const PageView = (props: PageViewProps) => {
   );
 
   const statusBarComponent = React.useMemo(
-    () =>
-      Platform.select(
-        statusBar === 'primary'
-          ? {
-              ios: <StatusBar barStyle="light-content" />,
-              android: <StatusBar backgroundColor={theme.palette.primary.regular} barStyle="light-content" />,
-            }
-          : statusBar === 'light'
-            ? {
-                ios: <StatusBar barStyle="dark-content" />,
-                android: <StatusBar backgroundColor={theme.ui.background.page} barStyle="dark-content" />,
-              }
-            : /* statusBar === 'dark' */ {
-                ios: <StatusBar barStyle="light-content" />,
-                android: <StatusBar backgroundColor={theme.palette.grey.black} barStyle="light-content" />,
-              },
-      ),
+    () => (statusBar !== 'none' ? <StatusBar type={statusBar ?? 'primary'} /> : null),
     [statusBar],
   );
 
