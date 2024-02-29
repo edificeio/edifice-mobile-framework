@@ -420,7 +420,7 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
   return React.useMemo(() => {
     return (
       <SmallBoldText style={styles.version}>
-        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform}`}
+        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
       </SmallBoldText>
     );
   }, [currentPlatform]);
@@ -454,6 +454,9 @@ function useVersionFeature(setAreDetailsVisible, scrollViewRef) {
 
 // All these values are compile-time constants. So we decalre them as function statics.
 useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
+useVersionDetailsFeature.deviceModel = DeviceInfo.getModel();
+useVersionDetailsFeature.os = DeviceInfo.getSystemName();
+useVersionDetailsFeature.osVersion = DeviceInfo.getSystemVersion();
 useVersionDetailsFeature.versionType = RNConfigReader.BundleVersionType as string;
 useVersionDetailsFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
