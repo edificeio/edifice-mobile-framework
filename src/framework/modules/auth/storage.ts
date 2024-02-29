@@ -55,26 +55,7 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
 };
 
 /**
- * Save in storage a single account, replacing the others already present.
- * @param account
- * @param showOnboarding
- */
-export const writeSingleAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
-  const savedAccount = getSerializedLoggedInAccountInfo(account);
-  const savedAccounts: Record<string, AuthSavedAccount> = {
-    [account.user.id]: savedAccount,
-  };
-  const startup: AuthStorageData['startup'] = {
-    platform: account.platform.name,
-    account: account.user.id,
-  };
-  authStorage.setJSON('accounts', savedAccounts);
-  authStorage.setJSON('startup', startup);
-  authStorage.set('show-onboarding', showOnboarding);
-};
-
-/**
- * Save in storage a single account, replacing the others already present.
+ * Save in storage a new account.
  * @param account
  * @param showOnboarding
  */

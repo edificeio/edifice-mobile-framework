@@ -55,7 +55,6 @@ import {
   readShowOnbording,
   writeLogout,
   writeNewAccount,
-  writeSingleAccount,
 } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
@@ -315,7 +314,7 @@ const loginCredentialsAction =
       activation: typeof actions.redirectActivation;
       passwordRenew: typeof actions.redirectPasswordRenew;
     },
-    storageFn: typeof writeSingleAccount,
+    storageFn: typeof writeNewAccount,
     platform: Platform,
     credentials: AuthCredentials,
     key?: number,
@@ -397,7 +396,7 @@ const loginFederationAction =
       activation: typeof actions.redirectActivation;
       passwordRenew: typeof actions.redirectPasswordRenew;
     },
-    storageFn: typeof writeSingleAccount,
+    storageFn: typeof writeNewAccount,
     platform: Platform,
     credentials: AuthFederationCredentials,
     key?: number,
@@ -428,7 +427,7 @@ export const loginFederationActionMainAccount = (platform: Platform, credentials
       activation: actions.redirectActivation,
       passwordRenew: actions.redirectPasswordRenew,
     },
-    writeSingleAccount,
+    writeNewAccount,
     platform,
     credentials,
     key,
@@ -471,7 +470,7 @@ export const restoreAction =
         account.user.loginUsed,
         dispatch,
       );
-      writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+      writeNewAccount(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
       console.warn(`[Auth] Restore error :`, e);
