@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Platform, View } from 'react-native';
 import deviceInfoModule from 'react-native-device-info';
 import Swiper from 'react-native-swiper';
-import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import { getButtonWidth } from '~/framework/components/buttons/default';
@@ -10,21 +9,14 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { PageView } from '~/framework/components/page';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
-import { authRouteNames, navigateAfterOnboarding } from '~/framework/modules/auth/navigation';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import appConf from '~/framework/util/appConf';
 import { Image } from '~/framework/util/media';
 
 import styles from './styles';
-import { IOnboardingScreenProps, IOnboardingScreenState } from './types';
+import { AuthOnboardingScreenPrivateProps, AuthOnboardingScreenState } from './types';
 
-const renderOnboardingPics = {
-  'onboarding-0': require('ASSETS/images/onboarding/onboarding_0.png'),
-  'onboarding-1': require('ASSETS/images/onboarding/onboarding_1.png'),
-  'onboarding-2': require('ASSETS/images/onboarding/onboarding_2.png'),
-  'onboarding-3': require('ASSETS/images/onboarding/onboarding_3.png'),
-};
-
-class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnboardingScreenState> {
+class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivateProps, AuthOnboardingScreenState> {
   state = {
     buttonsWidth: 0,
   };
@@ -34,8 +26,6 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
   showDiscoveryClass = appConf.onboarding.showDiscoveryClass;
 
   showAppName = appConf.onboarding.showAppName;
-
-  texts = I18n.getArray('user-onboarding-text');
 
   async componentDidMount() {
     // Calculate button(s) width(s)
@@ -79,21 +69,22 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
           testID="onboarding-discover"
         />
       );
+    return null;
   };
 
   render() {
-    const { navigation } = this.props;
+    const { navigation, texts, pictures, nextScreenAction } = this.props;
     const { buttonsWidth } = this.state;
     return (
-      <PageView style={styles.page} statusBar="light">
+      <PageView style={styles.page} statusBar="none">
         <View style={styles.mainContainer}>
           <HeadingLText style={styles.title} testID="onboarding-title">
             {this.showAppName ? deviceInfoModule.getApplicationName().toUpperCase() : null}
           </HeadingLText>
           <Swiper autoplay autoplayTimeout={5} dotStyle={styles.swiper} activeDotStyle={[styles.swiper, styles.swiperActive]}>
-            {this.texts.map((onboardingText, index) => (
+            {texts.map((onboardingText, index) => (
               <View key={index} style={styles.swiperItem}>
-                <Image source={renderOnboardingPics[`onboarding-${index}`]} style={styles.swiperItemImage} />
+                <Image source={pictures[index]} style={styles.swiperItemImage} />
 
                 <HeadingSText style={styles.swiperItemText}>{onboardingText}</HeadingSText>
               </View>
@@ -104,12 +95,12 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
           <PrimaryButton
             text={I18n.get('user-onboarding-joinmynetwork')}
             action={() => {
-              navigateAfterOnboarding(navigation);
+              navigation.dispatch(nextScreenAction);
             }}
             style={{ width: buttonsWidth }}
             testID="onboarding-join"
           />
-          {/* Note: The discover button has to be hidden on iOs (only for NEO), since Apple doesn't approve
+          {/* Note: This button has to be hidden on iOs (only for ONE/NEO), since Apple doesn't approve
             when the url directs the user to external mechanisms for purchase and subscription to the app. */}
           {this.renderSecondaryButton()}
         </View>
@@ -118,5 +109,5 @@ class OnboardingScreen extends React.PureComponent<IOnboardingScreenProps, IOnbo
   }
 }
 
-const OnboardingScreenConnected = connect()(OnboardingScreen);
+const OnboardingScreenConnected = OnboardingScreen;
 export default OnboardingScreenConnected;

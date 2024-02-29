@@ -214,6 +214,7 @@ const imports = {
   'homework-assistance-home': async () => import('ASSETS/images/homework-assistance-home.svg'),
   'image-not-found': async () => import('ASSETS/images/empty-screen/image-not-found.svg'),
   'form-default': async () => import('ASSETS/images/form-default.svg'),
+  'multi-account': async () => import('ASSETS/images/multi-account.svg'),
   'pictos-answer': async () => import('ASSETS/images/pictos/answer.svg'),
   'pictos-arrow-right': async () => import('ASSETS/images/pictos/arrow-right.svg'),
   'pictos-close': async () => import('ASSETS/images/pictos/close.svg'),

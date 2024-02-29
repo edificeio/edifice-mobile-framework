@@ -18,7 +18,7 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthErrorAction, loginFederationAction } from '~/framework/modules/auth/actions';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
@@ -43,7 +43,7 @@ interface WAYFScreenDispatchProps {
 
 export interface IWayfScreenProps
   extends WAYFScreenDispatchProps,
-    NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.wayf> {
+    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.wayf> {
   auth: IAuthState;
   dispatch: ThunkDispatch<any, any, any>;
 }

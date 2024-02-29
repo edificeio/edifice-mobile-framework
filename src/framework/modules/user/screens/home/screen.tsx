@@ -23,9 +23,9 @@ import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/componen
 import Toast from '~/framework/components/toast';
 import { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { AccountType, PlatformAuthContext } from '~/framework/modules/auth/model';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { userCanAddAccount } from '~/framework/modules/auth/model/business';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
-import { userCanAddAccount } from '~/framework/modules/auth/rights/business';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
@@ -319,7 +319,7 @@ function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], acco
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
   const canManageAccounts = userCanAddAccount(session);
-  const navigation = useNavigation<NavigationProp<UserNavigationParams & IAuthNavigationParams>>();
+  const navigation = useNavigation<NavigationProp<UserNavigationParams & AuthNavigationParams>>();
   const showAccountList = React.useCallback(() => {
     accountListRef.current?.present();
   }, [accountListRef]);

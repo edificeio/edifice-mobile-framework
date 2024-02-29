@@ -1,4 +1,3 @@
-import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
@@ -19,9 +18,8 @@ import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { navBarOptions } from '~/framework/navigation/navBar';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
@@ -29,19 +27,6 @@ import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
 import styles from './styles';
 import { LoginCredentialsScreenDispatchProps, LoginCredentialsScreenPrivateProps, LoginState } from './types';
-
-export const computeNavBar = ({
-  navigation,
-  route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.loginCredentials>): NativeStackNavigationOptions => ({
-  ...navBarOptions({
-    navigation,
-    route,
-    title: I18n.get('auth-login-title'),
-    titleTestID: 'login-title',
-    backButtonTestID: 'login-back',
-  }),
-});
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { route, navigation, error, handleConsumeError, tryLogin } = props;
