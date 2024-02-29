@@ -118,11 +118,3 @@ export const writeLogout = (account: AuthLoggedAccount) => {
   const newStartup = { platform: authStorage.getJSON('startup')?.platform, account: account.user.id };
   authStorage.setJSON('startup', newStartup);
 };
-
-/** read old auth values in storage */
-// export const getLegagyAuthInformation = () => {
-//   const currentPlatform = storage.global.getString('currentPlatform');
-//   const tokenStr = storage.global.getString('token');
-//   const token = tokenStr ? (JSON.parse(tokenStr) as IOAuthToken) : undefined;
-//   return { currentPlatform, token };
-// };
