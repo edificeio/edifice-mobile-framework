@@ -54,26 +54,11 @@ import {
   readSavedStartup,
   readShowOnbording,
   writeLogout,
+  writeNewAccount,
   writeSingleAccount,
 } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
-
-// interface ILoginActionResultActivation {
-//   action: 'activate';
-//   credentials: IAuthCredentials;
-//   rememberMe?: boolean;
-//   context: IAuthContext;
-// }
-// interface ILoginActionResultPartialScenario {
-//   action: AuthRequirement;
-//   defaultMobile?: string;
-//   defaultEmail?: string;
-//   credentials?: IAuthCredentials;
-//   rememberMe?: boolean;
-//   context: IAuthContext;
-// }
-// export type ILoginResult = ILoginActionResultActivation | ILoginActionResultPartialScenario | void;
 
 /**
  * Init the auth state with walues read from the storage.
@@ -288,7 +273,15 @@ export const loginSteps = {
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
-const performLogin = async (platform: Platform, loginUsed: string | undefined, dispatch: AuthDispatch) => {
+const performLogin = async (
+  redux: {
+    success: typeof actions.login;
+    requirement: typeof actions.loginRequirement;
+  },
+  platform: Platform,
+  loginUsed: string | undefined,
+  dispatch: AuthDispatch,
+) => {
   const requirement = await loginSteps.getRequirement(platform);
   const user = await loginSteps.getUserData(platform, requirement);
   const accountInfo = await loginSteps.finalizeSession(platform, loginUsed, user.infos, user.publicInfos);
@@ -300,9 +293,9 @@ const performLogin = async (platform: Platform, loginUsed: string | undefined, d
     if (requirementsThatNeedLegalUrls.includes(requirement)) {
       await dispatch(loadPlatformLegalUrlsAction(platform));
     }
-    dispatch(actions.loginRequirement(accountInfo.user.id, accountInfo, requirement, context));
+    dispatch(redux.requirement(accountInfo.user.id, accountInfo, requirement, context));
   } else {
-    dispatch(actions.login(accountInfo.user.id, accountInfo));
+    dispatch(redux.success(accountInfo.user.id, accountInfo));
   }
   return accountInfo;
 };
@@ -314,24 +307,35 @@ const performLogin = async (platform: Platform, loginUsed: string | undefined, d
  * @returns
  * @throws
  */
-export const loginCredentialsAction =
-  (platform: Platform, credentials: AuthCredentials, key?: number) =>
+const loginCredentialsAction =
+  (
+    redux: {
+      success: typeof actions.login;
+      requirement: typeof actions.loginRequirement;
+      activation: typeof actions.redirectActivation;
+      passwordRenew: typeof actions.redirectPasswordRenew;
+    },
+    storageFn: typeof writeSingleAccount,
+    platform: Platform,
+    credentials: AuthCredentials,
+    key?: number,
+  ) =>
   async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       // Nested try/catch block to handle CREDENTIALS_MISMATCH errors caused by activation/renew code use.
       try {
         await loginSteps.getNewToken(platform, credentials);
-        const session = await performLogin(platform, credentials.username, dispatch);
-        writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+        const session = await performLogin(redux, platform, credentials.username, dispatch);
+        storageFn(session, getAuthState(getState()).showOnboarding);
         return session;
       } catch (ee) {
         if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH) {
           switch (await loginSteps.checkActivationAndRenew(platform, credentials)) {
             case AuthPendingRedirection.ACTIVATE:
-              dispatch(actions.redirectActivation(platform.name, credentials.username, credentials.password));
+              dispatch(redux.activation(platform.name, credentials.username, credentials.password));
               return AuthPendingRedirection.ACTIVATE;
             case AuthPendingRedirection.RENEW_PASSWORD:
-              dispatch(actions.redirectPasswordRenew(platform.name, credentials.username, credentials.password));
+              dispatch(redux.passwordRenew(platform.name, credentials.username, credentials.password));
               return AuthPendingRedirection.RENEW_PASSWORD;
           }
         } else {
@@ -350,6 +354,34 @@ export const loginCredentialsAction =
     }
   };
 
+export const loginCredentialsActionMainAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
+  loginCredentialsAction(
+    {
+      success: actions.login,
+      requirement: actions.loginRequirement,
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+    },
+    writeSingleAccount,
+    platform,
+    credentials,
+    key,
+  );
+
+export const loginCredentialsActionAddAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
+  loginCredentialsAction(
+    {
+      success: actions.addAccount,
+      requirement: actions.addAccountRequirement,
+      activation: actions.addAccountActivation,
+      passwordRenew: actions.addAccountPasswordRenew,
+    },
+    writeNewAccount,
+    platform,
+    credentials,
+    key,
+  );
+
 /**
  * Manual login action with Federation.
  * @param platform platform info to create the session on.
@@ -357,13 +389,24 @@ export const loginCredentialsAction =
  * @returns
  * @throws
  */
-export const loginFederationAction =
-  (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
+const loginFederationAction =
+  (
+    redux: {
+      success: typeof actions.login;
+      requirement: typeof actions.loginRequirement;
+      activation: typeof actions.redirectActivation;
+      passwordRenew: typeof actions.redirectPasswordRenew;
+    },
+    storageFn: typeof writeSingleAccount,
+    platform: Platform,
+    credentials: AuthFederationCredentials,
+    key?: number,
+  ) =>
   async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       await loginSteps.getNewToken(platform, credentials);
-      const session = await performLogin(platform, undefined, dispatch);
-      writeSingleAccount(session, getAuthState(getState()).showOnboarding);
+      const session = await performLogin(redux, platform, undefined, dispatch);
+      storageFn(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
       console.warn(`[Auth] Login federation error :`, e);
@@ -376,6 +419,34 @@ export const loginFederationAction =
       throw e;
     }
   };
+
+export const loginFederationActionMainAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
+  loginFederationAction(
+    {
+      success: actions.login,
+      requirement: actions.loginRequirement,
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+    },
+    writeSingleAccount,
+    platform,
+    credentials,
+    key,
+  );
+
+export const loginFederationActionAddAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
+  loginFederationAction(
+    {
+      success: actions.addAccount,
+      requirement: actions.addAccountRequirement,
+      activation: actions.addAccountActivation,
+      passwordRenew: actions.addAccountPasswordRenew,
+    },
+    writeNewAccount,
+    platform,
+    credentials,
+    key,
+  );
 
 /**
  * Automatic login action with given saved account information (and its serialized token).
@@ -391,7 +462,15 @@ export const restoreAction =
         throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
       }
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
-      const session = await performLogin(appConf.assertPlatformOfName(account.platform), account.user.loginUsed, dispatch);
+      const session = await performLogin(
+        {
+          success: actions.login,
+          requirement: actions.loginRequirement,
+        },
+        appConf.assertPlatformOfName(account.platform),
+        account.user.loginUsed,
+        dispatch,
+      );
       writeSingleAccount(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
@@ -458,10 +537,19 @@ export const activateAccountAction =
     try {
       await authService.activateAccount(platform, model);
       dispatch(
-        loginCredentialsAction(platform, {
-          username: model.login,
-          password: model.password,
-        }),
+        loginCredentialsAction(
+          {
+            success: actions.login,
+            requirement: actions.loginRequirement,
+            activation: actions.redirectActivation,
+            passwordRenew: actions.redirectPasswordRenew,
+          },
+          platform,
+          {
+            username: model.login,
+            password: model.password,
+          },
+        ),
       );
     } catch (e) {
       console.warn(e);
@@ -623,6 +711,17 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       username: p.login,
       password: p.newPassword,
     };
-    await dispatch(loginCredentialsAction(platform, credentials));
+    await dispatch(
+      loginCredentialsAction(
+        {
+          success: actions.login,
+          requirement: actions.loginRequirement,
+          activation: actions.redirectActivation,
+          passwordRenew: actions.redirectPasswordRenew,
+        },
+        platform,
+        credentials,
+      ),
+    );
   };
 }

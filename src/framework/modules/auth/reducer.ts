@@ -48,6 +48,7 @@ export interface IAuthState {
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
 
   pending?: AuthPendingRestore | AuthPendingActivation | AuthPendingPasswordRenew;
+  pendingAddAccount?: AuthPendingActivation | AuthPendingPasswordRenew;
 
   error?: {
     // No need to affiliate the error to a platform since the `key` contains the render ID on the screen
@@ -84,18 +85,10 @@ export const actionTypes = {
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
   redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
   profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
-
-  // sessionCreate: moduleConfig.namespaceActionType('SESSION_START'),
-  // sessionPartial: moduleConfig.namespaceActionType('SESSION_PARTIAL'),
-  // sessionRefresh: moduleConfig.namespaceActionType('SESSION_REFRESH'),
-  // sessionError: moduleConfig.namespaceActionType('SESSION_ERROR'),
-  // sessionErrorConsume: moduleConfig.namespaceActionType('SESSION_ERROR_CONSUME'),
-  // sessionEnd: moduleConfig.namespaceActionType('SESSION_END'),
-  // redirectAutoLogin: moduleConfig.namespaceActionType('REDIRECT_AUTO_LOGIN'),
-  // getLegalDocuments: moduleConfig.namespaceActionType('GET_LEGAL_DOCUMENTS'),
-  // profileUpdateRequest: moduleConfig.namespaceActionType('PROFILE_UPDATE_REQUEST'),
-  // profileUpdateSuccess: moduleConfig.namespaceActionType('PROFILE_UPDATE_SUCCESS'),
-  // profileUpdateError: moduleConfig.namespaceActionType('PROFILE_UPDATE_ERROR'),
+  addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
+  addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
+  addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
+  addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
 };
 
 export interface ActionPayloads {
@@ -118,18 +111,10 @@ export interface ActionPayloads {
   redirectActivation: { platformName: Platform['name']; login: string; code: string };
   redirectPasswordRenew: { platformName: Platform['name']; login: string; code: string };
   profileUpdate: { id: string; user: Partial<AuthLoggedAccount['user']> };
-
-  // sessionCreate: Pick<Required<IAuthState>, 'session'>;
-  // sessionPartial: Pick<Required<IAuthState>, 'session'>;
-  // sessionRefresh: Pick<Required<IAuthState>, 'session'>;
-  // sessionError: Pick<Required<IAuthState>, 'error'>;
-  // sessionErrorConsume: undefined;
-  // sessionEnd: undefined;
-  // redirectAutoLogin: Pick<Required<IAuthState>, 'autoLoginResult'>;
-  // getLegalDocuments: Pick<Required<IAuthState>, 'legalUrls'>;
-  // profileUpdateRequest: { values: Partial<ILoggedUserProfile> };
-  // profileUpdateSuccess: { values: Partial<ILoggedUserProfile> };
-  // profileUpdateError: undefined;
+  addAccount: { id: string; account: AuthLoggedAccount };
+  addAccountRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
+  addAccountActivation: { platformName: Platform['name']; login: string; code: string };
+  addAccountPasswordRenew: { platformName: Platform['name']; login: string; code: string };
 }
 
 export const actions = {
@@ -207,20 +192,33 @@ export const actions = {
     user,
   }),
 
-  // sessionCreate: (session: ISession) => ({ type: actionTypes.sessionCreate, session }),
-  // sessionPartial: (session: ISession) => ({ type: actionTypes.sessionPartial, session }),
-  // sessionRefresh: (session: ISession) => ({ type: actionTypes.sessionRefresh, session }),
-  // sessionError: (error: AuthErrorCode) => ({
-  //   type: actionTypes.sessionError,
-  //   error,
-  // }),
-  // sessionErrorConsume: () => ({ type: actionTypes.sessionErrorConsume }),
-  // sessionEnd: () => ({ type: actionTypes.sessionEnd }),
-  // redirectAutoLogin: (result: ILoginResult) => ({ type: actionTypes.redirectAutoLogin, autoLoginResult: result }),
-  // getLegalDocuments: (legalUrls: LegalUrls) => ({ type: actionTypes.getLegalDocuments, legalUrls }),
-  // profileUpdateRequest: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdateRequest, values }),
-  // profileUpdateSuccess: (values: Partial<ILoggedUserProfile>) => ({ type: actionTypes.profileUpdateSuccess, values }),
-  // profileUpdateError: () => ({ type: actionTypes.profileUpdateError }),
+  addAccount: (id: string, account: AuthLoggedAccount) => ({
+    type: actionTypes.addAccount,
+    id,
+    account,
+  }),
+
+  addAccountRequirement: (id: string, account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
+    type: actionTypes.addAccountRequirement,
+    id,
+    account,
+    requirement,
+    context,
+  }),
+
+  addAccountActivation: (platformName: Platform['name'], login: string, code: string) => ({
+    type: actionTypes.addAccountActivation,
+    platformName,
+    login,
+    code,
+  }),
+
+  addAccountPasswordRenew: (platformName: Platform['name'], login: string, code: string) => ({
+    type: actionTypes.addAccountPasswordRenew,
+    platformName,
+    login,
+    code,
+  }),
 };
 
 const reducer = createReducer(initialState, {
@@ -381,54 +379,58 @@ const reducer = createReducer(initialState, {
     return { ...state, accounts: { ...state.accounts, [id]: { ...account, user: { ...account.user, ...user } } } };
   },
 
-  // // Saves session info & consider user logged
-  // [actionTypes.sessionCreate]: (state, action) => {
-  //   const { session }: ActionPayloads['sessionCreate'] = action as any;
-  //   return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
-  // },
-  // // Saves session info, NOT consider user logged
-  // [actionTypes.sessionPartial]: (state, action) => {
-  //   const { session }: ActionPayloads['sessionCreate'] = action as any;
-  //   return { ...initialState, session, logged: false, legalUrls: state.legalUrls };
-  // },
-  // // Saves session info & consider user logged (used for new session built from previous ones)
-  // [actionTypes.sessionRefresh]: (state, action) => {
-  //   const { session }: ActionPayloads['sessionRefresh'] = action as any;
-  //   return { ...initialState, session, logged: true, legalUrls: state.legalUrls };
-  // },
-  // // Reset auth state plus error
-  // [actionTypes.sessionError]: (state, action) => {
-  //   const { error }: ActionPayloads['sessionError'] = action as any;
-  //   return { ...initialState, error };
-  // },
-  // // Removes error after it was displayed
-  // // Beware of storing the error in the state of the component to control when the error will be hidden
-  // [actionTypes.sessionErrorConsume]: (state, action) => {
-  //   return { ...state, error: undefined };
-  // },
-  // [actionTypes.sessionEnd]: (state, action) => {
-  //   return { ...initialState, error: state.error }; // Logout preserves error
-  // },
-  // // Stores the autoLogin result for redirecting user
-  // [actionTypes.redirectAutoLogin]: (state, action) => {
-  //   const { autoLoginResult }: ActionPayloads['redirectAutoLogin'] = action as any;
-  //   return { ...state, autoLoginResult };
-  // },
-  // // Saves url of platform-dependant documents urls
-  // [actionTypes.getLegalDocuments]: (state, action) => {
-  //   const { legalUrls }: ActionPayloads['getLegalDocuments'] = action as any;
-  //   return { ...state, legalUrls: { ...state.legalUrls, ...legalUrls } };
-  // },
-  // // Saves changes to user profile values into session
-  // [actionTypes.profileUpdateRequest]: (state, action) => state,
-  // [actionTypes.profileUpdateSuccess]: (state, action) => {
-  //   const { values }: ActionPayloads['profileUpdateSuccess'] = action as any;
-  //   if (!state.session) {
-  //     return state;
-  //   }
-  //   return { ...state, session: { ...state.session, user: { ...state.session.user, ...values } } };
-  // },
-  // [actionTypes.profileUpdateError]: (state, action) => state,
+  [actionTypes.addAccount]: (state, action) => {
+    const { id, account } = action as unknown as ActionPayloads['login'];
+    return {
+      ...state,
+      accounts: { ...state.accounts, [id]: account },
+      connected: id,
+      showOnboarding: false,
+      requirement: undefined,
+    };
+  },
+
+  [actionTypes.addAccountRequirement]: (state, action) => {
+    const { id, account, requirement, context } = action as unknown as ActionPayloads['loginRequirement'];
+    return {
+      ...state,
+      accounts: { ...state.accounts, [id]: account },
+      connected: id,
+      showOnboarding: false,
+      requirement,
+      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+    };
+  },
+
+  [actionTypes.addAccountActivation]: (state, action) => {
+    const { platformName, login, code } = action as unknown as ActionPayloads['redirectActivation'];
+    return {
+      ...state,
+      requirement: undefined,
+      error: undefined,
+      pendingAddAccount: {
+        redirect: AuthPendingRedirection.ACTIVATE as const,
+        platform: platformName,
+        loginUsed: login,
+        code,
+      },
+    };
+  },
+
+  [actionTypes.addAccountPasswordRenew]: (state, action) => {
+    const { platformName, login, code } = action as unknown as ActionPayloads['redirectPasswordRenew'];
+    return {
+      ...state,
+      requirement: undefined,
+      error: undefined,
+      pendingAddAccount: {
+        redirect: AuthPendingRedirection.RENEW_PASSWORD as const,
+        platform: platformName,
+        loginUsed: login,
+        code,
+      },
+    };
+  },
 });
 
 Reducers.register(moduleConfig.reducerName, reducer);

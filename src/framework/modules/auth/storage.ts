@@ -9,7 +9,7 @@ export interface AuthStorageData {
   startup: {
     account?: string;
     platform?: string;
-    /** @deprecated used to migrate pre-1.12 automatic connections */
+    /** used to migrate pre-1.12 automatic connections */
     anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
@@ -62,6 +62,26 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
 export const writeSingleAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
   const savedAccount = getSerializedLoggedInAccountInfo(account);
   const savedAccounts: Record<string, AuthSavedAccount> = {
+    [account.user.id]: savedAccount,
+  };
+  const startup: AuthStorageData['startup'] = {
+    platform: account.platform.name,
+    account: account.user.id,
+  };
+  authStorage.setJSON('accounts', savedAccounts);
+  authStorage.setJSON('startup', startup);
+  authStorage.set('show-onboarding', showOnboarding);
+};
+
+/**
+ * Save in storage a single account, replacing the others already present.
+ * @param account
+ * @param showOnboarding
+ */
+export const writeNewAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
+  const savedAccount = getSerializedLoggedInAccountInfo(account);
+  const savedAccounts: Record<string, AuthSavedAccount> = {
+    ...readSavedAccounts(),
     [account.user.id]: savedAccount,
   };
   const startup: AuthStorageData['startup'] = {
