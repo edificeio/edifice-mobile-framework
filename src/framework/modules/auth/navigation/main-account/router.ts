@@ -172,7 +172,7 @@ export const getAuthNavigationState = (
     : allPlatforms[0];
 
   // 3.3 – Put the platform route into the stack
-  if (platform && !routes.length) {
+  if (platform) {
     const nextScreen = getLoginNextScreen(platform);
     routes.push({ ...nextScreen, params: { ...nextScreen.params, login } });
   }
