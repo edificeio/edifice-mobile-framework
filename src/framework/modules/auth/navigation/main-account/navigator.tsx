@@ -9,13 +9,13 @@ import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
-import AuthAccountSelectionScreen, {
-  computeNavBar as authAccountSelectionNavBar,
-} from '~/framework/modules/auth/screens/account-selection';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
 import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
 import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
+import AuthAccountSelectionScreen, {
+  computeNavBar as authAccountSelectionNavBar,
+} from '~/framework/modules/auth/screens/main-account/account-selection';
 import AuthAddAccountModalScreen, {
   computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/main-account/add-account-modal';
