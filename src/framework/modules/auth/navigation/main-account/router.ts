@@ -3,9 +3,9 @@ import { CommonActions, NavigationState, PartialState, StackActionType, StackAct
 import { RouteStack } from '~/framework/navigation/helper';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-import { authRouteNames, simulateNavAction } from '.';
-import { AuthPendingRedirection, AuthRequirement } from '../model';
-import { IAuthState, getPlatform, getSession } from '../reducer';
+import { authRouteNames, simulateNavAction } from '..';
+import { AuthPendingRedirection, AuthRequirement } from '../../model';
+import { IAuthState, getPlatform, getSession } from '../../reducer';
 
 /** @deprecated */
 export const getLoginRouteName = (platform?: Platform) => {
@@ -172,7 +172,7 @@ export const getAuthNavigationState = (
     : allPlatforms[0];
 
   // 3.3 – Put the platform route into the stack
-  if (platform && !routes.length) {
+  if (platform) {
     const nextScreen = getLoginNextScreen(platform);
     routes.push({ ...nextScreen, params: { ...nextScreen.params, login } });
   }

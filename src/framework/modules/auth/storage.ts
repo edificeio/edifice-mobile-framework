@@ -9,7 +9,7 @@ export interface AuthStorageData {
   startup: {
     account?: string;
     platform?: string;
-    /** @deprecated used to migrate pre-1.12 automatic connections */
+    /** used to migrate pre-1.12 automatic connections */
     anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
@@ -55,13 +55,14 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
 };
 
 /**
- * Save in storage a single account, replacing the others already present.
+ * Save in storage a new account.
  * @param account
  * @param showOnboarding
  */
-export const writeSingleAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
+export const writeNewAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
   const savedAccount = getSerializedLoggedInAccountInfo(account);
   const savedAccounts: Record<string, AuthSavedAccount> = {
+    ...readSavedAccounts(),
     [account.user.id]: savedAccount,
   };
   const startup: AuthStorageData['startup'] = {
@@ -98,11 +99,3 @@ export const writeLogout = (account: AuthLoggedAccount) => {
   const newStartup = { platform: authStorage.getJSON('startup')?.platform, account: account.user.id };
   authStorage.setJSON('startup', newStartup);
 };
-
-/** read old auth values in storage */
-// export const getLegagyAuthInformation = () => {
-//   const currentPlatform = storage.global.getString('currentPlatform');
-//   const tokenStr = storage.global.getString('token');
-//   const token = tokenStr ? (JSON.parse(tokenStr) as IOAuthToken) : undefined;
-//   return { currentPlatform, token };
-// };

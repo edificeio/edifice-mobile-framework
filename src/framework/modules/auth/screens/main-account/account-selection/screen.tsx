@@ -13,8 +13,8 @@ import HandleAccountList from '~/framework/modules/auth/components/handle-accoun
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import { AccountType } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import styles from '~/framework/modules/auth/screens/account-selection/styles';
-import { AuthAccountSelectionScreenPrivateProps } from '~/framework/modules/auth/screens/account-selection/types';
+import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
+import { AuthAccountSelectionScreenPrivateProps } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 export const computeNavBar = ({

@@ -1,4 +1,4 @@
-import { AccountType, AuthLoggedAccount } from '../model';
+import { AccountType, AuthLoggedAccount } from '.';
 import { getAccountsNumber } from '../reducer';
 
 const MULTIPLE_ACCOUNT_ELIGIBLE_TYPES = [AccountType.Teacher, AccountType.Personnel];

@@ -23,9 +23,9 @@ import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/componen
 import Toast from '~/framework/components/toast';
 import { manualLogoutAction } from '~/framework/modules/auth/actions';
 import { AccountType, PlatformAuthContext } from '~/framework/modules/auth/model';
+import { userCanAddAccount } from '~/framework/modules/auth/model/business';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
-import { userCanAddAccount } from '~/framework/modules/auth/rights/business';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
@@ -475,7 +475,7 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
   return React.useMemo(() => {
     return (
       <SmallBoldText style={styles.version}>
-        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform}`}
+        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
       </SmallBoldText>
     );
   }, [currentPlatform]);
@@ -509,6 +509,9 @@ function useVersionFeature(setAreDetailsVisible, scrollViewRef) {
 
 // All these values are compile-time constants. So we decalre them as function statics.
 useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
+useVersionDetailsFeature.deviceModel = DeviceInfo.getModel();
+useVersionDetailsFeature.os = DeviceInfo.getSystemName();
+useVersionDetailsFeature.osVersion = DeviceInfo.getSystemVersion();
 useVersionDetailsFeature.versionType = RNConfigReader.BundleVersionType as string;
 useVersionDetailsFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
