@@ -259,7 +259,7 @@ export interface IAvatarProps {
   size: Size;
   width?: number;
   fallback?: ImageURISource;
-  session: AuthLoggedAccount;
+  session?: AuthLoggedAccount;
 }
 
 class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'loading' | 'success' | 'failed' }> {
@@ -402,13 +402,15 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
     let source =
       !this.userId && this.props.sourceOrId
         ? (this.props.sourceOrId as ImageURISource)
-        : {
-            uri: `${this.props.session.platform.url}/userbook/avatar/${
-              typeof this.userId === 'string' ? this.userId : this.userId!.id
-            }?thumbnail=${this.props.size === Size.verylarge ? '150x150' : '100x100'}`,
-          };
-    const isSelf = source.uri?.includes(this.props.session.user.id);
-    if (isSelf) {
+        : this.props.session
+          ? {
+              uri: `${this.props.session.platform.url}/userbook/avatar/${
+                typeof this.userId === 'string' ? this.userId : this.userId!.id
+              }?thumbnail=${this.props.size === Size.verylarge ? '150x150' : '100x100'}`,
+            }
+          : undefined;
+    const isSelf = this.props.session && source?.uri?.includes(this.props.session.user.id);
+    if (isSelf && source) {
       source = {
         ...source,
         uri: source.uri + '&uniqId=' + selfAvatarUniqueKey,
@@ -434,7 +436,7 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
             {...sharedProps}
             source={source}
             status={this.props.status}
-            key={isSelf ? selfAvatarUniqueKey : source.uri}
+            key={isSelf ? selfAvatarUniqueKey : source?.uri}
           />
         </AlignedContainer>
       );
@@ -446,14 +448,14 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
             decorate={this.decorate}
             source={source}
             status={this.props.status}
-            key={isSelf ? selfAvatarUniqueKey : source.uri}
+            key={isSelf ? selfAvatarUniqueKey : source?.uri}
           />
         </VLContainer>
       );
     } else if (this.props.size === Size.xxl) {
       return (
         <XXLContainer>
-          <XxlImage {...sharedProps} source={source} status={this.props.status} key={isSelf ? selfAvatarUniqueKey : source.uri} />
+          <XxlImage {...sharedProps} source={source} status={this.props.status} key={isSelf ? selfAvatarUniqueKey : source?.uri} />
         </XXLContainer>
       );
     } else {
@@ -464,7 +466,7 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
             count={this.props.count || 1}
             source={source}
             status={this.props.status}
-            key={isSelf ? selfAvatarUniqueKey : source.uri}
+            key={isSelf ? selfAvatarUniqueKey : source?.uri}
           />
         </SmallContainer>
       );
@@ -474,6 +476,6 @@ class Avatar extends React.PureComponent<IAvatarProps, { status: 'initial' | 'lo
 
 export default connect((state: IGlobalState) => {
   const session = getSession();
-  if (!session) throw new Error('[Avatar] session must exist');
+  // if (!session) throw new Error('[Avatar] session must exist');
   return { session };
 })(Avatar);

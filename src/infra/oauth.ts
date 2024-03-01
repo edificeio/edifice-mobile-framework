@@ -19,7 +19,7 @@ import {
   getSession,
   getState,
 } from '~/framework/modules/auth/reducer';
-import { getSerializedLoggedInAccountInfo, readSavedStartup, updateAccount } from '~/framework/modules/auth/storage';
+import { getSerializedLoggedInAccountInfo, updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
@@ -406,24 +406,21 @@ export class OAuth2RessourceOwnerPasswordClient {
     return token;
   }
 
-  public updateToken(token: AuthTokenSet) {
-    const userId = readSavedStartup().account;
-    if (userId) {
-      getStore().dispatch(authActions.refreshToken(userId, token)); // Update redux
-      let account = getState(getStore().getState()).accounts[userId]; // Get account in reducer
-      if (typeof account.platform === 'object') {
-        account = getSerializedLoggedInAccountInfo(account as AuthLoggedAccount); // Get saved accoutn info if it's logged account
-      }
-      updateAccount(account as AuthSavedAccount); // Update Storage
-      this.importToken(token); // Update OAuth2 client
+  public updateToken(userId: AuthSavedAccount['user']['id'], token: AuthTokenSet, useRedux?: boolean) {
+    if (useRedux) getStore().dispatch(authActions.refreshToken(userId, token)); // Update redux
+    let account = getState(getStore().getState()).accounts[userId]; // Get account in reducer
+    if (typeof account.platform === 'object') {
+      account = getSerializedLoggedInAccountInfo(account as AuthLoggedAccount); // Get saved accoutn info if it's logged account
     }
+    updateAccount(account as AuthSavedAccount); // Update Storage
+    this.importToken(token); // Update OAuth2 client
     return token;
   }
 
   /**
    * Refresh the user access token.
    */
-  public async refreshToken(): Promise<IOAuthToken> {
+  public async refreshToken(userId: AuthSavedAccount['user']['id'], updateRedux?: boolean): Promise<IOAuthToken> {
     if (!this.clientInfo) {
       throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
     }
@@ -462,7 +459,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         expires_at: OAuth2RessourceOwnerPasswordClient.getExpirationDate(data.expires_in),
       };
       // Update stored token
-      this.updateToken(this.exportToken());
+      this.updateToken(userId, this.exportToken(), updateRedux);
       return this.token!;
     } catch (err) {
       console.warn('[oAuth2] failed refresh token', err);

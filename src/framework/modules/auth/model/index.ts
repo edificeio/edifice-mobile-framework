@@ -1,4 +1,5 @@
 import type { Moment } from 'moment';
+import { ImageSourcePropType } from 'react-native';
 
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -21,8 +22,9 @@ export enum AccountType {
  * Describes minimal info to display a user
  */
 export interface DisplayUserPublic {
-  id: string; // id is used to get avatar
+  avatarCache?: ImageSourcePropType;
   displayName: string;
+  id: string; // id is used to get avatar if avatarCache is not defined
 }
 
 /**
@@ -38,7 +40,7 @@ export const isUserWithType = (u: DisplayUserPublic): u is DisplayUserPublicWith
  * Represent user information that a seved account contains
  */
 export interface AuthSavedAccountUserInfo extends DisplayUserPublicWithType {
-  avatarCache?: string;
+  avatarCache?: ImageSourcePropType;
   loginUsed: string | undefined; // undefined if federation login
 }
 
@@ -143,7 +145,9 @@ export const accountIsLogged = (account: AuthLoggedAccount | AuthSavedAccount | 
   return account !== undefined && (account as AuthLoggedAccount).rights !== undefined;
 };
 
-export const accountIsLoggable = (account: AuthSavedAccount | undefined): account is AuthSavedAccountWithTokens => {
+export const accountIsLoggable = (
+  account: AuthLoggedAccount | AuthSavedAccount | undefined,
+): account is AuthSavedAccountWithTokens => {
   // account that have rights object is currenty logged in.
   return account !== undefined && (account as AuthSavedAccount).tokens !== undefined;
 };

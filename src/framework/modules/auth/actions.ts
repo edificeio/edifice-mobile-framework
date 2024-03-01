@@ -460,7 +460,7 @@ export const restoreAction =
       if (!OAuth2RessourceOwnerPasswordClient.connection) {
         throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
       }
-      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(account.user.id, false);
       const session = await performLogin(
         {
           success: actions.login,
