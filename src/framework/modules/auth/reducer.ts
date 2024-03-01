@@ -341,7 +341,7 @@ const reducer = createReducer(initialState, {
       accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
       requirement: undefined,
       connected: undefined,
-      pending: { redirect: undefined, platform: currentAccount.platform.name, account: currentAccount.user.id },
+      pending: undefined,
       error: undefined,
     };
   },
