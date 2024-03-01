@@ -1,12 +1,12 @@
-import { CommonActions, StackActionType } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthNavigationTemplatesParams } from '~/framework/modules/auth/navigation';
+import { StackNavigationAction } from '~/framework/navigation/types';
 
 export interface AuthOnboardingScreenProps {
   pictures: any[];
   texts: string[];
-  nextScreenAction: CommonActions.Action | StackActionType;
+  nextScreenAction: StackNavigationAction;
 }
 
 export type AuthOnboardingScreenNavParams = undefined;

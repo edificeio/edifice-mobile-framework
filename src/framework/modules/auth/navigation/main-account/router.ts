@@ -1,6 +1,7 @@
-import { CommonActions, NavigationState, PartialState, StackActionType, StackActions } from '@react-navigation/native';
+import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
 
 import { RouteStack } from '~/framework/navigation/helper';
+import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import { authRouteNames, simulateNavAction } from '..';
@@ -180,7 +181,7 @@ export const getAuthNavigationState = (
 
   // 4 – Requirement & login redirections
   // 4.1 – Get corresponding nav action action
-  let navRedirection: CommonActions.Action | StackActionType | undefined;
+  let navRedirection: StackNavigationAction | undefined;
   if (requirement) {
     navRedirection = getNavActionForRequirement(requirement);
   } else if (platform && pending?.redirect !== undefined) {

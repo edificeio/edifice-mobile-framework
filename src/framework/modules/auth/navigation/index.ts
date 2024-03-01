@@ -1,7 +1,7 @@
 /**
  * Navigator for the auth section
  */
-import { CommonActions, ParamListBase, Router, StackActionType, StackNavigationState, StackRouter } from '@react-navigation/native';
+import { ParamListBase, Router, StackNavigationState, StackRouter } from '@react-navigation/native';
 
 import { AuthCredentials } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
@@ -17,6 +17,7 @@ import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/scre
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
 import { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
+import { StackNavigationAction } from '~/framework/navigation/types';
 import { Platform } from '~/framework/util/appConf';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
@@ -93,8 +94,8 @@ export interface AuthNavigationParams extends ParamListBase {
  * @returns The new nav State (will be rehydrated)
  */
 export const simulateNavAction = (
-  action: CommonActions.Action | StackActionType,
-  state: Parameters<Router<StackNavigationState<ParamListBase>, CommonActions.Action | StackActionType>['getRehydratedState']>[0],
+  action: StackNavigationAction,
+  state: Parameters<Router<StackNavigationState<ParamListBase>, StackNavigationAction>['getRehydratedState']>[0],
 ) => {
   // We must instaciate a throwaway StackRouter to perform the action on the state and get the resulting one.
   const router = StackRouter({});
