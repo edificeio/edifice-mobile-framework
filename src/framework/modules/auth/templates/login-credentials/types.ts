@@ -12,7 +12,7 @@ export enum LoginState {
 }
 
 export interface LoginCredentialsScreenProps {
-  goToForgotRoute: (platform: Platform) => void;
+  forgotRoute: string;
 }
 
 export interface LoginCredentialsScreenNavParams {
