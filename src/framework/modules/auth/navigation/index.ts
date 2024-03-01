@@ -3,21 +3,21 @@
  */
 import { CommonActions, ParamListBase, Router, StackActionType, StackNavigationState, StackRouter } from '@react-navigation/native';
 
-import { AuthCredentials, ForgotMode } from '~/framework/modules/auth/model';
+import { AuthCredentials } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/add-account/onboarding';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import type { AuthDiscoveryClassScreenNavParams } from '~/framework/modules/auth/screens/discovery-class';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
 import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
+import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/screens/main-account/platforms';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
+import { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
 import { Platform } from '~/framework/util/appConf';
-
-import type { AuthDiscoveryClassScreenNavParams } from '../screens/discovery-class';
-import type { AuthPlatformsScreenNavParams } from '../screens/main-account/platforms';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
@@ -66,7 +66,7 @@ export interface AuthNavigationParams extends ParamListBase {
   wayf: { platform: Platform };
   activation: { platform: Platform; credentials: AuthCredentials };
   changePassword: ChangePasswordScreenNavParams;
-  forgot: { platform: Platform; mode: ForgotMode; login?: string };
+  forgot: ForgotScreenNavParams;
   // Add account stack
   addAccountModal: AuthAddAccountModalScreenNavParams;
   addAccountOnboarding: AuthOnboardingAddAccountScreenNavParams;
@@ -75,7 +75,7 @@ export interface AuthNavigationParams extends ParamListBase {
   addAccountWayf: { platform: Platform };
   addAccountActivation: { platform: Platform; credentials: AuthCredentials };
   addAccountChangePassword: ChangePasswordScreenNavParams;
-  addAccountForgot: { platform: Platform; mode: ForgotMode; login?: string };
+  addAccountForgot: ForgotScreenNavParams;
   // Exclusive logged screen
   revalidateTerms: object;
   changePasswordModal: ChangePasswordScreenNavParams;

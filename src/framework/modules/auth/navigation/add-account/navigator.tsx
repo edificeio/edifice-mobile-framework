@@ -5,18 +5,20 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
-import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
+import AuthForgotAddAccountScreen from '~/framework/modules/auth/screens/add-account/forgot';
+import AuthLoginCredentialsScreen, {
+  computeNavBar as loginCredentialsNavBar,
+} from '~/framework/modules/auth/screens/add-account/login-credentials';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/add-account/onboarding';
 import AuthPlatformsAddAccountScreen, {
-    computeNavBar as platformsAddAccountNavBar,
+  computeNavBar as platformsAddAccountNavBar,
 } from '~/framework/modules/auth/screens/add-account/platforms';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { AuthNavigationParams, authRouteNames } from '..';
-import AuthLoginCredentialsScreen, { computeNavBar as loginCredentialsNavBar } from '../../screens/add-account/login-credentials';
 
 const Stack = getTypedRootStack<AuthNavigationParams>();
 
@@ -64,7 +66,7 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.addAccountForgot}
-        component={ForgotScreen}
+        component={AuthForgotAddAccountScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(
             route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
