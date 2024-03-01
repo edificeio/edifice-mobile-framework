@@ -5,11 +5,11 @@ import { CommonActions, ParamListBase, Router, StackActionType, StackNavigationS
 
 import { AuthCredentials, ForgotMode } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
-import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/account-selection/types';
 import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/add-account/onboarding';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
 import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';

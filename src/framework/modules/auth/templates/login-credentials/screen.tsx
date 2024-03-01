@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -15,18 +12,12 @@ import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
-import { consumeAuthErrorAction, loginCredentialsAction } from '~/framework/modules/auth/actions';
-import { AuthPendingRedirection } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
-import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
 import styles from './styles';
-import { LoginCredentialsScreenDispatchProps, LoginCredentialsScreenPrivateProps, LoginState } from './types';
+import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { route, navigation, error, handleConsumeError, tryLogin } = props;
@@ -246,30 +237,4 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };
 
-export default connect(
-  (state: IGlobalState) => {
-    return {
-      error: getAuthState(state).error,
-    };
-  },
-  dispatch =>
-    bindActionCreators<LoginCredentialsScreenDispatchProps>(
-      {
-        tryLogin: tryAction(loginCredentialsAction, {
-          track: res => [
-            moduleConfig,
-            res instanceof global.Error
-              ? trackingActionAddSuffix('Login credentials', false)
-              : res === AuthPendingRedirection.ACTIVATE
-                ? trackingActionAddSuffix('Login credentials', 'Activation')
-                : res === AuthPendingRedirection.RENEW_PASSWORD
-                  ? trackingActionAddSuffix('Login credentials', 'Renouvellement')
-                  : trackingActionAddSuffix('Login credentials', true),
-            res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
-          ],
-        }),
-        handleConsumeError: handleAction(consumeAuthErrorAction),
-      },
-      dispatch,
-    ),
-)(LoginCredentialsScreen);
+export default LoginCredentialsScreen;
