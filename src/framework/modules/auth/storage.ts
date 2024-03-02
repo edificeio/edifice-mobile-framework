@@ -96,6 +96,5 @@ export const writeLogout = (account: AuthLoggedAccount) => {
     authStorage.setJSON('accounts', accounts);
   }
   // Remove account id in startup object
-  const newStartup = { platform: authStorage.getJSON('startup')?.platform, account: account.user.id };
-  authStorage.setJSON('startup', newStartup);
+  authStorage.delete('startup');
 };

@@ -5,7 +5,6 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
-import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
@@ -19,6 +18,7 @@ import AuthAccountSelectionScreen, {
 import AuthAddAccountModalScreen, {
   computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/main-account/add-account-modal';
+import AuthForgotScreen from '~/framework/modules/auth/screens/main-account/forgot';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/main-account/onboarding';
 import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/main-account/platforms';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
@@ -74,7 +74,7 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.forgot}
-        component={ForgotScreen}
+        component={AuthForgotScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(
             route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),

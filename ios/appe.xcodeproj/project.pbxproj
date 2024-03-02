@@ -25,8 +25,6 @@
 		F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */; };
 		F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */; };
 		F09C4A402B0400800075018F /* SplashScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A3F2B0400800075018F /* SplashScreen.xib */; };
-		F0FEA0542B8F7AFF0056A33B /* ZendeskUnified.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0FEA0522B8F7AFF0056A33B /* ZendeskUnified.swift */; };
-		F0FEA0552B8F7AFF0056A33B /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0FEA0532B8F7AFF0056A33B /* ZendeskUnified.mm */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
 
@@ -71,8 +69,6 @@
 		F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@3x.png"; path = "appe/images/splash-screen@3x.png"; sourceTree = "<group>"; };
 		F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@2x.png"; path = "appe/images/splash-screen@2x.png"; sourceTree = "<group>"; };
 		F09C4A3F2B0400800075018F /* SplashScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplashScreen.xib; sourceTree = "<group>"; };
-		F0FEA0522B8F7AFF0056A33B /* ZendeskUnified.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZendeskUnified.swift; path = appe/ZendeskUnified.swift; sourceTree = "<group>"; };
-		F0FEA0532B8F7AFF0056A33B /* ZendeskUnified.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,8 +99,6 @@
 				F062593E26454B14001AE555 /* InfoPlist.strings */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FB71A68108700A75B9A /* main.m */,
-				F0FEA0532B8F7AFF0056A33B /* ZendeskUnified.mm */,
-				F0FEA0522B8F7AFF0056A33B /* ZendeskUnified.swift */,
 			);
 			name = appe;
 			sourceTree = "<group>";
@@ -388,32 +382,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-appe/Pods-appe-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskAnswerBotProvidersSDK/AnswerBotProvidersSDK.framework/AnswerBotProvidersSDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskAnswerBotSDK/AnswerBotSDK.framework/AnswerBotSDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskChatProvidersSDK/ChatProvidersSDK.framework/ChatProvidersSDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskChatSDK/ChatSDK.framework/ChatSDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskCommonUISDK/CommonUISDK.framework/CommonUISDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskCoreSDK/ZendeskCoreSDK.framework/ZendeskCoreSDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskMessagingAPISDK/MessagingAPI.framework/MessagingAPI",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskMessagingSDK/MessagingSDK.framework/MessagingSDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskSDKConfigurationsSDK/SDKConfigurations.framework/SDKConfigurations",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskSupportProvidersSDK/SupportProvidersSDK.framework/SupportProvidersSDK",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ZendeskSupportSDK/SupportSDK.framework/SupportSDK",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AnswerBotProvidersSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AnswerBotSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChatProvidersSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChatSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CommonUISDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ZendeskCoreSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessagingAPI.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessagingSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDKConfigurations.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SupportProvidersSDK.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SupportSDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -452,9 +424,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				F0FEA0552B8F7AFF0056A33B /* ZendeskUnified.mm in Sources */,
 				74660EAE247BE64C00F74D20 /* DummySwiftFile.swift in Sources */,
-				F0FEA0542B8F7AFF0056A33B /* ZendeskUnified.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

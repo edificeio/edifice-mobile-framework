@@ -1,10 +1,10 @@
-import { CommonActions, StackActionType } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { AuthNavigationParams } from '~/framework/modules/auth/navigation';
+import { StackNavigationAction } from '~/framework/navigation/types';
 
 export interface AuthIntroductionScreenProps {
-  nextScreenAction: CommonActions.Action | StackActionType;
+  nextScreenAction: StackNavigationAction;
   svgName: string;
   title: string;
   description: string;

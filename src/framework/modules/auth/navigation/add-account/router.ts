@@ -1,8 +1,9 @@
-import { CommonActions, NavigationState, PartialState, StackActionType } from '@react-navigation/native';
+import { CommonActions, NavigationState, PartialState } from '@react-navigation/native';
 
 import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
 import { IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
+import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import { getLoginRouteName, getNavActionForRedirect } from '../main-account/router';
@@ -31,7 +32,7 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
 
   // 4 – Requirement & login redirections
   // 4.1 – Get corresponding nav action action
-  let navRedirection: CommonActions.Action | StackActionType | undefined;
+  let navRedirection: StackNavigationAction | undefined;
   if (pending?.redirect !== undefined) {
     // 2 - Platform Select / Account Select
     if (appConf.hasMultiplePlatform) {

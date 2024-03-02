@@ -33,7 +33,7 @@ export const computeNavBar = ({
 });
 
 function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProps) {
-  return <LoginCredentialsScreen {...props} />;
+  return <LoginCredentialsScreen {...props} forgotRoute={authRouteNames.addAccountForgot} />;
 }
 
 export default connect(

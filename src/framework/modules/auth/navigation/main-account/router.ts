@@ -1,11 +1,12 @@
-import { CommonActions, NavigationState, PartialState, StackActionType, StackActions } from '@react-navigation/native';
+import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
 
 import { RouteStack } from '~/framework/navigation/helper';
+import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import { authRouteNames, simulateNavAction } from '..';
 import { AuthPendingRedirection, AuthRequirement } from '../../model';
-import { IAuthState, getPlatform, getSession } from '../../reducer';
+import { AuthPendingRestore, IAuthState, getPlatform, getSession } from '../../reducer';
 
 /** @deprecated */
 export const getLoginRouteName = (platform?: Platform) => {
@@ -139,6 +140,7 @@ export const getAuthNavigationState = (
   const multipleAccounts = accountsAsArray.length > 1;
   if (multipleAccounts) {
     // Push account select here
+    routes.push({ name: authRouteNames.accountSelection });
   } else if (appConf.hasMultiplePlatform) {
     routes.push({ name: authRouteNames.platforms });
   } // if single account && single platform, do not push any routes
@@ -172,14 +174,14 @@ export const getAuthNavigationState = (
     : allPlatforms[0];
 
   // 3.3 – Put the platform route into the stack
-  if (platform) {
+  if (platform && (accountsAsArray.length <= 1 || (pending as AuthPendingRestore)?.account)) {
     const nextScreen = getLoginNextScreen(platform);
     routes.push({ ...nextScreen, params: { ...nextScreen.params, login } });
   }
 
   // 4 – Requirement & login redirections
   // 4.1 – Get corresponding nav action action
-  let navRedirection: CommonActions.Action | StackActionType | undefined;
+  let navRedirection: StackNavigationAction | undefined;
   if (requirement) {
     navRedirection = getNavActionForRequirement(requirement);
   } else if (platform && pending?.redirect !== undefined) {

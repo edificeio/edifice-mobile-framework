@@ -22,7 +22,8 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
   if (!OAuth2RessourceOwnerPasswordClient.connection) throw new Error('no active oauth connection');
   if (OAuth2RessourceOwnerPasswordClient.connection.getIsTokenExpired()) {
     try {
-      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken();
+      const session = assertSession();
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(session.user.id, true);
     } catch (err) {
       if (isFailing) throw err;
       isFailing = true;

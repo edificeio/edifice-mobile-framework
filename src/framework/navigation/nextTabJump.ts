@@ -2,11 +2,14 @@
  * Export a ref to store the delayed navigation action on prevent Back;
  * Must be dispatched and cleared when it's consumed in preventBack handler
  */
-import { CommonActions, NavigationAction, StackActionType } from '@react-navigation/native';
+
+import { NavigationAction } from '@react-navigation/native';
+
+import { StackNavigationAction } from './types';
 
 export const NAVIGATE_CLOSE_DELAY = 333;
 
-type AllowedAction = CommonActions.Action | StackActionType | NavigationAction;
+type AllowedAction = StackNavigationAction | NavigationAction;
 
 const nextActionsMap: {
   confirmQuit?: AllowedAction | AllowedAction[];

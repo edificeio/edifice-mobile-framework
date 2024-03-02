@@ -1,11 +1,11 @@
-import { CommonActions, StackActionType } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { AuthNavigationTemplatesParams } from '~/framework/modules/auth/navigation';
+import { StackNavigationAction } from '~/framework/navigation/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthPlatformGridScreenProps {
-  getNextRoute: (platform: Platform) => CommonActions.Action | StackActionType;
+  getNextRoute: (platform: Platform) => StackNavigationAction;
 }
 
 export type AuthPlatformGridScreenNavParams = undefined;
