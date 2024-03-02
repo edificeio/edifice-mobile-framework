@@ -123,6 +123,9 @@ export class AppConf {
 
   getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
 
+  getExpandedPlatform = (platform: string | Platform) =>
+    typeof platform === 'string' ? this.getPlatformByName(platform) : platform;
+
   assertPlatformOfName = (name: string) => {
     return (
       this.getPlatformByName(name) ??

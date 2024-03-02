@@ -9,6 +9,7 @@
   "attachment-downloadsuccess-all": "Fichiers enregistrés dans Téléchargements",
   "attachment-downloadsuccess-name": "{{name}} enregistré dans Téléchargements",
   "attachment-tryagain": "Réessayer",
+  "auth-account-select-error": "Une erreur est survenue.",
   "auth-activation-activate": "Activer votre compte",
   "auth-activation-cgu": "Conditions générales d'utilisation",
   "auth-activation-cgu-accept": "J'accepte la ",
