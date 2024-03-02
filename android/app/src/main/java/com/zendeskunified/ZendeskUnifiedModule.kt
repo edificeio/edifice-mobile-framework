@@ -1,5 +1,6 @@
 package com.zendeskunified
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import com.facebook.react.bridge.Promise
@@ -25,10 +26,11 @@ import zendesk.support.request.RequestActivity
 import zendesk.support.requestlist.RequestListActivity
 import java.util.Locale
 
+
 class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
 
-  private val context = getReactApplicationContext()
+  private val context = this.reactApplicationContext
 
   override fun getName(): String {
     return NAME
@@ -274,10 +276,12 @@ class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
       helpCenterConfig.withShowConversationsMenuButton(showContactOptions)
     }
 
-    val intent: Intent = helpCenterConfig.intent(context, articleConfig.config())
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    val helpCenterActivity = HelpCenterActivity.builder()
+    helpCenterActivity.show(context.currentActivity!!, articleConfig.config(), helpCenterConfig.config())
 
-    context.startActivity(intent)
+    /*val intent = helpCenterConfig.intent(context, articleConfig.config())
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    context.startActivity(intent)*/
   }
 
   private fun openTicket(ticketId: String) {
@@ -308,7 +312,6 @@ class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
 
     val intent: Intent = requestConfig.intent(context)
     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-
     context.startActivity(intent)
   }
 
