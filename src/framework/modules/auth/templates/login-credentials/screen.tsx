@@ -12,6 +12,7 @@ import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { getAccountById } from '~/framework/modules/auth/reducer';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 
@@ -20,9 +21,10 @@ import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { route, navigation, error, forgotPasswordRoute, forgotIdRoute, handleConsumeError, tryLogin } = props;
-  const { platform } = route.params;
+  const { platform, accountId } = route.params;
+  const account = getAccountById(accountId);
 
-  const [login, setLogin] = React.useState<string>(route.params.login ?? '');
+  const [login, setLogin] = React.useState<string>(account?.user.loginUsed ?? '');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
@@ -231,7 +233,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         </View>
       </ScrollView>
     );
-  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, forgotIdRoute, forgotPasswordRoute, platform, route.params.login]);
+  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, forgotIdRoute, forgotPasswordRoute]);
 
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };

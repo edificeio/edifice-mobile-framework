@@ -19,7 +19,8 @@ export interface LoginCredentialsScreenProps {
 
 export interface LoginCredentialsScreenNavParams {
   platform: Platform;
-  login?: string;
+  // login?: string;
+  accountId?: string;
 }
 
 export interface LoginCredentialsScreenStoreProps {
