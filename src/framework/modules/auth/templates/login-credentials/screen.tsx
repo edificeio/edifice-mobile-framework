@@ -20,7 +20,17 @@ import styles from './styles';
 import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
-  const { route, navigation, error, forgotPasswordRoute, forgotIdRoute, handleConsumeError, tryLoginAdd, tryLoginReplace } = props;
+  const {
+    route,
+    navigation,
+    error,
+    forgotPasswordRoute,
+    forgotIdRoute,
+    handleConsumeError,
+    tryLoginAdd,
+    tryLoginReplace,
+    lockLogin,
+  } = props;
   const { platform, accountId } = route.params;
   const account = getAccountById(accountId);
 
@@ -164,6 +174,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
+              disabled={lockLogin}
             />
           }
         />
@@ -186,7 +197,17 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         />
       </View>
     );
-  }, [onLoginChanged, login, errmsg, errtype, onSubmitEditingLogin, onPasswordChanged, password, onSubmitEditingPassword]);
+  }, [
+    onLoginChanged,
+    login,
+    errmsg,
+    errtype,
+    onSubmitEditingLogin,
+    lockLogin,
+    onPasswordChanged,
+    password,
+    onSubmitEditingPassword,
+  ]);
 
   const renderLoginButton = React.useCallback(() => {
     if (
@@ -225,21 +246,34 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
             <View style={styles.boxTextForgot}>
               <DefaultButton
                 text={I18n.get('auth-login-forgot-password')}
-                action={() => navigation.dispatch(forgotPasswordRoute)}
+                action={() => navigation.dispatch(forgotPasswordRoute(login))}
                 testID="login-forgot-password"
                 style={styles.forgotPasswordButton}
               />
-              <DefaultButton
-                text={I18n.get('auth-login-forgot-id')}
-                action={() => navigation.dispatch(forgotIdRoute)}
-                testID="login-forgot-identifier"
-              />
+              {accountId === undefined ? (
+                <DefaultButton
+                  text={I18n.get('auth-login-forgot-id')}
+                  action={() => navigation.dispatch(forgotIdRoute)}
+                  testID="login-forgot-identifier"
+                />
+              ) : null}
             </View>
           </View>
         </View>
       </ScrollView>
     );
-  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, forgotIdRoute, forgotPasswordRoute]);
+  }, [
+    renderPlatform,
+    renderInputs,
+    renderError,
+    error,
+    renderLoginButton,
+    accountId,
+    navigation,
+    forgotPasswordRoute,
+    login,
+    forgotIdRoute,
+  ]);
 
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };

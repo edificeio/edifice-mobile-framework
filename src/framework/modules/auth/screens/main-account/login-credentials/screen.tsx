@@ -14,7 +14,7 @@ import {
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import LoginCredentialsScreen from '~/framework/modules/auth/templates/login-credentials';
 import { LoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -40,10 +40,12 @@ function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProp
   return (
     <LoginCredentialsScreen
       {...props}
-      forgotPasswordRoute={CommonActions.navigate({
-        name: authRouteNames.forgot,
-        params: { platform: props.route.params.platform, mode: 'password', login: undefined }, // ToDo : get login from template here
-      })}
+      forgotPasswordRoute={(login?: string) =>
+        CommonActions.navigate({
+          name: authRouteNames.forgot,
+          params: { platform: props.route.params.platform, mode: 'password', login }, // ToDo : get login from template here
+        })
+      }
       forgotIdRoute={CommonActions.navigate({
         name: authRouteNames.forgot,
         params: { platform: props.route.params.platform, mode: 'id' },
@@ -71,6 +73,7 @@ export default connect(
   (state: IGlobalState) => {
     return {
       error: getAuthState(state).error,
+      lockLogin: getAccountsNumber() > 1,
     };
   },
   dispatch =>

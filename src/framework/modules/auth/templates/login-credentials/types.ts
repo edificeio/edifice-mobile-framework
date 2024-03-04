@@ -17,7 +17,7 @@ export enum LoginState {
 }
 
 export interface LoginCredentialsScreenProps {
-  forgotPasswordRoute: StackNavigationAction;
+  forgotPasswordRoute: (login?: string) => StackNavigationAction;
   forgotIdRoute: StackNavigationAction;
 }
 
@@ -28,6 +28,7 @@ export interface LoginCredentialsScreenNavParams {
 
 export interface LoginCredentialsScreenStoreProps {
   error: IAuthState['error'];
+  lockLogin: boolean;
 }
 
 export interface LoginCredentialsScreenDispatchProps {
