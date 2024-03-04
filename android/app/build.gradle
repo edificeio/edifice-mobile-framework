@@ -55,7 +55,7 @@ project.ext.vectoricons = [
 
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = false
 def enableSeparateBuildPerCPUArchitecture = false
 def jscFlavor = 'org.webkit:android-jsc:+'
 
@@ -115,7 +115,6 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            // Leave shrinkResources to false as some resources are used React Native side only
             shrinkResources false
             signingConfig signingConfigs.release
         }

@@ -1,6 +1,5 @@
-package com.zendeskunified
+package com.ode.appe
 
-import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import com.facebook.react.bridge.Promise
@@ -278,10 +277,6 @@ class ZendeskUnifiedModule(reactContext: ReactApplicationContext) :
 
     val helpCenterActivity = HelpCenterActivity.builder()
     helpCenterActivity.show(context.currentActivity!!, articleConfig.config(), helpCenterConfig.config())
-
-    /*val intent = helpCenterConfig.intent(context, articleConfig.config())
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    context.startActivity(intent)*/
   }
 
   private fun openTicket(ticketId: String) {

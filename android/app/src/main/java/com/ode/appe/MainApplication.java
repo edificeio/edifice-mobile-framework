@@ -8,7 +8,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.soloader.SoLoader;
-import com.zendeskunified.ZendeskUnifiedPackage;
+import com.ode.appe.ZendeskUnifiedPackage;
 
 import java.util.List;
 

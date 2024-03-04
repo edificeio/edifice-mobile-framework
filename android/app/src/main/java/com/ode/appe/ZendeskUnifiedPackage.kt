@@ -1,4 +1,4 @@
-package com.zendeskunified
+package com.ode.appe
 
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
