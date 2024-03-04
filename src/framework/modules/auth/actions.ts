@@ -17,6 +17,7 @@ import {
   IActivationPayload as ActivationPayload,
   AuthCredentials,
   AuthFederationCredentials,
+  AuthLoggedAccount,
   AuthPendingRedirection,
   AuthRequirement,
   AuthSavedAccountWithTokens,
@@ -450,20 +451,23 @@ export const loginFederationActionAddAnotherAccount = (platform: Platform, crede
  * @throws
  */
 export const restoreAction =
-  (account: AuthSavedAccountWithTokens) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+  (account: AuthSavedAccountWithTokens | AuthLoggedAccount) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
-      await loginSteps.loadToken(account);
+      const accountToRestore = accountIsLogged(account)
+        ? (getSerializedLoggedInAccountInfo(account) as AuthSavedAccountWithTokens)
+        : account;
+      await loginSteps.loadToken(accountToRestore);
       if (!OAuth2RessourceOwnerPasswordClient.connection) {
         throw new Error.OAuth2Error(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
       }
-      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(account.user.id, false);
+      await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(accountToRestore.user.id, false);
       const session = await performLogin(
         {
           success: actions.addAccount,
           requirement: actions.addAccountRequirement,
         },
-        appConf.assertPlatformOfName(account.platform),
-        account.user.loginUsed,
+        appConf.assertPlatformOfName(accountToRestore.platform),
+        accountToRestore.user.loginUsed,
         dispatch,
       );
       writeCreateAccount(session, getAuthState(getState()).showOnboarding);

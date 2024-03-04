@@ -250,7 +250,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
                 testID="login-forgot-password"
                 style={styles.forgotPasswordButton}
               />
-              {accountId === undefined ? (
+              {!lockLogin ? (
                 <DefaultButton
                   text={I18n.get('auth-login-forgot-id')}
                   action={() => navigation.dispatch(forgotIdRoute)}
@@ -268,7 +268,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     renderError,
     error,
     renderLoginButton,
-    accountId,
+    lockLogin,
     navigation,
     forgotPasswordRoute,
     login,
