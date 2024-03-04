@@ -20,7 +20,7 @@ import styles from './styles';
 import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
-  const { route, navigation, error, forgotPasswordRoute, forgotIdRoute, handleConsumeError, tryLogin } = props;
+  const { route, navigation, error, forgotPasswordRoute, forgotIdRoute, handleConsumeError, tryLoginAdd, tryLoginReplace } = props;
   const { platform, accountId } = route.params;
   const account = getAccountById(accountId);
 
@@ -53,10 +53,16 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         password: password.trim(),
       };
 
-      await tryLogin(platform, loginCredentials, errkey);
+      if (accountId) {
+        await tryLoginReplace(accountId, platform, loginCredentials, errkey);
+      } else {
+        await tryLoginAdd(platform, loginCredentials, errkey);
+      }
+
       if (mounted) {
         setTyping(false);
         setLoginState(LoginState.DONE);
+        // Timemout is added after loggin in to keep spinner visible during screen transition
         setTimeout(() => {
           if (mounted) {
             setTyping(false);
@@ -70,7 +76,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         setLoginState(LoginState.IDLE);
       }
     }
-  }, [login, password, tryLogin, platform, errkey]);
+  }, [login, password, accountId, tryLoginReplace, platform, errkey, tryLoginAdd]);
 
   const goToWeb = React.useCallback(() => {
     openUrl(platform.url);

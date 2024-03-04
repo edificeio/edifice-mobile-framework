@@ -1,8 +1,9 @@
 import { storage } from '~/framework/util/storage';
 import type { IOAuthToken } from '~/infra/oauth';
 
-import { AuthLoggedAccount, AuthSavedAccount } from './model';
+import { AuthLoggedAccount, AuthSavedAccount, getSerializedLoggedInAccountInfo } from './model';
 import moduleConfig from './module-config';
+import { ERASE_ALL_ACCOUNTS } from './reducer';
 
 export interface AuthStorageData {
   accounts: Record<string, AuthSavedAccount>;
@@ -32,34 +33,12 @@ export const readSavedStartup = () => {
 };
 export const readShowOnbording = () => authStorage.getBoolean('show-onboarding') ?? true;
 
-/** Converts an actual logged account into a serialisable saved account information */
-export const getSerializedLoggedOutAccountInfo = (account: AuthLoggedAccount) => {
-  return {
-    platform: account.platform.name,
-    user: {
-      displayName: account.user.displayName,
-      id: account.user.id,
-      loginUsed: account.user.loginUsed,
-      type: account.user.type,
-      avatar: account.user.avatar,
-    },
-  } as AuthSavedAccount;
-};
-
-/** Converts an actual logged account into a serialisable saved account information */
-export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => {
-  return {
-    ...getSerializedLoggedOutAccountInfo(account),
-    tokens: account.tokens,
-  } as AuthSavedAccount;
-};
-
 /**
- * Save in storage a new account.
+ * Save in storage a new account along the pre-exising ones.
  * @param account
  * @param showOnboarding
  */
-export const writeNewAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
+export const writeCreateAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
   const savedAccount = getSerializedLoggedInAccountInfo(account);
   const savedAccounts: Record<string, AuthSavedAccount> = {
     ...readSavedAccounts(),
@@ -75,15 +54,19 @@ export const writeNewAccount = (account: AuthLoggedAccount, showOnboarding: bool
 };
 
 /**
- * Save in storage a new account.
+ * Save in storage an account replacing the one with given id.
  * @param account
  * @param showOnboarding
  */
-export const writeSingleAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
+export const writeReplaceAccount = (
+  id: string | typeof ERASE_ALL_ACCOUNTS,
+  account: AuthLoggedAccount,
+  showOnboarding: boolean = false,
+) => {
   const savedAccount = getSerializedLoggedInAccountInfo(account);
-  const savedAccounts: Record<string, AuthSavedAccount> = {
-    [account.user.id]: savedAccount,
-  };
+  const savedAccounts = id === ERASE_ALL_ACCOUNTS ? {} : readSavedAccounts();
+  if (id !== ERASE_ALL_ACCOUNTS) delete savedAccounts[id];
+  savedAccounts[account.user.id] = savedAccount;
   const startup: AuthStorageData['startup'] = {
     platform: account.platform.name,
     account: account.user.id,

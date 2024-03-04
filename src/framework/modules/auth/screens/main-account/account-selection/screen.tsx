@@ -80,7 +80,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, login: item.login } });
+        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, accountId: item.id } });
       };
       if (item.isLoggable) {
         try {

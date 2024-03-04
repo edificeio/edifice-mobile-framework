@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { IAuthState, actions, assertSession, getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { ERASE_ALL_ACCOUNTS, IAuthState, actions, assertSession, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
@@ -29,6 +29,7 @@ import {
   accountIsLogged,
   createActivationError,
   createChangePasswordError,
+  getSerializedLoggedInAccountInfo,
 } from './model';
 import * as authService from './service';
 import {
@@ -49,13 +50,12 @@ import {
   revalidateTerms,
 } from './service';
 import {
-  getSerializedLoggedInAccountInfo,
   readSavedAccounts,
   readSavedStartup,
   readShowOnbording,
+  writeCreateAccount,
   writeLogout,
-  writeNewAccount,
-  writeSingleAccount,
+  writeReplaceAccount,
 } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
@@ -273,11 +273,45 @@ export const loginSteps = {
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
+interface AuthLoginFunctions {
+  success: typeof actions.addAccount;
+  requirement: typeof actions.addAccountRequirement;
+  activation: typeof actions.redirectActivation;
+  passwordRenew: typeof actions.redirectPasswordRenew;
+  writeStorage: typeof writeCreateAccount;
+}
+
+const getLoginFunctions = {
+  addFirstAccount: () =>
+    ({
+      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(ERASE_ALL_ACCOUNTS, ...args),
+      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) =>
+        actions.replaceAccountRequirement(ERASE_ALL_ACCOUNTS, ...args),
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(ERASE_ALL_ACCOUNTS, ...args),
+    }) as AuthLoginFunctions,
+  replaceAccount: (id: keyof IAuthState['accounts']) =>
+    ({
+      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
+      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
+    }) as AuthLoginFunctions,
+  addAnotherAccount: () =>
+    ({
+      success: actions.addAccount,
+      requirement: actions.addAccountRequirement,
+      activation: actions.addAccountActivation,
+      passwordRenew: actions.addAccountPasswordRenew,
+      writeStorage: writeCreateAccount,
+    }) as AuthLoginFunctions,
+};
+
+/** Generic function that perform login task when token got. Only affects Redux, not storage ! */
 const performLogin = async (
-  redux: {
-    success: typeof actions.login;
-    requirement: typeof actions.loginRequirement;
-  },
+  reduxActions: Pick<AuthLoginFunctions, 'success' | 'requirement'>,
   platform: Platform,
   loginUsed: string | undefined,
   dispatch: AuthDispatch,
@@ -293,49 +327,32 @@ const performLogin = async (
     if (requirementsThatNeedLegalUrls.includes(requirement)) {
       await dispatch(loadPlatformLegalUrlsAction(platform));
     }
-    dispatch(redux.requirement(accountInfo.user.id, accountInfo, requirement, context));
+    dispatch(reduxActions.requirement(accountInfo, requirement, context));
   } else {
-    dispatch(redux.success(accountInfo.user.id, accountInfo));
+    dispatch(reduxActions.success(accountInfo));
   }
   return accountInfo;
 };
 
-/**
- * Manual login action with credentials by getting a fresh new token.
- * @param platform platform info to create the session on.
- * @param credentials login & password
- * @returns
- * @throws
- */
+/** Generic thunk action that handle everything for a login with credentials */
 const loginCredentialsAction =
-  (
-    redux: {
-      success: typeof actions.login;
-      requirement: typeof actions.loginRequirement;
-      activation: typeof actions.redirectActivation;
-      passwordRenew: typeof actions.redirectPasswordRenew;
-    },
-    storageFn: typeof writeNewAccount,
-    platform: Platform,
-    credentials: AuthCredentials,
-    key?: number,
-  ) =>
+  (functions: AuthLoginFunctions, platform: Platform, credentials: AuthCredentials, key?: number) =>
   async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       // Nested try/catch block to handle CREDENTIALS_MISMATCH errors caused by activation/renew code use.
       try {
         await loginSteps.getNewToken(platform, credentials);
-        const session = await performLogin(redux, platform, credentials.username, dispatch);
-        storageFn(session, getAuthState(getState()).showOnboarding);
+        const session = await performLogin(functions, platform, credentials.username, dispatch);
+        functions.writeStorage(session, getAuthState(getState()).showOnboarding);
         return session;
       } catch (ee) {
         if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH) {
           switch (await loginSteps.checkActivationAndRenew(platform, credentials)) {
             case AuthPendingRedirection.ACTIVATE:
-              dispatch(redux.activation(platform.name, credentials.username, credentials.password));
+              dispatch(functions.activation(platform.name, credentials.username, credentials.password));
               return AuthPendingRedirection.ACTIVATE;
             case AuthPendingRedirection.RENEW_PASSWORD:
-              dispatch(redux.passwordRenew(platform.name, credentials.username, credentials.password));
+              dispatch(functions.passwordRenew(platform.name, credentials.username, credentials.password));
               return AuthPendingRedirection.RENEW_PASSWORD;
           }
         } else {
@@ -354,47 +371,37 @@ const loginCredentialsAction =
     }
   };
 
-export const loginCredentialsActionSingleAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
-  loginCredentialsAction(
-    {
-      success: actions.login,
-      requirement: actions.loginRequirement,
-      activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
-    },
-    writeSingleAccount,
-    platform,
-    credentials,
-    key,
-  );
+/**
+ * Manual login action with credentials by getting a fresh new token.
+ * New account will exist among the other ones.
+ * @param platform platform info to create the session on.
+ * @param credentials login & password
+ * @param key the screen key to store eventuel errors with
+ * @returns
+ * @throws
+ */
+export const loginCredentialsActionAddFirstAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
+  loginCredentialsAction(getLoginFunctions.addFirstAccount(), platform, credentials, key);
 
-export const loginCredentialsActionMainAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
-  loginCredentialsAction(
-    {
-      success: actions.login,
-      requirement: actions.loginRequirement,
-      activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
-    },
-    writeNewAccount,
-    platform,
-    credentials,
-    key,
-  );
+/**
+ * Manual login action with credentials by getting a fresh new token.
+ * New account will replace the one with given id.
+ * @param accountId the account to replace
+ * @param platform platform info to create the session on.
+ * @param credentials login & password
+ * @param key the screen key to store eventuel errors with
+ * @returns
+ * @throws
+ */
+export const loginCredentialsActionReplaceAccount = (
+  accountId: keyof IAuthState['accounts'],
+  platform: Platform,
+  credentials: AuthCredentials,
+  key?: number,
+) => loginCredentialsAction(getLoginFunctions.replaceAccount(accountId), platform, credentials, key);
 
-export const loginCredentialsActionAddAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
-  loginCredentialsAction(
-    {
-      success: actions.addAccount,
-      requirement: actions.addAccountRequirement,
-      activation: actions.addAccountActivation,
-      passwordRenew: actions.addAccountPasswordRenew,
-    },
-    writeNewAccount,
-    platform,
-    credentials,
-    key,
-  );
+export const loginCredentialsActionAddAnotherAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
+  loginCredentialsAction(getLoginFunctions.addAnotherAccount(), platform, credentials, key);
 
 /**
  * Manual login action with Federation.
@@ -404,23 +411,12 @@ export const loginCredentialsActionAddAccount = (platform: Platform, credentials
  * @throws
  */
 const loginFederationAction =
-  (
-    redux: {
-      success: typeof actions.login;
-      requirement: typeof actions.loginRequirement;
-      activation: typeof actions.redirectActivation;
-      passwordRenew: typeof actions.redirectPasswordRenew;
-    },
-    storageFn: typeof writeNewAccount,
-    platform: Platform,
-    credentials: AuthFederationCredentials,
-    key?: number,
-  ) =>
+  (functions: AuthLoginFunctions, platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
   async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       await loginSteps.getNewToken(platform, credentials);
-      const session = await performLogin(redux, platform, undefined, dispatch);
-      storageFn(session, getAuthState(getState()).showOnboarding);
+      const session = await performLogin(functions, platform, undefined, dispatch);
+      functions.writeStorage(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
       console.warn(`[Auth] Login federation error :`, e);
@@ -434,47 +430,18 @@ const loginFederationAction =
     }
   };
 
-export const loginFederationActionSingleAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
-  loginFederationAction(
-    {
-      success: actions.login,
-      requirement: actions.loginRequirement,
-      activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
-    },
-    writeSingleAccount,
-    platform,
-    credentials,
-    key,
-  );
+export const loginFederationActionAddFirstAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
+  loginFederationAction(getLoginFunctions.addFirstAccount(), platform, credentials, key);
 
-export const loginFederationActionMainAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
-  loginFederationAction(
-    {
-      success: actions.login,
-      requirement: actions.loginRequirement,
-      activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
-    },
-    writeNewAccount,
-    platform,
-    credentials,
-    key,
-  );
+export const loginFederationActionReplaceAccount = (
+  accountId: keyof IAuthState['accounts'],
+  platform: Platform,
+  credentials: AuthFederationCredentials,
+  key?: number,
+) => loginFederationAction(getLoginFunctions.replaceAccount(accountId), platform, credentials, key);
 
-export const loginFederationActionAddAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
-  loginFederationAction(
-    {
-      success: actions.addAccount,
-      requirement: actions.addAccountRequirement,
-      activation: actions.addAccountActivation,
-      passwordRenew: actions.addAccountPasswordRenew,
-    },
-    writeNewAccount,
-    platform,
-    credentials,
-    key,
-  );
+export const loginFederationActionAddAnotherAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
+  loginFederationAction(getLoginFunctions.addAnotherAccount(), platform, credentials, key);
 
 /**
  * Automatic login action with given saved account information (and its serialized token).
@@ -492,14 +459,14 @@ export const restoreAction =
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(account.user.id, false);
       const session = await performLogin(
         {
-          success: actions.login,
-          requirement: actions.loginRequirement,
+          success: actions.addAccount,
+          requirement: actions.addAccountRequirement,
         },
         appConf.assertPlatformOfName(account.platform),
         account.user.loginUsed,
         dispatch,
       );
-      writeNewAccount(session, getAuthState(getState()).showOnboarding);
+      writeCreateAccount(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
       console.warn(`[Auth] Restore error :`, e);
@@ -566,13 +533,8 @@ export const activateAccountAction =
       await authService.activateAccount(platform, model);
       dispatch(
         loginCredentialsAction(
-          {
-            success: actions.login,
-            requirement: actions.loginRequirement,
-            activation: actions.redirectActivation,
-            passwordRenew: actions.redirectPasswordRenew,
-          },
-          writeNewAccount,
+          getLoginFunctions.addFirstAccount(),
+          // ToDo : NOOOO ! There are some cases where activation is replace // add another account
           platform,
           {
             username: model.login,
@@ -742,13 +704,8 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
     };
     await dispatch(
       loginCredentialsAction(
-        {
-          success: actions.login,
-          requirement: actions.loginRequirement,
-          activation: actions.redirectActivation,
-          passwordRenew: actions.redirectPasswordRenew,
-        },
-        writeNewAccount,
+        getLoginFunctions.addFirstAccount(),
+        // ToDo : NOOOO ! There are some cases where pwdrenew is replace // add another account
         platform,
         credentials,
       ),
