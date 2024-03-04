@@ -150,8 +150,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   noFutureHomeworkHiddenPast() {
-    const { pastDateLimit } = this.state;
-    return this.futureHomework().length === 0 && pastDateLimit.isSame(today(), 'day');
+    return this.futureHomework().length === 0;
   }
 
   hasPastHomeWork() {
