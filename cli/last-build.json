@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-04 21:02:05",
-  "notes": "fix(auth): MB-2512 better manage login\nfix(auth): MB-2554 fix rules for account add/replace\nMerge branch 'dev/1.12.0' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.12.0\nfix(presence): MB-1960,fix empty state when app not initialized\nchore(auth): store account id instead of raw login\nfix(homework): MB-2476, fix bug empty state\nfeat(forgot): MB-2534 , change login-credentials props forgotRoute to forgotPasswordRoute & forgotIdRoute\nrelease: 1.12.0-alpha.9(1120009)",
-  "version": "1.12.0-alpha.10(1120010)"
+  "last": "2024-03-05 00:15:06",
+  "notes": "fix(auth): bad handling of restoreAction\nrelease: 1.12.0-alpha.10(1120010)",
+  "version": "1.12.0-alpha.11(1120011)"
 }
