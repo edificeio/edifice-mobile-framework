@@ -19,7 +19,7 @@ import styles from './styles';
 import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
-  const { route, navigation, error, forgotRoute, handleConsumeError, tryLogin } = props;
+  const { route, navigation, error, forgotPasswordRoute, forgotIdRoute, handleConsumeError, tryLogin } = props;
   const { platform } = route.params;
 
   const [login, setLogin] = React.useState<string>(route.params.login ?? '');
@@ -217,13 +217,13 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
             <View style={styles.boxTextForgot}>
               <DefaultButton
                 text={I18n.get('auth-login-forgot-password')}
-                action={() => navigation.navigate(forgotRoute, { platform, mode: 'password', login: route.params.login })}
+                action={() => navigation.dispatch(forgotPasswordRoute)}
                 testID="login-forgot-password"
                 style={styles.forgotPasswordButton}
               />
               <DefaultButton
                 text={I18n.get('auth-login-forgot-id')}
-                action={() => navigation.navigate(forgotRoute, { platform, mode: 'id' })}
+                action={() => navigation.dispatch(forgotIdRoute)}
                 testID="login-forgot-identifier"
               />
             </View>
@@ -231,7 +231,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         </View>
       </ScrollView>
     );
-  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, forgotRoute, platform, route.params.login]);
+  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, forgotIdRoute, forgotPasswordRoute, platform, route.params.login]);
 
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };

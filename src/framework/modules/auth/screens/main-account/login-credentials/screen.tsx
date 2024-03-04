@@ -1,3 +1,4 @@
+import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -32,7 +33,19 @@ export const computeNavBar = ({
   }),
 });
 function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProps) {
-  return <LoginCredentialsScreen {...props} forgotRoute={authRouteNames.forgot} />;
+  return(
+    <LoginCredentialsScreen
+      {...props}
+      forgotPasswordRoute={CommonActions.navigate({
+    name: authRouteNames.forgot,
+    params: { platform: props.route.params.platform, mode: 'password', login: props.route.params.login },
+  })}
+  forgotIdRoute={CommonActions.navigate({
+    name: authRouteNames.forgot,
+    params: { platform: props.route.params.platform, mode: 'id' },
+      })}
+    />
+  );
 }
 
 export default connect(

@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { consumeAuthErrorAction, loginCredentialsActionMainAccount } from '~/framework/modules/auth/actions';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IAuthState } from '~/framework/modules/auth/reducer';
+import { StackNavigationAction } from '~/framework/navigation/types';
 import type { Platform } from '~/framework/util/appConf';
 
 export enum LoginState {
@@ -12,7 +13,8 @@ export enum LoginState {
 }
 
 export interface LoginCredentialsScreenProps {
-  forgotRoute: string;
+  forgotPasswordRoute: StackNavigationAction;
+  forgotIdRoute: StackNavigationAction;
 }
 
 export interface LoginCredentialsScreenNavParams {
