@@ -275,7 +275,7 @@ const reducer = createReducer(initialState, {
     const { id, account } = action as unknown as ActionPayloads['login'];
     return {
       ...state,
-      accounts: { ...state.accounts, [id]: account },
+      accounts: { [id]: account },
       connected: id,
       showOnboarding: false,
       requirement: undefined,
@@ -286,7 +286,7 @@ const reducer = createReducer(initialState, {
     const { id, account, requirement, context } = action as unknown as ActionPayloads['loginRequirement'];
     return {
       ...state,
-      accounts: { ...state.accounts, [id]: account },
+      accounts: { [id]: account },
       connected: id,
       showOnboarding: false,
       requirement,
@@ -495,6 +495,11 @@ export function getAccountsNumber() {
 export function getAccounts() {
   const state = getState(getStore().getState());
   return Object.values(state.accounts);
+}
+
+export function getAccountById(id?: keyof IAuthState['accounts']) {
+  const state = getState(getStore().getState());
+  return id ? state.accounts[id] : undefined;
 }
 
 /**

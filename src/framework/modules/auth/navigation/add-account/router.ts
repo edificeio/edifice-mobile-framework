@@ -6,7 +6,7 @@ import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-import { getLoginRouteName, getNavActionForRedirect } from '../main-account/router';
+import { getLoginNextScreen, getNavActionForRedirect } from '../main-account/router';
 
 export const getAddAccountLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {
   return platform.wayf
@@ -42,12 +42,14 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
     // 3 - Login Screen
     // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
     let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
-    let login: string | undefined;
+    // let login: string | undefined;
+    let accountId: keyof IAuthState['accounts'] | undefined;
+
     if (pending) {
       foundPlatform = pending.platform;
       if (pending.redirect !== undefined) {
         // Activation && password renew
-        login = pending.loginUsed;
+        // login = pending.loginUsed;
       }
     }
 
@@ -61,14 +63,10 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
       : allPlatforms[0];
 
     // 3.3 – Put the platform route into the stack
-    if (platform || !routes.length)
-      routes.push({
-        name: getLoginRouteName(platform),
-        params: {
-          platform,
-          login,
-        },
-      });
+    if (platform && !routes.length) {
+      const nextScreen = getLoginNextScreen(platform);
+      routes.push({ ...nextScreen, params: { ...nextScreen.params, accountId } });
+    }
 
     if (platform) navRedirection = getNavActionForRedirect(platform, pending);
   }

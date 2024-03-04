@@ -55,6 +55,7 @@ import {
   readShowOnbording,
   writeLogout,
   writeNewAccount,
+  writeSingleAccount,
 } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
@@ -68,12 +69,6 @@ export const authInitAction = () => async (dispatch: AuthDispatch, getState: () 
   const accounts = readSavedAccounts();
   const showOnboarding = readShowOnbording();
   const deviceId = await DeviceInfo.getUniqueId();
-
-  const singleAccountId = Object.keys(accounts).length === 1 ? Object.keys(accounts)[0] : undefined;
-  if (singleAccountId) {
-    startup.account = singleAccountId;
-    startup.platform = accounts[singleAccountId].platform;
-  }
 
   dispatch(actions.authInit(startup, accounts, showOnboarding, deviceId));
   const authState = getAuthState(getState());
@@ -359,6 +354,20 @@ const loginCredentialsAction =
     }
   };
 
+export const loginCredentialsActionSingleAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
+  loginCredentialsAction(
+    {
+      success: actions.login,
+      requirement: actions.loginRequirement,
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+    },
+    writeSingleAccount,
+    platform,
+    credentials,
+    key,
+  );
+
 export const loginCredentialsActionMainAccount = (platform: Platform, credentials: AuthCredentials, key?: number) =>
   loginCredentialsAction(
     {
@@ -424,6 +433,20 @@ const loginFederationAction =
       throw e;
     }
   };
+
+export const loginFederationActionSingleAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
+  loginFederationAction(
+    {
+      success: actions.login,
+      requirement: actions.loginRequirement,
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+    },
+    writeSingleAccount,
+    platform,
+    credentials,
+    key,
+  );
 
 export const loginFederationActionMainAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
   loginFederationAction(
