@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-04 16:24:43",
-  "notes": "poc(zendesk): Remove proguard to avoid Android crash when showing Zendesk Help Center\nMerge branch 'dev/1.12.0' into pocs/zendesk\npoc(zendesk): Improve HelpCenter Display\nrelease: 1.12.0-alpha.9(1120009)\nfix: MB-1795 delete pending & startup at logout. If only one account -> consider as startup content\nchore: create StackNavigationAction type\nfeat: MB-1795 show right screen on startup\nfeat(forgot): MB-2534 , add forgotPage template and add screens in main-account & add-accound\nMerge branch 'dev/1.12.0' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.12.0\nfeat(fileHandler): MB-2182 , add pic compression\nMerge branch 'dev/1.12.0' into pocs/zendesk\nupdate(stack): Update some packages.\nfix: some auth nav issues\nchore: move account-selection into main-account stack\nchore: remove writeSingleAccount\nchore: delete unused comment\nchore: MB-2024 add account with credentials OK\nfeat: Add additional device information on version number long press\nchore: set resolutions for rn/cli-platform-* to specific version 13.5.1\nchore: move some files\nrelease: 2.0.0-pocs.2(2000002)",
-  "version": "2.0.0-pocs.3(2000003)"
+  "last": "2024-03-04 17:14:28",
+  "notes": "poc(zendesk): Cleaning\nrelease: 2.0.0-pocs.3(2000003)",
+  "version": "2.0.0-pocs.4(2000004)"
 }
