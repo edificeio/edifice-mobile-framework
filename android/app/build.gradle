@@ -145,10 +145,6 @@ dependencies {
     implementation("com.zendesk:chat:3.4.0")
     implementation("com.zendesk:messaging:5.4.0")
     implementation("com.zendesk:support:5.2.0")
-    //api group: 'com.zendesk', name: 'answerbot', version: '3.2.0'
-    //api group: 'com.zendesk', name: 'chat', version: '3.4.0'
-    //api group: 'com.zendesk', name: 'messaging', version: '5.4.0'
-    //api group: 'com.zendesk', name: 'support', version: '5.2.0'
     // Packages
     implementation project(':react-native-action-sheet')
 
