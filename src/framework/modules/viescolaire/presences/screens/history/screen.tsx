@@ -33,6 +33,7 @@ import { Event } from '~/framework/modules/viescolaire/presences/model';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import { PresencesNavigationParams, presencesRouteNames } from '~/framework/modules/viescolaire/presences/navigation';
 import { getPresencesWorkflowInformation } from '~/framework/modules/viescolaire/presences/rights';
+import { presencesService } from '~/framework/modules/viescolaire/presences/service';
 import { getRecentEvents } from '~/framework/modules/viescolaire/presences/utils/events';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { addTime, subtractTime } from '~/framework/util/date';
@@ -73,6 +74,12 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
       const studentId = userType === AccountType.Student ? userId : selectedChildId;
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
+      const initialized = await presencesService.initialization.getStructureStatus(structureId);
+      
+      if (!initialized) {
+        setInitialized(false);
+        throw new Error();
+      }
       const { startDate, endDate } = await props.tryFetchSchoolYear(structureId);
       await props.tryFetchStatistics(studentId, structureId, startDate, endDate);
       await props.tryFetchAbsenceStatements(

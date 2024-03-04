@@ -794,7 +794,7 @@ export const presencesService = {
     },
   },
   initialization: {
-    getStructureStatus: async (session: AuthLoggedAccount, structureId: string) => {
+    getStructureStatus: async (structureId: string) => {
       const api = `/presences/initialization/structures/${structureId}`;
       const data = (await fetchJSONWithCache(api)) as { initialized: boolean };
       return data.initialized;
