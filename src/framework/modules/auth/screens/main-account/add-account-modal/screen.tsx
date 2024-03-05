@@ -26,13 +26,20 @@ export const computeNavBar = ({
 export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScreenPrivateProps) {
   const RootStack = getTypedRootStack();
   const authNavigation = useAuthNavigation();
+  const routes = React.useMemo(() => authNavigation, [authNavigation]);
   const pending = useSelector(state => getState(state).pendingAddAccount);
   const navigationState = React.useMemo(() => getAddAccountNavigationState(pending), [pending]);
-  return (
-    <RootStack.Navigator
-      initialRouteName={navigationState.routes[navigationState.routes.length - 1].name}
-      screenOptions={{ headerShown: false }}>
-      {authNavigation}
-    </RootStack.Navigator>
+  const initialRouteName = React.useMemo(
+    () => navigationState.routes[navigationState.routes.length - 1].name,
+    [navigationState.routes],
   );
+  const navigator = React.useMemo(
+    () => (
+      <RootStack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
+        {routes}
+      </RootStack.Navigator>
+    ),
+    [RootStack, routes, initialRouteName],
+  );
+  return navigator;
 }

@@ -60,6 +60,8 @@ export interface IAuthState {
   deviceInfo: {
     uniqueId?: string;
   };
+
+  lastAddAccount: number;
 }
 
 // Initial state
@@ -69,6 +71,7 @@ export const initialState: IAuthState = {
   platformContexts: {},
   platformLegalUrls: {},
   deviceInfo: {},
+  lastAddAccount: 0,
 };
 
 // Actions definitions
@@ -289,6 +292,7 @@ const reducer = createReducer(initialState, {
       connected: account.user.id,
       showOnboarding: false,
       requirement: undefined,
+      lastAddAccount: Date.now(),
     };
   },
 
@@ -301,6 +305,7 @@ const reducer = createReducer(initialState, {
       showOnboarding: false,
       requirement,
       platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+      lastAddAccount: Date.now(),
     };
   },
 

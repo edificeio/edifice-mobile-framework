@@ -206,8 +206,27 @@ export const getAuthNavigationState = (
   } else {
     return { stale: true as const, routes, index: routes.length - 1 };
   }
-}; /**
- * Get the right login route name for the given platfoem (credential /// wayf)
- * @param platform
- * @returns
- */
+};
+
+export const getFirstTabRoute = () => ({
+  stale: true as const,
+  routes: [
+    {
+      name: '$tabs',
+      state: {
+        routes: [
+          {
+            name: '$tab.timeline',
+            state: {
+              routes: [
+                {
+                  name: 'timeline',
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+});
