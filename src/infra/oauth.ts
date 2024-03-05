@@ -12,6 +12,7 @@ import { Source } from 'react-native-fast-image';
 import { I18n } from '~/app/i18n';
 import { getStore } from '~/app/store';
 import type { AuthLoggedAccount, AuthSavedAccount, AuthTokenSet } from '~/framework/modules/auth/model';
+import { getSerializedLoggedInAccountInfo } from '~/framework/modules/auth/model';
 import {
   assertSession,
   actions as authActions,
@@ -19,7 +20,7 @@ import {
   getSession,
   getState,
 } from '~/framework/modules/auth/reducer';
-import { getSerializedLoggedInAccountInfo, updateAccount } from '~/framework/modules/auth/storage';
+import { updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';

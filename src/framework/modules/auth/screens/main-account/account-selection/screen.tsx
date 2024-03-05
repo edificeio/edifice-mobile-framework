@@ -27,7 +27,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
 import { restoreAction } from '../../../actions';
-import { AuthSavedAccountWithTokens, accountIsLoggable } from '../../../model';
+import { AuthLoggedAccount, AuthSavedAccountWithTokens, accountIsLoggable } from '../../../model';
 import moduleConfig from '../../../module-config';
 import { getLoginNextScreen } from '../../../navigation/main-account/router';
 import { getState as getAuthState } from '../../../reducer';
@@ -80,12 +80,12 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, login: item.login } });
+        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, accountId: item.id } });
       };
       if (item.isLoggable) {
         try {
           const account = accounts[item.id];
-          await tryRestore(account as AuthSavedAccountWithTokens);
+          await tryRestore(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
         } catch (e) {
           console.warn(e);
           redirect(item);

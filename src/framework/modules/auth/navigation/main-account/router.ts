@@ -148,7 +148,10 @@ export const getAuthNavigationState = (
   // 3 - Login Screen
   // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
   let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
-  let login: string | undefined;
+  // let login: string | undefined;
+
+  let accountId: keyof IAuthState['accounts'] | undefined;
+
   if (pending) {
     foundPlatform = pending.platform;
     if (pending.redirect === undefined) {
@@ -156,11 +159,18 @@ export const getAuthNavigationState = (
       const loggingAccount = pending.account ? accounts[pending.account] : undefined;
       if (loggingAccount) {
         foundPlatform = loggingAccount.platform;
-        login = loggingAccount.user.loginUsed;
+        // login = loggingAccount.user.loginUsed;
+        accountId = loggingAccount.user.id;
       }
     } else {
       // Activation && password renew
-      login = pending.loginUsed;
+      // login = pending.loginUsed;
+    }
+  } else {
+    const singleAccountId = Object.keys(accounts).length === 1 ? Object.keys(accounts)[0] : undefined;
+    if (singleAccountId) {
+      foundPlatform = accounts[singleAccountId].platform;
+      accountId = singleAccountId;
     }
   }
 
@@ -176,7 +186,7 @@ export const getAuthNavigationState = (
   // 3.3 – Put the platform route into the stack
   if (platform && (accountsAsArray.length <= 1 || (pending as AuthPendingRestore)?.account)) {
     const nextScreen = getLoginNextScreen(platform);
-    routes.push({ ...nextScreen, params: { ...nextScreen.params, login } });
+    routes.push({ ...nextScreen, params: { ...nextScreen.params, accountId } });
   }
 
   // 4 – Requirement & login redirections

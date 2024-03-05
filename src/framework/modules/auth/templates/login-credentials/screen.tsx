@@ -12,6 +12,7 @@ import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { getAccountById } from '~/framework/modules/auth/reducer';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
 
@@ -19,10 +20,21 @@ import styles from './styles';
 import { LoginCredentialsScreenPrivateProps, LoginState } from './types';
 
 const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
-  const { route, navigation, error, forgotRoute, handleConsumeError, tryLogin } = props;
-  const { platform } = route.params;
+  const {
+    route,
+    navigation,
+    error,
+    forgotPasswordRoute,
+    forgotIdRoute,
+    handleConsumeError,
+    tryLoginAdd,
+    tryLoginReplace,
+    lockLogin,
+  } = props;
+  const { platform, accountId } = route.params;
+  const account = getAccountById(accountId);
 
-  const [login, setLogin] = React.useState<string>(route.params.login ?? '');
+  const [login, setLogin] = React.useState<string>(account?.user.loginUsed ?? '');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
@@ -51,10 +63,16 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         password: password.trim(),
       };
 
-      await tryLogin(platform, loginCredentials, errkey);
+      if (accountId) {
+        await tryLoginReplace(accountId, platform, loginCredentials, errkey);
+      } else {
+        await tryLoginAdd(platform, loginCredentials, errkey);
+      }
+
       if (mounted) {
         setTyping(false);
         setLoginState(LoginState.DONE);
+        // Timemout is added after loggin in to keep spinner visible during screen transition
         setTimeout(() => {
           if (mounted) {
             setTyping(false);
@@ -68,7 +86,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         setLoginState(LoginState.IDLE);
       }
     }
-  }, [login, password, tryLogin, platform, errkey]);
+  }, [login, password, accountId, tryLoginReplace, platform, errkey, tryLoginAdd]);
 
   const goToWeb = React.useCallback(() => {
     openUrl(platform.url);
@@ -156,6 +174,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
+              disabled={lockLogin}
             />
           }
         />
@@ -178,7 +197,17 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         />
       </View>
     );
-  }, [onLoginChanged, login, errmsg, errtype, onSubmitEditingLogin, onPasswordChanged, password, onSubmitEditingPassword]);
+  }, [
+    onLoginChanged,
+    login,
+    errmsg,
+    errtype,
+    onSubmitEditingLogin,
+    lockLogin,
+    onPasswordChanged,
+    password,
+    onSubmitEditingPassword,
+  ]);
 
   const renderLoginButton = React.useCallback(() => {
     if (
@@ -217,21 +246,34 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
             <View style={styles.boxTextForgot}>
               <DefaultButton
                 text={I18n.get('auth-login-forgot-password')}
-                action={() => navigation.navigate(forgotRoute, { platform, mode: 'password', login: route.params.login })}
+                action={() => navigation.dispatch(forgotPasswordRoute(login))}
                 testID="login-forgot-password"
                 style={styles.forgotPasswordButton}
               />
-              <DefaultButton
-                text={I18n.get('auth-login-forgot-id')}
-                action={() => navigation.navigate(forgotRoute, { platform, mode: 'id' })}
-                testID="login-forgot-identifier"
-              />
+              {!lockLogin ? (
+                <DefaultButton
+                  text={I18n.get('auth-login-forgot-id')}
+                  action={() => navigation.dispatch(forgotIdRoute)}
+                  testID="login-forgot-identifier"
+                />
+              ) : null}
             </View>
           </View>
         </View>
       </ScrollView>
     );
-  }, [renderPlatform, renderInputs, renderError, error, renderLoginButton, navigation, forgotRoute, platform, route.params.login]);
+  }, [
+    renderPlatform,
+    renderInputs,
+    renderError,
+    error,
+    renderLoginButton,
+    lockLogin,
+    navigation,
+    forgotPasswordRoute,
+    login,
+    forgotIdRoute,
+  ]);
 
   return <KeyboardPageView style={styles.pageView}>{renderPage()}</KeyboardPageView>;
 };

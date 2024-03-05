@@ -1,8 +1,13 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { consumeAuthErrorAction, loginCredentialsActionMainAccount } from '~/framework/modules/auth/actions';
+import type {
+  consumeAuthErrorAction,
+  loginCredentialsActionAddFirstAccount,
+  loginCredentialsActionReplaceAccount,
+} from '~/framework/modules/auth/actions';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { IAuthState } from '~/framework/modules/auth/reducer';
+import { StackNavigationAction } from '~/framework/navigation/types';
 import type { Platform } from '~/framework/util/appConf';
 
 export enum LoginState {
@@ -12,23 +17,27 @@ export enum LoginState {
 }
 
 export interface LoginCredentialsScreenProps {
-  forgotRoute: string;
+  forgotPasswordRoute: (login?: string) => StackNavigationAction;
+  forgotIdRoute: StackNavigationAction;
 }
 
 export interface LoginCredentialsScreenNavParams {
   platform: Platform;
-  login?: string;
+  accountId?: string;
 }
 
 export interface LoginCredentialsScreenStoreProps {
-  // auth: IAuthState;
   error: IAuthState['error'];
+  lockLogin: boolean;
 }
 
 export interface LoginCredentialsScreenDispatchProps {
-  tryLogin: (
-    ...args: Parameters<typeof loginCredentialsActionMainAccount>
-  ) => ReturnType<ReturnType<typeof loginCredentialsActionMainAccount>>;
+  tryLoginAdd: (
+    ...args: Parameters<typeof loginCredentialsActionAddFirstAccount>
+  ) => ReturnType<ReturnType<typeof loginCredentialsActionAddFirstAccount>>;
+  tryLoginReplace: (
+    ...args: Parameters<typeof loginCredentialsActionReplaceAccount>
+  ) => ReturnType<ReturnType<typeof loginCredentialsActionReplaceAccount>>;
   handleConsumeError: (...args: Parameters<typeof consumeAuthErrorAction>) => ReturnType<ReturnType<typeof consumeAuthErrorAction>>;
 }
 
