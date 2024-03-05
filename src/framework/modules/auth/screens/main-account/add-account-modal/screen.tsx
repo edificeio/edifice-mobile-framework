@@ -26,7 +26,7 @@ export const computeNavBar = ({
 export default function AuthAddAccountModalScreen(props: AuthAddAccountModalScreenPrivateProps) {
   const RootStack = getTypedRootStack();
   const authNavigation = useAuthNavigation();
-  const pending = useSelector(state => getState(state).pending);
+  const pending = useSelector(state => getState(state).pendingAddAccount);
   const navigationState = React.useMemo(() => getAddAccountNavigationState(pending), [pending]);
   return (
     <RootStack.Navigator

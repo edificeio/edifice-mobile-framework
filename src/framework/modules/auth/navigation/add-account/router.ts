@@ -1,12 +1,12 @@
-import { CommonActions, NavigationState, PartialState } from '@react-navigation/native';
+import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
 
+import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
+import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
 import { IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
-
-import { getLoginNextScreen, getNavActionForRedirect } from '../main-account/router';
 
 export const getAddAccountLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {
   return platform.wayf
@@ -22,6 +22,29 @@ export const getAddAccountOnboardingNextScreen = () => {
   return appConf.hasMultiplePlatform
     ? CommonActions.navigate({ name: authRouteNames.addAccountPlatforms })
     : CommonActions.navigate(getAddAccountLoginNextScreen(appConf.platforms[0]));
+};
+
+export const getAddAccountNavActionForRedirect = (platform: Platform, pending: IAuthState['pending'] | undefined) => {
+  switch (pending?.redirect) {
+    case AuthPendingRedirection.ACTIVATE:
+      return StackActions.push(authRouteNames.addAccountActivation, {
+        platform,
+        credentials: {
+          username: pending.loginUsed,
+          password: pending.code,
+        },
+      });
+
+    case AuthPendingRedirection.RENEW_PASSWORD:
+      return StackActions.push(authRouteNames.addAccountChangePassword, {
+        platform,
+        credentials: {
+          username: pending.loginUsed,
+          password: pending.code,
+        },
+        useResetCode: true,
+      });
+  }
 };
 
 export const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
@@ -68,7 +91,7 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
       routes.push({ ...nextScreen, params: { ...nextScreen.params, accountId } });
     }
 
-    if (platform) navRedirection = getNavActionForRedirect(platform, pending);
+    if (platform) navRedirection = getAddAccountNavActionForRedirect(platform, pending);
   }
 
   // 4.2 – Apply redirection
