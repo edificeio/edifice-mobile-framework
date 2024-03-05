@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-04 17:14:28",
-  "notes": "poc(zendesk): Cleaning\nrelease: 2.0.0-pocs.3(2000003)",
-  "version": "2.0.0-pocs.4(2000004)"
+  "last": "2024-03-05 10:08:32",
+  "notes": "Merge branch 'dev/1.12.0' into pocs/zendesk\npoc(zensesk): Add Zendesk stuff to proguard rules\nrelease: 1.12.0-alpha.11(1120011)\nfix(auth): bad handling of restoreAction\nrelease: 1.12.0-alpha.10(1120010)\nfix(auth): MB-2512 better manage login\nfix(auth): MB-2554 fix rules for account add/replace\nrelease: 2.0.0-pocs.4(2000004)",
+  "version": "2.0.0-pocs.5(2000005)"
 }
