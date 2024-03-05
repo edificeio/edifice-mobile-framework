@@ -462,15 +462,12 @@ export const restoreAction =
       }
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(accountToRestore.user.id, false);
       const session = await performLogin(
-        {
-          success: actions.addAccount,
-          requirement: actions.addAccountRequirement,
-        },
+        getLoginFunctions.replaceAccount(account.user.id),
         appConf.assertPlatformOfName(accountToRestore.platform),
         accountToRestore.user.loginUsed,
         dispatch,
       );
-      writeCreateAccount(session, getAuthState(getState()).showOnboarding);
+      writeReplaceAccount(account.user.id, session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
       console.warn(`[Auth] Restore error :`, e);
