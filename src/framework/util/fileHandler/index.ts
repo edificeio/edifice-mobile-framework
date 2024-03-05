@@ -37,7 +37,7 @@ const compress = async pic => {
   if (pic.type === 'image/gif') return pic;
   try {
     let result;
-    const maxDimension = 1080;
+    const maxDimension = 1680;
     await ImageResizer.createResizedImage(pic.uri, maxDimension, maxDimension, 'JPEG', 80, 0, undefined, false, {
       mode: 'contain',
       onlyScaleDown: true,
