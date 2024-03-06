@@ -131,10 +131,10 @@ export const tryActionLegacy =
     const doTrack = typeof trackInfo === 'function' ? trackInfo(...args) : trackInfo;
     try {
       const ret = await dispatch(action(...args));
-      doTrack && Trackers.trackEventOfModule(doTrack[0], doTrack[1], doTrack[2] + ' - Succès', doTrack[3]);
+      if (doTrack) Trackers.trackEventOfModule(doTrack[0], doTrack[1], doTrack[2] + ' - Succès', doTrack[3]);
       return ret;
     } catch (e) {
-      doTrack && Trackers.trackEventOfModule(doTrack[0], doTrack[1], doTrack[2] + ' - Échec', doTrack[3]);
+      if (doTrack) Trackers.trackEventOfModule(doTrack[0], doTrack[1], doTrack[2] + ' - Échec', doTrack[3]);
       // ToDo : General error reporting here
       if (throwback) throw e;
     }

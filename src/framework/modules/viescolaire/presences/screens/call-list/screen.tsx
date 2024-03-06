@@ -76,7 +76,7 @@ const PresencesCallListScreen = (props: PresencesCallListScreenPrivateProps) => 
         multipleSlot = JSON.parse(registerPreference).multipleSlot;
       }*/
       for (const id of structureIds) {
-        const initialized = await presencesService.initialization.getStructureStatus(session, id);
+        const initialized = await presencesService.initialization.getStructureStatus(id);
         if (initialized) initializedStructureIds.push(id);
       }
       if (!initializedStructureIds.length) {

@@ -11,12 +11,13 @@ import {
   LegalUrls,
   PlatformAuthContext,
   accountIsLogged,
+  getSerializedLoggedOutAccountInfo,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
-import { AuthStorageData, getSerializedLoggedOutAccountInfo } from './storage';
+import type { AuthStorageData } from './storage';
 
 export interface AuthPendingRestore {
   redirect: undefined;
@@ -59,6 +60,8 @@ export interface IAuthState {
   deviceInfo: {
     uniqueId?: string;
   };
+
+  lastAddAccount: number;
 }
 
 // Initial state
@@ -68,6 +71,7 @@ export const initialState: IAuthState = {
   platformContexts: {},
   platformLegalUrls: {},
   deviceInfo: {},
+  lastAddAccount: 0,
 };
 
 // Actions definitions
@@ -75,8 +79,10 @@ export const actionTypes = {
   authInit: moduleConfig.namespaceActionType('INIT'),
   loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
   loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
-  login: moduleConfig.namespaceActionType('LOGIN'),
-  loginRequirement: moduleConfig.namespaceActionType('LOGIN_REQUIREMENT'),
+  addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
+  addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
+  replaceAccount: moduleConfig.namespaceActionType('REPLACE_ACCOUNT'),
+  replaceAccountRequirement: moduleConfig.namespaceActionType('REPLACE_ACCOUNT_REQUIREMENT'),
   updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
   refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
   setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
@@ -84,12 +90,13 @@ export const actionTypes = {
   logout: moduleConfig.namespaceActionType('LOGOUT'),
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
   redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
-  profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
-  addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
-  addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
+  addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
   addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
   addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
+  profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
 };
+
+export const ERASE_ALL_ACCOUNTS = Symbol('ERASE_ALL_ACCOUNTS');
 
 export interface ActionPayloads {
   authInit: Pick<AuthStorageData, 'accounts' | 'startup'> & {
@@ -98,8 +105,15 @@ export interface ActionPayloads {
   };
   loadPfContext: { name: Platform['name']; context: PlatformAuthContext };
   loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
-  login: { id: string; account: AuthLoggedAccount };
-  loginRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
+  addAccount: { account: AuthLoggedAccount };
+  addAccountRequirement: { account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
+  replaceAccount: { id: string | typeof ERASE_ALL_ACCOUNTS; account: AuthLoggedAccount };
+  replaceAccountRequirement: {
+    id: string | typeof ERASE_ALL_ACCOUNTS;
+    account: AuthLoggedAccount;
+    requirement: AuthRequirement;
+    context: PlatformAuthContext;
+  };
   updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: PlatformAuthContext };
   refreshToken: { id: string; tokens: AuthTokenSet };
   setQueryParamToken: { id: string; token: AuthTokenSet['queryParam'] };
@@ -110,11 +124,10 @@ export interface ActionPayloads {
   logout: object;
   redirectActivation: { platformName: Platform['name']; login: string; code: string };
   redirectPasswordRenew: { platformName: Platform['name']; login: string; code: string };
-  profileUpdate: { id: string; user: Partial<AuthLoggedAccount['user']> };
-  addAccount: { id: string; account: AuthLoggedAccount };
-  addAccountRequirement: { id: string; account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
+  addAccountInit: object;
   addAccountActivation: { platformName: Platform['name']; login: string; code: string };
   addAccountPasswordRenew: { platformName: Platform['name']; login: string; code: string };
+  profileUpdate: { id: string; user: Partial<AuthLoggedAccount['user']> };
 }
 
 export const actions = {
@@ -129,20 +142,36 @@ export const actions = {
 
   loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ type: actionTypes.loadPfLegalUrls, name, legalUrls }),
 
-  login: (id: string, account: AuthLoggedAccount) => ({
-    type: actionTypes.login,
-    id,
+  addAccount: (account: AuthLoggedAccount) => ({
+    type: actionTypes.addAccount,
     account,
   }),
 
-  loginRequirement: (id: string, account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
-    type: actionTypes.loginRequirement,
-    id,
+  addAccountRequirement: (account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
+    type: actionTypes.addAccountRequirement,
     account,
     requirement,
     context,
   }),
 
+  replaceAccount: (id: string | typeof ERASE_ALL_ACCOUNTS, account: AuthLoggedAccount) => ({
+    type: actionTypes.replaceAccount,
+    id,
+    account,
+  }),
+
+  replaceAccountRequirement: (
+    id: string | typeof ERASE_ALL_ACCOUNTS,
+    account: AuthLoggedAccount,
+    requirement: AuthRequirement,
+    context: PlatformAuthContext,
+  ) => ({
+    type: actionTypes.replaceAccountRequirement,
+    id,
+    account,
+    requirement,
+    context,
+  }),
   updateRequirement: (requirement: AuthRequirement | undefined, account: AuthLoggedAccount, context?: PlatformAuthContext) => ({
     type: actionTypes.updateRequirement,
     requirement,
@@ -192,18 +221,8 @@ export const actions = {
     user,
   }),
 
-  addAccount: (id: string, account: AuthLoggedAccount) => ({
-    type: actionTypes.addAccount,
-    id,
-    account,
-  }),
-
-  addAccountRequirement: (id: string, account: AuthLoggedAccount, requirement: AuthRequirement, context: PlatformAuthContext) => ({
-    type: actionTypes.addAccountRequirement,
-    id,
-    account,
-    requirement,
-    context,
+  addAccountInit: () => ({
+    type: actionTypes.addAccountInit,
   }),
 
   addAccountActivation: (platformName: Platform['name'], login: string, code: string) => ({
@@ -271,23 +290,52 @@ const reducer = createReducer(initialState, {
     return { ...state, platformLegalUrls: { ...state.platformLegalUrls, [name]: legalUrls } };
   },
 
-  [actionTypes.login]: (state, action) => {
-    const { id, account } = action as unknown as ActionPayloads['login'];
+  [actionTypes.addAccount]: (state, action) => {
+    const { account } = action as unknown as ActionPayloads['addAccount'];
     return {
       ...state,
-      accounts: { ...state.accounts, [id]: account },
-      connected: id,
+      accounts: { ...state.accounts, [account.user.id]: account },
+      connected: account.user.id,
+      showOnboarding: false,
+      requirement: undefined,
+      lastAddAccount: Date.now(),
+    };
+  },
+
+  [actionTypes.addAccountRequirement]: (state, action) => {
+    const { account, requirement, context } = action as unknown as ActionPayloads['addAccountRequirement'];
+    return {
+      ...state,
+      accounts: { ...state.accounts, [account.user.id]: account },
+      connected: account.user.id,
+      showOnboarding: false,
+      requirement,
+      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
+      lastAddAccount: Date.now(),
+    };
+  },
+
+  [actionTypes.replaceAccount]: (state, action) => {
+    const { id, account } = action as unknown as ActionPayloads['replaceAccount'];
+    const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
+    if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
+    return {
+      ...state,
+      accounts: { ...newAccounts, [account.user.id]: account },
+      connected: account.user.id,
       showOnboarding: false,
       requirement: undefined,
     };
   },
 
-  [actionTypes.loginRequirement]: (state, action) => {
-    const { id, account, requirement, context } = action as unknown as ActionPayloads['loginRequirement'];
+  [actionTypes.replaceAccountRequirement]: (state, action) => {
+    const { id, account, requirement, context } = action as unknown as ActionPayloads['replaceAccountRequirement'];
+    const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
+    if (id !== ERASE_ALL_ACCOUNTS) delete newAccounts[id];
     return {
       ...state,
-      accounts: { ...state.accounts, [id]: account },
-      connected: id,
+      accounts: { ...newAccounts, [account.user.id]: account },
+      connected: account.user.id,
       showOnboarding: false,
       requirement,
       platformContexts: { ...state.platformContexts, [account.platform.name]: context },
@@ -385,27 +433,8 @@ const reducer = createReducer(initialState, {
     return { ...state, accounts: { ...state.accounts, [id]: { ...account, user: { ...account.user, ...user } } } };
   },
 
-  [actionTypes.addAccount]: (state, action) => {
-    const { id, account } = action as unknown as ActionPayloads['login'];
-    return {
-      ...state,
-      accounts: { ...state.accounts, [id]: account },
-      connected: id,
-      showOnboarding: false,
-      requirement: undefined,
-    };
-  },
-
-  [actionTypes.addAccountRequirement]: (state, action) => {
-    const { id, account, requirement, context } = action as unknown as ActionPayloads['loginRequirement'];
-    return {
-      ...state,
-      accounts: { ...state.accounts, [id]: account },
-      connected: id,
-      showOnboarding: false,
-      requirement,
-      platformContexts: { ...state.platformContexts, [account.platform.name]: context },
-    };
+  [actionTypes.addAccountInit]: (state, action) => {
+    return { ...state, pendingAddAccount: undefined, error: undefined };
   },
 
   [actionTypes.addAccountActivation]: (state, action) => {
@@ -495,6 +524,11 @@ export function getAccountsNumber() {
 export function getAccounts() {
   const state = getState(getStore().getState());
   return Object.values(state.accounts);
+}
+
+export function getAccountById(id?: keyof IAuthState['accounts']) {
+  const state = getState(getStore().getState());
+  return id ? state.accounts[id] : undefined;
 }
 
 /**

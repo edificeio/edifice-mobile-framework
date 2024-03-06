@@ -404,3 +404,24 @@ export function getFlattenedChildren(children: ILoggedUser['children']): UserChi
   }
   return flattenedChildren;
 }
+/** Converts an actual logged account into a serialisable saved account information */
+
+export const getSerializedLoggedOutAccountInfo = (account: AuthLoggedAccount) => {
+  return {
+    platform: account.platform.name,
+    user: {
+      displayName: account.user.displayName,
+      id: account.user.id,
+      loginUsed: account.user.loginUsed,
+      type: account.user.type,
+      avatar: account.user.avatar,
+    },
+  } as AuthSavedAccount;
+}; /** Converts an actual logged account into a serialisable saved account information */
+
+export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => {
+  return {
+    ...getSerializedLoggedOutAccountInfo(account),
+    tokens: account.tokens,
+  } as AuthSavedAccount;
+};

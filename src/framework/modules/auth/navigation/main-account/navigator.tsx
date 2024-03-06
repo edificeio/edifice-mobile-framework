@@ -5,12 +5,13 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
+import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
-import ChangePasswordScreenOLD from '~/framework/modules/auth/screens/change-password';
+import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
 import AuthAccountSelectionScreen, {
   computeNavBar as authAccountSelectionNavBar,
@@ -18,7 +19,6 @@ import AuthAccountSelectionScreen, {
 import AuthAddAccountModalScreen, {
   computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/main-account/add-account-modal';
-import AuthForgotScreen from '~/framework/modules/auth/screens/main-account/forgot';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/main-account/onboarding';
 import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/main-account/platforms';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
@@ -74,7 +74,7 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.forgot}
-        component={AuthForgotScreen}
+        component={ForgotScreen}
         options={({ route }) => ({
           headerTitle: navBarTitle(
             route.params.mode === 'id' ? I18n.get('auth-navigation-forgot-id') : I18n.get('auth-navigation-forgot-password'),
@@ -90,7 +90,7 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.changePassword}
-        component={ChangePasswordScreenOLD}
+        component={ChangePasswordScreen}
         options={{
           headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
         }}
@@ -98,7 +98,7 @@ export default function () {
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen
           name={authRouteNames.changePasswordModal}
-          component={ChangePasswordScreenOLD}
+          component={ChangePasswordScreen}
           options={{
             headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
           }}
