@@ -59,7 +59,7 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
   if (pending?.redirect !== undefined) {
     // 2 - Platform Select / Account Select
     if (appConf.hasMultiplePlatform) {
-      routes.push({ name: authRouteNames.platforms });
+      routes.push({ name: authRouteNames.addAccountPlatforms });
     } // if single account && single platform, do not push any routes
 
     // 3 - Login Screen
@@ -98,8 +98,8 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
   // We must add `stale = false` into the resulting state to make React Navigation reinterpret and rehydrate this state if necessary.
   // @see https://reactnavigation.org/docs/navigation-state/#partial-state-objects
   if (navRedirection) {
-    return { ...simulateNavAction(navRedirection, { routes }), stale: true as const };
+    return { ...simulateNavAction(navRedirection, { routes }), stale: true as const } as PartialState<NavigationState>;
   } else {
-    return { stale: true as const, routes, index: routes.length - 1 };
+    return { stale: true as const, routes, index: routes.length - 1 } as PartialState<NavigationState>;
   }
 };

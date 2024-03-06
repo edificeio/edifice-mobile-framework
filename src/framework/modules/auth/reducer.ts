@@ -90,6 +90,7 @@ export const actionTypes = {
   logout: moduleConfig.namespaceActionType('LOGOUT'),
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
   redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
+  addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
   addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
   addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
   profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
@@ -123,6 +124,7 @@ export interface ActionPayloads {
   logout: object;
   redirectActivation: { platformName: Platform['name']; login: string; code: string };
   redirectPasswordRenew: { platformName: Platform['name']; login: string; code: string };
+  addAccountInit: object;
   addAccountActivation: { platformName: Platform['name']; login: string; code: string };
   addAccountPasswordRenew: { platformName: Platform['name']; login: string; code: string };
   profileUpdate: { id: string; user: Partial<AuthLoggedAccount['user']> };
@@ -217,6 +219,10 @@ export const actions = {
     type: actionTypes.profileUpdate,
     id,
     user,
+  }),
+
+  addAccountInit: () => ({
+    type: actionTypes.addAccountInit,
   }),
 
   addAccountActivation: (platformName: Platform['name'], login: string, code: string) => ({
@@ -425,6 +431,10 @@ const reducer = createReducer(initialState, {
     const account = state.accounts[id] as AuthLoggedAccount;
     if (!account || !accountIsLogged(account)) return state;
     return { ...state, accounts: { ...state.accounts, [id]: { ...account, user: { ...account.user, ...user } } } };
+  },
+
+  [actionTypes.addAccountInit]: (state, action) => {
+    return { ...state, pendingAddAccount: undefined, error: undefined };
   },
 
   [actionTypes.addAccountActivation]: (state, action) => {
