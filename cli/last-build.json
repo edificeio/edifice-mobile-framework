@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-05 10:08:32",
-  "notes": "Merge branch 'dev/1.12.0' into pocs/zendesk\npoc(zensesk): Add Zendesk stuff to proguard rules\nrelease: 1.12.0-alpha.11(1120011)\nfix(auth): bad handling of restoreAction\nrelease: 1.12.0-alpha.10(1120010)\nfix(auth): MB-2512 better manage login\nfix(auth): MB-2554 fix rules for account add/replace\nrelease: 2.0.0-pocs.4(2000004)",
-  "version": "2.0.0-pocs.5(2000005)"
+  "last": "2024-03-06 16:17:31",
+  "notes": "Merge branch 'dev/1.12.0' into pocs/zendesk\npoc(zendesk): Add proguard rules to fix crash when showing HelpCenterActivity in release build\nfeat(fileHandler): Fix macDimension && maxCompression values\nfeat(fileHandler): Change photo maxDimension to 1680\nchore(auth): use independant navigation container in add-account modal\nfix(auth): go back on timeline after add account\nchore(change-password): MB-2536, add change password to add account navigator\nMerge branch 'dev/1.12.0' into pocs/zendesk\npoc(zendesk): Clean proguard rules\nchore(auth): login restore now uses replaceAccount action\npoc(zendesk): Disable proguard\nrelease: 2.0.0-pocs.5(2000005)",
+  "version": "2.0.0-pocs.6(2000006)"
 }
