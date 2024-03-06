@@ -723,6 +723,11 @@ export const changePasswordActionReplaceAccount = (
   rememberMe?: boolean,
 ) => changePasswordAction(getLoginFunctions.replaceAccount(accountId), platform, p, forceChange, rememberMe);
 
+export const buildChangePasswordActionReplaceAccount =
+  (accountId: keyof IAuthState['accounts']) =>
+  (platform: Platform, p: IChangePasswordPayload, forceChange?: boolean, rememberMe?: boolean) =>
+    changePasswordAction(getLoginFunctions.replaceAccount(accountId), platform, p, forceChange, rememberMe);
+
 export const changePasswordActionAddAnotherAccount = (
   platform: Platform,
   p: IChangePasswordPayload,

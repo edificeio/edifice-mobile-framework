@@ -7,6 +7,9 @@ import { I18n } from '~/app/i18n';
 import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
+import AuthChangePasswordScreen, {
+  computeNavBar as changePasswordNavBar,
+} from '~/framework/modules/auth/screens/add-account/change-password';
 import AuthForgotAddAccountScreen from '~/framework/modules/auth/screens/add-account/forgot';
 import AuthLoginCredentialsScreen, {
   computeNavBar as loginCredentialsNavBar,
@@ -15,7 +18,6 @@ import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/frame
 import AuthPlatformsAddAccountScreen, {
   computeNavBar as platformsAddAccountNavBar,
 } from '~/framework/modules/auth/screens/add-account/platforms';
-import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
@@ -60,10 +62,8 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.addAccountChangePassword}
-        component={ChangePasswordScreen}
-        options={{
-          headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
-        }}
+        component={AuthChangePasswordScreen}
+        options={changePasswordNavBar}
       />
       <Stack.Screen
         name={authRouteNames.addAccountActivation}
