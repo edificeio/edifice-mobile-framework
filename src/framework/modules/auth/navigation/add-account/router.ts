@@ -1,12 +1,12 @@
-import { CommonActions, NavigationState, PartialState } from '@react-navigation/native';
+import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
 
+import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
+import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
 import { IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
-
-import { getLoginNextScreen, getNavActionForRedirect } from '../main-account/router';
 
 export const getAddAccountLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {
   return platform.wayf
@@ -24,6 +24,29 @@ export const getAddAccountOnboardingNextScreen = () => {
     : CommonActions.navigate(getAddAccountLoginNextScreen(appConf.platforms[0]));
 };
 
+export const getAddAccountNavActionForRedirect = (platform: Platform, pending: IAuthState['pending'] | undefined) => {
+  switch (pending?.redirect) {
+    case AuthPendingRedirection.ACTIVATE:
+      return StackActions.push(authRouteNames.addAccountActivation, {
+        platform,
+        credentials: {
+          username: pending.loginUsed,
+          password: pending.code,
+        },
+      });
+
+    case AuthPendingRedirection.RENEW_PASSWORD:
+      return StackActions.push(authRouteNames.addAccountChangePassword, {
+        platform,
+        credentials: {
+          username: pending.loginUsed,
+          password: pending.code,
+        },
+        useResetCode: true,
+      });
+  }
+};
+
 export const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
@@ -36,7 +59,7 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
   if (pending?.redirect !== undefined) {
     // 2 - Platform Select / Account Select
     if (appConf.hasMultiplePlatform) {
-      routes.push({ name: authRouteNames.platforms });
+      routes.push({ name: authRouteNames.addAccountPlatforms });
     } // if single account && single platform, do not push any routes
 
     // 3 - Login Screen
@@ -68,15 +91,15 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
       routes.push({ ...nextScreen, params: { ...nextScreen.params, accountId } });
     }
 
-    if (platform) navRedirection = getNavActionForRedirect(platform, pending);
+    if (platform) navRedirection = getAddAccountNavActionForRedirect(platform, pending);
   }
 
   // 4.2 – Apply redirection
   // We must add `stale = false` into the resulting state to make React Navigation reinterpret and rehydrate this state if necessary.
   // @see https://reactnavigation.org/docs/navigation-state/#partial-state-objects
   if (navRedirection) {
-    return { ...simulateNavAction(navRedirection, { routes }), stale: true as const };
+    return { ...simulateNavAction(navRedirection, { routes }), stale: true as const } as PartialState<NavigationState>;
   } else {
-    return { stale: true as const, routes, index: routes.length - 1 };
+    return { stale: true as const, routes, index: routes.length - 1 } as PartialState<NavigationState>;
   }
 };

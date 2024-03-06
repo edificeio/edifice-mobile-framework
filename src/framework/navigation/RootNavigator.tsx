@@ -17,12 +17,12 @@ import SnowFlakes from '~/framework/components/SnowFlakes';
 import { RootToastHandler } from '~/framework/components/toast';
 import type { AuthLoggedAccountMap } from '~/framework/modules/auth/model';
 import useAuthNavigation from '~/framework/modules/auth/navigation/main-account/navigator';
+import { getAuthNavigationState, getFirstTabRoute } from '~/framework/modules/auth/navigation/main-account/router';
 import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import { AppPushNotificationHandlerComponent } from '~/framework/util/notifications/cloudMessaging';
 import { useNavigationSnowHandler } from '~/framework/util/tracker/useNavigationSnow';
 import { useNavigationTracker } from '~/framework/util/tracker/useNavigationTracker';
 
-import { getAuthNavigationState } from '../modules/auth/navigation/main-account/router';
 import { navigationRef } from './helper';
 import { useMainNavigation } from './mainNavigation';
 import modals from './modals/navigator';
@@ -46,6 +46,7 @@ export interface RootNavigatorStoreProps {
   appReady: StartupState['isReady'];
   connected: IAuthState['connected'];
   requirement: IAuthState['requirement'];
+  lastAddAccount: IAuthState['lastAddAccount'];
   dispatch: Dispatch;
 }
 export type RootNavigatorProps = RootNavigatorStoreProps;
@@ -53,7 +54,7 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
-  const { accounts, pending, showOnboarding, dispatch, appReady, requirement, connected } = props;
+  const { accounts, pending, showOnboarding, dispatch, appReady, requirement, connected, lastAddAccount } = props;
 
   React.useEffect(() => {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
@@ -69,11 +70,13 @@ function RootNavigator(props: RootNavigatorProps) {
   const session = connected ? (props.accounts as AuthLoggedAccountMap)[connected] : undefined;
   const isMainNavigationAccessible = session && !requirement;
 
-  const navigationState = React.useMemo(() => {
-    return appReady && !isMainNavigationAccessible
-      ? getAuthNavigationState(accounts, pending, showOnboarding, requirement)
-      : undefined;
-  }, [accounts, appReady, isMainNavigationAccessible, pending, requirement, showOnboarding]);
+  const navigationState = React.useMemo(
+    () =>
+      appReady && !isMainNavigationAccessible
+        ? getAuthNavigationState(accounts, pending, showOnboarding, requirement)
+        : getFirstTabRoute(),
+    [accounts, appReady, isMainNavigationAccessible, pending, requirement, showOnboarding],
+  );
 
   // Auth/Main switch
   const mainNavigation = useMainNavigation(session?.rights.apps ?? [], session?.rights.widgets ?? []);
@@ -90,8 +93,11 @@ function RootNavigator(props: RootNavigatorProps) {
   // Everytime computed navigationState changes, we need to update it in navigationRef by hand ===
   React.useLayoutEffect(() => {
     // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
-    console.debug('[Navigation] Reset root navigator state', navigationState);
-    if (navigationState && navigationRef.isReady()) navigationRef.reset(navigationState);
+    if (navigationState && navigationRef.isReady()) {
+      console.debug('[Navigation] Reset root navigator state', navigationRef.isReady(), JSON.stringify(navigationState));
+      // handleCloseModalActions(navigationRef);
+      navigationRef.reset(navigationState);
+    }
     trackNavState(navigationState);
   }, [navigationState, trackNavState]);
 
@@ -110,7 +116,11 @@ function RootNavigator(props: RootNavigatorProps) {
       <>
         <SplashScreenComponent key={appReady} />
         {appReady ? (
-          <NavigationContainer ref={navigationRef} initialState={navigationState} onStateChange={onStateChange}>
+          <NavigationContainer
+            key={lastAddAccount}
+            ref={navigationRef}
+            initialState={navigationState}
+            onStateChange={onStateChange}>
             <AppPushNotificationHandlerComponent>
               <RootStack.Navigator screenOptions={screenOptions}>
                 {routes}
@@ -123,7 +133,7 @@ function RootNavigator(props: RootNavigatorProps) {
         ) : null}
       </>
     );
-  }, [appReady, navigationState, onStateChange, routes, screenOptions]);
+  }, [appReady, lastAddAccount, navigationState, onStateChange, routes, screenOptions]);
 
   return ret;
 }
@@ -135,4 +145,5 @@ export default connect((state: IGlobalState) => ({
   accounts: getAuthState(state).accounts,
   connected: getAuthState(state).connected,
   requirement: getAuthState(state).requirement,
+  lastAddAccount: getAuthState(state).lastAddAccount,
 }))(RootNavigator);

@@ -15,6 +15,7 @@ import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/frame
 import AuthPlatformsAddAccountScreen, {
   computeNavBar as platformsAddAccountNavBar,
 } from '~/framework/modules/auth/screens/add-account/platforms';
+import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
@@ -55,6 +56,13 @@ export default function () {
         component={WayfScreen}
         options={{
           headerTitle: navBarTitle(I18n.get('auth-wayf-main-title')),
+        }}
+      />
+      <Stack.Screen
+        name={authRouteNames.addAccountChangePassword}
+        component={ChangePasswordScreen}
+        options={{
+          headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
         }}
       />
       <Stack.Screen
