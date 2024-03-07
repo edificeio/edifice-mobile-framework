@@ -4,9 +4,11 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
+import AuthActivationAddAccountScreen, {
+  computeNavBar as authActivationAddAccountNavBar,
+} from '~/framework/modules/auth/screens/add-account/activation';
 import AuthChangePasswordScreen, {
   computeNavBar as changePasswordNavBar,
 } from '~/framework/modules/auth/screens/add-account/change-password';
@@ -67,10 +69,8 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.addAccountActivation}
-        component={ActivationScreen}
-        options={{
-          headerTitle: navBarTitle(I18n.get('auth-navigation-activation-title')),
-        }}
+        component={AuthActivationAddAccountScreen}
+        options={authActivationAddAccountNavBar}
       />
       <Stack.Screen
         name={authRouteNames.addAccountForgot}

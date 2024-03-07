@@ -4,7 +4,6 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
 import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
@@ -15,6 +14,9 @@ import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from 
 import AuthAccountSelectionScreen, {
   computeNavBar as authAccountSelectionNavBar,
 } from '~/framework/modules/auth/screens/main-account/account-selection';
+import AuthActivationScreen, {
+  computeNavBar as authActivationNavBar,
+} from '~/framework/modules/auth/screens/main-account/activation';
 import AuthAddAccountModalScreen, {
   computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/main-account/add-account-modal';
@@ -67,13 +69,7 @@ export default function () {
           headerTitle: navBarTitle(I18n.get('auth-wayf-main-title')),
         }}
       />
-      <Stack.Screen
-        name={authRouteNames.activation}
-        component={ActivationScreen}
-        options={{
-          headerTitle: navBarTitle(I18n.get('auth-navigation-activation-title')),
-        }}
-      />
+      <Stack.Screen name={authRouteNames.activation} component={AuthActivationScreen} options={authActivationNavBar} />
       <Stack.Screen
         name={authRouteNames.forgot}
         component={ForgotScreen}

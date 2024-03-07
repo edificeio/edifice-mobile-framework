@@ -549,12 +549,6 @@ const activateAccountAction =
 export const activateAccountActionAddFirstAccount = (platform: Platform, model: ActivationPayload) =>
   activateAccountAction(getLoginFunctions.addFirstAccount(), platform, model);
 
-export const activateAccountActionReplaceAccount = (
-  accountId: keyof IAuthState['accounts'],
-  platform: Platform,
-  model: ActivationPayload,
-) => activateAccountAction(getLoginFunctions.replaceAccount(accountId), platform, model);
-
 export const activateAccountActionAddAnotherAccount = (platform: Platform, model: ActivationPayload) =>
   activateAccountAction(getLoginFunctions.addAnotherAccount(), platform, model);
 
