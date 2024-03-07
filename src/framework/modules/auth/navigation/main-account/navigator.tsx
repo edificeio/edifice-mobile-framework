@@ -4,21 +4,25 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import ActivationScreen from '~/framework/modules/auth/screens/ActivationScreen';
 import ForgotScreen from '~/framework/modules/auth/screens/ForgotScreen';
 import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
 import RevalidateTermsScreen from '~/framework/modules/auth/screens/RevalidateTermsScreen';
 import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthChangeEmailScreen, { computeNavBar as authChangeEmailNavBar } from '~/framework/modules/auth/screens/change-email';
 import AuthChangeMobileScreen, { computeNavBar as authChangeMobileNavBar } from '~/framework/modules/auth/screens/change-mobile';
-import ChangePasswordScreen from '~/framework/modules/auth/screens/change-password';
 import AuthDiscoveryClassScreen, { computeNavBar as discoveryClassNavBar } from '~/framework/modules/auth/screens/discovery-class';
 import AuthAccountSelectionScreen, {
   computeNavBar as authAccountSelectionNavBar,
 } from '~/framework/modules/auth/screens/main-account/account-selection';
+import AuthActivationScreen, {
+  computeNavBar as authActivationNavBar,
+} from '~/framework/modules/auth/screens/main-account/activation';
 import AuthAddAccountModalScreen, {
   computeNavBar as addAccountModalNavBar,
 } from '~/framework/modules/auth/screens/main-account/add-account-modal';
+import AuthChangePasswordScreen, {
+  computeNavBar as changePasswordNavBar,
+} from '~/framework/modules/auth/screens/main-account/change-password';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/main-account/onboarding';
 import AuthPlatformsScreen, { computeNavBar as platformsNavBar } from '~/framework/modules/auth/screens/main-account/platforms';
 import AuthMFAScreen, { computeNavBar as mfaNavBar } from '~/framework/modules/auth/screens/mfa';
@@ -65,13 +69,7 @@ export default function () {
           headerTitle: navBarTitle(I18n.get('auth-wayf-main-title')),
         }}
       />
-      <Stack.Screen
-        name={authRouteNames.activation}
-        component={ActivationScreen}
-        options={{
-          headerTitle: navBarTitle(I18n.get('auth-navigation-activation-title')),
-        }}
-      />
+      <Stack.Screen name={authRouteNames.activation} component={AuthActivationScreen} options={authActivationNavBar} />
       <Stack.Screen
         name={authRouteNames.forgot}
         component={ForgotScreen}
@@ -90,7 +88,7 @@ export default function () {
       />
       <Stack.Screen
         name={authRouteNames.changePassword}
-        component={ChangePasswordScreen}
+        component={AuthChangePasswordScreen}
         options={{
           headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
         }}
@@ -98,10 +96,8 @@ export default function () {
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen
           name={authRouteNames.changePasswordModal}
-          component={ChangePasswordScreen}
-          options={{
-            headerTitle: navBarTitle(I18n.get('user-page-editpassword')),
-          }}
+          component={AuthChangePasswordScreen}
+          options={changePasswordNavBar}
         />
       </Stack.Group>
       <Stack.Screen

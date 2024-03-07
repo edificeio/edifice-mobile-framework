@@ -1,7 +1,11 @@
 import { NavigationAction } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { IChangePasswordModel, changePasswordAction, manualLogoutAction } from '~/framework/modules/auth/actions';
+import type {
+  IChangePasswordModel,
+  changePasswordActionAddFirstAccount,
+  manualLogoutAction,
+} from '~/framework/modules/auth/actions';
 import type {
   AuthCredentials,
   AuthLoggedAccount,
@@ -33,13 +37,20 @@ export interface ChangePasswordScreenStoreProps {
 
 export interface ChangePasswordScreenDispatchProps {
   tryLogout: (...args: Parameters<typeof manualLogoutAction>) => ReturnType<ReturnType<typeof manualLogoutAction>>;
-  trySubmit: (...args: Parameters<typeof changePasswordAction>) => ReturnType<ReturnType<typeof changePasswordAction>>;
+  trySubmit: (
+    ...args: Parameters<typeof changePasswordActionAddFirstAccount>
+  ) => ReturnType<ReturnType<typeof changePasswordActionAddFirstAccount>>;
 }
 
 export type ChangePasswordScreenPrivateProps = ChangePasswordScreenProps &
   ChangePasswordScreenStoreProps &
   ChangePasswordScreenDispatchProps &
-  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>;
+  NativeStackScreenProps<
+    AuthNavigationParams,
+    | typeof authRouteNames.changePassword
+    | typeof authRouteNames.changePasswordModal
+    | typeof authRouteNames.addAccountChangePassword
+  >;
 
 export interface ChangePasswordScreenState extends IChangePasswordModel {
   typing: boolean;

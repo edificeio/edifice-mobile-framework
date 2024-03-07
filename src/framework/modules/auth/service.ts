@@ -1,6 +1,7 @@
 import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
+import DeviceInfo from 'react-native-device-info';
 
 import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
@@ -785,7 +786,11 @@ export async function activateAccount(platform: Platform, model: ActivationPaylo
     body: formdata,
     headers: {
       Accept: 'application/json',
+      'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'multipart/form-data',
+      'X-APP': 'mobile',
+      'X-APP-NAME': DeviceInfo.getApplicationName(),
+      'X-APP-VERSION': DeviceInfo.getReadableVersion(),
       'X-Device-Id': uniqueId(),
     },
     method: 'post',

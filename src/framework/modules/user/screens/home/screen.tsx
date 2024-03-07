@@ -28,9 +28,9 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
-import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import AddAccountList from '~/framework/modules/user/components/account-list/add';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';

@@ -3,18 +3,18 @@
  */
 import { ParamListBase, Router, StackNavigationState, StackRouter } from '@react-navigation/native';
 
-import { AuthCredentials } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/add-account/onboarding';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
-import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
 import type { AuthDiscoveryClassScreenNavParams } from '~/framework/modules/auth/screens/discovery-class';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
 import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
 import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/screens/main-account/platforms';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
+import { ActivationScreenNavParams } from '~/framework/modules/auth/templates/activation';
+import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
 import { StackNavigationAction } from '~/framework/navigation/types';
@@ -65,7 +65,7 @@ export interface AuthNavigationParams extends ParamListBase {
   loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: { platform: Platform };
   wayf: { platform: Platform };
-  activation: { platform: Platform; credentials: AuthCredentials };
+  activation: ActivationScreenNavParams;
   changePassword: ChangePasswordScreenNavParams;
   forgot: ForgotScreenNavParams;
   // Add account stack
@@ -74,7 +74,7 @@ export interface AuthNavigationParams extends ParamListBase {
   addAccountLoginCredentials: LoginCredentialsScreenNavParams;
   addAccountLoginWayf: { platform: Platform };
   addAccountWayf: { platform: Platform };
-  addAccountActivation: { platform: Platform; credentials: AuthCredentials };
+  addAccountActivation: ActivationScreenNavParams;
   addAccountChangePassword: ChangePasswordScreenNavParams;
   addAccountForgot: ForgotScreenNavParams;
   // Exclusive logged screen

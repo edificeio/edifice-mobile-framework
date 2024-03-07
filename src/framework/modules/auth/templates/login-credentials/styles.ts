@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 import theme from '~/app/theme';
-import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
+import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
   boxError: {
@@ -12,9 +12,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     flexGrow: 2,
     justifyContent: 'flex-start',
-  },
-  boxButtonsNoError: {
-    marginTop: getScaleWidth(72),
   },
   boxInputs: {
     alignSelf: 'stretch',

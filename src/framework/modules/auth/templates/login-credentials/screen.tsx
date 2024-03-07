@@ -241,7 +241,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
           {renderPlatform()}
           {renderInputs()}
           {renderError()}
-          <View style={[styles.boxButtons, !error ? styles.boxButtonsNoError : {}]}>
+          <View style={styles.boxButtons}>
             {renderLoginButton()}
             <View style={styles.boxTextForgot}>
               <DefaultButton
@@ -266,7 +266,6 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     renderPlatform,
     renderInputs,
     renderError,
-    error,
     renderLoginButton,
     lockLogin,
     navigation,
