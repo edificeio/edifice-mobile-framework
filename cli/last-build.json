@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-02-20 14:00:15",
-  "notes": "fix(phrase): MB-2521 prevent migrate phrase AsyncStorage keys\nrelease: 1.11.6(1110600)\nrelease: 1.11.5-rc.4(1110507)",
-  "version": "1.11.6-rc.1(1110601)"
+  "last": "2024-03-07 18:10:07",
+  "notes": "release: 1.11.7(1110700)\nfix(activation): MB-2557, Add missing headers when calling /auth/activation/no-login\nrelease: 1.11.6-rc.1(1110601)",
+  "version": "1.11.7-rc.1(1110701)"
 }
