@@ -528,20 +528,16 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
   await dispatch(refreshRequirementsAction());
 };
 
-export const activateAccountAction =
-  (platform: Platform, model: ActivationPayload) => async (dispatch: ThunkDispatch<any, any, any>, getState) => {
+const activateAccountAction =
+  (reduxActions: AuthLoginFunctions, platform: Platform, model: ActivationPayload) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState) => {
     try {
       await authService.activateAccount(platform, model);
       dispatch(
-        loginCredentialsAction(
-          getLoginFunctions.addFirstAccount(),
-          // ToDo : NOOOO ! There are some cases where activation is replace // add another account
-          platform,
-          {
-            username: model.login,
-            password: model.password,
-          },
-        ),
+        loginCredentialsAction(reduxActions, platform, {
+          username: model.login,
+          password: model.password,
+        }),
       );
     } catch (e) {
       console.warn(e);
@@ -549,6 +545,12 @@ export const activateAccountAction =
       else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '', e as object);
     }
   };
+
+export const activateAccountActionAddFirstAccount = (platform: Platform, model: ActivationPayload) =>
+  activateAccountAction(getLoginFunctions.addFirstAccount(), platform, model);
+
+export const activateAccountActionAddAnotherAccount = (platform: Platform, model: ActivationPayload) =>
+  activateAccountAction(getLoginFunctions.addAnotherAccount(), platform, model);
 
 /**
  * Send reset mail for id or password
@@ -603,19 +605,6 @@ export function quietLogoutAction() {
   };
 }
 
-// /** Action that invalidates the session without Tracking anything in case of error.
-//  * This removes FCM and takes the user to the auth stack.
-//  */
-// export function sessionInvalidateAction(platform: Platform, error?: AuthError) {
-//   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-//     // Unregister the device token from the backend
-//     await removeFirebaseToken(platform);
-//     // Validate log out
-//     dispatch(authActions.sessionError(error?.type ?? RuntimeAuthErrorCode.UNKNOWN_ERROR));
-//     dispatch(createEndSessionAction()); // flush sessionReducers
-//   };
-// }
-
 /** Clear the current session and track logout event.
  * Session must exist and this action will throw if no session is active.
  */
@@ -644,7 +633,13 @@ export interface IChangePasswordSubmitPayload {
   resetCode?: string;
 }
 
-export function changePasswordAction(platform: Platform, p: IChangePasswordPayload, forceChange?: boolean, rememberMe?: boolean) {
+function changePasswordAction(
+  reduxActions: AuthLoginFunctions,
+  platform: Platform,
+  p: IChangePasswordPayload,
+  forceChange?: boolean,
+  rememberMe?: boolean,
+) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       // === 2 - prepare chg pwd payload
@@ -703,13 +698,33 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
       username: p.login,
       password: p.newPassword,
     };
-    await dispatch(
-      loginCredentialsAction(
-        getLoginFunctions.addFirstAccount(),
-        // ToDo : NOOOO ! There are some cases where pwdrenew is replace // add another account
-        platform,
-        credentials,
-      ),
-    );
+    await dispatch(loginCredentialsAction(reduxActions, platform, credentials));
   };
 }
+
+export const changePasswordActionAddFirstAccount = (
+  platform: Platform,
+  p: IChangePasswordPayload,
+  forceChange?: boolean,
+  rememberMe?: boolean,
+) => changePasswordAction(getLoginFunctions.addFirstAccount(), platform, p, forceChange, rememberMe);
+
+export const changePasswordActionReplaceAccount = (
+  accountId: keyof IAuthState['accounts'],
+  platform: Platform,
+  p: IChangePasswordPayload,
+  forceChange?: boolean,
+  rememberMe?: boolean,
+) => changePasswordAction(getLoginFunctions.replaceAccount(accountId), platform, p, forceChange, rememberMe);
+
+export const buildChangePasswordActionReplaceAccount =
+  (accountId: keyof IAuthState['accounts']) =>
+  (platform: Platform, p: IChangePasswordPayload, forceChange?: boolean, rememberMe?: boolean) =>
+    changePasswordAction(getLoginFunctions.replaceAccount(accountId), platform, p, forceChange, rememberMe);
+
+export const changePasswordActionAddAnotherAccount = (
+  platform: Platform,
+  p: IChangePasswordPayload,
+  forceChange?: boolean,
+  rememberMe?: boolean,
+) => changePasswordAction(getLoginFunctions.addAnotherAccount(), platform, p, forceChange, rememberMe);

@@ -1,15 +1,11 @@
 /* eslint-disable react/jsx-max-depth */
 import styled from '@emotion/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { KeyboardAvoidingView, Platform as RNPlatform, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { connect, useDispatch } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { KeyboardAvoidingView, Platform as RNPlatform, SafeAreaView, ScrollView, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { Checkbox } from '~/framework/components/checkbox';
@@ -20,7 +16,7 @@ import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { activateAccountAction, loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
+import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
 import {
   ActivationFormModel,
   InputEmail,
@@ -29,67 +25,11 @@ import {
   InputPhone,
   ValueChangeArgs,
 } from '~/framework/modules/auth/components/ActivationForm';
-import {
-  IActivationPayload as ActivationPayload,
-  IActivationError,
-  LegalUrls,
-  PlatformAuthContext,
-} from '~/framework/modules/auth/model';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getPlatformContextOf, getPlatformLegalUrlsOf } from '~/framework/modules/auth/reducer';
-import { tryAction } from '~/framework/util/redux/actions';
+import { IActivationError, LegalUrls, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { Loading } from '~/ui/Loading';
 
-// TYPES ---------------------------------------------------------------------------
-
-type IFields = 'login' | 'password' | 'confirmPassword' | 'phone' | 'mail';
-
-export interface ActivationScreenState extends ActivationPayload {
-  typing: boolean;
-  acceptCGU: boolean;
-  error?: string;
-  activationState: 'IDLE' | 'RUNNING' | 'DONE';
-}
-export interface ActivationPrivateProps {}
-export interface ActivationScreenStoreProps {
-  legalUrls?: LegalUrls;
-  context?: PlatformAuthContext;
-}
-export interface ActivationScreenDispatchProps {
-  trySubmit: (...args: Parameters<typeof activateAccountAction>) => ReturnType<ReturnType<typeof activateAccountAction>>;
-}
-export type ActivationScreenProps = ActivationPrivateProps &
-  ActivationScreenDispatchProps &
-  ActivationScreenStoreProps &
-  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.activation>;
-
-// Activation Page Component -------------------------------------------------------------
-
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: theme.ui.background.card },
-  flexGrow1: { flexGrow: 1 },
-  cguWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'stretch',
-    marginTop: UI_SIZES.spacing.big,
-  },
-  cguText: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    flexWrap: 'wrap',
-    flex: 1,
-  },
-  errorMsg: {
-    flexGrow: 0,
-    marginTop: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.tiny,
-    textAlign: 'center',
-    alignSelf: 'center',
-    color: theme.palette.status.failure.regular,
-  },
-  alertCard: { marginTop: UI_SIZES.spacing.medium },
-});
+import styles from './styles';
+import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
 
 const FormTouchable = styled.TouchableWithoutFeedback({ flex: 1 });
 const FormWrapper = styled.View({ flex: 1 });
@@ -247,6 +187,7 @@ export class ActivationScreen extends React.PureComponent<
 
 const ActivationScreenLoader = (props: ActivationScreenProps) => {
   const { context, legalUrls, route } = props;
+  console.log(context, legalUrls, 'test');
   const platform = route.params.platform;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
@@ -264,23 +205,4 @@ const ActivationScreenLoader = (props: ActivationScreenProps) => {
   else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} />;
 };
 
-export default connect(
-  (
-    state: IGlobalState,
-    props: ActivationPrivateProps & NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.activation>,
-  ) => {
-    return {
-      context: getPlatformContextOf(props.route.params.platform),
-      legalUrls: getPlatformLegalUrlsOf(props.route.params.platform),
-    };
-  },
-  dispatch => {
-    const dprops = bindActionCreators<ActivationScreenDispatchProps>(
-      {
-        trySubmit: tryAction(activateAccountAction),
-      },
-      dispatch,
-    );
-    return dprops;
-  },
-)(ActivationScreenLoader);
+export default ActivationScreenLoader;

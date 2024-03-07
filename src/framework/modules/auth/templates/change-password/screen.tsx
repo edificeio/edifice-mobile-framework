@@ -1,8 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Pressable, View } from 'react-native';
-import { connect, useDispatch } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
@@ -22,7 +21,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { changePasswordAction, loadAuthContextAction, manualLogoutAction } from '~/framework/modules/auth/actions';
+import { loadAuthContextAction } from '~/framework/modules/auth/actions';
 import {
   AuthCredentials,
   IChangePasswordError,
@@ -32,19 +31,12 @@ import {
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
-import { tryAction } from '~/framework/util/redux/actions';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';
 
 import ChangePasswordFormModel from './form-model';
 import styles from './styles';
-import {
-  ChangePasswordScreenDispatchProps,
-  ChangePasswordScreenPrivateProps,
-  ChangePasswordScreenProps,
-  ChangePasswordScreenStoreProps,
-  IFields,
-} from './types';
+import { ChangePasswordScreenPrivateProps, ChangePasswordScreenProps, ChangePasswordScreenStoreProps, IFields } from './types';
 
 const keyboardPageViewScrollViewProps = { showsVerticalScrollIndicator: false, bounces: false };
 const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { context: PlatformAuthContext }) => {
@@ -281,10 +273,15 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
   );
 };
 
-const mapStateToProps: (
+export const mapStateToProps: (
   state: IGlobalState,
   props: ChangePasswordScreenProps &
-    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal>,
+    NativeStackScreenProps<
+      AuthNavigationParams,
+      | typeof authRouteNames.changePassword
+      | typeof authRouteNames.changePasswordModal
+      | typeof authRouteNames.addAccountChangePassword
+    >,
 ) => ChangePasswordScreenStoreProps = (state, props) => {
   return {
     session: getSession(),
@@ -292,15 +289,15 @@ const mapStateToProps: (
   };
 };
 
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePasswordScreenDispatchProps = dispatch => {
-  return bindActionCreators<ChangePasswordScreenDispatchProps>(
-    {
-      trySubmit: tryAction(changePasswordAction),
-      tryLogout: tryAction(manualLogoutAction),
-    },
-    dispatch,
-  );
-};
+// const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => ChangePasswordScreenDispatchProps = dispatch => {
+//   return bindActionCreators<ChangePasswordScreenDispatchProps>(
+//     {
+//       trySubmit: tryAction(changePasswordAction),
+//       tryLogout: tryAction(manualLogoutAction),
+//     },
+//     dispatch,
+//   );
+// };
 
 const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => {
   const { context, session, route } = props;
@@ -318,4 +315,4 @@ const ChangePasswordScreenLoader = (props: ChangePasswordScreenPrivateProps) => 
   else return <ChangePasswordScreen {...props} context={context} />;
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChangePasswordScreenLoader);
+export default ChangePasswordScreenLoader;
