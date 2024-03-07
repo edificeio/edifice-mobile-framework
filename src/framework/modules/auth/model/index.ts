@@ -1,5 +1,4 @@
 import type { Moment } from 'moment';
-import { ImageSourcePropType } from 'react-native';
 
 import { Platform } from '~/framework/util/appConf';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -22,9 +21,8 @@ export enum AccountType {
  * Describes minimal info to display a user
  */
 export interface DisplayUserPublic {
-  avatarCache?: ImageSourcePropType;
   displayName: string;
-  id: string; // id is used to get avatar if avatarCache is not defined
+  id: string; // id is also used to get avatar
 }
 
 /**
@@ -40,7 +38,6 @@ export const isUserWithType = (u: DisplayUserPublic): u is DisplayUserPublicWith
  * Represent user information that a seved account contains
  */
 export interface AuthSavedAccountUserInfo extends DisplayUserPublicWithType {
-  avatarCache?: ImageSourcePropType;
   loginUsed: string | undefined; // undefined if federation login
 }
 
@@ -62,7 +59,7 @@ export interface AuthLoggedUserProfile extends AuthSavedAccountUserInfo, AuthUse
   lastName: string;
   login: string; // May be same as loginUsed if real login was used to log in
   loginAlias?: string; // May be same as loginUsed if alias was used to log in. May be undefined for federation / migrated accounts
-  avatar?: string; // = avatar url if defined. Keep in mind `avatarCache` property stores the local image cache of the online image.
+  avatar?: string; // = avatar url if defined.
 }
 
 /**
