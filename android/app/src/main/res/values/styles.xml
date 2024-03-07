@@ -6,4 +6,8 @@
     <style name="SplashScreenTheme" parent="SplashScreen_SplashTheme">
         <item name="android:background">@drawable/launch_screen</item>
     </style>
+    <style name="HelpCenterTheme" parent="Theme.MaterialComponents.Light">
+        <item name="android:textColor">#E4F4FF</item>
+        <item name="android:navigationBarColor">#1A22A2</item>
+    </style>
 </resources>
