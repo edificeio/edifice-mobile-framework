@@ -6,11 +6,12 @@ import { useSelector } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { DefaultButton } from '~/framework/components/buttons/default';
-import AccountListItem from '~/framework/components/list/account/item';
+import { default as AccountListItem } from '~/framework/components/list/account/item';
 import styles from '~/framework/components/list/account/styles';
 import { AccountListProps } from '~/framework/components/list/account/types';
 import BottomSheetModal from '~/framework/components/modals/bottom-sheet';
 import { HeadingSText, SmallText } from '~/framework/components/text';
+import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { ArrayElement } from '~/utils/types';
@@ -21,18 +22,16 @@ const ItemSeparator = () => (
   </View>
 );
 
-const AccountList = ({ data, description, title }: AccountListProps, ref) => {
+const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
+  { data, description, title, getAvatarSource }: AccountListProps<ItemT>,
+  ref,
+) => {
   const hasSingleAccount = data.length === 1;
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const onAddAccount = () => navigation.navigate(userRouteNames.accountOnboarding, {});
   const currentAccount = useSelector(state => getSession());
-  const renderItem: FlatListProps<ArrayElement<typeof data>>['renderItem'] = ({ item }) => (
-    <AccountListItem
-      id={item.user.id}
-      displayName={item.user.displayName}
-      type={item.user.type}
-      selected={item.user.id === currentAccount?.user.id}
-    />
+  const renderItem: FlatListProps<ArrayElement<typeof data>>['renderItem'] = info => (
+    <AccountListItem {...info} selected={info.item.user.id === currentAccount?.user.id} getAvatarSource={getAvatarSource} />
   );
 
   return (

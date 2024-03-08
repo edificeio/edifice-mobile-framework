@@ -1,3 +1,8 @@
 import { AccountListProps } from '~/framework/components/list/account/types';
 
-export type HandleAccountListProps = Pick<AccountListProps, 'data'>;
+import { AuthLoggedAccount, AuthSavedAccount } from '../../model';
+
+export type HandleAccountListProps<ItemT extends AuthSavedAccount | AuthLoggedAccount> = Pick<
+  AccountListProps<ItemT>,
+  'data' | 'getAvatarSource'
+>;
