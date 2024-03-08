@@ -48,7 +48,8 @@ const isGroupAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleGro
 
 const commonSourceAttributes: Partial<Source> = { priority: 'high' };
 
-const getAvatarImage = (props: SingleAvatarOnlySpecificProps): FastImageProps['source'] => {
+const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): FastImageProps['source'] => {
+  if (error) return fallbackSource;
   if (isUserAvatar(props)) {
     return { uri: buildAbsoluteUserAvatarUrl(props.userId), ...commonSourceAttributes };
   } else if (isSourceAvatar(props)) {
@@ -63,9 +64,12 @@ const getAvatarImage = (props: SingleAvatarOnlySpecificProps): FastImageProps['s
   }
 };
 
-const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(props: SpecificProps): FastImageProps['source'] =>
+const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
+  props: SpecificProps,
+  error: boolean,
+): FastImageProps['source'] =>
   React.useMemo(
-    () => getAvatarImage(props as SingleAvatarOnlySpecificProps),
+    () => getAvatarImage(props as SingleAvatarOnlySpecificProps, error),
     // Here we memo on only specific props that can issue to image changes, without rebuild the object.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
@@ -77,6 +81,7 @@ const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(pro
       (props as SingleAvatarUnknownSpecificProps).svg,
       // eslint-disable-next-line react-hooks/exhaustive-deps
       (props as SingleAvatarUnknownSpecificProps).userId,
+      error,
     ],
   );
 
@@ -92,8 +97,13 @@ const removeAvatarSpecificProps = (props: SingleAvatarProps): CommonSingleAvatar
 export function SingleAvatar(props: SingleAvatarProps) {
   const { size, style, ...otherProps } = removeAvatarSpecificProps(props);
 
-  const computedStyle = useAvatarStyle(props);
-  const imageSource = useAvatarImage(props as SingleAvatarOnlySpecificProps);
+  const [error, setError] = React.useState(false);
+  const onError = React.useCallback(() => {
+    setError(true);
+  }, []);
 
-  return <FastImage style={computedStyle} source={imageSource} {...otherProps} />;
+  const computedStyle = useAvatarStyle(props);
+  const imageSource = useAvatarImage(props as SingleAvatarOnlySpecificProps, error);
+
+  return <FastImage style={computedStyle} source={imageSource} onError={onError} {...otherProps} />;
 }
