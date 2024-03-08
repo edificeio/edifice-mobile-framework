@@ -229,8 +229,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   );
 
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
-  const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
+  const showHelpCenter = session?.platform.showHelpCenter;
+  const showWhoAreWe = session?.platform.showWhoAreWe;
 
   //
   // Zendesk stuff
@@ -329,12 +330,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 }}
               />
             ) : null}
-            <LineButton
-              title={I18n.get('user-help-title')}
-              onPress={() => {
-                openHelpCenter();
-              }}
-            />
+            {showHelpCenter ? (
+              <LineButton
+                title={I18n.get('user-help-title')}
+                onPress={() => {
+                  openHelpCenter();
+                }}
+              />
+            ) : null}
             {showWhoAreWe ? (
               <LineButton
                 title={I18n.get('user-whoarewe-title')}
@@ -360,7 +363,16 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         </View>
       </>
     ),
-    [isFederated, currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
+    [
+      isFederated,
+      currentLoadingMenu,
+      canEditPersonalInfo,
+      showHelpCenter,
+      showWhoAreWe,
+      navigation,
+      editUserInformation,
+      openHelpCenter,
+    ],
   );
 }
 
