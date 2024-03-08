@@ -46,7 +46,7 @@ const isSvgAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleSvgAv
 const isGroupAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleGroupAvatarSpecificProps =>
   (props as Partial<SingleGroupAvatarSpecificProps>).group === true;
 
-const commonSourceAttributes: Partial<Source> = { cache: 'web', priority: 'high' };
+const commonSourceAttributes: Partial<Source> = { priority: 'high' };
 
 const getAvatarImage = (props: SingleAvatarOnlySpecificProps): FastImageProps['source'] => {
   if (isUserAvatar(props)) {
