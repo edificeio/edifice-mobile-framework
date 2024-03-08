@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { ListRenderItemInfo, FlatList as RNFlatList, TouchableOpacity, View, ViewProps } from 'react-native';
+import { ListRenderItemInfo, FlatList as RNFlatList, TouchableOpacity, View } from 'react-native';
 
 import HorizontalList, { HorizontalListProps } from '~/framework/components/list/horizontal';
 import { SmallText } from '~/framework/components/text';
 import { DisplayUserPublic } from '~/framework/modules/auth/model';
-import Avatar, { Size } from '~/ui/avatars/Avatar';
 
+import { SingleAvatar } from '../../avatar';
+import { Size } from '../../avatar/types';
 import styles from './styles';
 import { UserListItemProps, UserListProps } from './types';
 
@@ -33,13 +34,11 @@ export const UserListItemDetails = <ItemT extends DisplayUserPublic = DisplayUse
 //   );
 // };
 
-const UserListItem = <ItemT extends DisplayUserPublic = DisplayUserPublic>(
-  props: UserListItemProps<ItemT> & Pick<UserListProps<ItemT>, 'renderUserDetails'> & Pick<ViewProps, 'style'>,
-) => {
+const UserListItem = <ItemT extends DisplayUserPublic = DisplayUserPublic>(props: UserListItemProps<ItemT>) => {
   const { renderUserDetails, style, ...info } = props;
   return (
     <View style={style}>
-      <Avatar id={info.item.id} size={Size.xxl} />
+      <SingleAvatar userId={info.item.id} size={Size.xxl} />
       {(renderUserDetails ?? UserListItemDetails)(info)}
     </View>
   );
@@ -50,7 +49,16 @@ export const UserList = React.forwardRef(
     props: UserListProps<ItemT>,
     ref: React.Ref<RNFlatList<ItemT>> | null | undefined,
   ) => {
-    const { size, centered, onItemPress, renderUserDetails, itemContainerStyle, contentContainerStyle, ...listProps } = props;
+    const {
+      size,
+      centered,
+      onItemPress,
+      renderUserDetails,
+      itemContainerStyle,
+      contentContainerStyle,
+      userItemComponent,
+      ...listProps
+    } = props;
 
     const ItemTouchWrapper = onItemPress ? TouchableOpacity : React.Fragment;
 
@@ -62,6 +70,7 @@ export const UserList = React.forwardRef(
     const realItemContainerStyle = React.useMemo(() => [styles.item, itemContainerStyle], [itemContainerStyle]);
 
     const keyExtractor = React.useCallback((item: ItemT) => item.id, []);
+    const UserListItemComponent = userItemComponent ?? UserListItem;
     const renderItem: HorizontalListProps<ItemT>['renderItem'] = React.useCallback(
       (info: ListRenderItemInfo<ItemT>) => {
         return (
@@ -73,11 +82,11 @@ export const UserList = React.forwardRef(
                   },
                 }
               : {})}>
-            <UserListItem {...info} renderUserDetails={renderUserDetails} style={realItemContainerStyle} />
+            <UserListItemComponent {...info} renderUserDetails={renderUserDetails} style={realItemContainerStyle} />
           </ItemTouchWrapper>
         );
       },
-      [ItemTouchWrapper, onItemPress, realItemContainerStyle, renderUserDetails],
+      [ItemTouchWrapper, UserListItemComponent, onItemPress, realItemContainerStyle, renderUserDetails],
     );
     return (
       <HorizontalList
@@ -91,12 +100,3 @@ export const UserList = React.forwardRef(
     );
   },
 );
-
-// export const UserListWithType = React.forwardRef(
-//   <ItemT extends DisplayUserPublicWithType = DisplayUserPublicWithType>(
-//     props: Omit<UserListProps<ItemT>, 'renderUserDetails'>,
-//     ref: React.Ref<RNFlatList<ItemT>> | null | undefined,
-//   ) => {
-//     return <UserList ref={ref} renderUserDetails={UserListItemDetailsWithType} {...props} />;
-//   },
-// );
