@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-07 18:10:07",
-  "notes": "release: 1.11.7(1110700)\nfix(activation): MB-2557, Add missing headers when calling /auth/activation/no-login\nrelease: 1.11.6-rc.1(1110601)",
-  "version": "1.11.7-rc.1(1110701)"
+  "last": "2024-03-08 09:36:52",
+  "notes": "fix(lang): MB-2557, Missing Headers Addition\nrelease: 1.11.7-rc.1(1110701)",
+  "version": "1.11.7-rc.2(1110702)"
 }
