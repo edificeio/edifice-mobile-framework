@@ -249,7 +249,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   React.useEffect(() => {
     try {
       loadHealthCheck();
-      zendesk.changeTheme('#FC5E29');
+      //zendesk.changeTheme(theme.palette.primary.regular.toString());
       zendesk.setAnonymousIdentity({
         email: 'mobile@edifice.io',
         name: 'Edifice Mobile',
