@@ -27,7 +27,12 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
 import { restoreAction } from '../../../actions';
-import { AuthLoggedAccount, AuthSavedAccountWithTokens, accountIsLoggable } from '../../../model';
+import {
+  AuthLoggedAccount,
+  AuthSavedAccountWithTokens,
+  DisplayExternalUserPublicWithType,
+  accountIsLoggable,
+} from '../../../model';
 import moduleConfig from '../../../module-config';
 import { getLoginNextScreen } from '../../../navigation/main-account/router';
 import { getState as getAuthState } from '../../../reducer';
@@ -58,13 +63,12 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         id: account.user.id,
         type: account.user.type,
         displayName: account.user.displayName,
-        avatarCache: account.user.avatarCache,
         platform: appConf.getExpandedPlatform(account.platform),
         login: account.user.loginUsed,
         isLoggable: accountIsLoggable(account),
       })),
     [data],
-  );
+  ) satisfies DisplayExternalUserPublicWithType[];
 
   const onItemPress = React.useCallback(
     async (item: (typeof dataforList)[0], index: number) => {

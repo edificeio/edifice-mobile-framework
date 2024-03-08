@@ -12,6 +12,7 @@ export default StyleSheet.create({
   accountItem: {
     padding: UI_SIZES.spacing.minor,
     rowGap: UI_SIZES.spacing.small,
+    alignItems: 'center',
   },
   accountItemDetails: {
     flexGrow: 1,
