@@ -827,8 +827,12 @@ export async function forgot<Mode extends ForgotMode>(
     body: JSON.stringify(realPayload),
     method: 'POST',
     headers: {
-      'X-Device-Id': deviceId,
+      'Accept-Language': I18n.getLanguage(),
       'Content-Type': 'application/json',
+      'X-APP': 'mobile',
+      'X-APP-NAME': DeviceInfo.getApplicationName(),
+      'X-APP-VERSION': DeviceInfo.getReadableVersion(),
+      'X-Device-Id': uniqueId(),
     },
   });
   const resStatus = res.status;
