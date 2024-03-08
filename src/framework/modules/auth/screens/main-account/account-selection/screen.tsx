@@ -12,30 +12,23 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
+import { restoreAction } from '~/framework/modules/auth/actions';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
+import { AuthLoggedAccount, AuthSavedAccountWithTokens, accountIsLoggable } from '~/framework/modules/auth/model';
+import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
+import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
-import {
-  AuthAccountSelectionScreenDispatchProps,
-  AuthAccountSelectionScreenPrivateProps,
-} from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { tryAction } from '~/framework/util/redux/actions';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { Loading } from '~/ui/Loading';
 
-import { restoreAction } from '../../../actions';
-import {
-  AuthLoggedAccount,
-  AuthSavedAccountWithTokens,
-  DisplayExternalUserPublicWithType,
-  accountIsLoggable,
-} from '../../../model';
-import moduleConfig from '../../../module-config';
-import { getLoginNextScreen } from '../../../navigation/main-account/router';
-import { getState as getAuthState } from '../../../reducer';
+import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -52,6 +45,7 @@ export const computeNavBar = ({
 
 const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) => {
   const { navigation, accounts, tryRestore } = props;
+  const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const onHandleAccounts = () => {
     accountListRef.current?.present();
@@ -68,7 +62,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         isLoggable: accountIsLoggable(account),
       })),
     [data],
-  ) satisfies DisplayExternalUserPublicWithType[];
+  );
 
   const onItemPress = React.useCallback(
     async (item: (typeof dataforList)[0], index: number) => {
@@ -86,11 +80,15 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         }
         navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, accountId: item.id } });
       };
+      if (loadingState !== LoginState.IDLE) return;
       if (item.isLoggable) {
         try {
+          setLoadingState(LoginState.RUNNING);
           const account = accounts[item.id];
           await tryRestore(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
+          setLoadingState(LoginState.DONE);
         } catch (e) {
+          setLoadingState(LoginState.IDLE);
           console.warn(e);
           redirect(item);
         }
@@ -98,7 +96,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         redirect(item);
       }
     },
-    [accounts, navigation, tryRestore],
+    [accounts, loadingState, navigation, tryRestore],
   );
 
   const keyExtractor: FlatListProps<(typeof dataforList)[0]>['keyExtractor'] = React.useCallback(
@@ -116,6 +114,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         </View>
         <LargeHorizontalUserList keyExtractor={keyExtractor} data={dataforList} onItemPress={onItemPress} />
       </View>
+      {loadingState !== LoginState.IDLE ? <Loading /> : null}
       <View style={styles.bottomContainer}>
         <SecondaryButton
           style={styles.button}
