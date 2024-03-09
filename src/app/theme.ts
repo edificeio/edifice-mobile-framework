@@ -63,7 +63,6 @@ export interface ITheme {
       blue: ColorValue;
     };
   };
-
   // UI usage of the color palette
   ui: {
     notificationBadge: ColorValue;
@@ -84,7 +83,6 @@ export interface ITheme {
       inverse: ColorValue;
     };
   };
-
   // Semantic usage of the color palette
   color: {
     homework: {
@@ -117,7 +115,6 @@ export interface ITheme {
       Guest: ColorValue;
     };
   };
-
   // Legacy values
   legacy: {
     neutral: {

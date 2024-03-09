@@ -39,6 +39,7 @@ import AddAccountButton from '~/framework/modules/user/components/buttons/add-ac
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
 import { handleAction } from '~/framework/util/redux/actions';
 import { useZendesk } from '~/framework/util/zendesk';
@@ -230,7 +231,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const isFederated = session?.federated;
-  const showHelpCenter = session?.platform.showHelpCenter;
+  const showHelpCenter = appConf.showHelpCenterEnabled;
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
   //
@@ -250,7 +251,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   React.useEffect(() => {
     try {
       loadHealthCheck();
-      //zendesk.changeTheme(theme.palette.primary.regular.toString());
+      zendesk.changeTheme(theme.palette.primary.regular as string);
       zendesk.setAnonymousIdentity({
         email: 'mobile@edifice.io',
         name: 'Edifice Mobile',
@@ -259,8 +260,10 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     } catch (error) {
       Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const openHelpCenter = async () => {
     try {
       await zendesk.openHelpCenter({

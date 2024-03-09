@@ -23,7 +23,6 @@ export type IPlatformAccessDeclaration = {
   wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
   webTheme: string; // web theme applied to the activated accounts
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
-  showHelpCenter?: boolean; // Show Help Center on profile page?
   showWhoAreWe?: boolean; // To show or not the team link in profile page
   showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
 };
@@ -53,8 +52,6 @@ export class Platform {
 
   webTheme!: IPlatformAccessDeclaration['webTheme'];
 
-  showHelpCenter!: IPlatformAccessDeclaration['showHelpCenter'];
-
   showWhoAreWe!: IPlatformAccessDeclaration['showWhoAreWe'];
 
   showVieScolaireDashboard!: IPlatformAccessDeclaration['showVieScolaireDashboard'];
@@ -74,7 +71,6 @@ export class Platform {
     this.url = pf.url;
     this.wayf = pf.wayf;
     this.webTheme = pf.webTheme;
-    this.showHelpCenter = pf.showHelpCenter;
     this.showWhoAreWe = pf.showWhoAreWe;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
     this._webviewIdentifier = pf.webviewIdentifier;
@@ -124,9 +120,9 @@ export class AppConf {
     showAppName: boolean;
   };
 
-  platforms: Platform[];
-
   showHelpCenter = false;
+
+  platforms: Platform[];
 
   getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
 
@@ -180,8 +176,8 @@ export class AppConf {
     onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
     this.onboarding = onboarding as AppConf['onboarding'];
-    this.platforms = opts.platforms.map(pfd => new Platform(pfd));
     this.showHelpCenter = opts?.showHelpCenter || false;
+    this.platforms = opts.platforms.map(pfd => new Platform(pfd));
     this.webviewIdentifier = opts.webviewIdentifier;
   }
 }
