@@ -1,43 +1,32 @@
 import { StorageHandler } from './handler';
-import { mmkvStorageHelper } from './mmkv';
+import { mmkvHandler } from './mmkv';
 import { StorageSlice } from './slice';
-import { IStorageBackend, IStorageSlice, StorageKey, StorageTypeMap } from './types';
+import { StorageKey, StorageTypeMap } from './types';
+import { Trackers } from '../tracker';
 
 /**
  * Use MMKV as the storage technology.
  */
-const defaultStorage = mmkvStorageHelper;
+const defaultStorage = mmkvHandler;
 
 /**
  * Storage API
  */
-export const storage = {
-  /**
-   * defines a storage space that is a predefined subsection of the global storage with optional init phases.
-   * @returns the storage created
-   */
-  create: <Types extends { [key: StorageKey]: any }>() => {
-    return new StorageSlice<Types, IStorageBackend>(defaultStorage);
-  },
+export class Storage {
+  static create<Types extends { [key: StorageKey]: any }>() {
+    return new StorageSlice<Types>(defaultStorage);
+  }
 
-  /**
-   * defines a storage space that encompass another with additional prefixes and/or init phases.
-   * @param subStorage
-   * @returns
-   */
-  compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageSlice<StorageTypeMap>>(subStorage: Storage) => {
-    return new StorageSlice<Types, Storage>(subStorage);
-  },
+  static compose<Types extends { [key: StorageKey]: any }, Storage extends StorageSlice<StorageTypeMap>>(subStorage: Storage) {
+    return new StorageSlice<Types>(subStorage, subStorage.name);
+  }
 
-  /**
-   * Access to the global storage directly.
-   */
-  global: defaultStorage,
-};
+  static global = defaultStorage;
+}
 
 /// OLD CODE BELOW
 
-export const StorageObject = {
+export const OldStorageFunctions = {
   //
   //
   //
@@ -173,10 +162,10 @@ export const StorageObject = {
    * - Return setting and remove it from storage
    */
   migrateItemJson: async <ItemType>(oldKey: string): Promise<ItemType | undefined> => {
-    const notifFilterSetting: ItemType | undefined = await StorageObject.getItemJson(oldKey);
-    if (notifFilterSetting) {
-      await StorageObject.removeItem(oldKey);
-      return notifFilterSetting;
+    const data: ItemType | undefined = (await OldStorageFunctions.getItemJson(oldKey)) ?? undefined;
+    if (data) {
+      await OldStorageFunctions.removeItem(oldKey);
+      return data;
     } else return undefined;
   },
 
@@ -186,31 +175,4 @@ export const StorageObject = {
   init: async () => {
     await StorageHandler.initAllStorages();
   },
-};
-
-export const setItemJson = async <T>(key: string, data: T) => {
-  await StorageObject.setItemJson(key, data);
-};
-
-export const getItemJson = async <T>(key: string) => {
-  const parsedItem = await StorageObject.getItemJson(key);
-  return parsedItem as T | undefined;
-};
-
-export const removeItem = async (key: string) => {
-  await StorageObject.removeItem(key);
-};
-
-export const removeItems = async (keys: string[]) => {
-  await StorageObject.removeItems(keys);
-};
-
-export const getKeys = async () => {
-  const keys = await StorageObject.getKeys();
-  return keys;
-};
-
-export const migrateItemJson = async <ItemType>(oldKey: string) => {
-  const settingsToMigrate = await StorageObject.migrateItemJson(oldKey);
-  return settingsToMigrate as ItemType | undefined;
 };

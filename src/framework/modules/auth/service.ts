@@ -7,7 +7,7 @@ import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { getItemJson, setItemJson, storage } from '~/framework/util/storage';
+import { OldStorageFunctions, Storage } from '~/framework/util/storage';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 import { OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
@@ -315,7 +315,7 @@ export const PLATFORM_STORAGE_KEY = 'currentPlatform';
  * Read the platform stored in MMKV.
  */
 export async function loadCurrentPlatform() {
-  const platformId = storage.global.getString(PLATFORM_STORAGE_KEY);
+  const platformId = Storage.global.getString(PLATFORM_STORAGE_KEY);
   if (platformId) {
     const platform = appConf.getPlatformByName(platformId);
     if (!platform)
@@ -331,14 +331,14 @@ export async function loadCurrentPlatform() {
  * @deprecated
  */
 export function savePlatform(platform: Platform) {
-  storage.global.set(PLATFORM_STORAGE_KEY, platform.name);
+  Storage.global.set(PLATFORM_STORAGE_KEY, platform.name);
 }
 
 /**
  * @deprecated
  */
 export function forgetPlatform() {
-  storage.global.delete(PLATFORM_STORAGE_KEY);
+  Storage.global.delete(PLATFORM_STORAGE_KEY);
 }
 
 export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: AuthCredentials) {
@@ -442,7 +442,7 @@ export class FcmService {
 
   private async _getTokenToDeleteQueue(): Promise<string[]> {
     try {
-      const tokensCached = await getItemJson(FcmService.FCM_TOKEN_TODELETE_KEY);
+      const tokensCached = await OldStorageFunctions.getItemJson(FcmService.FCM_TOKEN_TODELETE_KEY);
       if (!tokensCached) return [];
       const tokens = tokensCached as string[];
       if (tokens instanceof Array) {
@@ -463,7 +463,7 @@ export class FcmService {
     //merge is not supported by all implementation
     let tokens = await this._getTokenToDeleteQueue();
     tokens = tokens.filter(t => t !== token);
-    await setItemJson(FcmService.FCM_TOKEN_TODELETE_KEY, tokens);
+    await OldStorageFunctions.setItemJson(FcmService.FCM_TOKEN_TODELETE_KEY, tokens);
   }
 
   async unregisterFCMToken(token: string | null = null) {

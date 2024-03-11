@@ -13,7 +13,7 @@ import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
 import { actionTypes } from '~/framework/modules/user/reducer';
 import { addTime, today } from '~/framework/util/date';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
@@ -140,7 +140,7 @@ const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any,
 
 export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await setItemJson(xmasMusicStorageKey, xmasMusic);
+    await OldStorageFunctions.setItemJson(xmasMusicStorageKey, xmasMusic);
     dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusic });
     if (xmasMusic) {
       //jingleBells.play();
@@ -156,7 +156,7 @@ export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: Thunk
 
 export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await setItemJson(xmasThemeStorageKey, xmasTheme);
+    await OldStorageFunctions.setItemJson(xmasThemeStorageKey, xmasTheme);
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
     if (xmasTheme) {
       dispatch(letItSnowAction());
@@ -173,15 +173,15 @@ export const importXmasAction = () => async (dispatch: ThunkDispatch<any, any, a
   try {
     let xmasThemeSetting;
     let xmasMusicSetting;
-    xmasThemeSetting = (await getItemJson(xmasThemeStorageKey)) as boolean | undefined;
-    xmasMusicSetting = (await getItemJson(xmasMusicStorageKey)) as boolean | undefined;
+    xmasThemeSetting = (await OldStorageFunctions.getItemJson(xmasThemeStorageKey)) as boolean | undefined;
+    xmasMusicSetting = (await OldStorageFunctions.getItemJson(xmasMusicStorageKey)) as boolean | undefined;
     // These settings are undefined on first launch (by default, we set the theme on and the music off)
     if (xmasThemeSetting === undefined) {
-      await setItemJson(xmasThemeStorageKey, true);
+      await OldStorageFunctions.setItemJson(xmasThemeStorageKey, true);
       xmasThemeSetting = true;
     }
     if (xmasMusicSetting === undefined) {
-      await setItemJson(xmasMusicStorageKey, false);
+      await OldStorageFunctions.setItemJson(xmasMusicStorageKey, false);
       xmasMusicSetting = false;
     }
 

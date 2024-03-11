@@ -8,13 +8,13 @@ import moduleConfig from '~/framework/modules/auth/module-config';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { Error } from '~/framework/util/error';
 import { tryAction } from '~/framework/util/redux/actions';
-import { StorageObject } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
 import { I18n } from './i18n';
 
 const initFeatures = async () => {
-  await StorageObject.init();
+  await OldStorageFunctions.init();
   await I18n.init();
 };
 

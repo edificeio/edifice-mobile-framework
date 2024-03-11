@@ -5,7 +5,7 @@ import { getFlattenedChildren } from '~/framework/modules/auth/model';
 import { ActionPayloads, actionTypes as authActionTypes } from '~/framework/modules/auth/reducer';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
-import { setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 export const getChildStorageKey = (userId: string) => `${moduleConfig.name}.selectedChildId.${userId}`;
 
@@ -34,23 +34,23 @@ export const actionTypes = {
 const reducer = combineReducers({
   selectedChildId: createSessionReducer(initialState.selectedChildId, {
     [authActionTypes.addAccount]: (state, action) => {
-      const { account } = action as unknown as ActionPayloads['createAccount'];
+      const { account } = action as unknown as ActionPayloads['addAccount'];
       const children = getFlattenedChildren(account.user.children);
       return children?.find(child => child.classesNames.length)?.id ?? null;
     },
     [authActionTypes.updateRequirement]: (state, action) => {
-      const { account } = action as unknown as ActionPayloads['loginRequirement'];
+      const { account } = action as unknown as ActionPayloads['updateRequirement'];
       const children = getFlattenedChildren(account.user.children);
       return children?.find(child => child.classesNames.length)?.id ?? null;
     },
     [actionTypes.selectChild]: (state, action) => {
-      setItemJson<string>(getChildStorageKey(action.userId ?? 'global'), action.childId);
+      OldStorageFunctions.setItemJson<string>(getChildStorageKey(action.userId ?? 'global'), action.childId);
       return action.childId;
     },
   }),
   selectedStructureId: createSessionReducer(initialState.selectedStructureId, {
     [authActionTypes.addAccount]: (state, action) => {
-      const { account } = action as unknown as ActionPayloads['createAccount'];
+      const { account } = action as unknown as ActionPayloads['addAccount'];
       return account.user.structures?.[0]?.id;
     },
     [authActionTypes.updateRequirement]: (state, action) => {
@@ -58,7 +58,7 @@ const reducer = combineReducers({
       return account.user.structures?.[0]?.id;
     },
     [actionTypes.selectStructure]: (state, action) => {
-      setItemJson<string>(getStructureStorageKey(action.userId ?? 'global'), action.structureId);
+      OldStorageFunctions.setItemJson<string>(getStructureStorageKey(action.userId ?? 'global'), action.structureId);
       return action.structureId;
     },
   }),
