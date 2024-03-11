@@ -1,7 +1,10 @@
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+
 import { StorageHandler } from './handler';
 import { mmkvHandler } from './mmkv';
 import { StorageSlice } from './slice';
-import { StorageKey, StorageTypeMap } from './types';
+import { StorageTypeMap } from './types';
+import { IModuleConfig } from '../moduleTool';
 import { Trackers } from '../tracker';
 
 /**
@@ -13,18 +16,39 @@ const defaultStorage = mmkvHandler;
  * Storage API
  */
 export class Storage {
-  static create<Types extends { [key: StorageKey]: any }>() {
+  static global = defaultStorage;
+
+  static slice<Types extends StorageTypeMap>() {
     return new StorageSlice<Types>(defaultStorage);
   }
 
-  static compose<Types extends { [key: StorageKey]: any }, Storage extends StorageSlice<StorageTypeMap>>(subStorage: Storage) {
-    return new StorageSlice<Types>(subStorage, subStorage.name);
+  static compose<StorageType extends StorageHandler>(subStorage: StorageType) {
+    return new StorageSlice(subStorage, subStorage.name) as unknown as StorageType;
   }
 
-  static global = defaultStorage;
+  static create<Types extends StorageTypeMap>(module: IModuleConfig<string, any>) {
+    return Storage.slice<Types>().withModule(module);
+  }
+
+  static PREFERENCES_PREFIX = '@';
+
+  static preferences<Types extends StorageTypeMap>(
+    module: IModuleConfig<string, any>,
+    initFn: (this: StorageSlice<Types>, session: AuthLoggedAccount) => void,
+  ) {
+    const ret = Storage.compose(Storage.create<Types>(module));
+    ret.setSessionInit(function (session) {
+      this.withPrefix(`${Storage.PREFERENCES_PREFIX}${session.user.id}`);
+      initFn.call(this, session);
+    });
+  }
 
   static async init() {
     await StorageHandler.initAllStorages();
+  }
+
+  static async sessionInit(session: AuthLoggedAccount) {
+    await StorageHandler.sessionInitAllStorages(session);
   }
 }
 

@@ -8,7 +8,7 @@ import { ERASE_ALL_ACCOUNTS, IAuthState, actions, assertSession, getState as get
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
-import { StorageSlice } from '~/framework/util/storage/slice';
+import { Storage } from '~/framework/util/storage';
 import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCacheLegacy } from '~/infra/cache';
 import { OAuth2RessourceOwnerPasswordClient, destroyOAuth2Legacy } from '~/infra/oauth';
@@ -234,7 +234,7 @@ export const loginSteps = {
         await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
         const { userData, userPublicInfo } = publicInfo;
         const sessionInfo = formatSession(addTimestamp, platform, loginUsed, userInfo, userData, userPublicInfo);
-        await StorageSlice.sessionInitAllStorages(sessionInfo);
+        await Storage.sessionInit(sessionInfo);
         Trackers.setUserId(sessionInfo.user.id);
         Trackers.setCustomDimension(1, 'Profile', sessionInfo.user.type.toString());
         Trackers.setCustomDimension(3, 'Project', new URL(sessionInfo.platform.url).hostname);

@@ -16,7 +16,7 @@ export interface AuthStorageData {
   'show-onboarding': boolean;
 }
 
-export const storage = Storage.create<AuthStorageData>().withModule(moduleConfig);
+export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
 // No storage init for auth, the functions below manage the item migration by custom logic.
 
 export const readSavedAccounts = () => storage.getJSON('accounts') ?? {};
