@@ -26,9 +26,9 @@ export default function AuthOnboardingAddAccountScreen(props: AuthOnboardingAddA
       {...props}
       nextScreenAction={getAddAccountOnboardingNextScreen()}
       svgName="multi-account"
-      title={I18n.get('user-accountonboarding-heading')}
-      description={I18n.get('user-accountonboarding-description')}
-      buttonText={I18n.get('user-accountonboarding-button')}
+      title={I18n.get('auth-accountonboarding-heading')}
+      description={I18n.get('auth-accountonboarding-description')}
+      buttonText={I18n.get('auth-accountonboarding-button')}
     />
   );
 }

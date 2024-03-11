@@ -49,7 +49,7 @@ const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
       {hasSingleAccount ? (
         <DefaultButton
           iconLeft="ui-plus"
-          text={I18n.get('accountlist-add')}
+          text={I18n.get('auth-accountlist-add')}
           contentColor={theme.palette.primary.regular}
           style={styles.addAccount}
           action={onAddAccount}

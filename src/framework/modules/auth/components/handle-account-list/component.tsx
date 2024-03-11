@@ -12,8 +12,8 @@ const HandleAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
   return (
     <AccountList
       ref={ref}
-      title={I18n.get('accountlist-handle-title')}
-      description={I18n.get('accountlist-handle-description')}
+      title={I18n.get('auth-accountlist-handle-title')}
+      description={I18n.get('auth-accountlist-handle-description')}
       data={data}
       getAvatarSource={info => {
         const uri = buildAbsoluteUserAvatarUrlWithPlatform(info.item.user.id, appConf.getExpandedPlatform(info.item.platform));
