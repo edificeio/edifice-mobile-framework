@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-08 19:05:19",
-  "notes": "fix(auth): fix handle-account-list\nchore(avatar): add error handling\nchore: display loader on account-select screen\nchore(wayf): MB-2537, duplicate loginWayf & wayf screens\nchore(build): Fix iOS build error in FlipperKit\nchore(build): Fix iOS build error in react-native-datetime-picker\nchore: remove web cache onto avatar\nfix(lang): MB-2557, Missing Headers Addition\nfeat(auth): MB-2553 display avatars on account selection\nfix(login): MB-2510, fix space between button & inputs\nMerge branch 'dev/1.12.0' of https://github.com/opendigitaleducation/edifice-mobile-framework into dev/1.12.0\nchore(activation): MB-2535 , duplicate activation screen\nfix(activation): MB-2556, Add default headers in account activation api call\nfix(auth): MB-2536 password renew OK\nchore(auth): add actions for activation & change password\nfeat(fileHandler): Fix macDimension && maxCompression values\nfeat(fileHandler): Change photo maxDimension to 1680\nchore(auth): use independant navigation container in add-account modal\nfix(auth): go back on timeline after add account\nchore(change-password): MB-2536, add change password to add account navigator\nchore(auth): login restore now uses replaceAccount action\nrelease: 1.12.0-alpha.11(1120011)",
-  "version": "1.12.0-alpha.12(1120012)"
+  "last": "2024-03-11 13:16:57",
+  "notes": "update(stack): Update some packages.\nfix(auth): MB-2569 account migration was broken\nchore: add getOrderedAccounts getter\nfix(auth): MB-2568 preserve accounts order\nrelease: 1.12.0-alpha.12(1120012)",
+  "version": "1.12.0-rc.1(1120013)"
 }
