@@ -15,7 +15,12 @@ import toast from '~/framework/components/toast';
 import { restoreAction } from '~/framework/modules/auth/actions';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
-import { AuthLoggedAccount, AuthSavedAccountWithTokens, accountIsLoggable } from '~/framework/modules/auth/model';
+import {
+  AuthLoggedAccount,
+  AuthSavedAccountWithTokens,
+  accountIsLoggable,
+  getOrderedAccounts,
+} from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
@@ -50,7 +55,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const onHandleAccounts = () => {
     accountListRef.current?.present();
   };
-  const data = React.useMemo(() => Object.values(props.accounts).sort((a, b) => a.addTimestamp - b.addTimestamp), [props.accounts]);
+  const data = React.useMemo(() => getOrderedAccounts(props.accounts), [props.accounts]);
   const dataforList = React.useMemo(
     () =>
       data.map(account => ({

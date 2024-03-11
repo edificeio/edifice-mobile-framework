@@ -180,7 +180,7 @@ export type AuthSavedAccountMap = Record<string, AuthSavedAccount>;
 
 export type AuthLoggedAccountMap = Record<string, AuthLoggedAccount>;
 
-export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthLoggedAccount>;
+export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthSavedAccountWithTokens | AuthLoggedAccount>;
 
 export interface IUser extends DisplayUserPublic {
   login: string;
@@ -425,3 +425,6 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
     tokens: account.tokens,
   } as AuthSavedAccount;
 };
+
+export const getOrderedAccounts = (accounts: AuthMixedAccountMap) =>
+  Object.values(accounts).sort((a, b) => a.addTimestamp - b.addTimestamp);
