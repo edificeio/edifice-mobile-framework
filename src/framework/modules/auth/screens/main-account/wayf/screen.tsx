@@ -39,7 +39,9 @@ export default connect(
     bindActionCreators<WAYFScreenDispatchProps>(
       {
         tryLogin: tryAction(
-          props.session ? buildLoginFederationActionReplaceAccount(props.session.user.id) : loginFederationActionAddFirstAccount,
+          props.session
+            ? buildLoginFederationActionReplaceAccount(props.session.user.id, props.session.addTimestamp)
+            : loginFederationActionAddFirstAccount,
           {
             track: res => {
               const errtype = res instanceof global.Error ? Error.getDeepErrorType<typeof Error.LoginError>(res) : undefined;

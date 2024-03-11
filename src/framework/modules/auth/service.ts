@@ -224,6 +224,7 @@ export async function forgetPreviousSession() {
 }
 
 export function formatSession(
+  addTimestamp: number,
   platform: Platform,
   loginUsed: string | undefined,
   userinfo: IUserInfoBackend,
@@ -300,7 +301,7 @@ export function formatSession(
     },
     type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
     federated: userinfo.federated ?? false,
-    // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
+    addTimestamp,
   };
 }
 

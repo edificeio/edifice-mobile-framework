@@ -113,6 +113,7 @@ export interface AuthSavedAccount {
   platform: string;
   tokens?: AuthTokenSet;
   user: AuthSavedAccountUserInfo;
+  addTimestamp: number;
 }
 
 export interface AuthSavedAccountWithTokens extends AuthSavedAccount {
@@ -135,6 +136,7 @@ export interface AuthLoggedAccount {
   rights: AuthLoggedAccountRights;
   type: SessionType;
   federated: boolean;
+  addTimestamp: AuthSavedAccount['addTimestamp'];
 }
 
 export const accountIsLogged = (account: AuthLoggedAccount | AuthSavedAccount | undefined): account is AuthLoggedAccount => {
@@ -413,6 +415,7 @@ export const getSerializedLoggedOutAccountInfo = (account: AuthLoggedAccount) =>
       type: account.user.type,
       avatar: account.user.avatar,
     },
+    addTimestamp: account.addTimestamp,
   } as AuthSavedAccount;
 }; /** Converts an actual logged account into a serialisable saved account information */
 

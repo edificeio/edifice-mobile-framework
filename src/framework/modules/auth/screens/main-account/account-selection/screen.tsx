@@ -50,7 +50,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const onHandleAccounts = () => {
     accountListRef.current?.present();
   };
-  const data = React.useMemo(() => Object.values(props.accounts), [props.accounts]);
+  const data = React.useMemo(() => Object.values(props.accounts).sort((a, b) => a.addTimestamp - b.addTimestamp), [props.accounts]);
   const dataforList = React.useMemo(
     () =>
       data.map(account => ({

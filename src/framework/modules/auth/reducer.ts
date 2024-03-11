@@ -268,6 +268,7 @@ const reducer = createReducer(initialState, {
             },
             scope: startup.anonymousToken.scope.split(' '),
           },
+          addTimestamp: 0,
         },
       };
     }
