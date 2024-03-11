@@ -22,6 +22,10 @@ export class Storage {
   }
 
   static global = defaultStorage;
+
+  static async init() {
+    await StorageHandler.initAllStorages();
+  }
 }
 
 /// OLD CODE BELOW
@@ -44,7 +48,7 @@ export const OldStorageFunctions = {
    */
   setItemJson: async <T>(key: string, data: T) => {
     try {
-      defaultStorage.set(key, JSON.stringify(data));
+      Storage.global.set(key, JSON.stringify(data));
     } catch (error) {
       console.warn(
         `[Storage] setItemJson: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
@@ -60,7 +64,7 @@ export const OldStorageFunctions = {
    */
   setItem: async <T extends string | number | boolean>(key: string, data: T) => {
     try {
-      defaultStorage.set(key, data);
+      Storage.global.set(key, data);
     } catch (error) {
       console.warn(
         `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
@@ -76,7 +80,7 @@ export const OldStorageFunctions = {
    */
   getItemJson: async <T>(key: string) => {
     try {
-      const item = defaultStorage.getString(key);
+      const item = Storage.global.getString(key);
       const parsedItem = item && JSON.parse(item);
       return parsedItem as T | undefined;
     } catch (error) {
@@ -95,7 +99,7 @@ export const OldStorageFunctions = {
    */
   getItem: async <T extends string | number | boolean>(key: string) => {
     try {
-      const item = defaultStorage.getString(key);
+      const item = Storage.global.getString(key);
       return item as T | undefined;
     } catch (error) {
       console.warn(
@@ -113,7 +117,7 @@ export const OldStorageFunctions = {
    */
   removeItem: async (key: string) => {
     try {
-      defaultStorage.delete(key);
+      Storage.global.delete(key);
     } catch (error) {
       console.warn(
         `[Storage] removeItemJson: failed to remove key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
@@ -130,7 +134,7 @@ export const OldStorageFunctions = {
   removeItems: async (keys: string[]) => {
     try {
       for (const key of keys) {
-        defaultStorage.delete(key);
+        Storage.global.delete(key);
       }
     } catch (error) {
       console.warn(
@@ -147,7 +151,7 @@ export const OldStorageFunctions = {
    */
   getKeys: async () => {
     try {
-      const keys = defaultStorage.getAllKeys();
+      const keys = Storage.global.getAllKeys();
       return keys;
     } catch (error) {
       console.warn(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
@@ -167,12 +171,5 @@ export const OldStorageFunctions = {
       await OldStorageFunctions.removeItem(oldKey);
       return data;
     } else return undefined;
-  },
-
-  /**
-   * Initiate storage
-   */
-  init: async () => {
-    await StorageHandler.initAllStorages();
   },
 };
