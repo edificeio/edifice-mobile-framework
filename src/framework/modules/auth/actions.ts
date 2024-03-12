@@ -746,10 +746,6 @@ export const buildLoginFederationActionReplaceAccount =
   (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
     loginFederationAction(getLoginFunctions.replaceAccount(accountId, timestamp), platform, credentials, key);
 
-export const buildLoginFederationActionReplaceAccount =
-  (accountId: keyof IAuthState['accounts']) => (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
-    loginFederationAction(getLoginFunctions.replaceAccount(accountId), platform, credentials, key);
-
 export const changePasswordActionAddAnotherAccount = (
   platform: Platform,
   p: IChangePasswordPayload,

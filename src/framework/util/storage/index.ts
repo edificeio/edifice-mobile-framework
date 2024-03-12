@@ -41,6 +41,7 @@ export class Storage {
       this.withPrefix(`${Storage.PREFERENCES_PREFIX}${session.user.id}`);
       initFn.call(this, session);
     });
+    return ret;
   }
 
   static async init() {

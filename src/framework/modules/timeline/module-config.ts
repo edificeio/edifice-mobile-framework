@@ -1,6 +1,6 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { TimelineState } from './reducer';
+import type { TimelineState } from './reducer';
 
 export default new NavigableModuleConfig<'timeline', TimelineState>({
   name: 'timeline',
