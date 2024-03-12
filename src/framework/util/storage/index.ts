@@ -1,43 +1,61 @@
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+
 import { StorageHandler } from './handler';
-import { mmkvStorageHelper } from './mmkv';
+import { mmkvHandler } from './mmkv';
 import { StorageSlice } from './slice';
-import { IStorageBackend, IStorageSlice, StorageKey, StorageTypeMap } from './types';
+import { StorageTypeMap } from './types';
+import { IModuleConfig } from '../moduleTool';
+import { Trackers } from '../tracker';
 
 /**
  * Use MMKV as the storage technology.
  */
-const defaultStorage = mmkvStorageHelper;
+const defaultStorage = mmkvHandler;
 
 /**
  * Storage API
  */
-export const storage = {
-  /**
-   * defines a storage space that is a predefined subsection of the global storage with optional init phases.
-   * @returns the storage created
-   */
-  create: <Types extends { [key: StorageKey]: any }>() => {
-    return new StorageSlice<Types, IStorageBackend>(defaultStorage);
-  },
+export class Storage {
+  static global = defaultStorage;
 
-  /**
-   * defines a storage space that encompass another with additional prefixes and/or init phases.
-   * @param subStorage
-   * @returns
-   */
-  compose: <Types extends { [key: StorageKey]: any }, Storage extends IStorageSlice<StorageTypeMap>>(subStorage: Storage) => {
-    return new StorageSlice<Types, Storage>(subStorage);
-  },
+  static slice<Types extends StorageTypeMap>() {
+    return new StorageSlice<Types>(defaultStorage);
+  }
 
-  /**
-   * Access to the global storage directly.
-   */
-  global: defaultStorage,
-};
+  static compose<StorageType extends StorageHandler>(subStorage: StorageType) {
+    return new StorageSlice(subStorage, subStorage.name) as unknown as StorageType;
+  }
+
+  static create<Types extends StorageTypeMap>(module: IModuleConfig<string, any>) {
+    return Storage.slice<Types>().withModule(module);
+  }
+
+  static PREFERENCES_PREFIX = '@';
+
+  static preferences<Types extends StorageTypeMap>(
+    module: IModuleConfig<string, any>,
+    initFn: (this: StorageSlice<Types>, session: AuthLoggedAccount) => void,
+  ) {
+    const ret = Storage.compose(Storage.create<Types>(module));
+    ret.setSessionInit(function (session) {
+      this.withPrefix(`${Storage.PREFERENCES_PREFIX}${session.user.id}`);
+      initFn.call(this, session);
+    });
+    return ret;
+  }
+
+  static async init() {
+    await StorageHandler.initAllStorages();
+  }
+
+  static async sessionInit(session: AuthLoggedAccount) {
+    await StorageHandler.sessionInitAllStorages(session);
+  }
+}
 
 /// OLD CODE BELOW
 
-export const StorageObject = {
+export const OldStorageFunctions = {
   //
   //
   //
@@ -55,7 +73,7 @@ export const StorageObject = {
    */
   setItemJson: async <T>(key: string, data: T) => {
     try {
-      defaultStorage.set(key, JSON.stringify(data));
+      Storage.global.set(key, JSON.stringify(data));
     } catch (error) {
       console.warn(
         `[Storage] setItemJson: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
@@ -71,7 +89,7 @@ export const StorageObject = {
    */
   setItem: async <T extends string | number | boolean>(key: string, data: T) => {
     try {
-      defaultStorage.set(key, data);
+      Storage.global.set(key, data);
     } catch (error) {
       console.warn(
         `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
@@ -87,7 +105,7 @@ export const StorageObject = {
    */
   getItemJson: async <T>(key: string) => {
     try {
-      const item = defaultStorage.getString(key);
+      const item = Storage.global.getString(key);
       const parsedItem = item && JSON.parse(item);
       return parsedItem as T | undefined;
     } catch (error) {
@@ -106,7 +124,7 @@ export const StorageObject = {
    */
   getItem: async <T extends string | number | boolean>(key: string) => {
     try {
-      const item = defaultStorage.getString(key);
+      const item = Storage.global.getString(key);
       return item as T | undefined;
     } catch (error) {
       console.warn(
@@ -124,7 +142,7 @@ export const StorageObject = {
    */
   removeItem: async (key: string) => {
     try {
-      defaultStorage.delete(key);
+      Storage.global.delete(key);
     } catch (error) {
       console.warn(
         `[Storage] removeItemJson: failed to remove key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
@@ -141,7 +159,7 @@ export const StorageObject = {
   removeItems: async (keys: string[]) => {
     try {
       for (const key of keys) {
-        defaultStorage.delete(key);
+        Storage.global.delete(key);
       }
     } catch (error) {
       console.warn(
@@ -158,7 +176,7 @@ export const StorageObject = {
    */
   getKeys: async () => {
     try {
-      const keys = defaultStorage.getAllKeys();
+      const keys = Storage.global.getAllKeys();
       return keys;
     } catch (error) {
       console.warn(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
@@ -173,44 +191,10 @@ export const StorageObject = {
    * - Return setting and remove it from storage
    */
   migrateItemJson: async <ItemType>(oldKey: string): Promise<ItemType | undefined> => {
-    const notifFilterSetting: ItemType | undefined = await StorageObject.getItemJson(oldKey);
-    if (notifFilterSetting) {
-      await StorageObject.removeItem(oldKey);
-      return notifFilterSetting;
+    const data: ItemType | undefined = (await OldStorageFunctions.getItemJson(oldKey)) ?? undefined;
+    if (data) {
+      await OldStorageFunctions.removeItem(oldKey);
+      return data;
     } else return undefined;
   },
-
-  /**
-   * Initiate storage
-   */
-  init: async () => {
-    await StorageHandler.initAllStorages();
-  },
-};
-
-export const setItemJson = async <T>(key: string, data: T) => {
-  await StorageObject.setItemJson(key, data);
-};
-
-export const getItemJson = async <T>(key: string) => {
-  const parsedItem = await StorageObject.getItemJson(key);
-  return parsedItem as T | undefined;
-};
-
-export const removeItem = async (key: string) => {
-  await StorageObject.removeItem(key);
-};
-
-export const removeItems = async (keys: string[]) => {
-  await StorageObject.removeItems(keys);
-};
-
-export const getKeys = async () => {
-  const keys = await StorageObject.getKeys();
-  return keys;
-};
-
-export const migrateItemJson = async <ItemType>(oldKey: string) => {
-  const settingsToMigrate = await StorageObject.migrateItemJson(oldKey);
-  return settingsToMigrate as ItemType | undefined;
 };

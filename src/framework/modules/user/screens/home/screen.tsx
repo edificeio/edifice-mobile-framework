@@ -32,7 +32,6 @@ import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/typ
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
-import AddAccountList from '~/framework/modules/user/components/account-list/add';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
@@ -332,7 +331,7 @@ function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], acco
       accountsArray.length === 1 ? (
         <>
           <AddAccountButton action={addAccount} style={styles.accountButton} />
-          <AddAccountList ref={accountListRef} data={accountsArray} />
+          {/* <AddAccountList ref={accountListRef} data={accountsArray} /> */}
         </>
       ) : (
         <>

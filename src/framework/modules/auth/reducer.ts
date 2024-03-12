@@ -256,7 +256,7 @@ const reducer = createReducer(initialState, {
         ...realAccounts,
         [ANONYMOUS_ACCOUNT_ID]: {
           platform: pending.platform,
-          user: { displayName: '', id: '', loginUsed: '', type: AccountType.Guest },
+          user: { displayName: '', id: ANONYMOUS_ACCOUNT_ID, loginUsed: '', type: AccountType.Guest },
           tokens: {
             access: {
               type: startup.anonymousToken.token_type as 'Bearer',
@@ -268,6 +268,7 @@ const reducer = createReducer(initialState, {
             },
             scope: startup.anonymousToken.scope.split(' '),
           },
+          addTimestamp: 0,
         },
       };
     }

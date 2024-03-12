@@ -36,7 +36,7 @@ import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-co
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 import styles from './styles';
 import type { CompetencesHomeScreenDispatchProps, CompetencesHomeScreenPrivateProps } from './types';
@@ -70,7 +70,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       const { childId, classes, structureId, userId, userType } = props;
 
       if (!childId || !structureId || !userId || !userType) throw new Error();
-      getItemJson<boolean>(STORAGE_KEY).then(value => {
+      OldStorageFunctions.getItemJson<boolean>(STORAGE_KEY).then(value => {
         if (value) setAverageColorsShown(true);
       });
       await props.tryFetchSubjects(structureId);
@@ -215,7 +215,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 value={areAverageColorsShown}
                 onValueChange={() => {
                   setAverageColorsShown(!areAverageColorsShown);
-                  setItemJson(STORAGE_KEY, !areAverageColorsShown);
+                  OldStorageFunctions.setItemJson(STORAGE_KEY, !areAverageColorsShown);
                 }}
                 trackColor={{ false: theme.palette.grey.grey, true: theme.palette.complementary.green.regular }}
                 style={Platform.OS !== 'ios' ? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : null}

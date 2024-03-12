@@ -6,7 +6,7 @@ import { MMKV } from 'react-native-mmkv';
 import { getOverrideName } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 
-import { StorageBackend } from './backend';
+import { StorageHandler } from './handler';
 import type { IStorageBackend } from './types';
 
 const MIGRATION_KEYS_IGNORE: RegExp[] = [/^@phrase_pref_/, /^@phrase_cache_/];
@@ -53,6 +53,6 @@ const FlipperMMKV = __DEV__
   : undefined;
 export const FlipperMMKVElement = FlipperMMKV ? <FlipperMMKV /> : null;
 
-export const mmkvStorageHelper = new StorageBackend(mmkvInstance, 'mmkv').setAppInit(async function () {
+export const mmkvHandler = new StorageHandler(mmkvInstance, 'mmkv').setAppInit(async function () {
   await migrateFromAsyncStorage(this);
 });

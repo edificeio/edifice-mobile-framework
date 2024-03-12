@@ -24,8 +24,7 @@ import { updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
-import { isEmpty } from '~/framework/util/object';
-import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 export const AllModulesBackup = {
@@ -342,7 +341,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * @returns
    */
   public static async getStoredTokenStr(): Promise<IOAuthToken | undefined> {
-    const rawStoredToken = await getItemJson('token');
+    const rawStoredToken = await OldStorageFunctions.getItemJson('token');
     if (!rawStoredToken) {
       return undefined;
     }
@@ -371,7 +370,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Saves given token information in local storage.
    */
   public async saveToken() {
-    await setItemJson('token', this.token);
+    await OldStorageFunctions.setItemJson('token', this.token);
   }
 
   /**
@@ -379,7 +378,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Remove given token information in local storage.
    */
   public async forgetToken() {
-    await removeItem('token');
+    await OldStorageFunctions.removeItem('token');
   }
 
   /**
@@ -512,7 +511,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * @deprecated
    */
   public async eraseToken() {
-    await removeItem('token');
+    await OldStorageFunctions.removeItem('token');
     await this.deleteQueryParamToken();
     this.token = null;
   }
@@ -527,33 +526,6 @@ export class OAuth2RessourceOwnerPasswordClient {
   public generateUniqueSesionIdentifier() {
     this.uniqueSessionIdentifier = Math.random().toString(36).substring(7);
     return this.uniqueSessionIdentifier;
-  }
-
-  /**
-   * oneSessionId management (for rich editor)
-   */
-  private oneSessionId?: string = undefined;
-
-  public async getOneSessionId() {
-    try {
-      // Call token-as-cookie
-      const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
-      const response = await fetch(request);
-      const cookie = response.headers.get('set-cookie') || undefined;
-      // Continue if set-cookie header found
-      // Otherwise, last oneSessionId will be returned
-      if (!isEmpty(cookie)) {
-        // Extract oneSessionId from set-cookie header
-        const match = cookie!.match(/oneSessionId=([^;]+)/);
-        // Update oneSessionId if found
-        // Otherwise, last oneSessionId will be returned
-        if (!isEmpty(match)) this.oneSessionId = match![1];
-      }
-    } catch (e) {
-      console.warn('Unable to retrieve oneSessionId => ', e);
-      // We leave the catch and returned value will be last oneSessionId
-    }
-    return this.oneSessionId;
   }
 
   /**

@@ -8,8 +8,8 @@ const ChangeAccountList = ({ data }: ChangeAccountListProps, ref) => {
   return (
     <AccountList
       ref={ref}
-      title={I18n.get('accountlist-change-title')}
-      description={I18n.get('accountlist-change-description')}
+      title={I18n.get('auth-accountlist-change-title')}
+      description={I18n.get('auth-accountlist-change-description')}
       data={data}
     />
   );

@@ -4,8 +4,6 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import LoginWayfScreen from '~/framework/modules/auth/screens/LoginWayfScreen';
-import WayfScreen from '~/framework/modules/auth/screens/WayfScreen';
 import AuthActivationAddAccountScreen, {
   computeNavBar as authActivationAddAccountNavBar,
 } from '~/framework/modules/auth/screens/add-account/activation';
@@ -16,10 +14,14 @@ import AuthForgotAddAccountScreen from '~/framework/modules/auth/screens/add-acc
 import AuthLoginCredentialsScreen, {
   computeNavBar as loginCredentialsNavBar,
 } from '~/framework/modules/auth/screens/add-account/login-credentials';
+import AuthLoginWayfAddAccountScreen, {
+  computeNavBar as loginWayfNavBar,
+} from '~/framework/modules/auth/screens/add-account/login-wayf';
 import AuthOnboardingScreen, { computeNavBar as onboardingNavBar } from '~/framework/modules/auth/screens/add-account/onboarding';
 import AuthPlatformsAddAccountScreen, {
   computeNavBar as platformsAddAccountNavBar,
 } from '~/framework/modules/auth/screens/add-account/platforms';
+import AuthWayfAddAccountScreen, { computeNavBar as wayfNavBar } from '~/framework/modules/auth/screens/add-account/wayf';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
@@ -48,20 +50,8 @@ export default function () {
         options={loginCredentialsNavBar}
       />
 
-      <Stack.Screen
-        name={authRouteNames.addAccountLoginWayf}
-        component={LoginWayfScreen}
-        options={({ route }) => ({
-          headerTitle: navBarTitle(route.params?.platform.displayName),
-        })}
-      />
-      <Stack.Screen
-        name={authRouteNames.addAccountWayf}
-        component={WayfScreen}
-        options={{
-          headerTitle: navBarTitle(I18n.get('auth-wayf-main-title')),
-        }}
-      />
+      <Stack.Screen name={authRouteNames.addAccountLoginWayf} component={AuthLoginWayfAddAccountScreen} options={loginWayfNavBar} />
+      <Stack.Screen name={authRouteNames.addAccountWayf} component={AuthWayfAddAccountScreen} options={wayfNavBar} />
       <Stack.Screen
         name={authRouteNames.addAccountChangePassword}
         component={AuthChangePasswordScreen}

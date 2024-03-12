@@ -10,6 +10,7 @@ import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/s
 import type { AuthDiscoveryClassScreenNavParams } from '~/framework/modules/auth/screens/discovery-class';
 import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
+import { AuthLoginWayfScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-wayf';
 import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
 import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/screens/main-account/platforms';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
@@ -63,7 +64,7 @@ export interface AuthNavigationParams extends ParamListBase {
   platforms: AuthPlatformsScreenNavParams;
   accountSelection: AuthAccountSelectionScreenNavParams;
   loginCredentials: LoginCredentialsScreenNavParams;
-  loginWayf: { platform: Platform };
+  loginWayf: AuthLoginWayfScreenNavParams;
   wayf: { platform: Platform };
   activation: ActivationScreenNavParams;
   changePassword: ChangePasswordScreenNavParams;
@@ -72,7 +73,7 @@ export interface AuthNavigationParams extends ParamListBase {
   addAccountModal: AuthAddAccountModalScreenNavParams;
   addAccountOnboarding: AuthOnboardingAddAccountScreenNavParams;
   addAccountLoginCredentials: LoginCredentialsScreenNavParams;
-  addAccountLoginWayf: { platform: Platform };
+  addAccountLoginWayf: AuthLoginWayfScreenNavParams;
   addAccountWayf: { platform: Platform };
   addAccountActivation: ActivationScreenNavParams;
   addAccountChangePassword: ChangePasswordScreenNavParams;

@@ -1,4 +1,4 @@
-import { storage } from '~/framework/util/storage';
+import { Storage } from '~/framework/util/storage';
 import type { IOAuthToken } from '~/infra/oauth';
 
 import { AuthLoggedAccount, AuthSavedAccount, getSerializedLoggedInAccountInfo } from './model';
@@ -16,22 +16,19 @@ export interface AuthStorageData {
   'show-onboarding': boolean;
 }
 
-export const authStorage = storage
-  .create<AuthStorageData>()
-  .withModule(moduleConfig)
-  .setAppInit(function () {})
-  .setSessionInit(function (session) {});
+export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
+// No storage init for auth, the functions below manage the item migration by custom logic.
 
-export const readSavedAccounts = () => authStorage.getJSON('accounts') ?? {};
+export const readSavedAccounts = () => storage.getJSON('accounts') ?? {};
 export const readSavedStartup = () => {
-  let startup = authStorage.getJSON('startup');
-  const oldCurrentPlatform = storage.global.getString('currentPlatform');
+  let startup = storage.getJSON('startup');
+  const oldCurrentPlatform = Storage.global.getString('currentPlatform');
   if (!startup?.platform && oldCurrentPlatform) startup = { platform: oldCurrentPlatform };
-  const oldCurrentToken = storage.global.getString('token');
+  const oldCurrentToken = Storage.global.getString('token');
   if (!startup?.account && oldCurrentToken) startup = { ...startup, anonymousToken: JSON.parse(oldCurrentToken) };
   return { ...startup } as AuthStorageData['startup'];
 };
-export const readShowOnbording = () => authStorage.getBoolean('show-onboarding') ?? true;
+export const readShowOnbording = () => storage.getBoolean('show-onboarding') ?? true;
 
 /**
  * Save in storage a new account along the pre-exising ones.
@@ -48,9 +45,9 @@ export const writeCreateAccount = (account: AuthLoggedAccount, showOnboarding: b
     platform: account.platform.name,
     account: account.user.id,
   };
-  authStorage.setJSON('accounts', savedAccounts);
-  authStorage.setJSON('startup', startup);
-  authStorage.set('show-onboarding', showOnboarding);
+  storage.setJSON('accounts', savedAccounts);
+  storage.setJSON('startup', startup);
+  storage.set('show-onboarding', showOnboarding);
 };
 
 /**
@@ -71,9 +68,9 @@ export const writeReplaceAccount = (
     platform: account.platform.name,
     account: account.user.id,
   };
-  authStorage.setJSON('accounts', savedAccounts);
-  authStorage.setJSON('startup', startup);
-  authStorage.set('show-onboarding', showOnboarding);
+  storage.setJSON('accounts', savedAccounts);
+  storage.setJSON('startup', startup);
+  storage.set('show-onboarding', showOnboarding);
 };
 
 /**
@@ -83,20 +80,20 @@ export const writeReplaceAccount = (
 export const updateAccount = (savedAccount: AuthSavedAccount) => {
   const savedAccounts = readSavedAccounts();
   savedAccounts[savedAccount.user.id] = savedAccount;
-  authStorage.setJSON('accounts', savedAccounts);
+  storage.setJSON('accounts', savedAccounts);
 };
 
 export const writeLogout = (account: AuthLoggedAccount) => {
   // Remove token for loegged out account
-  const accounts = authStorage.getJSON('accounts');
+  const accounts = storage.getJSON('accounts');
   if (accounts) {
     const savedAccount = accounts[account.user.id];
     if (savedAccount) {
       savedAccount.tokens = undefined;
       accounts[account.user.id] = savedAccount;
     }
-    authStorage.setJSON('accounts', accounts);
+    storage.setJSON('accounts', accounts);
   }
   // Remove account id in startup object
-  authStorage.delete('startup');
+  storage.delete('startup');
 };

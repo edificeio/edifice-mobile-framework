@@ -1,9 +1,10 @@
-import { AccountType } from '~/framework/modules/auth/model';
+import { ListRenderItemInfo } from 'react-native';
 
-export interface AccountListItemProps {
-  // avatar: Blob;
-  id: string;
-  displayName: string;
-  type: AccountType;
+import type { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+
+import type { AccountListProps } from '..';
+
+export interface AccountListItemProps<ItemT extends AuthSavedAccount | AuthLoggedAccount> extends ListRenderItemInfo<ItemT> {
   selected?: boolean;
+  getAvatarSource?: AccountListProps<ItemT>['getAvatarSource'];
 }

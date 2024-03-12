@@ -1,97 +1,28 @@
 import CookieManager from '@react-native-cookies/cookies';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { ShouldStartLoadRequest, WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
-import { consumeAuthErrorAction, loginFederationAction } from '~/framework/modules/auth/actions';
-import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { IAuthState, getState as getAuthState } from '~/framework/modules/auth/reducer';
+import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
+import moduleConfig from '~/framework/modules/auth/module-config';
+import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
-import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
-import moduleConfig from '../module-config';
-
-enum WAYFPageMode {
-  EMPTY = 0,
-  ERROR = 1,
-  LOADING = 2,
-  SELECT = 3,
-  WEBVIEW = 4,
-}
-
-interface WAYFScreenDispatchProps {
-  tryLogin: (...args: Parameters<typeof loginFederationAction>) => ReturnType<ReturnType<typeof loginFederationAction>>;
-}
-
-export interface IWayfScreenProps
-  extends WAYFScreenDispatchProps,
-    NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.wayf> {
-  auth: IAuthState;
-  dispatch: ThunkDispatch<any, any, any>;
-}
-
-interface IWayfScreenState {
-  // User selection dropdown opened?
-  dropdownOpened: boolean;
-  // Current display mode: Error Message | Loading Indicator | User Selection | WebView
-  mode: WAYFPageMode;
-  // error key as it functions in `useErrorWithKey`
-  errkey: number;
-}
-
-// Styles sheet
-const STYLES = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'space-around',
-    paddingHorizontal: UI_SIZES.spacing.large,
-    paddingVertical: UI_SIZES.spacing.huge * 1.5,
-  },
-  // help: { marginTop: UI_SIZES.spacing.large, textAlign: 'center' },
-  safeView: { flex: 1, backgroundColor: theme.ui.background.card },
-  select: { borderColor: theme.palette.primary.regular, borderWidth: 1, marginTop: UI_SIZES.spacing.medium },
-  selectBackDrop: { flex: 1 },
-  selectContainer: {
-    borderColor: theme.palette.primary.regular,
-    borderWidth: 1,
-    maxHeight: 120,
-    marginTop: UI_SIZES.spacing.medium,
-  },
-  selectPlaceholder: { color: theme.ui.text.light },
-  selectText: { color: theme.ui.text.light },
-  text: { textAlign: 'center' },
-  webview: { flex: 1 },
-  errorMsg: {
-    flexGrow: 0,
-    marginTop: UI_SIZES.spacing.medium,
-    padding: UI_SIZES.spacing.tiny,
-    textAlign: 'center',
-    alignSelf: 'center',
-    color: theme.palette.status.failure.regular,
-  },
-  submitButton: {
-    zIndex: -1,
-  },
-});
+import styles from './styles';
+import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
 class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Used to post HTML content and retrieve it via onMessage
@@ -171,9 +102,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     () => {
       Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
       return (
-        <View style={STYLES.container}>
+        <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />
-          <SmallText style={STYLES.errorMsg}>
+          <SmallText style={styles.errorMsg}>
             {this.error ? Error.getAuthErrorText<typeof Error.LoginError>(this.error) : ''}
           </SmallText>
           <PrimaryButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
@@ -183,9 +114,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     // WAYFPageMode.LOADING: Display loading indicator
     () => {
       return (
-        <View style={STYLES.container}>
+        <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />
-          <SmallText style={STYLES.text}>{I18n.get('auth-wayf-loading-text')}</SmallText>
+          <SmallText style={styles.text}>{I18n.get('auth-wayf-loading-text')}</SmallText>
           <ActivityIndicator size="large" color={theme.palette.primary.regular} />
         </View>
       );
@@ -194,18 +125,18 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     (dropdownOpened: boolean) => {
       return (
         <TouchableWithoutFeedback
-          style={STYLES.selectBackDrop}
+          style={styles.selectBackDrop}
           onPress={() => {
             this.setState({ dropdownOpened: false });
           }}>
-          <View style={STYLES.container}>
-            <SmallText style={STYLES.text}>{I18n.get('auth-wayf-select-text')}</SmallText>
+          <View style={styles.container}>
+            <SmallText style={styles.text}>{I18n.get('auth-wayf-select-text')}</SmallText>
             <DropDownPicker
-              dropDownContainerStyle={STYLES.selectContainer}
+              dropDownContainerStyle={styles.selectContainer}
               items={this.dropdownItems}
               open={this.state.dropdownOpened}
               placeholder={I18n.get('auth-wayf-select-placeholder')}
-              placeholderStyle={STYLES.selectPlaceholder}
+              placeholderStyle={styles.selectPlaceholder}
               setOpen={() =>
                 this.setState({
                   dropdownOpened: !dropdownOpened,
@@ -213,17 +144,16 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
               }
               setValue={callback => (this.dropdownValue = callback({}))}
               showTickIcon={false}
-              style={STYLES.select}
-              textStyle={STYLES.selectText}
+              style={styles.select}
+              textStyle={styles.selectText}
               value={this.dropdownValue}
             />
-            <View style={STYLES.submitButton}>
+            <View style={styles.submitButton}>
               <PrimaryButton
                 text={I18n.get('auth-wayf-select-button')}
                 disabled={this.dropdownValue === null}
                 action={() => this.loginWithCustomToken()}
               />
-              {/*<Small style={WAYFPage.STYLES.help}>{I18n.get('auth-wayf-select-help')}</Small>*/}
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -249,7 +179,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           source={{ uri: this.wayfUrl!, headers: { 'X-APP': 'mobile' } }}
           setSupportMultipleWindows={false}
           startInLoadingState
-          style={STYLES.webview}
+          style={styles.webview}
         />
       );
     },
@@ -362,7 +292,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
             this.setState({ errkey: Error.generateErrorKey() }); // clear error
             this.displaySelect();
             return;
-          } catch (e) {
+          } catch {
             // Malformed multiple users error description
             this.displayError(Error.FetchErrorType.BAD_RESPONSE);
           }
@@ -489,39 +419,10 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     const { dropdownOpened, mode } = this.state;
     return (
       <PageView>
-        <SafeAreaView style={STYLES.safeView}>{this.contentComponents[mode](dropdownOpened)}</SafeAreaView>
+        <SafeAreaView style={styles.safeView}>{this.contentComponents[mode](dropdownOpened)}</SafeAreaView>
       </PageView>
     );
   }
 }
 
-export default connect(
-  (state: any, props: any) => {
-    return {
-      auth: getAuthState(state),
-    };
-  },
-  dispatch =>
-    bindActionCreators<WAYFScreenDispatchProps>(
-      {
-        tryLogin: tryAction(loginFederationAction, {
-          track: res => {
-            const errtype = res instanceof global.Error ? Error.getDeepErrorType<typeof Error.LoginError>(res) : undefined;
-            return [
-              moduleConfig,
-              res instanceof global.Error
-                ? errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
-                  ? trackingActionAddSuffix('Login fédéré', 'Multiple')
-                  : trackingActionAddSuffix('Login fédéré', false)
-                : trackingActionAddSuffix('Login fédéré', true),
-              res instanceof global.Error && errtype !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
-                ? errtype?.toString() ?? res.toString()
-                : undefined,
-              res instanceof Error.SamlMultipleVectorError ? res.data.users.length : undefined,
-            ];
-          },
-        }),
-      },
-      dispatch,
-    ),
-)(WayfScreen);
+export default WayfScreen;

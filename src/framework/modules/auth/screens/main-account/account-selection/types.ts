@@ -5,6 +5,12 @@ import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/a
 import { restoreAction } from '../../../actions';
 import { AuthMixedAccountMap } from '../../../model';
 
+export enum LoginState {
+  IDLE = 'IDLE',
+  RUNNING = 'RUNNING',
+  DONE = 'DONE',
+}
+
 export interface AuthAccountSelectionScreenNavParams {}
 
 export interface AuthAccountSelectionScreenProps {
