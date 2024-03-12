@@ -15,7 +15,7 @@ import {
 } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
-import { getItemJson, migrateItemJson, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
 
@@ -35,14 +35,14 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
 
     // 2 - Load notif settings from MMKV
     const storageKey = getStorageKey(userId);
-    let settings: INotifFilterSettings | undefined = await getItemJson(storageKey);
+    let settings: INotifFilterSettings | undefined = await OldStorageFunctions.getItemJson(storageKey);
 
     // 2 bis - No existing data ? Maybe we have old data to migrate
     if (!settings) {
-      settings = await migrateItemJson(`timelinev2.notifFilterSettings`);
+      settings = await OldStorageFunctions.migrateItemJson(`timelinev2.notifFilterSettings`);
     }
     if (!settings) {
-      settings = await migrateItemJson(`timelinev2.notifFilterSettings.${userId}`);
+      settings = await OldStorageFunctions.migrateItemJson(`timelinev2.notifFilterSettings.${userId}`);
     }
 
     // 3 - merge with defaults
@@ -53,7 +53,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     settings = { ...defaults, ...settings };
 
     // 4 - Save loaded notif settings for persistency
-    await setItemJson(storageKey, settings);
+    await OldStorageFunctions.setItemJson(storageKey, settings);
     dispatch(notifFilterSettingsActions.receipt(settings));
   } catch (e) {
     // ToDo: Error handling
@@ -68,7 +68,7 @@ export const setFiltersAction =
       const userId = session.user.id;
       const storageKey = getStorageKey(userId);
       dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
-      await setItemJson(storageKey, selectedFilters);
+      await OldStorageFunctions.setItemJson(storageKey, selectedFilters);
       dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
     } catch {
       // ToDo: Error handling

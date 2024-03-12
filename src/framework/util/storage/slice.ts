@@ -3,7 +3,6 @@ import type { IModuleConfig } from '~/framework/util/moduleTool';
 import { StorageHandler } from './handler';
 import type {
   IStorageBackend,
-  IStorageSlice,
   KeysWithValueNotOfType,
   KeysWithValueOfType,
   StorageKey,
@@ -11,17 +10,10 @@ import type {
   StorageTypeMap,
 } from './types';
 
-export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends IStorageBackend | IStorageSlice<StorageTypeMap>>
-  extends StorageHandler<Storage>
-  implements IStorageSlice<StorageTypes>
-{
+export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHandler {
   static separator = '.';
 
   protected prefix: string[] = [];
-
-  constructor(storage: Storage, storageName?: string) {
-    super(storage, storageName);
-  }
 
   /**
    * Add prefix at the start of the given key. If key is '', returns only the stringified prefix.
@@ -54,7 +46,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#contains(key);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#contains`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#contains`, key);
       return (this.storage as IStorageBackend).contains(key);
     }
   }
@@ -72,7 +64,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#delete(key);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#delete`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#delete`, key);
       return (this.storage as IStorageBackend).delete(key);
     }
   }
@@ -94,7 +86,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#getBoolean(key);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#getBoolean`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#getBoolean`, key);
       return (this.storage as IStorageBackend).getBoolean(key);
     }
   }
@@ -114,7 +106,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#getNumber(key);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#getNumber`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#getNumber`, key);
       return (this.storage as IStorageBackend).getNumber(key);
     }
   }
@@ -134,7 +126,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#getString(key);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#getString`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#getString`, key);
       return (this.storage as IStorageBackend).getString(key);
     }
   }
@@ -154,7 +146,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#getJSON(key);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#getJSON`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#getJSON`, key);
       const str = (this.storage as IStorageBackend).getString(key);
       return str ? JSON.parse(str) : undefined;
     }
@@ -175,7 +167,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
         : this.#set(this.computeKey(key as Exclude<typeof key, unknown>), value);
     } else {
       throw new Error(
-        `[Storage] ${this.storageName || this.constructor.name}#set : failed to write value that type is unknown : ${value}`,
+        `[Storage] ${this.name || this.constructor.name}#set : failed to write value that type is unknown : ${value}`,
       );
     }
   }
@@ -184,7 +176,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#set(key, value);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#set`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#set`, key);
       return (this.storage as IStorageBackend).set(key, value);
     }
   }
@@ -207,7 +199,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.storage instanceof StorageSlice) {
       return this.storage.#setJSON(key, value);
     } else {
-      console.debug(`[Storage] ${this.storageName || this.constructor.name}#setJSON`, key);
+      console.debug(`[Storage] ${this.name || this.constructor.name}#setJSON`, key);
       return (this.storage as IStorageBackend).set(key, JSON.stringify(value));
     }
   }
@@ -222,7 +214,7 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.prefix.length > 0) {
       console.warn(
         `[Storage] Do not use withPrefix() or withModule() more than once, nor together. That mutates the storage '${
-          this.storageName || this.constructor.name
+          this.name || this.constructor.name
         }' view.`,
       );
     }
@@ -240,12 +232,12 @@ export class StorageSlice<StorageTypes extends StorageTypeMap, Storage extends I
     if (this.prefix.length > 0) {
       console.warn(
         `[Storage] Do not use withPrefix() or withModule() more than once, nor together. That mutates the storage '${
-          this.storageName || this.constructor.name
+          this.name || this.constructor.name
         }' view.`,
       );
     }
     this.prefix.push(module.storageName);
-    this.storageName = module.storageName;
+    this.name = module.storageName;
     return this;
   }
 }

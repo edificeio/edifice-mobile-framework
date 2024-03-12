@@ -3,7 +3,6 @@ import { ParamListBase } from '@react-navigation/native';
 import moduleConfig from '~/framework/modules/user/module-config';
 import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
-import type { UserAccountOnboardingScreenNavParams } from '~/framework/modules/user/screens/account-onboarding';
 import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
 import type { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
 import type { UserLegalNoticeScreenNavParams } from '~/framework/modules/user/screens/legal-notice';
@@ -22,7 +21,6 @@ export const userRouteNames = {
   notifPrefsDetails: `${moduleConfig.routeName}/notifPrefs/details` as 'notifPrefsDetails',
   profile: `${moduleConfig.routeName}/profile` as 'profile',
   structures: `${moduleConfig.routeName}/profile/structures` as 'structures',
-  accountOnboarding: `${moduleConfig.routeName}/accountOnboarding` as 'accountOnboarding',
   editHobbies: `${moduleConfig.routeName}/profile/editHobbies` as 'editHobbies',
   editDescription: `${moduleConfig.routeName}/profile/editDescription` as 'editDescription',
   editMoodMotto: `${moduleConfig.routeName}/profile/editMoodMotto` as 'editMoodMotto',
@@ -38,7 +36,6 @@ export interface UserNavigationParams extends ParamListBase {
   notifPrefsDetails: IPushNotifsItemsListScreenNavigationParams;
   profile: ProfileScreenNavigationParams;
   structures: UserStructuresScreenNavParams;
-  accountOnboarding: UserAccountOnboardingScreenNavParams;
   editHobbies: UserEditHobbiesScreenNavParams;
   editDescription: UserEditDescriptionScreenNavParams;
   editMoodMotto: UserEditMoodMottoScreenNavParams;

@@ -3,13 +3,23 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import { SingleAvatar } from '~/framework/components/avatar';
 import IconButton from '~/framework/components/buttons/icon';
 import styles from '~/framework/components/list/account/item/styles';
 import { AccountListItemProps } from '~/framework/components/list/account/item/types';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import Avatar, { Size } from '~/ui/avatars/Avatar';
+import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 
-const AccountListItem = ({ id, displayName, type, selected }: AccountListItemProps) => {
+const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
+  selected,
+  getAvatarSource,
+  item,
+  item: {
+    user: { type, id, displayName },
+  },
+  index,
+  separators,
+}: AccountListItemProps<ItemT>) => {
   const containerBackgroundColor = { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card };
   const typeColor = { color: theme.color.profileTypes[type] };
   const typeText = I18n.get(`user-profiletypes-${type}`.toLowerCase());
@@ -28,10 +38,15 @@ const AccountListItem = ({ id, displayName, type, selected }: AccountListItemPro
     ]);
   };
 
+  const avatarProps = React.useMemo(
+    () => (getAvatarSource ? { source: getAvatarSource({ item, index, separators }) } : { userId: id }),
+    [getAvatarSource, id, index, item, separators],
+  );
+
   return (
     <TouchableOpacity style={[styles.container, containerBackgroundColor]} onPress={onSelectAccount}>
       <View>
-        <Avatar size={Size.large} id={id} />
+        <SingleAvatar size="lg" {...avatarProps} />
         <View style={styles.avatarContour} />
       </View>
       <View style={styles.textContainer}>

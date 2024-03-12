@@ -21,7 +21,7 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: I18n.get('user-accountonboarding-title'),
+    title: I18n.get('auth-accountonboarding-heading'),
   }),
 });
 
@@ -33,12 +33,12 @@ const UserAccountOnboardingScreen = (props: UserAccountOnboardingScreenPrivatePr
     <PageView style={styles.page}>
       <View style={styles.topContainer}>
         <NamedSVG name="multi-account" width={getScaleWidth(130)} height={getScaleWidth(130)} />
-        <HeadingSText style={styles.title}>{I18n.get('user-accountonboarding-heading')}</HeadingSText>
-        <SmallText style={styles.description}>{I18n.get('user-accountonboarding-description')}</SmallText>
+        <HeadingSText style={styles.title}>{I18n.get('auth-accountonboarding-heading')}</HeadingSText>
+        <SmallText style={styles.description}>{I18n.get('auth-accountonboarding-description')}</SmallText>
       </View>
       <View style={styles.bottomContainer}>
         <PrimaryButton
-          text={I18n.get('user-accountonboarding-button')}
+          text={I18n.get('auth-accountonboarding-button')}
           iconRight="ui-arrowRight"
           style={styles.button}
           action={onAddAccount}

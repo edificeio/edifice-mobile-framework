@@ -64,7 +64,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
       };
 
       if (accountId) {
-        await tryLoginReplace(accountId, platform, loginCredentials, errkey);
+        await tryLoginReplace(accountId, account?.addTimestamp ?? Date.now(), platform, loginCredentials, errkey);
       } else {
         await tryLoginAdd(platform, loginCredentials, errkey);
       }
@@ -86,7 +86,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
         setLoginState(LoginState.IDLE);
       }
     }
-  }, [login, password, accountId, tryLoginReplace, platform, errkey, tryLoginAdd]);
+  }, [login, password, accountId, tryLoginReplace, account?.addTimestamp, platform, errkey, tryLoginAdd]);
 
   const goToWeb = React.useCallback(() => {
     openUrl(platform.url);

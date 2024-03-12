@@ -1,16 +1,16 @@
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
-import type { IStorageBackend, IStorageHandler, IStorageSlice, StorageTypeMap } from './types';
+import { IStorageBackend, StorageKey } from './types';
 
-export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<StorageTypeMap>> implements IStorageHandler<Storage> {
+export class StorageHandler {
   constructor(
-    protected storage: Storage,
-    protected storageName?: string,
+    protected storage: StorageHandler | IStorageBackend,
+    public name?: string,
   ) {}
 
-  private static storageListWithAppInit: StorageHandler<IStorageBackend | IStorageSlice<StorageTypeMap>>[] = [];
+  private static storageListWithAppInit: StorageHandler[] = [];
 
-  private static storageListWithSessionInit: StorageHandler<IStorageBackend | IStorageSlice<StorageTypeMap>>[] = [];
+  private static storageListWithSessionInit: StorageHandler[] = [];
 
   private static initPhaseDone: boolean = false;
 
@@ -30,7 +30,7 @@ export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<Stor
     }
 
     this.init = async () => {
-      console.debug(`[Storage] init storage '${this.storageName ?? this.constructor.name}'`);
+      console.debug(`[Storage] init storage '${this.name ?? this.constructor.name}'`);
       initFn.call(this);
       this.isInitialized = true;
     };
@@ -51,7 +51,7 @@ export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<Stor
    */
   setSessionInit(initFn: (this: this, session: AuthLoggedAccount) => void) {
     this.sessionInit = async (session: AuthLoggedAccount) => {
-      console.debug(`[Storage] session init storage '${this.storageName ?? this.constructor.name}'`);
+      console.debug(`[Storage] session init storage '${this.name ?? this.constructor.name}'`);
       initFn.call(this, session);
     };
 
@@ -67,7 +67,7 @@ export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<Stor
           storage.init?.();
         }
       } catch (e) {
-        console.warn(`[Storage] storage '${storage.storageName ?? storage.constructor.name}' failed to init`, e);
+        console.warn(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to init`, e);
       }
     }
     StorageHandler.initPhaseDone = true;
@@ -78,8 +78,45 @@ export class StorageHandler<Storage extends IStorageBackend | IStorageSlice<Stor
       try {
         storage.sessionInit?.(session);
       } catch (e) {
-        console.warn(`[Storage] storage '${storage.storageName ?? storage.constructor.name}' failed to session init`, e);
+        console.warn(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to session init`, e);
       }
     }
+  }
+
+  static BOOL_FALSE = 0;
+
+  static BOOL_TRUE = 1;
+
+  contains(key: StorageKey): boolean {
+    return this.storage.contains(key);
+  }
+
+  delete(key: StorageKey): void {
+    return this.storage.delete(key);
+  }
+
+  getBoolean(key: StorageKey): boolean | undefined {
+    const val = this.storage.getNumber(key);
+    if (val === StorageHandler.BOOL_TRUE) return true;
+    if (val === StorageHandler.BOOL_FALSE) return false;
+    else return undefined;
+  }
+
+  getNumber(key: StorageKey): number | undefined {
+    return this.storage.getNumber(key);
+  }
+
+  getString(key: StorageKey): string | undefined {
+    return this.storage.getString(key);
+  }
+
+  set(key: StorageKey, value: string | number | boolean): void {
+    if (typeof value === 'boolean') {
+      return this.storage.set(key, value ? StorageHandler.BOOL_TRUE : StorageHandler.BOOL_FALSE);
+    } else return this.storage.set(key, value);
+  }
+
+  getAllKeys(): StorageKey[] {
+    return this.storage.getAllKeys();
   }
 }

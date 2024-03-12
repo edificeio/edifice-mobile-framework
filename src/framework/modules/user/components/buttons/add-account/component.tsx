@@ -5,7 +5,7 @@ import { AddAccountButtonProps } from '~/framework/modules/user/components/butto
 import LargeButton from '~/framework/modules/user/components/buttons/large';
 
 const AddAccountButton = ({ action, style }: AddAccountButtonProps) => {
-  return <LargeButton style={style} icon="ui-plus" text={I18n.get('accountbutton-add')} action={action} />;
+  return <LargeButton style={style} icon="ui-plus" text={I18n.get('auth-accountbutton-add')} action={action} />;
 };
 
 export default AddAccountButton;

@@ -20,7 +20,7 @@ import RNRestart from 'react-native-restart';
 
 import appConf from '~/framework/util/appConf';
 import { isEmpty } from '~/framework/util/object';
-import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 import { getOverrideName } from '~/framework/util/string';
 
 // Read Phrase ID && Secrets
@@ -125,7 +125,7 @@ export namespace I18n {
       languageTag: string;
       isRTL: boolean;
     };
-    const lang = await getItemJson(I18N_APP_LANG);
+    const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
     if (isEmpty(lang)) {
       const newLang = bestAvailableLanguage?.languageTag ?? fallbackLng;
       i18n.language = newLang;
@@ -137,9 +137,9 @@ export namespace I18n {
   }
 
   export const changeLanguage = async (lang: 'fr' | 'en' | 'es' | 'auto') => {
-    if (showKeys) await setItemJson(I18N_SHOW_KEYS_KEY, false);
-    if (lang === 'auto') await removeItem(I18N_APP_LANG);
-    else await setItemJson(I18N_APP_LANG, lang);
+    if (showKeys) await OldStorageFunctions.setItemJson(I18N_SHOW_KEYS_KEY, false);
+    if (lang === 'auto') await OldStorageFunctions.removeItem(I18N_APP_LANG);
+    else await OldStorageFunctions.setItemJson(I18N_APP_LANG, lang);
     RNRestart.restart();
   };
 
@@ -148,7 +148,7 @@ export namespace I18n {
   export const toggleShowKeys = async () => {
     if (canShowKeys) {
       showKeys = !showKeys;
-      await setItemJson(I18N_SHOW_KEYS_KEY, showKeys);
+      await OldStorageFunctions.setItemJson(I18N_SHOW_KEYS_KEY, showKeys);
       RNRestart.restart();
     }
   };
@@ -156,7 +156,7 @@ export namespace I18n {
   export async function init() {
     // Initialize keys toggling
     if (canShowKeys) {
-      const stored: boolean | undefined = await getItemJson(I18N_SHOW_KEYS_KEY);
+      const stored: boolean | undefined = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
       if (stored) showKeys = stored;
     }
     // Initalize language

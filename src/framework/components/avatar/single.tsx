@@ -1,6 +1,7 @@
 import * as React from 'react';
 import FastImage, { FastImageProps, Source } from 'react-native-fast-image';
 
+import { Platform } from '~/framework/util/appConf';
 import { urlSigner } from '~/infra/oauth';
 
 import { AvatarSizes } from './styles';
@@ -36,6 +37,8 @@ const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
 const fallbackSource: FastImageProps['source'] = require('ASSETS/images/no-avatar.png');
 export const buildRelativeUserAvatarUrl = (id: string) => `/userbook/avatar/${id}`;
 export const buildAbsoluteUserAvatarUrl = (id: string) => urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id));
+export const buildAbsoluteUserAvatarUrlWithPlatform = (id: string, platform?: Platform) =>
+  platform ? urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id), platform) : undefined;
 
 const isUserAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleUserAvatarSpecificProps =>
   (props as Partial<SingleUserAvatarSpecificProps>).userId !== undefined;
@@ -50,16 +53,20 @@ const commonSourceAttributes: Partial<Source> = { priority: 'high' };
 
 const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): FastImageProps['source'] => {
   if (error) return fallbackSource;
-  if (isUserAvatar(props)) {
-    return { uri: buildAbsoluteUserAvatarUrl(props.userId), ...commonSourceAttributes };
-  } else if (isSourceAvatar(props)) {
-    const { source } = props;
-    if (typeof source === 'number') {
-      return source;
+  try {
+    if (isUserAvatar(props)) {
+      return { uri: buildAbsoluteUserAvatarUrl(props.userId), ...commonSourceAttributes };
+    } else if (isSourceAvatar(props)) {
+      const { source } = props;
+      if (typeof source === 'number') {
+        return source;
+      } else {
+        return { uri: source.uri, headers: source.headers, ...commonSourceAttributes };
+      }
     } else {
-      return { uri: source.uri, headers: source.headers, ...commonSourceAttributes };
+      return fallbackSource;
     }
-  } else {
+  } catch {
     return fallbackSource;
   }
 };

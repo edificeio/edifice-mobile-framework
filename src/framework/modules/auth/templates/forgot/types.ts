@@ -24,7 +24,7 @@ export interface IForgotPageEventProps {
 
 export type ForgotScreenPrivateProps = ForgotScreenProps &
   IForgotPageEventProps &
-  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.forgot>;
+  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.forgot | typeof authRouteNames.addAccountForgot>;
 
 export interface ForgotScreenNavParams {
   platform: Platform;

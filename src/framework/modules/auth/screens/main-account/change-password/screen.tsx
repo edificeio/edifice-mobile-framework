@@ -44,7 +44,9 @@ export default connect(
     return bindActionCreators<ChangePasswordScreenDispatchProps>(
       {
         trySubmit: tryAction(
-          props.session ? buildChangePasswordActionReplaceAccount(props.session.user.id) : changePasswordActionAddFirstAccount,
+          props.session
+            ? buildChangePasswordActionReplaceAccount(props.session.user.id, props.session.addTimestamp)
+            : changePasswordActionAddFirstAccount,
         ),
         tryLogout: tryAction(manualLogoutAction),
       },

@@ -7,9 +7,6 @@ import PushNotifsItemsListScreen, {
 import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
-import UserAccountOnboardingScreen, {
-  computeNavBar as accountOnboardingNavBar,
-} from '~/framework/modules/user/screens/account-onboarding';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
 import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/framework/modules/user/screens/legal-notice';
@@ -70,14 +67,6 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={userRouteNames.structures}
           component={UserStructuresScreen}
           options={structuresNavBar}
-          initialParams={{}}
-        />
-      </Stack.Group>
-      <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
-        <Stack.Screen
-          name={userRouteNames.accountOnboarding}
-          component={UserAccountOnboardingScreen}
-          options={accountOnboardingNavBar}
           initialParams={{}}
         />
       </Stack.Group>

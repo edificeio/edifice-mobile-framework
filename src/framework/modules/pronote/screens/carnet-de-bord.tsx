@@ -36,7 +36,7 @@ import redirect from '~/framework/modules/pronote/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 export interface CarnetDeBordScreenDataProps {
   session?: AuthLoggedAccount;
@@ -104,7 +104,7 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
     const idToBeSelected = usersRef.current.find(u => u.id === id) ? id : usersRef.current[0]?.id;
     if (!idToBeSelected) throw new Error(`idToBeSelected is undefined. CarnetDeBord need to select an existing user`);
     setSelectedId(idToBeSelected);
-    setItemJson(CarnetDeBordScreen.STORAGE_KEY, idToBeSelected);
+    OldStorageFunctions.setItemJson(CarnetDeBordScreen.STORAGE_KEY, idToBeSelected);
   }, []);
   const isUserListShown = React.useMemo(
     () => /* session.user.type === UserType.Relative || */ users.length > 1,
@@ -113,9 +113,12 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
 
   // Data & content
   const loadData = React.useCallback(async () => {
-    const [newData, savedSelectedId] = await Promise.all([handleLoadData(), getItemJson<string>(CarnetDeBordScreen.STORAGE_KEY)]);
+    const [newData, savedSelectedId] = await Promise.all([
+      handleLoadData(),
+      OldStorageFunctions.getItemJson<string>(CarnetDeBordScreen.STORAGE_KEY),
+    ]);
     usersRef.current = getUsers(newData);
-    await selectUser(savedSelectedId);
+    await selectUser(savedSelectedId ?? undefined);
   }, [selectUser, handleLoadData, getUsers]);
   const selectedCdbData = React.useMemo(() => {
     return data.find(d => d.idPronote === selectedId);

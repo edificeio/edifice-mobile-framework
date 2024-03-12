@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { getStore } from '~/app/store';
 import { quietLogoutAction } from '~/framework/modules/auth/actions';
 import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 import { CACHE_KEY_PREFIX } from './cache';
 import { OAuth2RessourceOwnerPasswordClient } from './oauth';
@@ -67,7 +67,7 @@ export async function signedFetchJson2(url: string | Request, init?: any): Promi
 export const getCachedData = async <T>(path: string) => {
   let cachedData: undefined;
   try {
-    cachedData = await getItemJson(CACHE_KEY_PREFIX + path);
+    cachedData = await OldStorageFunctions.getItemJson(CACHE_KEY_PREFIX + path);
   } catch {
     // Do nothing. We don't want to fail.
   }
@@ -76,7 +76,7 @@ export const getCachedData = async <T>(path: string) => {
 
 export const setCachedData = async (path: string, data: T) => {
   try {
-    await setItemJson(CACHE_KEY_PREFIX + path, data);
+    await OldStorageFunctions.setItemJson(CACHE_KEY_PREFIX + path, data);
   } catch {
     // Do nothing. We don't want to fail.
   }

@@ -113,6 +113,7 @@ export interface AuthSavedAccount {
   platform: string;
   tokens?: AuthTokenSet;
   user: AuthSavedAccountUserInfo;
+  addTimestamp: number;
 }
 
 export interface AuthSavedAccountWithTokens extends AuthSavedAccount {
@@ -135,6 +136,7 @@ export interface AuthLoggedAccount {
   rights: AuthLoggedAccountRights;
   type: SessionType;
   federated: boolean;
+  addTimestamp: AuthSavedAccount['addTimestamp'];
 }
 
 export const accountIsLogged = (account: AuthLoggedAccount | AuthSavedAccount | undefined): account is AuthLoggedAccount => {
@@ -178,7 +180,7 @@ export type AuthSavedAccountMap = Record<string, AuthSavedAccount>;
 
 export type AuthLoggedAccountMap = Record<string, AuthLoggedAccount>;
 
-export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthLoggedAccount>;
+export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthSavedAccountWithTokens | AuthLoggedAccount>;
 
 export interface IUser extends DisplayUserPublic {
   login: string;
@@ -413,6 +415,7 @@ export const getSerializedLoggedOutAccountInfo = (account: AuthLoggedAccount) =>
       type: account.user.type,
       avatar: account.user.avatar,
     },
+    addTimestamp: account.addTimestamp,
   } as AuthSavedAccount;
 }; /** Converts an actual logged account into a serialisable saved account information */
 
@@ -422,3 +425,6 @@ export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => 
     tokens: account.tokens,
   } as AuthSavedAccount;
 };
+
+export const getOrderedAccounts = (accounts: AuthMixedAccountMap) =>
+  Object.values(accounts).sort((a, b) => a.addTimestamp - b.addTimestamp);

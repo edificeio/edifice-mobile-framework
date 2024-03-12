@@ -30,7 +30,7 @@ import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 import { urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
@@ -89,7 +89,7 @@ async function assertPermissions(permissions: Permission[]) {
 export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; imageViewerRef }) => {
   const showPrivacyAlert = async action => {
     try {
-      const getDatePrivacyAlert: Moment | undefined = await getItemJson('privacyAlert');
+      const getDatePrivacyAlert: Moment | undefined = await OldStorageFunctions.getItemJson('privacyAlert');
       if (isEmpty(getDatePrivacyAlert) || moment().startOf('day').isAfter(getDatePrivacyAlert)) {
         Alert.alert(I18n.get('carousel-privacy-title'), I18n.get('carousel-privacy-text'), [
           {
@@ -97,7 +97,7 @@ export const Buttons = ({ disabled, imageViewerRef }: { disabled: boolean; image
             onPress: action,
           },
         ]);
-        await setItemJson('privacyAlert', moment().startOf('day'));
+        await OldStorageFunctions.setItemJson('privacyAlert', moment().startOf('day'));
       } else {
         action();
       }

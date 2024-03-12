@@ -24,7 +24,7 @@ import { updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
-import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
 export const AllModulesBackup = {
@@ -341,7 +341,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * @returns
    */
   public static async getStoredTokenStr(): Promise<IOAuthToken | undefined> {
-    const rawStoredToken = await getItemJson('token');
+    const rawStoredToken = await OldStorageFunctions.getItemJson('token');
     if (!rawStoredToken) {
       return undefined;
     }
@@ -370,7 +370,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Saves given token information in local storage.
    */
   public async saveToken() {
-    await setItemJson('token', this.token);
+    await OldStorageFunctions.setItemJson('token', this.token);
   }
 
   /**
@@ -378,7 +378,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Remove given token information in local storage.
    */
   public async forgetToken() {
-    await removeItem('token');
+    await OldStorageFunctions.removeItem('token');
   }
 
   /**
@@ -511,7 +511,7 @@ export class OAuth2RessourceOwnerPasswordClient {
    * @deprecated
    */
   public async eraseToken() {
-    await removeItem('token');
+    await OldStorageFunctions.removeItem('token');
     await this.deleteQueryParamToken();
     this.token = null;
   }

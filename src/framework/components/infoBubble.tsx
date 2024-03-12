@@ -3,14 +3,14 @@ import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-na
 
 import { I18n } from '~/app/i18n';
 import { Image } from '~/framework/util/media';
-import { getItemJson, removeItem, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 import { IconButton } from '~/ui/IconButton';
 
+import PrimaryButton from './buttons/primary';
 import { Card, InfoCard } from './card/base';
 import { UI_SIZES } from './constants';
 import { CaptionText, SmallBoldText, SmallText } from './text';
 import { Toggle } from './toggle';
-import PrimaryButton from './buttons/primary';
 
 export interface IInfoBubbleProps {
   infoText: string;
@@ -135,7 +135,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
     const { infoBubbleId } = this.props;
     const storageKey = computeStorageId(infoBubbleId);
     try {
-      const res = await getItemJson(storageKey);
+      const res = await OldStorageFunctions.getItemJson(storageKey);
       const isAcknowledged = !!res;
       this.setState({ isAcknowledged });
     } catch (e) {
@@ -149,7 +149,7 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
     const isRegular = infoBubbleType === 'regular';
     const isFloating = infoBubbleType === 'floating';
     try {
-      acknowledge ? await setItemJson(storageKey, true) : await removeItem(storageKey);
+      acknowledge ? await OldStorageFunctions.setItemJson(storageKey, true) : await OldStorageFunctions.removeItem(storageKey);
       isFloating ? this.setState({ isAcknowledged: true }) : isRegular ? this.setState({ acknowledgeToggle: acknowledge }) : null;
     } catch (e) {
       // ToDo: Error handling
