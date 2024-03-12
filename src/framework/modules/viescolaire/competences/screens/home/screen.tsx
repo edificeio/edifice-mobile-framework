@@ -32,11 +32,11 @@ import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
+import { storage } from '~/framework/modules/viescolaire/competences/storage';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { OldStorageFunctions } from '~/framework/util/storage';
 
 import styles from './styles';
 import type { CompetencesHomeScreenDispatchProps, CompetencesHomeScreenPrivateProps } from './types';
@@ -57,7 +57,6 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
   const [isSubjectDropdownOpen, setSubjectDropdownOpen] = React.useState<boolean>(false);
   const [term, setTerm] = React.useState<string>('default');
   const [subject, setSubject] = React.useState<string>('default');
-  const STORAGE_KEY = `${moduleConfig.name}.showAverageColors`;
   const [areAverageColorsShown, setAverageColorsShown] = React.useState<boolean>(false);
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
@@ -70,9 +69,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       const { childId, classes, structureId, userId, userType } = props;
 
       if (!childId || !structureId || !userId || !userType) throw new Error();
-      OldStorageFunctions.getItemJson<boolean>(STORAGE_KEY).then(value => {
-        if (value) setAverageColorsShown(true);
-      });
+      setAverageColorsShown(storage.getBoolean('show-average-colors') ?? false);
       await props.tryFetchSubjects(structureId);
       let childClasses = classes?.[0];
       if (userType === AccountType.Relative) {
@@ -215,7 +212,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 value={areAverageColorsShown}
                 onValueChange={() => {
                   setAverageColorsShown(!areAverageColorsShown);
-                  OldStorageFunctions.setItemJson(STORAGE_KEY, !areAverageColorsShown);
+                  storage.set('show-average-colors', !areAverageColorsShown);
                 }}
                 trackColor={{ false: theme.palette.grey.grey, true: theme.palette.complementary.green.regular }}
                 style={Platform.OS !== 'ios' ? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : null}
