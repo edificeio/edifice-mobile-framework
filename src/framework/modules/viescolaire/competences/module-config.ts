@@ -14,6 +14,7 @@ export default new NavigableModuleConfig<'competences', ICompetencesReduxState>(
   name: 'competences',
   entcoreScope: ['competences'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  storageName: 'competences',
 
   displayI18n: 'competences-moduleconfig-appname',
   displayAs: 'myAppsModule',

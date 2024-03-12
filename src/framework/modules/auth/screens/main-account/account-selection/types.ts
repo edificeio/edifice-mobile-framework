@@ -1,9 +1,14 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+import { restoreAction } from '~/framework/modules/auth/actions';
+import { AuthMixedAccountMap } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 
-import { restoreAction } from '../../../actions';
-import { AuthMixedAccountMap } from '../../../model';
+export enum LoginState {
+  IDLE = 'IDLE',
+  RUNNING = 'RUNNING',
+  DONE = 'DONE',
+}
 
 export enum LoginState {
   IDLE = 'IDLE',

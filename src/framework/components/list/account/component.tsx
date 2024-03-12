@@ -23,7 +23,7 @@ const ItemSeparator = () => (
 );
 
 const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
-  { data, description, title, getAvatarSource }: AccountListProps<ItemT>,
+  { data, description, title, getAvatarSource, action }: AccountListProps<ItemT>,
   ref,
 ) => {
   const hasSingleAccount = data.length === 1;
@@ -31,7 +31,12 @@ const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
   const onAddAccount = () => navigation.navigate(userRouteNames.accountOnboarding, {});
   const currentAccount = useSelector(state => getSession());
   const renderItem: FlatListProps<ArrayElement<typeof data>>['renderItem'] = info => (
-    <AccountListItem {...info} selected={info.item.user.id === currentAccount?.user.id} getAvatarSource={getAvatarSource} />
+    <AccountListItem
+      {...info}
+      selected={info.item.user.id === currentAccount?.user.id}
+      getAvatarSource={getAvatarSource}
+      action={action}
+    />
   );
 
   return (

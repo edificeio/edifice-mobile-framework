@@ -13,6 +13,8 @@ import { PageView } from '~/framework/components/page';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 
+import { storage } from '../storage';
+
 export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
   modules: NavigableModuleArray;
 }
@@ -33,7 +35,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
           infoTitle={I18n.get('myapp-infobubble-title')}
           infoImage={require('ASSETS/images/my-apps-infobubble.png')}
           infoBubbleType="floating"
-          infoBubbleId="myAppsScreen.redirect"
+          storageKey={storage.computeKey('infobubble-ack')}
         />
       </View>
     );
@@ -54,8 +56,8 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
               ? item.config.displayPicture.type === 'NamedSvg'
                 ? { ...item.config.displayPicture, height: 64, width: '100%' }
                 : item.config.displayPicture.type === 'Image'
-                ? { ...item.config.displayPicture }
-                : /* item.config.displayPicture.type === 'Icon' */ { ...item.config.displayPicture, size: 64 }
+                  ? { ...item.config.displayPicture }
+                  : /* item.config.displayPicture.type === 'Icon' */ { ...item.config.displayPicture, size: 64 }
               : {
                   // Fallback on legacy moduleConfig properties
                   type: 'Icon',

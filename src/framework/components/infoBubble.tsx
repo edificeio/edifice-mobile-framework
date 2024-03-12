@@ -3,7 +3,8 @@ import { ImageSourcePropType, TouchableOpacity, View, ViewStyle } from 'react-na
 
 import { I18n } from '~/app/i18n';
 import { Image } from '~/framework/util/media';
-import { OldStorageFunctions } from '~/framework/util/storage';
+import { Storage } from '~/framework/util/storage';
+import type { StorageKey } from '~/framework/util/storage/types';
 import { IconButton } from '~/ui/IconButton';
 
 import PrimaryButton from './buttons/primary';
@@ -15,7 +16,7 @@ import { Toggle } from './toggle';
 export interface IInfoBubbleProps {
   infoText: string;
   infoBubbleType: 'floating' | 'regular';
-  infoBubbleId: string;
+  storageKey: StorageKey;
   infoTitle?: string;
   infoImage?: ImageSourcePropType;
   style?: ViewStyle;
@@ -26,8 +27,6 @@ export interface IInfoBubbleState {
   acknowledgeToggle: boolean; // determines whether the Toggle is ON/OFF (regular type)
   displayToggle: boolean; // determines whether the content is displayed (floating type)
 }
-
-const computeStorageId = (infoBubbleId: string) => `infoBubbleAck-${infoBubbleId}`;
 
 export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbleState> {
   // DECLARATIONS =================================================================================
@@ -124,34 +123,32 @@ export class InfoBubble extends React.PureComponent<IInfoBubbleProps, IInfoBubbl
 
   // LIFECYCLE ====================================================================================
 
-  constructor(props: IInfoBubbleProps) {
-    super(props);
+  componentDidMount(): void {
     this.doVerifyIfAcknowledged();
   }
 
   // METHODS ======================================================================================
 
   async doVerifyIfAcknowledged() {
-    const { infoBubbleId } = this.props;
-    const storageKey = computeStorageId(infoBubbleId);
+    const { storageKey } = this.props;
     try {
-      const res = await OldStorageFunctions.getItemJson(storageKey);
-      const isAcknowledged = !!res;
+      const isAcknowledged = !!Storage.global.getBoolean(storageKey);
       this.setState({ isAcknowledged });
-    } catch (e) {
+    } catch {
       // ToDo: Error handling
     }
   }
 
   async doAcknowledge(acknowledge: boolean) {
-    const { infoBubbleId, infoBubbleType } = this.props;
-    const storageKey = computeStorageId(infoBubbleId);
+    const { infoBubbleType, storageKey } = this.props;
     const isRegular = infoBubbleType === 'regular';
     const isFloating = infoBubbleType === 'floating';
     try {
-      acknowledge ? await OldStorageFunctions.setItemJson(storageKey, true) : await OldStorageFunctions.removeItem(storageKey);
-      isFloating ? this.setState({ isAcknowledged: true }) : isRegular ? this.setState({ acknowledgeToggle: acknowledge }) : null;
-    } catch (e) {
+      if (acknowledge) Storage.global.set(storageKey, true);
+      else Storage.global.delete(storageKey);
+      if (isFloating) this.setState({ isAcknowledged: true });
+      else if (isRegular) this.setState({ acknowledgeToggle: acknowledge });
+    } catch {
       // ToDo: Error handling
     }
   }

@@ -18,6 +18,7 @@ export default new NavigableModuleConfig<'presences', PresencesReduxState>({
   name: 'presences',
   entcoreScope: ['presences'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  storageName: 'presences',
 
   displayI18n: 'presences-moduleconfig-appname',
   displayAs: 'myAppsModule',

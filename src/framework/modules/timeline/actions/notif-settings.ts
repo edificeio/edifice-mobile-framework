@@ -17,7 +17,7 @@ import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
-import { sessionStorage } from '../storage';
+import { preferences } from '../storage';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
@@ -29,7 +29,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     }
     state = moduleConfig.getState(getState());
 
-    let settings = sessionStorage.getJSON('notif-filters');
+    let settings = preferences.getJSON('notif-filters');
 
     // 3 - merge with defaults
     const defaults = {};
@@ -39,7 +39,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     settings = { ...defaults, ...settings };
 
     // 4 - Save loaded notif settings for persistency
-    sessionStorage.setJSON('notif-filters', settings);
+    preferences.setJSON('notif-filters', settings);
     dispatch(notifFilterSettingsActions.receipt(settings));
   } catch (e) {
     // ToDo: Error handling
@@ -51,7 +51,7 @@ export const setFiltersAction =
   (selectedFilters: INotifFilterSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
       dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
-      sessionStorage.setJSON('notif-filters', selectedFilters);
+      preferences.setJSON('notif-filters', selectedFilters);
       dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
     } catch {
       // ToDo: Error handling

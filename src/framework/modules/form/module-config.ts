@@ -2,7 +2,7 @@ import theme from '~/app/theme';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { IFormReduxState } from './reducer';
+import type { IFormReduxState } from './reducer';
 import { getFormWorkflowInformation } from './rights';
 
 export default new NavigableModuleConfig<'form', IFormReduxState>({
@@ -10,6 +10,7 @@ export default new NavigableModuleConfig<'form', IFormReduxState>({
   entcoreScope: ['formulaire'],
   matchEntcoreApp: '/formulaire',
   hasRight: () => !!getFormWorkflowInformation(getSession()).initResponse,
+  storageName: 'form',
 
   displayI18n: 'form-moduleconfig-appname',
   displayAs: 'myAppsModule',
