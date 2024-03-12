@@ -363,7 +363,11 @@ export function activateAccountAction(platform: Platform, model: IActivationPayl
         body: formdata,
         headers: {
           Accept: 'application/json',
+          'Accept-Language': I18n.getLanguage(),
           'Content-Type': 'multipart/form-data',
+          'X-APP': 'mobile',
+          'X-APP-NAME': DeviceInfo.getApplicationName(),
+          'X-APP-VERSION': DeviceInfo.getReadableVersion(),
           'X-Device-Id': uniqueId(),
         },
         method: 'post',
@@ -433,8 +437,12 @@ export function forgotAction(platform: Platform, userInfo: IForgotPayload, forgo
       body: JSON.stringify(payLoad),
       method: 'POST',
       headers: {
-        'X-Device-Id': uniqueId(),
+        'Accept-Language': I18n.getLanguage(),
         'Content-Type': 'application/json',
+        'X-APP': 'mobile',
+        'X-APP-NAME': DeviceInfo.getApplicationName(),
+        'X-APP-VERSION': DeviceInfo.getReadableVersion(),
+        'X-Device-Id': uniqueId(),
       },
     });
     const resStatus = res.status;
@@ -524,7 +532,11 @@ export function changePasswordAction(platform: Platform, p: IChangePasswordPaylo
         body: formdata,
         headers: {
           Accept: 'application/json',
+          'Accept-Language': I18n.getLanguage(),
           'Content-Type': 'multipart/form-data',
+          'X-APP': 'mobile',
+          'X-APP-NAME': DeviceInfo.getApplicationName(),
+          'X-APP-VERSION': DeviceInfo.getReadableVersion(),
           'X-Device-Id': uniqueId(),
         },
         method: 'post',

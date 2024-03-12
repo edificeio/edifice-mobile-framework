@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-02-20 14:00:15",
-  "notes": "fix(phrase): MB-2521 prevent migrate phrase AsyncStorage keys\nrelease: 1.11.6(1110600)\nrelease: 1.11.5-rc.4(1110507)",
-  "version": "1.11.6-rc.1(1110601)"
+  "last": "2024-03-08 09:36:52",
+  "notes": "fix(lang): MB-2557, Missing Headers Addition\nrelease: 1.11.7-rc.1(1110701)",
+  "version": "1.11.7-rc.2(1110702)"
 }
