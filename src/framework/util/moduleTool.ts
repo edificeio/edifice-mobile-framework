@@ -218,7 +218,7 @@ export interface IModuleStorage<
   ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
 > {
   storage?: StorageSlice<ModuleStorageSliceTypeMap>;
-  sessionStorage?: StorageSlice<ModuleSessionStorageSliceTypeMap>;
+  preferences?: StorageSlice<ModuleSessionStorageSliceTypeMap>;
 }
 export interface IModule<
   Name extends string,
@@ -252,8 +252,8 @@ export class Module<
   ConfigType extends IModuleConfig<Name, State>,
   State,
   ModuleStorageSliceTypeMap extends StorageTypeMap = object,
-  ModuleSessionStorageSliceTypeMap extends StorageTypeMap = object,
-> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap>
+  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+> implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
 {
   // Gathered from declaration
   config: ConfigType;
@@ -262,15 +262,15 @@ export class Module<
 
   storage?: StorageSlice<ModuleStorageSliceTypeMap> | undefined;
 
-  sessionStorage?: StorageSlice<ModuleSessionStorageSliceTypeMap> | undefined;
+  preferences?: StorageSlice<ModulePreferencesSliceTypeMap> | undefined;
 
   constructor(
-    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap>,
+    moduleDeclaration: IModuleDeclaration<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
   ) {
     this.config = moduleDeclaration.config;
     this.reducer = moduleDeclaration.reducer;
     this.storage = moduleDeclaration.storage;
-    this.sessionStorage = moduleDeclaration.sessionStorage;
+    this.preferences = moduleDeclaration.preferences;
   }
 
   init(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) {
@@ -288,7 +288,7 @@ export class Module<
 
   get() {
     if (!this.isReady) throw new Error(`Try to get non-initialized module '${this.config.name}'`);
-    return this as Required<Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModuleSessionStorageSliceTypeMap>>;
+    return this as Required<Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>>;
   }
 }
 
@@ -486,7 +486,9 @@ export interface INavigableModuleBase<
   ConfigType extends IModuleConfig<Name, State>,
   State,
   Root extends React.ReactElement,
-> extends IModule<Name, ConfigType, State> {
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+> extends IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   getRoot(matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]): Root;
 }
 export interface INavigableModule<
@@ -494,7 +496,9 @@ export interface INavigableModule<
   ConfigType extends IModuleConfig<Name, State>,
   State,
   Root extends React.ReactElement,
-> extends INavigableModuleBase<Name, ConfigType, State, Root> {
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+> extends INavigableModuleBase<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap> {
   // ToDo add Module methods here
 }
 
@@ -503,7 +507,9 @@ export interface INavigableModuleDeclaration<
   ConfigType extends IModuleConfig<Name, State>,
   State,
   Root extends React.ReactElement,
-> extends INavigableModuleBase<Name, ConfigType, State, Root>,
+  ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+  ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
+> extends INavigableModuleBase<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>,
     IModuleRedux<State> {}
 
 export class NavigableModule<
@@ -511,9 +517,11 @@ export class NavigableModule<
     ConfigType extends INavigableModuleConfig<Name, State>,
     State,
     Root extends React.ReactElement,
+    ModuleStorageSliceTypeMap extends StorageTypeMap = object,
+    ModulePreferencesSliceTypeMap extends StorageTypeMap = object,
   >
-  extends Module<Name, ConfigType, State>
-  implements IModule<Name, ConfigType, State>
+  extends Module<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
+  implements IModule<Name, ConfigType, State, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
 {
   // Gathered from declaration
 
@@ -523,7 +531,16 @@ export class NavigableModule<
 
   #root?: Root;
 
-  constructor(moduleDeclaration: INavigableModuleDeclaration<Name, ConfigType, State, Root>) {
+  constructor(
+    moduleDeclaration: INavigableModuleDeclaration<
+      Name,
+      ConfigType,
+      State,
+      Root,
+      ModuleStorageSliceTypeMap,
+      ModulePreferencesSliceTypeMap
+    >,
+  ) {
     const { getRoot } = moduleDeclaration;
     super(moduleDeclaration);
     this.getRoot = getRoot;
@@ -547,7 +564,9 @@ export class NavigableModule<
   }
 
   get() {
-    return super.get() as Required<NavigableModule<Name, ConfigType, State, Root>>;
+    return super.get() as Required<
+      NavigableModule<Name, ConfigType, State, Root, ModuleStorageSliceTypeMap, ModulePreferencesSliceTypeMap>
+    >;
   }
 }
 
