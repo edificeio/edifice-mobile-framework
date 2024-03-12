@@ -15,22 +15,26 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
   getAvatarSource,
   item,
   item: {
-    user: { type, id, displayName },
+    user: { type, id, displayName, loginUsed },
   },
   index,
   separators,
+  action,
 }: AccountListItemProps<ItemT>) => {
   const containerBackgroundColor = { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card };
   const typeColor = { color: theme.color.profileTypes[type] };
   const typeText = I18n.get(`user-profiletypes-${type}`.toLowerCase());
   const numberOfLines = 1;
-  const onSelectAccount = () => id;
+  const onSelectAccount = async () => {
+    action?.(item, index);
+  };
+
   const onRemoveAccount = () => {
     Alert.alert(I18n.get('accountlistitem-removealert-title'), I18n.get('accountlistitem-removealert-description'), [
       {
         text: I18n.get('common-delete'),
         style: 'destructive',
-        onPress: () => id,
+        onPress: () => console.log('Delete Pressed', id),
       },
       {
         text: I18n.get('common-cancel'),
