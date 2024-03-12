@@ -94,7 +94,7 @@ interface IModuleConfigTracking {
   trackingName: string; // Name used for tracking category. Computed from `name` if not specified.
 }
 interface IModuleConfigStorage {
-  storageName: string; // Name used for storage namespace. Equals to `name` if not specified.
+  storageName: string; // Name used for storage namespace. Needs to be manually specified to prevent erros if module name changes across time
 }
 // All information config available about a module
 export type IModuleConfig<Name extends string, State> = IModuleConfigBase<Name> &
@@ -111,7 +111,7 @@ export type IModuleConfigDeclaration<Name extends string> = IModuleConfigBase<Na
   IModuleConfigDeclarationRights &
   Partial<IModuleConfigDeclarationRedux> &
   Partial<IModuleConfigTracking> &
-  Partial<IModuleConfigStorage>;
+  IModuleConfigStorage;
 export type IUnkownModuleConfig = IModuleConfig<string, unknown>;
 export type IAnyModuleConfig = IModuleConfig<string, any>;
 
@@ -179,7 +179,7 @@ export class ModuleConfig<Name extends string, State> implements IModuleConfig<N
     // Tracking
     this.trackingName = trackingName ?? toCamelCase(this.name, true);
     // Storage
-    this.storageName = storageName ?? this.name;
+    this.storageName = storageName;
     // Rest
     Object.assign(this, rest);
   }
@@ -348,6 +348,7 @@ interface IModuleConfigDeclarationDisplay {
     | INavigableModuleConfigDisplay['displayBadges']
     | ((matchingApps: IEntcoreApp[], matchingWidgets: IEntcoreWidget[]) => INavigableModuleConfigDisplay['displayBadges']);
   routeName?: INavigableModuleConfigDisplay['routeName'];
+  testID?: string;
 }
 
 // All information config available about a navigable module

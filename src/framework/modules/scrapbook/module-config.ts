@@ -5,6 +5,8 @@ export default new NavigableModuleConfig<'scrapbook', null>({
   name: 'scrapbook',
   entcoreScope: ['scrapbook'],
   matchEntcoreApp: '/scrapbook',
+  storageName: 'scrapbook',
+
   displayI18n: 'scrapbook-appname',
   displayAs: 'myAppsModule',
   displayOrder: 0,

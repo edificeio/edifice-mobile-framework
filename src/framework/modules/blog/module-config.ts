@@ -10,6 +10,8 @@ export default new NavigableModuleConfig<'blog', ReturnType<typeof reducer>>({
   name: 'blog',
   entcoreScope: ['blog'],
   matchEntcoreApp: '/blog',
+  storageName: 'blog',
+
   displayI18n: 'blog-tabname',
   displayAs: 'myAppsModule',
   displayPicture: { type: 'NamedSvg', name: 'blog', fill: moduleColor.regular },
