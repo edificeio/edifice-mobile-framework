@@ -1,6 +1,6 @@
 import { Storage } from '~/framework/util/storage';
 
-import moduleConfig from './moduleConfig';
+import moduleConfig from './module-config';
 
 export interface MyAppsStorageData {
   'infobubble-ack': boolean;
