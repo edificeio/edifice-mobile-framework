@@ -279,7 +279,7 @@ export function deactivateLoggedAccountAction(action?: AnyAction) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const account = assertSession();
     // Unregister the device token from the backend
-    await authService.removeFirebaseToken(account.platform);
+    await authService.removeFirebaseTokenWithAccount(account);
     // Erase requests cache
     await clearRequestsCacheLegacy();
     // flush sessionReducers
