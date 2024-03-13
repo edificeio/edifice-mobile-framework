@@ -147,7 +147,6 @@ dependencies {
     implementation("com.zendesk:support:5.2.0")
     // Packages
     implementation project(':react-native-action-sheet')
-
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
