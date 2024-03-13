@@ -323,8 +323,17 @@ const getLoginFunctions = {
     }) as AuthLoginFunctions,
   addAnotherAccount: () =>
     ({
-      success: actions.addAccount,
-      requirement: actions.addAccountRequirement,
+      // success: actions.addAccount,
+      success:
+        (...args: Parameters<typeof actions.addAccount>) =>
+        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+          await dispatch(deactivateLoggedAccountAction(actions.addAccount(...args)));
+        },
+      requirement:
+        (...args: Parameters<typeof actions.addAccountRequirement>) =>
+        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+          await dispatch(deactivateLoggedAccountAction(actions.addAccountRequirement(...args)));
+        },
       activation: actions.addAccountActivation,
       passwordRenew: actions.addAccountPasswordRenew,
       writeStorage: writeCreateAccount,

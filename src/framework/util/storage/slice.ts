@@ -211,13 +211,6 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
    * @returns
    */
   setPrefix(...prefixes: string[]) {
-    if (this.prefix.length > 0) {
-      console.warn(
-        `[Storage] Do not use setPrefix() or withModule() more than once, nor together. That mutates the storage '${
-          this.name || this.constructor.name
-        }' view.`,
-      );
-    }
     this.prefix = prefixes;
     return this;
   }
