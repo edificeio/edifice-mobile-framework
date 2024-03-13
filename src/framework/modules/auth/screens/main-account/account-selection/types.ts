@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { restoreAction } from '~/framework/modules/auth/actions';
+import { restoreAccountAction } from '~/framework/modules/auth/actions';
 import { AuthMixedAccountMap } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 
@@ -17,7 +17,7 @@ export interface AuthAccountSelectionScreenProps {
 }
 
 export interface AuthAccountSelectionScreenDispatchProps {
-  tryRestore: (...args: Parameters<typeof restoreAction>) => ReturnType<ReturnType<typeof restoreAction>>;
+  tryRestore: (...args: Parameters<typeof restoreAccountAction>) => ReturnType<ReturnType<typeof restoreAccountAction>>;
 }
 
 export interface AuthAccountSelectionScreenPrivateProps

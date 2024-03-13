@@ -12,7 +12,7 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { restoreAction } from '~/framework/modules/auth/actions';
+import { restoreAccountAction } from '~/framework/modules/auth/actions';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import {
@@ -140,7 +140,7 @@ export default connect(
   dispatch =>
     bindActionCreators<AuthAccountSelectionScreenDispatchProps>(
       {
-        tryRestore: tryAction(restoreAction, {
+        tryRestore: tryAction(restoreAccountAction, {
           track: res => [
             moduleConfig,
             trackingActionAddSuffix('Login restore', !(res instanceof global.Error)),

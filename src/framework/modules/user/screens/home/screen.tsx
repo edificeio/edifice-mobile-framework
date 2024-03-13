@@ -21,7 +21,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
-import { manualLogoutAction, restoreAction } from '~/framework/modules/auth/actions';
+import { manualLogoutAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
   AccountType,
   AuthLoggedAccount,
@@ -238,6 +238,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
+
   return React.useMemo(
     () => (
       <>
@@ -330,7 +331,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 function useAccountsFeature(
   session: UserHomeScreenPrivateProps['session'],
   accounts: UserHomeScreenPrivateProps['accounts'],
-  tryRestore: UserHomeScreenPrivateProps['tryRestore'],
+  trySwitch: UserHomeScreenPrivateProps['trySwitch'],
 ) {
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
@@ -373,7 +374,7 @@ function useAccountsFeature(
         try {
           setLoadingState(LoginState.RUNNING);
           const account = accounts[item.user.id];
-          await tryRestore(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
+          await trySwitch(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);
@@ -384,7 +385,7 @@ function useAccountsFeature(
         redirect(item);
       }
     },
-    [accounts, loadingState, navigation, tryRestore],
+    [accounts, loadingState, navigation, trySwitch],
   );
 
   return React.useMemo(() => {
@@ -522,7 +523,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
-  const { handleLogout, tryRestore, session, accounts } = props;
+  const { handleLogout, trySwitch, session, accounts } = props;
   const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
   const scrollViewRef = React.useRef(null);
@@ -542,7 +543,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(session, accounts, tryRestore);
+  const accountsButton = useAccountsFeature(session, accounts, trySwitch);
   const logoutButton = useLogoutFeature(handleLogout);
   const toggleKeysButton = useToggleKeysFeature();
   const versionDetails = useVersionDetailsFeature(session);
@@ -589,7 +590,7 @@ export default connect(
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
         handleLogout: handleAction(manualLogoutAction),
-        tryRestore: tryAction(restoreAction, {
+        trySwitch: tryAction(switchAccountAction, {
           track: res => [
             moduleConfig,
             trackingActionAddSuffix('Login restore', !(res instanceof global.Error)),
