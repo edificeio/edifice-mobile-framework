@@ -5,6 +5,7 @@ export default new NavigableModuleConfig<'peertube', null>({
   name: 'peertube',
   entcoreScope: ['cas'],
   matchEntcoreApp: entcoreApp => entcoreApp.name.toUpperCase().includes('PEERTUBE'),
+  storageName: 'peertube',
 
   displayI18n: 'peertube-moduleconfig-appname',
   displayAs: 'myAppsModule',

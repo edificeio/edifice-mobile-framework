@@ -2,7 +2,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 // import { loginAction } from '~/framework/modules/auth/actions';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { authInitAction, restoreAction } from '~/framework/modules/auth/actions';
+import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { appReadyAction } from '~/framework/navigation/redux';
@@ -27,7 +27,7 @@ const initFeatures = async () => {
 export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
   useConstructor(async () => {
     try {
-      const tryRestore = tryAction(restoreAction, {
+      const tryRestore = tryAction(restoreAccountAction, {
         track: res => [
           moduleConfig,
           trackingActionAddSuffix('Login restore', !(res instanceof global.Error)),
@@ -37,7 +37,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
       await initFeatures();
       const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch async
       if (startupAccount && accountIsLoggable(startupAccount)) {
-        await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAction>>); // TS-issue with dispatch async
+        await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAccountAction>>); // TS-issue with dispatch async
       }
     } catch (e) {
       console.warn('[Startup] Startup failed. Cause :', e);

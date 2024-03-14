@@ -20,14 +20,23 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
-import Toast from '~/framework/components/toast';
-import { manualLogoutAction } from '~/framework/modules/auth/actions';
-import { AccountType, PlatformAuthContext } from '~/framework/modules/auth/model';
+import { default as Toast, default as toast } from '~/framework/components/toast';
+import { manualLogoutAction, switchAccountAction } from '~/framework/modules/auth/actions';
+import {
+  AccountType,
+  AuthLoggedAccount,
+  AuthSavedAccountWithTokens,
+  PlatformAuthContext,
+  accountIsLoggable,
+  getOrderedAccounts,
+} from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
+import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
@@ -36,10 +45,14 @@ import ChangeAccountList from '~/framework/modules/user/components/account-list/
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
+import moduleConfig from '~/framework/modules/user/module-config';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
 import { formatSource } from '~/framework/util/media';
-import { handleAction } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -173,7 +186,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     async (modificationType: ModificationType) => {
       try {
         setCurrentLoadingMenu(modificationType);
-        if (!(await fetchAuthContext())) throw new Error('No session');
+        if (!(await fetchAuthContext())) throw new global.Error('No session');
         let needMfa: undefined | boolean;
         if (modificationType !== ModificationType.PASSWORD) needMfa = await fetchMFAValidationInfos();
         const routeNames = {
@@ -225,6 +238,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
+
   return React.useMemo(
     () => (
       <>
@@ -314,7 +328,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
  * @param accountListRef
  * @returns the React Elements of the account button and list
  */
-function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], accounts: UserHomeScreenPrivateProps['accounts']) {
+function useAccountsFeature(
+  session: UserHomeScreenPrivateProps['session'],
+  accounts: UserHomeScreenPrivateProps['accounts'],
+  trySwitch: UserHomeScreenPrivateProps['trySwitch'],
+) {
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
   const canManageAccounts = userCanAddAccount(session);
@@ -326,21 +344,60 @@ function useAccountsFeature(session: UserHomeScreenPrivateProps['session'], acco
     navigation.navigate(authRouteNames.addAccountModal, {});
   }, [navigation]);
 
+  const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
+
+  const data = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
+
+  const onItemPress = React.useCallback(
+    async (item: (typeof data)[0], index: number) => {
+      // const account = assertSession();
+      // await authService.removeFirebaseToken(account.platform);
+      accountListRef.current?.dismiss();
+
+      const redirect = (i: typeof item) => {
+        const platform = appConf.getExpandedPlatform(i.platform);
+        if (!platform) {
+          console.warn('AccountSelectionScreen: Missing platform for this account');
+          toast.showError(I18n.get('auth-account-select-error'));
+          return;
+        }
+        const nextScreen = getLoginNextScreen(platform);
+        if (!nextScreen) {
+          console.warn('AccountSelectionScreen: Next screen cannot be determined for this user');
+          toast.showError(I18n.get('auth-account-select-error'));
+          return;
+        }
+        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, accountId: item.user.id } });
+      };
+      if (loadingState !== LoginState.IDLE) return;
+      if (accountIsLoggable(item)) {
+        try {
+          setLoadingState(LoginState.RUNNING);
+          const account = accounts[item.user.id];
+          await trySwitch(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
+          setLoadingState(LoginState.DONE);
+        } catch (e) {
+          setLoadingState(LoginState.IDLE);
+          console.warn(e);
+          redirect(item);
+        }
+      } else {
+        redirect(item);
+      }
+    },
+    [accounts, loadingState, navigation, trySwitch],
+  );
+
   return React.useMemo(() => {
-    return canManageAccounts && accountsArray ? (
-      accountsArray.length === 1 ? (
-        <>
-          <AddAccountButton action={addAccount} style={styles.accountButton} />
-          {/* <AddAccountList ref={accountListRef} data={accountsArray} /> */}
-        </>
-      ) : (
-        <>
-          <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
-          <ChangeAccountList ref={accountListRef} data={accountsArray} />
-        </>
-      )
+    return canManageAccounts && accountsArray.length === 1 ? (
+      <AddAccountButton action={addAccount} style={styles.accountButton} />
+    ) : accountsArray.length > 1 ? (
+      <>
+        <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
+        <ChangeAccountList ref={accountListRef} data={data} onPress={onItemPress} />
+      </>
     ) : null;
-  }, [accountsArray, addAccount, canManageAccounts, showAccountList]);
+  }, [canManageAccounts, accountsArray, addAccount, showAccountList, data, onItemPress]);
 }
 
 /**
@@ -466,7 +523,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
-  const { handleLogout, session, accounts } = props;
+  const { handleLogout, trySwitch, session, accounts } = props;
   const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
   const scrollViewRef = React.useRef(null);
@@ -486,7 +543,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(session, accounts);
+  const accountsButton = useAccountsFeature(session, accounts, trySwitch);
   const logoutButton = useLogoutFeature(handleLogout);
   const toggleKeysButton = useToggleKeysFeature();
   const versionDetails = useVersionDetailsFeature(session);
@@ -533,6 +590,13 @@ export default connect(
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
         handleLogout: handleAction(manualLogoutAction),
+        trySwitch: tryAction(switchAccountAction, {
+          track: res => [
+            moduleConfig,
+            trackingActionAddSuffix('Login restore', !(res instanceof global.Error)),
+            res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
+          ],
+        }),
       },
       dispatch,
     ),

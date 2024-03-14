@@ -18,6 +18,7 @@ export default new NavigableModuleConfig<'edt', IEdtReduxState>({
   name: 'edt',
   entcoreScope: ['edt'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  storageName: 'edt',
 
   displayI18n: 'edt-moduleconfig-appname',
   displayAs: 'myAppsModule',

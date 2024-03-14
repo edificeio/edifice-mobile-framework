@@ -9,6 +9,7 @@ export default new NavigableModuleConfig<'myapps', null>({
     const modules = myAppsModules.get().filterAvailables(allEntcoreApps);
     return modules.length > 0;
   },
+  storageName: 'myapps',
 
   displayI18n: 'myapp-appname',
   displayAs: 'tabModule',

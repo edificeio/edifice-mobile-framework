@@ -1,12 +1,13 @@
 import theme from '~/app/theme';
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import reducer from './reducer';
+import type reducer from './reducer';
 
 export default new NavigableModuleConfig<'support', ReturnType<typeof reducer>>({
   name: 'support',
   entcoreScope: ['support'],
   matchEntcoreApp: '/support',
+  storageName: 'support',
 
   displayI18n: 'support-appname',
   displayAs: 'myAppsModule',

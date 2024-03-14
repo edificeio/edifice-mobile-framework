@@ -7,6 +7,7 @@ export default new NavigableModuleConfig<'timeline', TimelineState>({
   entcoreScope: ['timeline', 'userbook'],
   matchEntcoreApp: app => app.prefix === '/timeline',
   hasRight: () => true, // The timeline is always displayed
+  storageName: 'timeline',
 
   displayI18n: 'timeline-tabname',
   displayAs: 'tabModule',

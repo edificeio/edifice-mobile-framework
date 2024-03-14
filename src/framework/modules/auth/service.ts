@@ -485,6 +485,31 @@ export class FcmService {
     }
   }
 
+  async unregisterFCMTokenWithAccount(account: AuthLoggedAccount, token: string | null = null) {
+    try {
+      if (!token) {
+        token = await messaging().getToken();
+      }
+      const request = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
+        OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
+        `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+        {
+          method: 'delete',
+        },
+      );
+
+      await fetch(request);
+      this._removeTokenFromDeleteQueue(token);
+    } catch {
+      //unregistering fcm token should not crash the login process
+      if (!Connection.isOnline) {
+        //when no connection => get it from property
+        const tokenToUnregister = token || this.lastRegisteredToken;
+        if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
+      }
+    }
+  }
+
   async registerFCMToken(token: string | null = null) {
     try {
       this.pendingRegistration = 'initial';
@@ -527,6 +552,19 @@ export async function removeFirebaseToken(platform: Platform) {
     const authorizationStatus = await messaging().requestPermission();
     if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
       await fcm.unregisterFCMToken();
+    }
+  } catch (err) {
+    if (err instanceof Error.ErrorWithType) throw err;
+    else throw new global.Error('Firebase unregister error', { cause: err });
+  }
+}
+
+export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount) {
+  try {
+    const fcm = new FcmService(account.platform);
+    const authorizationStatus = await messaging().requestPermission();
+    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+      await fcm.unregisterFCMTokenWithAccount(account);
     }
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;

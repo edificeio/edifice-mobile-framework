@@ -18,7 +18,7 @@ const getOldStorageKeys = (session: AuthLoggedAccount) => ({
   '1.9.6': `timeline.notifFilterSettings.${session.user.id}`,
 });
 
-export const sessionStorage = Storage.preferences<TimelinePreferencesData>(moduleConfig, async function (session) {
+export const preferences = Storage.preferences<TimelinePreferencesData>(moduleConfig, async function (session) {
   // notif-filters data migration
   const filters = this.getJSON('notif-filters');
   const oldKeys = getOldStorageKeys(session);
