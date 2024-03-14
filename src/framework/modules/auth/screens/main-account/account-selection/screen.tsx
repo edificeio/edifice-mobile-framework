@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
+import theme from '~/app/theme';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { getScaleWidth } from '~/framework/components/constants';
 import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
-import { HeadingXSText, SmallText } from '~/framework/components/text';
+import { HeadingXSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
 import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
@@ -116,6 +117,8 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
     [accounts, tryRemoveAccount],
   );
 
+  const onAddAccount = React.useCallback(async () => navigation.navigate(authRouteNames.addAccountModal, {}), [navigation]);
+
   const keyExtractor: FlatListProps<(typeof dataforList)[0]>['keyExtractor'] = React.useCallback(
     (item: (typeof dataforList)[0]) => item.id,
     [],
@@ -129,12 +132,26 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           <HeadingXSText>{I18n.get('auth-accountselection-heading')}</HeadingXSText>
           <SmallText style={styles.description}>{I18n.get('auth-accountselection-description')}</SmallText>
         </View>
-        <LargeHorizontalUserList keyExtractor={keyExtractor} data={dataforList} onItemPress={onItemPress} />
-        {data.length === 1 ? (
-          <TouchableOpacity onPress={() => navigation.navigate(authRouteNames.addAccountModal, {})}>
-            <SmallText>Add user</SmallText>
-          </TouchableOpacity>
-        ) : null}
+        <LargeHorizontalUserList
+          keyExtractor={keyExtractor}
+          data={dataforList}
+          onItemPress={onItemPress}
+          ListFooterComponent={
+            data.length === 1 ? (
+              <TouchableOpacity onPress={onAddAccount} style={styles.addAccount}>
+                <View style={styles.addAccountRound}>
+                  <NamedSVG
+                    name="ui-plus"
+                    fill={theme.palette.primary.regular}
+                    height={getScaleWidth(48)}
+                    width={getScaleWidth(48)}
+                  />
+                </View>
+                <SmallBoldText style={styles.addAccountText}>Ajouter un compte</SmallBoldText>
+              </TouchableOpacity>
+            ) : null
+          }
+        />
       </View>
       {loadingState !== LoginState.IDLE ? <Loading /> : null}
       <View style={styles.bottomContainer}>
