@@ -79,7 +79,7 @@ function RootNavigator(props: RootNavigatorProps) {
         : getFirstTabRoute(),
     [accounts, appReady, isMainNavigationAccessible, lastDeletedAccount, pending, requirement, showOnboarding],
   );
-  const navStateJSON = JSON.stringify(navigationState).replace('\n', '');
+  const navStateJSON = JSON.stringify(navigationState);
 
   // Auth/Main switch
   const mainNavigation = useMainNavigation(session?.rights.apps ?? [], session?.rights.widgets ?? []);
