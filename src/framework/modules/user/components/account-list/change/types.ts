@@ -5,6 +5,7 @@ import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/mo
 
 export interface ChangeAccountListDispatchProps<ItemT extends AuthSavedAccount | AuthLoggedAccount> {
   onPress: (item: ListRenderItemInfo<ItemT>['item'], index: number) => Promise<void>;
+  onDelete: (item: ListRenderItemInfo<ItemT>['item'], index: number) => Promise<void>;
 }
 
 export interface ChangeAccountListProps<ItemT extends AuthSavedAccount | AuthLoggedAccount>

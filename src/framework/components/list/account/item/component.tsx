@@ -19,14 +19,15 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
   },
   index,
   separators,
-  action,
+  onPress,
+  onDelete,
 }: AccountListItemProps<ItemT>) => {
   const containerBackgroundColor = { backgroundColor: selected ? theme.palette.primary.pale : theme.ui.background.card };
   const typeColor = { color: theme.color.profileTypes[type] };
   const typeText = I18n.get(`user-profiletypes-${type}`.toLowerCase());
   const numberOfLines = 1;
   const onSelectAccount = async () => {
-    action?.(item, index);
+    onPress?.(item, index);
   };
 
   const onRemoveAccount = () => {
@@ -34,7 +35,7 @@ const AccountListItem = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
       {
         text: I18n.get('common-delete'),
         style: 'destructive',
-        onPress: () => console.log('Delete Pressed', id),
+        onPress: () => onDelete?.(item, index),
       },
       {
         text: I18n.get('common-cancel'),
