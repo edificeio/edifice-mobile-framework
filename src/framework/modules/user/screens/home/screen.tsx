@@ -21,7 +21,7 @@ import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
-import { manualLogoutAction, switchAccountAction } from '~/framework/modules/auth/actions';
+import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
   AccountType,
   AuthLoggedAccount,
@@ -332,6 +332,7 @@ function useAccountsFeature(
   session: UserHomeScreenPrivateProps['session'],
   accounts: UserHomeScreenPrivateProps['accounts'],
   trySwitch: UserHomeScreenPrivateProps['trySwitch'],
+  tryRemoveAccount: UserHomeScreenPrivateProps['tryRemoveAccount'],
 ) {
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
@@ -348,7 +349,7 @@ function useAccountsFeature(
 
   const data = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
 
-  const onItemPress = React.useCallback(
+  const onPressItem = React.useCallback(
     async (item: (typeof data)[0], index: number) => {
       // const account = assertSession();
       // await authService.removeFirebaseToken(account.platform);
@@ -388,16 +389,28 @@ function useAccountsFeature(
     [accounts, loadingState, navigation, trySwitch],
   );
 
+  const onDeleteItem = React.useCallback(
+    async (item: (typeof data)[0], index: number) => {
+      try {
+        const account = accounts[item.user.id];
+        await tryRemoveAccount(account);
+      } catch (e) {
+        console.warn(e);
+      }
+    },
+    [accounts, tryRemoveAccount],
+  );
+
   return React.useMemo(() => {
     return canManageAccounts && accountsArray.length === 1 ? (
       <AddAccountButton action={addAccount} style={styles.accountButton} />
     ) : accountsArray.length > 1 ? (
       <>
         <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
-        <ChangeAccountList ref={accountListRef} data={data} onPress={onItemPress} />
+        <ChangeAccountList ref={accountListRef} data={data} onPress={onPressItem} onDelete={onDeleteItem} />
       </>
     ) : null;
-  }, [canManageAccounts, accountsArray, addAccount, showAccountList, data, onItemPress]);
+  }, [canManageAccounts, accountsArray, addAccount, showAccountList, data, onPressItem, onDeleteItem]);
 }
 
 /**
@@ -523,7 +536,7 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
-  const { handleLogout, trySwitch, session, accounts } = props;
+  const { handleLogout, trySwitch, tryRemoveAccount, session, accounts } = props;
   const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
   const scrollViewRef = React.useRef(null);
@@ -543,7 +556,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
-  const accountsButton = useAccountsFeature(session, accounts, trySwitch);
+  const accountsButton = useAccountsFeature(session, accounts, trySwitch, tryRemoveAccount);
   const logoutButton = useLogoutFeature(handleLogout);
   const toggleKeysButton = useToggleKeysFeature();
   const versionDetails = useVersionDetailsFeature(session);
@@ -597,6 +610,7 @@ export default connect(
             res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
           ],
         }),
+        tryRemoveAccount: handleAction(removeAccountAction),
       },
       dispatch,
     ),

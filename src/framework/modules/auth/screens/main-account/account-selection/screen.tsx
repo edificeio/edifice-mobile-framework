@@ -12,7 +12,7 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import toast from '~/framework/components/toast';
-import { restoreAccountAction } from '~/framework/modules/auth/actions';
+import { removeAccountAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import HandleAccountList from '~/framework/modules/auth/components/handle-account-list';
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import {
@@ -29,7 +29,7 @@ import styles from '~/framework/modules/auth/screens/main-account/account-select
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
-import { tryAction } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 
@@ -49,7 +49,7 @@ export const computeNavBar = ({
 };
 
 const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) => {
-  const { navigation, accounts, tryRestore } = props;
+  const { navigation, accounts, tryRestore, tryRemoveAccount } = props;
   const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const onHandleAccounts = () => {
@@ -104,6 +104,18 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
     [accounts, loadingState, navigation, tryRestore],
   );
 
+  const onDeleteItem = React.useCallback(
+    async (item: (typeof data)[0], index: number) => {
+      try {
+        const account = accounts[item.user.id];
+        await tryRemoveAccount(account);
+      } catch (e) {
+        console.warn(e);
+      }
+    },
+    [accounts, tryRemoveAccount],
+  );
+
   const keyExtractor: FlatListProps<(typeof dataforList)[0]>['keyExtractor'] = React.useCallback(
     (item: (typeof dataforList)[0]) => item.id,
     [],
@@ -127,7 +139,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           iconLeft="ui-settings"
           action={onHandleAccounts}
         />
-        <HandleAccountList ref={accountListRef} data={data} />
+        <HandleAccountList ref={accountListRef} data={data} onDelete={onDeleteItem} />
       </View>
     </PageView>
   );
@@ -136,6 +148,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
 export default connect(
   state => ({
     accounts: getAuthState(state).accounts,
+    lastDeletedAccount: getAuthState(state).lastDeletedAccount,
   }),
   dispatch =>
     bindActionCreators<AuthAccountSelectionScreenDispatchProps>(
@@ -147,6 +160,7 @@ export default connect(
             res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
           ],
         }),
+        tryRemoveAccount: handleAction(removeAccountAction),
       },
       dispatch,
     ),

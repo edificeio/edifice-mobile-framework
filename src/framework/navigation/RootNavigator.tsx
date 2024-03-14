@@ -47,6 +47,7 @@ export interface RootNavigatorStoreProps {
   connected: IAuthState['connected'];
   requirement: IAuthState['requirement'];
   lastAddAccount: IAuthState['lastAddAccount'];
+  lastDeletedAccount: IAuthState['lastDeletedAccount'];
   dispatch: Dispatch;
 }
 export type RootNavigatorProps = RootNavigatorStoreProps;
@@ -54,7 +55,8 @@ export type RootNavigatorProps = RootNavigatorStoreProps;
 const RootStack = getTypedRootStack();
 
 function RootNavigator(props: RootNavigatorProps) {
-  const { accounts, pending, showOnboarding, dispatch, appReady, requirement, connected, lastAddAccount } = props;
+  const { accounts, pending, showOnboarding, dispatch, appReady, requirement, connected, lastAddAccount, lastDeletedAccount } =
+    props;
 
   React.useEffect(() => {
     if (Platform.OS === 'android') StatusBar.setBackgroundColor(theme.palette.primary.regular);
@@ -73,9 +75,9 @@ function RootNavigator(props: RootNavigatorProps) {
   const navigationState = React.useMemo(
     () =>
       appReady && !isMainNavigationAccessible
-        ? getAuthNavigationState(accounts, pending, showOnboarding, requirement)
+        ? getAuthNavigationState(accounts, pending, showOnboarding, requirement, lastDeletedAccount)
         : getFirstTabRoute(),
-    [accounts, appReady, isMainNavigationAccessible, pending, requirement, showOnboarding],
+    [accounts, appReady, isMainNavigationAccessible, lastDeletedAccount, pending, requirement, showOnboarding],
   );
 
   // Auth/Main switch
@@ -146,4 +148,5 @@ export default connect((state: IGlobalState) => ({
   connected: getAuthState(state).connected,
   requirement: getAuthState(state).requirement,
   lastAddAccount: getAuthState(state).lastAddAccount,
+  lastDeletedAccount: getAuthState(state).lastDeletedAccount,
 }))(RootNavigator);

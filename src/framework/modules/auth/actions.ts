@@ -20,6 +20,7 @@ import {
   AuthLoggedAccount,
   AuthPendingRedirection,
   AuthRequirement,
+  AuthSavedAccount,
   AuthSavedAccountWithTokens,
   ForgotMode,
   IActivationError,
@@ -55,6 +56,7 @@ import {
   readSavedStartup,
   readShowOnbording,
   writeCreateAccount,
+  writeDeleteAccount,
   writeLogout,
   writeReplaceAccount,
 } from './storage';
@@ -284,6 +286,7 @@ export function deactivateLoggedAccountAction(action?: AnyAction) {
     await clearRequestsCacheLegacy();
     // flush sessionReducers
     dispatch(createEndSessionAction());
+    dispatch(actions.deactivate());
     if (action) dispatch(action);
   };
 }
@@ -684,6 +687,16 @@ export function quietLogoutAction() {
 export function manualLogoutAction() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     await dispatch(quietLogoutAction());
+  };
+}
+
+export function removeAccountAction(account: AuthLoggedAccount | AuthSavedAccountWithTokens | AuthSavedAccount) {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    if (accountIsLogged(account)) {
+      await dispatch(quietLogoutAction());
+    }
+    dispatch(actions.removeAccount(account.user.id));
+    writeDeleteAccount(account.user.id);
   };
 }
 

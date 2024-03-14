@@ -3,7 +3,7 @@ import type { IOAuthToken } from '~/infra/oauth';
 
 import { AuthLoggedAccount, AuthSavedAccount, getSerializedLoggedInAccountInfo } from './model';
 import moduleConfig from './module-config';
-import { ERASE_ALL_ACCOUNTS } from './reducer';
+import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
 
 export interface AuthStorageData {
   accounts: Record<string, AuthSavedAccount>;
@@ -96,4 +96,14 @@ export const writeLogout = (account: AuthLoggedAccount) => {
   }
   // Remove account id in startup object
   storage.delete('startup');
+};
+
+/**
+ * Delete the given account information in the storage
+ * @param account
+ */
+export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
+  const savedAccounts = readSavedAccounts();
+  delete savedAccounts[id];
+  storage.setJSON('accounts', savedAccounts);
 };

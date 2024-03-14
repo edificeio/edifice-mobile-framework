@@ -13,7 +13,8 @@ const ChangeAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(p
       title={I18n.get('auth-accountlist-change-title')}
       description={I18n.get('auth-accountlist-change-description')}
       data={props.data}
-      action={props.onPress}
+      onPress={props.onPress}
+      onDelete={props.onDelete}
     />
   );
 };
