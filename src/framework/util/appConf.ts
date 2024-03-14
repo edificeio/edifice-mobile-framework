@@ -103,8 +103,12 @@ export interface IAppConfDeclaration {
     showAppName?: boolean;
   };
   platforms: IPlatformAccessDeclaration[];
-  showHelpCenter?: boolean;
   webviewIdentifier: string;
+  zendesk?: {
+    appId?: string;
+    clientId?: string;
+    zendeskUrl?: string;
+  };
 }
 
 export class AppConf {
@@ -120,9 +124,15 @@ export class AppConf {
     showAppName: boolean;
   };
 
-  showHelpCenter = false;
-
   platforms: Platform[];
+
+  webviewIdentifier: string;
+
+  zendesk?: {
+    appId?: string;
+    clientId?: string;
+    zendeskUrl?: string;
+  };
 
   getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
 
@@ -142,8 +152,6 @@ export class AppConf {
     return this.platforms.length > 1;
   }
 
-  webviewIdentifier: string;
-
   get i18nOTAEnabled() {
     return this.i18nOTA;
   }
@@ -156,8 +164,8 @@ export class AppConf {
     return this.level === '2d';
   }
 
-  get showHelpCenterEnabled() {
-    return this.showHelpCenter;
+  get zendeskEnabled() {
+    return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.zendeskUrl;
   }
 
   constructor(opts: IAppConfDeclaration) {
@@ -176,9 +184,15 @@ export class AppConf {
     onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
     this.onboarding = onboarding as AppConf['onboarding'];
-    this.showHelpCenter = opts?.showHelpCenter || false;
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
     this.webviewIdentifier = opts.webviewIdentifier;
+    this.zendesk = opts.zendesk
+      ? {
+          appId: opts.zendesk?.appId,
+          clientId: opts.zendesk?.clientId,
+          zendeskUrl: opts.zendesk?.zendeskUrl,
+        }
+      : undefined;
   }
 }
 

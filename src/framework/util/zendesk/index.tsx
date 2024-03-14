@@ -127,14 +127,8 @@ export const ZendeskContext = createContext<Zendesk | undefined>(undefined);
 /**
  * Hook to get the Zendesk instance from the ZendeskContext
  */
-export function useZendesk(): Zendesk {
-  const context = useContext(ZendeskContext);
-
-  if (!context) {
-    throw new Error('useZendesk must be used within an ZendeskProvider');
-  }
-
-  return context;
+export function useZendesk(): Zendesk | undefined {
+  return useContext(ZendeskContext);
 }
 
 interface ZendeskContextProps {

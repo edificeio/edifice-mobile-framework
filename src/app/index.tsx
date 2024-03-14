@@ -15,11 +15,12 @@ import { UI_STYLES } from '~/framework/components/constants';
 import Navigation from '~/framework/navigation/RootNavigator';
 import { useNavigationDevPlugins } from '~/framework/navigation/helper';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
+import appConf from '~/framework/util/appConf';
 import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
 import { isEmpty } from '~/framework/util/object';
 import { FlipperMMKVElement } from '~/framework/util/storage/mmkv';
 import { Trackers } from '~/framework/util/tracker';
-import { ZendeskConfig, ZendeskProvider } from '~/framework/util/zendesk';
+import { ZendeskProvider } from '~/framework/util/zendesk';
 import { AllModulesBackup } from '~/infra/oauth';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
@@ -77,13 +78,6 @@ interface AppProps extends IStoreProp {}
 function App(props: AppProps) {
   const currentState = useAppState();
 
-  const zendeskConfig: ZendeskConfig = {
-    appId: '6284805bbec39478e7b8ed4d44736cd4eda7c48aaa34b241',
-    clientId: 'mobile_sdk_client_e42a4a0cec9bfd95768f',
-    zendeskUrl: 'https://one-opendigitaleducation.zendesk.com/',
-    accountKey: 'dummy',
-  };
-
   const onRemoteNotification =
     Platform.OS === 'ios'
       ? // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -116,21 +110,21 @@ function App(props: AppProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <ZendeskProvider zendeskConfig={zendeskConfig}>
-      <GestureHandlerRootView style={UI_STYLES.flex1}>
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <Provider store={props.store}>
-            <BottomSheetModalProvider>
-              <Navigation />
-            </BottomSheetModalProvider>
-          </Provider>
-        </SafeAreaProvider>
-        {FlipperAsyncStorageElement}
-        {FlipperMMKVElement}
-      </GestureHandlerRootView>
-    </ZendeskProvider>
+  const content = (
+    <GestureHandlerRootView style={UI_STYLES.flex1}>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <Provider store={props.store}>
+          <BottomSheetModalProvider>
+            <Navigation />
+          </BottomSheetModalProvider>
+        </Provider>
+      </SafeAreaProvider>
+      {FlipperAsyncStorageElement}
+      {FlipperMMKVElement}
+    </GestureHandlerRootView>
   );
+
+  return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }
 
 // Hack to generate scopes without circular deps. ToDo: fix it !

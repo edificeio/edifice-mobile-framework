@@ -49,11 +49,11 @@ import moduleConfig from '~/framework/modules/user/module-config';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { useZendesk } from '~/framework/util/zendesk';
 import { Error } from '~/framework/util/error';
 import { formatSource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -242,7 +242,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const isFederated = session?.federated;
-  const showHelpCenter = appConf.showHelpCenterEnabled;
+  const showHelpCenter = appConf.zendeskEnabled;
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
   //
@@ -252,7 +252,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   const loadHealthCheck = React.useCallback(async () => {
     try {
-      const healthCheckResult = await zendesk.healthCheck();
+      const healthCheckResult = await zendesk?.healthCheck();
       console.debug('Zendesk health check: ', healthCheckResult);
     } catch (error) {
       Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
@@ -260,24 +260,25 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   }, [zendesk]);
 
   React.useEffect(() => {
-    try {
-      loadHealthCheck();
-      zendesk.changeTheme(theme.palette.primary.regular as string);
-      zendesk.setAnonymousIdentity({
-        email: 'mobile@edifice.io',
-        name: 'Edifice Mobile',
-      });
-      zendesk.setHelpCenterLocaleOverride('fr');
-    } catch (error) {
-      Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
-    }
+    if (showHelpCenter)
+      try {
+        loadHealthCheck();
+        zendesk?.changeTheme(theme.palette.primary.regular as string);
+        zendesk?.setAnonymousIdentity({
+          email: 'mobile@edifice.io',
+          name: 'Edifice Mobile',
+        });
+        zendesk?.setHelpCenterLocaleOverride('fr');
+      } catch (error) {
+        Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
+      }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const openHelpCenter = async () => {
     try {
-      await zendesk.openHelpCenter({
+      await zendesk?.openHelpCenter({
         labels: [
           /* "test" */
         ],
