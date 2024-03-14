@@ -242,12 +242,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const isFederated = session?.federated;
-  const showHelpCenter = appConf.zendeskEnabled;
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
   //
   // Zendesk stuff
   //
+  const showHelpCenter = appConf.zendeskEnabled;
   const zendesk = useZendesk();
 
   const loadHealthCheck = React.useCallback(async () => {
@@ -290,6 +290,10 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
     }
   };
+
+  //
+  // Show User Home Screen
+  //
 
   return React.useMemo(
     () => (
