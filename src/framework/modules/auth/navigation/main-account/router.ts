@@ -139,7 +139,7 @@ export const getAuthNavigationState = (
   // 2 - Platform Select / Account Select
   const accountsAsArray = Object.values(accounts);
   const multipleAccounts = accountsAsArray.length > 1;
-  if (multipleAccounts || lastDeletedAccount) {
+  if (multipleAccounts || (lastDeletedAccount && accountsAsArray.length)) {
     // Push account select here
     routes.push({ name: authRouteNames.accountSelection });
   } else if (appConf.hasMultiplePlatform) {

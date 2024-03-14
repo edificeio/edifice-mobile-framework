@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { FlatListProps, View } from 'react-native';
+import { FlatListProps, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -130,6 +130,11 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           <SmallText style={styles.description}>{I18n.get('auth-accountselection-description')}</SmallText>
         </View>
         <LargeHorizontalUserList keyExtractor={keyExtractor} data={dataforList} onItemPress={onItemPress} />
+        {data.length === 1 ? (
+          <TouchableOpacity onPress={() => navigation.navigate(authRouteNames.addAccountModal, {})}>
+            <SmallText>Add user</SmallText>
+          </TouchableOpacity>
+        ) : null}
       </View>
       {loadingState !== LoginState.IDLE ? <Loading /> : null}
       <View style={styles.bottomContainer}>
