@@ -79,6 +79,7 @@ function RootNavigator(props: RootNavigatorProps) {
         : getFirstTabRoute(),
     [accounts, appReady, isMainNavigationAccessible, lastDeletedAccount, pending, requirement, showOnboarding],
   );
+  const navStateJSON = JSON.stringify(navigationState).replace('\n', '');
 
   // Auth/Main switch
   const mainNavigation = useMainNavigation(session?.rights.apps ?? [], session?.rights.widgets ?? []);
@@ -96,12 +97,13 @@ function RootNavigator(props: RootNavigatorProps) {
   React.useLayoutEffect(() => {
     // useLayoutEffect is used to prevent to have a one-frame flash showing the old navigation state
     if (navigationState && navigationRef.isReady()) {
-      console.debug('[Navigation] Reset root navigator state', navigationRef.isReady(), JSON.stringify(navigationState));
-      // handleCloseModalActions(navigationRef);
+      console.debug('[Navigation] Reset root navigator state : ' + navStateJSON);
       navigationRef.reset(navigationState);
     }
     trackNavState(navigationState);
-  }, [navigationState, trackNavState]);
+    // We use `navStateJSON` as a dependency to avoid resetting when new nav state is identical to the previous one.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navStateJSON, trackNavState]);
 
   const onStateChange = React.useCallback(
     (state: NavigationState | undefined) => {
@@ -119,7 +121,7 @@ function RootNavigator(props: RootNavigatorProps) {
         <SplashScreenComponent key={appReady} />
         {appReady ? (
           <NavigationContainer
-            key={lastAddAccount}
+            // key={lastAddAccount}
             ref={navigationRef}
             initialState={navigationState}
             onStateChange={onStateChange}>
