@@ -53,7 +53,6 @@ import { Error } from '~/framework/util/error';
 import { formatSource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { trackingActionAddSuffix } from '~/framework/util/tracker';
-import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -172,20 +171,17 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
-
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
     return authContextRef.current;
   }, [session]);
-
   const fetchMFAValidationInfos = React.useCallback(async () => {
     const requirements = await getUserRequirements(session?.platform!);
     const needMfa = requirements?.needMfa;
     if (needMfa) await getMFAValidationInfos();
     return needMfa;
   }, [session]);
-
   const editUserInformation = React.useCallback(
     async (modificationType: ModificationType) => {
       try {
@@ -239,61 +235,9 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       session?.user.loginUsed,
     ],
   );
-
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
-  const isFederated = session?.federated;
   const showWhoAreWe = session?.platform.showWhoAreWe;
-
-  //
-  // Zendesk stuff
-  //
-  const showHelpCenter = appConf.zendeskEnabled;
-  const zendesk = useZendesk();
-
-  const loadHealthCheck = React.useCallback(async () => {
-    try {
-      const healthCheckResult = await zendesk?.healthCheck();
-      console.debug('Zendesk health check: ', healthCheckResult);
-    } catch (error) {
-      Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
-    }
-  }, [zendesk]);
-
-  React.useEffect(() => {
-    if (showHelpCenter)
-      try {
-        loadHealthCheck();
-        zendesk?.changeTheme(theme.palette.primary.regular as string);
-        zendesk?.setAnonymousIdentity({
-          email: 'mobile@edifice.io',
-          name: 'Edifice Mobile',
-        });
-        zendesk?.setHelpCenterLocaleOverride('fr');
-      } catch (error) {
-        Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const openHelpCenter = async () => {
-    try {
-      await zendesk?.openHelpCenter({
-        labels: [
-          /* "test" */
-        ],
-        groupType: 'category',
-        groupIds: [360002895040],
-        showContactOptions: false,
-      });
-    } catch (error) {
-      Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
-    }
-  };
-
-  //
-  // Show User Home Screen
-  //
+  const isFederated = session?.federated;
 
   return React.useMemo(
     () => (
@@ -349,14 +293,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 }}
               />
             ) : null}
-            {showHelpCenter ? (
-              <LineButton
-                title={I18n.get('user-help-title')}
-                onPress={() => {
-                  openHelpCenter();
-                }}
-              />
-            ) : null}
             {showWhoAreWe ? (
               <LineButton
                 title={I18n.get('user-whoarewe-title')}
@@ -382,16 +318,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         </View>
       </>
     ),
-    [
-      isFederated,
-      currentLoadingMenu,
-      canEditPersonalInfo,
-      showHelpCenter,
-      showWhoAreWe,
-      navigation,
-      editUserInformation,
-      openHelpCenter,
-    ],
+    [isFederated, currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
   );
 }
 

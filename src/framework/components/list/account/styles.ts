@@ -4,10 +4,6 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 
 export default StyleSheet.create({
-  addAccount: {
-    alignSelf: 'baseline',
-    marginTop: UI_SIZES.spacing.small,
-  },
   separator: {
     height: UI_SIZES.border.thin,
     backgroundColor: theme.palette.grey.cloudy,
