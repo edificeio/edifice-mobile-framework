@@ -23,7 +23,7 @@ const ItemSeparator = () => (
 );
 
 const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
-  { data, description, title, getAvatarSource, action }: AccountListProps<ItemT>,
+  { data, description, title, getAvatarSource, onPress, onDelete }: AccountListProps<ItemT>,
   ref,
 ) => {
   const hasSingleAccount = data.length === 1;
@@ -35,7 +35,8 @@ const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
       {...info}
       selected={info.item.user.id === currentAccount?.user.id}
       getAvatarSource={getAvatarSource}
-      action={action}
+      onPress={onPress}
+      onDelete={onDelete}
     />
   );
 

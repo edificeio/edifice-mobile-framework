@@ -196,20 +196,14 @@ export class OAuth2RessourceOwnerPasswordClient {
    * Sign a standardised request object with user authentication information.
    * To use with the standard fetch API, call `fetch(url, sign(init))`.
    */
-  public signRequest(requestInfo: RequestInfo, init?: RequestInit) {
-    if (!this.hasToken) {
-      throw new Error.FetchError(
-        Error.FetchErrorType.NOT_AUTHENTICATED,
-        'EAUTH: Unable to sign request without active access token.',
-      );
-    }
-    if (this.token!.token_type.toLowerCase() === 'bearer') {
+  public static signRequestWithToken(token: IOAuthToken, requestInfo: RequestInfo, init?: RequestInit) {
+    if (token.token_type.toLowerCase() === 'bearer') {
       const req = new Request(requestInfo, {
         ...init,
         headers: {
           ...init?.headers,
           'Accept-Language': I18n.getLanguage(),
-          Authorization: 'Bearer ' + this.token!.access_token,
+          Authorization: 'Bearer ' + token.access_token,
           'X-APP': 'mobile',
           'X-APP-NAME': DeviceInfo.getApplicationName(),
           'X-APP-VERSION': DeviceInfo.getReadableVersion(),
@@ -220,9 +214,20 @@ export class OAuth2RessourceOwnerPasswordClient {
     } else {
       throw new Error.FetchError(
         Error.FetchErrorType.NOT_AUTHENTICATED,
-        'EAUTH: Only Bearer token type supported. Given ' + this.token!.token_type,
+        'EAUTH: Only Bearer token type supported. Given ' + token.token_type,
       );
     }
+  }
+
+  public signRequest(requestInfo: RequestInfo, init?: RequestInit) {
+    if (!this.hasToken) {
+      throw new Error.FetchError(
+        Error.FetchErrorType.NOT_AUTHENTICATED,
+        'EAUTH: Unable to sign request without active access token.',
+      );
+    }
+
+    return OAuth2RessourceOwnerPasswordClient.signRequestWithToken(this.token!, requestInfo, init);
   }
 
   /**
@@ -394,8 +399,8 @@ export class OAuth2RessourceOwnerPasswordClient {
     };
   }
 
-  public importToken(token: AuthTokenSet) {
-    this.token = {
+  public static convertTokenToOldObjectSyntax(token: AuthTokenSet): IOAuthToken {
+    return {
       access_token: token.access.value,
       expires_at: new Date(token.access.expiresAt),
       expires_in: 0,
@@ -403,6 +408,10 @@ export class OAuth2RessourceOwnerPasswordClient {
       refresh_token: token.refresh.value,
       scope: token.scope.join(' '),
     };
+  }
+
+  public importToken(token: AuthTokenSet) {
+    this.token = OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(token);
     this.generateUniqueSesionIdentifier();
     return token;
   }

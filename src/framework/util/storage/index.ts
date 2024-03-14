@@ -38,7 +38,7 @@ export class Storage {
   ) {
     const ret = Storage.compose(Storage.create<Types>(module));
     ret.setSessionInit(function (session) {
-      this.withPrefix(`${Storage.PREFERENCES_PREFIX}${session.user.id}`);
+      this.setPrefix(`${Storage.PREFERENCES_PREFIX}${session.user.id}`);
       initFn.call(this, session);
     });
     return ret;

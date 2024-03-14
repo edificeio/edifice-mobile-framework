@@ -1,6 +1,6 @@
 import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -20,6 +20,7 @@ import {
   AuthLoggedAccount,
   AuthPendingRedirection,
   AuthRequirement,
+  AuthSavedAccount,
   AuthSavedAccountWithTokens,
   ForgotMode,
   IActivationError,
@@ -55,6 +56,7 @@ import {
   readSavedStartup,
   readShowOnbording,
   writeCreateAccount,
+  writeDeleteAccount,
   writeLogout,
   writeReplaceAccount,
 } from './storage';
@@ -275,9 +277,27 @@ export const loginSteps = {
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
+export function deactivateLoggedAccountAction(action?: AnyAction) {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const account = assertSession();
+    // Unregister the device token from the backend
+    await authService.removeFirebaseTokenWithAccount(account);
+    // Erase requests cache
+    await clearRequestsCacheLegacy();
+    // flush sessionReducers
+    dispatch(createEndSessionAction());
+    dispatch(actions.deactivate());
+    if (action) dispatch(action);
+  };
+}
+
 interface AuthLoginFunctions {
-  success: typeof actions.addAccount;
-  requirement: typeof actions.addAccountRequirement;
+  success:
+    | typeof actions.addAccount
+    | ((...args: Parameters<typeof actions.addAccount>) => ThunkAction<void, IGlobalState, undefined, AnyAction>);
+  requirement:
+    | typeof actions.addAccountRequirement
+    | ((...args: Parameters<typeof actions.addAccountRequirement>) => ThunkAction<void, IGlobalState, undefined, AnyAction>);
   activation: typeof actions.redirectActivation;
   passwordRenew: typeof actions.redirectPasswordRenew;
   writeStorage: typeof writeCreateAccount;
@@ -306,12 +326,47 @@ const getLoginFunctions = {
     }) as AuthLoginFunctions,
   addAnotherAccount: () =>
     ({
-      success: actions.addAccount,
-      requirement: actions.addAccountRequirement,
+      // success: actions.addAccount,
+      success:
+        (...args: Parameters<typeof actions.addAccount>) =>
+        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+          await dispatch(deactivateLoggedAccountAction(actions.addAccount(...args)));
+        },
+      requirement:
+        (...args: Parameters<typeof actions.addAccountRequirement>) =>
+        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+          await dispatch(deactivateLoggedAccountAction(actions.addAccountRequirement(...args)));
+        },
       activation: actions.addAccountActivation,
       passwordRenew: actions.addAccountPasswordRenew,
       writeStorage: writeCreateAccount,
       getTimestamp: Date.now,
+    }) as AuthLoginFunctions,
+  restoreAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
+    ({
+      success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
+      requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
+      getTimestamp: () => timestamp,
+    }) as AuthLoginFunctions,
+  switchAccount: (id: keyof IAuthState['accounts'], timestamp: number) =>
+    ({
+      success:
+        (...args: Parameters<typeof actions.addAccount>) =>
+        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+          await dispatch(deactivateLoggedAccountAction(actions.replaceAccount(id, ...args)));
+        },
+      requirement:
+        (...args: Parameters<typeof actions.addAccountRequirement>) =>
+        async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+          await dispatch(deactivateLoggedAccountAction(actions.replaceAccountRequirement(id, ...args)));
+        },
+      activation: actions.redirectActivation,
+      passwordRenew: actions.redirectPasswordRenew,
+      writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
+      getTimestamp: () => timestamp,
     }) as AuthLoginFunctions,
 };
 
@@ -463,8 +518,9 @@ export const loginFederationActionAddAnotherAccount = (platform: Platform, crede
  * @returns
  * @throws
  */
-export const restoreAction =
-  (account: AuthSavedAccountWithTokens | AuthLoggedAccount) => async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+const loadAccountAction =
+  (functions: AuthLoginFunctions, account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
+  async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       const accountToRestore = accountIsLogged(account)
         ? (getSerializedLoggedInAccountInfo(account) as AuthSavedAccountWithTokens)
@@ -475,7 +531,7 @@ export const restoreAction =
       }
       await OAuth2RessourceOwnerPasswordClient.connection.refreshToken(accountToRestore.user.id, false);
       const session = await performLogin(
-        getLoginFunctions.replaceAccount(account.user.id, account.addTimestamp),
+        functions,
         appConf.assertPlatformOfName(accountToRestore.platform),
         accountToRestore.user.loginUsed,
         dispatch,
@@ -493,6 +549,12 @@ export const restoreAction =
       throw e;
     }
   };
+
+export const restoreAccountAction = (account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
+  loadAccountAction(getLoginFunctions.restoreAccount(account.user.id, account.addTimestamp), account);
+
+export const switchAccountAction = (account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
+  loadAccountAction(getLoginFunctions.switchAccount(account.user.id, account.addTimestamp), account);
 
 /**
  * Marks the current error as displayed.
@@ -625,6 +687,16 @@ export function quietLogoutAction() {
 export function manualLogoutAction() {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     await dispatch(quietLogoutAction());
+  };
+}
+
+export function removeAccountAction(account: AuthLoggedAccount | AuthSavedAccountWithTokens | AuthSavedAccount) {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    if (accountIsLogged(account)) {
+      await dispatch(quietLogoutAction());
+    }
+    dispatch(actions.removeAccount(account.user.id));
+    writeDeleteAccount(account.user.id);
   };
 }
 

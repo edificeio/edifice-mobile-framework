@@ -210,15 +210,8 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
    * @param prefixes
    * @returns
    */
-  withPrefix(...prefixes: string[]) {
-    if (this.prefix.length > 0) {
-      console.warn(
-        `[Storage] Do not use withPrefix() or withModule() more than once, nor together. That mutates the storage '${
-          this.name || this.constructor.name
-        }' view.`,
-      );
-    }
-    this.prefix.push(...prefixes);
+  setPrefix(...prefixes: string[]) {
+    this.prefix = prefixes;
     return this;
   }
 
@@ -231,12 +224,12 @@ export class StorageSlice<StorageTypes extends StorageTypeMap> extends StorageHa
   withModule<Name extends string>(module: IModuleConfig<Name, any>) {
     if (this.prefix.length > 0) {
       console.warn(
-        `[Storage] Do not use withPrefix() or withModule() more than once, nor together. That mutates the storage '${
+        `[Storage] Do not use setPrefix() or withModule() more than once, nor together. That mutates the storage '${
           this.name || this.constructor.name
         }' view.`,
       );
     }
-    this.prefix.push(module.storageName);
+    this.setPrefix(module.storageName);
     this.name = module.storageName;
     return this;
   }

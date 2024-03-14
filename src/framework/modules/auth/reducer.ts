@@ -11,6 +11,7 @@ import {
   LegalUrls,
   PlatformAuthContext,
   accountIsLogged,
+  getSerializedLoggedInAccountInfo,
   getSerializedLoggedOutAccountInfo,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
@@ -43,7 +44,7 @@ export interface IAuthState {
   accounts: AuthMixedAccountMap; // account list with populated info
   connected?: keyof IAuthState['accounts']; // Currently logged user if so
   requirement?: AuthRequirement; // Requirement for the current account
-  deleted?: keyof IAuthState['accounts']; // Last account was deleted
+  lastDeletedAccount?: keyof IAuthState['accounts']; // Last account was deleted
   showOnboarding: AuthStorageData['show-onboarding'];
   platformContexts: Record<string, PlatformAuthContext>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
@@ -81,6 +82,7 @@ export const actionTypes = {
   loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
   addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
   addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
+  removeAccount: moduleConfig.namespaceActionType('REMOVE_ACCOUNT'),
   replaceAccount: moduleConfig.namespaceActionType('REPLACE_ACCOUNT'),
   replaceAccountRequirement: moduleConfig.namespaceActionType('REPLACE_ACCOUNT_REQUIREMENT'),
   updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
@@ -88,6 +90,7 @@ export const actionTypes = {
   setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
   authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
   logout: moduleConfig.namespaceActionType('LOGOUT'),
+  deactivate: moduleConfig.namespaceActionType('DEACTIVATE'),
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
   redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
   addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
@@ -107,27 +110,29 @@ export interface ActionPayloads {
   loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
   addAccount: { account: AuthLoggedAccount };
   addAccountRequirement: { account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
-  replaceAccount: { id: string | typeof ERASE_ALL_ACCOUNTS; account: AuthLoggedAccount };
+  removeAccount: { id: keyof IAuthState['accounts'] };
+  replaceAccount: { id: keyof IAuthState['accounts'] | typeof ERASE_ALL_ACCOUNTS; account: AuthLoggedAccount };
   replaceAccountRequirement: {
-    id: string | typeof ERASE_ALL_ACCOUNTS;
+    id: keyof IAuthState['accounts'] | typeof ERASE_ALL_ACCOUNTS;
     account: AuthLoggedAccount;
     requirement: AuthRequirement;
     context: PlatformAuthContext;
   };
   updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: PlatformAuthContext };
-  refreshToken: { id: string; tokens: AuthTokenSet };
-  setQueryParamToken: { id: string; token: AuthTokenSet['queryParam'] };
+  refreshToken: { id: keyof IAuthState['accounts']; tokens: AuthTokenSet };
+  setQueryParamToken: { id: keyof IAuthState['accounts']; token: AuthTokenSet['queryParam'] };
   authError: {
     account: keyof IAuthState['accounts'];
     error: NonNullable<Required<IAuthState['error']>>;
   };
   logout: object;
+  deactivate: object;
   redirectActivation: { platformName: Platform['name']; login: string; code: string };
   redirectPasswordRenew: { platformName: Platform['name']; login: string; code: string };
   addAccountInit: object;
   addAccountActivation: { platformName: Platform['name']; login: string; code: string };
   addAccountPasswordRenew: { platformName: Platform['name']; login: string; code: string };
-  profileUpdate: { id: string; user: Partial<AuthLoggedAccount['user']> };
+  profileUpdate: { id: keyof IAuthState['accounts']; user: Partial<AuthLoggedAccount['user']> };
 }
 
 export const actions = {
@@ -152,6 +157,11 @@ export const actions = {
     account,
     requirement,
     context,
+  }),
+
+  removeAccount: (id: keyof IAuthState['accounts']) => ({
+    type: actionTypes.removeAccount,
+    id,
   }),
 
   replaceAccount: (id: string | typeof ERASE_ALL_ACCOUNTS, account: AuthLoggedAccount) => ({
@@ -199,6 +209,10 @@ export const actions = {
 
   logout: () => ({
     type: actionTypes.logout,
+  }),
+
+  deactivate: () => ({
+    type: actionTypes.deactivate,
   }),
 
   redirectActivation: (platformName: Platform['name'], login: string, code: string) => ({
@@ -316,6 +330,18 @@ const reducer = createReducer(initialState, {
     };
   },
 
+  [actionTypes.removeAccount]: (state, action) => {
+    const { id } = action as unknown as ActionPayloads['removeAccount'];
+    const newAccounts = { ...state.accounts };
+    delete newAccounts[id];
+    return {
+      ...state,
+      accounts: newAccounts,
+      lastDeletedAccount: id,
+      requirement: undefined,
+    };
+  },
+
   [actionTypes.replaceAccount]: (state, action) => {
     const { id, account } = action as unknown as ActionPayloads['replaceAccount'];
     const newAccounts = id === ERASE_ALL_ACCOUNTS ? {} : { ...state.accounts };
@@ -392,6 +418,21 @@ const reducer = createReducer(initialState, {
       connected: undefined,
       pending: undefined,
       error: undefined,
+      lastDeletedAccount: undefined,
+    };
+  },
+
+  [actionTypes.deactivate]: (state, action) => {
+    const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthLoggedAccount | undefined;
+    if (!currentAccount) return state;
+    return {
+      ...state,
+      accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedInAccountInfo(currentAccount) },
+      requirement: undefined,
+      connected: undefined,
+      pending: undefined,
+      error: undefined,
+      lastDeletedAccount: undefined,
     };
   },
 

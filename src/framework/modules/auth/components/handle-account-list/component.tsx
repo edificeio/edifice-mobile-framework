@@ -8,13 +8,13 @@ import appConf from '~/framework/util/appConf';
 
 import { AuthLoggedAccount, AuthSavedAccount } from '../../model';
 
-const HandleAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({ data }: HandleAccountListProps<ItemT>, ref) => {
+const HandleAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(props: HandleAccountListProps<ItemT>, ref) => {
   return (
     <AccountList
       ref={ref}
       title={I18n.get('auth-accountlist-handle-title')}
       description={I18n.get('auth-accountlist-handle-description')}
-      data={data}
+      data={props.data}
       getAvatarSource={info => {
         const uri = buildAbsoluteUserAvatarUrlWithPlatform(info.item.user.id, appConf.getExpandedPlatform(info.item.platform));
         return uri
@@ -23,6 +23,7 @@ const HandleAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>({
             }
           : undefined;
       }}
+      onDelete={props.onDelete}
     />
   );
 };

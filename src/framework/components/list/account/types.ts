@@ -11,5 +11,6 @@ export interface AccountListProps<ItemT extends AuthSavedAccount | AuthLoggedAcc
   getAvatarSource?: (
     ...args: Parameters<NonNullable<FlatListProps<ItemT>['renderItem']>>
   ) => SingleSourceAvatarSpecificProps['source'] | undefined;
-  action?: (item: ListRenderItemInfo<ItemT>['item'], index: number) => Promise<void>;
+  onPress?: (item: ListRenderItemInfo<ItemT>['item'], index: number) => Promise<void>;
+  onDelete?: (item: ListRenderItemInfo<ItemT>['item'], index: number) => Promise<void>;
 }
