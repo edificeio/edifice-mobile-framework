@@ -140,7 +140,7 @@
     "react-native-localize": "3.0.6",
     "react-native-matomo": "file:third-party/react-native-matomo",
     "react-native-media-console": "2.1.0",
-    "react-native-mmkv": "2.12.2",
+    "react-native-mmkv": "2.12.2xf",
     "react-native-mmkv-flipper-plugin": "1.0.0",
     "react-native-modal": "13.0.1",
     "react-native-orientation-locker": "1.6.0",
