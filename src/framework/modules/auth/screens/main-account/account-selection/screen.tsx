@@ -147,7 +147,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
                     width={getScaleWidth(48)}
                   />
                 </View>
-                <SmallBoldText style={styles.addAccountText}>Ajouter un compte</SmallBoldText>
+                <SmallBoldText style={styles.addAccountText}>{I18n.get('auth-accountbutton-add')}</SmallBoldText>
               </TouchableOpacity>
             ) : null
           }

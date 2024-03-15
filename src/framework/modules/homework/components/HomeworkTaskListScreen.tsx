@@ -16,7 +16,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
@@ -185,10 +185,12 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
 
   canCreateEntry() {
     const { diaryInformation, session } = this.props;
+    const isTeacher = session?.user.type === AccountType.Teacher;
     const hasCreationRight =
       session &&
       (hasPermissionManager(diaryInformation!, modifyHomeworkEntryResourceRight, session) ||
-        diaryInformation?.owner.userId === session.user.id);
+        diaryInformation?.owner.userId === session.user.id) &&
+      isTeacher;
     return hasCreationRight;
   }
 
