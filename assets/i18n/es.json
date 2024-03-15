@@ -742,6 +742,8 @@
   "myapp-infobubble-title": "¿Dónde están las otras aplicaciones?",
   "myapp-infobubble-understood": "He entendido",
   "News": "Noticias",
+  "accountlistitem-removealert-description": "¿Está seguro de que desea eliminar este identificador?",
+  "accountlistitem-removealert-title": "Confirmar la eliminación",
   "news-details-appname": "Noticias",
   "news-details-comment": "Comentario",
   "news-details-comment-confirmation-unsaved-modification": "Está a punto de cancelar los cambios del comentario. ¿Está seguro?",

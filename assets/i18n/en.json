@@ -742,6 +742,8 @@
   "myapp-infobubble-title": "Where are the other applications?",
   "myapp-infobubble-understood": "Understood",
   "News": "News",
+  "accountlistitem-removealert-description": "Are you sure you want to delete this identifier?",
+  "accountlistitem-removealert-title": "Confirm deletion",
   "news-details-appname": "News",
   "news-details-comment": "Comment",
   "news-details-comment-confirmation-unsaved-modification": "You are going to undo the changes you made to the comment. Do you want to proceed?",

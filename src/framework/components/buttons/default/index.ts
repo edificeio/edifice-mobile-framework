@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import TextSize from 'react-native-text-size';
 
 import { UI_SIZES } from '~/framework/components/constants';
@@ -24,7 +25,8 @@ const getButtonWidth = async ({
     fontWeight: bold ? 'bold' : 'normal',
     text,
   });
-  const width = Math.ceil(textMeasure.width);
+  // +10 for android bc bold text is not measured correctly
+  const width = Platform.OS === 'android' ? Math.ceil(textMeasure.width) + 10 : Math.ceil(textMeasure.width);
   if (textMeasure) {
     let btnWidth;
     // determine button width

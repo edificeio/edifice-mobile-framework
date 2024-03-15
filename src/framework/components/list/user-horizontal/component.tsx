@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { ListRenderItemInfo, FlatList as RNFlatList, TouchableOpacity, View } from 'react-native';
 
+import { SingleAvatar } from '~/framework/components/avatar';
+import { Size } from '~/framework/components/avatar/types';
 import HorizontalList, { HorizontalListProps } from '~/framework/components/list/horizontal';
 import { SmallText } from '~/framework/components/text';
 import { DisplayUserPublic } from '~/framework/modules/auth/model';
 
-import { SingleAvatar } from '../../avatar';
-import { Size } from '../../avatar/types';
 import styles from './styles';
 import { UserListItemProps, UserListProps } from './types';
 

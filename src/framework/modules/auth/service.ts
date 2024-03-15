@@ -1,10 +1,12 @@
 import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
+import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
 
 import { I18n } from '~/app/i18n';
-import appConf, { Platform } from '~/framework/util/appConf';
+import appConf from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OldStorageFunctions, Storage } from '~/framework/util/storage';
@@ -536,9 +538,16 @@ export class FcmService {
 export async function manageFirebaseToken(platform: Platform) {
   try {
     const fcm = new FcmService(platform);
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-      await fcm.registerFCMToken();
+    if (Platform.OS === 'android') {
+      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+      if (result === RESULTS.GRANTED) {
+        await fcm.registerFCMToken();
+      }
+    } else {
+      const authorizationStatus = await messaging().requestPermission();
+      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+        await fcm.registerFCMToken();
+      }
     }
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;
@@ -549,9 +558,16 @@ export async function manageFirebaseToken(platform: Platform) {
 export async function removeFirebaseToken(platform: Platform) {
   try {
     const fcm = new FcmService(platform);
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-      await fcm.unregisterFCMToken();
+    if (Platform.OS === 'android') {
+      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+      if (result === RESULTS.GRANTED) {
+        await fcm.unregisterFCMToken();
+      }
+    } else {
+      const authorizationStatus = await messaging().requestPermission();
+      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+        await fcm.unregisterFCMToken();
+      }
     }
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;
@@ -562,9 +578,16 @@ export async function removeFirebaseToken(platform: Platform) {
 export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount) {
   try {
     const fcm = new FcmService(account.platform);
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-      await fcm.unregisterFCMTokenWithAccount(account);
+    if (Platform.OS === 'android') {
+      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+      if (result === RESULTS.GRANTED) {
+        await fcm.unregisterFCMTokenWithAccount(account);
+      }
+    } else {
+      const authorizationStatus = await messaging().requestPermission();
+      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+        await fcm.unregisterFCMTokenWithAccount(account);
+      }
     }
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;

@@ -8,7 +8,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
+import UserList, { IUserListItem } from '~/framework/components/UserList';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -36,7 +36,8 @@ import redirect from '~/framework/modules/pronote/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
-import { OldStorageFunctions } from '~/framework/util/storage';
+
+import { preferences } from '../storage';
 
 export interface CarnetDeBordScreenDataProps {
   session?: AuthLoggedAccount;
@@ -96,7 +97,7 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
     (_data: typeof data) => _data.map(cdb => ({ id: cdb.idPronote ?? cdb.id, avatarId: cdb.id, name: cdb.firstName })),
     [],
   );
-  const users: UserListProps['data'] = React.useMemo(() => getUsers(data), [getUsers, data]);
+  const users = React.useMemo(() => getUsers(data), [getUsers, data]);
   const usersRef = React.useRef(users);
   const [selectedId, setSelectedId] = React.useState<string | undefined>(undefined);
   const selectUser = React.useCallback(async (id: string | undefined) => {
@@ -104,7 +105,7 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
     const idToBeSelected = usersRef.current.find(u => u.id === id) ? id : usersRef.current[0]?.id;
     if (!idToBeSelected) throw new Error(`idToBeSelected is undefined. CarnetDeBord need to select an existing user`);
     setSelectedId(idToBeSelected);
-    OldStorageFunctions.setItemJson(CarnetDeBordScreen.STORAGE_KEY, idToBeSelected);
+    preferences.set('carnet-de-bord.selected-user', idToBeSelected);
   }, []);
   const isUserListShown = React.useMemo(
     () => /* session.user.type === UserType.Relative || */ users.length > 1,
@@ -113,10 +114,8 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
 
   // Data & content
   const loadData = React.useCallback(async () => {
-    const [newData, savedSelectedId] = await Promise.all([
-      handleLoadData(),
-      OldStorageFunctions.getItemJson<string>(CarnetDeBordScreen.STORAGE_KEY),
-    ]);
+    const savedSelectedId = preferences.getString('carnet-de-bord.selected-user');
+    const newData = await handleLoadData();
     usersRef.current = getUsers(newData);
     await selectUser(savedSelectedId ?? undefined);
   }, [selectUser, handleLoadData, getUsers]);
