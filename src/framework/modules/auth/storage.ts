@@ -106,5 +106,4 @@ export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
   const savedAccounts = readSavedAccounts();
   delete savedAccounts[id];
   storage.setJSON('accounts', savedAccounts);
-  Storage.erasePreferences(id);
 };

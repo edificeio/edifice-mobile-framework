@@ -4,14 +4,7 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import {
-  ERASE_ALL_ACCOUNTS,
-  IAuthState,
-  actions,
-  assertSession,
-  getState as getAuthState,
-  getSession,
-} from '~/framework/modules/auth/reducer';
+import { ERASE_ALL_ACCOUNTS, IAuthState, actions, assertSession, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
@@ -284,18 +277,16 @@ export const loginSteps = {
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
-export function deactivateLoggedAccountActionIfApplicable(action?: AnyAction) {
+export function deactivateLoggedAccountAction(action?: AnyAction) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    const account = getSession();
-    if (account) {
-      // Unregister the device token from the backend
-      await authService.removeFirebaseTokenWithAccount(account);
-      // Erase requests cache
-      await clearRequestsCacheLegacy();
-      // flush sessionReducers
-      dispatch(createEndSessionAction());
-      dispatch(actions.deactivate());
-    }
+    const account = assertSession();
+    // Unregister the device token from the backend
+    await authService.removeFirebaseTokenWithAccount(account);
+    // Erase requests cache
+    await clearRequestsCacheLegacy();
+    // flush sessionReducers
+    dispatch(createEndSessionAction());
+    dispatch(actions.deactivate());
     if (action) dispatch(action);
   };
 }
@@ -339,12 +330,12 @@ const getLoginFunctions = {
       success:
         (...args: Parameters<typeof actions.addAccount>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.addAccount(...args)));
+          await dispatch(deactivateLoggedAccountAction(actions.addAccount(...args)));
         },
       requirement:
         (...args: Parameters<typeof actions.addAccountRequirement>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.addAccountRequirement(...args)));
+          await dispatch(deactivateLoggedAccountAction(actions.addAccountRequirement(...args)));
         },
       activation: actions.addAccountActivation,
       passwordRenew: actions.addAccountPasswordRenew,
@@ -365,12 +356,12 @@ const getLoginFunctions = {
       success:
         (...args: Parameters<typeof actions.addAccount>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.replaceAccount(id, ...args)));
+          await dispatch(deactivateLoggedAccountAction(actions.replaceAccount(id, ...args)));
         },
       requirement:
         (...args: Parameters<typeof actions.addAccountRequirement>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-          await dispatch(deactivateLoggedAccountActionIfApplicable(actions.replaceAccountRequirement(id, ...args)));
+          await dispatch(deactivateLoggedAccountAction(actions.replaceAccountRequirement(id, ...args)));
         },
       activation: actions.redirectActivation,
       passwordRenew: actions.redirectPasswordRenew,

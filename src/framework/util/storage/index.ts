@@ -1,5 +1,4 @@
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { IAuthState } from '~/framework/modules/auth/reducer';
 
 import { StorageHandler } from './handler';
 import { mmkvHandler } from './mmkv';
@@ -43,14 +42,6 @@ export class Storage {
       initFn.call(this, session);
     });
     return ret;
-  }
-
-  static erasePreferences(id: keyof IAuthState['accounts']) {
-    const keys = Storage.global.getAllKeys().filter(k => k.startsWith(`${Storage.PREFERENCES_PREFIX}${id}`));
-    for (const key of keys) {
-      console.debug('Erase key', key);
-      Storage.global.delete(key);
-    }
   }
 
   static async init() {
