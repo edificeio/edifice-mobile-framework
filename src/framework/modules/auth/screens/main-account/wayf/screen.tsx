@@ -1,3 +1,4 @@
+import { StackActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -64,5 +65,10 @@ export default connect(
       dispatch,
     ),
 )(function AuthWayfScreen(props: AuthWayfScreenPrivateProps) {
-  return <WayfScreen {...props} />;
+  return (
+    <WayfScreen
+      loginCredentialsNavAction={StackActions.replace(authRouteNames.loginCredentials, { platform: props.route.params.platform })}
+      {...props}
+    />
+  );
 });
