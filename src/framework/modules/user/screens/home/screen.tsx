@@ -307,13 +307,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}
             />
-            <LineButton
-              title="Test UI Multicompte"
-              textStyle={{ color: 'orange' }}
-              onPress={() => {
-                navigation.navigate(userRouteNames.multicomptePages, {});
-              }}
-            />
           </ButtonLineGroup>
         </View>
       </>
