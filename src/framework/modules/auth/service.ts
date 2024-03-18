@@ -595,19 +595,6 @@ export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount)
   }
 }
 
-export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount) {
-  try {
-    const fcm = new FcmService(account.platform);
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-      await fcm.unregisterFCMTokenWithAccount(account);
-    }
-  } catch (err) {
-    if (err instanceof Error.ErrorWithType) throw err;
-    else throw new global.Error('Firebase unregister error', { cause: err });
-  }
-}
-
 export async function getAuthTranslationKeys(platform: Platform, language: I18n.SupportedLocales) {
   try {
     // Note: a simple fetch() is used here, to be able to call the API even without a token (for example, while activating an account)

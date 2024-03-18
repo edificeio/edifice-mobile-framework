@@ -4,6 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { loginFederationActionAddFirstAccount } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { IAuthState } from '~/framework/modules/auth/reducer';
+import { StackNavigationAction } from '~/framework/navigation/types';
 
 export enum WAYFPageMode {
   EMPTY = 0,
@@ -19,11 +20,16 @@ export interface WAYFScreenDispatchProps {
   ) => ReturnType<ReturnType<typeof loginFederationActionAddFirstAccount>>;
 }
 
+export interface WAYFScreenStoreProps {
+  auth: IAuthState;
+}
+
 export interface IWayfScreenProps
   extends WAYFScreenDispatchProps,
+    WAYFScreenStoreProps,
     NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.wayf> {
-  auth: IAuthState;
   dispatch: ThunkDispatch<any, any, any>;
+  loginCredentialsNavAction: StackNavigationAction;
 }
 
 export interface IWayfScreenState {

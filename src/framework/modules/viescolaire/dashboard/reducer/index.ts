@@ -55,7 +55,7 @@ const reducer = combineReducers({
     },
     [authActionTypes.updateRequirement]: (state, action) => {
       const { account } = action as unknown as ActionPayloads['updateRequirement'];
-      return account.user.structures?.[0]?.id;
+      return account.user.structures?.[0]?.id ?? null;
     },
     [actionTypes.selectStructure]: (state, action) => {
       OldStorageFunctions.setItemJson<string>(getStructureStorageKey(action.userId ?? 'global'), action.structureId);
