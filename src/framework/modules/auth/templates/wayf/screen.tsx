@@ -405,7 +405,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       if (this.pfUrl && url.startsWith(this.pfUrl)) {
         if (!this.samlResponse) {
           if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
-          this.props.navigation.replace(authRouteNames.loginCredentials, { platform: this.props.route.params.platform });
+          this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
         }
         return false;
       }

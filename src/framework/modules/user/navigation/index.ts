@@ -6,7 +6,6 @@ import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/mo
 import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
 import type { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
 import type { UserLegalNoticeScreenNavParams } from '~/framework/modules/user/screens/legal-notice';
-import type { UserMulticomptePagesScreenNavParams } from '~/framework/modules/user/screens/multicompte-pages';
 import type { ProfileScreenNavigationParams } from '~/framework/modules/user/screens/profile';
 import type { UserEditDescriptionScreenNavParams } from '~/framework/modules/user/screens/profile/edit-description';
 import type { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
@@ -28,7 +27,6 @@ export const userRouteNames = {
   xmas: `${moduleConfig.routeName}/xmas` as 'xmas',
   legalNotice: `${moduleConfig.routeName}/legal-notice` as 'legalNotice',
   lang: `${moduleConfig.routeName}/lang` as 'lang',
-  multicomptePages: `${moduleConfig.routeName}/multicompte-pages` as 'multicomptePages',
 };
 export interface UserNavigationParams extends ParamListBase {
   home: UserHomeScreenNavParams;
@@ -43,5 +41,4 @@ export interface UserNavigationParams extends ParamListBase {
   xmas: UserXmasScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
   lang: UserLangScreenNavParams;
-  multicomptePages: UserMulticomptePagesScreenNavParams;
 }
