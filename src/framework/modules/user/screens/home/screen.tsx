@@ -33,7 +33,7 @@ import {
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
-import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
+import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
@@ -344,9 +344,11 @@ function useAccountsFeature(
 
   const onPressItem = React.useCallback(
     async (item: (typeof data)[0], index: number) => {
-      // const account = assertSession();
+      const activeSession = assertSession();
       // await authService.removeFirebaseToken(account.platform);
       accountListRef.current?.dismiss();
+
+      if (activeSession.user.id === item.user.id) return;
 
       const redirect = (i: typeof item) => {
         const platform = appConf.getExpandedPlatform(i.platform);
