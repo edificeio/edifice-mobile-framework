@@ -13,7 +13,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
-import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
+import { IDistantFile, IMAGE_MAX_DIMENSION, LocalFile } from '~/framework/util/fileHandler';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 /**
@@ -111,7 +111,7 @@ export const createBlogPostAction =
     if (uploadedPostImages) {
       const postImageUploads = Object.values(uploadedPostImages);
       const images = postImageUploads
-        .map(postImageUpload => `<img src="${postImageUpload.url}?thumbnail=2600x0" class="">`)
+        .map(postImageUpload => `<img src="${postImageUpload.url}?thumbnail=${IMAGE_MAX_DIMENSION}x0" class="">`)
         .join('');
       const imagesHtml = `<p class="ng-scope" style="">
         <span contenteditable="false" class="image-container ng-scope" style="">

@@ -32,14 +32,15 @@ namespace LocalFile {
   export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
 
+export const IMAGE_MAX_DIMENSION = 1440;
+
 const compress = async pic => {
   if (!pic.uri) return;
   if (pic.type === 'image/gif') return pic;
   try {
     let result;
     const maxCompression = 80;
-    const maxDimension = 1440;
-    await ImageResizer.createResizedImage(pic.uri, maxDimension, maxDimension, 'JPEG', maxCompression, 0, undefined, false, {
+    await ImageResizer.createResizedImage(pic.uri, 1440, 1440, 'JPEG', maxCompression, 0, undefined, false, {
       mode: 'contain',
       onlyScaleDown: true,
     })
