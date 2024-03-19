@@ -85,7 +85,9 @@ export const authInitAction = () => async (dispatch: AuthDispatch, getState: () 
   const ret =
     authState.pending && authState.pending.redirect === undefined && authState.pending.account
       ? authState.accounts[authState.pending.account]
-      : undefined;
+      : Object.keys(authState.accounts).length === 1
+        ? Object.values(authState.accounts)[0]
+        : undefined;
   if (accountIsLogged(ret)) {
     return getSerializedLoggedInAccountInfo(ret);
   } else return ret;
