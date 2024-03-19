@@ -110,6 +110,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
       try {
         const account = accounts[item.user.id];
         await tryRemoveAccount(account);
+        accountListRef.current?.dismiss();
       } catch (e) {
         console.warn(e);
       }
