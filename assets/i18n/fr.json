@@ -20,6 +20,7 @@
   "auth-accountlist-change-title": "Changer de compte",
   "auth-accountlist-handle-description": "Vous pouvez supprimer le.s compte.s que vous n’utilisez plus.",
   "auth-accountlist-handle-title": "Gérer les comptes",
+  "auth-accountlist-delete-success": "Le compte a bien été supprimé.",
   "auth-accountonboarding-button": "C'est parti !",
   "auth-accountonboarding-description": "Cette fonctionnalité n’est disponible que pour les enseignants et personnels, afin de vous permettre de jongler facilement avec votre compte parent. Ainsi, vous pouvez enregistrer 2 comptes maximum.\nLes push notifications arrivent uniquement pour le compte actif.",
   "auth-accountonboarding-heading": "Le saviez-vous ?",
