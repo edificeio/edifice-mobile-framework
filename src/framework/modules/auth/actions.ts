@@ -286,7 +286,7 @@ export const loginSteps = {
 
 const requirementsThatNeedLegalUrls = [AuthRequirement.MUST_REVALIDATE_TERMS, AuthRequirement.MUST_VALIDATE_TERMS];
 
-export function deactivateLoggedAccountActionIfApplicable(action?: AnyAction) {
+export function deactivateLoggedAccountActionIfApplicable(action?: AnyAction | ThunkAction<void, IGlobalState, any, AnyAction>) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const account = getSession();
     if (account) {
@@ -406,9 +406,9 @@ const performLogin = async (
     if (requirementsThatNeedLegalUrls.includes(requirement)) {
       await dispatch(loadPlatformLegalUrlsAction(platform));
     }
-    dispatch(reduxActions.requirement(accountInfo, requirement, context));
+    await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.requirement(accountInfo, requirement, context)));
   } else {
-    dispatch(reduxActions.success(accountInfo));
+    await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.success(accountInfo)));
   }
   return accountInfo;
 };
