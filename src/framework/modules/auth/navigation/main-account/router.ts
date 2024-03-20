@@ -86,21 +86,6 @@ export const getNavActionForRedirect = (platform: Platform, pending: IAuthState[
           password: pending.code,
         },
       });
-    // // Uncomment this block to make a reset state instead of a push, making impossible to go back
-    // return CommonActions.reset({
-    //   routes: [
-    //     {
-    //       name: authRouteNames.activation,
-    //       params: {
-    //         platform,
-    //         credentials: {
-    //           username: pending.loginUsed,
-    //           password: pending.code,
-    //         },
-    //       },
-    //     },
-    //   ],
-    // });
     case AuthPendingRedirection.RENEW_PASSWORD:
       return StackActions.push(authRouteNames.changePassword, {
         platform,
@@ -109,6 +94,8 @@ export const getNavActionForRedirect = (platform: Platform, pending: IAuthState[
           password: pending.code,
         },
         useResetCode: true,
+        replaceAccountId: pending.accountId,
+        replaceAccountTimestamp: pending.accountTimestamp,
       });
   }
 };

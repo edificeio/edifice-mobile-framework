@@ -331,7 +331,8 @@ const getLoginFunctions = {
       success: (...args: Parameters<typeof actions.addAccount>) => actions.replaceAccount(id, ...args),
       requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
       activation: actions.redirectActivation,
-      passwordRenew: actions.redirectPasswordRenew,
+      passwordRenew: (...[platformName, login, code]: Parameters<typeof actions.redirectPasswordRenew>) =>
+        actions.redirectPasswordRenew(platformName, login, code, id, timestamp),
       writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
       getTimestamp: () => timestamp,
     }) as AuthLoginFunctions,
