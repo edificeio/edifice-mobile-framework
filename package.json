@@ -273,7 +273,7 @@
   "ode": {
     "override": {
       "url": "https://github.com/edificeio/edifice-mobile-config.git",
-      "defaultBranch": "master"
+      "defaultBranch": "main"
     }
   }
 }

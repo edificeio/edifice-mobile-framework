@@ -111,6 +111,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         const account = accounts[item.user.id];
         await tryRemoveAccount(account);
         accountListRef.current?.dismiss();
+        toast.showSuccess(I18n.get('auth-accountlist-delete-success'));
       } catch (e) {
         console.warn(e);
       }
