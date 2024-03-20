@@ -389,11 +389,12 @@ function useAccountsFeature(
       try {
         const account = accounts[item.user.id];
         await tryRemoveAccount(account);
+        if (session?.user.id !== item.user.id) toast.showSuccess(I18n.get('auth-accountlist-delete-success'));
       } catch (e) {
         console.warn(e);
       }
     },
-    [accounts, tryRemoveAccount],
+    [accounts, session?.user.id, tryRemoveAccount],
   );
 
   return React.useMemo(() => {
