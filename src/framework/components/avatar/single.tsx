@@ -1,5 +1,5 @@
 import * as React from 'react';
-import FastImage, { FastImageProps, Source } from 'react-native-fast-image';
+import { Image, ImageProps } from 'react-native';
 
 import { Platform } from '~/framework/util/appConf';
 import { urlSigner } from '~/infra/oauth';
@@ -34,7 +34,7 @@ const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
   );
 };
 
-const fallbackSource: FastImageProps['source'] = require('ASSETS/images/no-avatar.png');
+const fallbackSource: ImageProps['source'] = require('ASSETS/images/no-avatar.png');
 export const buildRelativeUserAvatarUrl = (id: string) => `/userbook/avatar/${id}`;
 export const buildAbsoluteUserAvatarUrl = (id: string) => urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id));
 export const buildAbsoluteUserAvatarUrlWithPlatform = (id: string, platform?: Platform) =>
@@ -49,9 +49,9 @@ const isSvgAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleSvgAv
 const isGroupAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleGroupAvatarSpecificProps =>
   (props as Partial<SingleGroupAvatarSpecificProps>).group === true;
 
-const commonSourceAttributes: Partial<Source> = { priority: 'high' };
+const commonSourceAttributes: ImageProps['source'] = {};
 
-const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): FastImageProps['source'] => {
+const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): ImageProps['source'] => {
   if (error) return fallbackSource;
   try {
     if (isUserAvatar(props)) {
@@ -74,7 +74,7 @@ const getAvatarImage = (props: SingleAvatarOnlySpecificProps, error: boolean): F
 const useAvatarImage = <SpecificProps extends SingleAvatarOnlySpecificProps>(
   props: SpecificProps,
   error: boolean,
-): FastImageProps['source'] =>
+): ImageProps['source'] =>
   React.useMemo(
     () => getAvatarImage(props as SingleAvatarOnlySpecificProps, error),
     // Here we memo on only specific props that can issue to image changes, without rebuild the object.
@@ -112,5 +112,5 @@ export function SingleAvatar(props: SingleAvatarProps) {
   const computedStyle = useAvatarStyle(props);
   const imageSource = useAvatarImage(props as SingleAvatarOnlySpecificProps, error);
 
-  return <FastImage style={computedStyle} source={imageSource} onError={onError} {...otherProps} />;
+  return <Image style={computedStyle} source={imageSource} onError={onError} {...otherProps} />;
 }

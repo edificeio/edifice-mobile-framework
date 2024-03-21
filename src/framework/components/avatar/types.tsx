@@ -1,5 +1,4 @@
-import { ImageURISource } from 'react-native';
-import type { FastImageProps } from 'react-native-fast-image';
+import { ImageProps, ImageURISource } from 'react-native';
 
 import { NamedSVGProps } from '../picture';
 
@@ -11,7 +10,7 @@ export enum Size {
   xxl = 'xxl',
 }
 
-export interface CommonSingleAvatarProps extends Omit<FastImageProps, 'source'> {
+export interface CommonSingleAvatarProps extends Omit<ImageProps, 'source'> {
   size: Size | keyof typeof Size; // Override width & height given in style property.
 }
 
@@ -26,7 +25,7 @@ export interface SingleUserAvatarProps extends CommonSingleAvatarProps, SingleUs
 // Custom source avatar
 
 export interface SingleSourceAvatarSpecificProps {
-  source: ImageURISource | NonNullable<FastImageProps['source']>;
+  source: ImageURISource;
 }
 
 export interface SingleSourceAvatarProps extends CommonSingleAvatarProps, SingleSourceAvatarSpecificProps {}
