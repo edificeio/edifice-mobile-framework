@@ -1,16 +1,11 @@
-import { FlatListProps, ListRenderItemInfo } from 'react-native';
+import { ListRenderItemInfo } from 'react-native';
 
 import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
-
-import { SingleSourceAvatarSpecificProps } from '../../avatar/types';
 
 export interface AccountListProps<ItemT extends AuthSavedAccount | AuthLoggedAccount> {
   data: ItemT[];
   description: string;
   title: string;
-  getAvatarSource?: (
-    ...args: Parameters<NonNullable<FlatListProps<ItemT>['renderItem']>>
-  ) => SingleSourceAvatarSpecificProps['source'] | undefined;
   onPress?: (item: ListRenderItemInfo<ItemT>['item'], index: number) => Promise<void>;
   onDelete?: (item: ListRenderItemInfo<ItemT>['item'], index: number) => Promise<void>;
 }
