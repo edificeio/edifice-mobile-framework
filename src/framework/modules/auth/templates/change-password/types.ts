@@ -15,6 +15,8 @@ import type {
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import type { Platform } from '~/framework/util/appConf';
 
+import { IAuthState } from '../../reducer';
+
 export type IFields = 'oldPassword' | 'newPassword' | 'confirm';
 
 export interface ChangePasswordScreenProps {
@@ -27,6 +29,8 @@ export interface ChangePasswordScreenNavParams {
   useResetCode?: boolean;
   platform?: Platform;
   credentials?: AuthCredentials | AuthUsernameCredential;
+  replaceAccountId?: keyof IAuthState['accounts'];
+  replaceAccountTimestamp?: number;
 }
 
 export interface ChangePasswordScreenStoreProps {

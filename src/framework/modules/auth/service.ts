@@ -1,12 +1,12 @@
 import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
-import { Platform } from 'react-native';
+import { Platform as RNPlatform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
 
 import { I18n } from '~/app/i18n';
-import appConf from '~/framework/util/appConf';
+import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 import { OldStorageFunctions, Storage } from '~/framework/util/storage';
@@ -492,7 +492,7 @@ export class FcmService {
       if (!token) {
         token = await messaging().getToken();
       }
-      const request = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
+      const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
         OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
         `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
         {
@@ -500,7 +500,7 @@ export class FcmService {
         },
       );
 
-      await fetch(request);
+      await fetch(req);
       this._removeTokenFromDeleteQueue(token);
     } catch {
       //unregistering fcm token should not crash the login process
@@ -538,7 +538,7 @@ export class FcmService {
 export async function manageFirebaseToken(platform: Platform) {
   try {
     const fcm = new FcmService(platform);
-    if (Platform.OS === 'android') {
+    if (RNPlatform.OS === 'android') {
       const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
       if (result === RESULTS.GRANTED) {
         await fcm.registerFCMToken();
@@ -558,7 +558,7 @@ export async function manageFirebaseToken(platform: Platform) {
 export async function removeFirebaseToken(platform: Platform) {
   try {
     const fcm = new FcmService(platform);
-    if (Platform.OS === 'android') {
+    if (RNPlatform.OS === 'android') {
       const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
       if (result === RESULTS.GRANTED) {
         await fcm.unregisterFCMToken();
@@ -578,7 +578,7 @@ export async function removeFirebaseToken(platform: Platform) {
 export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount) {
   try {
     const fcm = new FcmService(account.platform);
-    if (Platform.OS === 'android') {
+    if (RNPlatform.OS === 'android') {
       const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
       if (result === RESULTS.GRANTED) {
         await fcm.unregisterFCMTokenWithAccount(account);

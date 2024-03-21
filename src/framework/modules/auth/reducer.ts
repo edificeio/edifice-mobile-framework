@@ -38,6 +38,8 @@ export interface AuthPendingPasswordRenew {
   platform: string;
   loginUsed: string;
   code: string;
+  accountId?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
+  accountTimestamp?: number;
 }
 
 export interface IAuthState {
@@ -128,7 +130,13 @@ export interface ActionPayloads {
   logout: object;
   deactivate: object;
   redirectActivation: { platformName: Platform['name']; login: string; code: string };
-  redirectPasswordRenew: { platformName: Platform['name']; login: string; code: string };
+  redirectPasswordRenew: {
+    platformName: Platform['name'];
+    login: string;
+    code: string;
+    accountId?: keyof IAuthState['accounts'];
+    accountTimestamp?: number;
+  };
   addAccountInit: object;
   addAccountActivation: { platformName: Platform['name']; login: string; code: string };
   addAccountPasswordRenew: { platformName: Platform['name']; login: string; code: string };
@@ -222,11 +230,19 @@ export const actions = {
     code,
   }),
 
-  redirectPasswordRenew: (platformName: Platform['name'], login: string, code: string) => ({
+  redirectPasswordRenew: (
+    platformName: Platform['name'],
+    login: string,
+    code: string,
+    accountId?: keyof IAuthState['accounts'],
+    accountTimestamp?: number,
+  ) => ({
     type: actionTypes.redirectPasswordRenew,
     platformName,
     login,
     code,
+    accountId,
+    accountTimestamp,
   }),
 
   profileUpdate: (id: string, user: Partial<AuthLoggedAccount['user']>) => ({
@@ -246,11 +262,19 @@ export const actions = {
     code,
   }),
 
-  addAccountPasswordRenew: (platformName: Platform['name'], login: string, code: string) => ({
+  addAccountPasswordRenew: (
+    platformName: Platform['name'],
+    login: string,
+    code: string,
+    accountId?: keyof IAuthState['accounts'],
+    accountTimestamp?: number,
+  ) => ({
     type: actionTypes.addAccountPasswordRenew,
     platformName,
     login,
     code,
+    accountId,
+    accountTimestamp,
   }),
 };
 
@@ -453,7 +477,7 @@ const reducer = createReducer(initialState, {
   },
 
   [actionTypes.redirectPasswordRenew]: (state, action) => {
-    const { platformName, login, code } = action as unknown as ActionPayloads['redirectPasswordRenew'];
+    const { platformName, login, code, accountId, accountTimestamp } = action as unknown as ActionPayloads['redirectPasswordRenew'];
     return {
       ...state,
       requirement: undefined,
@@ -464,6 +488,8 @@ const reducer = createReducer(initialState, {
         platform: platformName,
         loginUsed: login,
         code,
+        accountId,
+        accountTimestamp,
       },
     };
   },
@@ -495,7 +521,7 @@ const reducer = createReducer(initialState, {
   },
 
   [actionTypes.addAccountPasswordRenew]: (state, action) => {
-    const { platformName, login, code } = action as unknown as ActionPayloads['redirectPasswordRenew'];
+    const { platformName, login, code, accountId, accountTimestamp } = action as unknown as ActionPayloads['redirectPasswordRenew'];
     return {
       ...state,
       requirement: undefined,
@@ -505,6 +531,8 @@ const reducer = createReducer(initialState, {
         platform: platformName,
         loginUsed: login,
         code,
+        accountId,
+        accountTimestamp,
       },
     };
   },

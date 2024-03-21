@@ -214,10 +214,11 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   }, []);
 
   const renderUserCard = () => {
-    const avatar = isMyProfile ? session?.user.avatar : userInfo?.avatar;
+    const selfAvatar = isMyProfile ? session?.user.avatar : undefined;
+    const userAvatar = userInfo?.id;
     return (
       <UserCard
-        id={avatar && formatSource(`${session?.platform.url}${avatar}`)}
+        id={selfAvatar ? formatSource(`${session?.platform.url}${selfAvatar}`) : userAvatar ?? ''}
         displayName={userInfo?.displayName}
         type={userInfo?.type}
         hasAvatar={!!session?.user.avatar}

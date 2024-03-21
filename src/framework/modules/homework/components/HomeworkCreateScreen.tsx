@@ -170,10 +170,10 @@ export class HomeworkCreateScreen extends React.PureComponent<IHomeworkCreateScr
       const htmlContent = description.replace(/\n/g, '<br>');
 
       // Create entry
-      const createdEntryId = await handleCreateDiaryEntry(diaryId, date!, subject, htmlContent, uploadedEntryImages);
+      await handleCreateDiaryEntry(diaryId, date!, subject, htmlContent, uploadedEntryImages);
       await handleGetHomeworkTasks(diaryId);
       if (route.params.sourceRoute === homeworkRouteNames.homeworkTaskList) {
-        navigation.navigate(homeworkRouteNames.homeworkTaskList, { createdEntryId });
+        navigation.goBack();
       } else navigation.popToTop();
       Toast.showSuccess(I18n.get('homework-create-success'));
     } catch (e) {
