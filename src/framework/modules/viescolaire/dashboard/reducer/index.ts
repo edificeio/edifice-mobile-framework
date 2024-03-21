@@ -33,6 +33,11 @@ export const actionTypes = {
 
 const reducer = combineReducers({
   selectedChildId: createSessionReducer(initialState.selectedChildId, {
+    [authActionTypes.replaceAccount]: (state, action) => {
+      const { account } = action as unknown as ActionPayloads['addAccount'];
+      const children = getFlattenedChildren(account.user.children);
+      return children?.find(child => child.classesNames.length)?.id ?? null;
+    },
     [authActionTypes.addAccount]: (state, action) => {
       const { account } = action as unknown as ActionPayloads['addAccount'];
       const children = getFlattenedChildren(account.user.children);
@@ -49,9 +54,13 @@ const reducer = combineReducers({
     },
   }),
   selectedStructureId: createSessionReducer(initialState.selectedStructureId, {
+    [authActionTypes.replaceAccount]: (state, action) => {
+      const { account } = action as unknown as ActionPayloads['addAccount'];
+      return account.user.structures?.[0]?.id ?? null;
+    },
     [authActionTypes.addAccount]: (state, action) => {
       const { account } = action as unknown as ActionPayloads['addAccount'];
-      return account.user.structures?.[0]?.id;
+      return account.user.structures?.[0]?.id ?? null;
     },
     [authActionTypes.updateRequirement]: (state, action) => {
       const { account } = action as unknown as ActionPayloads['updateRequirement'];

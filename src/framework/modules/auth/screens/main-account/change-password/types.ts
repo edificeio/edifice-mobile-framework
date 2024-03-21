@@ -8,11 +8,14 @@ import {
 
 export interface AuthChangePasswordScreenProps {}
 
-export interface AuthChangePasswordScreenPrivateProps
-  extends NativeStackScreenProps<
+export interface AuthChangePasswordScreenOwnProps
+  extends AuthChangePasswordScreenProps,
+    NativeStackScreenProps<
       AuthNavigationParams,
       typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal
-    >,
-    AuthChangePasswordScreenProps,
+    > {}
+
+export interface AuthChangePasswordScreenPrivateProps
+  extends AuthChangePasswordScreenOwnProps,
     ChangePasswordScreenDispatchProps,
     ChangePasswordScreenStoreProps {}
