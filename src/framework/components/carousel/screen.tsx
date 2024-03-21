@@ -26,7 +26,7 @@ import { DEFAULTS, ToastHandler } from '~/framework/components/toast/component';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
@@ -158,10 +158,18 @@ export function Carousel(props: ICarouselProps) {
   const data = React.useMemo(() => route.params.data ?? [], [route]);
   const dataAsImages = React.useMemo(
     () =>
-      data.map(d => ({
-        url: '',
-        props: { source: urlSigner.signURISource(d.src) },
-      })),
+      data.map(d => {
+        const source = urlSigner.signURISource(d.src);
+        const uri = new URL(source.uri);
+        uri.searchParams.delete('thumbnail');
+        uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x${IMAGE_MAX_DIMENSION}`);
+        console.log('Carousel Image = ' + uri.toString());
+        source.uri = uri.toString();
+        return {
+          url: '',
+          props: { source },
+        };
+      }),
     [data],
   );
 
@@ -178,8 +186,6 @@ export function Carousel(props: ICarouselProps) {
     [imageViewerRef],
   );
 
-  const headerHeight = useHeaderHeight();
-
   const downloadFile = React.useCallback(
     async (url: string | ImageURISource) => {
       const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
@@ -187,7 +193,7 @@ export function Carousel(props: ICarouselProps) {
       const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
       const permissions = Platform.select<Permission[]>({
         ios: [],
-        android: androidVersionMajor >= 13 ? [] : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+        android: (androidVersionMajor as number) >= 13 ? [] : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
       })!;
       await assertPermissions(permissions);
       const foundData = data.find(d => (d.src = url));
