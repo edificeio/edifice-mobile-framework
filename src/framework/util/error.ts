@@ -237,9 +237,9 @@ export namespace Error {
  *  - errclear : function to call to clear the error (set state, so it does fire a re-render !).
  */
 export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
-  error: Error.ErrorWithKey,
-  consumeError: (errorKey: number) => void,
   platformUrl: string,
+  error?: Error.ErrorWithKey,
+  consumeError?: (errorKey: number) => void,
 ) => {
   const [errkey, setErrkey] = React.useState(Error.generateErrorKey);
   const showError = error?.key === errkey || error?.key === undefined;
