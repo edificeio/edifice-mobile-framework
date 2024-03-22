@@ -138,7 +138,7 @@ export namespace Error {
 
   export const LoginError = ErrorWithType<LoginErrorType | ErrorTypes<typeof OAuth2Error>>;
 
-  export const getAuthErrorText = <ErrorClass = ErrorWithType>(type?: Error.ErrorTypes<ErrorClass>, platformUrl?: string) => {
+  export const getAuthErrorText = <ErrorClass = ErrorWithType>(type: Error.ErrorTypes<ErrorClass>, platformUrl: string) => {
     switch (type) {
       case Error.FetchErrorType.NOT_AUTHENTICATED:
         return I18n.get('auth-error-notinitilized');
@@ -237,9 +237,9 @@ export namespace Error {
  *  - errclear : function to call to clear the error (set state, so it does fire a re-render !).
  */
 export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
-  error?: Error.ErrorWithKey,
-  consumeError?: (errorKey: number) => void,
-  platformUrl?: string,
+  error: Error.ErrorWithKey,
+  consumeError: (errorKey: number) => void,
+  platformUrl: string,
 ) => {
   const [errkey, setErrkey] = React.useState(Error.generateErrorKey);
   const showError = error?.key === errkey || error?.key === undefined;

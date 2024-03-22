@@ -105,7 +105,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />
           <SmallText style={styles.errorMsg}>
-            {this.error ? Error.getAuthErrorText<typeof Error.LoginError>(this.error) : ''}
+            {this.error ? Error.getAuthErrorText<typeof Error.LoginError>(this.error, this.props.route.params.platform.url) : ''}
           </SmallText>
           <PrimaryButton text={I18n.get('auth-wayf-error-retry')} action={() => this.displayWebview()} />
         </View>
