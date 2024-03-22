@@ -3,5 +3,5 @@ import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/mo
 
 export type HandleAccountListProps<ItemT extends AuthSavedAccount | AuthLoggedAccount> = Pick<
   AccountListProps<ItemT>,
-  'data' | 'getAvatarSource' | 'onDelete'
+  'data' | 'onDelete'
 >;

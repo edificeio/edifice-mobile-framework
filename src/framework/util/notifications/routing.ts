@@ -3,11 +3,9 @@
  * Router operations on opeening a notification
  */
 import { NavigationAction, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
-import { Alert } from 'react-native';
 import { Action, AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
-import Toast from '~/framework/components/toast';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navigate, navigationRef } from '~/framework/navigation/helper';
