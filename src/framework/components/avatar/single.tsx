@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Image, ImageProps } from 'react-native';
 
-import { Platform } from '~/framework/util/appConf';
+import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
+import appConf, { Platform } from '~/framework/util/appConf';
 import { urlSigner } from '~/infra/oauth';
 
 import { AvatarSizes } from './styles';
@@ -35,10 +36,19 @@ const useAvatarStyle = (props: Pick<SingleAvatarProps, 'size' | 'style'>) => {
 };
 
 const fallbackSource: ImageProps['source'] = require('ASSETS/images/no-avatar.png');
+
 export const buildRelativeUserAvatarUrl = (id: string) => `/userbook/avatar/${id}`;
 export const buildAbsoluteUserAvatarUrl = (id: string) => urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id));
 export const buildAbsoluteUserAvatarUrlWithPlatform = (id: string, platform?: Platform) =>
   platform ? urlSigner.getAbsoluteUrl(buildRelativeUserAvatarUrl(id), platform) : undefined;
+export const buildAvatarSourceForAccount = (account: AuthSavedAccount | AuthLoggedAccount) => {
+  const uri = buildAbsoluteUserAvatarUrlWithPlatform(account.user.id, appConf.getExpandedPlatform(account.platform));
+  return uri
+    ? {
+        uri,
+      }
+    : undefined;
+};
 
 const isUserAvatar = (props: SingleAvatarOnlySpecificProps): props is SingleUserAvatarSpecificProps =>
   (props as Partial<SingleUserAvatarSpecificProps>).userId !== undefined;

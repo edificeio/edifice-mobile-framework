@@ -11,6 +11,8 @@ import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/mo
 import { getSession } from '~/framework/modules/auth/reducer';
 import { ArrayElement } from '~/utils/types';
 
+import { buildAvatarSourceForAccount } from '../../avatar';
+
 const ItemSeparator = () => (
   <View style={styles.separatorContainer}>
     <View style={styles.separator} />
@@ -18,7 +20,7 @@ const ItemSeparator = () => (
 );
 
 const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
-  { data, description, title, getAvatarSource, onPress, onDelete }: AccountListProps<ItemT>,
+  { data, description, title, onPress, onDelete }: AccountListProps<ItemT>,
   ref,
 ) => {
   const currentAccount = useSelector(state => getSession());
@@ -26,7 +28,7 @@ const AccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(
     <AccountListItem
       {...info}
       selected={info.item.user.id === currentAccount?.user.id}
-      getAvatarSource={getAvatarSource}
+      getAvatarSource={i => buildAvatarSourceForAccount(i.item)}
       onPress={onPress}
       onDelete={onDelete}
     />

@@ -9,7 +9,7 @@ import { Trackers } from '~/framework/util/tracker';
 import { StorageHandler } from './handler';
 import type { IStorageBackend } from './types';
 
-const MIGRATION_KEYS_IGNORE: RegExp[] = [/^@phrase_pref_/, /^@phrase_cache_/];
+const MIGRATION_KEYS_IGNORE: RegExp[] = [/^@phrase_/];
 
 /**
  * Migrate from AsyncStorage
