@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-23 12:35:21",
-  "notes": "release: 1.12.0-rc.3(1120015)",
-  "version": "1.12.0-rc.4(1120016)"
+  "last": "2024-03-23 12:49:03",
+  "notes": "chore(i18n): Add missing translations\nrelease: 1.12.0-rc.4(1120016)",
+  "version": "1.12.0-rc.5(1120017)"
 }
