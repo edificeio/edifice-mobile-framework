@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-22 21:43:56",
-  "notes": "fix(login): MB-2601 , fix useErrorWithKey hook API\nfix(login): MB-2601 , add platformUrl to all function getAuthErrorText\nfix(login): MB-2601 , fix key currentplatform on login error predeleted\nchore: factorize storage Phrase keys to ignore as->mmkv migration\nfix: MB-2585 fix avatar not showing for accounts of another platform\nfix(notifs): MB-2595 , fix redirect when click on notifs\nfix(viesco): MB-2597 implement all login reducer actions\nfix: MB-2596 use <Image> component for new avatars\nfix(homework): MB-2574 , fix history in homework\nfix(user): MB-2581 foreign users avatar weren't visible in their profile page\nfix(auth): MB-2592 automatically switch account if necessary when login action is dispatched\nfix(auth): MB-2594 fix other account loss after change password\nchore(build): Change default overrides branch to main\nfix(multicompte): MB-2588; MB-2589 , when delete account and rest one account when kill and open the app, automatic connexion on the last account\nfix(multicompte): MB-2590 , show toast when delete account\nfix(multicompte): MB-2591 , dismiss dropdown when delete account\nfix(i18n): MB-2566, Wrong es translation fix\nfix(auth): MB-2582 add prop for wayf->credentials redirection\nfix(multicompte): MB-2586 , do nothing when switch account with the same account\nfix(multicompte): MB-2583 remove multicompte UI button & screen asociate\nfix(requirements): MB-2577 , fix redirect when accept cgu\nrelease: 1.12.0-rc.2(1120014)",
-  "version": "1.12.0-rc.3(1120015)"
+  "last": "2024-03-23 12:35:21",
+  "notes": "release: 1.12.0-rc.3(1120015)",
+  "version": "1.12.0-rc.4(1120016)"
 }

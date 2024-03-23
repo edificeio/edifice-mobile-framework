@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>BundleVersionOverride</key>
-	<string>dev/default</string>
+	<string>openent/prod</string>
 	<key>BundleVersionType</key>
-	<string>rc.3</string>
+	<string>rc.4</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
-	<string>Dev Pocket</string>
+	<string>Open ENT</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.ode.mobile</string>
+	<string>fr.openent.mobile</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -25,7 +25,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1120015</string>
+	<string>1120016</string>
 	<key>FirebaseInAppMessagingAutomaticDataCollectionEnabled</key>
 	<true/>
 	<key>LSApplicationQueriesSchemes</key>
