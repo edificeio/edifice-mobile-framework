@@ -6,4 +6,5 @@ export const trackingScenarios = trackScenarios({
     [AuthPendingRedirection.ACTIVATE]: ['Activation'],
     [AuthPendingRedirection.RENEW_PASSWORD]: ['Renouvellement'],
   },
+  'Connexion auto': {},
 });
