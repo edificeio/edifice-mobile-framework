@@ -29,11 +29,11 @@ import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 import { Loading } from '~/ui/Loading';
 
+import { trackingScenarios } from '../../../tracking';
 import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
 
 export const computeNavBar = ({
@@ -178,11 +178,7 @@ export default connect(
     bindActionCreators<AuthAccountSelectionScreenDispatchProps>(
       {
         tryRestore: tryAction(restoreAccountAction, {
-          track: res => [
-            moduleConfig,
-            trackingActionAddSuffix('Login restore', !(res instanceof global.Error)),
-            res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
-          ],
+          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion auto']),
         }),
         tryRemoveAccount: handleAction(removeAccountAction),
       },

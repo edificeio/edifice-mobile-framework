@@ -40,6 +40,7 @@ import { LoginState } from '~/framework/modules/auth/screens/main-account/accoun
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
+import { trackingScenarios } from '~/framework/modules/auth/tracking';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
@@ -49,10 +50,9 @@ import moduleConfig from '~/framework/modules/user/module-config';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
 import { formatSource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -600,11 +600,7 @@ export default connect(
       {
         handleLogout: handleAction(manualLogoutAction),
         trySwitch: tryAction(switchAccountAction, {
-          track: res => [
-            moduleConfig,
-            trackingActionAddSuffix('Login restore', !(res instanceof global.Error)),
-            res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
-          ],
+          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion auto']),
         }),
         tryRemoveAccount: handleAction(removeAccountAction),
       },
