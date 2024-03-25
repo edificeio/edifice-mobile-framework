@@ -32,7 +32,7 @@ export const authRouteNames = {
   activation: `${moduleConfig.name}/activation` as 'activation',
   changePassword: `${moduleConfig.name}/changePassword` as 'changePassword',
   forgot: `${moduleConfig.name}/forgot` as 'forgot',
-  accountSelection: `${moduleConfig.name}/accountSelection` as 'accountSelection', // This screen is exclusive to normal login stack
+  accounts: `${moduleConfig.name}/accounts` as 'accounts', // This screen is exclusive to normal login stack
   // Login stack (add account version)
   addAccountOnboarding: `${moduleConfig.name}/add-account/onboarding` as 'addAccountOnboarding',
   addAccountPlatforms: `${moduleConfig.name}/add-account/platforms` as 'addAccountPlatforms',
@@ -62,7 +62,7 @@ export interface AuthNavigationParams extends ParamListBase {
   // Normal auth stack
   onboarding: AuthOnboardingScreenNavParams;
   platforms: AuthPlatformsScreenNavParams;
-  accountSelection: AuthAccountSelectionScreenNavParams;
+  accounts: AuthAccountSelectionScreenNavParams;
   loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: AuthLoginWayfScreenNavParams;
   wayf: { platform: Platform };

@@ -3,7 +3,13 @@ import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
-import { ShouldStartLoadRequest, WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
+import {
+  ShouldStartLoadRequest,
+  WebViewErrorEvent,
+  WebViewHttpErrorEvent,
+  WebViewNavigation,
+  WebViewNavigationEvent,
+} from 'react-native-webview/lib/WebViewTypes';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -15,6 +21,7 @@ import { SmallText } from '~/framework/components/text';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
+import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
@@ -93,14 +100,14 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private contentComponents = [
     // WAYFPageMode.EMPTY: Display empty screen
     () => {
-      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'));
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Erreur'));
       return (
         <EmptyScreen svgImage="empty-content" text={I18n.get('auth-wayf-empty-text')} title={I18n.get('auth-wayf-empty-title')} />
       );
     },
     // WAYFPageMode.ERROR: Display error message
     () => {
-      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
       return (
         <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />
@@ -249,7 +256,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Display error message
   displayError(error: Error.ErrorTypes<typeof Error.LoginError>) {
     this.clearDatas(() => {
-      this.error = error === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH ? Error.OAuth2ErrorType.SAML_INVALID : error;
+      this.error = error;
       this.setState({ mode: WAYFPageMode.ERROR });
       if (this.state.errkey === undefined) this.props.dispatch(consumeAuthErrorAction(this.state.errkey));
     });
@@ -327,22 +334,25 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   // Called each time a navigation error occurs in WebView
   // See WebView onError property
-  onError(event) {
-    if (__DEV__) console.debug('WAYFScreen::onError => ', event.nativeEvent);
+  onError({ nativeEvent }: WebViewErrorEvent) {
+    if (__DEV__) console.debug('WAYFScreen::onError => ', nativeEvent);
+    if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url);
     // Display empty screen
     this.displayEmpty();
   }
 
   // Called each time an http error occurs in WebView
   // See WebView onError property
-  onHttpError(event) {
-    if (__DEV__) console.debug('WAYFScreen::onHttpError => ', event.nativeEvent.statusCode);
+  onHttpError({ nativeEvent }: WebViewHttpErrorEvent) {
+    if (__DEV__) console.debug('WAYFScreen::onHttpError => ', nativeEvent.statusCode);
+    if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url, nativeEvent.statusCode);
     // Display empty screen
     this.displayEmpty();
   }
 
-  onLoad() {
+  onLoad({ nativeEvent }: WebViewNavigationEvent) {
     // Flag first webview page loading completion
+    if (!this.isFirstLoadFinished) trackingWayfEvents.loadSuccess(nativeEvent.url);
     this.isFirstLoadFinished = true;
   }
 

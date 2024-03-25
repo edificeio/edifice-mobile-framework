@@ -2,6 +2,7 @@ import * as React from 'react';
 import { FlatList, FlatListProps, View } from 'react-native';
 import { useSelector } from 'react-redux';
 
+import { buildAvatarSourceForAccount } from '~/framework/components/avatar';
 import { default as AccountListItem } from '~/framework/components/list/account/item';
 import styles from '~/framework/components/list/account/styles';
 import { AccountListProps } from '~/framework/components/list/account/types';
@@ -10,8 +11,6 @@ import { HeadingSText, SmallText } from '~/framework/components/text';
 import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { ArrayElement } from '~/utils/types';
-
-import { buildAvatarSourceForAccount } from '../../avatar';
 
 const ItemSeparator = () => (
   <View style={styles.separatorContainer}>

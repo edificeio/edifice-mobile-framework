@@ -6,14 +6,12 @@ import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { loginFederationActionAddAnotherAccount } from '~/framework/modules/auth/actions';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Error } from '~/framework/util/error';
 import { tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
 
 import { AuthWayfAddAccountScreenPrivateProps } from './types';
 
@@ -37,23 +35,12 @@ export default connect(
   dispatch =>
     bindActionCreators<WAYFScreenDispatchProps>(
       {
-        tryLogin: tryAction(loginFederationActionAddAnotherAccount, {
-          track: res => {
-            const errtype = res instanceof global.Error ? Error.getDeepErrorType<typeof Error.LoginError>(res) : undefined;
-            return [
-              moduleConfig,
-              res instanceof global.Error
-                ? errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
-                  ? trackingActionAddSuffix('Login fédéré', 'Multiple')
-                  : trackingActionAddSuffix('Login fédéré', false)
-                : trackingActionAddSuffix('Login fédéré', true),
-              res instanceof global.Error && errtype !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
-                ? errtype?.toString() ?? res.toString()
-                : undefined,
-              res instanceof Error.SamlMultipleVectorError ? res.data.users.length : undefined,
-            ];
-          },
-        }),
+        tryLogin: tryAction(
+          tryAction(loginFederationActionAddAnotherAccount, {
+            track: track.loginFederation,
+          }),
+          { track: track.addAccount },
+        ),
       },
       dispatch,
     ),
