@@ -20,7 +20,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
-import { loginCredentialsTracking } from '../../../tracking';
+import { trackingScenarios } from '../../../tracking';
 import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -64,10 +64,10 @@ export default connect(
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
         tryLoginAdd: tryAction(loginCredentialsActionAddFirstAccount, {
-          track: makeTrackOption(moduleConfig, loginCredentialsTracking),
+          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion simple']),
         }),
         tryLoginReplace: tryAction(loginCredentialsActionReplaceAccount, {
-          track: makeTrackOption(moduleConfig, loginCredentialsTracking),
+          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion simple']),
         }),
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },

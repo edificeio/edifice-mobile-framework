@@ -41,3 +41,19 @@ export const makeTrackOption =
       return [mConf, trackingActionAddSuffix(name, true), def[0], def[1]];
     }
   };
+
+export const trackScenario = <Scenarios>(name: keyof Scenarios, customs?: Omit<TrackValuesMap, typeof TRACK_NAME>) =>
+  ({
+    [TRACK_NAME]: name,
+    ...customs,
+  }) as TrackValuesMap;
+
+export const trackScenarios = <Scenarios>(items: { [name in keyof Scenarios]: Omit<TrackValuesMap, typeof TRACK_NAME> }) =>
+  Object.fromEntries(
+    (Object.entries(items) as [keyof Scenarios, Omit<TrackValuesMap, typeof TRACK_NAME>][]).map(([k, v]) => [
+      k,
+      trackScenario<Scenarios>(k, v),
+    ]),
+  ) as {
+    [name in keyof typeof items]: ReturnType<typeof trackScenario>;
+  };
