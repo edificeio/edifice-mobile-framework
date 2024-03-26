@@ -59,7 +59,10 @@ export class LoginWAYFPage extends React.Component<LoginWayfScreenPrivateProps, 
             <SmallText style={styles.textError}>
               {error
                 ? error.key === undefined || error.key === this.state.errkey
-                  ? Error.getAuthErrorText<Error.ErrorTypes<typeof Error.LoginError>>(Error.getDeepErrorType(error))
+                  ? Error.getAuthErrorText<Error.ErrorTypes<typeof Error.LoginError>>(
+                      Error.getDeepErrorType(error),
+                      route.params.platform.url,
+                    )
                   : ''
                 : ''}
             </SmallText>

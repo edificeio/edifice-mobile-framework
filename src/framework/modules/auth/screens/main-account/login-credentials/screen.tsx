@@ -11,17 +11,16 @@ import {
   loginCredentialsActionAddFirstAccount,
   loginCredentialsActionReplaceAccount,
 } from '~/framework/modules/auth/actions';
-import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import LoginCredentialsScreen from '~/framework/modules/auth/templates/login-credentials';
 import { LoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Error } from '~/framework/util/error';
-import { TryActionOptions, handleAction, tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
+import { trackingScenarios } from '../../../tracking';
 import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -54,21 +53,6 @@ function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProp
   );
 }
 
-const trackOpt: TryActionOptions<
-  any,
-  ReturnType<ReturnType<typeof loginCredentialsActionAddFirstAccount | typeof loginCredentialsActionReplaceAccount>>
->['track'] = res => [
-  moduleConfig,
-  res instanceof global.Error
-    ? trackingActionAddSuffix('Login credentials', false)
-    : res === AuthPendingRedirection.ACTIVATE
-      ? trackingActionAddSuffix('Login credentials', 'Activation')
-      : res === AuthPendingRedirection.RENEW_PASSWORD
-        ? trackingActionAddSuffix('Login credentials', 'Renouvellement')
-        : trackingActionAddSuffix('Login credentials', true),
-  res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
-];
-
 export default connect(
   (state: IGlobalState) => {
     return {
@@ -80,10 +64,10 @@ export default connect(
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
         tryLoginAdd: tryAction(loginCredentialsActionAddFirstAccount, {
-          track: trackOpt,
+          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion simple']),
         }),
         tryLoginReplace: tryAction(loginCredentialsActionReplaceAccount, {
-          track: trackOpt,
+          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion simple']),
         }),
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },

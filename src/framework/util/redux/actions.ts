@@ -4,10 +4,8 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { IGlobalState } from '~/app/store';
 import { DoTrackArgLegacy, TrackEventOfModuleArgs, Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 
-export interface TryActionOptions<Args extends any[], ReturnType> {
-  track?:
-    | TrackEventOfModuleArgs
-    | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackEventOfModuleArgs | undefined);
+export interface TryActionOptions<Args extends any[], ReturnType, TrackEventArgs = TrackEventOfModuleArgs> {
+  track?: TrackEventArgs | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackEventArgs | undefined);
 }
 
 /** must declare correct type for bindActionCreators since built-in types are unusable.
