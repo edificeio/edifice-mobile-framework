@@ -499,14 +499,21 @@ const loginFederationAction =
       functions.writeStorage(session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
-      console.warn(`[Auth] Login federation error :`, e);
+      // When login in with federation, "CREDENTIALS_MISMATCH" is the errcode obtained if the saml token does not link to an actual user account.
+      // We override the error type to "SAML_INVALID" in this case.
+      const error =
+        e instanceof Error.ErrorWithType && e.type === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH
+          ? new Error.LoginError(Error.OAuth2ErrorType.SAML_INVALID, undefined, { cause: e.cause })
+          : e;
+
+      console.warn(`[Auth] Login federation error :`, error);
       dispatch(
         actions.authError({
           key,
-          info: e as Error,
+          info: error as Error,
         }),
       );
-      throw e;
+      throw error;
     }
   };
 

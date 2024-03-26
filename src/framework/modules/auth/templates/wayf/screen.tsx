@@ -13,7 +13,6 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
@@ -21,6 +20,7 @@ import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
+import moduleConfig from '../../module-config';
 import styles from './styles';
 import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
@@ -249,7 +249,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Display error message
   displayError(error: Error.ErrorTypes<typeof Error.LoginError>) {
     this.clearDatas(() => {
-      this.error = error === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH ? Error.OAuth2ErrorType.SAML_INVALID : error;
+      this.error = error;
       this.setState({ mode: WAYFPageMode.ERROR });
       if (this.state.errkey === undefined) this.props.dispatch(consumeAuthErrorAction(this.state.errkey));
     });
