@@ -1,6 +1,9 @@
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { Error } from '~/framework/util/error';
+import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { TRACK_ERROR, trackScenarios } from '~/framework/util/tracker/track-opt';
+
+import moduleConfig from './module-config';
 
 export const trackingScenarios = trackScenarios({
   'Connexion simple': {
@@ -15,3 +18,12 @@ export const trackingScenarios = trackScenarios({
     },
   },
 });
+
+export const trackingWayfEvents = {
+  loadSuccess: (url: string) => {
+    Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Affichage WAYF', true), url);
+  },
+  loadError: (url: string, code?: number) => {
+    Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Affichage WAYF', false), url, code);
+  },
+};

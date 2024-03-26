@@ -3,7 +3,13 @@ import * as React from 'react';
 import { ActivityIndicator, SafeAreaView, TouchableWithoutFeedback, View } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
-import { ShouldStartLoadRequest, WebViewNavigation } from 'react-native-webview/lib/WebViewTypes';
+import {
+  ShouldStartLoadRequest,
+  WebViewErrorEvent,
+  WebViewHttpErrorEvent,
+  WebViewNavigation,
+  WebViewNavigationEvent,
+} from 'react-native-webview/lib/WebViewTypes';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -21,6 +27,7 @@ import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
 import moduleConfig from '../../module-config';
+import { trackingWayfEvents } from '../../tracking';
 import styles from './styles';
 import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 
@@ -327,22 +334,25 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   // Called each time a navigation error occurs in WebView
   // See WebView onError property
-  onError(event) {
-    if (__DEV__) console.debug('WAYFScreen::onError => ', event.nativeEvent);
+  onError({ nativeEvent }: WebViewErrorEvent) {
+    if (__DEV__) console.debug('WAYFScreen::onError => ', nativeEvent);
+    if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url);
     // Display empty screen
     this.displayEmpty();
   }
 
   // Called each time an http error occurs in WebView
   // See WebView onError property
-  onHttpError(event) {
-    if (__DEV__) console.debug('WAYFScreen::onHttpError => ', event.nativeEvent.statusCode);
+  onHttpError({ nativeEvent }: WebViewHttpErrorEvent) {
+    if (__DEV__) console.debug('WAYFScreen::onHttpError => ', nativeEvent.statusCode);
+    if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url, nativeEvent.statusCode);
     // Display empty screen
     this.displayEmpty();
   }
 
-  onLoad() {
+  onLoad({ nativeEvent }: WebViewNavigationEvent) {
     // Flag first webview page loading completion
+    if (!this.isFirstLoadFinished) trackingWayfEvents.loadSuccess(nativeEvent.url);
     this.isFirstLoadFinished = true;
   }
 
