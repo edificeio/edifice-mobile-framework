@@ -245,7 +245,7 @@ export default class RichToolbar extends Component {
               ]}
             />
             <View>
-              <RichToolbarActionItem icon="ui-keyboardHide" action={actions.keyboard} editor={this.editor} />
+              <RichToolbarCustomItem icon="ui-keyboardHide" action={() => this.editor.blurContentEditor()} />
             </View>
           </Animated.View>
           <Animated.View style={animatedStyleEnter}>
