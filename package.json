@@ -32,7 +32,7 @@
     "fast-open-alpha": "fastlane deploy open_alpha>&1 | tee -a ./fastlane/build.log",
     "fast-open-rc": "fastlane deploy open_rc>&1 | tee -a ./fastlane/build.log",
     "fast-open-support": "fastlane deploy open_support>&1 | tee -a ./fastlane/build.log",
-    "fast-pocs": "fastlane deploy pocs>&1 | tee -a ./fastlane/build.log",
+    "fast-poc": "fastlane deploy poc>&1 | tee -a ./fastlane/build.log",
     "fast-rc": "fastlane deploy rc>&1 | tee -a ./fastlane/build.log",
     "fast-support": "fastlane deploy support>&1 | tee -a ./fastlane/build.log",
     "i18n-diff": "node cli/i18n.js diff",
