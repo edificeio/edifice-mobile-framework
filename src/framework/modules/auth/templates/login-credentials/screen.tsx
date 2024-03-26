@@ -39,7 +39,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
 
-  const { errmsg, errtype, errkey, errclear } = useErrorWithKey<typeof Error.LoginError>(error, handleConsumeError);
+  const { errmsg, errtype, errkey, errclear } = useErrorWithKey<typeof Error.LoginError>(platform.url, error, handleConsumeError);
 
   const inputLogin = React.useRef<any>(null);
   const inputPassword = React.useRef<any>(null);

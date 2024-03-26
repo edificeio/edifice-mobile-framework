@@ -5,31 +5,9 @@
 export default {
   matomo: {
     url: "https://matomo.opendigitaleducation.com/matomo.php",
-    siteId: 3, // MOBILE DEV
+    siteId: 4, // MOBILE
   },
-  webviewIdentifier: "dev.CC3B2A9FC9C32565FF6237642B73E",
+  webviewIdentifier: "openent.CC3B2A9FC9C32565FF6237642B73E",
 
-  platforms: [
-    // Recettes
-    require("~/platforms/recette"),
-    require("~/platforms/recette-leo"),
-    require("~/platforms/recette-ent77"),
-    require("~/platforms/recette-paris"),
-    require("~/platforms/recette-na")["recette-na"],
-    require("~/platforms/recette-na")["recette-na-test"],
-    // RD
-    require("~/platforms/rd"),
-    // Formation
-    require("~/platforms/formation")["formation-one"],
-    require("~/platforms/formation")["formation-neo"],
-    // Preprod
-    require("~/platforms/saas")["preprod-one"],
-    require("~/platforms/saas")["preprod-neo"],
-    // Prod
-    require("~/platforms/saas")["prod-one"],
-    require("~/platforms/saas")["prod-neo"],
-    // Divers
-    require("~/platforms/localhost")["default"],
-    require("~/platforms/localhost")["avd"],
-  ],
+  platforms: [require("~/platforms/paris")["prod"], require("~/platforms/ent77")["prod"]],
 };

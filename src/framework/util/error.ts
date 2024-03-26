@@ -138,7 +138,7 @@ export namespace Error {
 
   export const LoginError = ErrorWithType<LoginErrorType | ErrorTypes<typeof OAuth2Error>>;
 
-  export const getAuthErrorText = <ErrorClass = ErrorWithType>(type?: Error.ErrorTypes<ErrorClass>) => {
+  export const getAuthErrorText = <ErrorClass = ErrorWithType>(type: Error.ErrorTypes<ErrorClass>, platformUrl: string) => {
     switch (type) {
       case Error.FetchErrorType.NOT_AUTHENTICATED:
         return I18n.get('auth-error-notinitilized');
@@ -182,7 +182,7 @@ export namespace Error {
       case Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM:
         return I18n.get('auth-error-notpremium');
       case Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED:
-        return I18n.get('auth-error-predeleted');
+        return I18n.get('auth-error-predeleted', { currentplatform: platformUrl });
 
       case Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR:
       default:
@@ -237,6 +237,7 @@ export namespace Error {
  *  - errclear : function to call to clear the error (set state, so it does fire a re-render !).
  */
 export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
+  platformUrl: string,
   error?: Error.ErrorWithKey,
   consumeError?: (errorKey: number) => void,
 ) => {
@@ -247,8 +248,9 @@ export const useErrorWithKey = <ErrorClass = Error.ErrorWithType>(
     if (error && showError) setErrkey(Error.generateErrorKey());
   }, [error, showError]);
   const errmsg = React.useMemo(
-    () => (showError && error ? Error.getAuthErrorText<ErrorClass>(errtype as Error.ErrorTypes<ErrorClass>) : undefined),
-    [error, errtype, showError],
+    () =>
+      showError && error ? Error.getAuthErrorText<ErrorClass>(errtype as Error.ErrorTypes<ErrorClass>, platformUrl) : undefined,
+    [error, errtype, platformUrl, showError],
   );
   React.useEffect(() => {
     if (error?.key === undefined) {
