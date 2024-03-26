@@ -130,7 +130,6 @@ function createHTML(options = {}) {
  .pell { height: 100%;} .pell-content { outline: 0; overflow-y: auto;padding: 0;height: 100%;$font-size: 16px; line-height: 24px; overflow-x: hidden; max-width: 100%; margin-top: 12px;}
         [placeholder]:empty:before { content: attr(placeholder); color: ${placeholderColor}; font-style: italic}
         [placeholder]:empty:focus:before { content: attr(placeholder);color: ${placeholderColor};display:block;}
-        img {max-width: 100%;vertical-align: middle;}
         .x-todo li {list-style:none;}
         .x-todo-box {position: relative; left: -24px;}
         .x-todo-box input{position: absolute;}
@@ -163,6 +162,7 @@ function createHTML(options = {}) {
         iframe {border: none; max-width: 100%;}
         .video-wrapper::before {content: ""; background-image: url(${playIcon}); background-size: ${playIconSize}px ${playIconSize}px; height: ${playIconSize}px; width: ${playIconSize}px; position: absolute; top: 0; left: 0; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%);}
         video {border-radius: ${UI_SIZES.radius.small}px;}
+        img {max-width: 100vw; max-height: 100vw; border-radius: ${UI_SIZES.radius.small}px; margin: ${UI_SIZES.spacing.tiny}px auto; display: flex;}
     </style>
 </head>
 <body>
