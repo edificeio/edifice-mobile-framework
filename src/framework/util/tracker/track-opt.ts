@@ -9,10 +9,11 @@ export const TRACK_NAME = Symbol('TRACK_NAME');
 
 export type TrackValuesDeclSuccess = [string?, number?];
 export type TrackValuesDeclError = [number?];
+export type TrackValuesDeclErrorOverride = [string, string?, number?];
 
 export interface TrackValuesMap {
   [TRACK_NAME]: string;
-  [TRACK_ERROR]?: TrackValuesDeclError;
+  [TRACK_ERROR]?: TrackValuesDeclError | ((e: Error | undefined) => TrackValuesDeclErrorOverride | undefined);
   [TRACK_DEFAULT]?: TrackValuesDeclSuccess;
   [key: string]: TrackValuesDeclSuccess;
 }
@@ -31,7 +32,18 @@ export const makeTrackOption =
       ...customValues
     } = values;
     if (returnedValue instanceof global.Error) {
-      return [mConf, trackingActionAddSuffix(name, false), Error.getDeepErrorType(returnedValue)?.toString(), err[0]];
+      if (typeof err === 'function') {
+        const realErr = err(returnedValue);
+        if (!realErr) return [mConf, trackingActionAddSuffix(name, false), Error.getDeepErrorType(returnedValue)?.toString()];
+        return [
+          mConf,
+          trackingActionAddSuffix(name, realErr[0]),
+          realErr[1] ?? Error.getDeepErrorType(returnedValue)?.toString(),
+          realErr[2],
+        ];
+      } else {
+        return [mConf, trackingActionAddSuffix(name, false), Error.getDeepErrorType(returnedValue)?.toString(), err[0]];
+      }
     } else {
       for (const [k, v] of Object.entries(customValues)) {
         if (k === returnedValue) {

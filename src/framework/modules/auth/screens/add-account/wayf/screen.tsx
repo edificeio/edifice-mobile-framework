@@ -11,10 +11,10 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Error } from '~/framework/util/error';
 import { tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
+import { trackingScenarios } from '../../../tracking';
 import { AuthWayfAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -38,21 +38,7 @@ export default connect(
     bindActionCreators<WAYFScreenDispatchProps>(
       {
         tryLogin: tryAction(loginFederationActionAddAnotherAccount, {
-          track: res => {
-            const errtype = res instanceof global.Error ? Error.getDeepErrorType<typeof Error.LoginError>(res) : undefined;
-            return [
-              moduleConfig,
-              res instanceof global.Error
-                ? errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
-                  ? trackingActionAddSuffix('Login fédéré', 'Multiple')
-                  : trackingActionAddSuffix('Login fédéré', false)
-                : trackingActionAddSuffix('Login fédéré', true),
-              res instanceof global.Error && errtype !== Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR
-                ? errtype?.toString() ?? res.toString()
-                : undefined,
-              res instanceof Error.SamlMultipleVectorError ? res.data.users.length : undefined,
-            ];
-          },
+          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion fédérée']),
         }),
       },
       dispatch,
