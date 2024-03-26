@@ -17,6 +17,7 @@ export const trackingScenarios = trackScenarios({
       return undefined;
     },
   },
+  Activation: {},
 });
 
 export const trackingWayfEvents = {

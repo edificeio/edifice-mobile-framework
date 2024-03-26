@@ -20,7 +20,7 @@ export interface TrackValuesMap {
 
 export const makeTrackOption =
   <Args extends any[], ReturnType>(
-    mConf: IAnyModuleConfig,
+    mConf: Pick<IAnyModuleConfig, 'trackingName'>,
     trackValues: TrackValuesMap | ((returnedValue: Awaited<ReturnType> | Error, ...args: Args) => TrackValuesMap),
   ): TryActionOptions<Args, ReturnType>['track'] =>
   (returnedValue: Awaited<ReturnType> | Error, ...args: Args) => {
