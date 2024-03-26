@@ -17,7 +17,10 @@ import ChangePasswordScreen from '~/framework/modules/auth/templates/change-pass
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
+import moduleConfig from '../../../module-config';
+import { trackingScenarios } from '../../../tracking';
 import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -44,17 +47,21 @@ export default connect(
   (dispatch: ThunkDispatch<any, any, any>, props: AuthChangePasswordScreenOwnProps) => {
     return bindActionCreators<ChangePasswordScreenDispatchProps>(
       {
-        trySubmit: tryAction((...args) => (d, gs) => {
-          const session = selectors.session(gs());
-          const replaceAccountId = session ? session.user.id : props.route.params.replaceAccountId;
-          const replaceAccountTimestamp = session ? session.addTimestamp : props.route.params.replaceAccountTimestamp;
-          const action =
-            replaceAccountId && replaceAccountTimestamp
-              ? buildChangePasswordActionReplaceAccount(replaceAccountId, replaceAccountTimestamp)
-              : changePasswordActionAddFirstAccount;
+        trySubmit: tryAction(
+          (...args) =>
+            (d, gs) => {
+              const session = selectors.session(gs());
+              const replaceAccountId = session ? session.user.id : props.route.params.replaceAccountId;
+              const replaceAccountTimestamp = session ? session.addTimestamp : props.route.params.replaceAccountTimestamp;
+              const action =
+                replaceAccountId && replaceAccountTimestamp
+                  ? buildChangePasswordActionReplaceAccount(replaceAccountId, replaceAccountTimestamp)
+                  : changePasswordActionAddFirstAccount;
 
-          return d(action(...args));
-        }),
+              return d(action(...args));
+            },
+          props.route.params.useResetCode ? { track: makeTrackOption(moduleConfig, trackingScenarios.Renouvellement) } : undefined,
+        ),
         tryLogout: tryAction(manualLogoutAction),
       },
       dispatch,

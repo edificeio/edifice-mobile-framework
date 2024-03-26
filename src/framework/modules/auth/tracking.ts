@@ -18,6 +18,7 @@ export const trackingScenarios = trackScenarios({
     },
   },
   Activation: {},
+  Renouvellement: {},
 });
 
 export const trackingWayfEvents = {

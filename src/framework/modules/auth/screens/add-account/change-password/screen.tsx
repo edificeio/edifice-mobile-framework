@@ -12,8 +12,11 @@ import ChangePasswordScreen from '~/framework/modules/auth/templates/change-pass
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
+import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
-import type { AuthChangePasswordScreenPrivateProps } from './types';
+import moduleConfig from '../../../module-config';
+import { trackingScenarios } from '../../../tracking';
+import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -33,10 +36,13 @@ export default connect(
       context: props.route.params.platform ? getPlatformContextOf(props.route.params.platform) : getPlatformContext(),
     };
   },
-  (dispatch: ThunkDispatch<any, any, any>) => {
+  (dispatch: ThunkDispatch<any, any, any>, props: AuthChangePasswordScreenOwnProps) => {
     return bindActionCreators<ChangePasswordScreenDispatchProps>(
       {
-        trySubmit: tryAction(changePasswordActionAddAnotherAccount),
+        trySubmit: tryAction(
+          changePasswordActionAddAnotherAccount,
+          props.route.params.useResetCode ? { track: makeTrackOption(moduleConfig, trackingScenarios.Renouvellement) } : undefined,
+        ),
         tryLogout: tryAction(manualLogoutAction),
       },
       dispatch,
