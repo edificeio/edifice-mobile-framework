@@ -134,6 +134,8 @@ const RichEditorForm = (props: RichEditorFormProps) => {
               onChange={handleChange}
               onCursorPosition={handleCursorPosition}
               onFocus={handleFocus}
+              autoCorrect
+              autoCapitalize
             />
           </ScrollView>
           {renderToolbar()}

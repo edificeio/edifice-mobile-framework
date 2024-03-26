@@ -136,8 +136,6 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
           <MultilineTextInput
             style={styles.inputTitle}
             placeholder={I18n.get('blog-createpost-inputtitle')}
-            autoCorrect={false}
-            spellCheck={false}
             numberOfLines={1}
             onChangeText={text => setTitle(text)}
             value={title}
