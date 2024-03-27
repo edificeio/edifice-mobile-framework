@@ -3,8 +3,6 @@ import { Error } from '~/framework/util/error';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { TRACK_DEFAULT, TRACK_ERROR, createTrackEvents } from '~/framework/util/tracker/track-opt';
 
-import moduleConfig from './module-config';
-
 enum TrackCategory {
   Authentification = 'Authentification',
   Compte = 'Compte',
@@ -36,13 +34,31 @@ export default createTrackEvents({
   addAccount: {
     [TRACK_DEFAULT]: [TrackCategory.Compte, 'Ajout de compte'],
   },
+  logout: {
+    [TRACK_DEFAULT]: [TrackCategory.Compte, 'Déconnexion'],
+  },
 });
 
 export const trackingWayfEvents = {
   loadSuccess: (url: string) => {
-    Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Affichage WAYF', true), url);
+    Trackers.trackEvent(TrackCategory.Authentification, trackingActionAddSuffix('Affichage WAYF', true), url);
   },
   loadError: (url: string, code?: number) => {
-    Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Affichage WAYF', false), url, code);
+    Trackers.trackEvent(TrackCategory.Authentification, trackingActionAddSuffix('Affichage WAYF', false), url, code);
+  },
+};
+
+export const trackingAccountEvents = {
+  switchAccountPressButton: () => {
+    Trackers.trackEvent(TrackCategory.Compte, 'Changer compte', 'Mon compte → Changer compte');
+  },
+  manageAccountsPressButton: () => {
+    Trackers.trackEvent(TrackCategory.Compte, 'Gérer comptes', 'Sélection compte → Gérer comptes');
+  },
+  deleteAccountFromSwitchAccount: () => {
+    Trackers.trackEvent(TrackCategory.Compte, 'Supprimer compte', 'Mon compte → Changer compte → Supprimer compte');
+  },
+  deleteAccountFromManageAccounts: () => {
+    Trackers.trackEvent(TrackCategory.Compte, 'Supprimer compte', 'Sélection compte → Gérer comptes → Supprimer compte');
   },
 };

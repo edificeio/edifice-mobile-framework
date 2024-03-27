@@ -40,7 +40,7 @@ import { LoginState } from '~/framework/modules/auth/screens/main-account/accoun
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
-import track from '~/framework/modules/auth/tracking';
+import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
@@ -330,6 +330,7 @@ function useAccountsFeature(
   const canManageAccounts = userCanAddAccount(session);
   const navigation = useNavigation<NavigationProp<UserNavigationParams & AuthNavigationParams>>();
   const showAccountList = React.useCallback(() => {
+    trackingAccountEvents.switchAccountPressButton();
     accountListRef.current?.present();
   }, [accountListRef]);
   const addAccount = React.useCallback(() => {
@@ -385,6 +386,7 @@ function useAccountsFeature(
   const onDeleteItem = React.useCallback(
     async (item: (typeof data)[0], index: number) => {
       try {
+        trackingAccountEvents.deleteAccountFromSwitchAccount();
         const account = accounts[item.user.id];
         await tryRemoveAccount(account);
         if (session?.user.id !== item.user.id) toast.showSuccess(I18n.get('auth-accountlist-delete-success'));
@@ -596,7 +598,7 @@ export default connect(
   dispatch =>
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
-        handleLogout: handleAction(manualLogoutAction),
+        handleLogout: handleAction(manualLogoutAction, { track: track.logout }),
         trySwitch: tryAction(switchAccountAction, {
           track: track.loginRestore,
         }),

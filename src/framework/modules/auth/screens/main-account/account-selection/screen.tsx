@@ -26,7 +26,7 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
-import track from '~/framework/modules/auth/tracking';
+import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
@@ -52,6 +52,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const onHandleAccounts = () => {
+    trackingAccountEvents.manageAccountsPressButton();
     accountListRef.current?.present();
   };
   const data = React.useMemo(() => getOrderedAccounts(props.accounts), [props.accounts]);
@@ -106,6 +107,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const onDeleteItem = React.useCallback(
     async (item: (typeof data)[0], index: number) => {
       try {
+        trackingAccountEvents.deleteAccountFromManageAccounts();
         const account = accounts[item.user.id];
         await tryRemoveAccount(account);
         accountListRef.current?.dismiss();
