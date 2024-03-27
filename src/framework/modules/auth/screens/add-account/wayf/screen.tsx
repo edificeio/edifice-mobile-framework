@@ -35,9 +35,12 @@ export default connect(
   dispatch =>
     bindActionCreators<WAYFScreenDispatchProps>(
       {
-        tryLogin: tryAction(loginFederationActionAddAnotherAccount, {
-          track: track.loginFederation,
-        }),
+        tryLogin: tryAction(
+          tryAction(loginFederationActionAddAnotherAccount, {
+            track: track.loginFederation,
+          }),
+          { track: track.addAccount },
+        ),
       },
       dispatch,
     ),

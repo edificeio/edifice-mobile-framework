@@ -33,6 +33,9 @@ export default createTrackEvents({
   loginRestore: {
     [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Connexion auto'],
   },
+  addAccount: {
+    [TRACK_DEFAULT]: [TrackCategory.Compte, 'Ajout de compte'],
+  },
 });
 
 export const trackingWayfEvents = {

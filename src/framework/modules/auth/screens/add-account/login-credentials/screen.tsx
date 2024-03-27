@@ -61,12 +61,20 @@ export default connect(
   dispatch =>
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
-        tryLoginAdd: tryAction(loginCredentialsActionAddAnotherAccount, {
-          track: track.loginCredentials,
-        }),
-        tryLoginReplace: tryAction(loginCredentialsActionReplaceAccount, {
-          track: track.loginCredentials,
-        }),
+        tryLoginAdd: tryAction(
+          tryAction(loginCredentialsActionAddAnotherAccount, {
+            track: track.loginCredentials,
+          }),
+          { track: track.addAccount },
+        ),
+        // Usually, tryLoginReplace is useless in this case.
+        // ToDo : fix it like in wayfscreen
+        tryLoginReplace: tryAction(
+          tryAction(loginCredentialsActionReplaceAccount, {
+            track: track.loginCredentials,
+          }),
+          { track: track.addAccount },
+        ),
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },
       dispatch,
