@@ -1,9 +1,22 @@
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { Error } from '~/framework/util/error';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
-import { TRACK_ERROR, trackScenarios } from '~/framework/util/tracker/track-opt';
+import { TRACK_DEFAULT, TRACK_ERROR, createTrackEvents, trackScenarios } from '~/framework/util/tracker/track-opt';
 
 import moduleConfig from './module-config';
+
+enum TrackCategory {
+  Authentification = 'Authentification',
+  Compte = 'Compte',
+}
+
+export default createTrackEvents({
+  loginCredentials: {
+    [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Connexion simple'],
+    [AuthPendingRedirection.ACTIVATE]: [TrackCategory.Authentification, ['Activation', 'Init']],
+    [AuthPendingRedirection.RENEW_PASSWORD]: [TrackCategory.Authentification, ['Renouvellement', 'Init']],
+  },
+});
 
 export const trackingScenarios = trackScenarios({
   'Connexion simple': {
