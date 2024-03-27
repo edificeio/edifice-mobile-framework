@@ -22,16 +22,14 @@ import {
   accountIsLoggable,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
-import { trackingScenarios } from '~/framework/modules/auth/tracking';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 import { Loading } from '~/ui/Loading';
 
 import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
@@ -178,7 +176,7 @@ export default connect(
     bindActionCreators<AuthAccountSelectionScreenDispatchProps>(
       {
         tryRestore: tryAction(restoreAccountAction, {
-          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion auto']),
+          track: track.loginRestore,
         }),
         tryRemoveAccount: handleAction(removeAccountAction),
       },

@@ -1,7 +1,7 @@
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { Error } from '~/framework/util/error';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
-import { TRACK_DEFAULT, TRACK_ERROR, createTrackEvents, trackScenarios } from '~/framework/util/tracker/track-opt';
+import { TRACK_DEFAULT, TRACK_ERROR, createTrackEvents } from '~/framework/util/tracker/track-opt';
 
 import moduleConfig from './module-config';
 
@@ -30,10 +30,9 @@ export default createTrackEvents({
       return undefined;
     },
   },
-});
-
-export const trackingScenarios = trackScenarios({
-  'Connexion auto': {},
+  loginRestore: {
+    [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Connexion auto'],
+  },
 });
 
 export const trackingWayfEvents = {

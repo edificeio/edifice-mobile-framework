@@ -3,12 +3,10 @@ import { ThunkDispatch } from 'redux-thunk';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/module-config';
-import { trackingScenarios } from '~/framework/modules/auth/tracking';
+import track from '~/framework/modules/auth/tracking';
 import { appReadyAction } from '~/framework/navigation/redux';
 import { tryAction } from '~/framework/util/redux/actions';
 import { Storage } from '~/framework/util/storage';
-import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
 import { I18n } from './i18n';
 
@@ -27,7 +25,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
   useConstructor(async () => {
     try {
       const tryRestore = tryAction(restoreAccountAction, {
-        track: makeTrackOption(moduleConfig, trackingScenarios['Connexion auto']),
+        track: track.loginRestore,
       });
       await initFeatures();
       const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch async
