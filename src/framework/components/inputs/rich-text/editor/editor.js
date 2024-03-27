@@ -601,7 +601,7 @@ function createHTML(options = {}) {
             UPDATE_HEIGHT: function() {
                 if (!${useContainer}) return;
                 // var height = Math.max(docEle.scrollHeight, body.scrollHeight);
-                var height = editor.content.scrollHeight;
+                var height = editor.content.scrollHeight + ${TextSizeStyle.Huge.lineHeight};
                 if (o_height !== height){
                     _postMessage({type: 'OFFSET_HEIGHT', data: o_height = height});
                 }
