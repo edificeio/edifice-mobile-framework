@@ -100,14 +100,14 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private contentComponents = [
     // WAYFPageMode.EMPTY: Display empty screen
     () => {
-      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'));
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Erreur'));
       return (
         <EmptyScreen svgImage="empty-content" text={I18n.get('auth-wayf-empty-text')} title={I18n.get('auth-wayf-empty-title')} />
       );
     },
     // WAYFPageMode.ERROR: Display error message
     () => {
-      Trackers.trackEventOfModule(moduleConfig, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'Erreur'), this.error?.toString());
       return (
         <View style={styles.container}>
           <PFLogo pf={this.props.route.params.platform} />

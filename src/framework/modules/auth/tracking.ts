@@ -22,16 +22,18 @@ export default createTrackEvents({
   passwordRenew: {
     [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Renouvellement'],
   },
+  loginFederation: {
+    [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Connexion fédérée'],
+    [TRACK_ERROR]: e => {
+      if (e instanceof Error.SamlMultipleVectorError)
+        return [TrackCategory.Authentification, ['Connexion fédérée', 'Multiple'], undefined, e.data.users.length];
+      return undefined;
+    },
+  },
 });
 
 export const trackingScenarios = trackScenarios({
   'Connexion auto': {},
-  'Connexion fédérée': {
-    [TRACK_ERROR]: e => {
-      if (e instanceof Error.SamlMultipleVectorError) return ['Multiple', '', e.data.users.length];
-      return undefined;
-    },
-  },
 });
 
 export const trackingWayfEvents = {

@@ -75,6 +75,7 @@ type Category = string;
 type Action = string;
 type ActionSuffix = string;
 type Name = string;
+type ErrorName = typeof TRACK_ERROR_CODE | Name;
 type Value = number;
 
 export type TrackingEventDefaultSuccessValues = [Category, Action, Name?, Value?];
@@ -87,18 +88,15 @@ export type TrackingScenarioSuccess<Args extends any[], ReturnType> =
       ...args: Args
     ) => TrackingEventDefaultSuccessValues | TrackingEventCustomSuccessValues | undefined);
 
-export type TrackingEventDefaultErrorValue = [Category, Action, typeof TRACK_ERROR_CODE, Value?];
-export type TrackingEventCustomErrorValue = [Category, [Action, ActionSuffix], typeof TRACK_ERROR_CODE, Value?];
-export type TrackingScenarioError<Args extends any[], ReturnType> =
+export type TrackingEventDefaultErrorValue = [Category, Action, ErrorName?, Value?];
+export type TrackingEventCustomErrorValue = [Category, [Action, ActionSuffix], ErrorName?, Value?];
+export type TrackingScenarioError<Args extends any[]> =
   | TrackingEventDefaultErrorValue
   | TrackingEventCustomErrorValue
-  | ((
-      returnedValue: Awaited<ReturnType> | Error,
-      ...args: Args
-    ) => TrackingEventDefaultErrorValue | TrackingEventCustomErrorValue | undefined);
+  | ((returnedValue: Error, ...args: Args) => TrackingEventDefaultErrorValue | TrackingEventCustomErrorValue | undefined);
 
 export type TrackingScenario<Args extends any[], ReturnType> = {
-  [TRACK_ERROR]?: TrackingScenarioError<Args, ReturnType>;
+  [TRACK_ERROR]?: TrackingScenarioError<Args>;
   [TRACK_DEFAULT]: TrackingScenarioSuccess<Args, ReturnType>;
   [key: string]: TrackingScenarioSuccess<Args, ReturnType>;
 };
@@ -108,7 +106,10 @@ const createTrackOption =
   (returnedValue: Awaited<ReturnType> | Error, ...args: Args) => {
     if (returnedValue instanceof global.Error) {
       const errorScenario = scenario[TRACK_ERROR] ?? scenario[TRACK_DEFAULT];
-      const errorScenarioValues = typeof errorScenario === 'function' ? errorScenario(returnedValue, ...args) : errorScenario;
+      let errorScenarioValues = typeof errorScenario === 'function' ? errorScenario(returnedValue, ...args) : errorScenario;
+      if (errorScenarioValues === undefined)
+        errorScenarioValues =
+          typeof scenario[TRACK_DEFAULT] === 'function' ? scenario[TRACK_DEFAULT](returnedValue, ...args) : scenario[TRACK_DEFAULT];
       return (
         errorScenarioValues &&
         ([

@@ -6,15 +6,13 @@ import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { loginFederationActionAddAnotherAccount } from '~/framework/modules/auth/actions';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
-import { trackingScenarios } from '../../../tracking';
 import { AuthWayfAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -38,7 +36,7 @@ export default connect(
     bindActionCreators<WAYFScreenDispatchProps>(
       {
         tryLogin: tryAction(loginFederationActionAddAnotherAccount, {
-          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion fédérée']),
+          track: track.loginFederation,
         }),
       },
       dispatch,
