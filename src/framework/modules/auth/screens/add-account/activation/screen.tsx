@@ -10,10 +10,10 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getPlatformContextOf, getPlatformLegalUrlsOf } from '~/framework/modules/auth/reducer';
 import ActivationScreen from '~/framework/modules/auth/templates/activation';
 import { ActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation/types';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import track from '../../../tracking';
 import type { AuthActivationAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({

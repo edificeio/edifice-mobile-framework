@@ -15,10 +15,10 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import LoginCredentialsScreen from '~/framework/modules/auth/templates/login-credentials';
 import { LoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 
-import track from '../../../tracking';
 import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({

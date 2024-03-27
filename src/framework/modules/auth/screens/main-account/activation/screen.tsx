@@ -9,10 +9,10 @@ import { activateAccountActionAddFirstAccount } from '~/framework/modules/auth/a
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContextOf, getPlatformLegalUrlsOf } from '~/framework/modules/auth/reducer';
 import ActivationScreen, { ActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import track from '../../../tracking';
 import type { AuthActivationScreenPrivateProps } from './types';
 
 export const computeNavBar = ({

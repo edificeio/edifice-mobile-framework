@@ -1,12 +1,12 @@
 import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
 
+import { AuthPendingRedirection, AuthRequirement } from '~/framework/modules/auth/model';
+import { AuthPendingRestore, IAuthState, getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import { authRouteNames, simulateNavAction } from '..';
-import { AuthPendingRedirection, AuthRequirement } from '../../model';
-import { AuthPendingRestore, IAuthState, getPlatform, getSession } from '../../reducer';
 
 /** @deprecated */
 export const getLoginRouteName = (platform?: Platform) => {

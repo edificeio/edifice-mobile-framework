@@ -15,10 +15,10 @@ import { getPlatformContext, getPlatformContextOf, getSession } from '~/framewor
 import * as selectors from '~/framework/modules/auth/redux/selectors';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import track from '../../../tracking';
 import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 export const computeNavBar = ({

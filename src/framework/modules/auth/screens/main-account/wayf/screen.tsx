@@ -11,11 +11,11 @@ import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import WayfScreen, { WAYFScreenDispatchProps } from '~/framework/modules/auth/templates/wayf';
+import { trackingScenarios } from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
-import { trackingScenarios } from '../../../tracking';
 import { AuthWayfScreenPrivateProps } from './types';
 
 export const computeNavBar = ({

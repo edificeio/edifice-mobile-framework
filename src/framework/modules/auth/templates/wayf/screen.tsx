@@ -19,15 +19,15 @@ import { PageView } from '~/framework/components/page';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallText } from '~/framework/components/text';
 import { consumeAuthErrorAction } from '~/framework/modules/auth/actions';
+import moduleConfig from '~/framework/modules/auth/module-config';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
+import { trackingWayfEvents } from '~/framework/modules/auth/tracking';
 import { navBarTitle } from '~/framework/navigation/navBar';
 import { Error } from '~/framework/util/error';
 import { Trackers, trackingActionAddSuffix } from '~/framework/util/tracker';
 import { OAuthCustomTokens } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
-import moduleConfig from '../../module-config';
-import { trackingWayfEvents } from '../../tracking';
 import styles from './styles';
 import { IWayfScreenProps, IWayfScreenState, WAYFPageMode } from './types';
 

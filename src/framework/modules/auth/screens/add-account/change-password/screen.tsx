@@ -10,10 +10,10 @@ import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/n
 import { getPlatformContext, getPlatformContextOf } from '~/framework/modules/auth/reducer';
 import ChangePasswordScreen from '~/framework/modules/auth/templates/change-password';
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
-import track from '../../../tracking';
 import type { AuthChangePasswordScreenOwnProps, AuthChangePasswordScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
