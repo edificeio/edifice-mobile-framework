@@ -311,6 +311,7 @@ interface AuthLoginFunctions {
     | ((...args: Parameters<typeof actions.addAccountRequirement>) => ThunkAction<void, IGlobalState, undefined, AnyAction>);
   activation: typeof actions.redirectActivation;
   passwordRenew: typeof actions.redirectPasswordRenew;
+  redirectCancel: typeof actions.redirectCancel | typeof actions.addAccountRedirectCancel;
   writeStorage: typeof writeCreateAccount;
   getTimestamp: () => number;
 }
@@ -323,6 +324,7 @@ const getLoginFunctions = {
         actions.replaceAccountRequirement(ERASE_ALL_ACCOUNTS, ...args),
       activation: actions.redirectActivation,
       passwordRenew: actions.redirectPasswordRenew,
+      redirectCancel: actions.redirectCancel,
       writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(ERASE_ALL_ACCOUNTS, ...args),
       getTimestamp: Date.now,
     }) as AuthLoginFunctions,
@@ -333,12 +335,12 @@ const getLoginFunctions = {
       activation: actions.redirectActivation,
       passwordRenew: (...[platformName, login, code]: Parameters<typeof actions.redirectPasswordRenew>) =>
         actions.redirectPasswordRenew(platformName, login, code, id, timestamp),
+      redirectCancel: actions.redirectCancel,
       writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
       getTimestamp: () => timestamp,
     }) as AuthLoginFunctions,
   addAnotherAccount: () =>
     ({
-      // success: actions.addAccount,
       success:
         (...args: Parameters<typeof actions.addAccount>) =>
         async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
@@ -351,6 +353,7 @@ const getLoginFunctions = {
         },
       activation: actions.addAccountActivation,
       passwordRenew: actions.addAccountPasswordRenew,
+      redirectCancel: actions.addAccountRedirectCancel,
       writeStorage: writeCreateAccount,
       getTimestamp: Date.now,
     }) as AuthLoginFunctions,
@@ -360,6 +363,7 @@ const getLoginFunctions = {
       requirement: (...args: Parameters<typeof actions.addAccountRequirement>) => actions.replaceAccountRequirement(id, ...args),
       activation: actions.redirectActivation,
       passwordRenew: actions.redirectPasswordRenew,
+      redirectCancel: actions.redirectCancel,
       writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
       getTimestamp: () => timestamp,
     }) as AuthLoginFunctions,
@@ -377,6 +381,7 @@ const getLoginFunctions = {
         },
       activation: actions.redirectActivation,
       passwordRenew: actions.redirectPasswordRenew,
+      redirectCancel: actions.redirectCancel,
       writeStorage: (...args: Parameters<typeof writeCreateAccount>) => writeReplaceAccount(id, ...args),
       getTimestamp: () => timestamp,
     }) as AuthLoginFunctions,
@@ -626,18 +631,24 @@ export const revalidateTermsAction = () => async (dispatch: AuthDispatch) => {
 const activateAccountAction =
   (reduxActions: AuthLoginFunctions, platform: Platform, model: ActivationPayload) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState) => {
+    let activationWasDone = false;
     try {
       await authService.activateAccount(platform, model);
-      dispatch(
+      activationWasDone = true;
+      await dispatch(
         loginCredentialsAction(reduxActions, platform, {
           username: model.login,
           password: model.password,
         }),
       );
     } catch (e) {
-      console.warn(e);
+      if (activationWasDone) {
+        dispatch(reduxActions.redirectCancel(platform.name, model.login));
+      }
+
       if ((e as IActivationError).name === 'EACTIVATION') throw e;
-      else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '', e as object);
+      else if (e instanceof global.Error) throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '', e);
+      else throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'), '');
     }
   };
 
@@ -802,12 +813,17 @@ function changePasswordAction(
       else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
     }
 
-    // 4 === Login back to get renewed token
-    const credentials: AuthCredentials = {
-      username: p.login,
-      password: p.newPassword,
-    };
-    await dispatch(loginCredentialsAction(reduxActions, platform, credentials));
+    try {
+      // 4 === Login back to get renewed token
+      const credentials: AuthCredentials = {
+        username: p.login,
+        password: p.newPassword,
+      };
+      await dispatch(loginCredentialsAction(reduxActions, platform, credentials));
+    } catch (e) {
+      dispatch(reduxActions.redirectCancel(platform.name, p.login));
+      throw e;
+    }
   };
 }
 

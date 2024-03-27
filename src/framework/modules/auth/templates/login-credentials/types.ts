@@ -24,6 +24,7 @@ export interface LoginCredentialsScreenProps {
 export interface LoginCredentialsScreenNavParams {
   platform: Platform;
   accountId?: string;
+  loginUsed?: string; // used when activation & pwd renews fails
 }
 
 export interface LoginCredentialsScreenStoreProps {

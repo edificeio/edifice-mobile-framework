@@ -2,7 +2,6 @@ import { CommonActions, NavigationState, PartialState, StackActions } from '@rea
 
 import { AuthPendingRedirection } from '~/framework/modules/auth/model';
 import { authRouteNames, simulateNavAction } from '~/framework/modules/auth/navigation';
-import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
 import { IAuthState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
@@ -47,7 +46,7 @@ export const getAddAccountNavActionForRedirect = (platform: Platform, pending: I
   }
 };
 
-export const getAddAccountNavigationState = (pending: IAuthState['pending']) => {
+export const getAddAccountNavigationState = (pending: IAuthState['pendingAddAccount']) => {
   const routes = [] as RouteStack;
   const allPlatforms = appConf.platforms;
 
@@ -56,7 +55,7 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
   // 4 – Requirement & login redirections
   // 4.1 – Get corresponding nav action action
   let navRedirection: StackNavigationAction | undefined;
-  if (pending?.redirect !== undefined) {
+  if (pending) {
     // 2 - Platform Select / Account Select
     if (appConf.hasMultiplePlatform) {
       routes.push({ name: authRouteNames.addAccountPlatforms });
@@ -65,15 +64,16 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
     // 3 - Login Screen
     // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
     let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
-    // let login: string | undefined;
+    let loginWithoutAccountId: string | undefined;
     let accountId: keyof IAuthState['accounts'] | undefined;
 
-    if (pending) {
-      foundPlatform = pending.platform;
-      if (pending.redirect !== undefined) {
-        // Activation && password renew
-        // login = pending.loginUsed;
-      }
+    foundPlatform = pending.platform;
+    if (pending.redirect === undefined) {
+      // Session restore (for failed activation & renews)
+      loginWithoutAccountId = pending.loginUsed;
+    } else {
+      // Activation && password renew
+      // login = pending.loginUsed;
     }
 
     // 3.2 – Get the actual platform object to be loaded
@@ -86,9 +86,12 @@ export const getAddAccountNavigationState = (pending: IAuthState['pending']) => 
       : allPlatforms[0];
 
     // 3.3 – Put the platform route into the stack
-    if (platform && !routes.length) {
-      const nextScreen = getLoginNextScreen(platform);
-      routes.push({ ...nextScreen, params: { ...nextScreen.params, accountId } });
+    if (platform && pending && pending.redirect === undefined && (accountId || loginWithoutAccountId)) {
+      const nextScreen = getAddAccountLoginNextScreen(platform);
+      routes.push({
+        ...nextScreen,
+        params: { ...nextScreen.params, accountId, loginUsed: accountId === undefined ? loginWithoutAccountId : undefined },
+      });
     }
 
     if (platform) navRedirection = getAddAccountNavActionForRedirect(platform, pending);

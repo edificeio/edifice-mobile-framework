@@ -12,10 +12,8 @@ import ActivationScreen from '~/framework/modules/auth/templates/activation';
 import { ActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
-import moduleConfig from '../../../module-config';
-import { trackingScenarios } from '../../../tracking';
+import track from '../../../tracking';
 import type { AuthActivationAddAccountScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -28,7 +26,6 @@ export const computeNavBar = ({
     title: I18n.get('auth-navigation-activation-title'),
   }),
 });
-
 export default connect(
   (state, props: AuthActivationAddAccountScreenPrivateProps) => {
     return {
@@ -40,7 +37,7 @@ export default connect(
     return bindActionCreators<ActivationScreenDispatchProps>(
       {
         trySubmit: tryAction(activateAccountActionAddAnotherAccount, {
-          track: makeTrackOption(moduleConfig, trackingScenarios.Activation),
+          track: track.activation,
         }),
       },
       dispatch,

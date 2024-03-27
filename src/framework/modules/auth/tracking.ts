@@ -16,13 +16,15 @@ export default createTrackEvents({
     [AuthPendingRedirection.ACTIVATE]: [TrackCategory.Authentification, ['Activation', 'Init']],
     [AuthPendingRedirection.RENEW_PASSWORD]: [TrackCategory.Authentification, ['Renouvellement', 'Init']],
   },
+  activation: {
+    [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Activation'],
+  },
+  passwordRenew: {
+    [TRACK_DEFAULT]: [TrackCategory.Authentification, 'Renouvellement'],
+  },
 });
 
 export const trackingScenarios = trackScenarios({
-  'Connexion simple': {
-    [AuthPendingRedirection.ACTIVATE]: ['Activation'],
-    [AuthPendingRedirection.RENEW_PASSWORD]: ['Renouvellement'],
-  },
   'Connexion auto': {},
   'Connexion fédérée': {
     [TRACK_ERROR]: e => {
@@ -30,8 +32,6 @@ export const trackingScenarios = trackScenarios({
       return undefined;
     },
   },
-  Activation: {},
-  Renouvellement: {},
 });
 
 export const trackingWayfEvents = {
