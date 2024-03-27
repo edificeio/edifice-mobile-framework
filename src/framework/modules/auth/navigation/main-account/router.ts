@@ -128,7 +128,7 @@ export const getAuthNavigationState = (
   const multipleAccounts = accountsAsArray.length > 1;
   if (multipleAccounts || (lastDeletedAccount && accountsAsArray.length)) {
     // Push account select here
-    routes.push({ name: authRouteNames.accountSelection });
+    routes.push({ name: authRouteNames.accounts });
   } else if (appConf.hasMultiplePlatform) {
     routes.push({ name: authRouteNames.platforms });
   } // if single account && single platform, do not push any routes

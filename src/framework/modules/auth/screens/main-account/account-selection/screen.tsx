@@ -37,7 +37,7 @@ import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPriv
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accountSelection>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accounts>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
       navigation,

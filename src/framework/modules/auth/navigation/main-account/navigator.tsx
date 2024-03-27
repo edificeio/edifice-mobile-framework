@@ -51,11 +51,7 @@ export default function () {
         options={loginCredentialsNavBar}
       />
 
-      <Stack.Screen
-        name={authRouteNames.accountSelection}
-        component={AuthAccountSelectionScreen}
-        options={authAccountSelectionNavBar}
-      />
+      <Stack.Screen name={authRouteNames.accounts} component={AuthAccountSelectionScreen} options={authAccountSelectionNavBar} />
 
       <Stack.Screen name={authRouteNames.loginWayf} component={AuthLoginWayfScreen} options={loginWayfNavBar} />
       <Stack.Screen name={authRouteNames.wayf} component={AuthWayfScreen} options={wayfNavBar} />
