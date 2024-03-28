@@ -71,6 +71,17 @@ import {
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
+const MAX_AUTH_TIMEOUT = 15000;
+
+let loginCanceled = false;
+
+const assertCancelLogin = () => {
+  if (loginCanceled) {
+    loginCanceled = false;
+    throw new Error.LoginError(Error.FetchErrorType.TIMEOUT);
+  }
+};
+
 /**
  * Init the auth state with walues read from the storage.
  * @returns If exist, the startup account to try refresh session with.
@@ -164,6 +175,34 @@ const withErrorTracking = <Fn extends (...args: any[]) => any>(
       throw e;
     }
   }) as Fn;
+};
+
+const raceTimeoutAction = <ReturnType>(fn: ThunkAction<ReturnType, any, any, any>, timeout: number, key?: number) => {
+  return async (...args: Parameters<typeof fn>) => {
+    try {
+      loginCanceled = false;
+      const ret = await Promise.race([
+        fn(...args),
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            reject(new Error.FetchError(Error.FetchErrorType.TIMEOUT));
+          }, timeout);
+        }),
+      ]);
+      loginCanceled = false;
+      return ret;
+    } catch (e) {
+      loginCanceled = true;
+      args[0](
+        actions.authError({
+          key,
+          info: e as Error,
+        }),
+      );
+      console.debug('[Auth] Login Timeout exceeded', e);
+      throw e;
+    }
+  };
 };
 
 /**
@@ -395,8 +434,11 @@ const performLogin = async (
   loginUsed: string | undefined,
   dispatch: AuthDispatch,
 ) => {
+  assertCancelLogin();
   const requirement = await loginSteps.getRequirement(platform);
+  assertCancelLogin();
   const user = await loginSteps.getUserData(platform, requirement);
+  assertCancelLogin();
   const accountInfo = await loginSteps.finalizeSession(
     reduxActions.getTimestamp(),
     platform,
@@ -420,41 +462,44 @@ const performLogin = async (
 };
 
 /** Generic thunk action that handle everything for a login with credentials */
-const loginCredentialsAction =
-  (functions: AuthLoginFunctions, platform: Platform, credentials: AuthCredentials, key?: number) =>
-  async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-    try {
-      // Nested try/catch block to handle CREDENTIALS_MISMATCH errors caused by activation/renew code use.
+const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platform, credentials: AuthCredentials, key?: number) =>
+  raceTimeoutAction(
+    async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
       try {
-        await loginSteps.getNewToken(platform, credentials);
-        const session = await performLogin(functions, platform, credentials.username, dispatch);
-        functions.writeStorage(session, getAuthState(getState()).showOnboarding);
-        return session;
-      } catch (ee) {
-        if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH) {
-          switch (await loginSteps.checkActivationAndRenew(platform, credentials)) {
-            case AuthPendingRedirection.ACTIVATE:
-              dispatch(functions.activation(platform.name, credentials.username, credentials.password));
-              return AuthPendingRedirection.ACTIVATE;
-            case AuthPendingRedirection.RENEW_PASSWORD:
-              dispatch(functions.passwordRenew(platform.name, credentials.username, credentials.password));
-              return AuthPendingRedirection.RENEW_PASSWORD;
+        // Nested try/catch block to handle CREDENTIALS_MISMATCH errors caused by activation/renew code use.
+        try {
+          await loginSteps.getNewToken(platform, credentials);
+          const session = await performLogin(functions, platform, credentials.username, dispatch);
+          functions.writeStorage(session, getAuthState(getState()).showOnboarding);
+          return session;
+        } catch (ee) {
+          if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH) {
+            switch (await loginSteps.checkActivationAndRenew(platform, credentials)) {
+              case AuthPendingRedirection.ACTIVATE:
+                dispatch(functions.activation(platform.name, credentials.username, credentials.password));
+                return AuthPendingRedirection.ACTIVATE;
+              case AuthPendingRedirection.RENEW_PASSWORD:
+                dispatch(functions.passwordRenew(platform.name, credentials.username, credentials.password));
+                return AuthPendingRedirection.RENEW_PASSWORD;
+            }
+          } else {
+            throw ee;
           }
-        } else {
-          throw ee;
         }
+      } catch (e) {
+        console.warn(`[Auth] Login credentials error :`, e);
+        dispatch(
+          actions.authError({
+            key,
+            info: e as Error,
+          }),
+        );
+        throw e;
       }
-    } catch (e) {
-      console.warn(`[Auth] Login credentials error :`, e);
-      dispatch(
-        actions.authError({
-          key,
-          info: e as Error,
-        }),
-      );
-      throw e;
-    }
-  };
+    },
+    MAX_AUTH_TIMEOUT,
+    key,
+  );
 
 /**
  * Manual login action with credentials by getting a fresh new token.
@@ -496,32 +541,40 @@ export const loginCredentialsActionAddAnotherAccount = (platform: Platform, cred
  * @returns
  * @throws
  */
-const loginFederationAction =
-  (functions: AuthLoginFunctions, platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
-  async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
-    try {
-      await loginSteps.getNewToken(platform, credentials);
-      const session = await performLogin(functions, platform, undefined, dispatch);
-      functions.writeStorage(session, getAuthState(getState()).showOnboarding);
-      return session;
-    } catch (e) {
-      // When login in with federation, "CREDENTIALS_MISMATCH" is the errcode obtained if the saml token does not link to an actual user account.
-      // We override the error type to "SAML_INVALID" in this case.
-      const error =
-        e instanceof Error.ErrorWithType && e.type === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH
-          ? new Error.LoginError(Error.OAuth2ErrorType.SAML_INVALID, undefined, { cause: e.cause })
-          : e;
+const loginFederationAction = (
+  functions: AuthLoginFunctions,
+  platform: Platform,
+  credentials: AuthFederationCredentials,
+  key?: number,
+) =>
+  raceTimeoutAction(
+    async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+      try {
+        await loginSteps.getNewToken(platform, credentials);
+        const session = await performLogin(functions, platform, undefined, dispatch);
+        functions.writeStorage(session, getAuthState(getState()).showOnboarding);
+        return session;
+      } catch (e) {
+        // When login in with federation, "CREDENTIALS_MISMATCH" is the errcode obtained if the saml token does not link to an actual user account.
+        // We override the error type to "SAML_INVALID" in this case.
+        const error =
+          e instanceof Error.ErrorWithType && e.type === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH
+            ? new Error.LoginError(Error.OAuth2ErrorType.SAML_INVALID, undefined, { cause: e.cause })
+            : e;
 
-      console.warn(`[Auth] Login federation error :`, error);
-      dispatch(
-        actions.authError({
-          key,
-          info: error as Error,
-        }),
-      );
-      throw error;
-    }
-  };
+        console.warn(`[Auth] Login federation error :`, error);
+        dispatch(
+          actions.authError({
+            key,
+            info: error as Error,
+          }),
+        );
+        throw error;
+      }
+    },
+    MAX_AUTH_TIMEOUT,
+    key,
+  );
 
 export const loginFederationActionAddFirstAccount = (platform: Platform, credentials: AuthFederationCredentials, key?: number) =>
   loginFederationAction(getLoginFunctions.addFirstAccount(), platform, credentials, key);
@@ -543,9 +596,8 @@ export const loginFederationActionAddAnotherAccount = (platform: Platform, crede
  * @returns
  * @throws
  */
-const loadAccountAction =
-  (functions: AuthLoginFunctions, account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
-  async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
+const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
+  raceTimeoutAction(async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
       const accountToRestore = accountIsLogged(account)
         ? (getSerializedLoggedInAccountInfo(account) as AuthSavedAccountWithTokens)
@@ -573,7 +625,7 @@ const loadAccountAction =
       );
       throw e;
     }
-  };
+  }, MAX_AUTH_TIMEOUT);
 
 export const restoreAccountAction = (account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
   loadAccountAction(getLoginFunctions.restoreAccount(account.user.id, account.addTimestamp), account);
