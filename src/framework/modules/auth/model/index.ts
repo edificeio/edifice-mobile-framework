@@ -311,14 +311,14 @@ export function createActivationError<T extends object>(
   type: string,
   error: string,
   description?: string,
-  additionalData?: T,
+  cause?: Error,
 ): IActivationError & T {
-  const err: IActivationError = new global.Error('ACTIVATION: returned error') as any;
+  const err: IActivationError = new global.Error('ACTIVATION: returned error', { cause }) as any;
   err.name = 'EACTIVATION';
   err.type = type;
   err.error = error;
   err.description = description;
-  return { ...err, ...additionalData } as IActivationError & T;
+  return err as IActivationError & T;
 }
 
 export interface AuthUsernameCredential {

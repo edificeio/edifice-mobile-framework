@@ -83,8 +83,8 @@ export const updateAccount = (savedAccount: AuthSavedAccount) => {
   storage.setJSON('accounts', savedAccounts);
 };
 
-export const writeLogout = (account: AuthLoggedAccount) => {
-  // Remove token for loegged out account
+export const writeRemoveToken = (account: AuthLoggedAccount) => {
+  // Remove token for logged out account
   const accounts = storage.getJSON('accounts');
   if (accounts) {
     const savedAccount = accounts[account.user.id];
@@ -94,6 +94,11 @@ export const writeLogout = (account: AuthLoggedAccount) => {
     }
     storage.setJSON('accounts', accounts);
   }
+};
+
+export const writeLogout = (account: AuthLoggedAccount) => {
+  // Remove token for loegged out account
+  writeRemoveToken(account);
   // Remove account id in startup object
   storage.delete('startup');
 };

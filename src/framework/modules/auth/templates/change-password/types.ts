@@ -13,6 +13,7 @@ import type {
   PlatformAuthContext,
 } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { IAuthState } from '~/framework/modules/auth/reducer';
 import type { Platform } from '~/framework/util/appConf';
 
 import { IAuthState } from '../../reducer';

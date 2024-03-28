@@ -25,6 +25,7 @@ export default StyleSheet.create({
   bottomContainer: {
     flex: 1,
     justifyContent: 'flex-end',
+    marginBottom: UI_SIZES.spacing.large,
   },
   button: {
     marginBottom: UI_SIZES.spacing.minor,

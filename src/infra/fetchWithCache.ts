@@ -3,7 +3,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { getStore } from '~/app/store';
-import { quietLogoutAction } from '~/framework/modules/auth/actions';
+import { invalidateSessionAction } from '~/framework/modules/auth/actions';
 import { assertSession, actions as authActions, getSession } from '~/framework/modules/auth/reducer';
 import { OldStorageFunctions } from '~/framework/util/storage';
 
@@ -29,7 +29,7 @@ export async function signedFetch(requestInfo: RequestInfo, init?: RequestInit):
       isFailing = true;
       // We consider assume here user user is logged out, but we don't really destroy his session => sessionInvalidate.
       try {
-        await (getStore().dispatch as ThunkDispatch<any, any, any>)(quietLogoutAction());
+        await (getStore().dispatch as ThunkDispatch<any, any, any>)(invalidateSessionAction());
         getStore().dispatch(authActions.authError({ info: new Error('session connot be refreshed', { cause: err }) }));
       } catch (e) {
         // Cannot remove FCM token if we havn't platform. Just dispatch error in this case.

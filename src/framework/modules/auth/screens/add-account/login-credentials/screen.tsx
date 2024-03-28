@@ -11,16 +11,13 @@ import {
   loginCredentialsActionAddAnotherAccount,
   loginCredentialsActionReplaceAccount,
 } from '~/framework/modules/auth/actions';
-import { AuthPendingRedirection } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import LoginCredentialsScreen from '~/framework/modules/auth/templates/login-credentials';
 import { LoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { Error } from '~/framework/util/error';
-import { TryActionOptions, handleAction, tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 
 import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 
@@ -54,22 +51,6 @@ function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProp
     />
   );
 }
-
-const trackOpt: TryActionOptions<
-  any,
-  ReturnType<ReturnType<typeof loginCredentialsActionAddAnotherAccount | typeof loginCredentialsActionReplaceAccount>>
->['track'] = res => [
-  moduleConfig,
-  res instanceof global.Error
-    ? trackingActionAddSuffix('Add account credentials', false)
-    : res === AuthPendingRedirection.ACTIVATE
-      ? trackingActionAddSuffix('Add account credentials', 'Activation')
-      : res === AuthPendingRedirection.RENEW_PASSWORD
-        ? trackingActionAddSuffix('Add account credentials', 'Renouvellement')
-        : trackingActionAddSuffix('Add account credentials', true),
-  res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
-];
-
 export default connect(
   (state: IGlobalState) => {
     return {
@@ -80,12 +61,20 @@ export default connect(
   dispatch =>
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
-        tryLoginAdd: tryAction(loginCredentialsActionAddAnotherAccount, {
-          track: trackOpt,
-        }),
-        tryLoginReplace: tryAction(loginCredentialsActionReplaceAccount, {
-          track: trackOpt,
-        }),
+        tryLoginAdd: tryAction(
+          tryAction(loginCredentialsActionAddAnotherAccount, {
+            track: track.loginCredentials,
+          }),
+          { track: track.addAccount },
+        ),
+        // Usually, tryLoginReplace is useless in this case.
+        // ToDo : fix it like in wayfscreen
+        tryLoginReplace: tryAction(
+          tryAction(loginCredentialsActionReplaceAccount, {
+            track: track.loginCredentials,
+          }),
+          { track: track.addAccount },
+        ),
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },
       dispatch,

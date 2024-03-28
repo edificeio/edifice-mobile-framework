@@ -11,16 +11,14 @@ import {
   loginCredentialsActionAddFirstAccount,
   loginCredentialsActionReplaceAccount,
 } from '~/framework/modules/auth/actions';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getAccountsNumber, getState as getAuthState } from '~/framework/modules/auth/reducer';
 import LoginCredentialsScreen from '~/framework/modules/auth/templates/login-credentials';
 import { LoginCredentialsScreenDispatchProps } from '~/framework/modules/auth/templates/login-credentials/types';
+import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { makeTrackOption } from '~/framework/util/tracker/track-opt';
 
-import { trackingScenarios } from '../../../tracking';
 import type { AuthLoginCredentialsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
@@ -64,10 +62,10 @@ export default connect(
     bindActionCreators<LoginCredentialsScreenDispatchProps>(
       {
         tryLoginAdd: tryAction(loginCredentialsActionAddFirstAccount, {
-          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion simple']),
+          track: track.loginCredentials,
         }),
         tryLoginReplace: tryAction(loginCredentialsActionReplaceAccount, {
-          track: makeTrackOption(moduleConfig, trackingScenarios['Connexion simple']),
+          track: track.loginCredentials,
         }),
         handleConsumeError: handleAction(consumeAuthErrorAction),
       },

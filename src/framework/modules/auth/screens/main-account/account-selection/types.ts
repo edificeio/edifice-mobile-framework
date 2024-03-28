@@ -22,6 +22,6 @@ export interface AuthAccountSelectionScreenDispatchProps {
 }
 
 export interface AuthAccountSelectionScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accountSelection>,
+  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accounts>,
     AuthAccountSelectionScreenProps,
     AuthAccountSelectionScreenDispatchProps {}
