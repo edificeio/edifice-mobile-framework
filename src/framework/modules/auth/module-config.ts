@@ -7,4 +7,5 @@ export default new ModuleConfig<'auth', IAuthState>({
   entcoreScope: ['auth', 'userinfo'],
   matchEntcoreApp: () => true, // Auth always included
   storageName: 'auth',
+  trackingName: 'Authentification',
 });

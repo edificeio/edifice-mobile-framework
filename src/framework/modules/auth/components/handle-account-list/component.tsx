@@ -3,8 +3,7 @@ import * as React from 'react';
 import { I18n } from '~/app/i18n';
 import AccountList from '~/framework/components/list/account';
 import { HandleAccountListProps } from '~/framework/modules/auth/components/handle-account-list/types';
-
-import { AuthLoggedAccount, AuthSavedAccount } from '../../model';
+import { AuthLoggedAccount, AuthSavedAccount } from '~/framework/modules/auth/model';
 
 const HandleAccountList = <ItemT extends AuthSavedAccount | AuthLoggedAccount>(props: HandleAccountListProps<ItemT>, ref) => {
   return (

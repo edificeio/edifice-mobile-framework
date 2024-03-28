@@ -4,7 +4,12 @@ import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/a
 import { ChangePasswordScreenDispatchProps } from '~/framework/modules/auth/templates/change-password/types';
 
 export interface AuthChangePasswordScreenProps {}
-export interface AuthChangePasswordScreenPrivateProps
-  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.addAccountChangePassword>,
-    AuthChangePasswordScreenProps,
-    ChangePasswordScreenDispatchProps {}
+
+export interface AuthChangePasswordScreenOwnProps
+  extends AuthChangePasswordScreenProps,
+    NativeStackScreenProps<
+      AuthNavigationParams,
+      typeof authRouteNames.changePassword | typeof authRouteNames.changePasswordModal
+    > {}
+
+export interface AuthChangePasswordScreenPrivateProps extends AuthChangePasswordScreenOwnProps, ChangePasswordScreenDispatchProps {}

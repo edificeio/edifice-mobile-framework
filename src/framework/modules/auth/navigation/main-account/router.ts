@@ -1,12 +1,12 @@
 import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
 
+import { AuthPendingRedirection, AuthRequirement } from '~/framework/modules/auth/model';
+import { AuthPendingRestore, IAuthState, getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import { authRouteNames, simulateNavAction } from '..';
-import { AuthPendingRedirection, AuthRequirement } from '../../model';
-import { AuthPendingRestore, IAuthState, getPlatform, getSession } from '../../reducer';
 
 /** @deprecated */
 export const getLoginRouteName = (platform?: Platform) => {
@@ -128,7 +128,7 @@ export const getAuthNavigationState = (
   const multipleAccounts = accountsAsArray.length > 1;
   if (multipleAccounts || (lastDeletedAccount && accountsAsArray.length)) {
     // Push account select here
-    routes.push({ name: authRouteNames.accountSelection });
+    routes.push({ name: authRouteNames.accounts });
   } else if (appConf.hasMultiplePlatform) {
     routes.push({ name: authRouteNames.platforms });
   } // if single account && single platform, do not push any routes
@@ -136,8 +136,7 @@ export const getAuthNavigationState = (
   // 3 - Login Screen
   // 3.1 – Get actual platform object or name corresponding to the auth state + login if possible
   let foundPlatform: string | Platform | undefined = !appConf.hasMultiplePlatform ? allPlatforms[0] : undefined;
-  // let login: string | undefined;
-
+  let loginWithoutAccountId: string | undefined;
   let accountId: keyof IAuthState['accounts'] | undefined;
 
   if (pending) {
@@ -149,6 +148,9 @@ export const getAuthNavigationState = (
         foundPlatform = loggingAccount.platform;
         // login = loggingAccount.user.loginUsed;
         accountId = loggingAccount.user.id;
+      } else {
+        // This case is for failed activations & renews
+        loginWithoutAccountId = pending.loginUsed;
       }
     } else {
       // Activation && password renew
@@ -174,7 +176,10 @@ export const getAuthNavigationState = (
   // 3.3 – Put the platform route into the stack
   if (platform && (accountsAsArray.length <= 1 || (pending as AuthPendingRestore)?.account)) {
     const nextScreen = getLoginNextScreen(platform);
-    routes.push({ ...nextScreen, params: { ...nextScreen.params, accountId } });
+    routes.push({
+      ...nextScreen,
+      params: { ...nextScreen.params, accountId, loginUsed: accountId === undefined ? loginWithoutAccountId : undefined },
+    });
   }
 
   // 4 – Requirement & login redirections

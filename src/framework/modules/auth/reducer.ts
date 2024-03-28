@@ -24,6 +24,7 @@ export interface AuthPendingRestore {
   redirect: undefined;
   account?: keyof IAuthState['accounts']; // If it concerns a saved account, which one
   platform: string; // Platform id of the login task (duplicated the value in `account` if present)
+  loginUsed?: string; // Login to display if account is not defined
 }
 
 export interface AuthPendingActivation {
@@ -52,7 +53,7 @@ export interface IAuthState {
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
 
   pending?: AuthPendingRestore | AuthPendingActivation | AuthPendingPasswordRenew;
-  pendingAddAccount?: AuthPendingActivation | AuthPendingPasswordRenew;
+  pendingAddAccount?: AuthPendingRestore | AuthPendingActivation | AuthPendingPasswordRenew;
 
   error?: {
     // No need to affiliate the error to a platform since the `key` contains the render ID on the screen
@@ -95,10 +96,13 @@ export const actionTypes = {
   deactivate: moduleConfig.namespaceActionType('DEACTIVATE'),
   redirectActivation: moduleConfig.namespaceActionType('REDIRECT_ACTIVATION'),
   redirectPasswordRenew: moduleConfig.namespaceActionType('REDIRECT_PASSWORD_RENEW'),
+  redirectCancel: moduleConfig.namespaceActionType('REDIRECT_CANCEL'),
   addAccountInit: moduleConfig.namespaceActionType('ADD_ACCOUNT_INIT'),
   addAccountActivation: moduleConfig.namespaceActionType('ADD_ACCOUNT_ACTIVATION'),
   addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
+  addAccountRedirectCancel: moduleConfig.namespaceActionType('ADD_ACCOUNT_REDIRECT_CANCEL'),
   profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
+  invalidate: moduleConfig.namespaceActionType('INVALIDATE'),
 };
 
 export const ERASE_ALL_ACCOUNTS = Symbol('ERASE_ALL_ACCOUNTS');
@@ -137,10 +141,21 @@ export interface ActionPayloads {
     accountId?: keyof IAuthState['accounts'];
     accountTimestamp?: number;
   };
+  redirectCancel: {
+    platformName: Platform['name'];
+    login: string;
+    accountId?: keyof IAuthState['accounts'];
+    accountTimestamp?: number;
+  };
   addAccountInit: object;
   addAccountActivation: { platformName: Platform['name']; login: string; code: string };
   addAccountPasswordRenew: { platformName: Platform['name']; login: string; code: string };
+  addAccountRedirectCancel: {
+    platformName: Platform['name'];
+    login: string;
+  };
   profileUpdate: { id: keyof IAuthState['accounts']; user: Partial<AuthLoggedAccount['user']> };
+  invalidate: object;
 }
 
 export const actions = {
@@ -245,6 +260,19 @@ export const actions = {
     accountTimestamp,
   }),
 
+  redirectCancel: (
+    platformName: Platform['name'],
+    login: string,
+    accountId?: keyof IAuthState['accounts'],
+    accountTimestamp?: number,
+  ) => ({
+    type: actionTypes.redirectCancel,
+    platformName,
+    login,
+    accountId,
+    accountTimestamp,
+  }),
+
   profileUpdate: (id: string, user: Partial<AuthLoggedAccount['user']>) => ({
     type: actionTypes.profileUpdate,
     id,
@@ -275,6 +303,16 @@ export const actions = {
     code,
     accountId,
     accountTimestamp,
+  }),
+
+  addAccountRedirectCancel: (platformName: Platform['name'], login: string) => ({
+    type: actionTypes.addAccountRedirectCancel,
+    platformName,
+    login,
+  }),
+
+  invalidate: () => ({
+    type: actionTypes.invalidate,
   }),
 };
 
@@ -494,6 +532,22 @@ const reducer = createReducer(initialState, {
     };
   },
 
+  [actionTypes.redirectCancel]: (state, action) => {
+    const { platformName, login, accountId, accountTimestamp } = action as unknown as ActionPayloads['redirectCancel'];
+    return {
+      ...state,
+      requirement: undefined,
+      connected: undefined,
+      pending: {
+        redirect: undefined,
+        platform: platformName,
+        loginUsed: login,
+        accountId,
+        accountTimestamp,
+      },
+    };
+  },
+
   [actionTypes.profileUpdate]: (state, action) => {
     const { id, user } = action as unknown as ActionPayloads['profileUpdate'];
     const account = state.accounts[id] as AuthLoggedAccount;
@@ -534,6 +588,32 @@ const reducer = createReducer(initialState, {
         accountId,
         accountTimestamp,
       },
+    };
+  },
+
+  [actionTypes.addAccountRedirectCancel]: (state, action) => {
+    const { platformName, login } = action as unknown as ActionPayloads['addAccountRedirectCancel'];
+    return {
+      ...state,
+      requirement: undefined,
+      pendingAddAccount: {
+        redirect: undefined,
+        platform: platformName,
+        loginUsed: login,
+      },
+    };
+  },
+
+  [actionTypes.invalidate]: (state, action) => {
+    const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthLoggedAccount | undefined;
+    if (!currentAccount) return state;
+    return {
+      ...state,
+      accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
+      requirement: undefined,
+      connected: undefined,
+      pending: { redirect: undefined, account: currentAccount.user.id, platform: currentAccount.platform.name },
+      lastDeletedAccount: undefined,
     };
   },
 });

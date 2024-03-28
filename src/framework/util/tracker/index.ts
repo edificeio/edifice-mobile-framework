@@ -13,7 +13,7 @@ import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/mod
 import { urlSigner } from '~/infra/oauth';
 
 export type TrackEventArgs = [string, string, string?, number?];
-export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
+export type TrackEventOfModuleArgs = [Pick<IAnyModuleConfig, 'trackingName'>, string, string?, number?];
 export type DoTrackArgLegacy = undefined | TrackEventOfModuleArgs;
 
 export abstract class AbstractTracker<OptionsType> {
@@ -104,7 +104,12 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
-  async trackEventOfModule(moduleConfig: AnyNavigableModuleConfig, action: string, name?: string, value?: number) {
+  async trackEventOfModule(
+    moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
+    action: string,
+    name?: string,
+    value?: number,
+  ) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
@@ -124,7 +129,7 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
-  async trackViewOfModule(moduleConfig: AnyNavigableModuleConfig, path: string[]) {
+  async trackViewOfModule(moduleConfig: Pick<AnyNavigableModuleConfig, 'routeName'>, path: string[]) {
     await this._trackView([moduleConfig.routeName, ...path]);
   }
 }
@@ -313,7 +318,7 @@ export class ConcreteTrackerSet {
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
-  async trackEventOfModule(moduleConfig: IAnyModuleConfig, action: string, name?: string, value?: number) {
+  async trackEventOfModule(moduleConfig: Pick<IAnyModuleConfig, 'trackingName'>, action: string, name?: string, value?: number) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
@@ -322,7 +327,7 @@ export class ConcreteTrackerSet {
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
 
-  async trackViewOfModule(moduleConfig: AnyNavigableModuleConfig, path: string[]) {
+  async trackViewOfModule(moduleConfig: Pick<AnyNavigableModuleConfig, 'routeName'>, path: string[]) {
     await this.trackView([moduleConfig.routeName, ...path]);
   }
 

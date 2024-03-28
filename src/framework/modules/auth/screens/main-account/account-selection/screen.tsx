@@ -22,16 +22,14 @@ import {
   accountIsLoggable,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/module-config';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
+import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
-import { Error } from '~/framework/util/error';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
-import { trackingActionAddSuffix } from '~/framework/util/tracker';
 import { Loading } from '~/ui/Loading';
 
 import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPrivateProps, LoginState } from './types';
@@ -39,7 +37,7 @@ import { AuthAccountSelectionScreenDispatchProps, AuthAccountSelectionScreenPriv
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accountSelection>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.accounts>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
       navigation,
@@ -54,6 +52,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
   const accountListRef = React.useRef<BottomSheetModalMethods>(null);
   const onHandleAccounts = () => {
+    trackingAccountEvents.manageAccountsPressButton();
     accountListRef.current?.present();
   };
   const data = React.useMemo(() => getOrderedAccounts(props.accounts), [props.accounts]);
@@ -108,6 +107,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const onDeleteItem = React.useCallback(
     async (item: (typeof data)[0], index: number) => {
       try {
+        trackingAccountEvents.deleteAccountFromManageAccounts();
         const account = accounts[item.user.id];
         await tryRemoveAccount(account);
         accountListRef.current?.dismiss();
@@ -178,11 +178,7 @@ export default connect(
     bindActionCreators<AuthAccountSelectionScreenDispatchProps>(
       {
         tryRestore: tryAction(restoreAccountAction, {
-          track: res => [
-            moduleConfig,
-            trackingActionAddSuffix('Login restore', !(res instanceof global.Error)),
-            res instanceof global.Error ? Error.getDeepErrorType(res)?.toString() ?? res.toString() : undefined,
-          ],
+          track: track.loginRestore,
         }),
         tryRemoveAccount: handleAction(removeAccountAction),
       },

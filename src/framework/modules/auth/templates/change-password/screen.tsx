@@ -31,6 +31,7 @@ import {
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getPlatformContext, getPlatformContextOf, getSession } from '~/framework/modules/auth/reducer';
+import { Error } from '~/framework/util/error';
 import { Loading } from '~/ui/Loading';
 import { ValueChangeArgs } from '~/utils/form';
 
@@ -107,7 +108,8 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
       }
     } catch (e) {
       const changePwdError = e as IChangePasswordError;
-      Toast.showError(I18n.get('toast-error-text'));
+      // We don't show toaster if it's login error since that case is handled by redirecting the user to the login page, with error displayed.
+      if (!(e instanceof Error.LoginError)) Toast.showError(I18n.get('toast-error-text'));
       setError(changePwdError.error);
       setSumitState('IDLE');
       setTyping(false);

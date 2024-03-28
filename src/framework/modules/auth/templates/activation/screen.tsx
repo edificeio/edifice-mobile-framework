@@ -187,7 +187,7 @@ export class ActivationScreen extends React.PureComponent<
 
 const ActivationScreenLoader = (props: ActivationScreenProps) => {
   const { context, legalUrls, route } = props;
-  console.log(context, legalUrls, 'test');
+
   const platform = route.params.platform;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
