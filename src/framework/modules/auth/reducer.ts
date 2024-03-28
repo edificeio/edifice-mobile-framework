@@ -102,6 +102,7 @@ export const actionTypes = {
   addAccountPasswordRenew: moduleConfig.namespaceActionType('ADD_ACCOUNT_PASSWORD_RENEW'),
   addAccountRedirectCancel: moduleConfig.namespaceActionType('ADD_ACCOUNT_REDIRECT_CANCEL'),
   profileUpdate: moduleConfig.namespaceActionType('PROFILE_UPDATE'),
+  invalidate: moduleConfig.namespaceActionType('INVALIDATE'),
 };
 
 export const ERASE_ALL_ACCOUNTS = Symbol('ERASE_ALL_ACCOUNTS');
@@ -154,6 +155,7 @@ export interface ActionPayloads {
     login: string;
   };
   profileUpdate: { id: keyof IAuthState['accounts']; user: Partial<AuthLoggedAccount['user']> };
+  invalidate: object;
 }
 
 export const actions = {
@@ -307,6 +309,10 @@ export const actions = {
     type: actionTypes.addAccountRedirectCancel,
     platformName,
     login,
+  }),
+
+  invalidate: () => ({
+    type: actionTypes.invalidate,
   }),
 };
 
@@ -595,6 +601,19 @@ const reducer = createReducer(initialState, {
         platform: platformName,
         loginUsed: login,
       },
+    };
+  },
+
+  [actionTypes.invalidate]: (state, action) => {
+    const currentAccount = (state.connected ? state.accounts[state.connected] : undefined) as AuthLoggedAccount | undefined;
+    if (!currentAccount) return state;
+    return {
+      ...state,
+      accounts: { ...state.accounts, [currentAccount.user.id]: getSerializedLoggedOutAccountInfo(currentAccount) },
+      requirement: undefined,
+      connected: undefined,
+      pending: { redirect: undefined, account: currentAccount.user.id, platform: currentAccount.platform.name },
+      lastDeletedAccount: undefined,
     };
   },
 });

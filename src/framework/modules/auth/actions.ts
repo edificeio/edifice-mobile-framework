@@ -65,6 +65,7 @@ import {
   writeCreateAccount,
   writeDeleteAccount,
   writeLogout,
+  writeRemoveToken,
   writeReplaceAccount,
 } from './storage';
 
@@ -707,6 +708,18 @@ export function quietLogoutAction() {
     writeLogout(account);
     // Validate log out
     dispatch(actions.logout());
+    dispatch(createEndSessionAction()); // flush sessionReducers
+  };
+}
+
+export function invalidateSessionAction() {
+  return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const account = assertSession();
+    await authService.removeFirebaseToken(account.platform);
+    await clearRequestsCacheLegacy();
+    await destroyOAuth2Legacy();
+    writeRemoveToken(account);
+    dispatch(actions.invalidate());
     dispatch(createEndSessionAction()); // flush sessionReducers
   };
 }
