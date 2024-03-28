@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-23 12:49:03",
-  "notes": "chore(i18n): Add missing translations\nrelease: 1.12.0-rc.4(1120016)",
-  "version": "1.12.0-rc.5(1120017)"
+  "last": "2024-03-28 13:03:38",
+  "notes": "chore(auth): add back login timeout (15s)\nfix(auth): MB-2603 partial logout (\"invalidate\") session when fail refresh token\nchore: MB-2479 new auth tracking plan + new tracking framework\nchore(build): rename fast-pocs in fast-poc\nchore(build): Remove unused scripts and add missing build scripts\nUpdated translations from Phrase (#137)\nUpdated translations from Phrase (#136)\nchore(tracking): make new & simpler tracking API with dedicated scenarios file\nchore(tracking): make new & simpler tracking API with tryAction\nrelease: 1.12.0-rc.5(1120017)",
+  "version": "1.12.0-rc.6(1120018)"
 }
