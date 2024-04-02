@@ -8,18 +8,18 @@ import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/module
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
 import type { AuthDiscoveryClassScreenNavParams } from '~/framework/modules/auth/screens/discovery-class';
-import { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/main-account/account-selection/types';
+import type { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
-import { AuthLoginWayfScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-wayf';
+import type { AuthLoginWayfScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-wayf';
 import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
 import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/screens/main-account/platforms';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
-import { ActivationScreenNavParams } from '~/framework/modules/auth/templates/activation';
+import type { ActivationScreenNavParams } from '~/framework/modules/auth/templates/activation';
 import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
-import { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
+import type { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
 import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
-import { StackNavigationAction } from '~/framework/navigation/types';
-import { Platform } from '~/framework/util/appConf';
+import type { StackNavigationAction } from '~/framework/navigation/types';
+import type { Platform } from '~/framework/util/appConf';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
@@ -65,7 +65,7 @@ export interface AuthNavigationParams extends ParamListBase {
   accounts: AuthAccountSelectionScreenNavParams;
   loginCredentials: LoginCredentialsScreenNavParams;
   loginWayf: AuthLoginWayfScreenNavParams;
-  wayf: { platform: Platform };
+  wayf: { platform: Platform; accountId?: string };
   activation: ActivationScreenNavParams;
   changePassword: ChangePasswordScreenNavParams;
   forgot: ForgotScreenNavParams;

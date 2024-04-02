@@ -51,7 +51,10 @@ export default connect(
 )(function AuthWayfScreen(props: AuthWayfScreenPrivateProps) {
   return (
     <WayfScreen
-      loginCredentialsNavAction={StackActions.replace(authRouteNames.loginCredentials, { platform: props.route.params.platform })}
+      loginCredentialsNavAction={StackActions.replace(authRouteNames.loginCredentials, {
+        platform: props.route.params.platform,
+        accountId: props.route.params.accountId,
+      })}
       {...props}
     />
   );
