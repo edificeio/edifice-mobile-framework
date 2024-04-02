@@ -48,7 +48,7 @@ export default connect(
     <LoginWAYFScreen
       wayfRoute={CommonActions.navigate({
         name: authRouteNames.wayf,
-        params: { platform: props.route.params.platform },
+        params: { platform: props.route.params.platform, accountId: props.route.params.accountId },
       })}
       {...props}
     />

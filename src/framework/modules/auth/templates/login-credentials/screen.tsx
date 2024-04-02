@@ -34,7 +34,8 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { platform, accountId } = route.params;
   const account = getAccountById(accountId);
 
-  const [login, setLogin] = React.useState<string>(account?.user.loginUsed ?? route.params.loginUsed ?? '');
+  const initialLogin = account?.user.loginUsed ?? route.params.loginUsed;
+  const [login, setLogin] = React.useState<string>(initialLogin ?? '');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
   const [loginState, setLoginState] = React.useState<string>(LoginState.IDLE);
@@ -174,7 +175,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
               showError={errmsg ? errtype === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH : false}
               onSubmitEditing={onSubmitEditingLogin}
               returnKeyType="next"
-              disabled={lockLogin}
+              disabled={lockLogin && !!initialLogin} // lock Login only if login is provided.
             />
           }
         />
