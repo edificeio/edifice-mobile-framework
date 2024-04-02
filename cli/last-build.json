@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-03-28 13:03:38",
-  "notes": "chore(auth): add back login timeout (15s)\nfix(auth): MB-2603 partial logout (\"invalidate\") session when fail refresh token\nchore: MB-2479 new auth tracking plan + new tracking framework\nchore(build): rename fast-pocs in fast-poc\nchore(build): Remove unused scripts and add missing build scripts\nUpdated translations from Phrase (#137)\nUpdated translations from Phrase (#136)\nchore(tracking): make new & simpler tracking API with dedicated scenarios file\nchore(tracking): make new & simpler tracking API with tryAction\nrelease: 1.12.0-rc.5(1120017)",
-  "version": "1.12.0-rc.6(1120018)"
+  "last": "2024-04-02 11:40:22",
+  "notes": "fix(auth): MB-2612 prevent login lock if login not provided\nfix(auth): MB-2612 correct login placeholder for non-fede accounts in fede-platforms\nrelease: 1.12.0-rc.6(1120018)",
+  "version": "1.12.0-rc.7(1120019)"
 }
