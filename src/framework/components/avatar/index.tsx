@@ -1,5 +1,5 @@
 export * from './single';
-export type { SingleAvatarProps } from './types';
+export type { SingleAvatarProps, Size } from './types';
 
 /**
  * New avatar implementation
