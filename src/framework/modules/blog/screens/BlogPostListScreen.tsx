@@ -16,7 +16,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { BlogPostResourceCard } from '~/framework/modules/blog/components/BlogPostResourceCard';
 import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
@@ -31,7 +31,7 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface BlogPostListScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 export interface BlogPostListScreenEventProps {
   // doFetch: (selectedBlogId: string) => Promise<BlogPost[] | undefined>; // unused ?

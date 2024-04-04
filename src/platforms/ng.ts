@@ -1,6 +1,7 @@
 const ngCommon = {
   oauth: ["app-e", "ODE"],
   logo: require("ASSETS/platforms/logo-cgi.png"),
+  showVieScolaireDashboard: true,
   webTheme: "neo",
 };
 

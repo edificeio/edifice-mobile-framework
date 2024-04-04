@@ -20,8 +20,8 @@ import { BodyText, HeadingSText, SmallItalicText, SmallText } from '~/framework/
 import { TextAvatar } from '~/framework/components/textAvatar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
+import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession, getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { conversationRouteNames } from '~/framework/modules/conversation/navigation';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import UserPlaceholderProfile from '~/framework/modules/user/components/placeholder/profile';
@@ -37,7 +37,6 @@ import appConf from '~/framework/util/appConf';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image, formatSource } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
-import { Trackers } from '~/framework/util/tracker';
 import { pickFileError } from '~/infra/actions/pickFile';
 
 import { hobbiesItems, renderEmoji } from '.';
@@ -139,7 +138,6 @@ const UserProfileScreen = (props: ProfilePageProps) => {
       setUpdatingAvatar(true);
       const sc = await onUploadAvatar(lc);
       await onUpdateAvatar(sc.url);
-      Trackers.trackEvent('Profile', 'EDIT_AVATAR');
     } catch (err: any) {
       if (err.message === 'Error picking image') {
         onPickFileError('profileOne');
@@ -175,7 +173,7 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const onNewMessage = () => {
     const user = [{ displayName: userInfo?.displayName, id: userInfo?.id }];
-    if (userInfo?.type === UserType.Student && !isEmpty(family) && session?.user.type !== UserType.Student) {
+    if (userInfo?.type === AccountType.Student && !isEmpty(family) && session?.user.type !== AccountType.Student) {
       const familyUser: any = [];
       family?.forEach(item => familyUser.push({ displayName: item.relatedName, id: item.relatedId }));
       showBottomMenu([
@@ -216,13 +214,14 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   }, []);
 
   const renderUserCard = () => {
-    const avatar = isMyProfile ? session?.user.photo : userInfo?.photo;
+    const selfAvatar = isMyProfile ? session?.user.avatar : undefined;
+    const userAvatar = userInfo?.id;
     return (
       <UserCard
-        id={avatar && formatSource(`${session?.platform.url}${avatar}`)}
+        id={selfAvatar ? formatSource(`${session?.platform.url}${selfAvatar}`) : userAvatar ?? ''}
         displayName={userInfo?.displayName}
         type={userInfo?.type}
-        hasAvatar={!!session?.user.photo}
+        hasAvatar={!!session?.user.avatar}
         updatingAvatar={updatingAvatar}
         onChangeAvatar={onChangeAvatar.bind(this)}
         onDeleteAvatar={onDeleteAvatar.bind(this)}
@@ -234,8 +233,8 @@ const UserProfileScreen = (props: ProfilePageProps) => {
 
   const renderPersonFamily = user => {
     if (
-      (!isMyProfile && (session?.user.type === UserType.Teacher || session?.user.type === UserType.Personnel)) ||
-      (isMyProfile && session?.user.type === UserType.Relative)
+      (!isMyProfile && (session?.user.type === AccountType.Teacher || session?.user.type === AccountType.Personnel)) ||
+      (isMyProfile && session?.user.type === AccountType.Relative)
     )
       return (
         <TouchableOpacity
@@ -260,13 +259,13 @@ const UserProfileScreen = (props: ProfilePageProps) => {
   };
 
   const renderFamily = () => {
-    if (userInfo?.type !== UserType.Relative && userInfo?.type !== UserType.Student) return;
-    if (!isMyProfile && session?.user.type === UserType.Student && userInfo?.type === UserType.Relative) return;
-    if (!isMyProfile && session?.user.type === UserType.Student && userInfo?.type === UserType.Student) return;
+    if (userInfo?.type !== AccountType.Relative && userInfo?.type !== AccountType.Student) return;
+    if (!isMyProfile && session?.user.type === AccountType.Student && userInfo?.type === AccountType.Relative) return;
+    if (!isMyProfile && session?.user.type === AccountType.Student && userInfo?.type === AccountType.Student) return;
     return (
       <View style={styles.bloc}>
         <HeadingSText style={family ? {} : styles.blocTitle}>
-          {userInfo?.type === UserType.Student
+          {userInfo?.type === AccountType.Student
             ? I18n.get(family?.length! > 1 ? 'user-profile-relatives' : 'user-profile-relative')
             : I18n.get(family?.length! > 1 ? 'user-profile-children' : 'user-profile-child')}
         </HeadingSText>
@@ -576,7 +575,7 @@ const UserProfileScreenConnected = connect(
     onUploadAvatarError: () => dispatch(uploadAvatarError()),
     onUploadAvatar: (avatar: LocalFile) => dispatch(uploadAvatarAction(avatar)),
     onUpdateAvatar: (imageWorkspaceUrl: string) =>
-      dispatch(profileUpdateAction({ photo: imageWorkspaceUrl })) as unknown as Promise<void>,
+      dispatch(profileUpdateAction({ avatar: imageWorkspaceUrl })) as unknown as Promise<void>,
   }),
 )(UserProfileScreen);
 

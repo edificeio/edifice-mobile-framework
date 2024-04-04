@@ -4,25 +4,22 @@
 import { Moment } from 'moment';
 import { EmitterSubscription, Vibration } from 'react-native';
 import RNShake from 'react-native-shake';
+import Sound from 'react-native-sound';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import Sound from 'react-native-sound';
 import { IGlobalState } from '~/app/store';
 import { ILoggedUserProfile } from '~/framework/modules/auth/model';
 import { assertSession, actions as authActions } from '~/framework/modules/auth/reducer';
 import { actionTypes } from '~/framework/modules/user/reducer';
 import { addTime, today } from '~/framework/util/date';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
-import { Trackers } from '~/framework/util/tracker';
+import { OldStorageFunctions } from '~/framework/util/storage';
 import { signedFetchJson } from '~/infra/fetchWithCache';
 import { refreshSelfAvatarUniqueKey } from '~/ui/avatars/Avatar';
 
-export type UpdatableProfileValues = Partial<ILoggedUserProfile>;
-
-export function profileUpdateAction(newValues: UpdatableProfileValues) {
+export function profileUpdateAction(newValues: Partial<ILoggedUserProfile>) {
   return async (dispatch: Dispatch & ThunkDispatch<any, void, AnyAction>, getState: () => IGlobalState) => {
-    const isUpdatingPhoto = newValues.photo !== undefined;
+    const isUpdatingPhoto = newValues.avatar !== undefined;
 
     const session = assertSession();
 
@@ -30,18 +27,17 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
       if (newValues[key] !== undefined) {
         if (
           key.match(/Valid/) ||
-          newValues[key as keyof UpdatableProfileValues] === session.user[key] ||
+          newValues[key as keyof Partial<ILoggedUserProfile>] === session.user[key] ||
           key === 'updatingAvatar'
         ) {
-          delete newValues[key as keyof UpdatableProfileValues];
+          delete newValues[key as keyof Partial<ILoggedUserProfile>];
         }
       }
     }
 
-    dispatch(authActions.profileUpdateRequest(newValues));
     try {
       const userId = session.user.id;
-      const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.photo } : newValues;
+      const updatedValues = isUpdatingPhoto ? { ...newValues, picture: newValues.avatar } : newValues;
       const reponse = await signedFetchJson(`${session.platform.url}/directory/user${isUpdatingPhoto ? 'book' : ''}/${userId}`, {
         method: 'PUT',
         body: JSON.stringify(updatedValues),
@@ -49,18 +45,15 @@ export function profileUpdateAction(newValues: UpdatableProfileValues) {
       if ((reponse as any).error) {
         throw new Error((reponse as any).error);
       }
-      dispatch(authActions.profileUpdateSuccess(newValues));
+      dispatch(authActions.profileUpdate(userId, newValues));
       if (isUpdatingPhoto) {
         refreshSelfAvatarUniqueKey();
       }
-      Trackers.trackEvent('Profile', 'UPDATE');
     } catch (e) {
-      dispatch(authActions.profileUpdateError());
-
       if ((e as Error).message.match(/loginAlias/)) {
-        Trackers.trackEvent('Profile', 'UPDATE ERROR', 'user-profilechange-login-error');
+        // Tracking was here
       } else {
-        Trackers.trackEvent('Profile', 'UPDATE ERROR', `${isUpdatingPhoto ? 'Avatar' : 'Profile'}ChangeError`);
+        // Tracking was here
       }
     }
   };
@@ -147,7 +140,7 @@ const updateShakeListenerAction = () => async (dispatch: ThunkDispatch<any, any,
 
 export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await setItemJson(xmasMusicStorageKey, xmasMusic);
+    await OldStorageFunctions.setItemJson(xmasMusicStorageKey, xmasMusic);
     dispatch({ type: actionTypes.toggleXmasMusic, value: xmasMusic });
     if (xmasMusic) {
       //jingleBells.play();
@@ -163,7 +156,7 @@ export const setXmasMusicAction = (xmasMusic: boolean) => async (dispatch: Thunk
 
 export const setXmasThemeAction = (xmasTheme: boolean) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
-    await setItemJson(xmasThemeStorageKey, xmasTheme);
+    await OldStorageFunctions.setItemJson(xmasThemeStorageKey, xmasTheme);
     dispatch({ type: actionTypes.toggleXmasTheme, value: xmasTheme });
     if (xmasTheme) {
       dispatch(letItSnowAction());
@@ -180,15 +173,15 @@ export const importXmasAction = () => async (dispatch: ThunkDispatch<any, any, a
   try {
     let xmasThemeSetting;
     let xmasMusicSetting;
-    xmasThemeSetting = (await getItemJson(xmasThemeStorageKey)) as boolean | undefined;
-    xmasMusicSetting = (await getItemJson(xmasMusicStorageKey)) as boolean | undefined;
+    xmasThemeSetting = (await OldStorageFunctions.getItemJson(xmasThemeStorageKey)) as boolean | undefined;
+    xmasMusicSetting = (await OldStorageFunctions.getItemJson(xmasMusicStorageKey)) as boolean | undefined;
     // These settings are undefined on first launch (by default, we set the theme on and the music off)
     if (xmasThemeSetting === undefined) {
-      await setItemJson(xmasThemeStorageKey, true);
+      await OldStorageFunctions.setItemJson(xmasThemeStorageKey, true);
       xmasThemeSetting = true;
     }
     if (xmasMusicSetting === undefined) {
-      await setItemJson(xmasMusicStorageKey, false);
+      await OldStorageFunctions.setItemJson(xmasMusicStorageKey, false);
       xmasMusicSetting = false;
     }
 

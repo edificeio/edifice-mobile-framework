@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IClass, IEdtCourse, ISlot, IUserChild } from '~/framework/modules/viescolaire/edt/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
@@ -130,7 +130,7 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
 
 export const edtService = {
   classes: {
-    get: async (session: ISession, structureId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/viescolaire/classes?idEtablissement=${structureId}&isEdt=true`;
       const classes = (await fetchJSONWithCache(api)) as IBackendClassList;
       return classes.map(classAdapter);
@@ -138,7 +138,7 @@ export const edtService = {
   },
   courses: {
     get: async (
-      session: ISession,
+      session: AuthLoggedAccount,
       structureId: string,
       startDate: Moment,
       endDate: Moment,
@@ -161,7 +161,13 @@ export const edtService = {
       })) as IBackendCourseList;
       return courses.map(courseAdapter);
     },
-    getFromTeacher: async (session: ISession, structureId: string, startDate: Moment, endDate: Moment, teacherId: string) => {
+    getFromTeacher: async (
+      session: AuthLoggedAccount,
+      structureId: string,
+      startDate: Moment,
+      endDate: Moment,
+      teacherId: string,
+    ) => {
       const startDateString = startDate.format('YYYY-MM-DD');
       const endDateString = endDate.format('YYYY-MM-DD');
       const api = `/edt/structures/${structureId}/common/courses/${startDateString}/${endDateString}`;
@@ -180,14 +186,14 @@ export const edtService = {
     },
   },
   slots: {
-    get: async (session: ISession, structureId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/edt/time-slots?structureId=${structureId}`;
       const slots = (await fetchJSONWithCache(api)) as IBackendSlotList;
       return slots.map(slotAdapter);
     },
   },
   userChildren: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/edt/user/children';
       const userChildren = (await fetchJSONWithCache(api)) as IBackendUserChildren;
       return userChildren.map(userChildAdapter);

@@ -1,19 +1,20 @@
+import theme from '~/app/theme';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { ICompetencesReduxState } from './reducer';
-import theme from '~/app/theme';
+import type { ICompetencesReduxState } from './reducer';
 
 function hasNecessaryRight(entcoreApp: IEntcoreApp): boolean {
   const userType = getSession()?.user.type;
-  return !!userType && entcoreApp.address === '/competences' && [UserType.Student, UserType.Relative].includes(userType);
+  return !!userType && entcoreApp.address === '/competences' && [AccountType.Student, AccountType.Relative].includes(userType);
 }
 
 export default new NavigableModuleConfig<'competences', ICompetencesReduxState>({
   name: 'competences',
   entcoreScope: ['competences'],
   matchEntcoreApp: entcoreApp => hasNecessaryRight(entcoreApp),
+  storageName: 'competences',
 
   displayI18n: 'competences-moduleconfig-appname',
   displayAs: 'myAppsModule',

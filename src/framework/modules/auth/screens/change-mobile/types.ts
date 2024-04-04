@@ -1,13 +1,13 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { logoutAction } from '~/framework/modules/auth/actions';
-import type { IAuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import type { manualLogoutAction } from '~/framework/modules/auth/actions';
+import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthChangeMobileScreenDispatchProps {
-  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
+  tryLogout: (...args: Parameters<typeof manualLogoutAction>) => Promise<void>;
   trySaveNewMobile(updatedProfileValues: UpdatableProfileValues): Promise<void>;
 }
 
@@ -16,7 +16,7 @@ export interface AuthChangeMobileScreenNavParams {
   modificationType?: ModificationType;
   navBarTitle?: string;
   platform: Platform;
-  rememberMe?: boolean;
+  // rememberMe?: boolean;
 }
 
 export interface AuthChangeMobileScreenProps {}
@@ -24,7 +24,7 @@ export interface AuthChangeMobileScreenProps {}
 export interface AuthChangeMobileScreenStoreProps {}
 
 export interface AuthChangeMobileScreenPrivateProps
-  extends NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changeMobile>,
+  extends NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeMobile>,
     AuthChangeMobileScreenProps,
     AuthChangeMobileScreenStoreProps,
     AuthChangeMobileScreenDispatchProps {}

@@ -1,5 +1,6 @@
 const provinceSudCommon = {
   oauth: ["app-e", "sXFdHvLRGp7hVuFzSmhuHBSw"],
+  showWhoAreWe: true,
 };
 const provinceSudCommon1D = {
   logo: require("ASSETS/platforms/logo-province-sud-one.png"),

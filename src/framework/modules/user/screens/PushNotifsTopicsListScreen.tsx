@@ -19,7 +19,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { Icon } from '~/framework/components/picture';
 import { SmallActionText, SmallText, TextSizeStyle } from '~/framework/components/text';
-import { ISession } from '~/framework/modules//auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadPushNotifsSettingsAction } from '~/framework/modules/timeline/actions/notif-settings';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
@@ -36,7 +36,7 @@ import Notifier from '~/framework/util/notifier';
 
 export interface IPushNotifsTopicsListScreenDataProps {
   timelineState: TimelineState;
-  session: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface IPushNotifsTopicsListScreenEventProps {
@@ -122,7 +122,7 @@ export class PushNotifsTopicsListScreen extends React.PureComponent<
     items = Object.fromEntries(
       Object.entries(items).filter(item => {
         const notifFilter = this.props.timelineState.notifDefinitions.notifFilters.data.find(tf => tf.type === item[0]);
-        return this.props.session.apps.find(app => !app.name || app.name === notifFilter?.['app-name']);
+        return this.props.session?.rights.apps.find(app => !app.name || app.name === notifFilter?.['app-name']);
       }),
     );
     const mainListData =

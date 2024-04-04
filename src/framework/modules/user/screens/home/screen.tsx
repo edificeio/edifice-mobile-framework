@@ -15,29 +15,45 @@ import DefaultButton from '~/framework/components/buttons/default';
 import { ButtonLineGroup, LineButton } from '~/framework/components/buttons/line';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
-import Toast from '~/framework/components/toast';
-import { logoutAction } from '~/framework/modules/auth/actions';
-import { IAuthContext } from '~/framework/modules/auth/model';
-import { authRouteNames } from '~/framework/modules/auth/navigation';
-import { getSession } from '~/framework/modules/auth/reducer';
+import { default as Toast, default as toast } from '~/framework/components/toast';
+import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
+import {
+  AccountType,
+  AuthLoggedAccount,
+  AuthSavedAccountWithTokens,
+  PlatformAuthContext,
+  accountIsLoggable,
+  getOrderedAccounts,
+} from '~/framework/modules/auth/model';
+import { userCanAddAccount } from '~/framework/modules/auth/model/business';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
+import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
-import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
+import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
-import { UserType, getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
+import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
+import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
+import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
+import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
+import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import appConf from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
-import { handleAction } from '~/framework/util/redux/actions';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-import { colorType } from '.';
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
@@ -93,7 +109,7 @@ useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
  */
 function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session']) {
   const userProfilePicture = React.useMemo(() => {
-    const uri = session?.platform && session?.user.photo ? new URL(`${session.platform.url}${session.user.photo}`) : undefined;
+    const uri = session?.platform && session?.user.avatar ? new URL(`${session.platform.url}${session.user.avatar}`) : undefined;
     if (uri) {
       const uti = OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier();
       if (uti) uri.searchParams.append('uti', uti);
@@ -104,7 +120,7 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
         ...formatSource(uri.href),
       } as ImageURISource)
     );
-  }, [session?.platform, session?.user.photo]);
+  }, [session?.platform, session?.user.avatar]);
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
     return !userProfilePicture ? (
@@ -128,7 +144,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
     () => (
       <>
         <HeadingXSText style={styles.userInfoName}>{session?.user.displayName}</HeadingXSText>
-        <SmallBoldText style={{ color: colorType[session?.user.type!] }}>
+        <SmallBoldText style={{ color: theme.color.profileTypes[session?.user.type!] }}>
           {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
         </SmallBoldText>
         <SecondaryButton
@@ -152,7 +168,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
 function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], focusedRef: React.MutableRefObject<boolean>) {
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
-  const authContextRef = React.useRef<IAuthContext | undefined>(undefined);
+  const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
@@ -168,7 +184,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     async (modificationType: ModificationType) => {
       try {
         setCurrentLoadingMenu(modificationType);
-        if (!(await fetchAuthContext())) throw new Error('No session');
+        if (!(await fetchAuthContext())) throw new global.Error('No session');
         let needMfa: undefined | boolean;
         if (modificationType !== ModificationType.PASSWORD) needMfa = await fetchMFAValidationInfos();
         const routeNames = {
@@ -191,7 +207,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           [ModificationType.PASSWORD]: {
             platform: session?.platform,
             context: authContextRef?.current,
-            credentials: { username: session?.user.login },
+            credentials: { username: session?.user.loginUsed ?? session?.user.login },
             navCallback: CommonActions.goBack(),
           } as ChangePasswordScreenNavParams,
         };
@@ -207,11 +223,20 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         Toast.showError(I18n.get('user-page-error-text'));
       }
     },
-    [fetchAuthContext, fetchMFAValidationInfos, focusedRef, navigation, session?.platform, session?.user.login],
+    [
+      fetchAuthContext,
+      fetchMFAValidationInfos,
+      focusedRef,
+      navigation,
+      session?.platform,
+      session?.user.login,
+      session?.user.loginUsed,
+    ],
   );
-  const canEditPersonalInfo = session?.user.type !== UserType.Student;
+  const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
   const isFederated = session?.federated;
+
   return React.useMemo(
     () => (
       <>
@@ -284,8 +309,104 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         </View>
       </>
     ),
-    [currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
+    [isFederated, currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
   );
+}
+
+/**
+ * Setup an Accounts button feature that opens up an account list
+ * @param session
+ * @param accountListRef
+ * @returns the React Elements of the account button and list
+ */
+function useAccountsFeature(
+  session: UserHomeScreenPrivateProps['session'],
+  accounts: UserHomeScreenPrivateProps['accounts'],
+  trySwitch: UserHomeScreenPrivateProps['trySwitch'],
+  tryRemoveAccount: UserHomeScreenPrivateProps['tryRemoveAccount'],
+) {
+  const accountListRef = React.useRef<BottomSheetModalMethods>(null);
+  const accountsArray = React.useMemo(() => Object.values(accounts), [accounts]);
+  const canManageAccounts = userCanAddAccount(session);
+  const navigation = useNavigation<NavigationProp<UserNavigationParams & AuthNavigationParams>>();
+  const showAccountList = React.useCallback(() => {
+    trackingAccountEvents.switchAccountPressButton();
+    accountListRef.current?.present();
+  }, [accountListRef]);
+  const addAccount = React.useCallback(() => {
+    navigation.navigate(authRouteNames.addAccountModal, {});
+  }, [navigation]);
+
+  const [loadingState, setLoadingState] = React.useState<LoginState>(LoginState.IDLE);
+
+  const data = React.useMemo(() => getOrderedAccounts(accounts), [accounts]);
+
+  const onPressItem = React.useCallback(
+    async (item: (typeof data)[0], index: number) => {
+      const activeSession = assertSession();
+      // await authService.removeFirebaseToken(account.platform);
+      accountListRef.current?.dismiss();
+
+      if (activeSession.user.id === item.user.id) return;
+
+      const redirect = (i: typeof item) => {
+        const platform = appConf.getExpandedPlatform(i.platform);
+        if (!platform) {
+          console.warn('AccountSelectionScreen: Missing platform for this account');
+          toast.showError(I18n.get('auth-account-select-error'));
+          return;
+        }
+        const nextScreen = getLoginNextScreen(platform);
+        if (!nextScreen) {
+          console.warn('AccountSelectionScreen: Next screen cannot be determined for this user');
+          toast.showError(I18n.get('auth-account-select-error'));
+          return;
+        }
+        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, accountId: item.user.id } });
+      };
+      if (loadingState !== LoginState.IDLE) return;
+      if (accountIsLoggable(item)) {
+        try {
+          setLoadingState(LoginState.RUNNING);
+          const account = accounts[item.user.id];
+          await trySwitch(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
+          setLoadingState(LoginState.DONE);
+        } catch (e) {
+          setLoadingState(LoginState.IDLE);
+          console.warn(e);
+          redirect(item);
+        }
+      } else {
+        redirect(item);
+      }
+    },
+    [accounts, loadingState, navigation, trySwitch],
+  );
+
+  const onDeleteItem = React.useCallback(
+    async (item: (typeof data)[0], index: number) => {
+      try {
+        trackingAccountEvents.deleteAccountFromSwitchAccount();
+        const account = accounts[item.user.id];
+        await tryRemoveAccount(account);
+        if (session?.user.id !== item.user.id) toast.showSuccess(I18n.get('auth-accountlist-delete-success'));
+      } catch (e) {
+        console.warn(e);
+      }
+    },
+    [accounts, session?.user.id, tryRemoveAccount],
+  );
+
+  return React.useMemo(() => {
+    return canManageAccounts && accountsArray.length === 1 ? (
+      <AddAccountButton action={addAccount} style={styles.accountButton} />
+    ) : accountsArray.length > 1 ? (
+      <>
+        <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
+        <ChangeAccountList ref={accountListRef} data={data} onPress={onPressItem} onDelete={onDeleteItem} />
+      </>
+    ) : null;
+  }, [canManageAccounts, accountsArray, addAccount, showAccountList, data, onPressItem, onDeleteItem]);
 }
 
 /**
@@ -338,40 +459,72 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
 }
 
 /**
- * Setup a version number feature that can secretly display detailed information when long pressed.
- * @returns the React Element of the touchable version text
+ * Setup an i18n keys toggle feature.
+ * @returns the React Element of the toggle
  */
-function useVersionFeature(session: UserHomeScreenPrivateProps['session']) {
-  /**
-   * When true, version number display more info about build / platform / override / etc
-   */
-  const [isVersionDetailsShown, setIsVersionDetailsShown] = React.useState<boolean>(false);
-  const toggleVersionDetails = React.useCallback(() => {
-    setIsVersionDetailsShown(oldState => !oldState);
-  }, []);
+function useToggleKeysFeature() {
+  if (!I18n.canShowKeys) return;
+  return (
+    <DefaultButton
+      text="Toggle i18n Keys"
+      action={() => {
+        I18n.toggleShowKeys();
+      }}
+      contentColor={theme.palette.primary.regular}
+      style={styles.toggleKeysButton}
+    />
+  );
+}
+
+/**
+ * Setup a version details feature.
+ * @returns the React Element of the version details text
+ */
+function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']) {
   const currentPlatform = session?.platform.displayName;
   return React.useMemo(() => {
     return (
+      <SmallBoldText style={styles.version}>
+        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
+      </SmallBoldText>
+    );
+  }, [currentPlatform]);
+}
+
+/**
+ * Setup a version number feature that can secretly display detailed information when long pressed.
+ * @returns the React Element of the touchable version text
+ */
+function useVersionFeature(setAreDetailsVisible, scrollViewRef) {
+  /**
+   * When true, additional information is displayed above (build/platform/override)
+   */
+  const toggleVersionDetails = React.useCallback(() => {
+    setAreDetailsVisible(oldState => !oldState);
+    // setTimeout is used to wait for the ScrollView height to update (after details are shown).
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd();
+    }, 0);
+  }, [scrollViewRef, setAreDetailsVisible]);
+  return React.useMemo(() => {
+    return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
-        <SmallBoldText style={styles.versionButton}>
+        <SmallBoldText style={styles.version}>
           {I18n.get('user-page-versionnumber')} {useVersionFeature.versionNumber}
-          {isVersionDetailsShown ? ` ${useVersionFeature.versionType} (${useVersionFeature.buildNumber})` : null}
         </SmallBoldText>
-        {isVersionDetailsShown ? (
-          <SmallBoldText style={styles.versionButton}>
-            {isVersionDetailsShown ? `${useVersionFeature.versionOverride} – ${currentPlatform}` : null}
-          </SmallBoldText>
-        ) : null}
       </TouchableOpacity>
     );
-  }, [currentPlatform, isVersionDetailsShown, toggleVersionDetails]);
+  }, [toggleVersionDetails]);
 }
 
 // All these values are compile-time constants. So we decalre them as function statics.
+useVersionDetailsFeature.buildNumber = DeviceInfo.getBuildNumber();
+useVersionDetailsFeature.deviceModel = DeviceInfo.getModel();
+useVersionDetailsFeature.os = DeviceInfo.getSystemName();
+useVersionDetailsFeature.osVersion = DeviceInfo.getSystemVersion();
+useVersionDetailsFeature.versionType = RNConfigReader.BundleVersionType as string;
+useVersionDetailsFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
-useVersionFeature.buildNumber = DeviceInfo.getBuildNumber();
-useVersionFeature.versionType = RNConfigReader.BundleVersionType as string;
-useVersionFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
 
 /**
  * UserHomeScreen component
@@ -379,10 +532,12 @@ useVersionFeature.versionOverride = RNConfigReader.BundleVersionOverride as stri
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
-  const { handleLogout, session } = props;
+  const { handleLogout, trySwitch, tryRemoveAccount, session, accounts } = props;
+  const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
+  const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
-  // We must store it in a Ref because of async operations
+  // We must store it in a Ref because of async operations.
   const focusedRef = React.useRef(useIsFocused());
   useFocusEffect(
     React.useCallback(() => {
@@ -397,12 +552,20 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
   const accountMenu = useAccountMenuFeature(session, focusedRef);
+  const accountsButton = useAccountsFeature(session, accounts, trySwitch, tryRemoveAccount);
   const logoutButton = useLogoutFeature(handleLogout);
-  const versionButton = useVersionFeature(session);
+  const toggleKeysButton = useToggleKeysFeature();
+  const versionDetails = useVersionDetailsFeature(session);
+  const versionButton = useVersionFeature(setAreDetailsVisible, scrollViewRef);
 
   return (
     <PageView style={styles.page} showNetworkBar={false}>
-      <ScrollView style={UI_STYLES.flex1} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={UI_STYLES.flex1}
+        bottomInset={false}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.sectionUserInfo}>
           {navBarDecoration}
           {avatarButton}
@@ -410,8 +573,15 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         </View>
         {accountMenu}
         <View style={styles.sectionBottom}>
+          {accountsButton}
           {logoutButton}
-          {versionButton}
+          {areDetailsVisible ? (
+            <>
+              {toggleKeysButton}
+              {versionDetails}
+            </>
+          ) : null}
+          <BottomRoundDecoration style={styles.bottomRoundDecoration} child={versionButton} />
         </View>
       </ScrollView>
     </PageView>
@@ -422,12 +592,17 @@ export default connect(
   (state: IGlobalState) => {
     return {
       session: getSession(),
+      accounts: getAuthState(state).accounts,
     };
   },
   dispatch =>
     bindActionCreators<UserHomeScreenDispatchProps>(
       {
-        handleLogout: handleAction(logoutAction),
+        handleLogout: handleAction(manualLogoutAction, { track: track.logout }),
+        trySwitch: tryAction(switchAccountAction, {
+          track: track.loginRestore,
+        }),
+        tryRemoveAccount: handleAction(removeAccountAction),
       },
       dispatch,
     ),

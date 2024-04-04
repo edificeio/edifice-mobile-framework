@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Dispatch } from 'redux';
 
-import { IAuthState } from '~/framework/modules/auth/reducer';
+import { LegalUrls } from '~/framework/modules/auth/model';
 import type { UserNavigationParams } from '~/framework/modules/user/navigation';
 
 export interface UserLegalNoticeScreenProps {}
@@ -10,8 +10,7 @@ export interface UserLegalNoticeScreenNavParams {}
 
 export interface UserLegalNoticeScreenStoreProps {
   dispatch: Dispatch;
-  session: IAuthState['session'];
-  urls: IAuthState['legalUrls'];
+  legalUrls?: LegalUrls;
 }
 
 export interface UserLegalNoticeScreenDispatchProps {}

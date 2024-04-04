@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
 export enum MediaType {
@@ -17,5 +17,5 @@ export interface MediaPlayerParams {
 
 export interface MediaPlayerProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer> {
   connected: boolean;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }

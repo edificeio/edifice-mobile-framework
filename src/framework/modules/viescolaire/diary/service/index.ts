@@ -1,6 +1,6 @@
 import moment, { Moment } from 'moment';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IDiaryCourse, IDiarySession, IHomework, IHomeworkMap } from '~/framework/modules/viescolaire/diary/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
@@ -196,7 +196,7 @@ const sessionAdapter = (data: IBackendSession): IDiarySession => {
 
 export const diaryService = {
   courses: {
-    get: async (session: ISession, structureId: string, teacherId: string, startDate: Moment, endDate: Moment) => {
+    get: async (session: AuthLoggedAccount, structureId: string, teacherId: string, startDate: Moment, endDate: Moment) => {
       const start = startDate.format('YYYY-MM-DD');
       const end = endDate.format('YYYY-MM-DD');
       const api = `/viescolaire/common/courses/${structureId}/${start}/${end}?teacherId=${teacherId}&union=true`;
@@ -205,19 +205,19 @@ export const diaryService = {
     },
   },
   homeworks: {
-    get: async (session: ISession, structureId: string, startDate: string, endDate: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/homeworks/own/${startDate}/${endDate}/${structureId}`;
       const homeworks = (await fetchJSONWithCache(api)) as IBackendHomeworkList;
       return homeworksAdapter(homeworks);
     },
-    getFromChild: async (session: ISession, childId: string, structureId: string, startDate: string, endDate: string) => {
+    getFromChild: async (session: AuthLoggedAccount, childId: string, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/homeworks/child/${startDate}/${endDate}/${childId}/${structureId}`;
       const homeworks = (await fetchJSONWithCache(api)) as IBackendHomeworkList;
       return homeworksAdapter(homeworks);
     },
   },
   homework: {
-    updateProgress: async (session: ISession, homeworkId: number, isDone: boolean) => {
+    updateProgress: async (session: AuthLoggedAccount, homeworkId: number, isDone: boolean) => {
       const status = isDone ? 'done' : 'todo';
       const api = `/diary/homework/progress/${homeworkId}/${status}`;
       await fetchJSONWithCache(api, {
@@ -227,12 +227,12 @@ export const diaryService = {
     },
   },
   sessions: {
-    get: async (session: ISession, structureId: string, startDate: string, endDate: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string, startDate: string, endDate: string) => {
       const api = `/diary/sessions/own/${startDate}/${endDate}/${structureId}`;
       const sessions = (await fetchJSONWithCache(api)) as IBackendSessionList;
       return sessions.map(sessionAdapter);
     },
-    getFromChild: async (session: ISession, childId: string, startDate: string, endDate: string) => {
+    getFromChild: async (session: AuthLoggedAccount, childId: string, startDate: string, endDate: string) => {
       const api = `/diary/sessions/child/${startDate}/${endDate}/${childId}`;
       const sessions = (await fetchJSONWithCache(api)) as IBackendSessionList;
       return sessions.map(sessionAdapter);

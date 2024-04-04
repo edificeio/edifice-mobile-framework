@@ -1,189 +1,107 @@
 /**
  * Navigator for the auth section
  */
-import { CommonActions, NavigationProp, ParamListBase, StackRouter } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ParamListBase, Router, StackNavigationState, StackRouter } from '@react-navigation/native';
 
-import { ILoginResult } from '~/framework/modules/auth/actions';
-import { ForgotMode, IAuthContext, IAuthCredentials, PartialSessionScenario } from '~/framework/modules/auth/model';
-import moduleConfig from '~/framework/modules/auth/moduleConfig';
+import moduleConfig from '~/framework/modules/auth/module-config';
+import type { AuthOnboardingAddAccountScreenNavParams } from '~/framework/modules/auth/screens/add-account/onboarding';
 import type { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email';
 import type { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile';
-import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/screens/change-password/types';
-import type { LoginHomeScreenNavParams } from '~/framework/modules/auth/screens/login-home/types';
+import type { AuthDiscoveryClassScreenNavParams } from '~/framework/modules/auth/screens/discovery-class';
+import type { AuthAccountSelectionScreenNavParams } from '~/framework/modules/auth/screens/main-account/account-selection/types';
+import type { AuthAddAccountModalScreenNavParams } from '~/framework/modules/auth/screens/main-account/add-account-modal';
+import type { AuthLoginWayfScreenNavParams } from '~/framework/modules/auth/screens/main-account/login-wayf';
+import type { AuthOnboardingScreenNavParams } from '~/framework/modules/auth/screens/main-account/onboarding';
+import type { AuthPlatformsScreenNavParams } from '~/framework/modules/auth/screens/main-account/platforms';
 import type { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa';
-import { RouteStack } from '~/framework/navigation/helper';
-import appConf, { Platform } from '~/framework/util/appConf';
+import type { ActivationScreenNavParams } from '~/framework/modules/auth/templates/activation';
+import type { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
+import type { ForgotScreenNavParams } from '~/framework/modules/auth/templates/forgot';
+import type { LoginCredentialsScreenNavParams } from '~/framework/modules/auth/templates/login-credentials/types';
+import type { StackNavigationAction } from '~/framework/navigation/types';
+import type { Platform } from '~/framework/util/appConf';
 
 // We use moduleConfig.name instead of moduleConfig.routeName because this module is not technically a NavigableModule.
 export const authRouteNames = {
-  loginHome: `${moduleConfig.name}/login/home` as 'loginHome',
-  loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
-  wayf: `${moduleConfig.name}/wayf` as 'wayf',
+  // Login stack (normal version)
   onboarding: `${moduleConfig.name}/onboarding` as 'onboarding',
   platforms: `${moduleConfig.name}/platforms` as 'platforms',
+  loginCredentials: `${moduleConfig.name}/login/credentials` as 'loginCredentials',
+  loginWayf: `${moduleConfig.name}/login/wayf` as 'loginWayf',
+  wayf: `${moduleConfig.name}/wayf` as 'wayf',
   activation: `${moduleConfig.name}/activation` as 'activation',
-  forgot: `${moduleConfig.name}/forgot` as 'forgot',
-  revalidateTerms: `${moduleConfig.name}/revalidateTerms` as 'revalidateTerms',
   changePassword: `${moduleConfig.name}/changePassword` as 'changePassword',
+  forgot: `${moduleConfig.name}/forgot` as 'forgot',
+  accounts: `${moduleConfig.name}/accounts` as 'accounts', // This screen is exclusive to normal login stack
+  // Login stack (add account version)
+  addAccountOnboarding: `${moduleConfig.name}/add-account/onboarding` as 'addAccountOnboarding',
+  addAccountPlatforms: `${moduleConfig.name}/add-account/platforms` as 'addAccountPlatforms',
+  addAccountLoginCredentials: `${moduleConfig.name}/add-account/login/credentials` as 'addAccountLoginCredentials',
+  addAccountLoginWayf: `${moduleConfig.name}/add-account/login/wayf` as 'addAccountLoginWayf',
+  addAccountWayf: `${moduleConfig.name}/add-account/wayf` as 'addAccountWayf',
+  addAccountActivation: `${moduleConfig.name}/add-account/activation` as 'addAccountActivation',
+  addAccountChangePassword: `${moduleConfig.name}/add-account/changePassword` as 'addAccountChangePassword',
+  addAccountForgot: `${moduleConfig.name}/add-account/forgot` as 'addAccountForgot',
+  // Exclusive logged screen (normal auth stack)
+  addAccountModal: `${moduleConfig.name}/add-account/modal` as 'addAccountModal', // This is the add acount stack parent screen.
+  revalidateTerms: `${moduleConfig.name}/revalidateTerms` as 'revalidateTerms',
   changePasswordModal: `${moduleConfig.name}/changePasswordModal` as 'changePasswordModal',
   changeEmail: `${moduleConfig.name}/changeEmail` as 'changeEmail',
   changeMobile: `${moduleConfig.name}/changeMobile` as 'changeMobile',
   mfa: `${moduleConfig.name}/mfa` as 'mfa',
   mfaModal: `${moduleConfig.name}/mfaModal` as 'mfaModal',
+  discoveryClass: `${moduleConfig.name}/discovery-class` as 'discoveryClass',
 };
 
-export interface IAuthNavigationParams extends ParamListBase {
-  loginHome: LoginHomeScreenNavParams;
-  loginWayf: { platform: Platform };
-  wayf: { platform: Platform };
-  activation: { platform: Platform; context: IAuthContext; credentials: IAuthCredentials; rememberMe?: boolean };
-  forgot: { platform: Platform; mode: ForgotMode };
-  revalidateTerms: { platform: Platform; credentials?: IAuthCredentials; rememberMe?: boolean };
+export interface AuthNavigationTemplatesParams extends ParamListBase {
+  onboarding: undefined;
+  platforms: undefined;
+}
+
+export interface AuthNavigationParams extends ParamListBase {
+  // Normal auth stack
+  onboarding: AuthOnboardingScreenNavParams;
+  platforms: AuthPlatformsScreenNavParams;
+  accounts: AuthAccountSelectionScreenNavParams;
+  loginCredentials: LoginCredentialsScreenNavParams;
+  loginWayf: AuthLoginWayfScreenNavParams;
+  wayf: { platform: Platform; accountId?: string };
+  activation: ActivationScreenNavParams;
   changePassword: ChangePasswordScreenNavParams;
+  forgot: ForgotScreenNavParams;
+  // Add account stack
+  addAccountModal: AuthAddAccountModalScreenNavParams;
+  addAccountOnboarding: AuthOnboardingAddAccountScreenNavParams;
+  addAccountLoginCredentials: LoginCredentialsScreenNavParams;
+  addAccountLoginWayf: AuthLoginWayfScreenNavParams;
+  addAccountWayf: { platform: Platform };
+  addAccountActivation: ActivationScreenNavParams;
+  addAccountChangePassword: ChangePasswordScreenNavParams;
+  addAccountForgot: ForgotScreenNavParams;
+  // Exclusive logged screen
+  revalidateTerms: object;
   changePasswordModal: ChangePasswordScreenNavParams;
   changeEmail: AuthChangeEmailScreenNavParams;
   changeMobile: AuthChangeMobileScreenNavParams;
   mfa: AuthMFAScreenNavParams;
   mfaModal: AuthMFAScreenNavParams;
+  discoveryClass: AuthDiscoveryClassScreenNavParams;
 }
 
-export const getLoginRouteName = (platform?: Platform) => {
-  return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginHome;
-};
-
-export const getRedirectLoginNavAction = (action: ILoginResult, platform: Platform) => {
-  if (action) {
-    switch (action.action) {
-      case 'activate':
-        return CommonActions.navigate(authRouteNames.activation, {
-          platform,
-          context: action.context,
-          credentials: action.credentials,
-          rememberMe: action.rememberMe,
-        });
-      case 'reset':
-        return CommonActions.navigate(authRouteNames.changePassword, {
-          platform,
-          context: action.context,
-          credentials: action.credentials,
-          rememberMe: action.rememberMe,
-          useResetCode: true,
-        });
-      case PartialSessionScenario.MUST_CHANGE_PASSWORD:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.changePassword,
-              params: {
-                platform,
-                context: action.context,
-                credentials: action.credentials,
-                rememberMe: action.rememberMe,
-                forceChange: true,
-              },
-            },
-          ],
-        });
-      case PartialSessionScenario.MUST_REVALIDATE_TERMS:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.revalidateTerms,
-              params: {
-                platform,
-                credentials: action.credentials,
-                rememberMe: action.rememberMe,
-              },
-            },
-          ],
-        });
-      case PartialSessionScenario.MUST_VERIFY_MOBILE:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.changeMobile,
-              params: {
-                platform,
-                defaultMobile: action.defaultMobile,
-                rememberMe: action.rememberMe,
-              },
-            },
-          ],
-        });
-      case PartialSessionScenario.MUST_VERIFY_EMAIL:
-        return CommonActions.reset({
-          // we reset instead of navigate to prevent the user from going back or something else
-          routes: [
-            {
-              name: authRouteNames.changeEmail,
-              params: {
-                platform,
-                defaultEmail: action.defaultEmail,
-                rememberMe: action.rememberMe,
-              },
-            },
-          ],
-        });
-    }
-  }
-};
-
-export const redirectLoginNavAction = (
-  action: ILoginResult,
-  platform: Platform,
-  navigation: NavigationProp<IAuthNavigationParams>,
+/**
+ * Simulate a nav action from the given nav state and returns the resulting nav state
+ * @param action the nav action to simulate
+ * @param state nav state (can be stale) to apply the nav action on
+ * @returns The new nav State (will be rehydrated)
+ */
+export const simulateNavAction = (
+  action: StackNavigationAction,
+  state: Parameters<Router<StackNavigationState<ParamListBase>, StackNavigationAction>['getRehydratedState']>[0],
 ) => {
-  const navAction = getRedirectLoginNavAction(action, platform);
-  if (navAction) {
-    navigation.dispatch(navAction);
-  }
-};
-
-export function navigateAfterOnboarding(navigation: NativeStackNavigationProp<IAuthNavigationParams>) {
-  const hasMultiplePlatforms = appConf.platforms.length > 1;
-  if (hasMultiplePlatforms) {
-    navigation.navigate(authRouteNames.platforms);
-  } else {
-    const pf = appConf.platforms[0];
-    navigation.navigate(getLoginRouteName(pf), { platform: pf }); // Auto-select first platform if not defined));
-  }
-}
-
-export const getAuthNavigationState = (selectedPlatform?: Platform, loginRedirect?: ILoginResult) => {
-  const routes = [] as RouteStack;
-
-  // 1. Pre-login screens
-
-  routes.push({ name: authRouteNames.onboarding });
-
-  if (appConf.platforms.length > 1 && (selectedPlatform || !routes.length)) routes.push({ name: authRouteNames.platforms });
-
-  if (selectedPlatform || !routes.length)
-    routes.push({
-      name: getLoginRouteName(selectedPlatform),
-      params: {
-        platform: selectedPlatform || appConf.platforms[0], // Auto-select first platform if not defined
-      },
-    });
-
-  // 2. post-login screens (if loginRedirect provided only)
-
-  if (!loginRedirect || !selectedPlatform) return { routes };
-
-  // Okay time for explanation !
-  // { routes } are "stale" navigation state and must be rehyrated to apply `navAction` on it.
-  // We create a dummy StackRouter to perform this, then returns the resulting navState.
-  const navAction = getRedirectLoginNavAction(loginRedirect, selectedPlatform);
-  if (!navAction) return { routes };
-
+  // We must instaciate a throwaway StackRouter to perform the action on the state and get the resulting one.
   const router = StackRouter({});
   const routeNames = Object.values(authRouteNames);
-  const rehydratedState = router.getRehydratedState({ routes }, { routeNames, routeParamList: {}, routeGetIdList: {} });
-  const newState = router.getStateForAction(rehydratedState, navAction, { routeNames, routeParamList: {}, routeGetIdList: {} });
-
-  return newState ?? { routes };
+  const rehydratedState = router.getRehydratedState(state, { routeNames, routeParamList: {}, routeGetIdList: {} });
+  const newState = router.getStateForAction(rehydratedState, action, { routeNames, routeParamList: {}, routeGetIdList: {} });
+  return newState ?? state;
 };

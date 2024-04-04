@@ -19,6 +19,7 @@ export const CheckboxButton = ({
   return (
     <TouchableOpacity onPress={onPress}>
       <ListItem
+        style={customListItemStyle}
         leftElement={<SmallText style={UI_STYLES.flexShrink1}>{I18n.get(title)}</SmallText>}
         rightElement={
           <Checkbox

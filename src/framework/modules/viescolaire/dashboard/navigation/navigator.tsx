@@ -1,7 +1,7 @@
 import * as React from 'react';
 
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import DashboardRelativeScreen, {
   computeNavBar as relativeNavBar,
@@ -23,7 +23,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     const session = getSession();
     const userType = session?.user.type;
 
-    if (userType === UserType.Student) {
+    if (userType === AccountType.Student) {
       screens.push(
         <Stack.Screen
           name={dashboardRouteNames.student}
@@ -33,7 +33,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
         />,
       );
       moduleConfig.routeName = dashboardRouteNames.student;
-    } else if (userType === UserType.Relative) {
+    } else if (userType === AccountType.Relative) {
       screens.push(
         <Stack.Screen
           name={dashboardRouteNames.relative}

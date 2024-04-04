@@ -1,19 +1,22 @@
-import type { Route } from '@react-navigation/native';
+import { findFocusedRoute, InitialState, type Route } from '@react-navigation/native';
 import * as React from 'react';
-
-import { navigationRef } from '~/framework/navigation/helper';
 
 import { Trackers } from '.';
 
-const customRouteNameLogicMap: { [key: string]: (route: Route<string, any>) => string } = {};
+const customRouteNameLogicMap: { [key: string]: (route: Omit<Route<string, object | undefined>, 'key'>) => string } = {};
 
-export const registerCustomRouteTracking = <R = Route<string, any>>(routeName: string, logic: (route: R) => string) => {
-  customRouteNameLogicMap[routeName] = logic as (route: Route<string, any>) => string;
+export const registerCustomRouteTracking = <R = Omit<Route<string, object | undefined>, 'key'>>(
+  routeName: string,
+  logic: (route: R) => string,
+) => {
+  customRouteNameLogicMap[routeName] = logic as (route: Omit<Route<string, object | undefined>, 'key'>) => string;
 };
 
-const trackViewIfNeeded = async (routeNameRef: React.MutableRefObject<string | undefined>, path?: string) => {
+const trackViewIfNeeded = async (
+  routeNameRef: React.MutableRefObject<string | undefined>,
+  route?: Omit<Route<string, object | undefined>, 'key'> | undefined,
+) => {
   const previousRouteName = routeNameRef.current;
-  const route = navigationRef.getCurrentRoute();
   let currentRouteName = route?.name;
 
   if (route && currentRouteName && customRouteNameLogicMap[currentRouteName] !== undefined) {
@@ -31,5 +34,9 @@ const trackViewIfNeeded = async (routeNameRef: React.MutableRefObject<string | u
 
 export const useNavigationTracker = () => {
   const routeNameRef = React.useRef<string>();
-  return () => trackViewIfNeeded(routeNameRef, navigationRef.getCurrentRoute()?.name);
+  return React.useCallback(
+    (navState: InitialState | undefined) =>
+      trackViewIfNeeded(routeNameRef, navState ? findFocusedRoute(navState) : undefined /*, navigationRef.getCurrentRoute()*/),
+    [],
+  );
 };

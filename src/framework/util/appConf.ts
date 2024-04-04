@@ -2,10 +2,10 @@
  * AppConfTool
  * AppConf Loader
  */
-import { ImageStyle, PlatformOSType } from 'react-native';
+import type { ImageStyle, PlatformOSType } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
-import { PictureProps } from '~/framework/components/picture';
+import type { PictureProps } from '~/framework/components/picture';
 
 // Platforms ======================================================================================
 
@@ -99,6 +99,7 @@ export interface IAppConfDeclaration {
   };
   onboarding?: {
     showDiscoverLink?: PlatformOSType[];
+    showDiscoveryClass?: boolean;
     showAppName?: boolean;
   };
   platforms: IPlatformAccessDeclaration[];
@@ -114,10 +115,29 @@ export class AppConf {
 
   onboarding: {
     showDiscoverLink: { [p in PlatformOSType]?: boolean };
+    showDiscoveryClass: boolean;
     showAppName: boolean;
   };
 
   platforms: Platform[];
+
+  getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
+
+  getExpandedPlatform = (platform: string | Platform) =>
+    typeof platform === 'string' ? this.getPlatformByName(platform) : platform;
+
+  assertPlatformOfName = (name: string) => {
+    return (
+      this.getPlatformByName(name) ??
+      (() => {
+        throw new Error('[assertPlatformOfName] no platform of name :' + name);
+      })()
+    );
+  };
+
+  get hasMultiplePlatform() {
+    return this.platforms.length > 1;
+  }
 
   webviewIdentifier: string;
 
@@ -149,6 +169,7 @@ export class AppConf {
     } else {
       onboarding.showDiscoverLink = { ios: true, android: true };
     }
+    onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
     this.onboarding = onboarding as AppConf['onboarding'];
 

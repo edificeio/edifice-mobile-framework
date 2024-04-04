@@ -15,8 +15,8 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import { loadStoredStructureAction } from '~/framework/modules/viescolaire/dashboard/actions';
 import { ModuleButton } from '~/framework/modules/viescolaire/dashboard/components/ModuleButton';
 import { DashboardNavigationParams, dashboardRouteNames } from '~/framework/modules/viescolaire/dashboard/navigation';
@@ -80,7 +80,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener('focus', () => {
-      if (props.userType !== UserType.Teacher || !props.authorizedViescoApps.presences) return;
+      if (props.userType !== AccountType.Teacher || !props.authorizedViescoApps.presences) return;
       if (loadingRef.current === AsyncPagedLoadingState.PRISTINE) init();
       else refreshSilent();
     });
@@ -148,7 +148,7 @@ const DashboardTeacherScreen = (props: DashboardTeacherScreenPrivateProps) => {
     );
   };
 
-  if (props.userType !== UserType.Teacher) {
+  if (props.userType !== AccountType.Teacher) {
     return (
       <EmptyScreen
         svgImage="empty-viesco"
@@ -186,13 +186,13 @@ export default connect(
   (state: IGlobalState) => {
     const presencesState = presencesConfig.getState(state);
     const session = getSession();
-    const hasPresencesApp = session?.apps.some(app => app.address === '/presences');
+    const hasPresencesApp = session?.rights.apps.some(app => app.address === '/presences');
 
     return {
       authorizedViescoApps: {
-        competences: session?.apps.some(app => app.address === '/competences'),
-        diary: session?.apps.some(app => app.address === '/diary'),
-        edt: session?.apps.some(app => app.address === '/edt'),
+        competences: session?.rights.apps.some(app => app.address === '/competences'),
+        diary: session?.rights.apps.some(app => app.address === '/diary'),
+        edt: session?.rights.apps.some(app => app.address === '/edt'),
         presences: hasPresencesApp,
       },
       courses: presencesState.courses.data,

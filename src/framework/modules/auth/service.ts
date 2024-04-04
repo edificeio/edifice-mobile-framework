@@ -1,26 +1,40 @@
+import CookieManager from '@react-native-cookies/cookies';
 import messaging from '@react-native-firebase/messaging';
 import moment from 'moment';
+import { Platform as RNPlatform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import { PERMISSIONS, RESULTS, request } from 'react-native-permissions';
 
 import { I18n } from '~/app/i18n';
 import appConf, { Platform } from '~/framework/util/appConf';
+import { Error } from '~/framework/util/error';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
-import { getItem, getItemJson, setItem, setItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions, Storage } from '~/framework/util/storage';
 import { Connection } from '~/infra/Connection';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
-import { OAuth2ErrorCode, OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } from '~/infra/oauth';
 
 import {
-  IAuthContext,
-  IAuthCredentials,
-  ILoggedUser,
-  ISession,
-  PartialSessionScenario,
-  RuntimeAuthErrorCode,
+  AccountType,
+  IActivationPayload as ActivationPayload,
+  AuthCredentials,
+  AuthFederationCredentials,
+  AuthLoggedAccount,
+  AuthLoggedUserInfo,
+  AuthPendingRedirection,
+  AuthRequirement,
+  AuthTokenSet,
+  ForgotMode,
+  LegalUrls,
+  PlatformAuthContext,
   SessionType,
   StructureNode,
   UserChild,
   UserChildren,
-  createAuthError,
+  createActivationError,
+  credentialsAreCustomToken,
+  credentialsAreLoginPassword,
+  credentialsAreSaml,
 } from './model';
 
 export interface IUserRequirements {
@@ -77,21 +91,13 @@ export interface IEntcoreEmailValidationState {
   valid: string; // Last known valid email address (or empty string)
 }
 
-export enum UserType {
-  Student = 'Student',
-  Relative = 'Relative',
-  Teacher = 'Teacher',
-  Personnel = 'Personnel',
-  Guest = 'Guest',
-}
-
 export interface IAuthorizedAction {
   name: string;
   displayName: string;
   type: 'SECURED_ACTION_WORKFLOW'; // ToDo add other types here
 }
 
-export enum UserTypeBackend {
+export enum AccountTypeBackend {
   Student = 'Student',
   Relative = 'Relative',
   Teacher = 'Teacher',
@@ -104,7 +110,7 @@ export interface IUserInfoBackend {
   userId?: string;
   username?: string;
   login?: string;
-  type?: UserType;
+  type?: AccountType;
   deletePending?: boolean;
   hasApp?: boolean;
   forceChangePassword?: boolean;
@@ -163,68 +169,73 @@ export function formatStructuresWithClasses(
   }));
 }
 
-export async function createSession(platform: Platform, credentials: { username: string; password: string }) {
+export async function createSession(platform: Platform, credentials: AuthCredentials | AuthFederationCredentials) {
   if (!platform) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
+    throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
   }
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
+    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
   }
 
-  await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
-    credentials.username,
-    credentials.password,
-    false, // Do not save token until login is completely successful
-  );
+  if (credentialsAreLoginPassword(credentials)) {
+    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithUserAndPassword(
+      credentials.username,
+      credentials.password,
+      false, // Do not save token until login is completely successful
+    );
+  } else if (credentialsAreSaml(credentials)) {
+    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithSAML(
+      credentials.saml,
+      false, // Do not save token until login is completely successful
+    );
+  } else if (credentialsAreCustomToken(credentials)) {
+    await OAuth2RessourceOwnerPasswordClient.connection.getNewTokenWithCustomToken(
+      credentials.customToken,
+      false, // Do not save token until login is completely successful
+    );
+  } else {
+    throw new global.Error(`[auth.createSession] given credentials are not recognisable.`);
+  }
 }
 
-export function restoreSessionAvailable() {
-  return OAuth2RessourceOwnerPasswordClient.getStoredTokenStr();
-}
-
-export async function restoreSession(platform: Platform) {
+export async function restoreSession(platform: Platform, token: AuthTokenSet) {
   initOAuth2(platform);
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
+    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
   }
-  await OAuth2RessourceOwnerPasswordClient.connection.loadToken();
+  OAuth2RessourceOwnerPasswordClient.connection.importToken(token);
   if (!OAuth2RessourceOwnerPasswordClient.connection.hasToken) {
-    throw createAuthError(RuntimeAuthErrorCode.RESTORE_FAIL, 'Failed to restore saved session', '');
+    throw new Error.LoginError(Error.FetchErrorType.NOT_AUTHENTICATED, 'Failed to restore saved session');
   }
 }
 
-export async function saveSession() {
-  try {
-    if (!OAuth2RessourceOwnerPasswordClient.connection) {
-      throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
-    }
-    await OAuth2RessourceOwnerPasswordClient.connection.saveToken();
-  } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Failed to save token', err as Error);
-  }
-}
-
+/**
+ * @deprecated
+ * Remove the old storage data of saved token
+ */
 export async function forgetPreviousSession() {
   try {
     if (!OAuth2RessourceOwnerPasswordClient.connection) {
-      throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
+      throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
     }
     await OAuth2RessourceOwnerPasswordClient.connection.forgetToken();
   } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Failed to forget previous token', err as Error);
+    throw new global.Error('Failed to forget previous (LEGACY) token', { cause: err });
   }
 }
 
 export function formatSession(
+  addTimestamp: number,
   platform: Platform,
+  loginUsed: string | undefined,
   userinfo: IUserInfoBackend,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
   rememberMe?: boolean,
-): ISession {
+): AuthLoggedAccount {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'Failed to init oAuth2 client', '');
+    throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
   }
   if (
     !userinfo.apps ||
@@ -238,11 +249,12 @@ export function formatSession(
     !userinfo.firstName ||
     !userinfo.lastName
   ) {
-    throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing data in user info', '');
+    throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user info');
   }
-  const user: ILoggedUser = {
+  const user: AuthLoggedUserInfo = {
     id: userinfo.userId,
     login: userinfo.login,
+    loginUsed,
     type: userinfo.type,
     displayName: userinfo.username,
     firstName: userinfo.firstName,
@@ -251,7 +263,7 @@ export function formatSession(
     classes: userinfo.classes,
     structures: formatStructuresWithClasses(userPrivateData?.structureNodes, userPublicInfo?.schools),
     uniqueId: userinfo.uniqueId,
-    photo: userPublicInfo?.photo,
+    avatar: userPublicInfo?.photo,
     mobile: userPrivateData?.mobile,
     email: userPrivateData?.email,
     homePhone: userPrivateData?.homePhone,
@@ -269,7 +281,7 @@ export function formatSession(
       for (const child of structure.children) {
         const foundChild = userinfo.children?.[child.id];
         if (!foundChild) {
-          throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Missing data in user children', '');
+          throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user children');
         }
         child.lastName = foundChild.lastName;
         child.firstName = foundChild.firstName;
@@ -282,28 +294,34 @@ export function formatSession(
   }
   return {
     platform,
-    oauth2: OAuth2RessourceOwnerPasswordClient.connection,
-    apps: userinfo.apps,
-    widgets: userinfo.widgets,
-    authorizedActions: userinfo.authorizedActions,
+    tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
+    user,
+    rights: {
+      apps: userinfo.apps,
+      widgets: userinfo.widgets,
+      authorizedActions: userinfo.authorizedActions,
+    },
     type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
     federated: userinfo.federated ?? false,
-    // ... Add here every account-related (not user-related!) information that must be kept into the session. Keep it minimal.
-    user,
+    addTimestamp,
   };
 }
 
+/**
+ * Old storage key used before 1.12 for selected platform
+ * @deprecated
+ */
 export const PLATFORM_STORAGE_KEY = 'currentPlatform';
 
 /**
  * Read the platform stored in MMKV.
  */
 export async function loadCurrentPlatform() {
-  const platformId = await getItem(PLATFORM_STORAGE_KEY);
+  const platformId = Storage.global.getString(PLATFORM_STORAGE_KEY);
   if (platformId) {
-    const platform = appConf.platforms.find(_pf => _pf.name === platformId);
+    const platform = appConf.getPlatformByName(platformId);
     if (!platform)
-      throw createAuthError(RuntimeAuthErrorCode.PLATFORM_NOT_EXISTS, '', `Loaded platform "${platformId}" doesn't exists.`);
+      throw new Error.LoginError(Error.LoginErrorType.INVALID_PLATFORM, `Loaded platform "${platformId}" doesn't exists.`);
     else return platform;
   } else {
     return undefined;
@@ -312,14 +330,22 @@ export async function loadCurrentPlatform() {
 
 /**
  * Read and select the platform stored in MMKV.
+ * @deprecated
  */
-export async function savePlatform(platform: Platform) {
-  await setItem(PLATFORM_STORAGE_KEY, platform.name);
+export function savePlatform(platform: Platform) {
+  Storage.global.set(PLATFORM_STORAGE_KEY, platform.name);
 }
 
-export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: IAuthCredentials) {
+/**
+ * @deprecated
+ */
+export function forgetPlatform() {
+  Storage.global.delete(PLATFORM_STORAGE_KEY);
+}
+
+export async function ensureCredentialsMatchActivationCode(platform: Platform, credentials: AuthCredentials) {
   if (!platform) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
+    throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
   }
   try {
     const res = await fetch(`${platform.url}/auth/activation/match`, {
@@ -335,21 +361,21 @@ export async function ensureCredentialsMatchActivationCode(platform: Platform, c
       method: 'post',
     });
     if (!res.ok) {
-      throw createAuthError(RuntimeAuthErrorCode.ACTIVATION_ERROR, '', 'Activation match HTTP code not 200');
+      throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Activation match response not OK');
     }
     const body = await res.json();
     if (!body.match) {
-      throw createAuthError(OAuth2ErrorCode.BAD_CREDENTIALS, '', 'Activation credentials no match');
+      throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
     }
-    return 'activate' as const;
+    return AuthPendingRedirection.ACTIVATE;
   } catch (activationErr) {
-    throw createAuthError(RuntimeAuthErrorCode.ACTIVATION_ERROR, '', 'Activation match error', activationErr as Error);
+    throw new global.Error('Activation match error', { cause: activationErr });
   }
 }
 
-export async function ensureCredentialsMatchPwdResetCode(platform: Platform, credentials: IAuthCredentials) {
+export async function ensureCredentialsMatchPwdRenewCode(platform: Platform, credentials: AuthCredentials) {
   if (!platform) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, 'No platform specified', '');
+    throw new Error.LoginError(Error.LoginErrorType.NO_SPECIFIED_PLATFORM);
   }
   try {
     const res = await fetch(`${platform.url}/auth/reset/match`, {
@@ -365,15 +391,15 @@ export async function ensureCredentialsMatchPwdResetCode(platform: Platform, cre
       method: 'post',
     });
     if (!res.ok) {
-      throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match HTTP code not 200');
+      throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Renew match response not OK');
     }
     const body = await res.json();
     if (!body.match) {
-      throw createAuthError(OAuth2ErrorCode.BAD_CREDENTIALS, '', 'Pwd reset credentials no match');
+      throw new Error.LoginError(Error.OAuth2ErrorType.CREDENTIALS_MISMATCH);
     }
-    return 'reset' as const;
+    return AuthPendingRedirection.RENEW_PASSWORD;
   } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.PWDRESET_ERROR, '', 'Pwd reset match error', err as Error);
+    throw new global.Error('Pwd renew match error', { cause: err });
   }
 }
 
@@ -384,9 +410,9 @@ export async function getAuthContext(platform: Platform) {
     },
   });
   if (!res.ok) {
-    throw createAuthError(RuntimeAuthErrorCode.RUNTIME_ERROR, '', 'Auth context code not 200');
+    throw new Error.LoginError(Error.FetchErrorType.NOT_OK, 'Get Auth context response not OK');
   }
-  const activationContext: IAuthContext = await res.json();
+  const activationContext: PlatformAuthContext = await res.json();
   return activationContext;
 }
 
@@ -418,7 +444,7 @@ export class FcmService {
 
   private async _getTokenToDeleteQueue(): Promise<string[]> {
     try {
-      const tokensCached = await getItemJson(FcmService.FCM_TOKEN_TODELETE_KEY);
+      const tokensCached = await OldStorageFunctions.getItemJson(FcmService.FCM_TOKEN_TODELETE_KEY);
       if (!tokensCached) return [];
       const tokens = tokensCached as string[];
       if (tokens instanceof Array) {
@@ -439,7 +465,7 @@ export class FcmService {
     //merge is not supported by all implementation
     let tokens = await this._getTokenToDeleteQueue();
     tokens = tokens.filter(t => t !== token);
-    await setItemJson(FcmService.FCM_TOKEN_TODELETE_KEY, tokens);
+    await OldStorageFunctions.setItemJson(FcmService.FCM_TOKEN_TODELETE_KEY, tokens);
   }
 
   async unregisterFCMToken(token: string | null = null) {
@@ -450,6 +476,31 @@ export class FcmService {
       await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
         method: 'delete',
       });
+      this._removeTokenFromDeleteQueue(token);
+    } catch {
+      //unregistering fcm token should not crash the login process
+      if (!Connection.isOnline) {
+        //when no connection => get it from property
+        const tokenToUnregister = token || this.lastRegisteredToken;
+        if (tokenToUnregister) this._removeTokenFromDeleteQueue(tokenToUnregister);
+      }
+    }
+  }
+
+  async unregisterFCMTokenWithAccount(account: AuthLoggedAccount, token: string | null = null) {
+    try {
+      if (!token) {
+        token = await messaging().getToken();
+      }
+      const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
+        OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
+        `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+        {
+          method: 'delete',
+        },
+      );
+
+      await fetch(req);
       this._removeTokenFromDeleteQueue(token);
     } catch {
       //unregistering fcm token should not crash the login process
@@ -487,24 +538,60 @@ export class FcmService {
 export async function manageFirebaseToken(platform: Platform) {
   try {
     const fcm = new FcmService(platform);
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-      await fcm.registerFCMToken();
+    if (RNPlatform.OS === 'android') {
+      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+      if (result === RESULTS.GRANTED) {
+        await fcm.registerFCMToken();
+      }
+    } else {
+      const authorizationStatus = await messaging().requestPermission();
+      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+        await fcm.registerFCMToken();
+      }
     }
   } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.FIREBASE_ERROR, '', '', err as Error);
+    if (err instanceof Error.ErrorWithType) throw err;
+    else throw new global.Error('Firebase register error', { cause: err });
   }
 }
 
 export async function removeFirebaseToken(platform: Platform) {
   try {
     const fcm = new FcmService(platform);
-    const authorizationStatus = await messaging().requestPermission();
-    if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-      await fcm.unregisterFCMToken();
+    if (RNPlatform.OS === 'android') {
+      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+      if (result === RESULTS.GRANTED) {
+        await fcm.unregisterFCMToken();
+      }
+    } else {
+      const authorizationStatus = await messaging().requestPermission();
+      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+        await fcm.unregisterFCMToken();
+      }
     }
   } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.FIREBASE_ERROR, '', '', err as Error);
+    if (err instanceof Error.ErrorWithType) throw err;
+    else throw new global.Error('Firebase unregister error', { cause: err });
+  }
+}
+
+export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount) {
+  try {
+    const fcm = new FcmService(account.platform);
+    if (RNPlatform.OS === 'android') {
+      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
+      if (result === RESULTS.GRANTED) {
+        await fcm.unregisterFCMTokenWithAccount(account);
+      }
+    } else {
+      const authorizationStatus = await messaging().requestPermission();
+      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+        await fcm.unregisterFCMTokenWithAccount(account);
+      }
+    }
+  } catch (err) {
+    if (err instanceof Error.ErrorWithType) throw err;
+    else throw new global.Error('Firebase unregister error', { cause: err });
   }
 }
 
@@ -514,14 +601,26 @@ export async function getAuthTranslationKeys(platform: Platform, language: I18n.
     const res = await fetch(`${platform.url}/auth/i18n`, { headers: { 'Accept-Language': language, 'X-Device-Id': uniqueId() } });
     if (res.ok) {
       const authTranslationKeys = await res.json();
-      return authTranslationKeys;
-    } else throw new Error('http response not 2xx');
-  } catch (e) {
-    throw createAuthError(RuntimeAuthErrorCode.LOAD_I18N_ERROR, '', '', e as Error);
+      const legalUrls: LegalUrls = {
+        cgu: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cgu'), platform),
+        personalDataProtection: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-personaldataprotection'), platform),
+        cookies: urlSigner.getAbsoluteUrl(I18n.get('user-legalurl-cookies'), platform),
+      };
+      if (authTranslationKeys) {
+        legalUrls.userCharter = urlSigner.getAbsoluteUrl(
+          authTranslationKeys['auth.charter'] || I18n.get('user-legalurl-usercharter'),
+          platform,
+        );
+      }
+      return legalUrls;
+    } else throw new Error.FetchError(Error.FetchErrorType.NOT_OK, 'getAuthTranslationKeys response not OK');
+  } catch (err) {
+    if (err instanceof Error.ErrorWithType) throw err;
+    else throw new global.Error('getAuthTranslationKeys error', { cause: err });
   }
 }
 
-export async function revalidateTerms(session: ISession) {
+export async function revalidateTerms(session: AuthLoggedAccount) {
   await signedFetch(session.platform.url + '/auth/cgu/revalidate', {
     method: 'PUT',
   });
@@ -531,7 +630,7 @@ export async function getMFAValidationInfos() {
   try {
     const MFAValidationInfos = (await fetchJSONWithCache('/auth/user/mfa/code')) as IEntcoreMFAValidationInfos;
     return MFAValidationInfos;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] getMFAValidationInfos: could not get MFA validation infos', e);
   }
 }
@@ -543,7 +642,7 @@ export async function verifyMFACode(key: string) {
       body: JSON.stringify({ key }),
     })) as IEntcoreMFAValidationState;
     return mfaValidationState;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] verifyMFACode: could not verify mfa code', e);
   }
 }
@@ -553,12 +652,8 @@ export async function getMobileValidationInfos(platformUrl: string) {
     const mobileValidationInfos = await fetchJSONWithCache('/directory/user/mobilestate', {}, true, platformUrl);
     return mobileValidationInfos;
   } catch (err) {
-    throw createAuthError(
-      RuntimeAuthErrorCode.MOBILEVALIDATIONINFOS_FAIL,
-      'Failed to fetch mobile validation infos',
-      '',
-      err as Error,
-    );
+    if (err instanceof Error.ErrorWithType) throw err;
+    else throw new global.Error('getMobileValidationInfos error', { cause: err });
   }
 }
 
@@ -576,22 +671,25 @@ export async function verifyMobileCode(key: string) {
       body: JSON.stringify({ key }),
     })) as IEntcoreMobileValidationState;
     return mobileValidationState;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] verifyMobileCode: could not verify mobile code', e);
+    if (e instanceof Error.ErrorWithType) throw e;
+    else throw new global.Error('verifyMobileCode: could not verify mobile code', { cause: e });
   }
 }
 
-export async function getEmailValidationInfos() {
+export async function getEmailValidationInfos(platformUrl: string) {
   try {
-    const emailValidationInfos = (await fetchJSONWithCache('/directory/user/mailstate')) as IEntcoreEmailValidationInfos;
+    const emailValidationInfos = (await fetchJSONWithCache(
+      '/directory/user/mailstate',
+      {},
+      true,
+      platformUrl,
+    )) as IEntcoreEmailValidationInfos;
     return emailValidationInfos;
-  } catch (err) {
-    throw createAuthError(
-      RuntimeAuthErrorCode.EMAILVALIDATIONINFOS_FAIL,
-      'Failed to fetch email validation infos',
-      '',
-      err as Error,
-    );
+  } catch (e) {
+    if (e instanceof Error.ErrorWithType) throw e;
+    else throw new global.Error('Failed to fetch email validation infos', { cause: e });
   }
 }
 
@@ -609,7 +707,7 @@ export async function verifyEmailCode(key: string) {
       body: JSON.stringify({ key }),
     })) as IEntcoreEmailValidationState;
     return emailValidationState;
-  } catch {
+  } catch (e) {
     if (__DEV__) console.warn('[UserService] verifyEmailCode: could not verify email code', e);
   }
 }
@@ -619,12 +717,13 @@ export async function getUserRequirements(platform: Platform) {
   return resp.status === 404 ? null : (resp.json() as IUserRequirements);
 }
 
-export async function fetchUserRequirements(platform: Platform) {
+export async function fetchRawUserRequirements(platform: Platform) {
   try {
     const requirements = await getUserRequirements(platform);
     return requirements as IUserRequirements;
-  } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.USERREQUIREMENTS_FAIL, 'Failed to fetch user requirements', '', err as Error);
+  } catch (e) {
+    if (e instanceof Error.ErrorWithType) throw e;
+    else throw new global.Error('Failed to fetch raw user requirements', { cause: e });
   }
 }
 
@@ -638,11 +737,12 @@ export async function fetchUserRequirements(platform: Platform) {
  * @param userRequirements get userRequirements from `fetchUserRequirements()`
  * @returns the first flag encountered (until there is none).
  */
-export function getPartialSessionScenario(userRequirements: IUserRequirements) {
-  if (userRequirements.forceChangePassword) return PartialSessionScenario.MUST_CHANGE_PASSWORD;
-  if (userRequirements.needRevalidateTerms) return PartialSessionScenario.MUST_REVALIDATE_TERMS;
-  if (userRequirements.needRevalidateMobile) return PartialSessionScenario.MUST_VERIFY_MOBILE;
-  if (userRequirements.needRevalidateEmail) return PartialSessionScenario.MUST_VERIFY_EMAIL;
+export function getRequirementScenario(userRequirements: IUserRequirements) {
+  if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+  if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
+  // ToDo add case for terms initial validation (for federated accounts)
+  if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
+  if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
 }
 
 export async function fetchUserInfo(platform: Platform) {
@@ -664,8 +764,9 @@ export async function fetchUserInfo(platform: Platform) {
     if (userinfo.appsNames.includes('Espace documentaire')) userinfo.appsNames.push('Workspace');
     if (userinfo.appsNames.includes('Actualites')) userinfo.appsNames.push('News');
     return userinfo as IUserInfoBackend;
-  } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.USERINFO_FAIL, 'Failed to fetch user info', '', err as Error);
+  } catch (e) {
+    if (e instanceof Error.ErrorWithType) throw e;
+    else throw new global.Error('Failed to fetch user info', { cause: e });
   }
 }
 
@@ -677,26 +778,19 @@ export async function fetchUserInfo(platform: Platform) {
  */
 export function ensureUserValidity(userinfo: IUserInfoBackend) {
   if (userinfo.deletePending) {
-    throw createAuthError(RuntimeAuthErrorCode.PRE_DELETED, '', 'User is predeleted');
+    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_PRE_DELETED);
   } else if (!userinfo.hasApp) {
-    throw createAuthError(RuntimeAuthErrorCode.NOT_PREMIUM, '', 'Structure is not premium');
+    throw new Error.LoginError(Error.LoginErrorType.ACCOUNT_INELIGIBLE_NOT_PREMIUM);
   }
-  // else if (userinfo.forceChangePassword) {
-  //   const error = createAuthError(RuntimeAuthErrorCode.MUST_CHANGE_PASSWORD, '', 'User must change his password');
-  //   (error as any).userinfo = userinfo;
-  //   throw error;
-  // } else if (userinfo.needRevalidateTerms) {
-  //   throw createAuthError(RuntimeAuthErrorCode.MUST_REVALIDATE_TERMS, '', 'User must revalidate CGU');
-  // }
 }
 
 export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: Platform) {
   try {
     if (!userinfo.userId) {
-      throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', 'User id has not being returned by the server');
+      throw new global.Error('fetchUserPublicInfo : User id has not being returned by the server');
     }
     if (!userinfo.type) {
-      throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', 'User type has not being returned by the server');
+      throw new global.Error('fetchUserPublicInfo : User type has not being returned by the server');
     }
 
     const [userdata, userPublicInfo] = await Promise.all([
@@ -706,7 +800,7 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
 
     // We fetch children information only for relative users
     const childrenStructure: UserPrivateData['childrenStructure'] =
-      userinfo.type === UserType.Relative
+      userinfo.type === AccountType.Relative
         ? await (fetchJSONWithCache('/directory/user/' + userinfo.userId + '/children', {}, true, platform.url) as any)
         : undefined;
     if (childrenStructure) {
@@ -714,7 +808,7 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
     }
 
     // We enforce undefined parents for non-student users becase backend populates this with null data
-    if (userinfo.type !== UserType.Student) {
+    if (userinfo.type !== AccountType.Student) {
       userdata.parents = undefined;
     }
 
@@ -722,7 +816,90 @@ export async function fetchUserPublicInfo(userinfo: IUserInfoBackend, platform: 
       userdata?: UserPrivateData;
       userPublicInfo?: UserPersonDataBackend;
     };
-  } catch (err) {
-    throw createAuthError(RuntimeAuthErrorCode.USERPUBLICINFO_FAIL, '', '', err as Error);
+  } catch (e) {
+    if (e instanceof Error.ErrorWithType) throw e;
+    else throw new global.Error('Failed to fetch user public info', { cause: e });
   }
+}
+
+interface IActivationSubmitPayload extends ActivationPayload {
+  callBack: string;
+  theme: string;
+}
+
+export async function activateAccount(platform: Platform, model: ActivationPayload) {
+  const theme = platform.webTheme;
+  const payload: IActivationSubmitPayload = {
+    acceptCGU: true,
+    activationCode: model.activationCode,
+    callBack: '',
+    login: model.login,
+    password: model.password,
+    confirmPassword: model.confirmPassword,
+    mail: model.mail || '',
+    phone: model.phone,
+    theme,
+  };
+  const formdata = new FormData();
+  for (const key in payload) {
+    formdata.append(key, payload[key]);
+  }
+  const res = await fetch(`${platform.url}/auth/activation/no-login`, {
+    body: formdata,
+    headers: {
+      Accept: 'application/json',
+      'Accept-Language': I18n.getLanguage(),
+      'Content-Type': 'multipart/form-data',
+      'X-APP': 'mobile',
+      'X-APP-NAME': DeviceInfo.getApplicationName(),
+      'X-APP-VERSION': DeviceInfo.getReadableVersion(),
+      'X-Device-Id': uniqueId(),
+    },
+    method: 'post',
+  });
+  if (!res.ok) {
+    throw createActivationError('activation', I18n.get('auth-activation-errorsubmit'));
+  }
+  if (res.headers.get('content-type')?.indexOf('application/json') !== -1) {
+    const resBody = await res.json();
+    if (resBody.error) {
+      throw createActivationError('activation', resBody.error.message);
+    }
+  }
+  await CookieManager.clearAll();
+}
+
+// ToDo : type def for response type
+export async function forgot<Mode extends 'password'>(platform: Platform, mode: Mode, payload: { login: string }, deviceId: string);
+export async function forgot<Mode extends 'id'>(
+  platform: Platform,
+  mode: Mode,
+  payload: { mail: string } | { mail: string; firstName: string; structureId: string },
+  deviceId: string,
+);
+export async function forgot<Mode extends ForgotMode>(
+  platform: Platform,
+  mode: Mode,
+  payload: { login: string } | { mail: string } | { mail: string; firstName: string; structureId: string },
+  deviceId: string,
+) {
+  const realPayload = { ...payload, service: 'mail' };
+  const api = mode === 'id' ? `${platform.url}/auth/forgot-id` : `${platform.url}/auth/forgot-password`;
+  const res = await fetch(api, {
+    body: JSON.stringify(realPayload),
+    method: 'POST',
+    headers: {
+      'Accept-Language': I18n.getLanguage(),
+      'Content-Type': 'application/json',
+      'X-APP': 'mobile',
+      'X-APP-NAME': DeviceInfo.getApplicationName(),
+      'X-APP-VERSION': DeviceInfo.getReadableVersion(),
+      'X-Device-Id': uniqueId(),
+    },
+  });
+  const resStatus = res.status;
+  const resJson = await res.json();
+  const ok = resStatus >= 200 && resStatus < 300;
+  const response = { ...resJson, ok };
+  return response;
 }

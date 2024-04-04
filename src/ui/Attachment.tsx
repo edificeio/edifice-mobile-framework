@@ -242,10 +242,10 @@ class Attachment extends React.PureComponent<
                   {downloadState === DownloadState.Success
                     ? ' ' + I18n.get('attachment-download-open')
                     : downloadState === DownloadState.Error
-                    ? ' ' + I18n.get('attachment-tryagain')
-                    : (this.props.attachment as IRemoteAttachment).size
-                    ? `${filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
-                    : ''}
+                      ? ' ' + I18n.get('attachment-tryagain')
+                      : (this.props.attachment as IRemoteAttachment).size
+                        ? `${filesize((this.props.attachment as IRemoteAttachment).size!, { round: 1 })}`
+                        : ''}
                 </SmallText>
               </SmallText>
             </View>

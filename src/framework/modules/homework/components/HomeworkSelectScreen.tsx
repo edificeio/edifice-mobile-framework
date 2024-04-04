@@ -5,7 +5,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import ResourcePicker from '~/framework/components/explorer/resource-picker';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { moduleColor } from '~/framework/modules/homework/module-config';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
@@ -27,7 +27,7 @@ export interface HomeworkSelectScreenDataProps {
   }[];
   didInvalidate?: boolean;
   isFetching?: boolean;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 export interface HomeworkSelectScreenEventProps {
   onRefresh: () => Promise<void>;

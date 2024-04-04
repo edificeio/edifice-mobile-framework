@@ -19,12 +19,12 @@ import { EmptyConnectionScreen, EmptyContentScreen } from '~/framework/component
 import { PageView } from '~/framework/components/page';
 import WebView from '~/framework/components/webview';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { assertSession, getSession } from '~/framework/modules/auth/reducer';
+import { getSession } from '~/framework/modules/auth/reducer';
 import { ScrapbookNavigationParams, scrapbookRouteNames } from '~/framework/modules/scrapbook/navigation';
 import { scrapbookService } from '~/framework/modules/scrapbook/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
-import { urlSigner } from '~/infra/oauth';
+import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 import { Loading } from '~/ui/Loading';
 
 import styles from './styles';
@@ -43,9 +43,8 @@ export const computeNavBar = ({
 
 const getQueryParamToken = async (finalUrl: string) => {
   try {
-    const session = assertSession();
     if (urlSigner.getIsUrlSignable(finalUrl)) {
-      const customToken = await session.oauth2.getQueryParamToken();
+      const customToken = await OAuth2RessourceOwnerPasswordClient.connection?.getQueryParamToken();
       if (customToken && finalUrl) {
         // Token can have failed to load. In that case, just ignore it and go on. The user may need to login on the web.
         const urlObj = new URL(finalUrl);

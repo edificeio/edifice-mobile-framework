@@ -13,8 +13,8 @@ import { AnyNavigableModuleConfig, IAnyModuleConfig } from '~/framework/util/mod
 import { urlSigner } from '~/infra/oauth';
 
 export type TrackEventArgs = [string, string, string?, number?];
-export type TrackEventOfModuleArgs = [IAnyModuleConfig, string, string?, number?];
-export type DoTrackArg = undefined | TrackEventOfModuleArgs;
+export type TrackEventOfModuleArgs = [Pick<IAnyModuleConfig, 'trackingName'>, string, string?, number?];
+export type DoTrackArgLegacy = undefined | TrackEventOfModuleArgs;
 
 export abstract class AbstractTracker<OptionsType> {
   debugName: string;
@@ -104,7 +104,12 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
-  async trackEventOfModule(moduleConfig: AnyNavigableModuleConfig, action: string, name?: string, value?: number) {
+  async trackEventOfModule(
+    moduleConfig: Pick<AnyNavigableModuleConfig, 'trackingName'>,
+    action: string,
+    name?: string,
+    value?: number,
+  ) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
@@ -124,7 +129,7 @@ export abstract class AbstractTracker<OptionsType> {
     }
   }
 
-  async trackViewOfModule(moduleConfig: AnyNavigableModuleConfig, path: string[]) {
+  async trackViewOfModule(moduleConfig: Pick<AnyNavigableModuleConfig, 'routeName'>, path: string[]) {
     await this._trackView([moduleConfig.routeName, ...path]);
   }
 }
@@ -309,26 +314,30 @@ export class ConcreteTrackerSet {
   }
 
   async trackEvent(category: string, action: string, name?: string, value?: number) {
+    console.debug('[Tracking] Event :', [category, action, name, value].join(' | '));
     await Promise.all(this._trackers.map(t => t.trackEvent(category, action, name, value)));
   }
 
-  async trackEventOfModule(moduleConfig: IAnyModuleConfig, action: string, name?: string, value?: number) {
+  async trackEventOfModule(moduleConfig: Pick<IAnyModuleConfig, 'trackingName'>, action: string, name?: string, value?: number) {
     await this.trackEvent(moduleConfig.trackingName, action, name, value);
   }
 
   async trackView(path: string[]) {
+    console.debug('[Tracking] View :', path.join('/'));
     await Promise.all(this._trackers.map(t => t.trackView(path)));
   }
 
-  async trackViewOfModule(moduleConfig: AnyNavigableModuleConfig, path: string[]) {
+  async trackViewOfModule(moduleConfig: Pick<AnyNavigableModuleConfig, 'routeName'>, path: string[]) {
     await this.trackView([moduleConfig.routeName, ...path]);
   }
 
   async setUserId(id: string) {
+    console.debug('[Tracking] Set ID :', id);
     await Promise.all(this._trackers.map(t => t.setUserId(id)));
   }
 
   async setCustomDimension(id: number, name: string, value: string) {
+    console.debug('[Tracking] Set Dimension :', id, '|', name, '|', value);
     await Promise.all(this._trackers.map(t => t.setCustomDimension(id, name, value)));
   }
 
@@ -342,3 +351,8 @@ export const Trackers = new ConcreteTrackerSet(
   new ConcreteAppCenterTracker('AppCenter', undefined),
   new ConcreteEntcoreTracker('Entcore', undefined),
 );
+
+export const TRACKING_ACTION_SUFFIX_SUCCESS = 'Succès';
+export const TRACKING_ACTION_SUFFIX_FAILURE = 'Échec';
+export const trackingActionAddSuffix = (str: string, suffix: false | true | string) =>
+  str + ' – ' + (suffix === true ? TRACKING_ACTION_SUFFIX_SUCCESS : suffix === false ? TRACKING_ACTION_SUFFIX_FAILURE : suffix);

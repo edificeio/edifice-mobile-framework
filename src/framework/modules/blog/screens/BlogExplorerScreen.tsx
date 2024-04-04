@@ -21,7 +21,7 @@ import {
 } from '~/framework/components/explorer/resource-explorer/types';
 import { PageView } from '~/framework/components/page';
 import { NamedSVGProps } from '~/framework/components/picture';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { fetchBlogsAndFoldersAction } from '~/framework/modules/blog/actions';
 import BlogPlaceholderExplorer from '~/framework/modules/blog/components/placeholder/explorer';
@@ -38,7 +38,7 @@ export interface BlogExplorerScreenDataProps {
   tree?: BlogFlatTree;
   initialLoadingState: AsyncLoadingState;
   error?: Error;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface BlogExplorerScreenEventProps {

@@ -8,7 +8,7 @@ import type { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
-import UserList, { IUserListItem, UserListProps } from '~/framework/components/UserList';
+import UserList, { IUserListItem } from '~/framework/components/UserList';
 import SecondaryButton from '~/framework/components/buttons/secondary';
 import { OverviewCard, TouchableOverviewCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -17,7 +17,7 @@ import { PageView } from '~/framework/components/page';
 import type { PictureProps } from '~/framework/components/picture';
 import { BodyBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { loadCarnetDeBordAction } from '~/framework/modules/pronote/actions/carnet-de-bord';
 import {
@@ -36,13 +36,14 @@ import redirect from '~/framework/modules/pronote/service/redirect';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
+
+import { preferences } from '../storage';
 
 export interface CarnetDeBordScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
   data: ICarnetDeBordStateData;
   error?: Error | PronoteCdbInitError;
-  structures?: ISession['user']['structures'];
+  structures?: AuthLoggedAccount['user']['structures'];
 }
 export interface CarnetDeBordScreenEventProps {
   handleLoadData: () => Promise<ICarnetDeBord[]>;
@@ -96,7 +97,7 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
     (_data: typeof data) => _data.map(cdb => ({ id: cdb.idPronote ?? cdb.id, avatarId: cdb.id, name: cdb.firstName })),
     [],
   );
-  const users: UserListProps['data'] = React.useMemo(() => getUsers(data), [getUsers, data]);
+  const users = React.useMemo(() => getUsers(data), [getUsers, data]);
   const usersRef = React.useRef(users);
   const [selectedId, setSelectedId] = React.useState<string | undefined>(undefined);
   const selectUser = React.useCallback(async (id: string | undefined) => {
@@ -104,7 +105,7 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
     const idToBeSelected = usersRef.current.find(u => u.id === id) ? id : usersRef.current[0]?.id;
     if (!idToBeSelected) throw new Error(`idToBeSelected is undefined. CarnetDeBord need to select an existing user`);
     setSelectedId(idToBeSelected);
-    setItemJson(CarnetDeBordScreen.STORAGE_KEY, idToBeSelected);
+    preferences.set('carnet-de-bord.selected-user', idToBeSelected);
   }, []);
   const isUserListShown = React.useMemo(
     () => /* session.user.type === UserType.Relative || */ users.length > 1,
@@ -113,9 +114,10 @@ function CarnetDeBordScreen({ data, error, session, handleLoadData, navigation, 
 
   // Data & content
   const loadData = React.useCallback(async () => {
-    const [newData, savedSelectedId] = await Promise.all([handleLoadData(), getItemJson<string>(CarnetDeBordScreen.STORAGE_KEY)]);
+    const savedSelectedId = preferences.getString('carnet-de-bord.selected-user');
+    const newData = await handleLoadData();
     usersRef.current = getUsers(newData);
-    await selectUser(savedSelectedId);
+    await selectUser(savedSelectedId ?? undefined);
   }, [selectUser, handleLoadData, getUsers]);
   const selectedCdbData = React.useMemo(() => {
     return data.find(d => d.idPronote === selectedId);
@@ -180,7 +182,7 @@ CarnetDeBordScreen.getRenderContent =
     isStructureShown: boolean,
     navigation: CarnetDeBordScreenProps['navigation'],
     structures: CarnetDeBordScreenProps['structures'],
-    session?: ISession,
+    session?: AuthLoggedAccount,
   ) =>
   (refreshControl: ScrollViewProps['refreshControl']) => {
     return (
@@ -302,10 +304,10 @@ CarnetDeBordScreen.getRenderContent =
                               })
                           : I18n.get('pronote-noinfo')
                         : vsco.Date
-                        ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
-                          ? displayDate(vsco.Date, 'short') + I18n.get('common-space') + vsco.Date.format('LT')
-                          : displayDate(vsco.Date, 'short')
-                        : I18n.get('pronote-noinfo'),
+                          ? vsco.type === 'Retard' || vsco.type === 'PassageInfirmerie'
+                            ? displayDate(vsco.Date, 'short') + I18n.get('common-space') + vsco.Date.format('LT')
+                            : displayDate(vsco.Date, 'short')
+                          : I18n.get('pronote-noinfo'),
                   }
                 );
               })()}

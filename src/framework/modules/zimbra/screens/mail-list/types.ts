@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type { fetchZimbraMailsFromFolderAction } from '~/framework/modules/zimbra/actions';
 import type { IFolder, IMail, IQuota, SystemFolder } from '~/framework/modules/zimbra/model';
 import type { ZimbraNavigationParams, zimbraRouteNames } from '~/framework/modules/zimbra/navigation';
@@ -19,7 +19,7 @@ export interface ZimbraMailListScreenStoreProps {
   mails: Omit<IMail, 'body'>[];
   quota: IQuota;
   rootFolders: IFolder[];
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface ZimbraMailListScreenDispatchProps {

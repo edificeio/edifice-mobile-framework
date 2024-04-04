@@ -1,4 +1,3 @@
-import theme from '~/app/theme';
 import { IEntcoreApp, NavigableModuleConfig } from '~/framework/util/moduleTool';
 
 const LVSRegex = /la[- ]+vie[- ]+scolaire/i;
@@ -11,6 +10,7 @@ export default new NavigableModuleConfig<'lvs', null>({
   name: 'lvs',
   entcoreScope: ['lvs'],
   matchEntcoreApp: entcoreApp => hasConnectorApp(entcoreApp),
+  storageName: 'lvs',
 
   displayI18n: 'lvs-moduleconfig-appname',
   displayAs: 'myAppsModule',

@@ -1,6 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import type { fetchDistributionResponsesAction, fetchFormContentAction } from '~/framework/modules/form/actions';
 import type { DistributionStatus, IFormContent, IFormElement, IQuestionResponse } from '~/framework/modules/form/model';
 import type { FormNavigationParams, formRouteNames } from '~/framework/modules/form/navigation';
@@ -22,7 +22,7 @@ export interface FormDistributionScreenNavParams {
 export interface FormDistributionScreenStoreProps {
   elements: IFormElement[];
   elementsCount: number;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface FormDistributionScreenDispatchProps {

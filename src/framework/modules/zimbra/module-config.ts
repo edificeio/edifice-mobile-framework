@@ -1,11 +1,12 @@
 import { NavigableModuleConfig } from '~/framework/util/moduleTool';
 
-import { IZimbraReduxState } from './reducer';
+import type { IZimbraReduxState } from './reducer';
 
 export default new NavigableModuleConfig<'zimbra', IZimbraReduxState>({
   name: 'zimbra',
   entcoreScope: ['zimbra'],
   matchEntcoreApp: '/zimbra/zimbra',
+  storageName: 'zimbra',
 
   displayI18n: 'zimbra-moduleconfig-tabname',
   displayAs: 'tabModule',

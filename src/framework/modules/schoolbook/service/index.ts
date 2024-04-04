@@ -3,7 +3,7 @@
  */
 import moment from 'moment';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IStudentAndParentWordList, ITeacherWordList, IWordReport } from '~/framework/modules/schoolbook/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
@@ -173,7 +173,7 @@ export const schoolbookUriCaptureFunction: IResourceUriCaptureFunction<{ schoolb
 
 export const schoolbookService = {
   list: {
-    teacher: async (session: ISession, page: number) => {
+    teacher: async (session: AuthLoggedAccount, page: number) => {
       const api = `/schoolbook/list`;
       const body = JSON.stringify({ filter: 'Any', page });
       const entcoreTeacherWordList = (await signedFetchJson(`${session?.platform!.url}${api}`, {
@@ -182,42 +182,42 @@ export const schoolbookService = {
       })) as unknown as IEntcoreTeacherWordList;
       return teacherWordListAdapter(entcoreTeacherWordList) as ITeacherWordList;
     },
-    studentAndParent: async (session: ISession, page: number, studentId: string) => {
+    studentAndParent: async (session: AuthLoggedAccount, page: number, studentId: string) => {
       const api = `/schoolbook/list/${page}/${studentId}`;
       const entcoreStudentAndParentWordList = (await fetchJSONWithCache(api)) as IEntcoreStudentAndParentWordList;
       return studentAndParentWordListAdapter(entcoreStudentAndParentWordList) as IStudentAndParentWordList;
     },
-    parentUnacknowledgedWordsCount: async (session: ISession, studentId: string) => {
+    parentUnacknowledgedWordsCount: async (session: AuthLoggedAccount, studentId: string) => {
       const api = `/schoolbook/count/${studentId}`;
       const entcoreParentUnacknowledgedWordsCount = (await fetchJSONWithCache(api)) as IEntcoreParentUnacknowledgedWordsCount;
       return parentUnacknowledgedWordsCountAdapter(entcoreParentUnacknowledgedWordsCount) as number;
     },
   },
   word: {
-    get: async (session: ISession, wordId: string) => {
+    get: async (session: AuthLoggedAccount, wordId: string) => {
       const api = `/schoolbook/report/${wordId}`;
       const entcoreWordReport = (await fetchJSONWithCache(api)) as IEntcoreWordReport;
       return wordReportAdapter(entcoreWordReport) as IWordReport;
     },
-    resend: async (session: ISession, wordId: string) => {
+    resend: async (session: AuthLoggedAccount, wordId: string) => {
       const api = `/schoolbook/word/resend/${wordId}`;
       return signedFetchJson(`${session?.platform!.url}${api}`, {
         method: 'POST',
       }) as Promise<{ count: number; word_id: string }>;
     },
-    delete: async (session: ISession, wordId: string) => {
+    delete: async (session: AuthLoggedAccount, wordId: string) => {
       const api = `/schoolbook/delete/${wordId}`;
       return signedFetchJson(`${session?.platform!.url}${api}`, {
         method: 'DELETE',
       }) as Promise<{ rows: number }>;
     },
-    acknowledge: async (session: ISession, wordId: string, studentId: string) => {
+    acknowledge: async (session: AuthLoggedAccount, wordId: string, studentId: string) => {
       const api = `/schoolbook/relation/acknowledge/${wordId}/${studentId}`;
       return signedFetchJson(`${session?.platform!.url}${api}`, {
         method: 'POST',
       }) as Promise<{ id: number }>;
     },
-    reply: async (session: ISession, wordId: string, studentId: string, text: string) => {
+    reply: async (session: AuthLoggedAccount, wordId: string, studentId: string, text: string) => {
       const api = `/schoolbook/relation/reply/${wordId}`;
       const body = JSON.stringify({ studentId, text });
       return signedFetchJson(`${session?.platform!.url}${api}`, {
@@ -225,7 +225,7 @@ export const schoolbookService = {
         body,
       }) as Promise<{ response_id: number }>;
     },
-    updateReply: async (session: ISession, wordId: string, replyId: string, text: string) => {
+    updateReply: async (session: AuthLoggedAccount, wordId: string, replyId: string, text: string) => {
       const api = `/schoolbook/relation/reply/${wordId}/${replyId}`;
       const body = JSON.stringify({ text });
       return signedFetchJson(`${session?.platform!.url}${api}`, {

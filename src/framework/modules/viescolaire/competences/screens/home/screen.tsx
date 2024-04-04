@@ -13,8 +13,8 @@ import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-sc
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import { getChildStructureId } from '~/framework/modules/viescolaire/common/utils/child';
 import {
@@ -32,11 +32,11 @@ import { IDevoir } from '~/framework/modules/viescolaire/competences/model';
 import moduleConfig from '~/framework/modules/viescolaire/competences/module-config';
 import { CompetencesNavigationParams, competencesRouteNames } from '~/framework/modules/viescolaire/competences/navigation';
 import { concatDevoirs } from '~/framework/modules/viescolaire/competences/service';
+import { storage } from '~/framework/modules/viescolaire/competences/storage';
 import dashboardConfig from '~/framework/modules/viescolaire/dashboard/module-config';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
-import { getItemJson, setItemJson } from '~/framework/util/storage';
 
 import styles from './styles';
 import type { CompetencesHomeScreenDispatchProps, CompetencesHomeScreenPrivateProps } from './types';
@@ -57,7 +57,6 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
   const [isSubjectDropdownOpen, setSubjectDropdownOpen] = React.useState<boolean>(false);
   const [term, setTerm] = React.useState<string>('default');
   const [subject, setSubject] = React.useState<string>('default');
-  const STORAGE_KEY = `${moduleConfig.name}.showAverageColors`;
   const [areAverageColorsShown, setAverageColorsShown] = React.useState<boolean>(false);
 
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
@@ -70,12 +69,10 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
       const { childId, classes, structureId, userId, userType } = props;
 
       if (!childId || !structureId || !userId || !userType) throw new Error();
-      getItemJson<boolean>(STORAGE_KEY).then(value => {
-        if (value) setAverageColorsShown(true);
-      });
+      setAverageColorsShown(storage.getBoolean('show-average-colors') ?? false);
       await props.tryFetchSubjects(structureId);
       let childClasses = classes?.[0];
-      if (userType === UserType.Relative) {
+      if (userType === AccountType.Relative) {
         const children = await props.tryFetchUserChildren(structureId, userId);
         childClasses = children.find(c => c.id === childId)?.classId;
       }
@@ -150,7 +147,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   const openAssessment = (assessment: IDevoir) => {
     const { childId, classes, navigation, userChildren, userType } = props;
-    const studentClass = userType === UserType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.classId;
+    const studentClass = userType === AccountType.Student ? classes?.[0] : userChildren?.find(c => c.id === childId)?.classId;
 
     navigation.navigate(competencesRouteNames.assessment, {
       assessment,
@@ -215,7 +212,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
                 value={areAverageColorsShown}
                 onValueChange={() => {
                   setAverageColorsShown(!areAverageColorsShown);
-                  setItemJson(STORAGE_KEY, !areAverageColorsShown);
+                  storage.set('show-average-colors', !areAverageColorsShown);
                 }}
                 trackColor={{ false: theme.palette.grey.grey, true: theme.palette.complementary.green.regular }}
                 style={Platform.OS !== 'ios' ? { transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] } : null}
@@ -290,7 +287,7 @@ const CompetencesHomeScreen = (props: CompetencesHomeScreenPrivateProps) => {
 
   return (
     <PageView>
-      {props.userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
+      {props.userType === AccountType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
       {renderPage()}
     </PageView>
   );
@@ -307,7 +304,7 @@ export default connect(
     return {
       averages: competencesState.averages.data,
       classes: session?.user.classes,
-      childId: userType === UserType.Student ? userId : dashboardState.selectedChildId,
+      childId: userType === AccountType.Student ? userId : dashboardState.selectedChildId,
       competences: competencesState.competences.data,
       devoirs: concatDevoirs(competencesState.devoirs.data, competencesState.competences.data),
       dropdownItems: {
@@ -333,7 +330,7 @@ export default connect(
           ? AsyncPagedLoadingState.PRISTINE
           : AsyncPagedLoadingState.DONE,
       structureId:
-        userType === UserType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
+        userType === AccountType.Student ? session?.user.structures?.[0]?.id : getChildStructureId(dashboardState.selectedChildId),
       subjects: competencesState.subjects.data,
       userChildren: competencesState.userChildren.data,
       userId,

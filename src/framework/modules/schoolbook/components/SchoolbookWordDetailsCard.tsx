@@ -15,7 +15,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { Picture } from '~/framework/components/picture';
 import { CaptionBoldText, CaptionText, HeadingSText, SmallBoldText, SmallText, TextSizeStyle } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountType } from '~/framework/modules/auth/model';
 import {
   IConcernedStudent,
   IWordReport,
@@ -34,7 +34,7 @@ import CardTopContentCategory from './cardtopcontent-category';
 
 const acknowledgementsString = (ackNumber: number, total: number) =>
   `${ackNumber}/${total} ${I18n.get(`schoolbook-worddetails-acknowledgement${ackNumber === 1 ? '' : 's'}`).toLowerCase()}`;
-const unacknowledgedString = (userType: UserType) =>
+const unacknowledgedString = (userType: AccountType) =>
   I18n.get(`schoolbook-worddetails-acknowledgementneeded-${userType.toLowerCase()}`);
 const recipientsString = (report: IConcernedStudent[]) =>
   getHasSingleRecipientForTeacher(report)
@@ -51,7 +51,7 @@ export interface ISchoolBookWordDetailsCardProps {
   onEditComment: (data) => any;
   isPublishingReply: boolean;
   isAcknowledgingWord: boolean;
-  userType: UserType | undefined;
+  userType: AccountType | undefined;
   userId: string | undefined;
   studentId: string;
   schoolbookWord: IWordReport;
@@ -113,9 +113,9 @@ const SchoolbookWordDetailsCard = (
   const schoolbookWordOwnerId = word?.ownerId;
   const schoolbookWordResponsesNumber = word?.respNumber;
   const isUserSchoolbookWordOwner = userId === schoolbookWordOwnerId;
-  const isParent = userType === UserType.Relative;
-  const isTeacher = userType === UserType.Teacher || userType === UserType.Personnel;
-  const isStudent = userType === UserType.Student;
+  const isParent = userType === AccountType.Relative;
+  const isTeacher = userType === AccountType.Teacher || userType === AccountType.Personnel;
+  const isStudent = userType === AccountType.Student;
   const isAuthorOtherTeacher = isTeacher && !isUserSchoolbookWordOwner;
   const hasSingleRecipientForTeacher = getHasSingleRecipientForTeacher(report);
   const studentsForTeacher = getStudentsForTeacher(report)?.map(student => ({ id: student.owner, name: student.ownerName }));

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
+import { AccountType } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { UserType } from '~/framework/modules/auth/service';
 import moduleConfig from '~/framework/modules/viescolaire/presences/module-config';
 import PresencesCallScreen, { computeNavBar as callNavBar } from '~/framework/modules/viescolaire/presences/screens/call';
 import PresencesCallListScreen, {
@@ -32,7 +32,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     const screens: React.ReactElement[] = [];
     const session = getSession();
 
-    if (session?.user.type === UserType.Teacher) {
+    if (session?.user.type === AccountType.Teacher) {
       screens.push(
         <Stack.Screen
           key={presencesRouteNames.callList}
@@ -48,7 +48,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={callNavBar}
           initialParams={{}}
         />,
-        <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+        <Stack.Group key={presencesRouteNames.declareEvent} screenOptions={{ presentation: 'fullScreenModal' }}>
           <Stack.Screen
             key={presencesRouteNames.declareEvent}
             name={presencesRouteNames.declareEvent}
@@ -68,7 +68,7 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={historyNavBar}
           initialParams={{}}
         />,
-        <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Group key={presencesRouteNames.eventList} screenOptions={{ presentation: 'modal' }}>
           <Stack.Screen
             key={presencesRouteNames.eventList}
             name={presencesRouteNames.eventList}
@@ -78,9 +78,9 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           />
         </Stack.Group>,
       );
-      if (session?.user.type === UserType.Relative) {
+      if (session?.user.type === AccountType.Relative) {
         screens.push(
-          <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
+          <Stack.Group key={presencesRouteNames.declareAbsence} screenOptions={{ presentation: 'fullScreenModal' }}>
             <Stack.Screen
               key={presencesRouteNames.declareAbsence}
               name={presencesRouteNames.declareAbsence}

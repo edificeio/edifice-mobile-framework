@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import moduleConfig from '~/framework/modules/myAppMenu/moduleConfig';
+import moduleConfig from '~/framework/modules/myAppMenu/module-config';
 import { myAppsModules } from '~/framework/modules/myAppMenu/myAppsModules';
 import MyAppsHomeScreen from '~/framework/modules/myAppMenu/screens/MyAppsHomeScreen';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';

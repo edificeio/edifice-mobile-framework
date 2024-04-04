@@ -17,32 +17,26 @@ import { PageView, PageViewStyle } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
-import { ILoginResult, loginAction, logoutAction } from '~/framework/modules/auth/actions';
-import { ISession, LegalUrls } from '~/framework/modules/auth/model';
-import {
-  IAuthNavigationParams,
-  authRouteNames,
-  getAuthNavigationState,
-  redirectLoginNavAction,
-} from '~/framework/modules/auth/navigation';
-import { getState as getAuthState } from '~/framework/modules/auth/reducer';
-import { revalidateTerms } from '~/framework/modules/auth/service';
+import { manualLogoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
+import { LegalUrls } from '~/framework/modules/auth/model';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { getPlatformLegalUrls } from '~/framework/modules/auth/reducer';
 import { tryAction } from '~/framework/util/redux/actions';
 
 // TYPES ==========================================================================================
 
 export interface IRevalidateTermsScreenDataProps {
-  session?: ISession;
   legalUrls?: LegalUrls;
 }
 
 export interface IRevalidateTermsScreenEventProps {
-  tryLogout: (...args: Parameters<typeof logoutAction>) => Promise<void>;
-  tryLogin: (...args: Parameters<typeof loginAction>) => Promise<ILoginResult>;
+  tryLogout: (...args: Parameters<typeof manualLogoutAction>) => Promise<void>;
+  tryRevalidate: (...args: Parameters<typeof revalidateTermsAction>) => ReturnType<ReturnType<typeof revalidateTermsAction>>;
 }
+
 export type IRevalidateTermsScreenProps = IRevalidateTermsScreenEventProps &
   IRevalidateTermsScreenDataProps &
-  NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.revalidateTerms>;
+  NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.revalidateTerms>;
 
 // COMPONENT ======================================================================================
 
@@ -65,37 +59,27 @@ const styles = StyleSheet.create({
   },
 });
 
-const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
+const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
   // EVENTS =====================================================================================
+  const { tryLogout, tryRevalidate, navigation } = props;
 
   const doRefuseTerms = React.useCallback(async () => {
     try {
-      props.tryLogout();
-      props.navigation.reset(getAuthNavigationState(props.route.params.platform));
-    } catch {
+      tryLogout();
+    } catch (e) {
       if (__DEV__) console.warn('refuseTerms: could not refuse terms', e);
     }
-    // Manually specified deps here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.tryLogout, props.navigation]);
+  }, [tryLogout]);
 
   const doRevalidateTerms = React.useCallback(async () => {
     try {
-      if (!props.session) {
-        throw new Error('revalidate terms : no active session');
-      }
-      await revalidateTerms(props.session);
-      const platform = props.route.params.platform;
-      const credentials = props.route.params.credentials;
-      const rememberMe = props.route.params.rememberMe;
-      const redirect = await props.tryLogin(platform, credentials, rememberMe);
-      redirectLoginNavAction(redirect, platform, props.navigation);
-    } catch {
+      await tryRevalidate();
+    } catch (e) {
       if (__DEV__) console.warn('revalidateTerms: could not revalidate terms', e);
     }
     // Manually specified deps here
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.navigation, props.tryLogin]);
+  }, [navigation]);
 
   const doOpenLegalUrl = React.useCallback((title: string, url?: string) => {
     openPDFReader({
@@ -156,15 +140,14 @@ const RevalidateTermsContainer = (props: IRevalidateTermsScreenProps) => {
 
 export default connect(
   (state: IGlobalState) => ({
-    session: getAuthState(state).session,
-    legalUrls: getAuthState(state).legalUrls,
+    legalUrls: getPlatformLegalUrls(),
   }),
   (dispatch: ThunkDispatch<any, any, any>) =>
     bindActionCreators<IRevalidateTermsScreenEventProps>(
       {
-        tryLogout: tryAction(logoutAction),
-        tryLogin: tryAction(loginAction),
+        tryLogout: tryAction(manualLogoutAction),
+        tryRevalidate: tryAction(revalidateTermsAction),
       },
       dispatch,
     ),
-)(RevalidateTermsContainer);
+)(RevalidateTermsScreen);

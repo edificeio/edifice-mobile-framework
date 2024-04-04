@@ -17,7 +17,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import NavBarActionsGroup from '~/framework/components/navigation/navbar-actions-group';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { deleteMailsAction, trashMailsAction } from '~/framework/modules/conversation/actions/mail';
 import { clearMailContentAction, fetchMailContentAction } from '~/framework/modules/conversation/actions/mailContent';
@@ -92,7 +92,7 @@ interface ConversationNewMailScreenEventProps {
 interface ConversationNewMailScreenDataProps {
   isFetching: boolean;
   mail: IMail;
-  session: ISession;
+  session: AuthLoggedAccount;
 }
 
 export type ConversationNewMailScreenProps = ConversationNewMailScreenEventProps &

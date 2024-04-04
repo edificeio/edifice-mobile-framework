@@ -14,7 +14,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
 import { CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
-import type { ISession } from '~/framework/modules/auth/model';
+import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   CarnetDeBordSection,
@@ -31,7 +31,7 @@ import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { splitWords } from '~/framework/util/string';
 
 export interface CarnetDeBordDetailsScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface CarnetDeBordDetailsScreenEventProps {}
@@ -217,18 +217,18 @@ CarnetDeBordDetailsScreen.getItems = (type: CarnetDeBordSection, data: ICarnetDe
                   })
               : I18n.get('pronote-noinfo')
             : item.Date
-            ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
-              ? displayDate(item.Date) + I18n.get('common-space') + item.Date.format('LT')
-              : displayDate(item.Date)
-            : I18n.get('pronote-noinfo'),
+              ? item.type === 'Retard' || item.type === 'PassageInfirmerie'
+                ? displayDate(item.Date) + I18n.get('common-space') + item.Date.format('LT')
+                : displayDate(item.Date)
+              : I18n.get('pronote-noinfo'),
         description:
           item.type === 'Absence' || item.type === 'Retard'
             ? item.Motif || I18n.get('pronote-noinfo')
             : item.type === 'Punition' || item.type === 'Sanction'
-            ? item.Nature || I18n.get('pronote-noinfo')
-            : item.type === 'Observation'
-            ? item.Observation || I18n.get('pronote-noinfo')
-            : I18n.get('pronote-noinfo'),
+              ? item.Nature || I18n.get('pronote-noinfo')
+              : item.type === 'Observation'
+                ? item.Observation || I18n.get('pronote-noinfo')
+                : I18n.get('pronote-noinfo'),
       }));
     }
   }

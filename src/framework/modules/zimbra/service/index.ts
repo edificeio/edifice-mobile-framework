@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IFolder, IMail, IQuota, IRecipient, ISignature } from '~/framework/modules/zimbra/model';
 import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
@@ -182,7 +182,7 @@ const signatureAdapter = (data: IBackendSignature): ISignature => {
 
 export const zimbraService = {
   draft: {
-    addAttachment: async (session: ISession, draftId: string, file: LocalFile) => {
+    addAttachment: async (session: AuthLoggedAccount, draftId: string, file: LocalFile) => {
       const api = `/zimbra/message/${draftId}/attachment`;
       let attachments: IBackendAttachment[] = [];
       await fileHandlerService.uploadFile(
@@ -203,7 +203,7 @@ export const zimbraService = {
       );
       return attachments.map(attachment => attachmentAdapter(attachment, session.platform.url, draftId));
     },
-    create: async (session: ISession, mail: Partial<IMail>, inReplyTo?: string, isForward?: boolean) => {
+    create: async (session: AuthLoggedAccount, mail: Partial<IMail>, inReplyTo?: string, isForward?: boolean) => {
       let api = '/zimbra/draft';
       if (inReplyTo) api += `?In-Reply-To=${inReplyTo}`;
       if (isForward) api += '&reply=F';
@@ -214,19 +214,19 @@ export const zimbraService = {
       })) as { id: string };
       return response.id;
     },
-    deleteAttachment: async (session: ISession, draftId: string, attachmentId: string) => {
+    deleteAttachment: async (session: AuthLoggedAccount, draftId: string, attachmentId: string) => {
       const api = `/zimbra/message/${draftId}/attachment/${attachmentId}`;
       await fetchJSONWithCache(api, {
         method: 'DELETE',
       });
     },
-    forward: async (session: ISession, draftId: string, forwardFrom: string) => {
+    forward: async (session: AuthLoggedAccount, draftId: string, forwardFrom: string) => {
       const api = `/zimbra/message/${draftId}/forward/${forwardFrom}`;
       await fetchJSONWithCache(api, {
         method: 'PUT',
       });
     },
-    update: async (session: ISession, draftId: string, mail: Partial<IMail>) => {
+    update: async (session: AuthLoggedAccount, draftId: string, mail: Partial<IMail>) => {
       const api = `/zimbra/draft/${draftId}`;
       const body = JSON.stringify(mail);
       await fetchJSONWithCache(api, {
@@ -236,7 +236,7 @@ export const zimbraService = {
     },
   },
   folder: {
-    create: async (session: ISession, name: string, parentId?: string) => {
+    create: async (session: AuthLoggedAccount, name: string, parentId?: string) => {
       const api = '/zimbra/folder';
       const body = JSON.stringify({
         name,
@@ -249,13 +249,13 @@ export const zimbraService = {
     },
   },
   mails: {
-    listFromFolder: async (session: ISession, folder: string, page: number, search?: string) => {
+    listFromFolder: async (session: AuthLoggedAccount, folder: string, page: number, search?: string) => {
       let api = `/zimbra/list?folder=${folder}&page=${page}&unread=false`;
       if (search) api += `&search=${search}`;
       const mails = (await fetchJSONWithCache(api)) as IBackendMailList;
       return mails.map(mail => mailFromListAdapter(mail, session.platform.url));
     },
-    delete: async (session: ISession, ids: string[]) => {
+    delete: async (session: AuthLoggedAccount, ids: string[]) => {
       const api = '/zimbra/delete';
       const body = JSON.stringify({
         id: ids,
@@ -265,7 +265,7 @@ export const zimbraService = {
         body,
       });
     },
-    moveToInbox: async (session: ISession, ids: string[]) => {
+    moveToInbox: async (session: AuthLoggedAccount, ids: string[]) => {
       const api = '/zimbra/move/root';
       const body = JSON.stringify({
         id: ids,
@@ -275,7 +275,7 @@ export const zimbraService = {
         body,
       });
     },
-    moveToFolder: async (session: ISession, ids: string[], folderId: string) => {
+    moveToFolder: async (session: AuthLoggedAccount, ids: string[], folderId: string) => {
       const api = `/zimbra/move/userfolder/${folderId}`;
       const body = JSON.stringify({
         id: ids,
@@ -285,7 +285,7 @@ export const zimbraService = {
         body,
       });
     },
-    restore: async (session: ISession, ids: string[]) => {
+    restore: async (session: AuthLoggedAccount, ids: string[]) => {
       const api = '/zimbra/restore';
       const body = JSON.stringify({
         id: ids,
@@ -295,7 +295,7 @@ export const zimbraService = {
         body,
       });
     },
-    toggleUnread: async (session: ISession, ids: string[], unread: boolean) => {
+    toggleUnread: async (session: AuthLoggedAccount, ids: string[], unread: boolean) => {
       let api = '/zimbra/toggleUnread?';
       api += ids.reduce((s, id) => s + 'id=' + id + '&', '');
       api += `unread=${unread}`;
@@ -303,7 +303,7 @@ export const zimbraService = {
         method: 'POST',
       });
     },
-    trash: async (session: ISession, ids: string[]) => {
+    trash: async (session: AuthLoggedAccount, ids: string[]) => {
       const api = '/zimbra/trash';
       const body = JSON.stringify({
         id: ids,
@@ -315,13 +315,13 @@ export const zimbraService = {
     },
   },
   mail: {
-    get: async (session: ISession, id: string, toggleRead: boolean = true) => {
+    get: async (session: AuthLoggedAccount, id: string, toggleRead: boolean = true) => {
       const api = `/zimbra/message/${id}?read=${toggleRead}`;
       const mail = (await fetchJSONWithCache(api)) as IBackendMail;
       if (!('id' in mail)) throw new Error();
       return mailAdapter(mail, session.platform.url);
     },
-    send: async (session: ISession, mail: Partial<IMail>, draftId?: string, inReplyTo?: string) => {
+    send: async (session: AuthLoggedAccount, mail: Partial<IMail>, draftId?: string, inReplyTo?: string) => {
       let api = '/zimbra/send';
       if (draftId) api += `?id=${draftId}`;
       if (inReplyTo) api += `&In-Reply-To=${inReplyTo}`;
@@ -334,33 +334,33 @@ export const zimbraService = {
     },
   },
   quota: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/zimbra/quota';
       const quota = (await fetchJSONWithCache(api)) as IBackendQuota;
       return quotaAdapter(quota);
     },
   },
   recipients: {
-    search: async (session: ISession, query: string) => {
+    search: async (session: AuthLoggedAccount, query: string) => {
       const api = `/zimbra/visible?search=${query}`;
       const recipientDirectory = (await fetchJSONWithCache(api)) as IBackendRecipientDirectory;
       return recipientDirectoryAdapter(recipientDirectory, query);
     },
   },
   rootFolders: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/zimbra/root-folder';
       const folders = (await fetchJSONWithCache(api)) as IBackendFolderList;
       return folders.map(folderAdapter);
     },
   },
   signature: {
-    get: async (session: ISession) => {
+    get: async (session: AuthLoggedAccount) => {
       const api = '/zimbra/signature';
       const signature = (await fetchJSONWithCache(api)) as IBackendSignature;
       return signatureAdapter(signature);
     },
-    update: async (session: ISession, signature: string, useSignature: boolean) => {
+    update: async (session: AuthLoggedAccount, signature: string, useSignature: boolean) => {
       const api = '/zimbra/signature';
       const body = JSON.stringify({
         signature,
@@ -373,7 +373,7 @@ export const zimbraService = {
     },
   },
   user: {
-    get: async (session: ISession, id: string) => {
+    get: async (session: AuthLoggedAccount, id: string) => {
       const api = `/userbook/api/person?id=${id}&type=undefined`;
       const data = (await fetchJSONWithCache(api)) as { result: IBackendUserList };
       return data.result[0];

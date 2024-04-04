@@ -10,8 +10,7 @@ import DateTimePicker from '~/framework/components/dateTimePicker';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { IUser } from '~/framework/modules/auth/model';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountType, IUser } from '~/framework/modules/auth/model';
 import ChildPicker from '~/framework/modules/viescolaire/common/components/ChildPicker';
 import viescoTheme from '~/framework/modules/viescolaire/common/theme';
 import {
@@ -78,7 +77,7 @@ type HomeworkListProps = {
   onRefreshHomeworks: any;
   onRefreshSessions: any;
   childId: string;
-  userType?: UserType;
+  userType?: AccountType;
 } & NativeStackScreenProps<DiaryNavigationParams, typeof diaryRouteNames.homeworkList>;
 
 const EmptyComponent = ({ title }) => <EmptyScreen svgImage="empty-homework" title={title} />;
@@ -108,7 +107,7 @@ const HomeworkList = ({ isFetching, onRefreshHomeworks, homeworkList, onHomework
           ) : null}
           <HomeworkItem
             onPress={() => onHomeworkTap(item)}
-            disabled={userType !== UserType.Student}
+            disabled={userType !== AccountType.Student}
             checked={isHomeworkDone(item)}
             title={item.subject_id !== 'exceptional' ? item.subject.name : item.exceptional_label}
             subtitle={item.type}
@@ -188,7 +187,7 @@ export default (props: HomeworkListProps) => {
 
   return (
     <PageContainer>
-      {userType === UserType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
+      {userType === AccountType.Relative ? <ChildPicker contentContainerStyle={styles.childPickerContentContainer} /> : null}
       <View style={styles.homeworkPart}>
         <View style={styles.grid}>
           <SmallText>{I18n.get('diary-homeworklist-from')}</SmallText>

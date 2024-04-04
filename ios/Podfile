@@ -25,7 +25,6 @@ target 'appe' do
 
   config = use_native_modules!
   $RNFirebaseAsStaticFramework = true
-  $FirebaseSDKVersion = "10.20.0"
 
   #
   # Static libraries => use modular headers

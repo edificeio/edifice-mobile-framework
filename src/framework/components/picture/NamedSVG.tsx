@@ -1,10 +1,10 @@
 /**
  * NamedSVG
  *
- * Display a SVG file from its name.
+ * Display an SVG file through its name.
  *
- * To add a SVG in the app, beware add its path to the "imports" list below.
- * ToDo : make this list automatically computed.
+ * To add an SVG in the app, add its path to the "imports" list below.
+ * ToDo: make this list compute automatically.
  */
 import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
@@ -203,6 +203,7 @@ const imports = {
   'homework-assistance-home': async () => import('ASSETS/images/homework-assistance-home.svg'),
   'image-not-found': async () => import('ASSETS/images/empty-screen/image-not-found.svg'),
   'form-default': async () => import('ASSETS/images/form-default.svg'),
+  'multi-account': async () => import('ASSETS/images/multi-account.svg'),
   'pictos-answer': async () => import('ASSETS/images/pictos/answer.svg'),
   'pictos-arrow-right': async () => import('ASSETS/images/pictos/arrow-right.svg'),
   'pictos-close': async () => import('ASSETS/images/pictos/close.svg'),

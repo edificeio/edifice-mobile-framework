@@ -1,7 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { logoutAction } from '~/framework/modules/auth/actions';
-import { ISession } from '~/framework/modules/auth/model';
+import type { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { IAuthState } from '~/framework/modules/auth/reducer';
 import type { UserNavigationParams } from '~/framework/modules/user/navigation';
 
 export enum ModificationType {
@@ -15,11 +16,14 @@ export interface UserHomeScreenProps {}
 export interface UserHomeScreenNavParams {}
 
 export interface UserHomeScreenStoreProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
+  accounts: IAuthState['accounts'];
 }
 
 export interface UserHomeScreenDispatchProps {
-  handleLogout: (...args: Parameters<typeof logoutAction>) => ReturnType<ReturnType<typeof logoutAction>>;
+  handleLogout: (...args: Parameters<typeof manualLogoutAction>) => ReturnType<ReturnType<typeof manualLogoutAction>>;
+  trySwitch: (...args: Parameters<typeof switchAccountAction>) => ReturnType<ReturnType<typeof switchAccountAction>>;
+  tryRemoveAccount: (...args: Parameters<typeof removeAccountAction>) => ReturnType<ReturnType<typeof removeAccountAction>>;
 }
 
 export interface UserHomeScreenPrivateProps

@@ -1,6 +1,7 @@
 /**
  * File Manager
  */
+import ImageResizer from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Platform } from 'react-native';
@@ -30,6 +31,37 @@ namespace LocalFile {
 
   export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
+
+const compress = async pic => {
+  if (!pic.uri) return;
+  if (pic.type === 'image/gif') return pic;
+  try {
+    let result;
+    const maxCompression = 80;
+    const maxDimension = 1440;
+    await ImageResizer.createResizedImage(pic.uri, maxDimension, maxDimension, 'JPEG', maxCompression, 0, undefined, false, {
+      mode: 'contain',
+      onlyScaleDown: true,
+    })
+      .then(response => {
+        result = {
+          fileName: response.name,
+          fileSize: response.size,
+          height: response.height,
+          type: 'image/jpg',
+          uri: response.uri,
+          width: response.width,
+        };
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    return result;
+  } catch (error) {
+    console.log(error, 'Unable to resize the photo');
+    return undefined;
+  }
+};
 
 /**
  * Represent a file that exists on the user's device.
@@ -96,10 +128,10 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       await assertPermissions('galery.read');
       // Pick files
       await new Promise<void>((resolve, reject) => {
-        const callback = (res: ImagePickerResponse) => {
+        const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            pickedFiles = res.assets;
+            pickedFiles = await Promise.all(res.assets.map(compress));
             resolve();
           }
         };
@@ -128,10 +160,10 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       await assertPermissions('camera');
       // Pick files
       await new Promise<void>((resolve, reject) => {
-        const callback = (res: ImagePickerResponse) => {
+        const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            pickedFiles = res.assets;
+            pickedFiles.push(await compress(res.assets[0]));
             resolve();
           }
         };

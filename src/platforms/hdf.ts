@@ -2,6 +2,7 @@ const hdfCommon = {
   oauth: ["app-e", "aY54xWeNHSSTuAbQSgg4ekav"],
   logo: require("ASSETS/platforms/logo-hdf.png"),
   webTheme: "hdf2d", // That's normal that it is "2d" even on 1d profiles just don't care
+  showWhoAreWe: true,
 };
 
 module.exports = {

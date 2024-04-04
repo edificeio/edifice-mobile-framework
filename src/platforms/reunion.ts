@@ -2,6 +2,7 @@ const reunionCommon = {
   oauth: ["app-e", "5NcxxzyMHFNEqPyuGctyndHh"],
   logo: require("ASSETS/platforms/logo-reunion.png"),
   webTheme: "one",
+  showWhoAreWe: true,
 };
 
 module.exports = {
@@ -10,7 +11,6 @@ module.exports = {
     name: "preprod-la-reunion",
     url: "https://preprod-reunion.one1d.fr",
     displayName: "Préprod La Réunion",
-    wayf: "https://ent1d.ac-reunion.fr/auth/saml/wayf?callBack=https%3A%2F%2Fent1d.ac-reunion.fr%2F#/",
   },
   prod: {
     ...reunionCommon,

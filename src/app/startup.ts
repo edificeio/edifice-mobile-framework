@@ -1,70 +1,41 @@
-import * as React from 'react';
 import { ThunkDispatch } from 'redux-thunk';
 
-import { loginAction } from '~/framework/modules/auth/actions';
-import { RuntimeAuthErrorCode } from '~/framework/modules/auth/model';
-import { actions } from '~/framework/modules/auth/reducer';
-import { loadCurrentPlatform } from '~/framework/modules/auth/service';
+import { useConstructor } from '~/framework/hooks/constructor';
+import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
+import { accountIsLoggable } from '~/framework/modules/auth/model';
+import track from '~/framework/modules/auth/tracking';
 import { appReadyAction } from '~/framework/navigation/redux';
-import { Platform } from '~/framework/util/appConf';
+import { tryAction } from '~/framework/util/redux/actions';
 import { Storage } from '~/framework/util/storage';
 
 import { I18n } from './i18n';
 
+const initFeatures = async () => {
+  await Storage.init();
+  await I18n.init();
+};
+
+// const MAX_STARTUP_TIME_MS = 15000;
+// Todo : implement this again.
+
 /**
  * Logic code that is run for the app start
  */
-export function useAppStartup(dispatch: ThunkDispatch<any, any, any>, lastPlatform?: Platform) {
-  const [loadedPlatform, setLoadedPlatform] = React.useState<Platform | undefined>(undefined);
-  React.useEffect(() => {
-    Storage.init()
-      .then(() =>
-        I18n.init()
-          .then(() =>
-            loadCurrentPlatform().then(platform => {
-              if (platform) {
-                let loginDone = false;
-                dispatch(loginAction(platform, undefined))
-                  .then(redirect => {
-                    dispatch(actions.redirectAutoLogin(redirect));
-                  })
-                  .catch(() => {
-                    // Do nothing. Finally clause + default navigation state will handle the case.
-                  })
-                  .finally(() => {
-                    loginDone = true;
-                    setLoadedPlatform(platform);
-                    dispatch(appReadyAction());
-                  });
-                setTimeout(() => {
-                  if (!loginDone) {
-                    dispatch(actions.sessionError(RuntimeAuthErrorCode.NETWORK_ERROR));
-                    setLoadedPlatform(platform);
-                    dispatch(appReadyAction());
-                  }
-                }, 15000);
-              } else dispatch(appReadyAction());
-            }),
-          )
-          .catch(e => {
-            if (__DEV__) console.warn(e);
-            dispatch(appReadyAction());
-          }),
-      )
-      .catch(e => {
-        if (__DEV__) console.warn(e);
-        I18n.init().finally(() => {
-          dispatch(appReadyAction());
-        });
+export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
+  useConstructor(async () => {
+    try {
+      const tryRestore = tryAction(restoreAccountAction, {
+        track: track.loginRestore,
       });
-    // We WANT TO call this only once
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Update last-known platform if provided.
-  if (lastPlatform && lastPlatform !== loadedPlatform) {
-    setLoadedPlatform(lastPlatform);
-    return lastPlatform;
-  }
-  return loadedPlatform;
+      await initFeatures();
+      const startupAccount = await (dispatch(authInitAction()) as unknown as ReturnType<ReturnType<typeof authInitAction>>); // TS-issue with dispatch async
+      if (startupAccount && accountIsLoggable(startupAccount)) {
+        await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAccountAction>>); // TS-issue with dispatch async
+      }
+    } catch (e) {
+      console.warn('[Startup] Startup failed. Cause :', e);
+    } finally {
+      dispatch(appReadyAction());
+    }
+  });
 }

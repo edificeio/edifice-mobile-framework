@@ -8,7 +8,7 @@ import DropdownPicker from '~/framework/components/pickers/dropdown';
 import { HeadingXSText, SmallText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { getItemJson } from '~/framework/util/storage';
+import { OldStorageFunctions } from '~/framework/util/storage';
 
 import styles from './styles';
 import type { UserLangScreenPrivateProps } from './types';
@@ -38,8 +38,8 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
   ];
 
   const setInitialValue = async () => {
-    const lang = await getItemJson(I18N_APP_LANG);
-    const showI18nKeys = await getItemJson(I18N_SHOW_KEYS_KEY);
+    const lang = await OldStorageFunctions.getItemJson(I18N_APP_LANG);
+    const showI18nKeys = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
 
     const initialLang = showI18nKeys ? 'wordingKeys' : lang ?? 'auto';
     setValue(initialLang as string);

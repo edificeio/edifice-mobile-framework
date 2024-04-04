@@ -1,16 +1,15 @@
 const commonValues = {
   oauth: ["app-e", "Kd2XTR6hYCU87TD75xGCmhSm"],
+  showWhoAreWe: true,
 };
 const moncollegeCommon = {
   ...commonValues,
-  logo: "logo-moncollege",
-  logoType: "NamedSvg",
+  logo: require("ASSETS/platforms/logo-moncollege.png"),
   webTheme: "moncollege",
 };
 const monecoleCommon = {
   ...commonValues,
-  logo: "logo-monecole",
-  logoType: "NamedSvg",
+  logo: require("ASSETS/platforms/logo-monecole.png"),
   webTheme: "moncollege1d",
 };
 

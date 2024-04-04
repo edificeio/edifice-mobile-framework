@@ -7,6 +7,7 @@ export default new NavigableModuleConfig<'pronote', ReturnType<typeof reducer>>(
   entcoreScope: ['pronote'],
   matchEntcoreApp: entcoreApp => entcoreApp.casType === 'PronoteRegisteredService',
   matchEntcoreWidget: entcoreWidget => entcoreWidget.name === 'carnet-de-bord',
+  storageName: 'pronote',
 
   displayI18n: (matchingApps, matchingWidgets) => {
     return matchingWidgets.length > 0 ? 'carnetdebord' : 'pronote';

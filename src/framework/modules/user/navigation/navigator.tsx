@@ -88,6 +88,7 @@ setModalModeForRoutes([
   userRouteNames.notifPrefsDetails,
   userRouteNames.whoAreWe,
   userRouteNames.structures,
+  userRouteNames.accountOnboarding,
   userRouteNames.editHobbies,
   userRouteNames.editDescription,
   userRouteNames.editMoodMotto,

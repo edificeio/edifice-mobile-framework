@@ -27,8 +27,8 @@ import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { CaptionItalicText, HeadingSText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { logoutAction } from '~/framework/modules/auth/actions';
-import { IAuthNavigationParams, authRouteNames, getAuthNavigationState } from '~/framework/modules/auth/navigation';
+import { manualLogoutAction } from '~/framework/modules/auth/actions';
+import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getUserRequirements, requestMobileVerificationCode } from '~/framework/modules/auth/service';
 import { profileUpdateAction } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
@@ -39,13 +39,13 @@ import { tryAction } from '~/framework/util/redux/actions';
 import styles from './styles';
 import { AuthChangeMobileScreenDispatchProps, AuthChangeMobileScreenPrivateProps, MobileState, PageTexts } from './types';
 
-const getNavBarTitle = (route: RouteProp<IAuthNavigationParams, typeof authRouteNames.changeMobile>) =>
+const getNavBarTitle = (route: RouteProp<AuthNavigationParams, typeof authRouteNames.changeMobile>) =>
   route.params.navBarTitle || I18n.get('auth-change-mobile-verify');
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IAuthNavigationParams, typeof authRouteNames.changeMobile>): NativeStackNavigationOptions => {
+}: NativeStackScreenProps<AuthNavigationParams, typeof authRouteNames.changeMobile>): NativeStackNavigationOptions => {
   return {
     ...navBarOptions({
       navigation,
@@ -68,7 +68,6 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const phoneInputRef = useRef<PhoneInput>(null);
 
   const platform = route.params.platform;
-  const rememberMe = route.params.rememberMe;
   const defaultMobile = route.params.defaultMobile;
   const modificationType = route.params.modificationType;
   const isModifyingMobile = modificationType === ModificationType.MOBILE;
@@ -164,7 +163,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
           await requestMobileVerificationCode(platform, mobileNumberFormatted);
           navigation.navigate(authRouteNames.mfa, {
             platform,
-            rememberMe,
+            rememberMe: false,
             modificationType,
             isMobileMFA: true,
             mobile: mobileNumberFormatted,
@@ -185,18 +184,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
         setIsSendingCode(false);
       }
     },
-    [
-      getIsValidMobileNumberForRegion,
-      isCheckMobile,
-      isModifyingMobile,
-      modificationType,
-      navigation,
-      platform,
-      props,
-      region,
-      rememberMe,
-      route,
-    ],
+    [getIsValidMobileNumberForRegion, isCheckMobile, modificationType, navigation, platform, props, region, route],
   );
 
   const sendSMS = useCallback(async () => {
@@ -215,11 +203,10 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
   const refuseMobileVerification = useCallback(async () => {
     try {
       await tryLogout();
-      navigation.reset(getAuthNavigationState(platform));
     } catch {
       Toast.showError(I18n.get('auth-change-mobile-error-text'));
     }
-  }, [navigation, tryLogout, platform]);
+  }, [tryLogout]);
 
   usePreventBack({
     title: I18n.get('auth-change-mobile-edit-alert-title'),
@@ -344,7 +331,7 @@ const AuthChangeMobileScreen = (props: AuthChangeMobileScreenPrivateProps) => {
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthChangeMobileScreenDispatchProps = dispatch => {
   return bindActionCreators(
     {
-      tryLogout: tryAction(logoutAction),
+      tryLogout: tryAction(manualLogoutAction),
       trySaveNewMobile: tryAction(profileUpdateAction),
     },
     dispatch,

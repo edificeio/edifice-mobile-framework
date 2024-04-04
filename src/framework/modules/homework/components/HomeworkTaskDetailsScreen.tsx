@@ -16,7 +16,7 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { HeadingSText, TextSizeStyle } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import HomeworkDayCheckpoint from '~/framework/modules/homework/components/HomeworkDayCheckpoint';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary } from '~/framework/modules/homework/reducers/diaryList';
@@ -26,6 +26,7 @@ import {
   hasPermissionManager,
 } from '~/framework/modules/homework/rights';
 import { getDayOfTheWeek } from '~/framework/util/date';
+import Feedback from '~/framework/util/feedback/feedback';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
 
@@ -40,7 +41,7 @@ const dayImages = {
 
 export interface HomeworkTaskDetailsScreenDataProps {
   diaryInformation?: IHomeworkDiary;
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface HomeworkTaskDetailsScreenEventProps {
@@ -138,6 +139,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
       await handleToggleHomeworkEntryStatus(diaryId, taskId, finished);
       await handleGetHomeworkTasks(diaryId);
       this.setState({ checked: !checked, playAnimation: !checked });
+      Feedback.homeworkDone();
     } catch {
       Toast.showError(I18n.get('homework-taskdetails-status-error'));
     }

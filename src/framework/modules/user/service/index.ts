@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountType } from '~/framework/modules/auth/model';
 import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
 import { hobbiesItems } from '~/framework/modules/user/screens/profile';
 import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
@@ -50,7 +50,7 @@ export const infoPersonAdapter = (n: BackendInfoPerson) => {
     id: n.id,
     login: n.login,
     displayName: n.displayName,
-    type: n.type[0] as UserType,
+    type: n.type[0] as AccountType,
     visibleInfos: n.visibleInfos,
     schools: n.schools,
     relatedName: n.relatedName,
@@ -77,7 +77,7 @@ export const userService = {
       const api = id ? `/userbook/api/person?id=${id}` : `/userbook/api/person`;
       const backendPerson = (await fetchJSONWithCache(api)) as BackendPerson;
 
-      const person = backendPerson.result.map(person => infoPersonAdapter(person));
+      const person = backendPerson.result.map(p => infoPersonAdapter(p));
       return person as InfoPerson[];
     },
     put: async (userId: string, body) => {

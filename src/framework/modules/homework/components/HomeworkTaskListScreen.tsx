@@ -16,7 +16,7 @@ import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
 import SectionList from '~/framework/components/sectionList';
 import { SmallText, TextSizeStyle } from '~/framework/components/text';
-import { ISession } from '~/framework/modules/auth/model';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { HomeworkNavigationParams, homeworkRouteNames } from '~/framework/modules/homework/navigation';
 import { IHomeworkDiary, IHomeworkDiaryList } from '~/framework/modules/homework/reducers/diaryList';
 import { IHomeworkTask } from '~/framework/modules/homework/reducers/tasks';
@@ -50,7 +50,7 @@ export interface IHomeworkTaskListScreenDataProps {
     tasks: IHomeworkTask[];
   }[];
   lastUpdated: any;
-  session?: ISession;
+  session?: AuthLoggedAccount;
   isFocused: boolean;
 }
 
@@ -150,8 +150,7 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
   }
 
   noFutureHomeworkHiddenPast() {
-    const { pastDateLimit } = this.state;
-    return this.futureHomework().length === 0 && pastDateLimit.isSame(today(), 'day');
+    return this.futureHomework().length === 0;
   }
 
   hasPastHomeWork() {
@@ -186,10 +185,12 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
 
   canCreateEntry() {
     const { diaryInformation, session } = this.props;
+    const isTeacher = session?.user.type === AccountType.Teacher;
     const hasCreationRight =
       session &&
       (hasPermissionManager(diaryInformation!, modifyHomeworkEntryResourceRight, session) ||
-        diaryInformation?.owner.userId === session.user.id);
+        diaryInformation?.owner.userId === session.user.id) &&
+      isTeacher;
     return hasCreationRight;
   }
 
@@ -320,7 +321,8 @@ class HomeworkTaskListScreen extends React.PureComponent<IHomeworkTaskListScreen
       }`,
     );
     const buttonText = this.canCreateEntry() ? I18n.get('homework-tasklist-createactivity') : undefined;
-    return this.noFutureHomeworkHiddenPast() ? (
+
+    return this.noFutureHomeworkHiddenPast() || !this.hasHomework() ? (
       <EmptyScreen svgImage="empty-hammock" title={title} text={text} buttonText={buttonText} buttonAction={this.addEntry} />
     ) : null;
   }

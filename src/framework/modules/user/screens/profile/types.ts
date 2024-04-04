@@ -1,13 +1,13 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Dispatch } from 'redux';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { HobbieItem } from '~/framework/modules/user/model';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 
 export interface ProfilePageDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface ProfilePageEventProps {
@@ -27,7 +27,7 @@ export interface ProfileScreenNavigationParams {
   userId?: string;
   newHobbies?: HobbieItem[];
   newDescription?: string;
-  newDescriptionVisibility: boolean;
+  newDescriptionVisibility?: boolean;
   newMood?: string;
   newMotto?: string;
 }

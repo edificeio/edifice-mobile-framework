@@ -136,7 +136,9 @@ try {
   if (['alpha', 'rc', 'pocs'].includes(buildType)) {
     // ¡¡¡ Update notes before last !!!
     // eslint-disable-next-line no-useless-escape
-    lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`).toString();
+    lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`)
+      .toString()
+      .slice(0, 4000);
     lastContent.last = moment().format('YYYY-MM-DD HH:mm:ss');
     lastContent.version = fullVersion;
     console.info('=> Release Notes :');

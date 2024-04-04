@@ -18,10 +18,10 @@ import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
-import moduleConfig from '~/framework/modules/blog/module-config';
+import moduleConfig, { moduleColor } from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -42,7 +42,7 @@ import { ILocalAttachment } from '~/ui/Attachment';
 import { AttachmentPicker } from '~/ui/AttachmentPicker';
 
 export interface BlogCreatePostScreenDataProps {
-  session?: ISession;
+  session?: AuthLoggedAccount;
 }
 
 export interface BlogCreatePostScreenEventProps {
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     borderRadius: UI_SIZES.radius.medium,
   },
   thumbnailNoBlog: {
-    backgroundColor: theme.palette.complementary.indigo.pale,
+    backgroundColor: moduleColor.pale,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -147,7 +147,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   async doSendPost() {
     try {
-      const { route, navigation, session, handleUploadPostImages, handleSendBlogPost, handleInitTimeline, dispatch } = this.props;
+      const { route, navigation, session, handleUploadPostImages, handleSendBlogPost, handleInitTimeline } = this.props;
       const { title, content, images } = this.state;
       const blog = route.params.blog;
       const blogId = blog && blog.id;
@@ -243,7 +243,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       );
     return (
       <View style={[styles.thumbnailBlog, styles.thumbnailNoBlog]}>
-        <NamedSVG name="blog" fill={theme.palette.complementary.indigo.regular} height={32} width={32} />
+        <NamedSVG name="blog" fill={moduleColor.regular} height={32} width={32} />
       </View>
     );
   }

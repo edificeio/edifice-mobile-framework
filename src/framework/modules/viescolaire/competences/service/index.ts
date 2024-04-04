@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { ISession } from '~/framework/modules/auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import {
   IAverage,
   ICompetence,
@@ -309,14 +309,14 @@ const userChildAdapter = (data: IBackendUserChild): IUserChild => {
 
 export const competencesService = {
   annotations: {
-    get: async (session: ISession, studentId: string, classId: string) => {
+    get: async (session: AuthLoggedAccount, studentId: string, classId: string) => {
       const api = `/viescolaire/annotations/eleve?idEleve=${studentId}&idClasse=${classId}`;
       const annotations = (await fetchJSONWithCache(api)) as IBackendAnnotationList;
       return annotations.map(annotationAdapter);
     },
   },
   averages: {
-    get: async (session: ISession, structureId: string, studentId: string, termId?: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string, studentId: string, termId?: string) => {
       let api = `/competences/devoirs/notes?idEtablissement=${structureId}&idEleve=${studentId}`;
       if (termId) {
         api += `&idPeriode=${termId}`;
@@ -326,42 +326,42 @@ export const competencesService = {
     },
   },
   competences: {
-    get: async (session: ISession, studentId: string, classId: string) => {
+    get: async (session: AuthLoggedAccount, studentId: string, classId: string) => {
       const api = `/viescolaire/competences/eleve?idEleve=${studentId}&idClasse=${classId}`;
       const competences = (await fetchJSONWithCache(api)) as IBackendCompetenceList;
       return competences.map(competenceAdapter);
     },
   },
   devoirs: {
-    get: async (session: ISession, structureId: string, studentId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string, studentId: string) => {
       const api = `/competences/devoirs?idEtablissement=${structureId}&idEleve=${studentId}`;
       const devoirs = (await fetchJSONWithCache(api)) as IBackendDevoirList;
       return devoirs.map(devoirAdapter);
     },
   },
   domaines: {
-    get: async (session: ISession, classId: string) => {
+    get: async (session: AuthLoggedAccount, classId: string) => {
       const api = `/competences/domaines?idClasse=${classId}`;
       const domaines = (await fetchJSONWithCache(api)) as IBackendDomaineList;
       return domaines.map(domaineAdapter);
     },
   },
   levels: {
-    get: async (session: ISession, structureId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/competences/maitrise/level/${structureId}`;
       const levels = (await fetchJSONWithCache(api)) as IBackendLevelList;
       return levels.map(levelAdapter);
     },
   },
   subjects: {
-    get: async (session: ISession, structureId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string) => {
       const api = `/viescolaire/matieres/services-filter?idEtablissement=${structureId}`;
       const subjects = (await fetchJSONWithCache(api)) as IBackendSubjectList;
       return subjects.map(subjectAdapter);
     },
   },
   userChildren: {
-    get: async (session: ISession, structureId: string, relativeId: string) => {
+    get: async (session: AuthLoggedAccount, structureId: string, relativeId: string) => {
       const api = `/competences/enfants?idEtablissement=${structureId}&userId=${relativeId}`;
       const userChildren = (await fetchJSONWithCache(api)) as IBackendUserChildren;
       return userChildren.map(userChildAdapter);

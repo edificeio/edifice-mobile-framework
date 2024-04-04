@@ -1,10 +1,10 @@
 import { ImagePicked } from '~/framework/components/menus/actions';
-import { UserType } from '~/framework/modules/auth/service';
+import { AccountType } from '~/framework/modules/auth/model';
 
 export interface IUserCardProps {
   id: string;
   displayName: string;
-  type: UserType;
+  type: AccountType;
   canEdit: boolean;
   hasAvatar: boolean;
   updatingAvatar?: boolean;

@@ -1,10 +1,11 @@
 /**
  * Zimbra workflow
  */
-import { ISession } from '~/framework/modules/auth/model';
+
+import { AuthLoggedAccount } from '../auth/model';
 
 export const sendExternalZimbraMailRight = 'fr.openent.zimbra.controllers.ZimbraController|zimbraOutside';
 
-export const getZimbraWorkflowInformation = (session: ISession) => ({
-  sendExternal: session.authorizedActions.some(a => a.name === sendExternalZimbraMailRight),
+export const getZimbraWorkflowInformation = (session: AuthLoggedAccount) => ({
+  sendExternal: session.rights.authorizedActions.some(a => a.name === sendExternalZimbraMailRight),
 });

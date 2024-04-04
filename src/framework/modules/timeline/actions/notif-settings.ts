@@ -15,17 +15,13 @@ import {
 } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { pushNotifsService } from '~/framework/modules/timeline/service';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
-import { getItemJson, migrateItemJson, setItemJson } from '~/framework/util/storage';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
-
-const getStorageKey = (userId: string) => `${moduleConfig.name}.notifFilterSettings.${userId}`;
+import { preferences } from '../storage';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {
     dispatch(notifFilterSettingsActions.request());
-    const session = assertSession();
-    const userId = session.user.id;
     // 1 - Load notification definitions if necessary
     let state = moduleConfig.getState(getState()) as TimelineState;
     if (!notifDefinitionsStateHandler.getAreNotificationDefinitionsLoaded(state.notifDefinitions)) {
@@ -33,17 +29,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     }
     state = moduleConfig.getState(getState());
 
-    // 2 - Load notif settings from MMKV
-    const storageKey = getStorageKey(userId);
-    let settings: INotifFilterSettings | undefined = await getItemJson(storageKey);
-
-    // 2 bis - No existing data ? Maybe we have old data to migrate
-    if (!settings) {
-      settings = await migrateItemJson(`timelinev2.notifFilterSettings`);
-    }
-    if (!settings) {
-      settings = await migrateItemJson(`timelinev2.notifFilterSettings.${userId}`);
-    }
+    let settings = preferences.getJSON('notif-filters');
 
     // 3 - merge with defaults
     const defaults = {};
@@ -53,7 +39,7 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
     settings = { ...defaults, ...settings };
 
     // 4 - Save loaded notif settings for persistency
-    await setItemJson(storageKey, settings);
+    preferences.setJSON('notif-filters', settings);
     dispatch(notifFilterSettingsActions.receipt(settings));
   } catch (e) {
     // ToDo: Error handling
@@ -64,11 +50,8 @@ export const loadNotificationFiltersSettingsAction = () => async (dispatch: Thun
 export const setFiltersAction =
   (selectedFilters: INotifFilterSettings) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     try {
-      const session = assertSession();
-      const userId = session.user.id;
-      const storageKey = getStorageKey(userId);
       dispatch(notifFilterSettingsActions.setRequest(selectedFilters));
-      await setItemJson(storageKey, selectedFilters);
+      preferences.setJSON('notif-filters', selectedFilters);
       dispatch(notifFilterSettingsActions.setReceipt(selectedFilters));
     } catch {
       // ToDo: Error handling

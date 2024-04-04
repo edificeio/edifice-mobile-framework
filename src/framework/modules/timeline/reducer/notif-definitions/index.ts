@@ -48,4 +48,4 @@ export const computeNotificationFilterList = (filters: string[], notifTypesToFil
  * Filter a notificationFilterList with authorized entcore apps
  */
 export const getAuthorizedNotificationFilterList = (notifFiltersToFilter: NotificationFilter[], entcoreApps: IEntcoreApp[]) =>
-  notifFiltersToFilter.filter(nf => entcoreApps.find(ea => !nf['app-name'] || ea.name === nf['app-name']));
+  notifFiltersToFilter?.filter(nf => entcoreApps?.find(ea => !nf['app-name'] || ea.name === nf['app-name']));
