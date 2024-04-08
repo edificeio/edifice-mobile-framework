@@ -138,7 +138,10 @@ export namespace Error {
 
   export const LoginError = ErrorWithType<LoginErrorType | ErrorTypes<typeof OAuth2Error>>;
 
-  export const getAuthErrorText = <ErrorClass = ErrorWithType>(type: Error.ErrorTypes<ErrorClass>, platformUrl: string) => {
+  export const getAuthErrorText = <ErrorClass = ErrorWithType>(
+    type: Error.ErrorTypes<ErrorClass> | undefined,
+    platformUrl: string,
+  ) => {
     switch (type) {
       case Error.FetchErrorType.NOT_AUTHENTICATED:
         return I18n.get('auth-error-notinitilized');

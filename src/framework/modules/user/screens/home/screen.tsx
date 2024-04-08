@@ -25,7 +25,8 @@ import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/
 import {
   AccountType,
   AuthLoggedAccount,
-  AuthSavedAccountWithTokens,
+  AuthSavedLoggedInAccount,
+  InitialAuthenticationMethod,
   PlatformAuthContext,
   accountIsLoggable,
   getOrderedAccounts,
@@ -235,7 +236,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   );
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
   const showWhoAreWe = session?.platform.showWhoAreWe;
-  const isFederated = session?.federated;
+  const isFederated = session?.method === InitialAuthenticationMethod.WAYF_SAML;
 
   return React.useMemo(
     () => (
@@ -356,7 +357,7 @@ function useAccountsFeature(
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        const nextScreen = getLoginNextScreen(platform);
+        const nextScreen = getLoginNextScreen(platform, item);
         if (!nextScreen) {
           console.warn('AccountSelectionScreen: Next screen cannot be determined for this user');
           toast.showError(I18n.get('auth-account-select-error'));
@@ -369,7 +370,7 @@ function useAccountsFeature(
         try {
           setLoadingState(LoginState.RUNNING);
           const account = accounts[item.user.id];
-          await trySwitch(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
+          await trySwitch(account as AuthSavedLoggedInAccount | AuthLoggedAccount);
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);

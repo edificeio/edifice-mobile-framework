@@ -17,17 +17,23 @@ import { OAuth2RessourceOwnerPasswordClient, initOAuth2, uniqueId, urlSigner } f
 import {
   AccountType,
   IActivationPayload as ActivationPayload,
+  AuthActiveAccount,
+  AuthActiveAccountWithCredentials,
+  AuthActiveAccountWithSaml,
+  AuthActiveUserInfo,
+  AuthActiveUserInfoRelative,
+  AuthActiveUserInfoStudent,
   AuthCredentials,
   AuthFederationCredentials,
   AuthLoggedAccount,
-  AuthLoggedUserInfo,
   AuthPendingRedirection,
   AuthRequirement,
   AuthTokenSet,
   ForgotMode,
+  InitialAuthenticationMethod,
   LegalUrls,
   PlatformAuthContext,
-  SessionType,
+  SessionPersistence,
   StructureNode,
   UserChild,
   UserChildren,
@@ -106,7 +112,6 @@ export enum AccountTypeBackend {
 }
 
 export interface IUserInfoBackend {
-  // ToDo: type it !
   userId?: string;
   username?: string;
   login?: string;
@@ -230,10 +235,11 @@ export function formatSession(
   platform: Platform,
   loginUsed: string | undefined,
   userinfo: IUserInfoBackend,
+  method: InitialAuthenticationMethod,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
   rememberMe?: boolean,
-): AuthLoggedAccount {
+): AuthActiveAccount {
   if (!OAuth2RessourceOwnerPasswordClient.connection) {
     throw new Error.LoginError(Error.OAuth2ErrorType.OAUTH2_MISSING_CLIENT);
   }
@@ -251,7 +257,7 @@ export function formatSession(
   ) {
     throw new Error.LoginError(Error.FetchErrorType.BAD_RESPONSE, 'Missing data in user info');
   }
-  const user: AuthLoggedUserInfo = {
+  const user: Partial<AuthActiveUserInfo> = {
     id: userinfo.userId,
     login: userinfo.login,
     loginUsed,
@@ -287,24 +293,24 @@ export function formatSession(
         child.firstName = foundChild.firstName;
       }
     }
-    user.children = children as UserChildren;
+    (user as AuthActiveUserInfoRelative).children = children as UserChildren;
   }
   if (userPrivateData?.parents) {
-    user.relatives = userPrivateData.parents;
+    (user as AuthActiveUserInfoStudent).relatives = userPrivateData.parents;
   }
   return {
     platform,
     tokens: OAuth2RessourceOwnerPasswordClient.connection.exportToken(),
-    user,
+    user: user as AuthActiveUserInfo,
     rights: {
       apps: userinfo.apps,
       widgets: userinfo.widgets,
       authorizedActions: userinfo.authorizedActions,
     },
-    type: rememberMe ? SessionType.PERMANENT : SessionType.TEMPORARY,
-    federated: userinfo.federated ?? false,
+    persist: rememberMe ? SessionPersistence.PERMANENT : SessionPersistence.TEMPORARY,
+    method,
     addTimestamp,
-  };
+  } as AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml;
 }
 
 /**
@@ -740,7 +746,7 @@ export async function fetchRawUserRequirements(platform: Platform) {
 export function getRequirementScenario(userRequirements: IUserRequirements) {
   if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
   if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
-  // ToDo add case for terms initial validation (for federated accounts)
+  // When the requirement for initial CGU validation for federated accounts, put it here :)
   if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
   if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;
 }

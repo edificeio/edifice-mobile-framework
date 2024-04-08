@@ -12,6 +12,7 @@ import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG, Picture } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
+import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredentials } from '~/framework/modules/auth/model';
 import { getAccountById } from '~/framework/modules/auth/reducer';
 import { Error, useErrorWithKey } from '~/framework/util/error';
 import { openUrl } from '~/framework/util/linking';
@@ -34,7 +35,9 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
   const { platform, accountId } = route.params;
   const account = getAccountById(accountId);
 
-  const initialLogin = account?.user.loginUsed ?? route.params.loginUsed;
+  const initialLogin =
+    (account as Partial<AuthSavedLoggedOutAccountWithCredentials | AuthActiveAccountWithCredentials> | undefined)?.user
+      ?.loginUsed ?? route.params.loginUsed;
   const [login, setLogin] = React.useState<string>(initialLogin ?? '');
   const [password, setPassword] = React.useState<string>('');
   const [typing, setTyping] = React.useState<boolean>(false);
@@ -205,6 +208,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     errtype,
     onSubmitEditingLogin,
     lockLogin,
+    initialLogin,
     onPasswordChanged,
     password,
     onSubmitEditingPassword,

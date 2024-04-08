@@ -28,14 +28,16 @@ import {
   AuthPendingRedirection,
   AuthRequirement,
   AuthSavedAccount,
-  AuthSavedAccountWithTokens,
+  AuthSavedLoggedInAccount,
+  AuthSavedLoggedInAccountWithCredentials,
   ForgotMode,
   IActivationError,
   IChangePasswordError,
   IChangePasswordPayload,
   IForgotPayload,
+  InitialAuthenticationMethod,
   PlatformAuthContext,
-  accountIsLogged,
+  accountIsActive,
   createActivationError,
   createChangePasswordError,
   getSerializedLoggedInAccountInfo,
@@ -100,7 +102,7 @@ export const authInitAction = () => async (dispatch: AuthDispatch, getState: () 
       : Object.keys(authState.accounts).length === 1
         ? Object.values(authState.accounts)[0]
         : undefined;
-  if (accountIsLogged(ret)) {
+  if (accountIsActive(ret)) {
     return getSerializedLoggedInAccountInfo(ret);
   } else return ret;
 };
@@ -226,7 +228,7 @@ export const loginSteps = {
    * @param platform
    */
   loadToken: withErrorTracking(
-    withMeasure(async (account: AuthSavedAccountWithTokens) => {
+    withMeasure(async (account: AuthSavedLoggedInAccount) => {
       authService.restoreSession(appConf.assertPlatformOfName(account.platform), account.tokens);
     }, 'loadToken'),
     'Auth',
@@ -281,10 +283,11 @@ export const loginSteps = {
         loginUsed: string | undefined,
         userInfo: IUserInfoBackend,
         publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
+        method: InitialAuthenticationMethod,
       ) => {
         await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
         const { userData, userPublicInfo } = publicInfo;
-        const sessionInfo = formatSession(addTimestamp, platform, loginUsed, userInfo, userData, userPublicInfo);
+        const sessionInfo = formatSession(addTimestamp, platform, loginUsed, userInfo, method, userData, userPublicInfo);
         await Storage.sessionInit(sessionInfo);
         Trackers.setUserId(sessionInfo.user.id);
         Trackers.setCustomDimension(1, 'Profile', sessionInfo.user.type.toString());
@@ -432,6 +435,7 @@ const performLogin = async (
   reduxActions: Pick<AuthLoginFunctions, 'success' | 'requirement' | 'getTimestamp'>,
   platform: Platform,
   loginUsed: string | undefined,
+  method: InitialAuthenticationMethod,
   dispatch: AuthDispatch,
 ) => {
   assertCancelLogin();
@@ -445,6 +449,7 @@ const performLogin = async (
     loginUsed,
     user.infos,
     user.publicInfos,
+    method,
   );
   if (requirement) {
     const context = await authService.getAuthContext(platform);
@@ -469,7 +474,13 @@ const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platfor
         // Nested try/catch block to handle CREDENTIALS_MISMATCH errors caused by activation/renew code use.
         try {
           await loginSteps.getNewToken(platform, credentials);
-          const session = await performLogin(functions, platform, credentials.username, dispatch);
+          const session = await performLogin(
+            functions,
+            platform,
+            credentials.username,
+            InitialAuthenticationMethod.LOGIN_PASSWORD,
+            dispatch,
+          );
           functions.writeStorage(session, getAuthState(getState()).showOnboarding);
           return session;
         } catch (ee) {
@@ -551,7 +562,7 @@ const loginFederationAction = (
     async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
       try {
         await loginSteps.getNewToken(platform, credentials);
-        const session = await performLogin(functions, platform, undefined, dispatch);
+        const session = await performLogin(functions, platform, undefined, InitialAuthenticationMethod.WAYF_SAML, dispatch);
         functions.writeStorage(session, getAuthState(getState()).showOnboarding);
         return session;
       } catch (e) {
@@ -596,11 +607,11 @@ export const loginFederationActionAddAnotherAccount = (platform: Platform, crede
  * @returns
  * @throws
  */
-const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
+const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedLoggedInAccount | AuthLoggedAccount) =>
   raceTimeoutAction(async (dispatch: AuthDispatch, getState: () => IGlobalState) => {
     try {
-      const accountToRestore = accountIsLogged(account)
-        ? (getSerializedLoggedInAccountInfo(account) as AuthSavedAccountWithTokens)
+      const accountToRestore = accountIsActive(account)
+        ? (getSerializedLoggedInAccountInfo(account) as AuthSavedLoggedInAccount)
         : account;
       await loginSteps.loadToken(accountToRestore);
       if (!OAuth2RessourceOwnerPasswordClient.connection) {
@@ -610,7 +621,8 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedAcco
       const session = await performLogin(
         functions,
         appConf.assertPlatformOfName(accountToRestore.platform),
-        accountToRestore.user.loginUsed,
+        (accountToRestore.user as Partial<AuthSavedLoggedInAccountWithCredentials['user']>).loginUsed,
+        account.method,
         dispatch,
       );
       writeReplaceAccount(account.user.id, session, getAuthState(getState()).showOnboarding);
@@ -627,10 +639,10 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedAcco
     }
   }, MAX_AUTH_TIMEOUT);
 
-export const restoreAccountAction = (account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
+export const restoreAccountAction = (account: AuthSavedLoggedInAccount | AuthLoggedAccount) =>
   loadAccountAction(getLoginFunctions.restoreAccount(account.user.id, account.addTimestamp), account);
 
-export const switchAccountAction = (account: AuthSavedAccountWithTokens | AuthLoggedAccount) =>
+export const switchAccountAction = (account: AuthSavedLoggedInAccount | AuthLoggedAccount) =>
   loadAccountAction(getLoginFunctions.switchAccount(account.user.id, account.addTimestamp), account);
 
 /**
@@ -656,8 +668,9 @@ export const refreshRequirementsAction = () => async (dispatch: AuthDispatch) =>
   const accountInfo = formatSession(
     session.addTimestamp,
     session.platform,
-    session.user.loginUsed,
+    (session.user as Partial<AuthSavedLoggedInAccountWithCredentials['user']>).loginUsed,
     user.infos,
+    session.method,
     user.publicInfos.userData,
     user.publicInfos.userPublicInfo,
   );
@@ -785,9 +798,9 @@ export function manualLogoutAction() {
   };
 }
 
-export function removeAccountAction(account: AuthLoggedAccount | AuthSavedAccountWithTokens | AuthSavedAccount) {
+export function removeAccountAction(account: AuthLoggedAccount | AuthSavedLoggedInAccount | AuthSavedAccount) {
   return async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
-    if (accountIsLogged(account)) {
+    if (accountIsActive(account)) {
       await dispatch(quietLogoutAction());
     }
     dispatch(actions.removeAccount(account.user.id));
