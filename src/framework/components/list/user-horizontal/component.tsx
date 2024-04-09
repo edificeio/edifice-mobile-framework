@@ -5,7 +5,8 @@ import { SingleAvatar } from '~/framework/components/avatar';
 import { Size } from '~/framework/components/avatar/types';
 import HorizontalList, { HorizontalListProps } from '~/framework/components/list/horizontal';
 import { SmallText } from '~/framework/components/text';
-import { DisplayUserPublic } from '~/framework/modules/auth/model';
+import { AccountTypeText } from '~/framework/components/text/account-type';
+import { DisplayUserPublic, DisplayUserPublicWithType } from '~/framework/modules/auth/model';
 
 import styles from './styles';
 import { UserListItemProps, UserListProps } from './types';
@@ -20,19 +21,18 @@ export const UserListItemDetails = <ItemT extends DisplayUserPublic = DisplayUse
   );
 };
 
-// export const UserListItemDetailsWithType = <ItemT extends DisplayUserPublicWithType = DisplayUserPublicWithType>({
-//   item,
-// }: UserListItemProps<ItemT>) => {
-//   const profileTextStyle = React.useMemo(() => [styles.itemText, getProfileColorStyle(item)], [item]);
-//   return (
-//     <>
-//       <SmallText style={styles.itemText} numberOfLines={DISPLAY_NAME_NUMBER_OF_LINES}>
-//         {item.displayName}
-//       </SmallText>
-//       <SmallBoldText style={profileTextStyle}>{item.type.toString()}</SmallBoldText>
-//     </>
-//   );
-// };
+export const UserListItemDetailsWithType = <ItemT extends DisplayUserPublicWithType = DisplayUserPublicWithType>({
+  item,
+}: UserListItemProps<ItemT>) => {
+  return (
+    <>
+      <SmallText style={styles.itemText} numberOfLines={DISPLAY_NAME_NUMBER_OF_LINES}>
+        {item.displayName}
+      </SmallText>
+      <AccountTypeText type={item.type} style={styles.itemText} />
+    </>
+  );
+};
 
 const UserListItem = <ItemT extends DisplayUserPublic = DisplayUserPublic>(props: UserListItemProps<ItemT>) => {
   const { renderUserDetails, style, ...info } = props;
