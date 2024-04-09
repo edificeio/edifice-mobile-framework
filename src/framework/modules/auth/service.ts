@@ -744,8 +744,9 @@ export async function fetchRawUserRequirements(platform: Platform) {
  * @returns the first flag encountered (until there is none).
  */
 export function getRequirementScenario(userRequirements: IUserRequirements) {
-  if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
+  // Note : MUST_CHANGE_PASSWORD need to be first, otherwise the other cases will not work and will be http 302.
   if (userRequirements.forceChangePassword) return AuthRequirement.MUST_CHANGE_PASSWORD;
+  if (userRequirements.needRevalidateTerms) return AuthRequirement.MUST_REVALIDATE_TERMS;
   // When the requirement for initial CGU validation for federated accounts, put it here :)
   if (userRequirements.needRevalidateMobile) return AuthRequirement.MUST_VERIFY_MOBILE;
   if (userRequirements.needRevalidateEmail) return AuthRequirement.MUST_VERIFY_EMAIL;

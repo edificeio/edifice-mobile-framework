@@ -17,6 +17,7 @@ import { PageView, PageViewStyle } from '~/framework/components/page';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { HeadingSText, SmallActionText, SmallBoldText, SmallText } from '~/framework/components/text';
+import Toast from '~/framework/components/toast';
 import { manualLogoutAction, revalidateTermsAction } from '~/framework/modules/auth/actions';
 import { LegalUrls } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
@@ -75,6 +76,7 @@ const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
     try {
       await tryRevalidate();
     } catch (e) {
+      Toast.showError(I18n.get('toast-error-text'));
       if (__DEV__) console.warn('revalidateTerms: could not revalidate terms', e);
     }
     // Manually specified deps here
