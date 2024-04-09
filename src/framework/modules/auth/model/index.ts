@@ -388,6 +388,7 @@ export interface PlatformAuthContext {
   cgu: boolean;
   passwordRegex: string;
   passwordRegexI18n?: { [lang: string]: string };
+  passwordRegexI18nActivation?: { [lang: string]: string };
   mandatory?: {
     mail?: boolean;
     phone?: boolean;
