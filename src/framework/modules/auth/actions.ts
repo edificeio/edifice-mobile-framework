@@ -283,7 +283,7 @@ export const loginSteps = {
         loginUsed: string | undefined,
         userInfo: IUserInfoBackend,
         publicInfo: { userData?: UserPrivateData; userPublicInfo?: UserPersonDataBackend },
-        method: InitialAuthenticationMethod,
+        method: InitialAuthenticationMethod | undefined,
       ) => {
         await Promise.all([manageFirebaseToken(platform), forgetPlatform(), forgetPreviousSession()]);
         const { userData, userPublicInfo } = publicInfo;
@@ -435,7 +435,7 @@ const performLogin = async (
   reduxActions: Pick<AuthLoginFunctions, 'success' | 'requirement' | 'getTimestamp'>,
   platform: Platform,
   loginUsed: string | undefined,
-  method: InitialAuthenticationMethod,
+  method: InitialAuthenticationMethod | undefined,
   dispatch: AuthDispatch,
 ) => {
   assertCancelLogin();
