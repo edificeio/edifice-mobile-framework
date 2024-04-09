@@ -16,7 +16,7 @@ import { Picture } from '~/framework/components/picture';
 import { NamedSVG } from '~/framework/components/picture/NamedSVG';
 import { BodyBoldText, BodyText, HeadingLText, HeadingSText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
-import { loginCredentialsAction, refreshRequirementsAction } from '~/framework/modules/auth/actions';
+import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
@@ -374,7 +374,6 @@ const mapStateToProps: (state: IGlobalState) => AuthMFAScreenStoreProps = state 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => AuthMFAScreenDispatchProps = dispatch => {
   return bindActionCreators<AuthMFAScreenDispatchProps>(
     {
-      tryLogin: tryAction(loginCredentialsAction),
       tryRefreshRequirements: tryAction(refreshRequirementsAction),
       tryUpdateProfile: tryAction(profileUpdateAction),
     },

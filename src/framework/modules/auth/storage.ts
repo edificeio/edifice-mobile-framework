@@ -1,7 +1,7 @@
 import { Storage } from '~/framework/util/storage';
 import type { IOAuthToken } from '~/infra/oauth';
 
-import { AuthLoggedAccount, AuthSavedAccount, getSerializedLoggedInAccountInfo } from './model';
+import { AuthActiveAccount, AuthSavedAccount, AuthSavedLoggedInAccount, getSerializedLoggedInAccountInfo } from './model';
 import moduleConfig from './module-config';
 import { ERASE_ALL_ACCOUNTS, IAuthState } from './reducer';
 
@@ -35,7 +35,7 @@ export const readShowOnbording = () => storage.getBoolean('show-onboarding') ?? 
  * @param account
  * @param showOnboarding
  */
-export const writeCreateAccount = (account: AuthLoggedAccount, showOnboarding: boolean = false) => {
+export const writeCreateAccount = (account: AuthActiveAccount, showOnboarding: boolean = false) => {
   const savedAccount = getSerializedLoggedInAccountInfo(account);
   const savedAccounts: Record<string, AuthSavedAccount> = {
     ...readSavedAccounts(),
@@ -57,7 +57,7 @@ export const writeCreateAccount = (account: AuthLoggedAccount, showOnboarding: b
  */
 export const writeReplaceAccount = (
   id: string | typeof ERASE_ALL_ACCOUNTS,
-  account: AuthLoggedAccount,
+  account: AuthActiveAccount,
   showOnboarding: boolean = false,
 ) => {
   const savedAccount = getSerializedLoggedInAccountInfo(account);
@@ -72,7 +72,6 @@ export const writeReplaceAccount = (
   storage.setJSON('startup', startup);
   storage.set('show-onboarding', showOnboarding);
 };
-
 /**
  * Update the given account information in the storage
  * @param account
@@ -83,20 +82,19 @@ export const updateAccount = (savedAccount: AuthSavedAccount) => {
   storage.setJSON('accounts', savedAccounts);
 };
 
-export const writeRemoveToken = (account: AuthLoggedAccount) => {
-  // Remove token for logged out account
+export const writeRemoveToken = (account: AuthActiveAccount | AuthSavedLoggedInAccount) => {
   const accounts = storage.getJSON('accounts');
   if (accounts) {
     const savedAccount = accounts[account.user.id];
     if (savedAccount) {
-      savedAccount.tokens = undefined;
+      (savedAccount as Partial<AuthSavedLoggedInAccount>).tokens = undefined;
       accounts[account.user.id] = savedAccount;
     }
     storage.setJSON('accounts', accounts);
   }
 };
 
-export const writeLogout = (account: AuthLoggedAccount) => {
+export const writeLogout = (account: AuthActiveAccount) => {
   // Remove token for loegged out account
   writeRemoveToken(account);
   // Remove account id in startup object

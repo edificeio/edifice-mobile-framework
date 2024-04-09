@@ -1,6 +1,11 @@
 import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
 
-import { AuthPendingRedirection, AuthRequirement } from '~/framework/modules/auth/model';
+import {
+  AuthPendingRedirection,
+  AuthRequirement,
+  AuthSavedAccount,
+  InitialAuthenticationMethod,
+} from '~/framework/modules/auth/model';
 import { AuthPendingRestore, IAuthState, getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
@@ -8,19 +13,17 @@ import appConf, { Platform } from '~/framework/util/appConf';
 
 import { authRouteNames, simulateNavAction } from '..';
 
-/** @deprecated */
-export const getLoginRouteName = (platform?: Platform) => {
-  return platform?.wayf ? authRouteNames.loginWayf : authRouteNames.loginCredentials;
-};
-
-export const getLoginNextScreen: (platform: Platform) => PartialState<NavigationState>['routes'][0] = platform => {
-  return platform.wayf
+export const getLoginNextScreen: (
+  platform: Platform,
+  account?: Pick<AuthSavedAccount, 'method'>,
+) => PartialState<NavigationState>['routes'][0] = (platform, account) => {
+  return platform.wayf && account?.method !== InitialAuthenticationMethod.LOGIN_PASSWORD
     ? { name: authRouteNames.loginWayf, params: { platform } }
     : { name: authRouteNames.loginCredentials, params: { platform } };
 };
 
-export const getLoginNextScreenNavAction = (platform: Platform) => {
-  return CommonActions.navigate(getLoginNextScreen(platform));
+export const getLoginNextScreenNavAction = (platform: Platform, account: Pick<AuthSavedAccount, 'method'>) => {
+  return CommonActions.navigate(getLoginNextScreen(platform, account));
 };
 
 export const getOnboardingNextScreen = () => {
@@ -173,9 +176,12 @@ export const getAuthNavigationState = (
       : undefined // Silenty go to the select page if the platform name has no correspondance.
     : allPlatforms[0];
 
-  // 3.3 – Put the platform route into the stack
-  if (platform && (accountsAsArray.length <= 1 || (pending as AuthPendingRestore)?.account)) {
-    const nextScreen = getLoginNextScreen(platform);
+  // 3.3 - Gather account data
+  const accountObject = accountId ? accounts[accountId] : undefined;
+
+  // 3.4 – Put the platform login route into the stack
+  if (platform && (!multipleAccounts || (pending as AuthPendingRestore)?.account)) {
+    const nextScreen = getLoginNextScreen(platform, accountObject);
     routes.push({
       ...nextScreen,
       params: { ...nextScreen.params, accountId, loginUsed: accountId === undefined ? loginWithoutAccountId : undefined },

@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { IGlobalState } from '~/app/store';
-import { accountIsLogged } from '~/framework/modules/auth/model';
+import { accountIsActive } from '~/framework/modules/auth/model';
 import * as selectors from '~/framework/modules/auth/redux/selectors';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 
@@ -64,7 +64,7 @@ function AppPushNotificationHandlerComponentUnconnected(
 
 const mapStateToProps = (s: IGlobalState) => {
   return {
-    isLoggedIn: accountIsLogged(selectors.session(s)),
+    isLoggedIn: accountIsActive(selectors.session(s)),
   };
 };
 

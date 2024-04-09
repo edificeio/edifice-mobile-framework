@@ -71,7 +71,7 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
   };
 
   // Refs
-  private inputLoginRef = React.createRef<TextInput>();
+  private inputLoginRef = React.createRef<TextInput>() as React.MutableRefObject<TextInput | null>;
 
   private setInputLoginRef = (ref: TextInput) => (this.inputLoginRef.current = ref);
 
@@ -217,7 +217,11 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
                         <Picker.Item label="" value={null} />
                         {structures &&
                           structures.map(structure => (
-                            <Picker.Item label={structure.structureName} value={structure.structureName} />
+                            <Picker.Item
+                              key={structure.structureName}
+                              label={structure.structureName}
+                              value={structure.structureName}
+                            />
                           ))}
                       </Picker>
                     ) : null}

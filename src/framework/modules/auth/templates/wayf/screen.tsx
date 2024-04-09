@@ -370,17 +370,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   onMessage(event: WebViewMessageEvent) {
     // Get HTML code
     const innerHTML = event?.nativeEvent?.data || '';
-    /*if (__DEV__) {
-      console.debug('innerHTML : ');
-      console.debug(innerHTML);
-    }*/
+    if (__DEV__) console.debug('innerHTML :\n' + innerHTML);
     // Retrieve potential SAML token (Stored in <input type="hidden" name="SAMLResponse" value="[saml]"/>)
     const components = innerHTML.split('name="SAMLResponse" value="');
     if (components?.length === 2) {
       const index = components[1].indexOf('"');
-      // Call oauth2 token api with received SAML if any
       if (index > 0) this.samlResponse = components[1].substring(0, index);
-      if (this.samlResponse) this.loginWithSaml();
     }
   }
 
@@ -409,14 +404,22 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: authUrl received => Navigation allowed');
         return true;
       }
-      // Go to standard login page and block navigation when
-      //   - No SAMLResponse has been detected
-      //   - WAYF redirects to ENT
+      // If WAYF redirects to ENT
+      //   - Try to login with SAML token if any retrieved previously
+      //   - Otherwise go to standard login page
+      //   - Block navigation
       if (this.pfUrl && url.startsWith(this.pfUrl)) {
-        if (!this.samlResponse) {
+        if (this.samlResponse) {
+          if (__DEV__)
+            console.debug(
+              'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse,
+            );
+          this.loginWithSaml();
+        } else {
           if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
           this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
         }
+        // Block navigation
         return false;
       }
     }

@@ -2,15 +2,17 @@ import { IGlobalState, Reducers, getStore } from '~/app/store';
 import {
   ANONYMOUS_ACCOUNT_ID,
   AccountType,
+  AuthActiveAccount,
   AuthLoggedAccount,
   AuthLoggedAccountMap,
   AuthMixedAccountMap,
   AuthPendingRedirection,
   AuthRequirement,
+  AuthSavedLoggedInAccount,
   AuthTokenSet,
   LegalUrls,
   PlatformAuthContext,
-  accountIsLogged,
+  accountIsActive,
   getSerializedLoggedInAccountInfo,
   getSerializedLoggedOutAccountInfo,
 } from '~/framework/modules/auth/model';
@@ -332,6 +334,7 @@ const reducer = createReducer(initialState, {
         ...realAccounts,
         [ANONYMOUS_ACCOUNT_ID]: {
           platform: pending.platform,
+          method: undefined,
           user: { displayName: '', id: ANONYMOUS_ACCOUNT_ID, loginUsed: '', type: AccountType.Guest },
           tokens: {
             access: {
@@ -452,13 +455,18 @@ const reducer = createReducer(initialState, {
 
   [actionTypes.setQueryParamToken]: (state, action) => {
     const { id, token } = action as unknown as ActionPayloads['setQueryParamToken'];
-    return {
-      ...state,
-      accounts: {
-        ...state.accounts,
-        [id]: { ...state.accounts[id], tokens: { ...state.accounts[id].tokens!, queryParam: token } },
-      },
-    };
+    const tokens = (state.accounts[id] as Partial<AuthActiveAccount | AuthSavedLoggedInAccount>).tokens
+      ? { ...(state.accounts[id] as AuthActiveAccount | AuthSavedLoggedInAccount).tokens, queryParam: token }
+      : undefined;
+    return tokens
+      ? {
+          ...state,
+          accounts: {
+            ...state.accounts,
+            [id]: { ...state.accounts[id], tokens },
+          },
+        }
+      : state;
   },
 
   [actionTypes.authError]: (state, action) => {
@@ -550,9 +558,10 @@ const reducer = createReducer(initialState, {
 
   [actionTypes.profileUpdate]: (state, action) => {
     const { id, user } = action as unknown as ActionPayloads['profileUpdate'];
-    const account = state.accounts[id] as AuthLoggedAccount;
-    if (!account || !accountIsLogged(account)) return state;
-    return { ...state, accounts: { ...state.accounts, [id]: { ...account, user: { ...account.user, ...user } } } };
+    const account = state.accounts[id] as AuthActiveAccount;
+    if (!account || !accountIsActive(account)) return state;
+    const newAccount = { ...account, user: { ...account.user, ...user } } as AuthActiveAccount;
+    return { ...state, accounts: { ...state.accounts, [id]: newAccount } };
   },
 
   [actionTypes.addAccountInit]: (state, action) => {

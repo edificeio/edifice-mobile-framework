@@ -18,6 +18,22 @@ export enum AccountType {
 }
 
 /**
+ * Authentication method that was used to add this account
+ */
+export enum InitialAuthenticationMethod {
+  LOGIN_PASSWORD,
+  WAYF_SAML,
+}
+
+/**
+ * If user asked to remember the session. (Temporary sessions are not used anymore.)
+ */
+export enum SessionPersistence {
+  TEMPORARY, // Session not saved, preventing auto-login
+  PERMANENT, // Session is to be saved to the storage
+}
+
+/**
  * Describes minimal info to display a user
  */
 export interface DisplayUserPublic {
@@ -32,47 +48,159 @@ export interface DisplayUserPublicWithType extends DisplayUserPublic {
   type: AccountType;
 }
 
-export const isUserWithType = (u: DisplayUserPublic): u is DisplayUserPublicWithType => !!(u as DisplayUserPublicWithType).type;
+/**
+ * Check if given display user is provided with type information.
+ * @param u
+ * @returns if user contains type information with type guards
+ */
+export const isDisplayUserWithType = (u: DisplayUserPublic | DisplayUserPublicWithType): u is DisplayUserPublicWithType =>
+  (u as Partial<DisplayUserPublicWithType> & DisplayUserPublic).type !== undefined;
 
 /**
- * Represent user information that a seved account contains
+ * Represent user information that a saved account contains
  */
-export interface AuthSavedAccountUserInfo extends DisplayUserPublicWithType {
-  loginUsed: string | undefined; // undefined if federation login
+interface AuthSavedUserInfoWithCredentials extends DisplayUserPublicWithType {
+  loginUsed: string; // login that the user used to log in
 }
+/**
+ * Represent user information that a saved account contains
+ */
+interface AuthSavedUserInfoWithSaml extends DisplayUserPublicWithType {
+  // No additional information
+}
+
+interface AuthLoggedInAccountTokens {
+  tokens: AuthTokenSet;
+}
+
+// Saved account that is Logged Out / Logged In
+
+interface AuthSavedLoggedOutAccountCommon {
+  platform: string; // name of the platform
+  addTimestamp: number; // date of the account addition into the app to preserve display order.
+}
+interface AuthSavedLoggedInAccountCommon extends AuthSavedLoggedOutAccountCommon, AuthLoggedInAccountTokens {}
+
+// Saved account that is Credentials / Saml
+
+interface AuthSavedAccountWithCredentials {
+  method?: InitialAuthenticationMethod.LOGIN_PASSWORD;
+  user: AuthSavedUserInfoWithCredentials;
+}
+
+interface AuthSavedAccountWithFederation {
+  method?: InitialAuthenticationMethod.WAYF_SAML;
+  user: AuthSavedUserInfoWithSaml;
+}
+
+// Mixup between logged status and auth method
+
+export interface AuthSavedLoggedOutAccountWithCredentials
+  extends AuthSavedAccountWithCredentials,
+    AuthSavedLoggedOutAccountCommon {}
+export interface AuthSavedLoggedInAccountWithCredentials extends AuthSavedAccountWithCredentials, AuthSavedLoggedInAccountCommon {}
+
+export interface AuthSavedLoggedOutAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedOutAccountCommon {}
+export interface AuthSavedLoggedInAccountWithSaml extends AuthSavedAccountWithFederation, AuthSavedLoggedInAccountCommon {}
+
+export type AuthSavedLoggedOutAccount = AuthSavedLoggedOutAccountWithCredentials | AuthSavedLoggedOutAccountWithSaml;
+export type AuthSavedLoggedInAccount = AuthSavedLoggedInAccountWithCredentials | AuthSavedLoggedInAccountWithSaml;
+
+export type AuthSavedAccount = AuthSavedLoggedOutAccount | AuthSavedLoggedInAccount;
+
+// Active Account
+
+export interface UpdatableUserInfo {
+  displayName: string;
+  loginAlias?: string; // May be same as loginUsed if alias was used to log in.
+  avatar?: string; // = avatar url if defined.
+  birthDate?: Moment;
+  email?: string;
+  firstName: string;
+  lastName: string;
+  mobile?: string;
+}
+
+/**
+ * Describes all visible values from active user profile.
+ */
+interface AuthActiveUserInfoCommon extends UpdatableUserInfo {
+  id: string; // id is also used to get avatar
+  classes?: string[];
+  groups: string[];
+  homePhone?: string;
+  login: string; // May be same as loginUsed if real login was used to log in.
+  structures?: UserStructureWithClasses[];
+  uniqueId?: string;
+}
+
+export interface AuthActiveUserInfoStudent extends AuthActiveUserInfoCommon {
+  type: AccountType.Student;
+  relatives?: UserPrivateData['parents'];
+}
+export interface AuthActiveUserInfoRelative extends AuthActiveUserInfoCommon {
+  type: AccountType.Relative;
+  children?: UserChildren;
+}
+export interface AuthActiveUserInfoTeacher extends AuthActiveUserInfoCommon {
+  type: AccountType.Teacher;
+}
+export interface AuthActiveUserInfoPersonnel extends AuthActiveUserInfoCommon {
+  type: AccountType.Personnel;
+}
+export interface AuthActiveUserInfoGuest extends AuthActiveUserInfoCommon {
+  type: AccountType.Guest;
+}
+
+export type AuthActiveUserInfoForTypes =
+  | AuthActiveUserInfoStudent
+  | AuthActiveUserInfoRelative
+  | AuthActiveUserInfoTeacher
+  | AuthActiveUserInfoPersonnel
+  | AuthActiveUserInfoGuest;
+
+/**
+ * Every info the logged account contains
+ */
+interface AuthActiveAccountCommon {
+  platform: Platform;
+  tokens: AuthTokenSet;
+  rights: AuthActiveAccountRights;
+  persist: SessionPersistence;
+  addTimestamp: AuthSavedAccount['addTimestamp'];
+}
+
+interface AuthActiveUserInfoWithCredentialsSpecifics {
+  loginUsed: string; // login that the user used to log in
+}
+interface AuthActiveUserInfoWithSamlSpecifics {
+  // No additional information
+}
+
+export type AuthActiveUserInfo =
+  | (AuthActiveUserInfoForTypes & AuthActiveUserInfoWithCredentialsSpecifics)
+  | (AuthActiveUserInfoForTypes & AuthActiveUserInfoWithSamlSpecifics);
+
+export interface AuthActiveAccountWithCredentials extends AuthActiveAccountCommon {
+  method: InitialAuthenticationMethod.LOGIN_PASSWORD;
+  user: AuthActiveUserInfoForTypes & AuthActiveUserInfoWithCredentialsSpecifics;
+}
+export interface AuthActiveAccountWithSaml extends AuthActiveAccountCommon {
+  method: InitialAuthenticationMethod.WAYF_SAML;
+  user: AuthActiveUserInfoForTypes & AuthActiveUserInfoWithSamlSpecifics;
+}
+
+export type AuthActiveAccount = AuthActiveAccountWithCredentials | AuthActiveAccountWithSaml;
+
+/**
+ * @deprecated use AuthActiveUserInfo;
+ */
+export type AuthLoggedUserInfo = AuthActiveUserInfoForTypes;
 
 /**
  * Describes the contact information of a user
  */
-export interface AuthUserContactDetails {
-  email?: string;
-  mobile?: string;
-  homePhone?: string;
-}
-
-/**
- * Describes all visible values from logged user profile.
- */
-export interface AuthLoggedUserProfile extends AuthSavedAccountUserInfo, AuthUserContactDetails {
-  birthDate?: Moment;
-  firstName: string;
-  lastName: string;
-  login: string; // May be same as loginUsed if real login was used to log in
-  loginAlias?: string; // May be same as loginUsed if alias was used to log in. May be undefined for federation / migrated accounts
-  avatar?: string; // = avatar url if defined.
-}
-
-/**
- * Describes all data thet is tied to the logged user
- */
-export interface AuthLoggedUserInfo extends AuthLoggedUserProfile {
-  groups: string[];
-  uniqueId?: string;
-  children?: UserChildren;
-  relatives?: UserPrivateData['parents'];
-  classes?: string[];
-  structures?: UserStructureWithClasses[];
-}
+export type AuthUserContactDetails = Pick<AuthActiveUserInfoForTypes, 'email' | 'mobile' | 'homePhone'>;
 
 export type DateTimeString = string;
 
@@ -106,21 +234,7 @@ export interface AuthTokenSet {
   scope: string[];
 }
 
-/**
- * Every info a saved account contains
- */
-export interface AuthSavedAccount {
-  platform: string;
-  tokens?: AuthTokenSet;
-  user: AuthSavedAccountUserInfo;
-  addTimestamp: number;
-}
-
-export interface AuthSavedAccountWithTokens extends AuthSavedAccount {
-  tokens: AuthTokenSet;
-}
-
-export interface AuthLoggedAccountRights {
+export interface AuthActiveAccountRights {
   apps: IEntcoreApp[];
   widgets: IEntcoreWidget[];
   authorizedActions: IAuthorizedAction[];
@@ -128,27 +242,20 @@ export interface AuthLoggedAccountRights {
 
 /**
  * Every info the logged account contains
+ * @deprecated use AuthActiveAccount instead.
  */
-export interface AuthLoggedAccount {
-  platform: Platform;
-  tokens: AuthTokenSet;
-  user: AuthLoggedUserInfo;
-  rights: AuthLoggedAccountRights;
-  type: SessionType;
-  federated: boolean;
-  addTimestamp: AuthSavedAccount['addTimestamp'];
-}
+export type AuthLoggedAccount = AuthActiveAccount;
 
-export const accountIsLogged = (account: AuthLoggedAccount | AuthSavedAccount | undefined): account is AuthLoggedAccount => {
-  // account that have rights object is currenty logged in.
-  return account !== undefined && (account as AuthLoggedAccount).rights !== undefined;
+export const accountIsActive = (account: AuthActiveAccount | AuthSavedAccount | undefined): account is AuthActiveAccount => {
+  // account that have rights object is currenty logged in & active.
+  return account !== undefined && (account as Partial<AuthActiveAccount>).rights !== undefined;
 };
 
 export const accountIsLoggable = (
-  account: AuthLoggedAccount | AuthSavedAccount | undefined,
-): account is AuthSavedAccountWithTokens => {
+  account: AuthActiveAccount | AuthSavedAccount | undefined,
+): account is AuthSavedLoggedInAccount => {
   // account that have rights object is currenty logged in.
-  return account !== undefined && (account as AuthSavedAccount).tokens !== undefined;
+  return account !== undefined && (account as Partial<AuthSavedLoggedInAccount>).tokens !== undefined;
 };
 
 /**
@@ -180,7 +287,7 @@ export type AuthSavedAccountMap = Record<string, AuthSavedAccount>;
 
 export type AuthLoggedAccountMap = Record<string, AuthLoggedAccount>;
 
-export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthSavedAccountWithTokens | AuthLoggedAccount>;
+export type AuthMixedAccountMap = Record<string, AuthSavedAccount | AuthLoggedAccount>;
 
 export interface IUser extends DisplayUserPublic {
   login: string;
@@ -221,6 +328,7 @@ export interface UserStructureWithClasses extends StructureNode {
 
 /**
  * Describes all editable profile values.
+ * @deprecated use AuthActiveAccount['user'] instead.
  */
 export interface ILoggedUserProfile extends DisplayUserPublic, AuthUserContactDetails {
   birthDate?: Moment;
@@ -232,6 +340,7 @@ export interface ILoggedUserProfile extends DisplayUserPublic, AuthUserContactDe
 
 /**
  * Describes the user that is logged in currently (private info)
+ * @deprecated use AuthActiveAccount['user'] instead.
  */
 export interface ILoggedUser extends IUser, ILoggedUserProfile {
   groups: string[];
@@ -262,11 +371,6 @@ export type UserChildrenFlattened = (UserChild & {
   structureName: string;
 })[];
 
-export enum SessionType {
-  PERMANENT, // Session is to be saved to the storage
-  TEMPORARY, // Session not saved, preventing auto-login
-}
-
 // export function getAuthErrorCode(error: InstanceType<typeof Error.LoginError>, platform: Platform) {
 //   return I18n.get('auth-error-' + error.replaceAll('_', ''), {
 //     version: DeviceInfo.getVersion(),
@@ -284,6 +388,7 @@ export interface PlatformAuthContext {
   cgu: boolean;
   passwordRegex: string;
   passwordRegexI18n?: { [lang: string]: string };
+  passwordRegexI18nActivation?: { [lang: string]: string };
   mandatory?: {
     mail?: boolean;
     phone?: boolean;
@@ -403,22 +508,24 @@ export function getFlattenedChildren(children: ILoggedUser['children']): UserChi
   }
   return flattenedChildren;
 }
-/** Converts an actual logged account into a serialisable saved account information */
 
-export const getSerializedLoggedOutAccountInfo = (account: AuthLoggedAccount) => {
+/** Converts an actual logged account into a serialisable saved account information */
+export const getSerializedLoggedOutAccountInfo = (account: AuthActiveAccount) => {
   return {
+    method: account.method,
     platform: account.platform.name,
     user: {
       displayName: account.user.displayName,
       id: account.user.id,
-      loginUsed: account.user.loginUsed,
+      ...(account.method === InitialAuthenticationMethod.LOGIN_PASSWORD ? { loginUsed: account.user.loginUsed } : undefined),
       type: account.user.type,
       avatar: account.user.avatar,
     },
     addTimestamp: account.addTimestamp,
-  } as AuthSavedAccount;
-}; /** Converts an actual logged account into a serialisable saved account information */
+  } as AuthSavedLoggedOutAccount;
+};
 
+/** Converts an actual logged account into a serialisable saved account information */
 export const getSerializedLoggedInAccountInfo = (account: AuthLoggedAccount) => {
   return {
     ...getSerializedLoggedOutAccountInfo(account),

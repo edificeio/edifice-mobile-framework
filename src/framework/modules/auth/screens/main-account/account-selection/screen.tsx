@@ -18,7 +18,8 @@ import HandleAccountList from '~/framework/modules/auth/components/handle-accoun
 import { LargeHorizontalUserList } from '~/framework/modules/auth/components/large-horizontal-user-list';
 import {
   AuthLoggedAccount,
-  AuthSavedAccountWithTokens,
+  AuthSavedLoggedInAccount,
+  AuthSavedLoggedInAccountWithCredentials,
   accountIsLoggable,
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
@@ -63,8 +64,9 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         type: account.user.type,
         displayName: account.user.displayName,
         platform: appConf.getExpandedPlatform(account.platform),
-        login: account.user.loginUsed,
+        login: (account.user as Partial<AuthSavedLoggedInAccountWithCredentials['user']>).loginUsed,
         isLoggable: accountIsLoggable(account),
+        method: account.method,
       })),
     [data],
   );
@@ -77,7 +79,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        const nextScreen = getLoginNextScreen(i.platform);
+        const nextScreen = getLoginNextScreen(i.platform, item);
         if (!nextScreen) {
           console.warn('AccountSelectionScreen: Next screen cannot be determined for this user');
           toast.showError(I18n.get('auth-account-select-error'));
@@ -90,7 +92,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         try {
           setLoadingState(LoginState.RUNNING);
           const account = accounts[item.id];
-          await tryRestore(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
+          await tryRestore(account as AuthSavedLoggedInAccount | AuthLoggedAccount);
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);
