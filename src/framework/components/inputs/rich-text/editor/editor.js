@@ -441,7 +441,7 @@ function createHTML(options = {}) {
             fontName: { result: function(name) { return exec('fontName', name); }},
             link: {
                 result: function(data) {
-                    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2404
+                    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2404
                     var sel = document.getSelection();
                     data = data || {};
                     var url = data.url || window.prompt('Enter the link URL');
@@ -497,7 +497,7 @@ function createHTML(options = {}) {
             audio: {
                 result: function(url, style) {
                     if (url) {
-                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2363
+                        // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2363
                         var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
                         var html = "<br><div style='"+ (style || '')+"'><audio src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
                         exec('insertHTML', html);
@@ -509,7 +509,7 @@ function createHTML(options = {}) {
             image: {
                 result: function(url, style) {
                     if (url){
-                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2357
+                        // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2357
                         exec('insertHTML', "<img style='"+ (style || '')+"' src='"+ url +"'/>");
                         Actions.UPDATE_HEIGHT();
                         Actions.GET_IMAGE_URLS();
@@ -519,7 +519,7 @@ function createHTML(options = {}) {
             video: {
                 result: function(url, style) {
                     if (url) {
-                        // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2360
+                        // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2360
                         var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
                         var html = "<br><div style='"+ (style || '')+"'><video src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
                         exec('insertHTML', html);

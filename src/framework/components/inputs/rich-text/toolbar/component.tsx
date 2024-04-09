@@ -4,6 +4,7 @@ import { Animated, TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
+import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { actions } from '~/framework/components/inputs/rich-text/editor/const';
 import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text/toolbar/list';
 import { NamedSVG } from '~/framework/components/picture';
@@ -12,182 +13,93 @@ import { RichToolbarActionItem } from './item/action/component';
 import { RichToolbarCustomItem } from './item/custom/component';
 import { RichToolbarSeparator } from './item/separator';
 import styles from './styles';
+import { RichToolbarProps, RichToolbarState } from './types';
 
-// const showAnimation = (ref, to) => {
-//   Animated.timing(ref, {
-//     toValue: to,
-//     duration: 200,
-//     useNativeDriver: false,
-//   }).start();
-// };
+export default class RichToolbar extends Component<RichToolbarProps, RichToolbarState> {
+  editor: RichEditor | undefined = undefined;
 
-// const RichToolbar = (props: RichToolbarProps) => {
-//   const [items, setItems] = useState([]);
+  state = {
+    selectedItems: [],
+    animatedValueEnter: new Animated.Value(0),
+    animatedValueExit: new Animated.Value(0),
+    animatedValueOpacityExit: new Animated.Value(0),
+    animatedValueOpacityEnter: new Animated.Value(0),
+  };
 
-//   const animatedValueEnterTranslate = useRef(new Animated.Value(0)).current;
-//   const animatedValueExitTranslate = useRef(new Animated.Value(0)).current;
-//   const animatedValueEnterOpacity = useRef(new Animated.Value(0)).current;
-//   const animatedValueExitOpacity = useRef(new Animated.Value(0)).current;
-//   const editor = null;
-
-//   const startAnimation = () => {
-//     showAnimation(animatedValueEnterTranslate, -41);
-//     showAnimation(animatedValueExitTranslate, 41);
-//     showAnimation(animatedValueEnterOpacity, 1);
-//     showAnimation(animatedValueExitOpacity, 0);
-//   };
-
-//   const inverseAnimation = () => {
-//     showAnimation(animatedValueEnterTranslate, 0);
-//     showAnimation(animatedValueExitTranslate, 0);
-//     showAnimation(animatedValueEnterOpacity, 0);
-//     showAnimation(animatedValueExitOpacity, 1);
-//   };
-
-//   useEffect(() => {
-//     console.log('test', props.getEditor?.());
-//   }, []);
-
-//   return (
-//     <View>
-//       <View style={styles.barContainer}>
-//         <Animated.View style={{ transform: [{ translateY: animatedValueExitTranslate }], opacity: animatedValueExitOpacity }}>
-//           <RichToolbarItemsList
-//             list={[
-//               <RichToolbarCustomItem icon="ui-image" fill={theme.palette.complementary.green.regular} />,
-//               <RichToolbarSeparator />,
-//               <RichToolbarMenuItem icon="ui-text-options" onSelected={startAnimation} />,
-//             ]}
-//           />
-//         </Animated.View>
-//         <Animated.View
-//           style={{
-//             flexDirection: 'row',
-//             transform: [{ translateY: animatedValueEnterTranslate }],
-//             opacity: animatedValueEnterOpacity,
-//           }}>
-//           <TouchableOpacity onPress={inverseAnimation}>
-//             <SmallText>close</SmallText>
-//           </TouchableOpacity>
-//           <RichToolbarItemsList
-//             list={[
-//               <RichToolbarActionItem
-//                 icon={`ui-${actions.setBold}`}
-//                 action={actions.setBold}
-//                 editor={editor}
-//                 selected={items.includes(actions.setBold)}
-//               />,
-//               <RichToolbarActionItem icon={`ui-${actions.setItalic}`} action={actions.setItalic} editor={editor} />,
-//               <RichToolbarActionItem icon={`ui-${actions.setUnderline}`} action={actions.setUnderline} editor={editor} />,
-//               <RichToolbarActionItem icon={`ui-${actions.insertBulletsList}`} action={actions.insertBulletsList} editor={editor} />,
-//               <RichToolbarActionItem icon={`ui-${actions.insertOrderedList}`} action={actions.insertOrderedList} editor={editor} />,
-//               <RichToolbarActionItem icon={`ui-${actions.setSubscript}`} action={actions.setSubscript} editor={editor} />,
-//               <RichToolbarActionItem icon={`ui-${actions.setSuperscript}`} action={actions.setSuperscript} editor={editor} />,
-//             ]}
-//           />
-//         </Animated.View>
-//       </View>
-//       <View style={{ height: props.heightPageToolbar, backgroundColor: theme.palette.grey.white }}>
-//         {/* <RichToolbarPage
-//             title="Titre de la page"
-//             content={
-//               <View></View>
-//             }
-//           /> */}
-//       </View>
-//     </View>
-//   );
-// };
-
-// export default RichToolbar;
-
-export default class RichToolbar extends Component {
   constructor(props) {
     super(props);
-    this.editor = null;
-    this.state = {
-      selectedItems: [],
-      animatedValueEnter: new Animated.Value(0),
-      animatedValueExit: new Animated.Value(0),
-      animatedValueOpacityExit: new Animated.Value(0),
-      animatedValueOpacityEnter: new Animated.Value(0),
-    };
+    this.animate = this.animate.bind(this);
+    this.inverseAnimation = this.inverseAnimation.bind(this);
+    this.setSelectedItems = this.setSelectedItems.bind(this);
+    this.showBottomSheet = this.showBottomSheet.bind(this);
+    this.startAnimation = this.startAnimation.bind(this);
   }
 
   componentDidMount() {
-    setTimeout(this._mount);
+    setTimeout(() => {
+      // TODO LEA: Fix that
+      const { editor: { current: editor } = { current: this.props.getEditor?.() } } = this.props;
+      if (!editor) {
+        // No longer throw an error, just try to re-load it when needed.
+        // This is because the webview may go away during long periods of inactivity,
+        // and the ref will be lost, causing the entire app to crash in this throw new error.
+        //throw new Error('Toolbar has no editor!');
+        if (__DEV__) {
+          console.warn('Toolbar has no editor. Please make sure the prop getEditor returns a ref to the editor component.');
+        }
+      } else {
+        editor.registerToolbar(selectedItems => this.setSelectedItems(selectedItems));
+        this.editor = editor;
+      }
+    });
   }
 
-  _mount = () => {
-    const { editor: { current: editor } = { current: this.props.getEditor?.() } } = this.props;
-    if (!editor) {
-      // No longer throw an error, just try to re-load it when needed.
-      // This is because the webview may go away during long periods of inactivity,
-      // and the ref will be lost, causing the entire app to crash in this throw new error.
-      //throw new Error('Toolbar has no editor!');
-      if (__DEV__) {
-        console.warn('Toolbar has no editor. Please make sure the prop getEditor returns a ref to the editor component.');
-      }
-    } else {
-      editor.registerToolbar(selectedItems => this.setSelectedItems(selectedItems));
-      this.editor = editor;
-    }
-  };
+  animate(inverse: boolean) {
+    Animated.parallel([
+      Animated.timing(this.state.animatedValueExit, {
+        toValue: inverse ? 0 : 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(this.state.animatedValueEnter, {
+        toValue: inverse ? 0 : 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(this.state.animatedValueOpacityExit, {
+        toValue: inverse ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+      Animated.timing(this.state.animatedValueOpacityEnter, {
+        toValue: inverse ? 0 : 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }
 
-  startAnimation = () => {
-    Animated.timing(this.state.animatedValueExit, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(this.state.animatedValueEnter, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(this.state.animatedValueOpacityExit, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(this.state.animatedValueOpacityEnter, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  inverseAnimation = () => {
-    Animated.timing(this.state.animatedValueExit, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(this.state.animatedValueEnter, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(this.state.animatedValueOpacityExit, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(this.state.animatedValueOpacityEnter, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  };
+  inverseAnimation() {
+    this.animate(true);
+  }
 
   setSelectedItems(selectedItems) {
     this.setState({ selectedItems });
   }
 
+  showBottomSheet() {
+    this.editor?.blurContentEditor();
+    this.props.showBottomSheet();
+  }
+
+  startAnimation() {
+    this.animate(false);
+  }
+
   render() {
     const interpolatedValueEnter = this.state.animatedValueEnter.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, -45], // plage de valeurs pour la translation
+      outputRange: [0, -UI_SIZES.elements.editor.toolbarHeight], // plage de valeurs pour la translation
     });
 
     const interpolatedValueOpacityEnter = this.state.animatedValueEnter.interpolate({
@@ -196,14 +108,13 @@ export default class RichToolbar extends Component {
     });
 
     const animatedStyleEnter = {
-      flexDirection: 'row',
       transform: [{ translateY: interpolatedValueEnter }],
       opacity: interpolatedValueOpacityEnter,
     };
 
     const interpolatedValueExit = this.state.animatedValueExit.interpolate({
       inputRange: [0, 1],
-      outputRange: [0, 45], // plage de valeurs pour la translation
+      outputRange: [0, UI_SIZES.elements.editor.toolbarHeight], // plage de valeurs pour la translation
     });
 
     const interpolatedValueOpacityExit = this.state.animatedValueEnter.interpolate({
@@ -212,43 +123,49 @@ export default class RichToolbar extends Component {
     });
 
     const animatedStyleExit = {
-      flexDirection: 'row',
       transform: [{ translateY: interpolatedValueExit }],
       opacity: interpolatedValueOpacityExit,
+    };
+
+    const isSelected = (action: string) => {
+      return this.state.selectedItems.includes(action);
     };
 
     return (
       <View>
         <View style={styles.container}>
-          <Animated.View style={animatedStyleExit}>
+          <Animated.View style={[animatedStyleExit, styles.row]}>
             <RichToolbarItemsList
               list={[
                 <RichToolbarActionItem
-                  icon={`ui-${actions.undo}`}
                   action={actions.undo}
+                  disabled={!isSelected(actions.undo)}
                   editor={this.editor}
-                  disabled={!this.state.selectedItems.includes(actions.undo)}
+                  icon={`ui-${actions.undo}`}
+                  key="undo"
                 />,
                 <RichToolbarActionItem
-                  icon={`ui-${actions.redo}`}
                   action={actions.redo}
+                  disabled={!isSelected(actions.redo)}
                   editor={this.editor}
-                  disabled={!this.state.selectedItems.includes(actions.redo)}
+                  icon={`ui-${actions.redo}`}
+                  key="redo"
                 />,
-                <RichToolbarSeparator />,
+                <RichToolbarSeparator key="separator1" />,
                 <RichToolbarCustomItem
-                  icon="ui-image"
+                  action={this.showBottomSheet}
                   fill={theme.palette.complementary.green.regular}
-                  action={() => this.props.showBottomSheet()}
+                  icon="ui-image"
+                  key="bottomSheet"
                 />,
-                <RichToolbarCustomItem icon="ui-text-options" action={this.startAnimation} />,
+                <RichToolbarCustomItem icon="ui-text-options" key="text" action={this.startAnimation} />,
               ]}
             />
             <View>
-              <RichToolbarCustomItem icon="ui-keyboardHide" action={() => this.editor.blurContentEditor()} />
+              <RichToolbarCustomItem icon="ui-keyboardHide" action={() => this.editor?.blurContentEditor()} />
             </View>
           </Animated.View>
-          <Animated.View style={animatedStyleEnter}>
+          <Animated.View style={[animatedStyleEnter, styles.row]}>
             <TouchableOpacity style={styles.closeUnderMenu} onPress={this.inverseAnimation}>
               <IconButton
                 icon="ui-close"
@@ -266,46 +183,53 @@ export default class RichToolbar extends Component {
             <RichToolbarItemsList
               list={[
                 <RichToolbarActionItem
-                  icon={`ui-${actions.setBold}`}
                   action={actions.setBold}
                   editor={this.editor}
-                  selected={this.state.selectedItems.includes(actions.setBold)}
+                  icon={`ui-${actions.setBold}`}
+                  key="bold"
+                  selected={isSelected(actions.setBold)}
                 />,
                 <RichToolbarActionItem
-                  icon={`ui-${actions.setItalic}`}
                   action={actions.setItalic}
                   editor={this.editor}
-                  selected={this.state.selectedItems.includes(actions.setItalic)}
+                  icon={`ui-${actions.setItalic}`}
+                  key="italic"
+                  selected={isSelected(actions.setItalic)}
                 />,
                 <RichToolbarActionItem
-                  icon={`ui-${actions.setUnderline}`}
                   action={actions.setUnderline}
                   editor={this.editor}
-                  selected={this.state.selectedItems.includes(actions.setUnderline)}
+                  icon={`ui-${actions.setUnderline}`}
+                  key="underline"
+                  selected={isSelected(actions.setUnderline)}
                 />,
                 <RichToolbarActionItem
-                  icon={`ui-${actions.insertBulletsList}`}
                   action={actions.insertBulletsList}
                   editor={this.editor}
-                  selected={this.state.selectedItems.includes(actions.insertBulletsList)}
+                  icon={`ui-${actions.insertBulletsList}`}
+                  key="bulletList"
+                  selected={isSelected(actions.insertBulletsList)}
                 />,
                 <RichToolbarActionItem
-                  icon={`ui-${actions.insertOrderedList}`}
                   action={actions.insertOrderedList}
                   editor={this.editor}
-                  selected={this.state.selectedItems.includes(actions.insertOrderedList)}
+                  icon={`ui-${actions.insertOrderedList}`}
+                  key="orderedList"
+                  selected={isSelected(actions.insertOrderedList)}
                 />,
                 <RichToolbarActionItem
-                  icon={`ui-${actions.setSubscript}`}
                   action={actions.setSubscript}
                   editor={this.editor}
-                  selected={this.state.selectedItems.includes(actions.setSubscript)}
+                  icon={`ui-${actions.setSubscript}`}
+                  key="index"
+                  selected={isSelected(actions.setSubscript)}
                 />,
                 <RichToolbarActionItem
-                  icon={`ui-${actions.setSuperscript}`}
                   action={actions.setSuperscript}
                   editor={this.editor}
-                  selected={this.state.selectedItems.includes(actions.setSuperscript)}
+                  icon={`ui-${actions.setSuperscript}`}
+                  key="exponent"
+                  selected={isSelected(actions.setSuperscript)}
                 />,
               ]}
             />

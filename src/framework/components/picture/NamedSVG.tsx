@@ -71,6 +71,7 @@ const imports = {
   'ui-keyboardHide': async () => import('ASSETS/icons/uiIcons/keyboardHide.svg'),
   'ui-leave': async () => import('ASSETS/icons/uiIcons/leave.svg'),
   'ui-listOrder': async () => import('ASSETS/icons/uiIcons/listOrder.svg'),
+  'ui-loader': async () => import('ASSETS/icons/uiIcons/loader.svg'),
   'ui-lock': async () => import('ASSETS/icons/uiIcons/lock.svg'),
   'ui-lock-alternate': async () => import('ASSETS/icons/uiIcons/lock-alternate.svg'),
   'ui-mail': async () => import('ASSETS/icons/uiIcons/mail.svg'),

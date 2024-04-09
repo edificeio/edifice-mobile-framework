@@ -8,8 +8,8 @@ export const RichToolbarActionItem = (props: RichToolbarActionItemProps) => {
   const { editor, action } = props;
 
   const handleSelected = () => {
-    editor.showAndroidKeyboard();
-    editor.sendAction(action, 'result');
+    editor?.showAndroidKeyboard();
+    editor?.sendAction(action, 'result');
   };
 
   return <RichToolbarItem {...props} onSelected={handleSelected} />;

@@ -191,6 +191,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
 
   _filepathNative: string; // Absolute url to the file on the device, including 'file://' protocol.
 
+  filesize?: number;
+
   filetype: string; // Mime type of the file
 
   nativeInfo: DocumentPickerResponse | Asset; // Backup of the full information given by react-native-fs

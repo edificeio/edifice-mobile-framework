@@ -21,6 +21,9 @@ const styles = StyleSheet.create({
     borderRadius: UI_SIZES.radius.huge,
     marginRight: UI_SIZES.spacing.minor,
   },
+  row: {
+    flexDirection: 'row',
+  },
 });
 
 export default styles;

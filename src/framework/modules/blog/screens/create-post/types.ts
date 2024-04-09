@@ -4,13 +4,14 @@ import { ThunkDispatch } from 'redux-thunk';
 import { ISession } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
-import { SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 
 export interface BlogCreatePostScreenDataProps {
   session?: ISession;
 }
 
 export interface BlogCreatePostScreenEventProps {
+  handleUploadPostImages(images: LocalFile[], isPublic: boolean): Promise<SyncedFile[]>;
   handleSendBlogPost(blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;

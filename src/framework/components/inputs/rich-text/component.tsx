@@ -5,78 +5,184 @@ import { Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity,
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
-import { UI_SIZES } from '~/framework/components/constants';
+import IconButton from '~/framework/components/buttons/icon';
+import PrimaryButton from '~/framework/components/buttons/primary';
+import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import { ImagePicked, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { BodyText } from '~/framework/components/text';
+import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
+import { assertSession } from '~/framework/modules/auth/reducer';
+//import workspaceService from '~/framework/modules/workspace/service';
+import { LocalFile } from '~/framework/util/fileHandler';
 
 import RichEditor from './editor/RichEditor';
 import styles from './styles';
 import RichToolbar from './toolbar/component';
-import { RichEditorFormProps } from './types';
+import { RichEditorFormProps, UploadStatus } from './types';
 
 const RichEditorForm = (props: RichEditorFormProps) => {
   const headerHeight = useHeaderHeight();
+  const session = assertSession();
+
+  //
+  // Editor management
+  //
+
   const richText = React.useRef<RichEditor>(null);
-  const scrollRef = React.useRef<ScrollView>(null);
-  const opacityToolbar = React.useRef(new Animated.Value(0)).current;
-  const transformToolbar = React.useRef(new Animated.Value(90)).current;
-  const bottomSheetModalRef = React.useRef<BottomSheetModalMethods>(null);
 
-  const handleBlur = React.useCallback(() => {
-    Animated.timing(opacityToolbar, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-    Animated.timing(transformToolbar, {
-      toValue: 90,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [opacityToolbar, transformToolbar]);
-
-  const handleChange = React.useCallback(
-    (html: string) => {
-      props.onChangeText(html);
-    },
-    [props],
-  );
-
-  const handleCursorPosition = React.useCallback((scrollY: number) => {
-    // Positioning scroll bar
-    scrollRef.current!.scrollTo({ y: scrollY - 30, animated: true });
-  }, []);
-
-  const handleFocus = React.useCallback(() => {
-    console.log('editor focus');
-    Animated.timing(opacityToolbar, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-    Animated.timing(transformToolbar, {
-      toValue: 45,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  }, [opacityToolbar, transformToolbar]);
-
-  const showBottomSheet = () => {
-    bottomSheetModalRef.current?.present();
+  const focusRichText = () => {
+    richText.current?.focusContentEditor();
   };
 
-  const renderBottomSheet = () => {
+  //
+  // Files management
+  //
+
+  const [files, setFiles] = React.useState<{ file: LocalFile; status: UploadStatus }[]>([]);
+
+  const updateFileStatus = (index: number, status: UploadStatus) => {
+    if (index >= files.length) return;
+    const newFiles = files;
+    newFiles[index].status = status;
+    setFiles(newFiles);
+  };
+
+  const addFile = (file: LocalFile) => {
+    const filesCount = files.length;
+    setFiles(current => [...current, { file, status: UploadStatus.PENDING }]);
+    // TODO LEA: Manage file upload
+    /*workspaceService.file
+      .uploadFile(session, file, props.uploadParams)
+      .then(() => {
+        updateFileStatus(filesCount, UploadStatus.OK);
+      })
+      .catch(() => {
+        updateFileStatus(filesCount, UploadStatus.KO);
+      });*/
+  };
+
+  const handleAddPic = async (pic: ImagePicked) => {
+    const file = imagePickedToLocalFile(pic);
+    file.filesize = pic.fileSize;
+    addFile(file);
+  };
+
+  const handleRemoveFile = async index => {
+    if (index >= files.length) return;
+    // TODO LEA: Remove following dummy line
+    alert('Will remove ' + files[index].file.filename + ' - ' + index);
+    // TODO LEA: Show confirmation box
+    // TODO LEA: Remove image from WS if needed
+    // TODO LEA: Remove pic from pics array if needed
+    setFiles(files.slice(index, 1)); // TODO LEA: If needed
+  };
+
+  const handleRetryFile = async index => {
+    // TODO LEA: Manage retry
+  };
+
+  const resetFiles = () => {
+    setFiles([]);
+  };
+
+  //
+  // Add files results bottom sheet management
+  //
+
+  const addFilesResultsRef = React.useRef<BottomSheetModalMethods>(null);
+
+  const handleAddFilesResultsDismissed = async () => {
+    // TODO LEAO: Show confirmation box
+    // TODO LEA: delete all uploaded files
+    resetFiles(); // If needed
+    focusRichText();
+  };
+
+  const hideAddFilesResults = () => {
+    addFilesResultsRef.current?.dismiss();
+    resetFiles();
+    focusRichText();
+  };
+
+  const showAddFilesResults = () => {
+    addFilesResultsRef.current?.present();
+  };
+
+  const handleAddFiles = () => {
+    // TODO LEA: Insert Right HTML info editor for files with status = UploadStatus.OK
+    hideAddFilesResults();
+  };
+
+  const fileStatusIcon = (index: number, status: UploadStatus) => {
+    switch (status) {
+      case UploadStatus.OK:
+        return <IconButton icon="ui-success" color={theme.palette.status.success.regular} />;
+      case UploadStatus.KO:
+        return <IconButton icon="ui-restore" color={theme.palette.grey.black} action={() => handleRetryFile(index)} />;
+      default:
+        return <IconButton icon="ui-loader" color={theme.palette.primary.regular} />;
+    }
+  };
+
+  const addFilesResults = () => {
     return (
-      <BottomSheetModal ref={bottomSheetModalRef} onDismiss={() => {}}>
+      <BottomSheetModal ref={addFilesResultsRef} onDismiss={handleAddFilesResultsDismissed}>
+        {files.map((file, index) => (
+          <View key={index} style={styles.addFilesResultsItem}>
+            <View style={styles.addFilesResultsType}>
+              <NamedSVG
+                name="ui-image"
+                height={UI_SIZES.elements.icon.small}
+                width={UI_SIZES.elements.icon.small}
+                fill={theme.palette.grey.black}
+              />
+            </View>
+            <View style={styles.addFilesResultsFile}>
+              <SmallText>{file.file.filename}</SmallText>
+              <CaptionText>
+                {file.file.filetype} - {file.file.filesize} - {file.status}
+              </CaptionText>
+            </View>
+            {fileStatusIcon(index, file.status)}
+            <IconButton icon="ui-close" color={theme.palette.grey.black} action={() => handleRemoveFile(index)} />
+          </View>
+        ))}
+        <PrimaryButton style={styles.addButton} text={`Ajouter (${files.length})`} action={handleAddFiles} />
+      </BottomSheetModal>
+    );
+  };
+
+  //
+  // Add pics bottom sheet management
+  //
+
+  const choosePicsMenuRef = React.useRef<BottomSheetModalMethods>(null);
+
+  const handleChoosePicsMenuDismissed = () => {
+    focusRichText();
+  };
+
+  const hideChoosePicsMenu = () => {
+    choosePicsMenuRef.current?.dismiss();
+  };
+
+  const showChoosePicsMenu = () => {
+    choosePicsMenuRef.current?.present();
+  };
+
+  const choosePicsMenu = () => {
+    return (
+      <BottomSheetModal ref={choosePicsMenuRef} onDismiss={handleChoosePicsMenuDismissed}>
         <DefaultButton
           iconLeft="ui-image"
           text={I18n.get('pickfile-image')}
           contentColor={theme.palette.complementary.green.regular}
           disabled
+          style={styles.choosePicsMenuTitle}
         />
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={() => {}}>
           <NamedSVG
             height={UI_SIZES.elements.icon.default}
             width={UI_SIZES.elements.icon.default}
@@ -85,8 +191,14 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           />
           <BodyText>{I18n.get('pickfile-take')}</BodyText>
         </TouchableOpacity>
-        <View />
-        <TouchableOpacity onPress={() => {}}>
+        <View style={styles.choosePicsMenuSeparator} />
+        <TouchableOpacity
+          style={styles.choosePicsMenuElement}
+          onPress={async () => {
+            hideChoosePicsMenu();
+            await galleryAction({ callback: handleAddPic, multiple: true }).action();
+            showAddFilesResults();
+          }}>
           <NamedSVG
             height={UI_SIZES.elements.icon.default}
             width={UI_SIZES.elements.icon.default}
@@ -99,53 +211,102 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     );
   };
 
-  const renderToolbar = () => {
+  //
+  // Toolbar management
+  //
+
+  const toolbarOpacity = React.useRef(new Animated.Value(0)).current;
+  const toolbarYPos = React.useRef(new Animated.Value(90)).current;
+
+  const animateToolbar = React.useCallback(
+    ({ opacity, ypos }: { opacity: number; ypos: number }) => {
+      Animated.parallel([
+        Animated.timing(toolbarOpacity, {
+          toValue: opacity,
+          ...UI_ANIMATIONS.fade,
+        }),
+        Animated.timing(toolbarYPos, {
+          toValue: ypos,
+          ...UI_ANIMATIONS.translate,
+        }),
+      ]).start();
+    },
+    [toolbarOpacity, toolbarYPos],
+  );
+
+  const toolbar = () => {
     return (
-      <Animated.View style={{ transform: [{ translateY: transformToolbar }], opacity: opacityToolbar, marginTop: -45 }}>
-        <RichToolbar editor={richText} showBottomSheet={showBottomSheet} />
+      <Animated.View style={[styles.toolbar, { transform: [{ translateY: toolbarYPos }] }, { opacity: toolbarOpacity }]}>
+        <RichToolbar editor={richText} showBottomSheet={showChoosePicsMenu} />
       </Animated.View>
     );
   };
 
-  // TODO: LEA => Pourquoi ne pas mettre ça dans render direct? En plus Post, c'est blog.
-  const renderPostInfos = () => {
-    return (
-      <PageView style={styles.page}>
-        <KeyboardAvoidingView
-          keyboardVerticalOffset={headerHeight}
-          style={styles.container}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-          <ScrollView keyboardDismissMode="none" nestedScrollEnabled ref={scrollRef} scrollEventThrottle={20} style={styles.scroll}>
-            {props.elements}
-            <RichEditor
-              disabled={false}
-              enterKeyHint="done"
-              editorStyle={styles.content} // TODO: LEA => c'est pas container?
-              firstFocusEnd={false}
-              initialContentHTML={props.initialContentHtml ?? ''}
-              initialFocus={false}
-              pasteAsPlainText
-              placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
-              ref={richText}
-              style={styles.rich}
-              useContainer
-              useComposition={false}
-              onBlur={handleBlur}
-              onChange={handleChange}
-              onCursorPosition={handleCursorPosition}
-              onFocus={handleFocus}
-              autoCorrect
-              autoCapitalize
-            />
-          </ScrollView>
-          {renderToolbar()}
-          {renderBottomSheet()}
-        </KeyboardAvoidingView>
-      </PageView>
-    );
-  };
+  //
+  // Rich Editor management
+  //
 
-  return <>{renderPostInfos()}</>;
+  const scrollRef = React.useRef<ScrollView>(null);
+
+  const handleBlur = React.useCallback(() => {
+    animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
+  }, [animateToolbar]);
+
+  const handleChange = React.useCallback(
+    (html: string) => {
+      props.onChangeText(html);
+    },
+    [props],
+  );
+
+  const handleCursorPosition = React.useCallback((scrollY: number) => {
+    scrollRef.current?.scrollTo({ y: scrollY - 30, animated: true });
+  }, []);
+
+  const handleFocus = React.useCallback(() => {
+    animateToolbar({ opacity: 1, ypos: UI_SIZES.elements.editor.toolbarHeight });
+  }, [animateToolbar]);
+
+  return (
+    <PageView style={styles.page}>
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={headerHeight}
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          keyboardDismissMode="none"
+          nestedScrollEnabled
+          ref={scrollRef}
+          scrollEventThrottle={20}
+          style={styles.scrollView}>
+          {props.topForm}
+          <RichEditor
+            disabled={false}
+            enterKeyHint="done"
+            editorStyle={styles.container}
+            firstFocusEnd={false}
+            initialContentHTML={props.initialContentHtml ?? ''}
+            initialFocus={false}
+            pasteAsPlainText
+            placeholder={I18n.get('blog-createpost-postcontent-placeholder')}
+            ref={richText}
+            style={styles.richEditor}
+            useContainer
+            useComposition={false}
+            onBlur={handleBlur}
+            onChange={handleChange}
+            onCursorPosition={handleCursorPosition}
+            onFocus={handleFocus}
+            autoCorrect
+            autoCapitalize
+          />
+        </ScrollView>
+        {toolbar()}
+        {choosePicsMenu()}
+        {addFilesResults()}
+      </KeyboardAvoidingView>
+    </PageView>
+  );
 };
 
 export default RichEditorForm;

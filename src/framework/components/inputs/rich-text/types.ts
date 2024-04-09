@@ -1,5 +1,16 @@
+import { ReactNode } from 'react';
+
+import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
+
 export interface RichEditorFormProps {
-  elements: Element;
   initialContentHtml: string;
+  topForm: ReactNode;
   onChangeText: (html: string) => void;
+  uploadParams: IWorkspaceUploadParams;
+}
+
+export enum UploadStatus {
+  OK,
+  KO,
+  PENDING,
 }

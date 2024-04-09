@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 export interface RichToolbarItemsListProps {
-  list: Element[];
+  list: React.JSX.Element[];
 }

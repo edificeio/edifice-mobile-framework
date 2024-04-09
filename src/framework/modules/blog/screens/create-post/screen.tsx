@@ -13,7 +13,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { sendBlogPostAction } from '~/framework/modules/blog/actions';
+import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -25,7 +25,7 @@ import {
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { SyncedFile } from '~/framework/util/fileHandler';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
@@ -48,11 +48,11 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState('');
 
+  const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = props;
+  const blog = route.params.blog;
+
   const doSendPost = async () => {
     try {
-      const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = props;
-
-      const blog = route.params.blog;
       const blogId = blog && blog.id;
       if (!blog || !blogId) {
         throw new Error('[doSendPost] failed to retrieve blog information');
@@ -132,7 +132,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const renderPostInfos = () => {
     return (
       <RichEditorForm
-        elements={
+        topForm={
           <MultilineTextInput
             style={styles.inputTitle}
             placeholder={I18n.get('blog-createpost-post-title-placeholder')}
@@ -143,6 +143,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         }
         initialContentHtml=""
         onChangeText={value => setContent(value)}
+        uploadFiles={files => props.handleUploadPostImages(files, blog.visibility === 'PUBLIC')}
       />
     );
   };
@@ -157,6 +158,9 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
+  handleUploadPostImages: async (files: LocalFile[], isPublic: boolean) => {
+    return dispatch(uploadBlogPostImagesAction(files, isPublic)) as unknown as Promise<SyncedFile[]>;
+  },
   handleSendBlogPost: async (blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
     return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;
   },

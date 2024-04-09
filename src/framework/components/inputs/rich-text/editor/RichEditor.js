@@ -1,3 +1,4 @@
+import CookieManager from '@react-native-cookies/cookies';
 import React, { Component } from 'react';
 import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -126,9 +127,10 @@ export default class RichEditor extends Component {
       .catch(err => console.warn(`Unable to retrieve oneSessionId: ${err.message}`))
       .finally(() => this.setState({ loading: false }));
     // IFrame video auto play bug fix
-    setTimeout(() => {
+    setTimeout(async () => {
       that.htmlLoaded = true;
       this.sendAction(actions.content, 'init');
+      await CookieManager.clearAll();
     }, 1000);
   }
 
@@ -194,8 +196,7 @@ export default class RichEditor extends Component {
 
   _onLinkTouched(url) {
     openUrl(url);
-    // TODO: LEA
-    // V2: https://edifice-community.atlassian.net/browse/MB-2437
+    // TODO LEA: V2 - https://edifice-community.atlassian.net/browse/MB-2437
   }
 
   _onVideoTouched(url) {
@@ -318,7 +319,6 @@ export default class RichEditor extends Component {
       <>
         <WebView
           injectedJavaScript={js}
-          sharedCookiesEnabled
           useWebKit={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView
@@ -414,19 +414,19 @@ export default class RichEditor extends Component {
   }
 
   insertAudio(attributes, style) {
-    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2363
+    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2363
     // + editor.js - "audio:"
     this.sendAction(actions.insertVideo, 'result', attributes, style);
   }
 
   insertImage(attributes, style) {
-    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2357
+    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2357
     // + editor.js - "image:"
     this.sendAction(actions.insertImage, 'result', attributes, style);
   }
 
   insertVideo(attributes, style) {
-    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2360
+    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2360
     // + editor.js - "video:"
     this.sendAction(actions.insertVideo, 'result', attributes, style);
   }
@@ -440,7 +440,7 @@ export default class RichEditor extends Component {
   }
 
   insertLink(title, url) {
-    // TODO: LEA - https://edifice-community.atlassian.net/browse/MB-2404
+    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2404
     if (url) {
       this.showAndroidKeyboard();
       this.sendAction(actions.insertLink, 'result', { title, url });

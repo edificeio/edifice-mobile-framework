@@ -5,10 +5,10 @@ import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/compone
 
 export interface RichToolbarItemProps {
   disabled?: boolean;
-  editor: RichEditor;
+  editor?: RichEditor;
   icon: string;
-  toolbar: RichToolbar;
-  selected: boolean;
+  toolbar?: RichToolbar;
+  selected?: boolean;
   fill?: ColorValue;
-  onSelected: () => void;
+  onSelected?: () => void;
 }

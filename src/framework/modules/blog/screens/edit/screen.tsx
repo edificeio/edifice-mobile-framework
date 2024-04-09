@@ -13,12 +13,13 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { editBlogPostAction } from '~/framework/modules/blog/actions';
+import { editBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 
 import styles from './styles';
 import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPostScreenProps } from './types';
@@ -40,11 +41,11 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   const [title, setTitle] = React.useState(props.route.params.title);
   const [content, setContent] = React.useState(props.route.params.content);
 
+  const { route, navigation, session, handleEditBlogPost } = props;
+  const blog = route.params.blog;
+
   const doEditPost = async () => {
     try {
-      const { route, navigation, session, handleEditBlogPost } = props;
-
-      const blog = route.params.blog;
       const blogId = blog && blog.id;
       if (!blog || !blogId) {
         throw new Error('[doEditPost] failed to retrieve blog information');
@@ -99,7 +100,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   const renderPostInfos = () => {
     return (
       <RichEditorForm
-        elements={
+        topForm={
           <MultilineTextInput
             style={styles.inputTitle}
             placeholder={I18n.get('blog-editpost-inputtitle')}
@@ -110,6 +111,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
         }
         initialContentHtml={props.route.params.content}
         onChangeText={value => setContent(value)}
+        uploadFiles={files => props.handleUploadPostImages(files, blog.visibility === 'PUBLIC')}
       />
     );
   };
@@ -124,6 +126,9 @@ const mapStateToProps: (s: IGlobalState) => BlogEditPostScreenDataProps = s => {
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogEditPostScreenEventProps = dispatch => ({
+  handleUploadPostImages: async (files: LocalFile[], isPublic: boolean) => {
+    return dispatch(uploadBlogPostImagesAction(files, isPublic)) as unknown as Promise<SyncedFile[]>;
+  },
   handleEditBlogPost: async (blog: Blog, postId: string, title: string, content: string) => {
     return (await dispatch(editBlogPostAction(blog, postId, title, content))) as unknown as string | undefined;
   },

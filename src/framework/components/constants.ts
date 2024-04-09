@@ -47,6 +47,10 @@ export const UI_ANIMATIONS = {
     duration: 300,
     useNativeDriver: false,
   },
+  translate: {
+    duration: 300,
+    useNativeDriver: false,
+  },
   toast: {
     duration: 3000,
   },
@@ -89,6 +93,9 @@ export const UI_SIZES = {
       thin: 1,
       default: 2,
       large: 4,
+    },
+    editor: {
+      toolbarHeight: 48,
     },
     icon: {
       xxsmall: getScaleWidth(12),
