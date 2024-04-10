@@ -25,6 +25,9 @@
 		F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */; };
 		F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */; };
 		F09C4A402B0400800075018F /* SplashScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = F09C4A3F2B0400800075018F /* SplashScreen.xib */; };
+		F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */; };
+		F0CB47602BC6BF83006A73F3 /* ZendeskUnified.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */; };
+		F0CB47612BC6BF83006A73F3 /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +72,9 @@
 		F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@3x.png"; path = "appe/images/splash-screen@3x.png"; sourceTree = "<group>"; };
 		F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "splash-screen@2x.png"; path = "appe/images/splash-screen@2x.png"; sourceTree = "<group>"; };
 		F09C4A3F2B0400800075018F /* SplashScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplashScreen.xib; sourceTree = "<group>"; };
+		F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = appe/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZendeskUnified.swift; path = appe/ZendeskUnified.swift; sourceTree = "<group>"; };
+		F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +92,9 @@
 		13B07FAE1A68108700A75B9A /* appe */ = {
 			isa = PBXGroup;
 			children = (
+				F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */,
+				F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */,
+				F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */,
 				741ACC0C23B632380075BCE4 /* AppCenter-Config.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -118,6 +127,7 @@
 		74264AB722DF7D2E00A0E2A6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7E6F88D32B17570A000B4E95 /* jingle_bells.mp3 */,
 				F06C18652B61837F00FBA3A2 /* splash-screen.png */,
 				F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */,
 				F06C18662B61837F00FBA3A2 /* splash-screen@3x.png */,
@@ -150,7 +160,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				7E6F88D32B17570A000B4E95 /* jingle_bells.mp3 */,
 				13B07FAE1A68108700A75B9A /* appe */,
 				74264AB722DF7D2E00A0E2A6 /* Resources */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
@@ -265,6 +274,7 @@
 				F0625946264574A4001AE555 /* InfoPlist.strings in Resources */,
 				741ACC0D23B632380075BCE4 /* AppCenter-Config.plist in Resources */,
 				F06C186A2B61837F00FBA3A2 /* splash-screen@2x.png in Resources */,
+				F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */,
 				745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */,
 				91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */,
 				91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */,
@@ -438,7 +448,9 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				F0CB47612BC6BF83006A73F3 /* ZendeskUnified.mm in Sources */,
 				74660EAE247BE64C00F74D20 /* DummySwiftFile.swift in Sources */,
+				F0CB47602BC6BF83006A73F3 /* ZendeskUnified.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
