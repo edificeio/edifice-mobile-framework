@@ -1,7 +1,4 @@
-/**
- * Entry point of the app
- * (formerly App.tsx)
- */
+/* eslint-disable react/jsx-max-depth */
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 import inAppMessaging from '@react-native-firebase/in-app-messaging';
@@ -18,10 +15,12 @@ import { UI_STYLES } from '~/framework/components/constants';
 import Navigation from '~/framework/navigation/RootNavigator';
 import { useNavigationDevPlugins } from '~/framework/navigation/helper';
 import { reducer as navigationReducer } from '~/framework/navigation/redux';
+import appConf from '~/framework/util/appConf';
 import { getCurrentBadgeValue, setCurrentBadgeValue } from '~/framework/util/badge';
 import { isEmpty } from '~/framework/util/object';
 import { FlipperMMKVElement } from '~/framework/util/storage/mmkv';
 import { Trackers } from '~/framework/util/tracker';
+import { ZendeskProvider } from '~/framework/util/zendesk';
 import { AllModulesBackup } from '~/infra/oauth';
 import connectionTrackerReducer from '~/infra/reducers/connectionTracker';
 
@@ -31,9 +30,6 @@ import { IStoreProp, Reducers, connectWithStore } from './store';
 const FlipperAsyncStorage = __DEV__ ? require('rn-flipper-async-storage-advanced').default : undefined;
 const FlipperAsyncStorageElement = FlipperAsyncStorage ? <FlipperAsyncStorage /> : null;
 
-/**
- * Code that listens to App State changes
- */
 function useAppState() {
   const [currentLocale, setCurrentLocale] = React.useState(I18n.getLanguage());
   const currentState = React.useRef<AppStateStatus>();
@@ -114,7 +110,7 @@ function App(props: AppProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
+  const content = (
     <GestureHandlerRootView style={UI_STYLES.flex1}>
       <SafeAreaProvider initialMetrics={initialWindowMetrics}>
         <Provider store={props.store}>
@@ -127,6 +123,8 @@ function App(props: AppProps) {
       {FlipperMMKVElement}
     </GestureHandlerRootView>
   );
+
+  return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }
 
 // Hack to generate scopes without circular deps. ToDo: fix it !

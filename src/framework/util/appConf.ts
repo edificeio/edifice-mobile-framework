@@ -104,6 +104,11 @@ export interface IAppConfDeclaration {
   };
   platforms: IPlatformAccessDeclaration[];
   webviewIdentifier: string;
+  zendesk?: {
+    appId?: string;
+    clientId?: string;
+    zendeskUrl?: string;
+  };
 }
 
 export class AppConf {
@@ -120,6 +125,14 @@ export class AppConf {
   };
 
   platforms: Platform[];
+
+  webviewIdentifier: string;
+
+  zendesk?: {
+    appId?: string;
+    clientId?: string;
+    zendeskUrl?: string;
+  };
 
   getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
 
@@ -139,8 +152,6 @@ export class AppConf {
     return this.platforms.length > 1;
   }
 
-  webviewIdentifier: string;
-
   get i18nOTAEnabled() {
     return this.i18nOTA;
   }
@@ -153,13 +164,14 @@ export class AppConf {
     return this.level === '2d';
   }
 
+  get zendeskEnabled() {
+    return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.zendeskUrl;
+  }
+
   constructor(opts: IAppConfDeclaration) {
     this.i18nOTA = opts?.i18nOTA || false;
-
     if (opts.level) this.level = opts.level;
-
     this.matomo = opts.matomo;
-
     const onboarding: Partial<AppConf['onboarding']> = {};
     if (opts.onboarding?.showDiscoverLink) {
       onboarding.showDiscoverLink = {};
@@ -172,10 +184,15 @@ export class AppConf {
     onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
     this.onboarding = onboarding as AppConf['onboarding'];
-
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
-
     this.webviewIdentifier = opts.webviewIdentifier;
+    this.zendesk = opts.zendesk
+      ? {
+          appId: opts.zendesk?.appId,
+          clientId: opts.zendesk?.clientId,
+          zendeskUrl: opts.zendesk?.zendeskUrl,
+        }
+      : undefined;
   }
 }
 
