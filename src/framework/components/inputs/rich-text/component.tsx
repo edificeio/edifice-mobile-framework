@@ -172,6 +172,18 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     choosePicsMenuRef.current?.present();
   };
 
+  const handleChoosePics = async () => {
+    hideChoosePicsMenu();
+    await galleryAction({ callback: handleAddPic, multiple: true }).action();
+    showAddFilesResults();
+  };
+
+  const handleTakePic = async () => {
+    // TODO LEA: Implement take picture
+    // See if handleAppPic can be used
+    alert('TODO LEA');
+  };
+
   const choosePicsMenu = () => {
     return (
       <BottomSheetModal ref={choosePicsMenuRef} onDismiss={handleChoosePicsMenuDismissed}>
@@ -182,7 +194,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           disabled
           style={styles.choosePicsMenuTitle}
         />
-        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={() => {}}>
+        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleTakePic}>
           <NamedSVG
             height={UI_SIZES.elements.icon.default}
             width={UI_SIZES.elements.icon.default}
@@ -192,13 +204,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           <BodyText>{I18n.get('pickfile-take')}</BodyText>
         </TouchableOpacity>
         <View style={styles.choosePicsMenuSeparator} />
-        <TouchableOpacity
-          style={styles.choosePicsMenuElement}
-          onPress={async () => {
-            hideChoosePicsMenu();
-            await galleryAction({ callback: handleAddPic, multiple: true }).action();
-            showAddFilesResults();
-          }}>
+        <TouchableOpacity style={styles.choosePicsMenuElement} onPress={handleChoosePics}>
           <NamedSVG
             height={UI_SIZES.elements.icon.default}
             width={UI_SIZES.elements.icon.default}
