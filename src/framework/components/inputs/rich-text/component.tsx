@@ -20,7 +20,7 @@ import { LocalFile } from '~/framework/util/fileHandler';
 import RichEditor from './editor/RichEditor';
 import styles from './styles';
 import RichToolbar from './toolbar/component';
-import { RichEditorFormProps, UploadStatus } from './types';
+import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
 
 const RichEditorForm = (props: RichEditorFormProps) => {
   const headerHeight = useHeaderHeight();
@@ -40,7 +40,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   // Files management
   //
 
-  const [files, setFiles] = React.useState<{ file: LocalFile; status: UploadStatus }[]>([]);
+  const [files, setFiles] = React.useState<UploadFile[]>([]);
 
   const updateFileStatus = (index: number, status: UploadStatus) => {
     if (index >= files.length) return;
@@ -51,7 +51,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const addFile = (file: LocalFile) => {
     const filesCount = files.length;
-    setFiles(current => [...current, { file, status: UploadStatus.PENDING }]);
+    setFiles(current => [...current, { localFile: file, status: UploadStatus.PENDING }]);
     // TODO LEA: Manage file upload
     /*workspaceService.file
       .uploadFile(session, file, props.uploadParams)
@@ -72,7 +72,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const handleRemoveFile = async index => {
     if (index >= files.length) return;
     // TODO LEA: Remove following dummy line
-    alert('Will remove ' + files[index].file.filename + ' - ' + index);
+    alert('Will remove ' + files[index].localFile.filename + ' - ' + index);
     // TODO LEA: Show confirmation box
     // TODO LEA: Remove image from WS if needed
     // TODO LEA: Remove pic from pics array if needed
@@ -140,9 +140,9 @@ const RichEditorForm = (props: RichEditorFormProps) => {
               />
             </View>
             <View style={styles.addFilesResultsFile}>
-              <SmallText>{file.file.filename}</SmallText>
+              <SmallText>{file.localFile.filename}</SmallText>
               <CaptionText>
-                {file.file.filetype} - {file.file.filesize} - {file.status}
+                {file.localFile.filetype} - {file.localFile.filesize} - {file.status}
               </CaptionText>
             </View>
             {fileStatusIcon(index, file.status)}
