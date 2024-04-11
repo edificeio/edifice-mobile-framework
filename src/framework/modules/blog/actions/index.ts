@@ -177,8 +177,7 @@ export const editBlogPostAction =
  * Info: no reducer is used in this action.
  */
 export const sendBlogPostAction =
-  (blog: Blog, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blog: Blog, postTitle: string, postContent: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
     const blogId = blog.id;
     const blogPostRight = getBlogPostRight(blog, session);

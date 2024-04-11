@@ -13,7 +13,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
+import { sendBlogPostAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import {
@@ -25,7 +25,7 @@ import {
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { SyncedFile } from '~/framework/util/fileHandler';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
@@ -142,8 +142,16 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
           />
         }
         initialContentHtml=""
+        uploadParams={
+          blog.visibility === 'PUBLIC'
+            ? {
+                public: true,
+              }
+            : {
+                parent: 'protected',
+              }
+        }
         onChangeText={value => setContent(value)}
-        uploadFiles={files => props.handleUploadPostImages(files, blog.visibility === 'PUBLIC')}
       />
     );
   };
@@ -158,9 +166,6 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
-  handleUploadPostImages: async (files: LocalFile[], isPublic: boolean) => {
-    return dispatch(uploadBlogPostImagesAction(files, isPublic)) as unknown as Promise<SyncedFile[]>;
-  },
   handleSendBlogPost: async (blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
     return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;
   },

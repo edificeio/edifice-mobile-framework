@@ -52,7 +52,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const addFile = (file: LocalFile) => {
     const filesCount = files.length;
     setFiles(current => [...current, { localFile: file, status: UploadStatus.PENDING }]);
-    // TODO LEA: Manage file upload
+    // TODO V1: Manage file upload
     /*workspaceService.file
       .uploadFile(session, file, props.uploadParams)
       .then(() => {
@@ -71,16 +71,16 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleRemoveFile = async index => {
     if (index >= files.length) return;
-    // TODO LEA: Remove following dummy line
+    // TODO V1: Remove following dummy line
     alert('Will remove ' + files[index].localFile.filename + ' - ' + index);
-    // TODO LEA: Show confirmation box
-    // TODO LEA: Remove image from WS if needed
-    // TODO LEA: Remove pic from pics array if needed
+    // TODO V1: Show confirmation box
+    // TODO V1: Remove image from WS if needed
+    // TODO V1: Remove pic from pics array if needed
     setFiles(files.slice(index, 1)); // TODO LEA: If needed
   };
 
   const handleRetryFile = async index => {
-    // TODO LEA: Manage retry
+    // TODO V1: Manage retry
   };
 
   const resetFiles = () => {
@@ -94,8 +94,8 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const addFilesResultsRef = React.useRef<BottomSheetModalMethods>(null);
 
   const handleAddFilesResultsDismissed = async () => {
-    // TODO LEAO: Show confirmation box
-    // TODO LEA: delete all uploaded files
+    // TODO V1: Show confirmation box
+    // TODO V1: delete all uploaded files
     resetFiles(); // If needed
     focusRichText();
   };
@@ -111,7 +111,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const handleAddFiles = () => {
-    // TODO LEA: Insert Right HTML info editor for files with status = UploadStatus.OK
+    // TODO V1: Insert Right HTML info editor for files with status = UploadStatus.OK
     hideAddFilesResults();
   };
 
@@ -179,7 +179,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const handleTakePic = async () => {
-    // TODO LEA: Implement take picture
+    // V1 LEA: Implement take picture
     // See if handleAppPic can be used
     alert('TODO LEA');
   };

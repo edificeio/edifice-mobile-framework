@@ -13,13 +13,12 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { NavBarAction, NavBarActionsGroup } from '~/framework/components/navigation';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { editBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
+import { editBlogPostAction } from '~/framework/modules/blog/actions';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 
 import styles from './styles';
 import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPostScreenProps } from './types';
@@ -110,8 +109,16 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
           />
         }
         initialContentHtml={props.route.params.content}
+        uploadParams={
+          blog.visibility === 'PUBLIC'
+            ? {
+                public: true,
+              }
+            : {
+                parent: 'protected',
+              }
+        }
         onChangeText={value => setContent(value)}
-        uploadFiles={files => props.handleUploadPostImages(files, blog.visibility === 'PUBLIC')}
       />
     );
   };
@@ -126,9 +133,6 @@ const mapStateToProps: (s: IGlobalState) => BlogEditPostScreenDataProps = s => {
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogEditPostScreenEventProps = dispatch => ({
-  handleUploadPostImages: async (files: LocalFile[], isPublic: boolean) => {
-    return dispatch(uploadBlogPostImagesAction(files, isPublic)) as unknown as Promise<SyncedFile[]>;
-  },
   handleEditBlogPost: async (blog: Blog, postId: string, title: string, content: string) => {
     return (await dispatch(editBlogPostAction(blog, postId, title, content))) as unknown as string | undefined;
   },

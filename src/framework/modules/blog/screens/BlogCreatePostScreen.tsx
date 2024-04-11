@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Alert, Keyboard, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, Platform, ScrollView, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -12,7 +12,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import InputContainer from '~/framework/components/inputs/container';
 import MultilineTextInput from '~/framework/components/inputs/multiline';
 import TextInput from '~/framework/components/inputs/text';
-import { ImagePicked, imagePickedToLocalFile } from '~/framework/components/menus/actions';
+import { ImagePicked } from '~/framework/components/menus/actions';
 import { KeyboardPageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, SmallBoldText } from '~/framework/components/text';
@@ -20,7 +20,7 @@ import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { sendBlogPostAction, uploadBlogPostImagesAction } from '~/framework/modules/blog/actions';
+import { sendBlogPostAction } from '~/framework/modules/blog/actions';
 import moduleConfig, { moduleColor } from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog } from '~/framework/modules/blog/reducer';
@@ -46,7 +46,6 @@ export interface BlogCreatePostScreenDataProps {
 }
 
 export interface BlogCreatePostScreenEventProps {
-  handleUploadPostImages(images: ImagePicked[], isPublic: boolean): Promise<SyncedFile[]>;
   handleSendBlogPost(blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]): Promise<string | undefined>;
   handleInitTimeline(): Promise<void>;
   dispatch: ThunkDispatch<any, any, any>;
@@ -147,7 +146,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   async doSendPost() {
     try {
-      const { route, navigation, session, handleUploadPostImages, handleSendBlogPost, handleInitTimeline } = this.props;
+      const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = this.props;
       const { title, content, images } = this.state;
       const blog = route.params.blog;
       const blogId = blog && blog.id;
@@ -157,23 +156,6 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       const blogPostRight = blog && session && getBlogPostRight(blog, session);
       if (!blogPostRight) {
         throw new Error('[doSendPost] user has no post rights for this blog');
-      }
-
-      // Upload post images (if added)
-      let uploadedPostImages: undefined | SyncedFile[];
-      if (images.length > 0) {
-        try {
-          uploadedPostImages = await handleUploadPostImages(images, blog.visibility === 'PUBLIC');
-        } catch (e: any) {
-          // Full storage management
-          // statusCode = 400 on iOS and code = 'ENOENT' on Android
-          if (e.response?.statusCode === 400 || e.code === 'ENOENT') {
-            Alert.alert('', I18n.get('blog-createpost-fullstorage'));
-          } else {
-            Alert.alert('', I18n.get('blog-createpost-uploadattachments-error-text'));
-          }
-          throw new Error('handled');
-        }
       }
 
       // Translate entered content to httml
@@ -359,12 +341,8 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
-  handleUploadPostImages: async (images: ImagePicked[], isPublic: boolean) => {
-    const localFiles = images.map(img => imagePickedToLocalFile(img));
-    return dispatch(uploadBlogPostImagesAction(localFiles, isPublic)) as unknown as Promise<SyncedFile[]>;
-  },
-  handleSendBlogPost: async (blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
-    return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;
+  handleSendBlogPost: async (blog: Blog, title: string, content: string) => {
+    return (await dispatch(sendBlogPostAction(blog, title, content))) as unknown as string | undefined;
   },
   handleInitTimeline: async () => {
     await dispatch(startLoadNotificationsAction());
