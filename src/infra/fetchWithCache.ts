@@ -64,6 +64,14 @@ export async function signedFetchJson2(url: string | Request, init?: any): Promi
   return signedFetchJson(session.platform.url + url, init);
 }
 
+export async function signedFetch2(url: string | Request, init?: any): Promise<unknown> {
+  const session = getSession();
+  if (!session) {
+    throw new Error('Fetch : no active session');
+  }
+  return signedFetch(session.platform.url + url, init);
+}
+
 export const getCachedData = async <T>(path: string) => {
   let cachedData: undefined;
   try {

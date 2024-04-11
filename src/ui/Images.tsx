@@ -8,6 +8,7 @@ import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
+import { AudienceParameter } from '~/framework/util/audience/types';
 import { FastImage } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
@@ -76,7 +77,7 @@ const UnavailableImage = (props: { big?: boolean }) => (
     }}>
     <NamedSVG
       style={{ alignSelf: 'center', flex: 0, marginVertical: UI_SIZES.spacing.minor }}
-      name={'image-not-found'}
+      name="image-not-found"
       width={(props.big ? 4 : 2) * imageWidth}
       height={(props.big ? 4 : 2) * imageHeight}
       fill={theme.palette.grey.stone}
@@ -105,6 +106,7 @@ class Images extends React.Component<
   {
     images: { src: ImageURISource; alt?: string; linkTo?: string }[];
     style?: ViewStyle;
+    referer: AudienceParameter;
   },
   any
 > {
@@ -116,7 +118,7 @@ class Images extends React.Component<
       ...(img.alt ? { alt: img.alt } : undefined),
       ...(img.linkTo ? { link: img.linkTo } : undefined),
     }));
-    openCarousel({ data, startIndex });
+    openCarousel({ data, startIndex, referer: this.props.referer });
   }
 
   public images() {

@@ -37,6 +37,7 @@ const MediaButton = (props: IPlayerProps) => {
     openMediaPlayer({
       type: props.type as MediaType,
       source: urlSigner.signURISource(props.source),
+      referer: props.referer,
     });
   };
 
