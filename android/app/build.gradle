@@ -115,7 +115,6 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            // Leave shrinkResources to false as some resources are used React Native side only
             shrinkResources false
             signingConfig signingConfigs.release
         }
@@ -138,10 +137,16 @@ dependencies {
     implementation("com.facebook.react:flipper-integration")
     implementation("com.fasterxml.jackson.core:jackson-core:2.11.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.11.1")
-    implementation("com.google.android.gms:play-services-base:18.2.0")
-    implementation project(':react-native-action-sheet')
+    implementation("com.google.android.gms:play-services-base:18.3.0")
     // Fix Duplicate class
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
+    // Zendesk
+    implementation("com.zendesk:answerbot:3.2.0")
+    implementation("com.zendesk:chat:3.4.0")
+    implementation("com.zendesk:messaging:5.4.0")
+    implementation("com.zendesk:support:5.2.0")
+    // Packages
+    implementation project(':react-native-action-sheet')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

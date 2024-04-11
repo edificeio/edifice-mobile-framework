@@ -1,4 +1,11 @@
-# React Native Fast Image (see https://github.com/DylanVann/react-native-fast-image#are-you-using-proguard)
+# BuildConfig
+-keep class com.ode.appe.BuildConfig { *; }
+
+# Hermes debugger
+-keep class com.facebook.hermes.unicode.** { *; }
+-keep class com.facebook.jni.** { *; }
+
+# react-native-fast-image
 -keep public class com.dylanvann.fastimage.* {*;}
 -keep public class com.dylanvann.fastimage.** {*;}
 -keep public class * implements com.bumptech.glide.module.GlideModule
@@ -8,13 +15,46 @@
   public *;
 }
 
-# Hermes debugger
--keep class com.facebook.hermes.unicode.** { *; }
--keep class com.facebook.jni.** { *; }
-
 # react-native-svg
 -keep public class com.horcrux.svg.** {*;}
 
-# BuildConfig
+# Zendesk
+-keep class zendesk.** { *; }
+-keepnames class zendesk.** { *; }
 
--keep class com.ode.appe.BuildConfig { *; }
+# Zendesk + Okhttp
+-keep class okhttp3.** { *; }
+-keepnames class okhttp3.** { *; }
+-keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
+
+# Zendesk - Retrofit
+-keepattributes Signature, InnerClasses, EnclosingMethod
+-keepattributes RuntimeVisibleAnnotations, RuntimeVisibleParameterAnnotations
+-keepattributes AnnotationDefault
+
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn javax.annotation.**
+-dontwarn kotlin.Unit
+-dontwarn retrofit2.KotlinExtensions
+-dontwarn retrofit2.KotlinExtensions$*
+
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface <1>
+
+-if interface * { @retrofit2.http.* <methods>; }
+-keep,allowobfuscation interface * extends <1>
+
+-keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
+
+-if interface * { @retrofit2.http.* public *** *(...); }
+-keep,allowoptimization,allowshrinking,allowobfuscation class <3>
+
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+
+# Zendesk + Xml
+-keep class org.xmlpull.** { *; }
+-keepnames class org.xmlpull.** { *; }
