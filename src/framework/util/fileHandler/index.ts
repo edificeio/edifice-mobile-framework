@@ -40,10 +40,20 @@ const compress = async pic => {
   try {
     let result;
     const maxCompression = 80;
-    await ImageResizer.createResizedImage(pic.uri, 1440, 1440, 'JPEG', maxCompression, 0, undefined, false, {
-      mode: 'contain',
-      onlyScaleDown: true,
-    })
+    await ImageResizer.createResizedImage(
+      pic.uri,
+      IMAGE_MAX_DIMENSION,
+      IMAGE_MAX_DIMENSION,
+      'JPEG',
+      maxCompression,
+      0,
+      undefined,
+      false,
+      {
+        mode: 'contain',
+        onlyScaleDown: true,
+      },
+    )
       .then(response => {
         result = {
           fileName: response.name,

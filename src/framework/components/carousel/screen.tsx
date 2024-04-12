@@ -4,6 +4,7 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useHeaderHeight } from '@react-navigation/elements';
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
@@ -39,6 +40,7 @@ import { IImageSize } from './image-viewer/image-viewer.type';
 export interface ICarouselNavParams {
   data: IMedia[];
   startIndex?: number;
+  referer: AudienceParameter; // used for audience tracking
 }
 
 export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
@@ -333,6 +335,15 @@ export function Carousel(props: ICarouselProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indexDisplay, isNavBarVisible, imageState]);
+
+  // Audience hook
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params.referer) {
+        markViewAudience(route.params.referer);
+      }
+    }, [route.params.referer]),
+  );
 
   const imageViewer = React.useMemo(
     () => (

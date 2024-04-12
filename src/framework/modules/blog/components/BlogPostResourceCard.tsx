@@ -25,6 +25,7 @@ export interface BlogPostResourceCardProps {
   date: Moment;
   title: string;
   state: 'PUBLISHED' | 'SUBMITTED';
+  resourceId: string;
 }
 
 export const commentsString = (comments: number) =>
@@ -35,7 +36,7 @@ export const commentsString = (comments: number) =>
     : I18n.get('blog-postlist-comment-nocomments');
 
 export const BlogPostResourceCard = React.memo(
-  ({ action, authorId, authorName, comments, contentHtml, date, title, state }: BlogPostResourceCardProps) => {
+  ({ action, authorId, authorName, comments, contentHtml, date, title, state, resourceId }: BlogPostResourceCardProps) => {
     const authorTextMaxLines = 1;
     const contentTextMaxLines = 5;
     const blogPostText = extractTextFromHtml(contentHtml);
@@ -83,7 +84,7 @@ export const BlogPostResourceCard = React.memo(
               {blogPostText}
             </SmallText>
           ) : null}
-          {hasBlogPostMedia ? renderMediaPreview(blogPostMedia) : null}
+          {hasBlogPostMedia ? renderMediaPreview(blogPostMedia, { module: 'blog', resourceType: 'post', resourceId }) : null}
         </TouchableResourceCard>
       </ArticleContainer>
     );

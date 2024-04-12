@@ -162,7 +162,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
       const htmlContent = content.replace(/\n/g, '<br>').trim();
 
       // Create and submit/publish post
-      await handleSendBlogPost(blog, title.trim(), htmlContent, uploadedPostImages);
+      await handleSendBlogPost(blog, title.trim(), htmlContent);
 
       // Track action, load/navigate to timeline and display toast
       const blogPostDisplayRight = blogPostRight.displayRight;

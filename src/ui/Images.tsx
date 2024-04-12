@@ -8,6 +8,7 @@ import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
+import { AudienceParameter } from '~/framework/util/audience/types';
 import { FastImage } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
@@ -106,6 +107,7 @@ class Images extends React.Component<
   {
     images: { src: ImageURISource; alt?: string; linkTo?: string }[];
     style?: ViewStyle;
+    referer: AudienceParameter;
   },
   any
 > {
@@ -117,7 +119,7 @@ class Images extends React.Component<
       ...(img.alt ? { alt: img.alt } : undefined),
       ...(img.linkTo ? { link: img.linkTo } : undefined),
     }));
-    openCarousel({ data, startIndex });
+    openCarousel({ data, startIndex, referer: this.props.referer });
   }
 
   public images() {

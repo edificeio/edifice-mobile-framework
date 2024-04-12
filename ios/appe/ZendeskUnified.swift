@@ -232,18 +232,30 @@ class ZendeskUnified: NSObject {
       if let showContactOptions = showContactOptions {
         articleUIConfig.showContactOptions = showContactOptions
         helpCenterConfig.showContactOptions = showContactOptions
+        helpCenterConfig.showContactOptionsOnEmptySearch = showContactOptions
       }
       let helpCenterController = HelpCenterUi.buildHelpCenterOverviewUi(withConfigs: [articleUIConfig,helpCenterConfig])
       let navigationController = UINavigationController(rootViewController: helpCenterController)
       if #available(iOS 13.0, *) {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = CommonTheme.currentTheme.primaryColor
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navigationController.navigationBar.standardAppearance = appearance
-        navigationController.navigationBar.scrollEdgeAppearance = appearance
+        let navbarAppearance = UINavigationBarAppearance()
+        let backAppearance = UIBarButtonItemAppearance(style: .plain)
+        backAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.white]
+        backAppearance.disabled.titleTextAttributes = [.foregroundColor: UIColor.lightText]
+        backAppearance.highlighted.titleTextAttributes = [.foregroundColor: UIColor.label]
+        backAppearance.focused.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navbarAppearance.configureWithOpaqueBackground()
+        navbarAppearance.buttonAppearance = backAppearance
+        navbarAppearance.backgroundColor = CommonTheme.currentTheme.primaryColor
+        navbarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        navbarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navigationController.navigationBar.compactAppearance = navbarAppearance
+        navigationController.navigationBar.standardAppearance = navbarAppearance
+        navigationController.navigationBar.scrollEdgeAppearance = navbarAppearance
+        if #available(iOS 15.0, *) {
+          navigationController.navigationBar.compactScrollEdgeAppearance = navbarAppearance
+        }
       } else {
+        navigationController.navigationBar.tintColor = UIColor.white
         navigationController.navigationBar.barTintColor = CommonTheme.currentTheme.primaryColor
       }
       UIApplication.shared.keyWindow?.rootViewController?.present(navigationController, animated: true, completion: nil)
@@ -300,7 +312,6 @@ class ZendeskUnified: NSObject {
 
   private func changeTheme(color: String) {
     CommonTheme.currentTheme.primaryColor = UIColorFromHex(color)
-    NSLog("CommonTheme.currentTheme.primaryColor = %@", CommonTheme.currentTheme.primaryColor)
   }
 
   // Converts hex string to UIColor

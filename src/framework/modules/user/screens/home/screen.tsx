@@ -281,8 +281,10 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         labels: [
           /* "test" */
         ],
-        groupType: 'category',
-        groupIds: [360002895040],
+        groupType: 'section',
+        groupIds: [
+          360005007020, 9624832797212, 4402870577554, 4402870581394, 4402870571666, 4402567155090, 10963313910428, 12096006889372,
+        ],
         showContactOptions: false,
       });
     } catch (error) {

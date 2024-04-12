@@ -7,6 +7,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import { markViewAudience } from '~/framework/util/audience';
+import { AudienceParameter } from '~/framework/util/audience/types';
 
 import Attachment, { IRemoteAttachment } from './Attachment';
 import { BubbleStyle } from './BubbleStyle';
@@ -23,6 +25,7 @@ export class AttachmentGroup extends React.PureComponent<
     onError?: () => void;
     onOpen?: () => void;
     onDownloadAll?: () => void;
+    referer: AudienceParameter;
   },
   {
     downloadAll: boolean;
@@ -77,6 +80,7 @@ export class AttachmentGroup extends React.PureComponent<
                 onPress={() => {
                   this.setState({ downloadAll: true });
                   onDownloadAll && onDownloadAll();
+                  if (this.props.referer) markViewAudience(this.props.referer);
                 }}>
                 <CaptionText style={{ color: theme.palette.complementary.blue.regular }}>
                   {I18n.get('attachment-download-all')}
@@ -103,7 +107,10 @@ export class AttachmentGroup extends React.PureComponent<
                     key={index}
                     attachment={item}
                     starDownload={downloadAll}
-                    onDownload={onDownload}
+                    onDownload={() => {
+                      onDownload?.();
+                      if (this.props.referer) markViewAudience(this.props.referer);
+                    }}
                     onError={onError}
                     onOpen={onOpen}
                     style={{ marginTop: index === 0 ? 0 : UI_SIZES.spacing.tiny / 2 }}

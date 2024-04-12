@@ -48,6 +48,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { markViewAudience } from '~/framework/util/audience';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
@@ -129,6 +130,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       await this.doGetBlogInfos();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
+      if (this.state.blogPostData?._id)
+        markViewAudience({ module: 'blog', resourceType: 'post', resourceId: this.state.blogPostData._id });
+      else {
+        if (__DEV__) console.warn(`[Audience] cannot recieve blog post id.`);
+      }
     }
   }
 
@@ -365,6 +371,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         blogPostData: blogPost,
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
+      markViewAudience({ module: 'blog', resourceType: 'post', resourceId: blogPost._id });
     } else this.doInit();
 
     // Update notification event if any

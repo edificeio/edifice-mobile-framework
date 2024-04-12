@@ -3,8 +3,8 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
-import { MediaType } from '~/framework/components/media/player';
-import { IMedia } from '~/framework/util/media';
+import type { ICarouselNavParams } from '~/framework/components/carousel/screen';
+import type { MediaPlayerParams } from '~/framework/components/media/player/types';
 
 export enum ModalsRouteNames {
   Pdf = '$pdf',
@@ -15,13 +15,6 @@ export enum ModalsRouteNames {
 
 export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.Pdf]: { title: string; src?: string };
-  [ModalsRouteNames.Carousel]: {
-    data: IMedia[];
-    startIndex?: number;
-  };
-  [ModalsRouteNames.MediaPlayer]: {
-    type: MediaType;
-    source: any;
-    filetype?: string;
-  };
+  [ModalsRouteNames.Carousel]: ICarouselNavParams;
+  [ModalsRouteNames.MediaPlayer]: MediaPlayerParams;
 }
