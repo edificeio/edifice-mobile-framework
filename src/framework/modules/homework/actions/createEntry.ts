@@ -8,7 +8,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import homeworkConfig from '~/framework/modules/homework/module-config';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
-import { IDistantFile, LocalFile } from '~/framework/util/fileHandler';
+import { IDistantFile, IMAGE_MAX_DIMENSION, LocalFile } from '~/framework/util/fileHandler';
 import { createUUID } from '~/framework/util/string';
 import { signedFetch } from '~/infra/fetchWithCache';
 import { asyncActionTypes } from '~/infra/redux/async';
@@ -70,7 +70,7 @@ export function createHomeworkDiaryEntry(
       if (uploadedImages) {
         const entryImageUploads = Object.values(uploadedImages);
         const images = entryImageUploads
-          .map(entryImageUpload => `<img src="${entryImageUpload.url}?thumbnail=2600x0" class="">`)
+          .map(entryImageUpload => `<img src="${entryImageUpload.url}?thumbnail=${IMAGE_MAX_DIMENSION}x0" class="">`)
           .join('');
         const imagesHtml = `<p class="ng-scope" style="">
         <span contenteditable="false" class="image-container ng-scope" style="">
