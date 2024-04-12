@@ -175,6 +175,8 @@ export function Carousel(props: ICarouselProps) {
           props: { source },
         };
       }),
+    [data],
+  );
 
   const [indexDisplay, setIndexDisplay] = React.useState((route.params.startIndex ?? 0) + 1);
 
