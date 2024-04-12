@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-04-05 11:55:40",
-  "notes": "chore: export `Size` from avatar\nrelease: 1.12.0-rc.7(1120019)",
-  "version": "1.12.0-rc.8(1120020)"
+  "last": "2024-04-12 18:38:32",
+  "notes": "feat(zendesk): Change iOS Navbar background, title && back button color\nfix: wrong image dimensions in `<Images/>`\nfeat(zendesk): MB-2527, Article css file addition\nchore: rename signedFetch2 functions\nchore(audience): move into own module\nfix(memory): MB-2524, Reduce images thumbnail size && carousel images size + Fix typo\nfix(memory): MB-2524, Reduce images thumbnail size && carousel images size\nfix(memory): MB-2524, Reduce images thumbnail size && carousel images size\nfeat(audience): MB-2532 implment audience for blog & blog previews\nfeat(zendesk): MB-2528, Filter articles by sections\nfix(ui): Restore default App Icon && SplashScreen.\nfeat(zendesk): Zendesk iOS stuff addition\nSquashed commit of the following:\nfix(auth): MB-2611 bad screen after login error when using renew code on a federated platform\nfix(ios): MB-2625, Add missing iOS Privacy Manifest\nchore: some mistyped args\nfix: MB-2628 account types were not translated on account-select\nfix: MB-2627 user screen round decoration wrong color\nfix(auth): MB-2626 use auth context activation i18n keys on activation screen\nfix(auth): MB-2631 change requirement order + error toast for cgu requirement\nfix(wayf): MB-2276, Move login with SAML2 token after ENT redirection\nfeat(auth): MB-2616 correct routing of non-fede accounts on fede-platforms + revamp auth types\nchore: add noEmit to ya tsc script\nSquashed commit of the following:",
+  "version": "1.12.1-alpha.1(1120101)"
 }
