@@ -29,7 +29,7 @@ import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigatio
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { markViewAudience } from '~/framework/util/audience';
 import { AudienceParameter } from '~/framework/util/audience/types';
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
@@ -163,12 +163,18 @@ export function Carousel(props: ICarouselProps) {
 
   const dataAsImages = React.useMemo(
     () =>
-      data.map(d => ({
-        url: '',
-        props: { source: urlSigner.signURISource(d.src) },
-      })),
-    [data],
-  );
+      data.map(d => {
+        const source = urlSigner.signURISource(d.src);
+        const uri = new URL(source.uri);
+        uri.searchParams.delete('thumbnail');
+        uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x${IMAGE_MAX_DIMENSION}`);
+        console.log('Carousel Image = ' + uri.toString());
+        source.uri = uri.toString();
+        return {
+          url: '',
+          props: { source },
+        };
+      }),
 
   const [indexDisplay, setIndexDisplay] = React.useState((route.params.startIndex ?? 0) + 1);
 
