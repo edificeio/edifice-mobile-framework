@@ -7,8 +7,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
-import { markViewAudience } from '~/framework/util/audience';
-import { AudienceParameter } from '~/framework/util/audience/types';
+import { markViewAudience } from '~/framework/modules/core/audience';
+import { AudienceParameter } from '~/framework/modules/core/audience/types';
 
 import Attachment, { IRemoteAttachment } from './Attachment';
 import { BubbleStyle } from './BubbleStyle';
