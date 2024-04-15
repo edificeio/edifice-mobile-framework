@@ -888,7 +888,13 @@ function changePasswordAction(
       }
     } catch (e) {
       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
-      else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
+      else
+        throw createChangePasswordError(
+          'change password',
+          I18n.get('auth-changepassword-error-submit'),
+          undefined,
+          e instanceof global.Error ? e : undefined,
+        );
     }
 
     try {
