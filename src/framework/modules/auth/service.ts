@@ -235,7 +235,7 @@ export function formatSession(
   platform: Platform,
   loginUsed: string | undefined,
   userinfo: IUserInfoBackend,
-  method: InitialAuthenticationMethod,
+  method?: InitialAuthenticationMethod,
   userPrivateData?: UserPrivateData,
   userPublicInfo?: UserPersonDataBackend,
   rememberMe?: boolean,
