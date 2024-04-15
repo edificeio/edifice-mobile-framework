@@ -1,5 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
+import { initEditor } from '~/framework/components/inputs/rich-text/editor/editor';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { authInitAction, restoreAccountAction } from '~/framework/modules/auth/actions';
 import { accountIsLoggable } from '~/framework/modules/auth/model';
@@ -35,6 +36,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
     } catch (e) {
       console.warn('[Startup] Startup failed. Cause :', e);
     } finally {
+      initEditor().finally(null);
       dispatch(appReadyAction());
     }
   });
