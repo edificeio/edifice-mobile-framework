@@ -73,7 +73,7 @@ import {
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
-const MAX_AUTH_TIMEOUT = 15000;
+const MAX_AUTH_TIMEOUT = 30000;
 
 let loginCanceled = false;
 
