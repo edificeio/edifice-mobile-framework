@@ -175,7 +175,7 @@ const imports = {
   'days-monday': async () => import('ASSETS/images/days/monday.svg'),
   'days-tuesday': async () => import('ASSETS/images/days/tuesday.svg'),
   'days-wednesday': async () => import('ASSETS/images/days/wednesday.svg'),
-  'days-thursday': async () => async () => import('ASSETS/images/days/thursday.svg'),
+  'days-thursday': async () => import('ASSETS/images/days/thursday.svg'),
   'days-friday': async () => import('ASSETS/images/days/friday.svg'),
   'days-saturday': async () => import('ASSETS/images/days/saturday.svg'),
   'empty-blog': async () => import('ASSETS/images/empty-screen/empty-blog.svg'),
