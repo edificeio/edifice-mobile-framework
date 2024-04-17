@@ -5,8 +5,9 @@ import { myAppsModules } from './myAppsModules';
 export default new NavigableModuleConfig<'myapps', null>({
   name: 'myapps',
   entcoreScope: [],
-  matchEntcoreApp: (entcoreApp, allEntcoreApps) => {
-    const modules = myAppsModules.get().filterAvailables(allEntcoreApps);
+  matchEntcoreApp: () => true,
+  hasRight: (matchingApps, matchingWidgets) => {
+    const modules = myAppsModules.get().filterAvailables(matchingApps);
     return modules.length > 0;
   },
   storageName: 'myapps',
