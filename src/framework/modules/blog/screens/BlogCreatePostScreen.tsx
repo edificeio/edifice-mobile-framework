@@ -146,7 +146,7 @@ export class BlogCreatePostScreen extends React.PureComponent<BlogCreatePostScre
 
   async doSendPost() {
     try {
-      const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = this.props;
+      const { route, navigation, session, handleUploadPostImages, handleSendBlogPost, handleInitTimeline } = this.props;
       const { title, content, images } = this.state;
       const blog = route.params.blog;
       const blogId = blog && blog.id;

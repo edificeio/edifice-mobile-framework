@@ -25,6 +25,7 @@ export default () => {
       // Built-in modules
       require('~/framework/modules/auth'),
       require('~/framework/modules/timeline'),
+      require('~/framework/modules/core/audience').default,
 
       // Included modules from override
       ...(IncludedModules || []),

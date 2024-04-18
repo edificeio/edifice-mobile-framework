@@ -56,7 +56,7 @@ export async function signedFetchJson(url: string | Request, init?: RequestInit)
   return response.json();
 }
 
-export async function signedFetchJson2(url: string | Request, init?: any): Promise<unknown> {
+export async function signedFetchJsonRelative(url: string | Request, init?: any): Promise<unknown> {
   const session = getSession();
   if (!session) {
     throw new Error('Fetch : no active session');
@@ -64,7 +64,7 @@ export async function signedFetchJson2(url: string | Request, init?: any): Promi
   return signedFetchJson(session.platform.url + url, init);
 }
 
-export async function signedFetch2(url: string | Request, init?: any): Promise<unknown> {
+export async function signedFetchRelative(url: string | Request, init?: any): Promise<unknown> {
   const session = getSession();
   if (!session) {
     throw new Error('Fetch : no active session');

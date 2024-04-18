@@ -14,7 +14,7 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { markViewAudience } from '~/framework/util/audience';
+import { markViewAudience } from '~/framework/modules/core/audience';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';

@@ -8,7 +8,7 @@ import { openCarousel } from '~/framework/components/carousel/openCarousel';
 import { UI_SIZES, getScaleImageSize } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallInverseText } from '~/framework/components/text';
-import { AudienceParameter } from '~/framework/util/audience/types';
+import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { FastImage } from '~/framework/util/media';
 import { urlSigner } from '~/infra/oauth';
 
@@ -60,9 +60,12 @@ const BubbleView = styled.View({
   width: "100%"
 });*/
 
-const imageWidth = getScaleImageSize(UI_SIZES.dimensions.height.huge);
-const imageHeight = getScaleImageSize(UI_SIZES.dimensions.height.huge);
+const errorImageWidth = getScaleImageSize(UI_SIZES.dimensions.height.huge);
+const errorImageHeight = getScaleImageSize(UI_SIZES.dimensions.height.huge);
+
 const imageHeightRatio = 0.6;
+const imageWidth = UI_SIZES.standardScreen.width;
+const imageHeight = imageWidth * imageHeightRatio;
 
 const UnavailableImage = (props: { big?: boolean }) => (
   <View
@@ -79,8 +82,8 @@ const UnavailableImage = (props: { big?: boolean }) => (
     <NamedSVG
       style={{ alignSelf: 'center', flex: 0, marginVertical: UI_SIZES.spacing.minor }}
       name="image-not-found"
-      width={(props.big ? 4 : 2) * imageWidth}
-      height={(props.big ? 4 : 2) * imageHeight}
+      width={(props.big ? 4 : 2) * errorImageWidth}
+      height={(props.big ? 4 : 2) * errorImageHeight}
       fill={theme.palette.grey.stone}
     />
   </View>
@@ -124,21 +127,22 @@ class Images extends React.Component<
 
   public images() {
     const { images } = this.props;
-    const width = UI_SIZES.standardScreen.width;
-    const height = width * imageHeightRatio;
 
     const getImageSource = (imageSrc: ImageURISource, oneRow: boolean) => {
       if (!imageSrc || !imageSrc.uri) return imageSrc;
       const uri = new URL(urlSigner.getAbsoluteUrl(imageSrc.uri)!);
       uri.searchParams.delete('thumbnail');
-      uri.searchParams.append('thumbnail', oneRow ? `${width}x${height}` : `${Math.floor(width / 2)}x${Math.floor(height / 2)}`);
+      uri.searchParams.append(
+        'thumbnail',
+        oneRow ? `${imageWidth}x${imageHeight}` : `${Math.floor(imageWidth / 2)}x${Math.floor(imageHeight / 2)}`,
+      );
       return { ...imageSrc, uri: uri.toString() };
     };
 
     if (images.length === 0) return <View />;
     if (images.length === 1) {
       return (
-        <SoloImage style={{ height }} onPress={() => this.openImage(0)}>
+        <SoloImage style={{ height: imageHeight }} onPress={() => this.openImage(0)}>
           <StretchImage source={getImageSource(images[0].src, true)} big />
         </SoloImage>
       );
@@ -147,12 +151,12 @@ class Images extends React.Component<
       return (
         <Row style={{ justifyContent: 'space-between' }}>
           <Column style={{ paddingRight: UI_SIZES.spacing._LEGACY_tiny }}>
-            <SoloImage style={{ height }} onPress={() => this.openImage(0)}>
+            <SoloImage style={{ height: imageHeight }} onPress={() => this.openImage(0)}>
               <StretchImage source={getImageSource(images[0].src, false)} big />
             </SoloImage>
           </Column>
           <Column style={{ paddingLeft: UI_SIZES.spacing._LEGACY_tiny }}>
-            <SoloImage style={{ height }} onPress={() => this.openImage(1)}>
+            <SoloImage style={{ height: imageHeight }} onPress={() => this.openImage(1)}>
               <StretchImage source={getImageSource(images[1].src, false)} big />
             </SoloImage>
           </Column>
@@ -163,15 +167,15 @@ class Images extends React.Component<
       return (
         <Row style={{ justifyContent: 'space-between' }}>
           <Column style={{ paddingRight: UI_SIZES.spacing._LEGACY_tiny }}>
-            <SoloImage style={{ height }} onPress={() => this.openImage(0)}>
+            <SoloImage style={{ height: imageHeight }} onPress={() => this.openImage(0)}>
               <StretchImage source={getImageSource(images[0].src, false)} />
             </SoloImage>
           </Column>
           <Column style={{ paddingLeft: UI_SIZES.spacing._LEGACY_tiny }}>
-            <QuarterImage style={{ height: height / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(1)}>
+            <QuarterImage style={{ height: imageHeight / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(1)}>
               <StretchImage source={getImageSource(images[1].src, false)} />
             </QuarterImage>
-            <QuarterImage style={{ height: height / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(2)}>
+            <QuarterImage style={{ height: imageHeight / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(2)}>
               <StretchImage source={getImageSource(images[2].src, false)} />
             </QuarterImage>
           </Column>
@@ -181,22 +185,22 @@ class Images extends React.Component<
     return (
       <Row style={{ justifyContent: 'space-between' }}>
         <Column style={{ paddingRight: UI_SIZES.spacing._LEGACY_tiny }}>
-          <QuarterImage style={{ height: height / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(0)}>
+          <QuarterImage style={{ height: imageHeight / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(0)}>
             <StretchImage source={getImageSource(images[0].src, false)} />
           </QuarterImage>
-          <QuarterImage style={{ height: height / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(2)}>
+          <QuarterImage style={{ height: imageHeight / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(2)}>
             <StretchImage source={getImageSource(images[2].src, false)} />
           </QuarterImage>
         </Column>
         <Column style={{ paddingLeft: UI_SIZES.spacing._LEGACY_tiny }}>
-          <QuarterImage style={{ height: height / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(1)}>
+          <QuarterImage style={{ height: imageHeight / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(1)}>
             <StretchImage source={getImageSource(images[1].src, false)} />
           </QuarterImage>
-          <QuarterImage style={{ height: height / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(3)}>
+          <QuarterImage style={{ height: imageHeight / 2 - UI_SIZES.spacing._LEGACY_tiny }} onPress={() => this.openImage(3)}>
             <StretchImage source={getImageSource(images[3].src, false)} />
-            {images.length > 4 && <Overlay style={{ height: height / 2 - 2 }} onPress={() => this.openImage(3)} />}
+            {images.length > 4 && <Overlay style={{ height: imageHeight / 2 - 2 }} onPress={() => this.openImage(3)} />}
             {images.length > 4 && (
-              <BubbleView style={{ bottom: height / 4 - 15, justifyContent: 'center' }}>
+              <BubbleView style={{ bottom: imageHeight / 4 - 15, justifyContent: 'center' }}>
                 <SmallInverseText
                   style={{ marginHorizontal: -UI_SIZES.spacing.small, textAlign: 'center', lineHeight: undefined }}
                   onPress={() => this.openImage(3)}>
@@ -216,13 +220,11 @@ class Images extends React.Component<
 
   public render() {
     const { images, style } = this.props;
-    const width = UI_SIZES.screen.width;
-    const height = width * imageHeightRatio;
 
     if (images.length === 0) return <View />;
     return (
       <View style={style}>
-        <ContainerImage style={{ height }}>{this.images()}</ContainerImage>
+        <ContainerImage style={{ height: imageHeight }}>{this.images()}</ContainerImage>
       </View>
     );
   }

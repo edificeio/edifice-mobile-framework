@@ -24,7 +24,6 @@ import { updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
-import { isEmpty } from '~/framework/util/object';
 import { OldStorageFunctions } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.

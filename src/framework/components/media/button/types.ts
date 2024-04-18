@@ -1,6 +1,6 @@
 import { ImageURISource, ViewStyle } from 'react-native';
 
-import { AudienceParameter } from '~/framework/util/audience/types';
+import { AudienceParameter } from '~/framework/modules/core/audience/types';
 
 export interface IPlayerProps {
   type: 'audio' | 'video' | 'web';

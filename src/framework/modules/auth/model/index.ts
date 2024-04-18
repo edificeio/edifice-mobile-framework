@@ -412,18 +412,13 @@ export interface IActivationError extends Error {
   description?: string;
 }
 
-export function createActivationError<T extends object>(
-  type: string,
-  error: string,
-  description?: string,
-  cause?: Error,
-): IActivationError & T {
+export function createActivationError(type: string, error: string, description?: string, cause?: Error): IActivationError {
   const err: IActivationError = new global.Error('ACTIVATION: returned error', { cause }) as any;
   err.name = 'EACTIVATION';
   err.type = type;
   err.error = error;
   err.description = description;
-  return err as IActivationError & T;
+  return err as IActivationError;
 }
 
 export interface AuthUsernameCredential {
@@ -472,26 +467,14 @@ export interface IChangePasswordError extends Error {
   description?: string;
 }
 
-export function createChangePasswordError<T extends object>(
-  type: string,
-  error: string,
-  description?: string,
-  additionalData?: T,
-): IChangePasswordError & T {
-  const err: IChangePasswordError = new global.Error('CHANGE PWD: returned error') as any;
+export function createChangePasswordError(type: string, error: string, description?: string, cause?: Error): IChangePasswordError {
+  const err: IChangePasswordError = new global.Error('CHANGE PWD: returned error', { cause }) as any;
   err.name = 'ECHANGEPWD';
   err.type = type;
   err.error = error;
   err.description = description;
-  return { ...err, ...additionalData } as IChangePasswordError & T;
+  return err as IChangePasswordError;
 }
-
-export type LegalUrls = {
-  userCharter?: string;
-  cgu?: string;
-  personalDataProtection?: string;
-  cookies?: string;
-};
 
 /**
  * returns all the children in a single array.

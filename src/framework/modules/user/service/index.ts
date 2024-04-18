@@ -3,7 +3,7 @@ import moment from 'moment';
 import { AccountType } from '~/framework/modules/auth/model';
 import { HobbieItem, InfoPerson } from '~/framework/modules/user/model';
 import { hobbiesItems } from '~/framework/modules/user/screens/profile';
-import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetchJsonRelative } from '~/infra/fetchWithCache';
 
 interface BackendInfoPerson {
   id: string;
@@ -83,7 +83,7 @@ export const userService = {
     put: async (userId: string, body) => {
       const api = `/directory/userbook/${userId}`;
 
-      return signedFetchJson2(`${api}`, {
+      return signedFetchJsonRelative(`${api}`, {
         method: 'PUT',
         body,
       });

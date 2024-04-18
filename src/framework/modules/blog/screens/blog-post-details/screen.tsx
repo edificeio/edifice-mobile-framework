@@ -47,6 +47,7 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
+import { markViewAudience } from '~/framework/modules/core/audience';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { markViewAudience } from '~/framework/util/audience';
 import { openUrl } from '~/framework/util/linking';

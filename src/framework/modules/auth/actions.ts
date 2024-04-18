@@ -73,7 +73,7 @@ import {
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
 
-const MAX_AUTH_TIMEOUT = 15000;
+const MAX_AUTH_TIMEOUT = 30000;
 
 let loginCanceled = false;
 
@@ -888,7 +888,13 @@ function changePasswordAction(
       }
     } catch (e) {
       if ((e as IChangePasswordError).name === 'ECHANGEPWD') throw e;
-      else throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
+      else
+        throw createChangePasswordError(
+          'change password',
+          I18n.get('auth-changepassword-error-submit'),
+          undefined,
+          e instanceof global.Error ? e : undefined,
+        );
     }
 
     try {
