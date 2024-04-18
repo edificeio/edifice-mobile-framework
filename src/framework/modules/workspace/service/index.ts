@@ -172,7 +172,7 @@ const workspaceService = {
         body,
       });
     },
-    trash: async (session: AuthLoggedAccount, parentId: string, ids: string[]) => {
+    trash: async (session: AuthLoggedAccount, ids: string[], parentId?: string) => {
       const api = '/workspace/documents/trash';
       const body = JSON.stringify({ parentId, ids });
       return signedFetchJson(`${session?.platform.url}${api}`, {

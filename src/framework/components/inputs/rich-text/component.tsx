@@ -15,12 +15,25 @@ import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import { assertSession } from '~/framework/modules/auth/reducer';
 //import workspaceService from '~/framework/modules/workspace/service';
+import workspaceService from '~/framework/modules/workspace/service';
 import { LocalFile } from '~/framework/util/fileHandler';
 
 import RichEditor from './editor/RichEditor';
 import styles from './styles';
 import RichToolbar from './toolbar/component';
 import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
+
+function formatBytes(bytes, decimals = 2) {
+  if (!+bytes) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
 
 const RichEditorForm = (props: RichEditorFormProps) => {
   const headerHeight = useHeaderHeight();
@@ -42,25 +55,32 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const [files, setFiles] = React.useState<UploadFile[]>([]);
 
-  const updateFileStatus = (index: number, status: UploadStatus) => {
-    if (index >= files.length) return;
-    const newFiles = files;
-    newFiles[index].status = status;
-    setFiles(newFiles);
+  const updateFileStatus = (file: LocalFile, status: UploadStatus, idWorkspace?: string) => {
+    // if (index >= files.length) return;
+    // const newFiles = files;
+    // newFiles[index].status = status;
+    // setFiles(newFiles);
+    setFiles([{ localFile: file, status, idWorkspace }]);
   };
 
   const addFile = (file: LocalFile) => {
-    const filesCount = files.length;
+    //const filesCount = files.length;
     setFiles(current => [...current, { localFile: file, status: UploadStatus.PENDING }]);
     // TODO V1: Manage file upload
-    /*workspaceService.file
+    workspaceService.file
       .uploadFile(session, file, props.uploadParams)
-      .then(() => {
-        updateFileStatus(filesCount, UploadStatus.OK);
+      .then(resp => {
+        const idWorkspace = resp.df.id;
+        console.log(resp.df.id, 'response');
+        console.log('ok', file);
+        //updateFileStatus(filesCount, UploadStatus.OK);
+        updateFileStatus(file, UploadStatus.OK, idWorkspace);
       })
-      .catch(() => {
-        updateFileStatus(filesCount, UploadStatus.KO);
-      });*/
+      .catch(e => {
+        console.log(e, 'error');
+        //updateFileStatus(filesCount, UploadStatus.KO);
+        updateFileStatus(file, UploadStatus.KO);
+      });
   };
 
   const handleAddPic = async (pic: ImagePicked) => {
@@ -96,7 +116,11 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const handleAddFilesResultsDismissed = async () => {
     // TODO V1: Show confirmation box
     // TODO V1: delete all uploaded files
-    resetFiles(); // If needed
+    workspaceService.files.trash(
+      session,
+      files.map(f => f.idWorkspace!),
+    );
+    resetFiles();
     focusRichText();
   };
 
@@ -112,6 +136,9 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleAddFiles = () => {
     // TODO V1: Insert Right HTML info editor for files with status = UploadStatus.OK
+    richText.current?.insertHTML(
+      `<img class="custom-image" src="/workspace/document/${files[0].idWorkspace}" width="350" height="NaN">`,
+    );
     hideAddFilesResults();
   };
 
@@ -142,11 +169,16 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             <View style={styles.addFilesResultsFile}>
               <SmallText>{file.localFile.filename}</SmallText>
               <CaptionText>
-                {file.localFile.filetype} - {file.localFile.filesize} - {file.status}
+                {file.localFile.filetype} - {formatBytes(file.localFile.filesize)}
               </CaptionText>
             </View>
             {fileStatusIcon(index, file.status)}
-            <IconButton icon="ui-close" color={theme.palette.grey.black} action={() => handleRemoveFile(index)} />
+            <IconButton
+              icon="ui-close"
+              style={{ marginLeft: UI_SIZES.spacing.small }}
+              color={theme.palette.grey.black}
+              action={() => handleRemoveFile(index)}
+            />
           </View>
         ))}
         <PrimaryButton style={styles.addButton} text={`Ajouter (${files.length})`} action={handleAddFiles} />
@@ -174,7 +206,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
-    await galleryAction({ callback: handleAddPic, multiple: true }).action();
+    await galleryAction({ callback: handleAddPic, multiple: false }).action();
     showAddFilesResults();
   };
 

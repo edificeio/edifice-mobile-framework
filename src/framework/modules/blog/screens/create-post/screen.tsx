@@ -25,7 +25,6 @@ import {
 import { startLoadNotificationsAction } from '~/framework/modules/timeline/actions';
 import { timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { SyncedFile } from '~/framework/util/fileHandler';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
@@ -166,8 +165,8 @@ const mapStateToProps: (s: IGlobalState) => BlogCreatePostScreenDataProps = s =>
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogCreatePostScreenEventProps = dispatch => ({
-  handleSendBlogPost: async (blog: Blog, title: string, content: string, uploadedPostImages?: SyncedFile[]) => {
-    return (await dispatch(sendBlogPostAction(blog, title, content, uploadedPostImages))) as unknown as string | undefined;
+  handleSendBlogPost: async (blog: Blog, title: string, content: string) => {
+    return (await dispatch(sendBlogPostAction(blog, title, content))) as unknown as string | undefined;
   },
   handleInitTimeline: async () => {
     await dispatch(startLoadNotificationsAction());

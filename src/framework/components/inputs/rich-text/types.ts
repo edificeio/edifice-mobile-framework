@@ -19,4 +19,5 @@ export enum UploadStatus {
 export interface UploadFile {
   localFile: LocalFile;
   status: UploadStatus;
+  idWorkspace?: string;
 }
