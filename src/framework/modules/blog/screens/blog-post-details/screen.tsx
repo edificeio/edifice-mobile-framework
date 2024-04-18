@@ -49,7 +49,6 @@ import {
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { markViewAudience } from '~/framework/modules/core/audience';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { markViewAudience } from '~/framework/util/audience';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';

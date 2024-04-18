@@ -3,7 +3,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
-import { AudienceParameter } from '~/framework/util/audience/types';
 
 export enum MediaType {
   AUDIO = 'audio',
