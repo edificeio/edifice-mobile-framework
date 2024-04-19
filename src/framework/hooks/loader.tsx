@@ -7,7 +7,7 @@ import { RefreshControl, ScrollView, ScrollViewProps } from 'react-native';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 
-interface ContentLoaderProps {
+export interface ContentLoaderProps {
   initialLoadingState?: LoadingState;
   loadContent: () => Promise<any>;
   renderContent: (refreshControl: ScrollViewProps['refreshControl']) => React.ReactElement;

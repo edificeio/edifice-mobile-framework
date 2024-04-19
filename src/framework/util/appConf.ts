@@ -3,6 +3,7 @@
  * AppConf Loader
  */
 import type { ImageStyle, PlatformOSType } from 'react-native';
+import RNConfigReader from 'react-native-config-reader';
 
 import AppConfValues from '~/app/appconf';
 import { I18n } from '~/app/i18n';
@@ -197,6 +198,11 @@ export class AppConf {
 
   get zendeskSections() {
     return this.zendesk?.sections;
+  }
+
+  // Determine wether the app is in dev mode or alpha
+  get isDevOrAlpha() {
+    return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
   }
 
   constructor(opts: IAppConfDeclaration) {
