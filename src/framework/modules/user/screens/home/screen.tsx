@@ -1,6 +1,7 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import LottieView from 'lottie-react-native';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
@@ -19,7 +20,7 @@ import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sh
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
-import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
+import { HeadingSText, HeadingXSText, HeadingXXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
@@ -602,6 +603,8 @@ useVersionDetailsFeature.versionType = RNConfigReader.BundleVersionType as strin
 useVersionDetailsFeature.versionOverride = RNConfigReader.BundleVersionOverride as string;
 useVersionFeature.versionNumber = DeviceInfo.getVersion();
 
+const animationSpaceSource = require('ASSETS/animations/space/card.json');
+
 /**
  * UserHomeScreen component
  * @param props
@@ -647,6 +650,19 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
           {avatarButton}
           {profileMenu}
         </View>
+        <TouchableOpacity
+          style={styles.space}
+          onPress={() => {
+            props.navigation.navigate(userRouteNames.space, {});
+          }}>
+          <LottieView source={animationSpaceSource} autoPlay loop={false} speed={0.6} style={styles.spaceAnim} />
+          <View style={styles.spaceBadge}>
+            <HeadingXXSText style={styles.spaceBadgeText}>{I18n.get('user-page-spacebadge')}</HeadingXXSText>
+          </View>
+
+          <HeadingXSText style={styles.spaceText}>{I18n.get('user-page-spacetext')}</HeadingXSText>
+          <NamedSVG name="space-edi" style={styles.spaceSvg} />
+        </TouchableOpacity>
         {accountMenu}
         <View style={styles.sectionBottom}>
           {accountsButton}

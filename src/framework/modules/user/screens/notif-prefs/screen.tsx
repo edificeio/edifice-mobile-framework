@@ -10,8 +10,7 @@ import { BodyBoldText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import styles from './styles';
-import type { UserNotifPrefsScreenDispatchProps, UserNotifPrefsScreenPrivateProps, UserNotifPrefsScreenState } from './types';
+import type { UserNotifPrefsScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
