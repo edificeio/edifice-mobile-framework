@@ -9,7 +9,7 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth.ts';
+import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
 
 import { actions, messages } from './const';
 import { createHTML } from './editor';
@@ -149,10 +149,10 @@ export default class RichEditor extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps) {
     const { editorStyle, disabled, placeholder } = this.props;
-    if (prevProps.editorStyle !== editorStyle) {
-      editorStyle && this.setContentStyle(editorStyle);
+    if (editorStyle && prevProps.editorStyle !== editorStyle) {
+      this.setContentStyle(editorStyle);
     }
     if (disabled !== prevProps.disabled) {
       this.setDisable(disabled);
@@ -171,11 +171,11 @@ export default class RichEditor extends Component {
     return url.startsWith('/') ? this.pfUrl + url : url;
   }
 
-  _onKeyboardWillShow(event) {
+  _onKeyboardWillShow() {
     this._keyOpen = true;
   }
 
-  _onKeyboardWillHide(event) {
+  _onKeyboardWillHide() {
     this._keyOpen = false;
   }
 
@@ -231,6 +231,7 @@ export default class RichEditor extends Component {
           console.log('FROM EDIT:', ...data);
           break;
         case messages.SELECTION_CHANGE:
+          // eslint-disable-next-line no-case-declarations
           const items = message.data;
           that.selectionChangeListeners.map(listener => {
             listener(items);
@@ -264,8 +265,9 @@ export default class RichEditor extends Component {
           that.setWebHeight(data);
           break;
         case messages.OFFSET_Y:
-          const offsetY = Number.parseInt(Number.parseInt(data) + that.layout.y || 0);
-          offsetY > 0 && onCursorPosition(offsetY);
+          // eslint-disable-next-line no-case-declarations
+          const offsetY = Number.parseInt(Number.parseInt(data, 10) + that.layout.y || 0, 10);
+          if (offsetY > 0) onCursorPosition(offsetY);
           break;
         case messages.AUDIO_TOUCHED:
           that._onAudioTouched(that._getAbsoluteUrl(data));
@@ -295,7 +297,7 @@ export default class RichEditor extends Component {
       if (!this.unmount && useContainer && maxHeight >= initialHeight) {
         this.setState({ height: maxHeight });
       }
-      onHeightChange && onHeightChange(height);
+      if (onHeightChange) onHeightChange(height);
     }
   }
 
@@ -316,6 +318,7 @@ export default class RichEditor extends Component {
     const { html: viewHTML, oneSessionId } = that.state;
     const js = `document.cookie="oneSessionId=${oneSessionId}"; true;`;
     return (
+      // eslint-disable-next-line react/jsx-filename-extension
       <>
         <WebView
           injectedJavaScript={js}
@@ -335,7 +338,6 @@ export default class RichEditor extends Component {
           domStorageEnabled={false}
           bounces={false}
           javaScriptEnabled
-          originWhitelist={['*']}
           source={viewHTML}
           onLoad={that.init}
           onShouldStartLoadWithRequest={() => !that.htmlLoaded}
@@ -408,7 +410,7 @@ export default class RichEditor extends Component {
   showAndroidKeyboard() {
     const that = this;
     if (Platform.OS === 'android') {
-      !that._keyOpen && that._input.focus();
+      if (!that._keyOpen) that._input.focus();
       that.webviewBridge?.requestFocus?.();
     }
   }
@@ -484,7 +486,8 @@ export default class RichEditor extends Component {
   }
 
   dismissKeyboard() {
-    this._focus ? this.blurContentEditor() : Keyboard.dismiss();
+    if (this._focus) this.blurContentEditor();
+    else Keyboard.dismiss();
   }
 
   get isKeyboardOpen() {
@@ -494,12 +497,12 @@ export default class RichEditor extends Component {
   init() {
     const that = this;
     const { initialFocus, initialContentHTML, placeholder, editorInitializedCallback, disabled } = that.props;
-    initialContentHTML && that.setContentHTML(initialContentHTML);
-    placeholder && that.setPlaceholder(placeholder);
+    if (initialContentHTML) that.setContentHTML(initialContentHTML);
+    if (placeholder) that.setPlaceholder(placeholder);
     that.setDisable(disabled);
     editorInitializedCallback();
     // initial request focus
-    initialFocus && !disabled && that.focusContentEditor();
+    if (initialFocus && !disabled) that.focusContentEditor();
     // no visible ?
     that.sendAction(actions.init);
   }
