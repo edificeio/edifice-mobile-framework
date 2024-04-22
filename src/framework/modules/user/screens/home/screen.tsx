@@ -2,6 +2,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import LottieView from 'lottie-react-native';
+import moment from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
@@ -627,6 +628,14 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
     }, []),
   );
 
+  const spaceIsVisible = () => {
+    if (appConf.space.userType !== session?.user.type) return false;
+    if (appConf.space.exceptionProject.includes(session.platform.name)) return false;
+    if (moment().isAfter(appConf.space.expirationDate)) return false;
+    if (appConf.space.lang !== I18n.getLanguage()) return false;
+    return true;
+  };
+
   const navBarDecoration = useCurvedNavBarFeature();
   const avatarButton = useProfileAvatarFeature(session);
   const profileMenu = useProfileMenuFeature(session);
@@ -650,19 +659,21 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
           {avatarButton}
           {profileMenu}
         </View>
-        <TouchableOpacity
-          style={styles.space}
-          onPress={() => {
-            props.navigation.navigate(userRouteNames.space, {});
-          }}>
-          <LottieView source={animationSpaceSource} autoPlay loop={false} speed={0.6} style={styles.spaceAnim} />
-          <View style={styles.spaceBadge}>
-            <HeadingXXSText style={styles.spaceBadgeText}>{I18n.get('user-page-spacebadge')}</HeadingXXSText>
-          </View>
+        {spaceIsVisible() ? (
+          <TouchableOpacity
+            style={styles.space}
+            onPress={() => {
+              props.navigation.navigate(userRouteNames.space, {});
+            }}>
+            <LottieView source={animationSpaceSource} autoPlay loop={false} speed={0.6} style={styles.spaceAnim} />
+            <View style={styles.spaceBadge}>
+              <HeadingXXSText style={styles.spaceBadgeText}>{I18n.get('user-page-spacebadge')}</HeadingXXSText>
+            </View>
+            <HeadingXSText style={styles.spaceText}>{I18n.get('user-page-spacetext')}</HeadingXSText>
+            <NamedSVG name="space-edi" style={styles.spaceSvg} />
+          </TouchableOpacity>
+        ) : null}
 
-          <HeadingXSText style={styles.spaceText}>{I18n.get('user-page-spacetext')}</HeadingXSText>
-          <NamedSVG name="space-edi" style={styles.spaceSvg} />
-        </TouchableOpacity>
         {accountMenu}
         <View style={styles.sectionBottom}>
           {accountsButton}
