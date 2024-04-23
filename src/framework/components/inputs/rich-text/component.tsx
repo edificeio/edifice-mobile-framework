@@ -8,32 +8,20 @@ import DefaultButton from '~/framework/components/buttons/default';
 import IconButton from '~/framework/components/buttons/icon';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import FlatList from '~/framework/components/list/flat-list';
 import { ImagePicked, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import { assertSession } from '~/framework/modules/auth/reducer';
-//import workspaceService from '~/framework/modules/workspace/service';
 import workspaceService from '~/framework/modules/workspace/service';
-import { LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
 
 import RichEditor from './editor/RichEditor';
 import styles from './styles';
 import RichToolbar from './toolbar/component';
 import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
-
-function formatBytes(bytes, decimals = 2) {
-  if (!+bytes) return '0 Bytes';
-
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-}
 
 const RichEditorForm = (props: RichEditorFormProps) => {
   const headerHeight = useHeaderHeight();
@@ -55,38 +43,49 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const [files, setFiles] = React.useState<UploadFile[]>([]);
 
-  const updateFileStatus = (file: LocalFile, status: UploadStatus, idWorkspace?: string) => {
-    // if (index >= files.length) return;
-    // const newFiles = files;
-    // newFiles[index].status = status;
-    // setFiles(newFiles);
-    setFiles([{ localFile: file, status, idWorkspace }]);
+  // const updateFileStatus = (index: number, status: UploadStatus, idWorkspace?: string) => {
+  //   console.log(index, status, 'test');
+  //   const newFiles = files;
+  //   console.log(newFiles, 'newFiles');
+  //   // newFiles[index].status = status;
+  //   // newFiles[index].idWorkspace = idWorkspace;
+  //   setFiles(newFiles);
+  // };
+
+  const addFile = async (file: LocalFile, index: number, filesArray: UploadFile[]) => {
+    try {
+      const resp = await workspaceService.file.uploadFile(session, file, props.uploadParams);
+      const idWorkspace = resp.df.id;
+
+      const newFiles = filesArray.map((fileItem, i) =>
+        i === index ? { ...fileItem, status: UploadStatus.OK, idWorkspace } : fileItem,
+      );
+      setFiles(newFiles);
+    } catch (error) {
+      console.error("Une erreur s'est produite lors du téléchargement du fichier :", error);
+
+      const newFiles = filesArray.map((fileItem, i) => (i === index ? { ...fileItem, status: UploadStatus.KO } : fileItem));
+      setFiles(newFiles);
+    }
   };
 
-  const addFile = (file: LocalFile) => {
-    //const filesCount = files.length;
-    setFiles(current => [...current, { localFile: file, status: UploadStatus.PENDING }]);
-    // TODO V1: Manage file upload
-    workspaceService.file
-      .uploadFile(session, file, props.uploadParams)
-      .then(resp => {
-        const idWorkspace = resp.df.id;
-        console.log(resp.df.id, 'response');
-        console.log('ok', file);
-        //updateFileStatus(filesCount, UploadStatus.OK);
-        updateFileStatus(file, UploadStatus.OK, idWorkspace);
-      })
-      .catch(e => {
-        console.log(e, 'error');
-        //updateFileStatus(filesCount, UploadStatus.KO);
-        updateFileStatus(file, UploadStatus.KO);
-      });
-  };
+  const handleAddPic = async (pics: ImagePicked[]) => {
+    try {
+      const picsFormatted = pics.map(
+        pic =>
+          ({
+            ...imagePickedToLocalFile(pic),
+            filesize: pic.fileSize,
+          }) as LocalFile,
+      );
 
-  const handleAddPic = async (pic: ImagePicked) => {
-    const file = imagePickedToLocalFile(pic);
-    file.filesize = pic.fileSize;
-    addFile(file);
+      const newFiles = picsFormatted.map(pic => ({ localFile: pic, status: UploadStatus.PENDING }));
+      setFiles(newFiles);
+
+      await Promise.all(picsFormatted.map((pic, index) => addFile(pic, index, newFiles)));
+    } catch (error) {
+      console.error("Une erreur s'est produite lors du traitement des images :", error);
+    }
   };
 
   const handleRemoveFile = async index => {
@@ -156,31 +155,34 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const addFilesResults = () => {
     return (
       <BottomSheetModal ref={addFilesResultsRef} onDismiss={handleAddFilesResultsDismissed}>
-        {files.map((file, index) => (
-          <View key={index} style={styles.addFilesResultsItem}>
-            <View style={styles.addFilesResultsType}>
-              <NamedSVG
-                name="ui-image"
-                height={UI_SIZES.elements.icon.small}
-                width={UI_SIZES.elements.icon.small}
-                fill={theme.palette.grey.black}
+        <FlatList
+          data={files}
+          renderItem={({ item, index }) => (
+            <View key={index} style={styles.addFilesResultsItem}>
+              <View style={styles.addFilesResultsType}>
+                <NamedSVG
+                  name="ui-image"
+                  height={UI_SIZES.elements.icon.small}
+                  width={UI_SIZES.elements.icon.small}
+                  fill={theme.palette.grey.black}
+                />
+              </View>
+              <View style={styles.addFilesResultsFile}>
+                <SmallText>{item.localFile.filename}</SmallText>
+                <CaptionText>
+                  {item.localFile.filetype} - {formatBytes(item.localFile.filesize)}
+                </CaptionText>
+              </View>
+              {fileStatusIcon(index, item.status)}
+              <IconButton
+                icon="ui-close"
+                style={{ marginLeft: UI_SIZES.spacing.small }}
+                color={theme.palette.grey.black}
+                action={() => handleRemoveFile(index)}
               />
             </View>
-            <View style={styles.addFilesResultsFile}>
-              <SmallText>{file.localFile.filename}</SmallText>
-              <CaptionText>
-                {file.localFile.filetype} - {formatBytes(file.localFile.filesize)}
-              </CaptionText>
-            </View>
-            {fileStatusIcon(index, file.status)}
-            <IconButton
-              icon="ui-close"
-              style={{ marginLeft: UI_SIZES.spacing.small }}
-              color={theme.palette.grey.black}
-              action={() => handleRemoveFile(index)}
-            />
-          </View>
-        ))}
+          )}
+        />
         <PrimaryButton style={styles.addButton} text={`Ajouter (${files.length})`} action={handleAddFiles} />
       </BottomSheetModal>
     );
@@ -206,7 +208,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
-    await galleryAction({ callback: handleAddPic, multiple: false }).action();
+    await galleryAction({ callback: handleAddPic, multiple: true }).action(true);
     showAddFilesResults();
   };
 

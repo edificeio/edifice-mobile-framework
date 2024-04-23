@@ -9,22 +9,28 @@ import { assertPermissions } from '~/framework/util/permissions';
 import { ImagePicked, MenuPickerActionProps } from './types';
 
 export default function galleryAction(props: MenuPickerActionProps & { multiple?: boolean; synchrone?: boolean }) {
-  const imageCallback = async (images: LocalFile[]) => {
+  const imageCallback = async (images: LocalFile[], inRichEditor: boolean = false) => {
     try {
-      for (const img of images) {
-        const imgFormatted = {
-          ...img.nativeInfo,
-          ...img,
-        };
-        if (props.synchrone) await props.callback!(imgFormatted as ImagePicked);
-        else props.callback!(imgFormatted as ImagePicked);
+      if (inRichEditor) {
+        const imgsForatted = images.map(img => ({ ...img.nativeInfo, ...img }));
+        if (props.synchrone) await props.callback!(imgsForatted as ImagePicked[]);
+        else props.callback!(imgsForatted as ImagePicked[]);
+      } else {
+        for (const img of images) {
+          const imgFormatted = {
+            ...img.nativeInfo,
+            ...img,
+          };
+          if (props.synchrone) await props.callback!(imgFormatted as ImagePicked);
+          else props.callback!(imgFormatted as ImagePicked);
+        }
       }
     } catch {
       /* empty */
     }
   };
 
-  const action = async () => {
+  const action = async (inRichEditor = false) => {
     try {
       await assertPermissions('galery.read');
       LocalFile.pick({ source: 'galery', multiple: props.multiple }).then(lf => {
@@ -37,7 +43,7 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
           });
         }
         images = lf.filter(item => !item.filetype.startsWith('video/'));
-        return imageCallback(images);
+        return imageCallback(images, inRichEditor);
       });
     } catch {
       Alert.alert(
