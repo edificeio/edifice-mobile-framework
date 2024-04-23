@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-04-23 09:49:42",
-  "notes": "feat(space): MB-2656 , reset animation when focus home screen\nrelease: 1.12.1-alpha.2(1120102)",
-  "version": "1.12.1-alpha.3(1120103)"
+  "last": "2024-04-24 01:31:20",
+  "notes": "feat(space): MB-2669 , change space event in timeline screen\nfeat(zendesk): MB-2667, Online help available only for authorized languages\nchore(secu): Ignore src/platfoms from public sources\nchore(secu): Remove platforms infos from public sources\nfeat(zendesk): B-2664, Make displayed sections configurable per platform\nrelease: 1.12.1-alpha.3(1120103)",
+  "version": "1.12.1-alpha.4(1120104)"
 }

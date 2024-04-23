@@ -5,7 +5,7 @@
 	<key>BundleVersionOverride</key>
 	<string>openent/prod</string>
 	<key>BundleVersionType</key>
-	<string>alpha.3</string>
+	<string>alpha.4</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr_FR</string>
 	<key>CFBundleDisplayName</key>
@@ -25,7 +25,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>1120103</string>
+	<string>1120104</string>
 	<key>FirebaseInAppMessagingAutomaticDataCollectionEnabled</key>
 	<true/>
 	<key>LSApplicationQueriesSchemes</key>
