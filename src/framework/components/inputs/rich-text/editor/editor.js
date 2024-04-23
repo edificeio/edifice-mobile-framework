@@ -122,7 +122,7 @@ function createHTML(options = {}) {
     <style>
         ${fontFaces}
         * {outline: 0px solid transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);-webkit-touch-callout: none;box-sizing: border-box;}
-        html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%;}    
+        html, body { margin: 0; padding: 0;font-family: Font; font-size:1em; height: 100%;}
         body { overflow-y: hidden; -webkit-overflow-scrolling: touch;background-color: ${theme.palette.grey.white};}
         .content {font-family: Font;color: ${theme.palette.grey.black}; width: 100%;${
           !useContainer ? 'height:100%;' : ''
@@ -428,6 +428,7 @@ function createHTML(options = {}) {
             line: { result: function() { return exec('insertHorizontalRule'); }},
             redo: { state: function() { return queryCommandEnabled('redo'); }, result: function() { return exec('redo'); }},
             undo: { state: function() { return queryCommandEnabled('undo'); }, result: function() { return exec('undo'); }},
+            selection: { state: function() { return window.getSelection().type === 'Range'; }},
             indent: { result: function() { return exec('indent'); }},
             outdent: { result: function() { return exec('outdent'); }},
             outdent: { result: function() { return exec('outdent'); }},

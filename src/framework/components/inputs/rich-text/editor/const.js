@@ -1,8 +1,6 @@
 export const actions = {
   content: 'content',
-
   updateHeight: 'UPDATE_HEIGHT',
-
   setBold: 'bold',
   setItalic: 'italic',
   setUnderline: 'underline',
@@ -58,6 +56,7 @@ export const actions = {
   setEditorHeight: 'SET_EDITOR_HEIGHT',
   setFooterHeight: 'SET_FOOTER_HEIGHT',
   setPlatform: 'SET_PLATFORM',
+  selection: 'selection',
 };
 
 export const messages = {
