@@ -119,6 +119,11 @@ export const HeadingXSText = styled.Text({
   ...TextSizeStyle.Medium,
 });
 
+export const HeadingXXSText = styled.Text({
+  ...HeadingFontStyle.Bold,
+  ...TextSizeStyle.Small,
+});
+
 /**
  * Body Text
  */

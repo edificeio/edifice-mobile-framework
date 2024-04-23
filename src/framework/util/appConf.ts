@@ -6,6 +6,7 @@ import type { ImageStyle, PlatformOSType } from 'react-native';
 
 import AppConfValues from '~/app/appconf';
 import type { PictureProps } from '~/framework/components/picture';
+import { AccountType } from '~/framework/modules/auth/model';
 
 // Platforms ======================================================================================
 
@@ -102,6 +103,12 @@ export interface IAppConfDeclaration {
     showDiscoveryClass?: boolean;
     showAppName?: boolean;
   };
+  space?: {
+    expirationDate?: string;
+    userType?: AccountType;
+    lang?: string;
+    exceptionProject?: string[];
+  };
   platforms: IPlatformAccessDeclaration[];
   webviewIdentifier: string;
   zendesk?: {
@@ -122,6 +129,13 @@ export class AppConf {
     showDiscoverLink: { [p in PlatformOSType]?: boolean };
     showDiscoveryClass: boolean;
     showAppName: boolean;
+  };
+
+  space: {
+    expirationDate: string;
+    userType: AccountType;
+    lang: string;
+    exceptionProject: string[];
   };
 
   platforms: Platform[];
@@ -183,7 +197,15 @@ export class AppConf {
     }
     onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
+    const space: Partial<AppConf['space']> = {
+      expirationDate: opts.space?.expirationDate ?? undefined,
+      userType: opts.space?.userType ?? undefined,
+      lang: opts.space?.lang ?? undefined,
+      exceptionProject: opts.space?.exceptionProject ?? [],
+    };
+
     this.onboarding = onboarding as AppConf['onboarding'];
+    this.space = space as AppConf['space'];
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
     this.webviewIdentifier = opts.webviewIdentifier;
     this.zendesk = opts.zendesk

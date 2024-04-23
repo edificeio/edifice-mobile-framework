@@ -160,6 +160,7 @@ export function Carousel(props: ICarouselProps) {
   const { navigation, route } = props;
   const startIndex = route.params.startIndex ?? 0;
   const data = React.useMemo(() => route.params.data ?? [], [route]);
+
   const dataAsImages = React.useMemo(
     () =>
       data.map(d => {
