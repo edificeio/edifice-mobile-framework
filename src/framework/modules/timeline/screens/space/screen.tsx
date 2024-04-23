@@ -8,19 +8,19 @@ import PrimaryButton from '~/framework/components/buttons/primary';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
-import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
-import { UserSpaceScreenPrivateProps } from './types';
+import { TimelineSpaceScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.space>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<ITimelineNavigationParams, typeof timelineRouteNames.space>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -33,7 +33,7 @@ export const computeNavBar = ({
 const animationSource = require('ASSETS/animations/space/modal.json');
 const pic = require('ASSETS/images/space/person.png');
 
-function UserSpaceScreen(props: UserSpaceScreenPrivateProps) {
+function TimelineSpaceScreen(props: TimelineSpaceScreenPrivateProps) {
   const onPressButton = () => {
     Trackers.trackEvent('onboarding', 'Inscription classe découverte');
     openUrl(I18n.get('user-space-buttonurl'));
@@ -60,4 +60,4 @@ function UserSpaceScreen(props: UserSpaceScreenPrivateProps) {
   );
 }
 
-export default UserSpaceScreen;
+export default TimelineSpaceScreen;

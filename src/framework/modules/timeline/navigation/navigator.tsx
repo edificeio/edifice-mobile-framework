@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/timeline/module-config';
+import TimelineSpaceScreen, { computeNavBar as spaceNavBar } from '~/framework/modules/timeline/screens/space';
 import TimelineFiltersScreen, {
   computeNavBar as TimelineFiltersNavBar,
 } from '~/framework/modules/timeline/screens/timeline-filters-screen';
@@ -23,8 +24,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={TimelineFiltersNavBar}
           initialParams={undefined}
         />
+        <Stack.Screen
+          name={timelineRouteNames.space}
+          component={TimelineSpaceScreen}
+          options={spaceNavBar}
+          initialParams={undefined}
+        />
       </Stack.Group>
     </>
   ));
 
-setModalModeForRoutes([timelineRouteNames.Filters]);
+setModalModeForRoutes([timelineRouteNames.Filters, timelineRouteNames.space]);
