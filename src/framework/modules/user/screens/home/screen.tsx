@@ -619,9 +619,12 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   // Manages focus to send to others features in this screen.
   // We must store it in a Ref because of async operations.
   const focusedRef = React.useRef(useIsFocused());
+  const animationSpaceRef = React.useRef<LottieView>(null);
+
   useFocusEffect(
     React.useCallback(() => {
       focusedRef.current = true;
+      animationSpaceRef.current?.play();
       return () => {
         focusedRef.current = false;
       };
@@ -665,7 +668,14 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
             onPress={() => {
               props.navigation.navigate(userRouteNames.space, {});
             }}>
-            <LottieView source={animationSpaceSource} autoPlay loop={false} speed={0.6} style={styles.spaceAnim} />
+            <LottieView
+              ref={animationSpaceRef}
+              source={animationSpaceSource}
+              autoPlay
+              loop={false}
+              speed={0.6}
+              style={styles.spaceAnim}
+            />
             <View style={styles.spaceBadge}>
               <HeadingXXSText style={styles.spaceBadgeText}>{I18n.get('user-page-spacebadge')}</HeadingXXSText>
             </View>
