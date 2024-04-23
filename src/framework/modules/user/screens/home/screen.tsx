@@ -278,20 +278,17 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const openHelpCenter = async () => {
-    try {
-      await zendesk?.openHelpCenter({
-        labels: [
-          /* "test" */
-        ],
-        groupType: 'section',
-        groupIds: [
-          360005007020, 9624832797212, 4402870577554, 4402870581394, 4402870571666, 4402567155090, 10963313910428, 12096006889372,
-        ],
-        showContactOptions: false,
-      });
-    } catch (error) {
-      Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
-    }
+    if (showHelpCenter)
+      try {
+        await zendesk?.openHelpCenter({
+          labels: [],
+          groupType: 'section',
+          groupIds: appConf.zendeskSections!,
+          showContactOptions: false,
+        });
+      } catch (error) {
+        Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
+      }
   };
 
   //

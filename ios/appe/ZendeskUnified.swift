@@ -236,12 +236,12 @@ class ZendeskUnified: NSObject {
       }
       let helpCenterController = HelpCenterUi.buildHelpCenterOverviewUi(withConfigs: [articleUIConfig,helpCenterConfig])
       let navigationController = UINavigationController(rootViewController: helpCenterController)
+      UINavigationBar.appearance().tintColor = .white
       if #available(iOS 13.0, *) {
           let appearance = UINavigationBarAppearance()
           appearance.backgroundColor = CommonTheme.currentTheme.primaryColor
           appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
           appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-          UINavigationBar.appearance().tintColor = .white
           UINavigationBar.appearance().standardAppearance = appearance
           UINavigationBar.appearance().compactAppearance = appearance
           UINavigationBar.appearance().scrollEdgeAppearance = appearance
@@ -249,9 +249,8 @@ class ZendeskUnified: NSObject {
             UINavigationBar.appearance().compactScrollEdgeAppearance = appearance
           }
       } else {
-          UINavigationBar.appearance().tintColor = .white
-          UINavigationBar.appearance().barTintColor = .purple
-          UINavigationBar.appearance().isTranslucent = false
+        UINavigationBar.appearance().barTintColor = CommonTheme.currentTheme.primaryColor
+        UINavigationBar.appearance().isTranslucent = false
       }
       UIApplication.shared.keyWindow?.rootViewController?.present(navigationController, animated: true, completion: nil)
     }

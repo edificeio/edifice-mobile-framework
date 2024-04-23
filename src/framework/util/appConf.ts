@@ -114,6 +114,7 @@ export interface IAppConfDeclaration {
   zendesk?: {
     appId?: string;
     clientId?: string;
+    sections?: number[];
     zendeskUrl?: string;
   };
 }
@@ -145,6 +146,7 @@ export class AppConf {
   zendesk?: {
     appId?: string;
     clientId?: string;
+    sections?: number[];
     zendeskUrl?: string;
   };
 
@@ -179,7 +181,11 @@ export class AppConf {
   }
 
   get zendeskEnabled() {
-    return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.zendeskUrl;
+    return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.sections && this.zendesk.zendeskUrl;
+  }
+
+  get zendeskSections() {
+    return this.zendesk?.sections;
   }
 
   constructor(opts: IAppConfDeclaration) {
@@ -212,6 +218,7 @@ export class AppConf {
       ? {
           appId: opts.zendesk?.appId,
           clientId: opts.zendesk?.clientId,
+          sections: opts.zendesk?.sections,
           zendeskUrl: opts.zendesk?.zendeskUrl,
         }
       : undefined;
