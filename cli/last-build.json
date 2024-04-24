@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-04-24 01:31:20",
-  "notes": "feat(space): MB-2669 , change space event in timeline screen\nfeat(zendesk): MB-2667, Online help available only for authorized languages\nchore(secu): Ignore src/platfoms from public sources\nchore(secu): Remove platforms infos from public sources\nfeat(zendesk): B-2664, Make displayed sections configurable per platform\nrelease: 1.12.1-alpha.3(1120103)",
-  "version": "1.12.1-alpha.4(1120104)"
+  "last": "2024-04-25 01:41:51",
+  "notes": "feat(zendesk): Remove I18n dependance from ZendeskProvider at Startup\nfeat: MB-2658 add discovery-class hint text\nfix: MB-2670 remove zendesk init language dependency\nrefacto: Review log statement\nRevert \"fix(wayf): MB-2276, Move login with SAML2 token after ENT redirection\"\nfix(collaborativewall): parse old resourceUrls\nfeat: MB-2525, MB-2526 create collaborativewall module + web-resource-viewer component\nfeat(space): MB-2669 , reset animation when focus screen\nrelease: 1.12.1-alpha.4(1120104)",
+  "version": "1.12.1-alpha.5(1120105)"
 }
