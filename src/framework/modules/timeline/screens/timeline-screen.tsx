@@ -1,9 +1,7 @@
 import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import LottieView from 'lottie-react-native';
-import moment from 'moment';
 import * as React from 'react';
-import { Alert, ListRenderItemInfo, RefreshControl, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -12,15 +10,14 @@ import { I18n } from '~/app/i18n';
 import type { IGlobalState } from '~/app/store';
 import theme from '~/app/theme';
 import { cardPaddingMerging } from '~/framework/components/card/base';
-import { UI_SIZES, UI_STYLES } from '~/framework/components/constants';
+import { UI_STYLES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import { LoadingIndicator } from '~/framework/components/loading';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView, pageGutterSize } from '~/framework/components/page';
-import { NamedSVG } from '~/framework/components/picture';
 import SwipeableList from '~/framework/components/swipeableList';
-import { HeadingXSText, HeadingXXSText, SmallText } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -41,7 +38,6 @@ import { getTimelineWorkflows } from '~/framework/modules/timeline/timeline-modu
 import { userRouteNames } from '~/framework/modules/user/navigation';
 import { navigate } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import appConf from '~/framework/util/appConf';
 import { openUrl } from '~/framework/util/linking';
 import {
   IAbstractNotification,
@@ -54,6 +50,8 @@ import {
   defaultNotificationActionStack,
   handleNotificationAction,
 } from '~/framework/util/notifications/routing';
+
+import TimelineSpace from '../components/space';
 
 // TYPES ==========================================================================================
 
@@ -99,45 +97,6 @@ export interface ITimelineItem {
 
 const NOTIFICATION_THROTLE_DELAY = 250;
 let notificationOpenThrottle = true;
-
-// STYLES =========================================================================================
-
-const styles = StyleSheet.create({
-  space: {
-    marginHorizontal: UI_SIZES.spacing.medium,
-    backgroundColor: theme.palette.secondary.dark,
-    marginBottom: UI_SIZES.spacing.medium,
-    borderRadius: UI_SIZES.radius.mediumPlus,
-    padding: UI_SIZES.spacing.medium,
-  },
-  spaceAnim: {
-    width: 100,
-    height: 100,
-    position: 'absolute',
-    top: -UI_SIZES.spacing.big,
-    right: 0,
-  },
-  spaceBadge: {
-    backgroundColor: theme.palette.primary.regular,
-    paddingHorizontal: UI_SIZES.spacing.small,
-    paddingVertical: UI_SIZES.spacing._LEGACY_tiny,
-    borderRadius: UI_SIZES.radius.huge,
-    marginBottom: UI_SIZES.spacing.medium,
-    alignSelf: 'flex-start',
-  },
-  spaceBadgeText: {
-    color: theme.palette.grey.white,
-  },
-  spaceSvg: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
-  spaceText: {
-    color: theme.palette.grey.white,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-  },
-});
 
 // UTILS ==========================================================================================
 
@@ -210,8 +169,6 @@ function NotificationItem({
     />
   );
 }
-
-const animationSpaceSource = require('ASSETS/animations/space/card.json');
 
 export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, ITimelineScreenState> {
   // DECLARATIONS =================================================================================
@@ -304,40 +261,10 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     };
   }
 
-  spaceIsVisible() {
-    if (appConf.space.userType !== this.props.session?.user.type) return false;
-    if (appConf.space.exceptionProject.includes(this.props.session.platform.name)) return false;
-    if (moment().isAfter(appConf.space.expirationDate)) return false;
-    if (appConf.space.lang !== I18n.getLanguage()) return false;
-    return true;
-  }
-
-  animationSpaceRef = React.createRef<LottieView>();
-
   listSeparator = (
     <>
       <View style={{ height: pageGutterSize }} />
-      {this.spaceIsVisible() ? (
-        <TouchableOpacity
-          style={styles.space}
-          onPress={() => {
-            this.props.navigation.navigate(timelineRouteNames.space, {});
-          }}>
-          <LottieView
-            ref={this.animationSpaceRef}
-            source={animationSpaceSource}
-            autoPlay
-            loop={false}
-            speed={0.6}
-            style={styles.spaceAnim}
-          />
-          <View style={styles.spaceBadge}>
-            <HeadingXXSText style={styles.spaceBadgeText}>{I18n.get('user-page-spacebadge')}</HeadingXXSText>
-          </View>
-          <HeadingXSText style={styles.spaceText}>{I18n.get('user-page-spacetext')}</HeadingXSText>
-          <NamedSVG name="space-edi" style={styles.spaceSvg} />
-        </TouchableOpacity>
-      ) : null}
+      <TimelineSpace session={this.props.session} />
     </>
   );
 
