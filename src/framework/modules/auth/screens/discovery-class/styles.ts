@@ -4,10 +4,14 @@ import theme from '~/app/theme';
 import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 
 export default StyleSheet.create({
+  container: {
+    backgroundColor: theme.palette.grey.white,
+  },
   page: {
     paddingHorizontal: UI_SIZES.spacing.medium,
     paddingVertical: UI_SIZES.spacing.big,
     backgroundColor: theme.palette.grey.white,
+    flex: 1,
   },
   title: {
     textAlign: 'center',
@@ -30,6 +34,11 @@ export default StyleSheet.create({
   text: {
     flex: 1,
     textAlign: 'center',
+  },
+  hint: {
+    flex: 0,
+    textAlign: 'center',
+    marginTop: UI_SIZES.spacing.large - UI_SIZES.spacing.minor,
   },
   pic: {
     width: getScaleWidth(120),
