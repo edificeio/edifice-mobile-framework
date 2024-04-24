@@ -124,6 +124,8 @@ function App(props: AppProps) {
     </GestureHandlerRootView>
   );
 
+  console.debug('zendeskEnabled', appConf.zendeskEnabled);
+
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }
 
