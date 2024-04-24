@@ -123,9 +123,6 @@ function App(props: AppProps) {
       {FlipperMMKVElement}
     </GestureHandlerRootView>
   );
-
-  console.debug('zendeskEnabled', appConf.zendeskEnabled);
-
   return appConf.zendeskEnabled ? <ZendeskProvider zendeskConfig={appConf.zendesk!}>{content}</ZendeskProvider> : <>{content}</>;
 }
 

@@ -6,6 +6,7 @@ import type { ImageStyle, PlatformOSType } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
 
 import AppConfValues from '~/app/appconf';
+import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
 import type { AccountType } from '~/framework/modules/auth/model';
 
@@ -184,14 +185,16 @@ export class AppConf {
   }
 
   get zendeskEnabled() {
+    return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.zendeskUrl;
+  }
+
+  get zendeskHelpCenterEnabled() {
     return (
-      this.zendesk &&
-      this.zendesk.appId &&
-      this.zendesk.clientId &&
-      // this.zendesk.languages &&
-      // this.zendesk.languages.includes(I18n.getLanguage()) &&
-      this.zendesk.sections &&
-      this.zendesk.zendeskUrl
+      this.zendeskEnabled &&
+      this.zendesk?.languages &&
+      this.zendesk?.languages.includes(I18n.getLanguage()) &&
+      this.zendesk?.sections &&
+      this.zendesk?.sections.length
     );
   }
 
