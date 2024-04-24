@@ -9,28 +9,24 @@ import { assertPermissions } from '~/framework/util/permissions';
 import { ImagePicked, MenuPickerActionProps } from './types';
 
 export default function galleryAction(props: MenuPickerActionProps & { multiple?: boolean; synchrone?: boolean }) {
-  const imageCallback = async (images: LocalFile[], inRichEditor: boolean = false) => {
+  const imageCallback = async (images: LocalFile[], callbackOnce: boolean = false) => {
     try {
-      if (inRichEditor) {
-        const imgsForatted = images.map(img => ({ ...img.nativeInfo, ...img }));
-        if (props.synchrone) await props.callback!(imgsForatted as ImagePicked[]);
-        else props.callback!(imgsForatted as ImagePicked[]);
+      const formattedImages = images.map(img => ({ ...img.nativeInfo, ...img })) as ImagePicked[];
+      if (callbackOnce) {
+        if (props.synchrone) await props.callback!(formattedImages);
+        else props.callback!(formattedImages);
       } else {
-        for (const img of images) {
-          const imgFormatted = {
-            ...img.nativeInfo,
-            ...img,
-          };
-          if (props.synchrone) await props.callback!(imgFormatted as ImagePicked);
-          else props.callback!(imgFormatted as ImagePicked);
-        }
+        formattedImages.forEach(async image => {
+          if (props.synchrone) await props.callback!(image);
+          else props.callback!(image);
+        });
       }
     } catch {
       /* empty */
     }
   };
 
-  const action = async (inRichEditor = false) => {
+  const action = async ({ callbackOnce }: { callbackOnce: boolean } = { callbackOnce: false }) => {
     try {
       await assertPermissions('galery.read');
       LocalFile.pick({ source: 'galery', multiple: props.multiple }).then(lf => {
@@ -43,7 +39,7 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
           });
         }
         images = lf.filter(item => !item.filetype.startsWith('video/'));
-        return imageCallback(images, inRichEditor);
+        return imageCallback(images, callbackOnce);
       });
     } catch {
       Alert.alert(

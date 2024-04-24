@@ -41,51 +41,42 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   // Files management
   //
 
+  let addedFiles: UploadFile[] = [];
   const [files, setFiles] = React.useState<UploadFile[]>([]);
 
-  // const updateFileStatus = (index: number, status: UploadStatus, idWorkspace?: string) => {
-  //   console.log(index, status, 'test');
-  //   const newFiles = files;
-  //   console.log(newFiles, 'newFiles');
-  //   // newFiles[index].status = status;
-  //   // newFiles[index].idWorkspace = idWorkspace;
-  //   setFiles(newFiles);
-  // };
-
-  const addFile = async (file: LocalFile, index: number, filesArray: UploadFile[]) => {
-    try {
-      const resp = await workspaceService.file.uploadFile(session, file, props.uploadParams);
-      const idWorkspace = resp.df.id;
-
-      const newFiles = filesArray.map((fileItem, i) =>
-        i === index ? { ...fileItem, status: UploadStatus.OK, idWorkspace } : fileItem,
-      );
-      setFiles(newFiles);
-    } catch (error) {
-      console.error("Une erreur s'est produite lors du téléchargement du fichier :", error);
-
-      const newFiles = filesArray.map((fileItem, i) => (i === index ? { ...fileItem, status: UploadStatus.KO } : fileItem));
-      setFiles(newFiles);
-    }
+  const resetFiles = () => {
+    addedFiles = [];
+    setFiles([]);
   };
 
-  const handleAddPic = async (pics: ImagePicked[]) => {
-    try {
-      const picsFormatted = pics.map(
-        pic =>
-          ({
-            ...imagePickedToLocalFile(pic),
-            filesize: pic.fileSize,
-          }) as LocalFile,
-      );
+  const updateFileStatusAndID = ({ index, status, id }: { index: number; status: UploadStatus; id?: string }) => {
+    const file = addedFiles[index];
+    file.status = status;
+    if (id) file.workspaceID = id;
+    setFiles([...addedFiles]);
+  };
 
-      const newFiles = picsFormatted.map(pic => ({ localFile: pic, status: UploadStatus.PENDING }));
-      setFiles(newFiles);
-
-      await Promise.all(picsFormatted.map((pic, index) => addFile(pic, index, newFiles)));
-    } catch (error) {
-      console.error("Une erreur s'est produite lors du traitement des images :", error);
+  const handleAddPics = async (pics: ImagePicked[]) => {
+    pics.forEach(pic => {
+      addedFiles.push({
+        localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
+        status: UploadStatus.PENDING,
+      });
+    });
+    const filesCount = addedFiles.length;
+    for (let index = 0; index < filesCount; index++) {
+      const file = addedFiles[index];
+      workspaceService.file
+        .uploadFile(session, file.localFile, props.uploadParams)
+        .then(resp => {
+          updateFileStatusAndID({ index, status: UploadStatus.OK, id: resp.df.id });
+        })
+        .catch(error => {
+          if (__DEV__) console.log(`Rich Editor File Upload Failed: ${error}`);
+          updateFileStatusAndID({ index, status: UploadStatus.KO });
+        });
     }
+    setFiles([...addedFiles]);
   };
 
   const handleRemoveFile = async index => {
@@ -95,15 +86,10 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     // TODO V1: Show confirmation box
     // TODO V1: Remove image from WS if needed
     // TODO V1: Remove pic from pics array if needed
-    setFiles(files.slice(index, 1)); // TODO LEA: If needed
   };
 
   const handleRetryFile = async index => {
     // TODO V1: Manage retry
-  };
-
-  const resetFiles = () => {
-    setFiles([]);
   };
 
   //
@@ -117,7 +103,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     // TODO V1: delete all uploaded files
     workspaceService.files.trash(
       session,
-      files.map(f => f.idWorkspace!),
+      files.map(f => f.workspaceID!),
     );
     resetFiles();
     focusRichText();
@@ -136,7 +122,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const handleAddFiles = () => {
     // TODO V1: Insert Right HTML info editor for files with status = UploadStatus.OK
     richText.current?.insertHTML(
-      `<img class="custom-image" src="/workspace/document/${files[0].idWorkspace}" width="350" height="NaN">`,
+      `<img class="custom-image" src="/workspace/document/${files[0].workspaceID}" width="350" height="NaN">`,
     );
     hideAddFilesResults();
   };
@@ -208,7 +194,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
-    await galleryAction({ callback: handleAddPic, multiple: true }).action(true);
+    await galleryAction({ callback: handleAddPics, multiple: true }).action({ callbackOnce: true });
     showAddFilesResults();
   };
 
