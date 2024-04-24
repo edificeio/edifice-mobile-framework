@@ -3,8 +3,10 @@
  * AppConf Loader
  */
 import type { ImageStyle, PlatformOSType } from 'react-native';
+import RNConfigReader from 'react-native-config-reader';
 
 import AppConfValues from '~/app/appconf';
+import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
 import { AccountType } from '~/framework/modules/auth/model';
 
@@ -114,6 +116,8 @@ export interface IAppConfDeclaration {
   zendesk?: {
     appId?: string;
     clientId?: string;
+    languages?: string[];
+    sections?: number[];
     zendeskUrl?: string;
   };
 }
@@ -145,6 +149,8 @@ export class AppConf {
   zendesk?: {
     appId?: string;
     clientId?: string;
+    languages?: string[];
+    sections?: number[];
     zendeskUrl?: string;
   };
 
@@ -179,7 +185,24 @@ export class AppConf {
   }
 
   get zendeskEnabled() {
-    return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.zendeskUrl;
+    return (
+      this.zendesk &&
+      this.zendesk.appId &&
+      this.zendesk.clientId &&
+      this.zendesk.languages &&
+      this.zendesk.languages.includes(I18n.getLanguage()) &&
+      this.zendesk.sections &&
+      this.zendesk.zendeskUrl
+    );
+  }
+
+  get zendeskSections() {
+    return this.zendesk?.sections;
+  }
+
+  // Determine wether the app is in dev mode or alpha
+  get isDevOrAlpha() {
+    return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
   }
 
   constructor(opts: IAppConfDeclaration) {
@@ -212,6 +235,8 @@ export class AppConf {
       ? {
           appId: opts.zendesk?.appId,
           clientId: opts.zendesk?.clientId,
+          languages: opts.zendesk?.languages,
+          sections: opts.zendesk?.sections,
           zendeskUrl: opts.zendesk?.zendeskUrl,
         }
       : undefined;

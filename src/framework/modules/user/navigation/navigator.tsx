@@ -19,7 +19,6 @@ import UserEditMoodMottoScreen, {
   computeNavBar as editMoodMottoNavBar,
 } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import UserStructuresScreen, { computeNavBar as structuresNavBar } from '~/framework/modules/user/screens/profile/structures';
-import UserSpaceScreen, { computeNavBar as spaceNavBar } from '~/framework/modules/user/screens/space';
 import UserWhoAreWeScreen, { computeNavBar as whoAreWeNavBar } from '~/framework/modules/user/screens/who-are-we';
 import UserXmasScreen, { computeNavBar as xmasNavBar } from '~/framework/modules/user/screens/xmas';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
@@ -61,7 +60,6 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           options={structuresNavBar}
           initialParams={{}}
         />
-        <Stack.Screen name={userRouteNames.space} component={UserSpaceScreen} options={spaceNavBar} initialParams={{}} />
       </Stack.Group>
       <Stack.Group screenOptions={{ presentation: 'fullScreenModal' }}>
         <Stack.Screen

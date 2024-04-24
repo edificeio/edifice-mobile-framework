@@ -11,7 +11,6 @@ import type { UserEditDescriptionScreenNavParams } from '~/framework/modules/use
 import type { UserEditHobbiesScreenNavParams } from '~/framework/modules/user/screens/profile/edit-hobbies';
 import type { UserEditMoodMottoScreenNavParams } from '~/framework/modules/user/screens/profile/edit-moodmotto';
 import type { UserStructuresScreenNavParams } from '~/framework/modules/user/screens/profile/structures';
-import { UserSpaceScreenNavParams } from '~/framework/modules/user/screens/space';
 import type { UserWhoAreWeScreenNavParams } from '~/framework/modules/user/screens/who-are-we';
 import type { UserXmasScreenNavParams } from '~/framework/modules/user/screens/xmas';
 
@@ -28,7 +27,6 @@ export const userRouteNames = {
   xmas: `${moduleConfig.routeName}/xmas` as 'xmas',
   legalNotice: `${moduleConfig.routeName}/legal-notice` as 'legalNotice',
   lang: `${moduleConfig.routeName}/lang` as 'lang',
-  space: `${moduleConfig.routeName}/space` as 'space',
 };
 export interface UserNavigationParams extends ParamListBase {
   home: UserHomeScreenNavParams;
@@ -43,5 +41,4 @@ export interface UserNavigationParams extends ParamListBase {
   xmas: UserXmasScreenNavParams;
   legalNotice: UserLegalNoticeScreenNavParams;
   lang: UserLangScreenNavParams;
-  space: UserSpaceScreenNavParams;
 }

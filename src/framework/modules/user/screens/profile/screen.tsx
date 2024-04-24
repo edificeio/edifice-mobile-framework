@@ -46,7 +46,7 @@ import { ProfilePageProps } from './types';
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.notifPrefs>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.profile>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,

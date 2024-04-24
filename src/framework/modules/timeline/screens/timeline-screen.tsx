@@ -1,4 +1,4 @@
-import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { Alert, ListRenderItemInfo, RefreshControl, View } from 'react-native';
@@ -50,6 +50,8 @@ import {
   defaultNotificationActionStack,
   handleNotificationAction,
 } from '~/framework/util/notifications/routing';
+
+import TimelineSpace from '../components/space';
 
 // TYPES ==========================================================================================
 
@@ -147,7 +149,6 @@ function NotificationItem({
   doOpenMoodMottoNotification: typeof TimelineScreen.prototype.doOpenMoodMottoNotification;
   notificationTestID?: string;
 }) {
-  const navigation = useNavigation();
   const onNotificationAction = React.useMemo(
     () => {
       if (notification.type === 'USERBOOK_MOTTO' || notification.type === 'USERBOOK_MOOD')
@@ -260,7 +261,12 @@ export class TimelineScreen extends React.PureComponent<ITimelineScreenProps, IT
     };
   }
 
-  listSeparator = (<View style={{ height: pageGutterSize }} />);
+  listSeparator = (
+    <>
+      <View style={{ height: pageGutterSize }} />
+      <TimelineSpace session={this.props.session} />
+    </>
+  );
 
   listRef = React.createRef<SwipeListView<ITimelineItem & { key: string }>>();
 

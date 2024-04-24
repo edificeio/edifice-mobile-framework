@@ -21,7 +21,7 @@ import { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sh
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
-import { HeadingSText, HeadingXSText, HeadingXXSText, SmallBoldText } from '~/framework/components/text';
+import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
@@ -278,20 +278,17 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const openHelpCenter = async () => {
-    try {
-      await zendesk?.openHelpCenter({
-        labels: [
-          /* "test" */
-        ],
-        groupType: 'section',
-        groupIds: [
-          360005007020, 9624832797212, 4402870577554, 4402870581394, 4402870571666, 4402567155090, 10963313910428, 12096006889372,
-        ],
-        showContactOptions: false,
-      });
-    } catch (error) {
-      Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
-    }
+    if (showHelpCenter)
+      try {
+        await zendesk?.openHelpCenter({
+          labels: [],
+          groupType: 'section',
+          groupIds: appConf.zendeskSections!,
+          showContactOptions: false,
+        });
+      } catch (error) {
+        Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
+      }
   };
 
   //
@@ -619,7 +616,6 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   // Manages focus to send to others features in this screen.
   // We must store it in a Ref because of async operations.
   const focusedRef = React.useRef(useIsFocused());
-  const animationSpaceRef = React.useRef<LottieView>(null);
 
   useFocusEffect(
     React.useCallback(() => {

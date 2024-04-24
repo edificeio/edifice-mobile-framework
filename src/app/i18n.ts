@@ -12,7 +12,6 @@ import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
 import { initReactI18next } from 'react-i18next';
-import RNConfigReader from 'react-native-config-reader';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
 import Phrase from 'react-native-phrase-sdk';
@@ -54,14 +53,11 @@ export namespace I18n {
     return unflatten(overridenTranslations);
   };
 
-  // Determine wether the app is in dev mode or alpha
-  const isDevOrAlpha = __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
-
   // i18n Keys toggling management (dev && alpha only)
   // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
   const I18N_SHOW_KEYS_KEY = 'showKeys';
   let showKeys = false;
-  export const canShowKeys = isDevOrAlpha;
+  export const canShowKeys = appConf.isDevOrAlpha;
 
   const I18N_APP_LANG = 'appLang';
 
@@ -81,7 +77,7 @@ export namespace I18n {
 
   // Phrase stuff
   const phraseId = phraseSecrets?.distributionId;
-  const phraseSecret = isDevOrAlpha ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
+  const phraseSecret = appConf.isDevOrAlpha ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;
 
   const phrase = new Phrase(phraseId, phraseSecret, DeviceInfo.getVersion(), 'i18next');
 
