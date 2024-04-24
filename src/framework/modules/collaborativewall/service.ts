@@ -7,7 +7,9 @@ export type CollaborativewallIdentifier = string;
 export const collaborativewallUriParser = {
   parse: (uri?: CollaborativewallResourceUri | string) => {
     const idRegex = /^\/collaborativewall\/id\/([a-f0-9-]{36})\/?/;
-    const cwallIdMatch = uri && uri.match(idRegex);
+    const idOldRegex = /^\/collaborativewall#\/view\/([a-f0-9-]{36})\/?/;
+    let cwallIdMatch = uri && uri.match(idRegex);
+    if (uri && !cwallIdMatch) cwallIdMatch = uri.match(idOldRegex);
     return cwallIdMatch?.[1] as CollaborativewallIdentifier | undefined;
   },
 
