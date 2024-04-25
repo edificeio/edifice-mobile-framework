@@ -246,7 +246,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   //
   // Zendesk stuff
   //
-  const showHelpCenter = appConf.zendeskEnabled;
+  const showHelpCenter = appConf.zendeskHelpCenterEnabled;
   const zendesk = useZendesk();
 
   const loadHealthCheck = React.useCallback(async () => {
