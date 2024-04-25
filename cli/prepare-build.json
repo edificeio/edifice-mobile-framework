@@ -1,10 +1,10 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "alpha": 12,
-  "build": 19,
+  "alpha": 0,
+  "build": 1,
   "major": 1,
   "minor": 12,
   "pocs": 0,
-  "rc": 7,
-  "rev": 0
+  "rc": 1,
+  "rev": 1
 }
