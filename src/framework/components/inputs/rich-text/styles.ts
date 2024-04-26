@@ -15,7 +15,6 @@ const styles = StyleSheet.create({
   addFilesResultsType: {
     width: getScaleWidth(36),
     aspectRatio: 1,
-    backgroundColor: theme.palette.complementary.green.pale,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: UI_SIZES.radius.card,

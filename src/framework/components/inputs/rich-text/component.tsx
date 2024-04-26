@@ -1,6 +1,15 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import * as React from 'react';
-import { Animated, KeyboardAvoidingView, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -9,14 +18,15 @@ import IconButton from '~/framework/components/buttons/icon';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
-import { ImagePicked, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
+import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
+import { BodyText, CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
+import { isEmpty } from '~/framework/util/object';
 
 import RichEditor from './editor/RichEditor';
 import styles from './styles';
@@ -56,40 +66,66 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     setFiles([...addedFiles]);
   };
 
-  const handleAddPics = async (pics: ImagePicked[]) => {
-    pics.forEach(pic => {
-      addedFiles.push({
-        localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
-        status: UploadStatus.PENDING,
+  const uploadFile = ({ file, index }: { file: UploadFile; index: number }) => {
+    workspaceService.file
+      .uploadFile(session, file.localFile, props.uploadParams)
+      .then(resp => {
+        updateFileStatusAndID({ index, status: UploadStatus.OK, id: resp.df.id });
+      })
+      .catch(error => {
+        if (__DEV__) console.log(`Rich Editor File Upload Failed: ${error}`);
+        updateFileStatusAndID({ index, status: UploadStatus.KO });
       });
-    });
-    const filesCount = addedFiles.length;
-    for (let index = 0; index < filesCount; index++) {
-      const file = addedFiles[index];
-      workspaceService.file
-        .uploadFile(session, file.localFile, props.uploadParams)
-        .then(resp => {
-          updateFileStatusAndID({ index, status: UploadStatus.OK, id: resp.df.id });
-        })
-        .catch(error => {
-          if (__DEV__) console.log(`Rich Editor File Upload Failed: ${error}`);
-          updateFileStatusAndID({ index, status: UploadStatus.KO });
-        });
-    }
+  };
+
+  const handleAddPics = async (pics: ImagePicked[]) => {
+    addedFiles = pics.map(pic => ({
+      localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
+      status: UploadStatus.PENDING,
+    }));
+
+    addedFiles.forEach((file, index) => uploadFile({ file, index }));
     setFiles([...addedFiles]);
   };
 
   const handleRemoveFile = async index => {
     if (index >= files.length) return;
-    // TODO V1: Remove following dummy line
-    alert('Will remove ' + files[index].localFile.filename + ' - ' + index);
-    // TODO V1: Show confirmation box
-    // TODO V1: Remove image from WS if needed
-    // TODO V1: Remove pic from pics array if needed
+    Alert.alert(I18n.get('richeditor-deletefile-title'), I18n.get('richeditor-deletefile-text'), [
+      {
+        text: I18n.get('common-cancel'),
+        onPress: () => {},
+      },
+      {
+        text: I18n.get('common-delete'),
+        style: 'destructive',
+        onPress: () => {
+          const file = files[index];
+          const newFiles = [...files];
+          if (file.workspaceID === undefined && isEmpty(newFiles)) return hideAddFilesResults();
+          if (file.workspaceID === undefined) {
+            newFiles.splice(index, 1);
+            setFiles(newFiles);
+            if (isEmpty(newFiles)) hideAddFilesResults();
+            return;
+          }
+          workspaceService.files
+            .trash(session, [file.workspaceID!])
+            .then(() => {
+              newFiles.splice(index, 1);
+              setFiles(newFiles);
+              if (isEmpty(newFiles)) hideAddFilesResults();
+            })
+            .catch(error => {
+              if (__DEV__) console.log(`Rich Editor file removal failed: ${error}`);
+            });
+        },
+      },
+    ]);
   };
 
   const handleRetryFile = async index => {
-    // TODO V1: Manage retry
+    const file = addedFiles[index];
+    uploadFile({ file, index });
   };
 
   //
@@ -100,7 +136,6 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleAddFilesResultsDismissed = async () => {
     // TODO V1: Show confirmation box
-    // TODO V1: delete all uploaded files
     workspaceService.files.trash(
       session,
       files.map(f => f.workspaceID!),
@@ -120,10 +155,13 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const handleAddFiles = () => {
-    // TODO V1: Insert Right HTML info editor for files with status = UploadStatus.OK
-    richText.current?.insertHTML(
-      `<img class="custom-image" src="/workspace/document/${files[0].workspaceID}" width="350" height="NaN">`,
-    );
+    let filesHTML = '';
+    files.forEach(file => {
+      if (file.status === UploadStatus.OK) {
+        filesHTML += `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="350" height="NaN">`;
+      }
+    });
+    richText.current?.insertHTML(filesHTML);
     hideAddFilesResults();
   };
 
@@ -134,7 +172,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
       case UploadStatus.KO:
         return <IconButton icon="ui-restore" color={theme.palette.grey.black} action={() => handleRetryFile(index)} />;
       default:
-        return <IconButton icon="ui-loader" color={theme.palette.primary.regular} />;
+        return <ActivityIndicator size={UI_SIZES.elements.icon.small} color={theme.palette.primary.regular} />;
     }
   };
 
@@ -145,19 +183,30 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           data={files}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.addFilesResultsItem}>
-              <View style={styles.addFilesResultsType}>
+              <View
+                style={[
+                  styles.addFilesResultsType,
+                  {
+                    backgroundColor:
+                      item.status === UploadStatus.KO ? theme.palette.status.failure.pale : theme.palette.complementary.green.pale,
+                  },
+                ]}>
                 <NamedSVG
-                  name="ui-image"
+                  name={item.status === UploadStatus.KO ? 'ui-error' : 'ui-image'}
                   height={UI_SIZES.elements.icon.small}
                   width={UI_SIZES.elements.icon.small}
-                  fill={theme.palette.grey.black}
+                  fill={item.status === UploadStatus.KO ? theme.palette.status.failure.regular : theme.palette.grey.black}
                 />
               </View>
               <View style={styles.addFilesResultsFile}>
                 <SmallText>{item.localFile.filename}</SmallText>
-                <CaptionText>
-                  {item.localFile.filetype} - {formatBytes(item.localFile.filesize)}
-                </CaptionText>
+                {item.status === UploadStatus.KO ? (
+                  <CaptionBoldText>{I18n.get('richeditor-uploaderror')}</CaptionBoldText>
+                ) : (
+                  <CaptionText>
+                    {item.localFile.filetype} - {formatBytes(item.localFile.filesize)}
+                  </CaptionText>
+                )}
               </View>
               {fileStatusIcon(index, item.status)}
               <IconButton
@@ -194,14 +243,20 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
-    await galleryAction({ callback: handleAddPics, multiple: true }).action({ callbackOnce: true });
-    showAddFilesResults();
+    await galleryAction({ callback: handleAddPics, multiple: true })
+      .action({ callbackOnce: true })
+      .then(() => {
+        showAddFilesResults();
+      });
   };
 
   const handleTakePic = async () => {
-    // V1 LEA: Implement take picture
-    // See if handleAppPic can be used
-    alert('TODO LEA');
+    hideChoosePicsMenu();
+    await cameraAction({ callback: handleAddPics })
+      .action()
+      .then(() => {
+        showAddFilesResults();
+      });
   };
 
   const choosePicsMenu = () => {
