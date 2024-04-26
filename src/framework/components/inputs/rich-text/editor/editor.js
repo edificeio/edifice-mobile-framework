@@ -162,7 +162,7 @@ function createHTML(options = {}) {
         iframe {border: none; max-width: 100%;}
         .video-wrapper::before {content: ""; background-image: url(${playIcon}); background-size: ${playIconSize}px ${playIconSize}px; height: ${playIconSize}px; width: ${playIconSize}px; position: absolute; top: 0; left: 0; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%);}
         video {border-radius: ${UI_SIZES.radius.small}px;}
-        img {max-width: 100vw; max-height: 100vw; border-radius: ${UI_SIZES.radius.small}px; margin: ${UI_SIZES.spacing.tiny}px auto; display: flex;}
+        img {max-width: 100vw; max-height: 100vw; height: auto; width: auto; border-radius: ${UI_SIZES.radius.small}px; margin: ${UI_SIZES.spacing.tiny}px auto; display: flex;}
     </style>
 </head>
 <body>
