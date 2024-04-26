@@ -103,6 +103,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   hideSubscription: EmitterSubscription | undefined;
 
+  cleanupFocusSubscription: (() => void) | undefined;
+
   editorOffsetRef = React.createRef<number | null>() as React.MutableRefObject<number | null>;
 
   state: BlogPostDetailsScreenState = {
@@ -141,6 +143,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   async doRefresh() {
     try {
       this.setState({ loadingState: BlogPostDetailsLoadingState.REFRESH });
+      await this.doGetBlogPostDetails();
+    } finally {
+      this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
+    }
+  }
+
+  async doRefreshSilent() {
+    try {
+      if (this.state.loadingState !== BlogPostDetailsLoadingState.DONE) return;
       await this.doGetBlogPostDetails();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
@@ -376,6 +387,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
     // Update notification event if any
     this.event = notification ? notification['event-type'] : null;
+
+    this.cleanupFocusSubscription = this.props.navigation.addListener('focus', () => {
+      this.doRefreshSilent();
+    });
   }
 
   componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
@@ -426,6 +441,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   componentWillUnmount() {
     this.showSubscription?.remove();
     this.hideSubscription?.remove();
+    this.cleanupFocusSubscription?.();
   }
 
   renderError() {
