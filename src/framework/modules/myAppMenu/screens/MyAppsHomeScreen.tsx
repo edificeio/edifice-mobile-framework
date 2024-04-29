@@ -11,9 +11,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { InfoBubble } from '~/framework/components/infoBubble';
 import { PageView } from '~/framework/components/page';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
+import { storage } from '~/framework/modules/myAppMenu/storage';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
-
-import { storage } from '../storage';
 
 export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
   modules: NavigableModuleArray;

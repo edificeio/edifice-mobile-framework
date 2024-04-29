@@ -168,7 +168,6 @@ export function Carousel(props: ICarouselProps) {
         const uri = new URL(source.uri);
         uri.searchParams.delete('thumbnail');
         uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
-        console.log('Carousel Image = ' + uri.toString());
         source.uri = uri.toString();
         return {
           url: '',

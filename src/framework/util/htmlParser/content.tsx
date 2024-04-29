@@ -7,13 +7,12 @@ import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
+import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { formatSource } from '~/framework/util/media';
 import { IRemoteAttachment } from '~/ui/Attachment';
 import { AttachmentGroup } from '~/ui/AttachmentGroup';
 import Images from '~/ui/Images';
-
-import { AudienceParameter } from '../../modules/core/audience/types';
 
 /**
  * Extracts text from an input html string

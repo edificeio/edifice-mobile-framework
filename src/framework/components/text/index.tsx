@@ -8,8 +8,7 @@ import styled from '@emotion/native';
 import { Platform, Text as RNText, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
-
-import { getScaleFontSize } from '../constants';
+import { getScaleFontSize } from '~/framework/components/constants';
 
 /**
  * Base font properties

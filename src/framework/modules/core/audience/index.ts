@@ -1,9 +1,9 @@
+import { blogUriCaptureFunction } from '~/framework/modules//blog/service';
 import { Module } from '~/framework/util/moduleTool';
 
 import config from './module-config';
 import service from './service';
 import { AudienceParameter, AudienceReferer } from './types';
-import { blogUriCaptureFunction } from '../../blog/service';
 
 export default new Module({ config, reducer: () => null });
 

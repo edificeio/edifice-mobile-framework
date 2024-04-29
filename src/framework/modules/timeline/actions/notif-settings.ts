@@ -14,10 +14,10 @@ import {
   actions as pushNotifsSettingsActions,
 } from '~/framework/modules/timeline/reducer/notif-settings/push-notifs-settings';
 import { pushNotifsService } from '~/framework/modules/timeline/service';
+import { preferences } from '~/framework/modules/timeline/storage';
 import { notifierShowAction } from '~/framework/util/notifier/actions';
 
 import { loadNotificationsDefinitionsAction } from './notif-definitions';
-import { preferences } from '../storage';
 
 export const loadNotificationFiltersSettingsAction = () => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
   try {

@@ -2,7 +2,7 @@
  * Zimbra workflow
  */
 
-import { AuthLoggedAccount } from '../auth/model';
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 
 export const sendExternalZimbraMailRight = 'fr.openent.zimbra.controllers.ZimbraController|zimbraOutside';
 

@@ -33,11 +33,10 @@ import moduleConfig from '~/framework/modules/pronote/module-config';
 import { PronoteNavigationParams, pronoteRouteNames } from '~/framework/modules/pronote/navigation';
 import { ICarnetDeBordStateData } from '~/framework/modules/pronote/reducer/carnet-de-bord';
 import redirect from '~/framework/modules/pronote/service/redirect';
+import { preferences } from '~/framework/modules/pronote/storage';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate } from '~/framework/util/date';
 import { tryActionLegacy } from '~/framework/util/redux/actions';
-
-import { preferences } from '../storage';
 
 export interface CarnetDeBordScreenDataProps {
   session?: AuthLoggedAccount;
