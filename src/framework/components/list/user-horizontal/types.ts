@@ -2,9 +2,8 @@ import type * as React from 'react';
 import { DimensionValue, GestureResponderEvent, ListRenderItemInfo } from 'react-native';
 import { ViewProps } from 'react-native-svg/lib/typescript/fabric/utils';
 
+import { HorizontalListProps } from '~/framework/components/list/horizontal/types';
 import { DisplayUserPublic } from '~/framework/modules/auth/model';
-
-import { HorizontalListProps } from '../horizontal/types';
 
 export type UserListItemProps<ItemT extends DisplayUserPublic = DisplayUserPublic> = ListRenderItemInfo<ItemT> &
   Pick<UserListProps<ItemT>, 'renderUserDetails'> &

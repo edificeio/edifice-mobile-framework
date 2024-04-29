@@ -167,8 +167,7 @@ export function Carousel(props: ICarouselProps) {
         const source = urlSigner.signURISource(d.src);
         const uri = new URL(source.uri);
         uri.searchParams.delete('thumbnail');
-        uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x${IMAGE_MAX_DIMENSION}`);
-        console.log('Carousel Image = ' + uri.toString());
+        uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
         source.uri = uri.toString();
         return {
           url: '',

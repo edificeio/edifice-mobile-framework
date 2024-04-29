@@ -4,10 +4,10 @@
 
 export default {
   matomo: {
-    url: "https://matomo.opendigitaleducation.com/matomo.php",
+    url: 'https://matomo.opendigitaleducation.com/matomo.php',
     siteId: 4, // MOBILE
   },
-  webviewIdentifier: "appe.CC3B2A9FC9C32565FF6237642B73E",
+  webviewIdentifier: 'appe.CC3B2A9FC9C32565FF6237642B73E',
 
-  platforms: [require("~/platforms/paris")["prod"], require("~/platforms/ent77")["prod"]],
+  platforms: [require('~/platforms/paris')['prod'], require('~/platforms/ent77')['prod']],
 };

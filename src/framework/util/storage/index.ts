@@ -1,12 +1,12 @@
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IAuthState } from '~/framework/modules/auth/reducer';
+import { IModuleConfig } from '~/framework/util/moduleTool';
+import { Trackers } from '~/framework/util/tracker';
 
 import { StorageHandler } from './handler';
 import { mmkvHandler } from './mmkv';
 import { StorageSlice } from './slice';
 import { StorageTypeMap } from './types';
-import { IModuleConfig } from '../moduleTool';
-import { Trackers } from '../tracker';
 
 /**
  * Use MMKV as the storage technology.

@@ -1,6 +1,6 @@
 import { ImageProps, ImageURISource } from 'react-native';
 
-import { NamedSVGProps } from '../picture';
+import { NamedSVGProps } from '~/framework/components/picture';
 
 export enum Size {
   sm = 'sm',

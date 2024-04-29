@@ -1,8 +1,7 @@
 import type { IGlobalState } from '~/app/store';
-
-import { accountIsActive } from '../model';
-import moduleConfig from '../module-config';
-import type { IAuthState } from '../reducer';
+import { accountIsActive } from '~/framework/modules/auth/model';
+import moduleConfig from '~/framework/modules/auth/module-config';
+import type { IAuthState } from '~/framework/modules/auth/reducer';
 
 export const authState = (s: IGlobalState) => s[moduleConfig.reducerName] as IAuthState;
 
