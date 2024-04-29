@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-04-25 17:35:07",
-  "notes": "feat(zendesk): MB-2527, Article css file addition\nchore(scrapbook): MB-2671 use web-resource-viewer in scrapbook\nUpdated translations from Phrase (#138)\nchore(i18n): Move Phrase sync branche to dev/1.12.2\nrelease: change version to 1.12.2-alpha.5(1120105)\nrelease: 1.12.1-alpha.5(1120105)",
-  "version": "1.12.2-rc.1(1120206)"
+  "last": "2024-04-29 16:33:50",
+  "notes": "chore(eslint): Relative imports removal.\nfix(carousel): MB-2645 , fix pic size in carousel\nrelease: 1.12.2-rc.1(1120206)",
+  "version": "1.12.2-rc.2(1120207)"
 }
