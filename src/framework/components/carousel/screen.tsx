@@ -169,6 +169,7 @@ export function Carousel(props: ICarouselProps) {
         uri.searchParams.delete('thumbnail');
         uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
         source.uri = uri.toString();
+        if (__DEV__) console.log('IMAGE = ' + source.uri);
         return {
           url: '',
           props: { source },
@@ -232,6 +233,7 @@ export function Carousel(props: ICarouselProps) {
   const onSave = React.useCallback(
     async (url: string | ImageURISource) => {
       try {
+        if (__DEV__) console.log('WILL SAVE : ' + (url as ImageURISource).uri?.toString());
         const sf = await getSyncedFile(url);
         try {
           if (!sf) return;
