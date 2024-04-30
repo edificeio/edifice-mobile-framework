@@ -10,6 +10,7 @@ import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import RNFastImage from 'react-native-fast-image';
 import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
 import Share from 'react-native-share';
 
@@ -350,6 +351,16 @@ export function Carousel(props: ICarouselProps) {
       }
     }, [route.params.referer]),
   );
+
+  // Cache management
+  React.useEffect(() => {
+    RNFastImage.clearMemoryCache();
+    if (__DEV__) console.log('Empty RNFast Image on mount');
+    return () => {
+      RNFastImage.clearMemoryCache();
+      if (__DEV__) console.log('Empty RNFast Image on unmount');
+    };
+  }, []);
 
   const imageViewer = React.useMemo(
     () => (
