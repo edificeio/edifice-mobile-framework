@@ -1,5 +1,5 @@
-import { AccountType, AuthLoggedAccount } from '../model';
-import { getAccountsNumber } from '../reducer';
+import { AccountType, AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { getAccountsNumber } from '~/framework/modules/auth/reducer';
 
 const MULTIPLE_ACCOUNT_ELIGIBLE_TYPES = [AccountType.Teacher, AccountType.Personnel];
 const MAX_ACCOUNTS = 2;

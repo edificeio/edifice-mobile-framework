@@ -73,7 +73,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
         updateFileStatusAndID({ index, status: UploadStatus.OK, id: resp.df.id });
       })
       .catch(error => {
-        if (__DEV__) console.log(`Rich Editor File Upload Failed: ${error}`);
+        console.debug(`Rich Editor File Upload Failed: ${error}`);
         updateFileStatusAndID({ index, status: UploadStatus.KO });
       });
   };
@@ -116,7 +116,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
               if (isEmpty(newFiles)) hideAddFilesResults();
             })
             .catch(error => {
-              if (__DEV__) console.log(`Rich Editor file removal failed: ${error}`);
+              console.debug(`Rich Editor file removal failed: ${error}`);
             });
         },
       },

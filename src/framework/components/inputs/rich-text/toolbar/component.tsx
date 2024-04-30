@@ -86,6 +86,7 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
   setSelectedItems(selectedItems) {
     if (selectedItems.includes(actions.selection)) {
       // TODO LEA: MB-2426 = Activate Text Toolbar if needed
+      alert('Text selected');
     }
     this.setState({ selectedItems });
   }

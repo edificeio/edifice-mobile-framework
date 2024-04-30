@@ -723,7 +723,7 @@ function createHTML(options = {}) {
                         activeTools.push(typeof state === "boolean" ? k : {type: k, value: Actions[k].state()});
                     }
                 }
-                postAction({type: 'SELECTION_CHANGE', data: activeTools});
+                setTimeout(() => {postAction({type: 'SELECTION_CHANGE', data: activeTools});}, 0);
             };
 
             var _handleStateDT = null;
@@ -815,6 +815,7 @@ function createHTML(options = {}) {
             addEventListener(content, 'touchcancel', handleSelecting);
             addEventListener(content, 'mouseup', handleSelecting);
             addEventListener(content, 'touchend', handleSelecting);
+            addEventListener(content, 'selectionchange', handleSelecting);
             addEventListener(content, 'keyup', handleKeyup);
             addEventListener(content, 'click', handleClick);
             addEventListener(content, 'keydown', handleKeydown);

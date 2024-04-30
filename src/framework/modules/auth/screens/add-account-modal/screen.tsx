@@ -11,14 +11,15 @@ import {
   getNavActionForRedirect,
   simulateNavAction,
 } from '~/framework/modules/auth/navigation';
-import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
+import { IAuthState, getState } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 import appConf, { Platform } from '~/framework/util/appConf';
 
-import { IAuthState, getState } from '../../reducer';
 import type { AuthAddAccountModalScreenPrivateProps } from './types';
+
+import useAuthNavigation from '~/framework/modules/auth/navigation/navigator';
 
 export const computeNavBar = ({
   navigation,
