@@ -14,8 +14,6 @@ import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/m
 import { storage } from '~/framework/modules/myAppMenu/storage';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
 
-import { storage } from '../storage';
-
 export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
   modules: NavigableModuleArray;
 }

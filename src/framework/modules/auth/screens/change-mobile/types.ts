@@ -6,8 +6,6 @@ import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/a
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
-import { UpdatableUserInfo } from '../../model';
-
 export interface AuthChangeMobileScreenDispatchProps {
   tryLogout: (...args: Parameters<typeof manualLogoutAction>) => Promise<void>;
   trySaveNewMobile(updatedProfileValues: Partial<UpdatableUserInfo>): Promise<void>;

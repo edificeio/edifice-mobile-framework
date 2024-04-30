@@ -14,8 +14,6 @@ import { IRemoteAttachment } from '~/ui/Attachment';
 import { AttachmentGroup } from '~/ui/AttachmentGroup';
 import Images from '~/ui/Images';
 
-import { AudienceParameter } from '../../modules/core/audience/types';
-
 /**
  * Extracts text from an input html string
  * @param html

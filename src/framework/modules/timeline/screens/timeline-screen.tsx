@@ -52,8 +52,6 @@ import {
   handleNotificationAction,
 } from '~/framework/util/notifications/routing';
 
-import TimelineSpace from '../components/space';
-
 // TYPES ==========================================================================================
 
 export interface ITimelineScreenDataProps {
