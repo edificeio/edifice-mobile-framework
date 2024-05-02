@@ -6,7 +6,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 const styles = StyleSheet.create({
   space: {
     marginHorizontal: UI_SIZES.spacing.medium,
-    backgroundColor: theme.palette.secondary.dark,
+    backgroundColor: '#1C1C73',
     marginBottom: UI_SIZES.spacing.medium,
     borderRadius: UI_SIZES.radius.mediumPlus,
     padding: UI_SIZES.spacing.medium,
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     right: 0,
   },
   spaceBadge: {
-    backgroundColor: theme.palette.primary.regular,
+    backgroundColor: '#FC5E29',
     paddingHorizontal: UI_SIZES.spacing.small,
     paddingVertical: UI_SIZES.spacing._LEGACY_tiny,
     borderRadius: UI_SIZES.radius.huge,
@@ -36,7 +36,8 @@ const styles = StyleSheet.create({
   },
   spaceText: {
     color: theme.palette.grey.white,
-    paddingHorizontal: UI_SIZES.spacing.medium,
+    paddingLeft: UI_SIZES.spacing.medium,
+    paddingRight: UI_SIZES.spacing.big,
   },
 });
 

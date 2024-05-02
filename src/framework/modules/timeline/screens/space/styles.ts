@@ -9,10 +9,10 @@ export default StyleSheet.create({
     height: 80,
     position: 'absolute',
     top: 0,
+    left: UI_SIZES.spacing.large,
   },
   content: {
-    backgroundColor: theme.palette.secondary.dark,
-    paddingHorizontal: UI_SIZES.spacing.large,
+    backgroundColor: '#1C1C73',
   },
   pic: {
     width: getScaleWidth(120),
@@ -24,10 +24,12 @@ export default StyleSheet.create({
     color: theme.palette.grey.white,
     marginVertical: UI_SIZES.spacing.large,
     alignSelf: 'stretch',
+    paddingHorizontal: UI_SIZES.spacing.large,
   },
   text: {
     color: theme.palette.grey.white,
     marginBottom: UI_SIZES.spacing.large,
+    paddingHorizontal: UI_SIZES.spacing.large,
   },
   button: {
     marginBottom: UI_SIZES.spacing.huge * 2,
@@ -40,27 +42,27 @@ export default StyleSheet.create({
   },
   svgRocket: {
     position: 'absolute',
-    right: -UI_SIZES.spacing.large,
+    right: 0,
     top: 0,
   },
   svgMoon: {
     position: 'absolute',
-    right: -UI_SIZES.spacing.large,
+    right: 0,
     top: getScaleWidth(340),
   },
   svgStar1: {
     position: 'absolute',
-    left: -UI_SIZES.spacing.large,
+    left: 0,
     bottom: getScaleWidth(68),
   },
   svgStar2: {
     position: 'absolute',
-    left: 0,
+    left: UI_SIZES.spacing.large,
     bottom: getScaleWidth(24),
   },
   svgStar3: {
     position: 'absolute',
-    right: -UI_SIZES.spacing.large,
+    right: 0,
     bottom: getScaleWidth(110),
   },
 });
