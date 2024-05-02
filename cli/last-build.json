@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-04-29 16:33:50",
-  "notes": "chore(eslint): Relative imports removal.\nfix(carousel): MB-2645 , fix pic size in carousel\nrelease: 1.12.2-rc.1(1120206)",
-  "version": "1.12.2-rc.2(1120207)"
+  "last": "2024-05-02 19:35:25",
+  "notes": "Revert \"fix(auth): MB-2611 bad screen after login error when using renew code on a federated platform\"\nMerge branch 'dev/1.12.2' of https://github.com/edificeio/edifice-mobile-framework into dev/1.12.2\nfix(space): MB-2674 , fix animation on android && elements positions\nfix(zimbra): AMV2-619 remove navbar composer action on fetch error\nfix(memory): Preload Carousel Images on focus\nfix(memory): Empty RNFastImage memory cache on Carousel blur/focus\ndebug: add some debug log on Carousel\nrelease: 1.12.2-rc.2(1120207)",
+  "version": "1.12.2-rc.3(1120208)"
 }
