@@ -815,7 +815,7 @@ function createHTML(options = {}) {
             addEventListener(content, 'touchcancel', handleSelecting);
             addEventListener(content, 'mouseup', handleSelecting);
             addEventListener(content, 'touchend', handleSelecting);
-            addEventListener(content, 'selectionchange', handleSelecting);
+            addEventListener(document, 'selectionchange', handleSelecting);
             addEventListener(content, 'keyup', handleKeyup);
             addEventListener(content, 'click', handleClick);
             addEventListener(content, 'keydown', handleKeydown);
