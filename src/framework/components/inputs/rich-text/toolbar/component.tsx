@@ -15,6 +15,17 @@ import { RichToolbarSeparator } from './item/separator';
 import styles from './styles';
 import { RichToolbarProps, RichToolbarState } from './types';
 
+const toolbarTextOptions = [
+  actions.setBold,
+  actions.setItalic,
+  actions.setUnderline,
+  actions.insertBulletsList,
+  actions.insertOrderedList,
+  actions.setSubscript,
+  actions.setSuperscript,
+];
+const animationDuration = 200;
+
 export default class RichToolbar extends Component<RichToolbarProps, RichToolbarState> {
   editor: RichEditor | undefined = undefined;
 
@@ -58,22 +69,22 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
     Animated.parallel([
       Animated.timing(this.state.animatedValueExit, {
         toValue: inverse ? 0 : 1,
-        duration: 200,
+        duration: animationDuration,
         useNativeDriver: false,
       }),
       Animated.timing(this.state.animatedValueEnter, {
         toValue: inverse ? 0 : 1,
-        duration: 200,
+        duration: animationDuration,
         useNativeDriver: false,
       }),
       Animated.timing(this.state.animatedValueOpacityExit, {
         toValue: inverse ? 1 : 0,
-        duration: 200,
+        duration: animationDuration,
         useNativeDriver: false,
       }),
       Animated.timing(this.state.animatedValueOpacityEnter, {
         toValue: inverse ? 0 : 1,
-        duration: 200,
+        duration: animationDuration,
         useNativeDriver: false,
       }),
     ]).start();
@@ -85,8 +96,6 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
 
   setSelectedItems(selectedItems) {
     if (selectedItems.includes(actions.selection)) {
-      // TODO LEA: MB-2426 = Activate Text Toolbar if needed
-      //alert('Text selected');
       this.startAnimation();
     }
     this.setState({ selectedItems });
@@ -147,14 +156,14 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
                   disabled={!isSelected(actions.undo)}
                   editor={this.editor}
                   icon={`ui-${actions.undo}`}
-                  key="undo"
+                  key={actions.undo}
                 />,
                 <RichToolbarActionItem
                   action={actions.redo}
                   disabled={!isSelected(actions.redo)}
                   editor={this.editor}
                   icon={`ui-${actions.redo}`}
-                  key="redo"
+                  key={actions.redo}
                 />,
                 <RichToolbarSeparator key="separator1" />,
                 <RichToolbarCustomItem
@@ -186,57 +195,15 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
               />
             </TouchableOpacity>
             <RichToolbarItemsList
-              list={[
+              list={toolbarTextOptions.map(action => (
                 <RichToolbarActionItem
-                  action={actions.setBold}
+                  action={action}
                   editor={this.editor}
-                  icon={`ui-${actions.setBold}`}
-                  key="bold"
-                  selected={isSelected(actions.setBold)}
-                />,
-                <RichToolbarActionItem
-                  action={actions.setItalic}
-                  editor={this.editor}
-                  icon={`ui-${actions.setItalic}`}
-                  key="italic"
-                  selected={isSelected(actions.setItalic)}
-                />,
-                <RichToolbarActionItem
-                  action={actions.setUnderline}
-                  editor={this.editor}
-                  icon={`ui-${actions.setUnderline}`}
-                  key="underline"
-                  selected={isSelected(actions.setUnderline)}
-                />,
-                <RichToolbarActionItem
-                  action={actions.insertBulletsList}
-                  editor={this.editor}
-                  icon={`ui-${actions.insertBulletsList}`}
-                  key="bulletList"
-                  selected={isSelected(actions.insertBulletsList)}
-                />,
-                <RichToolbarActionItem
-                  action={actions.insertOrderedList}
-                  editor={this.editor}
-                  icon={`ui-${actions.insertOrderedList}`}
-                  key="orderedList"
-                  selected={isSelected(actions.insertOrderedList)}
-                />,
-                <RichToolbarActionItem
-                  action={actions.setSubscript}
-                  editor={this.editor}
-                  icon={`ui-${actions.setSubscript}`}
-                  key="index"
-                  selected={isSelected(actions.setSubscript)}
-                />,
-                <RichToolbarActionItem
-                  action={actions.setSuperscript}
-                  editor={this.editor}
-                  icon={`ui-${actions.setSuperscript}`}
-                  key="exponent"
-                  selected={isSelected(actions.setSuperscript)}
-                />,
-              ]}
+                  icon={`ui-${action}`}
+                  key={action}
+                  selected={isSelected(action)}
+                />
+              ))}
             />
           </Animated.View>
         </View>
