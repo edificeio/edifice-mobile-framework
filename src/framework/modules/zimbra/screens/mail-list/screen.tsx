@@ -361,11 +361,13 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
     }
     return {
       headerLeft: undefined,
-      headerRight: () => (
-        <View style={styles.navBarRightContainer}>
-          <NavBarAction icon="ui-write" onPress={openComposer} />
-        </View>
-      ),
+      headerRight: [AsyncPagedLoadingState.INIT_FAILED, AsyncPagedLoadingState.RETRY].includes(loadingState)
+        ? undefined
+        : () => (
+            <View style={styles.navBarRightContainer}>
+              <NavBarAction icon="ui-write" onPress={openComposer} />
+            </View>
+          ),
     };
   };
 
