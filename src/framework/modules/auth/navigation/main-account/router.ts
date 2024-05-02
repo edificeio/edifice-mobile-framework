@@ -180,7 +180,7 @@ export const getAuthNavigationState = (
   const accountObject = accountId ? accounts[accountId] : undefined;
 
   // 3.4 – Put the platform login route into the stack
-  if (platform && (!multipleAccounts || (pending as AuthPendingRestore)?.account || (pending as AuthPendingRestore)?.loginUsed)) {
+  if (platform && (!multipleAccounts || (pending as AuthPendingRestore)?.account)) {
     const nextScreen = getLoginNextScreen(platform, accountObject);
     routes.push({
       ...nextScreen,
