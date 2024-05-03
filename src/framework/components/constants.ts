@@ -95,7 +95,7 @@ export const UI_SIZES = {
       large: 4,
     },
     editor: {
-      toolbarHeight: 48,
+      toolbarHeight: getScaleWidth(20) + 2 * getScaleWidth(8) + getScaleWidth(4) * 2,
     },
     icon: {
       xxsmall: getScaleWidth(12),

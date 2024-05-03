@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   closeUnderMenu: {
     backgroundColor: theme.palette.primary.pale,
     paddingHorizontal: UI_SIZES.spacing.minor,
-    paddingVertical: UI_SIZES.spacing.minor + UI_SIZES.spacing.tiny,
+    height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 
