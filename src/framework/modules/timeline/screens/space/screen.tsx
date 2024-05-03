@@ -3,7 +3,6 @@ import LottieView from 'lottie-react-native';
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
@@ -26,7 +25,7 @@ export const computeNavBar = ({
     route,
     title: I18n.get('user-space-title'),
   }),
-  headerStyle: { backgroundColor: theme.palette.secondary.dark },
+  headerStyle: { backgroundColor: '#1C1C73' },
   headerShadowVisible: false,
 });
 
