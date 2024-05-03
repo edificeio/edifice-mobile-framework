@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Platform } from 'react-native';
 
 import { forgotAction } from '~/framework/modules/auth/actions';
 import { ForgotMode } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
+import { Platform } from '~/framework/util/appConf';
 
 export interface ForgotScreenProps {}
 

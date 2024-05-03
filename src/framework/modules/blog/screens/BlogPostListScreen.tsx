@@ -81,6 +81,7 @@ const BlogPostListItem = ({ blog, post }: { blog: Blog; post: BlogPost }) => {
       date={dateAsMoment}
       title={post.title}
       state={post.state as 'PUBLISHED' | 'SUBMITTED'}
+      resourceId={post._id}
     />
   );
 };

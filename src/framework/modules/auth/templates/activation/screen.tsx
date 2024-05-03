@@ -126,8 +126,12 @@ export class ActivationScreen extends React.PureComponent<
                       <PFLogo pf={platform} />
                     </LogoWrapper>
                     {/* <InputLogin login={login} form={formModel} onChange={this.onChange('login')} /> */}
-                    {context.passwordRegexI18n?.[I18n.getLanguage()] ? (
-                      <AlertCard type="info" text={context.passwordRegexI18n[I18n.getLanguage()]} style={styles.alertCard} />
+                    {context.passwordRegexI18nActivation?.[I18n.getLanguage()] ? (
+                      <AlertCard
+                        type="info"
+                        text={context.passwordRegexI18nActivation[I18n.getLanguage()]}
+                        style={styles.alertCard}
+                      />
                     ) : null}
                     <InputPassword password={password} form={formModel} onChange={this.onFieldChange('password')} />
                     <InputPasswordConfirm

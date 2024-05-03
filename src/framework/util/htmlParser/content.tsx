@@ -7,6 +7,7 @@ import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
+import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { formatSource } from '~/framework/util/media';
 import { IRemoteAttachment } from '~/ui/Attachment';
@@ -105,7 +106,7 @@ export const extractMediaFromHtml = (html: string) => {
   return unsortedMedia.sort((a, b) => a.index - b.index);
 };
 
-const renderAttachementsPreview = (medias: IMedia[]) => {
+const renderAttachementsPreview = (medias: IMedia[], referer: AudienceParameter) => {
   const mediaAttachments: IMedia[] = [];
   for (const mediaItem of medias) {
     if (mediaAttachments.length === 4 || mediaItem.type !== 'attachment') break;
@@ -115,7 +116,7 @@ const renderAttachementsPreview = (medias: IMedia[]) => {
     url: mediaAtt.src as string,
     displayName: mediaAtt.name,
   }));
-  return <AttachmentGroup attachments={attachments as IRemoteAttachment[]} containerStyle={{ flex: 1 }} />;
+  return <AttachmentGroup attachments={attachments as IRemoteAttachment[]} containerStyle={{ flex: 1 }} referer={referer} />;
 };
 
 export const extractVideoResolution = (resolutionAsString: string) => {
@@ -123,7 +124,7 @@ export const extractVideoResolution = (resolutionAsString: string) => {
   return match ? [parseInt(match[1]), parseInt(match[2])] : undefined;
 };
 
-const renderAudioVideoPreview = (media: IMedia) => {
+const renderAudioVideoPreview = (media: IMedia, referer: AudienceParameter) => {
   const videoDimensions = media['video-resolution'] ? extractVideoResolution(media['video-resolution']) : undefined;
   const videoId = media['document-id'] as string | undefined;
   if (!media.src) {
@@ -139,15 +140,16 @@ const renderAudioVideoPreview = (media: IMedia) => {
       source={formatSource(media.src as string)}
       posterSource={videoId && videoDimensions ? formatSource(computeVideoThumbnail(videoId, videoDimensions)) : undefined}
       ratio={videoDimensions && videoDimensions[1] !== 0 ? videoDimensions[0] / videoDimensions[1] : undefined}
+      referer={referer}
     />
   );
 };
 
-const renderIframePreview = (media: IMedia) => {
-  return <MediaButton type="web" source={formatSource(media.src as string)} />;
+const renderIframePreview = (media: IMedia, referer: AudienceParameter) => {
+  return <MediaButton type="web" source={formatSource(media.src as string)} referer={referer} />;
 };
 
-const renderImagesPreview = (medias: IMedia[]) => {
+const renderImagesPreview = (medias: IMedia[], referer: AudienceParameter) => {
   const images: IMedia[] = [];
   for (const mediaItem of medias) {
     if (mediaItem.type !== 'image') break;
@@ -157,21 +159,21 @@ const renderImagesPreview = (medias: IMedia[]) => {
     src: formatSource(image.src as string),
     alt: `image-${index}`,
   }));
-  return <Images images={imageSrcs} />;
+  return <Images images={imageSrcs} referer={referer} />;
 };
 
 /**
  * Renders first medias from an input media array
  * @param medias
  */
-export const renderMediaPreview = (medias: IMedia[]) => {
+export const renderMediaPreview = (medias: IMedia[], referer: AudienceParameter) => {
   const firstMedia = medias && medias[0];
   const components = {
-    attachment: () => renderAttachementsPreview(medias),
-    audio: () => renderAudioVideoPreview(firstMedia),
-    iframe: () => renderIframePreview(firstMedia),
-    image: () => renderImagesPreview(medias),
-    video: () => renderAudioVideoPreview(firstMedia),
+    attachment: () => renderAttachementsPreview(medias, referer),
+    audio: () => renderAudioVideoPreview(firstMedia, referer),
+    iframe: () => renderIframePreview(firstMedia, referer),
+    image: () => renderImagesPreview(medias, referer),
+    video: () => renderAudioVideoPreview(firstMedia, referer),
   };
   return firstMedia && components[firstMedia.type]?.();
 };

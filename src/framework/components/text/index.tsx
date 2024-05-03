@@ -8,8 +8,7 @@ import styled from '@emotion/native';
 import { Platform, Text as RNText, TextStyle } from 'react-native';
 
 import theme from '~/app/theme';
-
-import { getScaleFontSize } from '../constants';
+import { getScaleFontSize } from '~/framework/components/constants';
 
 /**
  * Base font properties
@@ -117,6 +116,11 @@ export const HeadingSText = styled.Text({
 export const HeadingXSText = styled.Text({
   ...HeadingFontStyle.Bold,
   ...TextSizeStyle.Medium,
+});
+
+export const HeadingXXSText = styled.Text({
+  ...HeadingFontStyle.Bold,
+  ...TextSizeStyle.Small,
 });
 
 /**

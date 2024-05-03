@@ -78,12 +78,6 @@ export interface RowProperties {
   width?: any;
 }
 
-export interface NewProps {
-  flex: number;
-  flexDirection?: 'column' | 'row' | 'row-reverse' | 'column-reverse';
-  flexWrap: 'wrap' | 'nowrap';
-}
-
 export const Line = styled.View({
   flexDirection: 'row',
   width: '100%',

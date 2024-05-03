@@ -4,11 +4,13 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { useHeaderHeight } from '@react-navigation/elements';
+import { useFocusEffect } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment, { Moment } from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, Platform, StatusBar, StyleSheet } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import RNFastImage from 'react-native-fast-image';
 import { PERMISSIONS, Permission, PermissionStatus, check, request } from 'react-native-permissions';
 import Share from 'react-native-share';
 
@@ -24,9 +26,11 @@ import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
 import { DEFAULTS, ToastHandler } from '~/framework/components/toast/component';
 import { assertSession } from '~/framework/modules/auth/reducer';
+import { markViewAudience } from '~/framework/modules/core/audience';
+import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
-import { LocalFile, SyncedFile } from '~/framework/util/fileHandler';
+import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFile } from '~/framework/util/fileHandler';
 import fileTransferService from '~/framework/util/fileHandler/service';
 import { FastImage, IMedia } from '~/framework/util/media';
 import { isEmpty } from '~/framework/util/object';
@@ -39,6 +43,7 @@ import { IImageSize } from './image-viewer/image-viewer.type';
 export interface ICarouselNavParams {
   data: IMedia[];
   startIndex?: number;
+  referer: AudienceParameter; // used for audience tracking
 }
 
 export interface ICarouselProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.Carousel> {}
@@ -156,7 +161,22 @@ export function Carousel(props: ICarouselProps) {
   const { navigation, route } = props;
   const startIndex = route.params.startIndex ?? 0;
   const data = React.useMemo(() => route.params.data ?? [], [route]);
-  const dataAsImages = React.useMemo(() => data.map(d => ({ url: '', props: { source: urlSigner.signURISource(d.src) } })), [data]);
+
+  const dataAsImages = React.useMemo(
+    () =>
+      data.map(d => {
+        const source = urlSigner.signURISource(d.src);
+        const uri = new URL(source.uri);
+        uri.searchParams.delete('thumbnail');
+        uri.searchParams.append('thumbnail', `${IMAGE_MAX_DIMENSION}x0`);
+        source.uri = uri.toString();
+        return {
+          url: '',
+          props: { source },
+        };
+      }),
+    [data],
+  );
 
   const [indexDisplay, setIndexDisplay] = React.useState((route.params.startIndex ?? 0) + 1);
 
@@ -320,6 +340,29 @@ export function Carousel(props: ICarouselProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [indexDisplay, isNavBarVisible, imageState]);
+
+  // Audience hook
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params.referer) {
+        markViewAudience(route.params.referer);
+      }
+    }, [route.params.referer]),
+  );
+
+  // Cache management
+  React.useEffect(() => {
+    RNFastImage.clearMemoryCache();
+    console.debug('Carousel : Empty RNFast Image on mount');
+    const preloads = dataAsImages.map(i => i.props.source);
+    RNFastImage.preload(preloads);
+    console.debug(`Carousel : Preload ${preloads.length} images`);
+    return () => {
+      RNFastImage.clearMemoryCache();
+      console.debug('Carousel : Empty RNFast Image on unmount');
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const imageViewer = React.useMemo(
     () => (

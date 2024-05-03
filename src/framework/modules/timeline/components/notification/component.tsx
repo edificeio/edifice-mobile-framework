@@ -8,7 +8,7 @@ import { renderMoodPicture } from '~/framework/modules/user/screens/profile/edit
 import appConf from '~/framework/util/appConf';
 import { renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { Image } from '~/framework/util/media';
-import { getAsEnrichedNotification } from '~/framework/util/notifications';
+import { getAsEnrichedNotification, getAsResourceUriNotification } from '~/framework/util/notifications';
 import { ArticleContainer } from '~/ui/ContainerContent';
 
 import styles from './styles';
@@ -35,6 +35,7 @@ export function TimelineNotification(props: ITimelineNotificationProps) {
     const preview = notification && getAsEnrichedNotification(notification)?.preview;
     const media = preview && preview.media;
     const text = preview && preview.text;
+    const uri = notification && getAsResourceUriNotification(notification)?.resource.uri;
 
     return (
       <>
@@ -48,7 +49,7 @@ export function TimelineNotification(props: ITimelineNotificationProps) {
             {text}
           </SmallText>
         ) : null}
-        {media ? <View style={styles.contentNotif}>{renderMediaPreview(media)}</View> : null}
+        {media ? <View style={styles.contentNotif}>{renderMediaPreview(media, uri)}</View> : null}
       </>
     );
     // Since notifications are immutable, we can memoize them only by id safely.

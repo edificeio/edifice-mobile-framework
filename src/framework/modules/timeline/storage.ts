@@ -1,8 +1,8 @@
+import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { Storage } from '~/framework/util/storage';
 
 import moduleConfig from './module-config';
 import { INotifFilterSettings } from './reducer/notif-settings/notif-filter-settings';
-import { AuthLoggedAccount } from '../auth/model';
 
 export interface TimelineStorageData {}
 

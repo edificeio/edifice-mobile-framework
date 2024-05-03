@@ -1,7 +1,8 @@
+import { Error } from '~/framework/util/error';
+import { IAnyModuleConfig } from '~/framework/util/moduleTool';
+import { TryActionOptions } from '~/framework/util/redux/actions';
+
 import { TrackEventOfModuleArgs, trackingActionAddSuffix } from '.';
-import { Error } from '../error';
-import { IAnyModuleConfig } from '../moduleTool';
-import { TryActionOptions } from '../redux/actions';
 
 export const TRACK_ERROR = Symbol('TRACK_ERROR');
 export const TRACK_DEFAULT = Symbol('TRACK_DEFAULT');

@@ -23,7 +23,9 @@ import Toast from '~/framework/components/toast';
 import { useConstructor } from '~/framework/hooks/constructor';
 import { loadAuthContextAction } from '~/framework/modules/auth/actions';
 import {
+  AuthActiveAccountWithCredentials,
   AuthCredentials,
+  AuthSavedLoggedOutAccountWithCredentials,
   IChangePasswordError,
   IChangePasswordPayload,
   PlatformAuthContext,
@@ -75,7 +77,11 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     try {
       setError(undefined);
       setSumitState('RUNNING');
-      const login = route.params.credentials?.username ?? session?.user.loginUsed ?? session?.user.login;
+      const login =
+        route.params.credentials?.username ??
+        (session as Partial<AuthSavedLoggedOutAccountWithCredentials | AuthActiveAccountWithCredentials> | undefined)?.user
+          ?.loginUsed ??
+        session?.user.login;
       if (!platform || !login) {
         throw createChangePasswordError('change password', I18n.get('auth-changepassword-error-submit'));
       }

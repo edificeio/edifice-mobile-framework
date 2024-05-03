@@ -1,14 +1,14 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { manualLogoutAction } from '~/framework/modules/auth/actions';
+import { UpdatableUserInfo } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthChangeMobileScreenDispatchProps {
   tryLogout: (...args: Parameters<typeof manualLogoutAction>) => Promise<void>;
-  trySaveNewMobile(updatedProfileValues: UpdatableProfileValues): Promise<void>;
+  trySaveNewMobile(updatedProfileValues: Partial<UpdatableUserInfo>): Promise<void>;
 }
 
 export interface AuthChangeMobileScreenNavParams {

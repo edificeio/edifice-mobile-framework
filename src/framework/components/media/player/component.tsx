@@ -14,6 +14,7 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import FakeHeaderMedia from '~/framework/components/media/fake-header';
 import { PageView } from '~/framework/components/page';
 import { getSession } from '~/framework/modules/auth/reducer';
+import { markViewAudience } from '~/framework/modules/core/audience';
 
 import styles from './styles';
 import { MediaPlayerProps, MediaType } from './types';
@@ -279,6 +280,15 @@ function MediaPlayer(props: MediaPlayerProps) {
   React.useEffect(() => {
     if (hideStatusBar !== undefined) setHideStatusBar(!error);
   }, [error, hideStatusBar]);
+
+  // Audience hook
+  useFocusEffect(
+    React.useCallback(() => {
+      if (route.params.referer) {
+        markViewAudience(route.params.referer);
+      }
+    }, [route.params.referer]),
+  );
 
   return (
     <PageView style={wrapperStyle} showNetworkBar={false}>

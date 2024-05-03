@@ -6,6 +6,7 @@
  */
 import { CommonActions } from '@react-navigation/native';
 
+import { AccountType } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import timelineModuleConfig from '~/framework/modules/timeline/module-config';
 import { computeTabRouteName } from '~/framework/navigation/tabModules';

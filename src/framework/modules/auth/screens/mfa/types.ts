@@ -1,18 +1,16 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import { loginCredentialsAction, refreshRequirementsAction } from '~/framework/modules/auth/actions';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { refreshRequirementsAction } from '~/framework/modules/auth/actions';
+import { AuthActiveAccount, UpdatableUserInfo } from '~/framework/modules/auth/model';
 import type { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { UpdatableProfileValues } from '~/framework/modules/user/actions';
 import { ModificationType } from '~/framework/modules/user/screens/home/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthMFAScreenDispatchProps {
-  tryLogin: (...args: Parameters<typeof loginCredentialsAction>) => ReturnType<ReturnType<typeof loginCredentialsAction>>;
   tryRefreshRequirements: (
     ...args: Parameters<typeof refreshRequirementsAction>
   ) => ReturnType<ReturnType<typeof refreshRequirementsAction>>;
-  tryUpdateProfile: (updatedProfileValues: UpdatableProfileValues) => Promise<void>;
+  tryUpdateProfile: (updatedProfileValues: Partial<UpdatableUserInfo>) => Promise<void>;
 }
 
 export interface AuthMFAScreenNavParams {
@@ -30,7 +28,7 @@ export interface AuthMFAScreenNavParams {
 export interface AuthMFAScreenProps {}
 
 export interface AuthMFAScreenStoreProps {
-  session?: AuthLoggedAccount;
+  session?: AuthActiveAccount;
 }
 
 export interface AuthMFAScreenPrivateProps

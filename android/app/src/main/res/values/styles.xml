@@ -6,4 +6,11 @@
     <style name="SplashScreenTheme" parent="SplashScreen_SplashTheme">
         <item name="android:background">@drawable/launch_screen</item>
     </style>
+    <!-- Zendesk Help Center -->
+    <style name="HelpCenterTheme" parent="Theme.AppCompat">
+        <!-- Navigation bar color = theme.primary.regular -->
+        <item name="colorPrimary">#2A9CC8</item>
+        <!-- Status bar color =  theme.primary.regular -->
+        <item name="android:statusBarColor">#2A9CC8</item>
+    </style>
 </resources>

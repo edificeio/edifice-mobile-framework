@@ -12,7 +12,7 @@ export default StyleSheet.create({
     height: visibleHeight,
   },
   subContainer: {
-    backgroundColor: theme.palette.complementary.blue.pale,
+    backgroundColor: theme.palette.primary.pale,
     width: diameter,
     height: diameter,
     borderRadius: radius,

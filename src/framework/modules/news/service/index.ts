@@ -10,7 +10,7 @@ import {
   NewsThreadItem,
   NewsThreadItemRights,
 } from '~/framework/modules/news/model';
-import { fetchJSONWithCache, signedFetchJson2 } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetchJsonRelative } from '~/infra/fetchWithCache';
 
 export interface BackendNewsItem {
   id: number;
@@ -175,7 +175,7 @@ export const newsService = {
     delete: async (threadId: number, infoId: number) => {
       const api = `/actualites/thread/${threadId}/info/${infoId}`;
 
-      return signedFetchJson2(`${api}`, {
+      return signedFetchJsonRelative(`${api}`, {
         method: 'DELETE',
       });
     },
@@ -192,7 +192,7 @@ export const newsService = {
       const api = `/actualites/info/${infoId}/comment`;
 
       const body = JSON.stringify({ info_id: infoId, comment });
-      return signedFetchJson2(`${api}`, {
+      return signedFetchJsonRelative(`${api}`, {
         method: 'PUT',
         body,
       });
@@ -201,7 +201,7 @@ export const newsService = {
       const api = `/actualites/info/${infoId}/comment/${commentId}`;
 
       const body = JSON.stringify({ info_id: infoId, comment });
-      return signedFetchJson2(`${api}`, {
+      return signedFetchJsonRelative(`${api}`, {
         method: 'PUT',
         body,
       });
@@ -209,7 +209,7 @@ export const newsService = {
     delete: async (infoId: number, commentId: number) => {
       const api = `/actualites/info/${infoId}/comment/${commentId}`;
 
-      return signedFetchJson2(`${api}`, {
+      return signedFetchJsonRelative(`${api}`, {
         method: 'DELETE',
       });
     },

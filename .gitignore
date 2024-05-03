@@ -78,6 +78,7 @@ yarn.lock
 # Overrides
 __overrides__
 __stashSpec__
+src/platforms
 
 # Ruby
 vendor

@@ -3,9 +3,12 @@
  * AppConf Loader
  */
 import type { ImageStyle, PlatformOSType } from 'react-native';
+import RNConfigReader from 'react-native-config-reader';
 
 import AppConfValues from '~/app/appconf';
+import { I18n } from '~/app/i18n';
 import type { PictureProps } from '~/framework/components/picture';
+import type { AccountType } from '~/framework/modules/auth/model';
 
 // Platforms ======================================================================================
 
@@ -102,8 +105,21 @@ export interface IAppConfDeclaration {
     showDiscoveryClass?: boolean;
     showAppName?: boolean;
   };
+  space?: {
+    expirationDate?: string;
+    userType?: AccountType;
+    lang?: string;
+    exceptionProject?: string[];
+  };
   platforms: IPlatformAccessDeclaration[];
   webviewIdentifier: string;
+  zendesk?: {
+    appId?: string;
+    clientId?: string;
+    languages?: string[];
+    sections?: number[];
+    zendeskUrl?: string;
+  };
 }
 
 export class AppConf {
@@ -119,7 +135,24 @@ export class AppConf {
     showAppName: boolean;
   };
 
+  space: {
+    expirationDate: string;
+    userType: AccountType;
+    lang: string;
+    exceptionProject: string[];
+  };
+
   platforms: Platform[];
+
+  webviewIdentifier: string;
+
+  zendesk?: {
+    appId?: string;
+    clientId?: string;
+    languages?: string[];
+    sections?: number[];
+    zendeskUrl?: string;
+  };
 
   getPlatformByName = (name: string) => this.platforms.find(pf => pf.name === name);
 
@@ -139,8 +172,6 @@ export class AppConf {
     return this.platforms.length > 1;
   }
 
-  webviewIdentifier: string;
-
   get i18nOTAEnabled() {
     return this.i18nOTA;
   }
@@ -153,13 +184,33 @@ export class AppConf {
     return this.level === '2d';
   }
 
+  get zendeskEnabled() {
+    return this.zendesk && this.zendesk.appId && this.zendesk.clientId && this.zendesk.zendeskUrl;
+  }
+
+  get zendeskHelpCenterEnabled() {
+    return (
+      this.zendeskEnabled &&
+      this.zendesk?.languages &&
+      this.zendesk?.languages.includes(I18n.getLanguage()) &&
+      this.zendesk?.sections &&
+      this.zendesk?.sections.length
+    );
+  }
+
+  get zendeskSections() {
+    return this.zendesk?.sections;
+  }
+
+  // Determine wether the app is in dev mode or alpha
+  get isDevOrAlpha() {
+    return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
+  }
+
   constructor(opts: IAppConfDeclaration) {
     this.i18nOTA = opts?.i18nOTA || false;
-
     if (opts.level) this.level = opts.level;
-
     this.matomo = opts.matomo;
-
     const onboarding: Partial<AppConf['onboarding']> = {};
     if (opts.onboarding?.showDiscoverLink) {
       onboarding.showDiscoverLink = {};
@@ -171,11 +222,26 @@ export class AppConf {
     }
     onboarding.showDiscoveryClass = opts.onboarding?.showDiscoveryClass ?? false;
     onboarding.showAppName = opts.onboarding?.showAppName ?? false;
+    const space: Partial<AppConf['space']> = {
+      expirationDate: opts.space?.expirationDate ?? undefined,
+      userType: opts.space?.userType ?? undefined,
+      lang: opts.space?.lang ?? undefined,
+      exceptionProject: opts.space?.exceptionProject ?? [],
+    };
+
     this.onboarding = onboarding as AppConf['onboarding'];
-
+    this.space = space as AppConf['space'];
     this.platforms = opts.platforms.map(pfd => new Platform(pfd));
-
     this.webviewIdentifier = opts.webviewIdentifier;
+    this.zendesk = opts.zendesk
+      ? {
+          appId: opts.zendesk?.appId,
+          clientId: opts.zendesk?.clientId,
+          languages: opts.zendesk?.languages,
+          sections: opts.zendesk?.sections,
+          zendeskUrl: opts.zendesk?.zendeskUrl,
+        }
+      : undefined;
   }
 }
 

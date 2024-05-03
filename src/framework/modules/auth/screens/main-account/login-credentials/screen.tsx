@@ -40,7 +40,7 @@ function AuthLoginCredentialsScreen(props: AuthLoginCredentialsScreenPrivateProp
       forgotPasswordRoute={(login?: string) =>
         CommonActions.navigate({
           name: authRouteNames.forgot,
-          params: { platform: props.route.params.platform, mode: 'password', login }, // ToDo : get login from template here
+          params: { platform: props.route.params.platform, mode: 'password', login },
         })
       }
       forgotIdRoute={CommonActions.navigate({

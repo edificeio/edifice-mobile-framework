@@ -25,7 +25,8 @@ import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/
 import {
   AccountType,
   AuthLoggedAccount,
-  AuthSavedAccountWithTokens,
+  AuthSavedLoggedInAccount,
+  InitialAuthenticationMethod,
   PlatformAuthContext,
   accountIsLoggable,
   getOrderedAccounts,
@@ -51,6 +52,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
@@ -169,17 +171,20 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   const [currentLoadingMenu, setCurrentLoadingMenu] = React.useState<ModificationType | undefined>(undefined);
   const authContextRef = React.useRef<PlatformAuthContext | undefined>(undefined);
+
   const fetchAuthContext = React.useCallback(async () => {
     if (!session) return;
     if (!authContextRef.current) authContextRef.current = await getAuthContext(session.platform);
     return authContextRef.current;
   }, [session]);
+
   const fetchMFAValidationInfos = React.useCallback(async () => {
     const requirements = await getUserRequirements(session?.platform!);
     const needMfa = requirements?.needMfa;
     if (needMfa) await getMFAValidationInfos();
     return needMfa;
   }, [session]);
+
   const editUserInformation = React.useCallback(
     async (modificationType: ModificationType) => {
       try {
@@ -233,9 +238,60 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       session?.user.loginUsed,
     ],
   );
+
   const canEditPersonalInfo = session?.user.type !== AccountType.Student;
+  const isFederated = session?.method === InitialAuthenticationMethod.WAYF_SAML;
   const showWhoAreWe = session?.platform.showWhoAreWe;
-  const isFederated = session?.federated;
+
+  //
+  // Zendesk stuff
+  //
+  const showHelpCenter = appConf.zendeskHelpCenterEnabled;
+  const zendesk = useZendesk();
+
+  const loadHealthCheck = React.useCallback(async () => {
+    try {
+      const healthCheckResult = await zendesk?.healthCheck();
+      console.debug('Zendesk health check: ', healthCheckResult);
+    } catch (error) {
+      Toast.showError(`Zendesk health check error: ${(error as Error).message}`);
+    }
+  }, [zendesk]);
+
+  React.useEffect(() => {
+    if (showHelpCenter)
+      try {
+        loadHealthCheck();
+        zendesk?.changeTheme(theme.palette.primary.regular as string);
+        zendesk?.setAnonymousIdentity({
+          email: 'mobile@edifice.io',
+          name: 'Edifice Mobile',
+        });
+        zendesk?.setHelpCenterLocaleOverride('fr');
+      } catch (error) {
+        Toast.showError(`Zendesk initialisation failed: ${(error as Error).message}`);
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const openHelpCenter = async () => {
+    if (showHelpCenter)
+      try {
+        await zendesk?.openHelpCenter({
+          labels: [],
+          groupType: 'section',
+          groupIds: appConf.zendeskSections!,
+          showContactOptions: false,
+        });
+      } catch (error) {
+        Toast.showError(`Error opening Zendesk help center: ${(error as Error).message}`);
+      }
+  };
+
+  //
+  // Show User Home Screen
+  //
 
   return React.useMemo(
     () => (
@@ -291,6 +347,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 }}
               />
             ) : null}
+            {showHelpCenter ? (
+              <LineButton
+                title={I18n.get('user-help-title')}
+                onPress={() => {
+                  openHelpCenter();
+                }}
+              />
+            ) : null}
             {showWhoAreWe ? (
               <LineButton
                 title={I18n.get('user-whoarewe-title')}
@@ -309,7 +373,16 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
         </View>
       </>
     ),
-    [isFederated, currentLoadingMenu, canEditPersonalInfo, showWhoAreWe, navigation, editUserInformation],
+    [
+      isFederated,
+      currentLoadingMenu,
+      canEditPersonalInfo,
+      showHelpCenter,
+      showWhoAreWe,
+      navigation,
+      editUserInformation,
+      openHelpCenter,
+    ],
   );
 }
 
@@ -356,7 +429,7 @@ function useAccountsFeature(
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        const nextScreen = getLoginNextScreen(platform);
+        const nextScreen = getLoginNextScreen(platform, item);
         if (!nextScreen) {
           console.warn('AccountSelectionScreen: Next screen cannot be determined for this user');
           toast.showError(I18n.get('auth-account-select-error'));
@@ -369,7 +442,7 @@ function useAccountsFeature(
         try {
           setLoadingState(LoginState.RUNNING);
           const account = accounts[item.user.id];
-          await trySwitch(account as AuthSavedAccountWithTokens | AuthLoggedAccount);
+          await trySwitch(account as AuthSavedLoggedInAccount | AuthLoggedAccount);
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);
@@ -539,6 +612,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   // Manages focus to send to others features in this screen.
   // We must store it in a Ref because of async operations.
   const focusedRef = React.useRef(useIsFocused());
+
   useFocusEffect(
     React.useCallback(() => {
       focusedRef.current = true;

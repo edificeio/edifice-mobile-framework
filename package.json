@@ -1,6 +1,6 @@
 {
   "name": "appe",
-  "version": "1.12.1",
+  "version": "1.12.2",
   "private": true,
   "engines": {
     "node": ">=18",
@@ -60,7 +60,7 @@
     "prepare-rev": "node cli/prepare-build.js rev",
     "prettier": "npx prettier --write src/**/*.{ts,tsx}",
     "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && react-native start --reset-cache",
-    "tsc": "tsc -p tsconfig.json",
+    "tsc": "tsc --noEmit -p tsconfig.json",
     "scaffold": "run(){ node cli/scaffold.js $@; }; run"
   },
   "dependencies": {

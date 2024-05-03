@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
 export enum MediaType {
@@ -13,6 +14,7 @@ export interface MediaPlayerParams {
   type: MediaType;
   source: any;
   filetype?: string;
+  referer: AudienceParameter;
 }
 
 export interface MediaPlayerProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer> {

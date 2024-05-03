@@ -7,7 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import CheckboxButton from '~/framework/components/buttons/checkbox';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { UI_SIZES, getScaleHeight } from '~/framework/components/constants';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
@@ -68,30 +68,17 @@ const styles = StyleSheet.create({
     aspectRatio: 3,
   },
   checkboxButtonContainer: {
-    position: 'absolute',
-    right: UI_SIZES.spacing.medium,
-    bottom: UI_SIZES.spacing.medium,
-    backgroundColor: theme.ui.background.card,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 6,
-    shadowColor: theme.ui.shadowColor,
-    shadowOpacity: 0.15,
-    elevation: 4,
-    borderRadius: UI_SIZES.radius.mediumPlus,
-  },
-  checkboxContainer: {
-    marginLeft: UI_SIZES.spacing.minor,
-  },
-  checkboxListItem: {
-    borderRadius: UI_SIZES.spacing.medium,
+    alignItems: 'center',
+    margin: UI_SIZES.spacing.big,
   },
   confetti: {
-    height: getScaleHeight(80),
+    height: '100%',
   },
   confettiContainer: {
-    width: '100%',
     position: 'absolute',
-    bottom: UI_SIZES.spacing.small,
+    bottom: -getScaleHeight(28),
+    width: '100%',
+    height: getScaleHeight(180),
   },
   content: {
     ...TextSizeStyle.Medium,
@@ -225,30 +212,29 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
               onOpen={() => Trackers.trackEvent('Homeworks', 'OPEN ATTACHMENT', 'Read mode')}
             />
           ) : null}
+
+          {hasCheckHomeworkResourceRight ? (
+            <View style={styles.checkboxButtonContainer}>
+              <SecondaryButton
+                text={I18n.get('homework-taskdetails-status-done')}
+                action={() => this.doToggleDiaryEntryStatus(!checked)}
+                iconLeft={checked ? 'ui-checkbox-on' : 'ui-checkbox-off'}
+              />
+              {playAnimation ? (
+                <View pointerEvents="none" style={styles.confettiContainer}>
+                  <LottieView
+                    autoPlay
+                    loop={false}
+                    resizeMode="contain"
+                    source={animationSource}
+                    style={styles.confetti}
+                    onAnimationFinish={() => this.handleAnimationFinished()}
+                  />
+                </View>
+              ) : null}
+            </View>
+          ) : null}
         </ScrollView>
-        {hasCheckHomeworkResourceRight ? (
-          <View style={styles.checkboxButtonContainer}>
-            <CheckboxButton
-              title="homework-taskdetails-status-done"
-              onPress={() => this.doToggleDiaryEntryStatus(!checked)}
-              checked={checked}
-              customListItemStyle={styles.checkboxListItem}
-              customContainerStyle={styles.checkboxContainer}
-            />
-            {playAnimation ? (
-              <View pointerEvents="none" style={styles.confettiContainer}>
-                <LottieView
-                  autoPlay
-                  loop={false}
-                  resizeMode="cover"
-                  source={animationSource}
-                  style={styles.confetti}
-                  onAnimationFinish={() => this.handleAnimationFinished()}
-                />
-              </View>
-            ) : null}
-          </View>
-        ) : null}
       </PageView>
     );
   }
