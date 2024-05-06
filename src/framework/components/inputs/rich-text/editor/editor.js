@@ -151,7 +151,7 @@ function createHTML(options = {}) {
         .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: ${UI_SIZES.elements.icon.medium}px ${UI_SIZES.elements.icon.medium}px; height: ${UI_SIZES.elements.icon.medium}px; width: ${UI_SIZES.elements.icon.medium}px; margin-right: ${UI_SIZES.spacing.minor}px;}
         .download-attachments .attachments {padding: 0; border: none;}
         .download-attachments .attachments::before {display: none;}
-        .audio-wrapper {background-color: ${theme.palette.grey.fog}; padding: ${UI_SIZES.spacing.minor}px ${UI_SIZES.spacing.small}px; border-radius: ${UI_SIZES.spacing.big}px; display: flex; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; align-items: center;}
+        .audio-wrapper {background-color: ${theme.palette.grey.fog}; padding: ${UI_SIZES.spacing.minor}px ${UI_SIZES.spacing.small}px; border-radius: ${UI_SIZES.spacing.big}px; display: flex; border: ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; align-items: center; margin: ${UI_SIZES.spacing.minor}px 0;}
         .audio-wrapper::before {content: ""; background-image: url(${audioIcon}); background-size: contain; background-repeat: no-repeat; height: ${getScaleWidth(36)}px; width: ${getScaleWidth(285)}px;}
         .audio-wrapper:active {opacity: 0.7;}
         .audio-wrapper audio {display: none;}
