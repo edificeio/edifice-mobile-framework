@@ -4,7 +4,7 @@
 // Automatic build number generation
 //
 // Args:
-//   - alpha|rc|pocs to prepare build number for alpha || rc || pocs
+//   - alpha|rc|poc to prepare build number for alpha || rc || poc
 //   - major|minor|rev to prepare build number for new major || minor || rev version
 //
 // Update:
@@ -29,8 +29,8 @@ const versionFile = 'cli/prepare-build.json';
 //
 
 const buildType = process.argv.slice(2)[0];
-if (!['alpha', 'rc', 'pocs', 'major', 'minor', 'rev'].includes(buildType)) {
-  console.error('!!! Argument should be "alpha", "rc", "pocs", "major", "minor" or "rev" !!!');
+if (!['alpha', 'rc', 'poc', 'major', 'minor', 'rev'].includes(buildType)) {
+  console.error('!!! Argument should be "alpha", "rc", "poc", "major", "minor" or "rev" !!!');
   process.exit(1);
 }
 
@@ -60,7 +60,7 @@ let fullVersion = null;
 let versionNumber = null;
 
 try {
-  if (['alpha', 'rc', 'pocs'].includes(buildType)) {
+  if (['alpha', 'rc', 'poc'].includes(buildType)) {
     versionContent.build += 1;
     versionContent[buildType] += 1;
     fullBuildType = `${buildType}.${versionContent[buildType]}`;
@@ -80,7 +80,7 @@ try {
     }
     versionContent.alpha = 0;
     versionContent.build = 0;
-    versionContent.pocs = 0;
+    versionContent.poc = 0;
     versionContent.rc = 0;
     fullBuildType = '';
   }
@@ -133,7 +133,7 @@ try {
 //
 
 try {
-  if (['alpha', 'rc', 'pocs'].includes(buildType)) {
+  if (['alpha', 'rc', 'poc'].includes(buildType)) {
     // ¡¡¡ Update notes before last !!!
     // eslint-disable-next-line no-useless-escape
     lastContent.notes = execSync(`git --no-pager log --pretty=format:\"%s\" --since=\"${lastContent.last}\"`)
