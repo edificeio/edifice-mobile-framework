@@ -11,6 +11,11 @@ const styles = StyleSheet.create({
   addFilesResultsItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: UI_SIZES.spacing.minor,
+  },
+  addFilesResultsTitle: {
+    textAlign: 'center',
+    marginBottom: UI_SIZES.spacing.minor,
   },
   addFilesResultsType: {
     width: getScaleWidth(36),

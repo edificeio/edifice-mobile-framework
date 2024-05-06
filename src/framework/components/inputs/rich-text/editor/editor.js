@@ -492,44 +492,18 @@ function createHTML(options = {}) {
                     if (html){
                         exec('insertHTML', html);
                         Actions.UPDATE_HEIGHT();
+                        Actions.GET_IMAGE_URLS();
                     }
+
+                    // if (anchorNode) {
+                    //     anchorNode.innerHTML = html;
+                    // } else {
+                    //     exec('insertHTML', html);
+                    // }
+                    // Actions.UPDATE_HEIGHT();
                 }
             },
             text: { result: function (text){ text && exec('insertText', text); }},
-            audio: {
-                result: function(url, style) {
-                    if (url) {
-                        // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2363
-                        var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
-                        var html = "<br><div style='"+ (style || '')+"'><audio src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
-                        exec('insertHTML', html);
-                        Actions.UPDATE_HEIGHT();
-                        Actions.FORMAT_AUDIOS();
-                    }
-                }
-            },
-            image: {
-                result: function(url, style) {
-                    if (url){
-                        // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2357
-                        exec('insertHTML', "<img style='"+ (style || '')+"' src='"+ url +"'/>");
-                        Actions.UPDATE_HEIGHT();
-                        Actions.GET_IMAGE_URLS();
-                    }
-                }
-            },
-            video: {
-                result: function(url, style) {
-                    if (url) {
-                        // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2360
-                        var thumbnail = url.replace(/.(mp4|m3u8)/g, '') + '-thumbnail';
-                        var html = "<br><div style='"+ (style || '')+"'><video src='"+ url +"' poster='"+ thumbnail + "' controls><source src='"+ url +"' type='video/mp4'>No video tag support</video></div><br>";
-                        exec('insertHTML', html);
-                        Actions.UPDATE_HEIGHT();
-                        Actions.FORMAT_VIDEOS();
-                    }
-                }
-            },
             checkboxList: {
                 state: function(){return checkboxNode(window.getSelection().anchorNode)},
                 result: function() {
@@ -555,8 +529,14 @@ function createHTML(options = {}) {
                 setDisable: function(dis){ this.blur(); editor.content.contentEditable = !dis},
                 setHtml: function(html) { editor.content.innerHTML = html; Actions.UPDATE_HEIGHT(); },
                 getHtml: function() { return editor.content.innerHTML; },
-                blur: function() { editor.content.blur(); },
-                focus: function() { focusCurrent(); },
+                blur: function() { 
+                    saveSelection();
+                    editor.content.blur(); 
+                },
+                focus: function() { 
+                    console.log(anchorNode);
+                    focusCurrent();
+                 },
                 postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
                 setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
                 setContentStyle: function(styles) {

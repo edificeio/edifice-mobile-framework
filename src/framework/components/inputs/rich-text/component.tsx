@@ -22,7 +22,7 @@ import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { BodyText, CaptionBoldText, CaptionText, SmallText } from '~/framework/components/text';
+import { BodyText, CaptionBoldText, CaptionText, HeadingXSText, SmallText } from '~/framework/components/text';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
@@ -32,6 +32,8 @@ import RichEditor from './editor/RichEditor';
 import styles from './styles';
 import RichToolbar from './toolbar/component';
 import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
+
+let addedFiles: UploadFile[] = [];
 
 const RichEditorForm = (props: RichEditorFormProps) => {
   const headerHeight = useHeaderHeight();
@@ -51,8 +53,11 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   // Files management
   //
 
-  let addedFiles: UploadFile[] = [];
   const [files, setFiles] = React.useState<UploadFile[]>([]);
+
+  const updateFiles = () => {
+    setFiles([...addedFiles]);
+  };
 
   const resetFiles = () => {
     addedFiles = [];
@@ -63,7 +68,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     const file = addedFiles[index];
     file.status = status;
     if (id) file.workspaceID = id;
-    setFiles([...addedFiles]);
+    updateFiles();
   };
 
   const uploadFile = ({ file, index }: { file: UploadFile; index: number }) => {
@@ -79,17 +84,18 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const handleAddPics = async (pics: ImagePicked[]) => {
+    showAddFilesResults();
     addedFiles = pics.map(pic => ({
       localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
       status: UploadStatus.PENDING,
     }));
 
     addedFiles.forEach((file, index) => uploadFile({ file, index }));
-    setFiles([...addedFiles]);
+    updateFiles();
   };
 
   const handleRemoveFile = async index => {
-    if (index >= files.length) return;
+    if (index >= addedFiles.length) return;
     Alert.alert(I18n.get('richeditor-deletefile-title'), I18n.get('richeditor-deletefile-text'), [
       {
         text: I18n.get('common-cancel'),
@@ -99,25 +105,22 @@ const RichEditorForm = (props: RichEditorFormProps) => {
         text: I18n.get('common-delete'),
         style: 'destructive',
         onPress: () => {
-          const file = files[index];
-          const newFiles = [...files];
-          if (file.workspaceID === undefined && isEmpty(newFiles)) return hideAddFilesResults();
+          const file = addedFiles[index];
           if (file.workspaceID === undefined) {
-            newFiles.splice(index, 1);
-            setFiles(newFiles);
-            if (isEmpty(newFiles)) hideAddFilesResults();
-            return;
+            addedFiles.splice(index, 1);
+            updateFiles();
+          } else {
+            workspaceService.files
+              .trash(session, [file.workspaceID!])
+              .then(() => {
+                addedFiles.splice(index, 1);
+                updateFiles();
+              })
+              .catch(error => {
+                console.debug(`Rich Editor file removal failed: ${error}`);
+              });
           }
-          workspaceService.files
-            .trash(session, [file.workspaceID!])
-            .then(() => {
-              newFiles.splice(index, 1);
-              setFiles(newFiles);
-              if (isEmpty(newFiles)) hideAddFilesResults();
-            })
-            .catch(error => {
-              console.debug(`Rich Editor file removal failed: ${error}`);
-            });
+          if (isEmpty(addedFiles)) hideAddFilesResults();
         },
       },
     ]);
@@ -125,6 +128,8 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleRetryFile = async index => {
     const file = addedFiles[index];
+    file.status = UploadStatus.PENDING;
+    updateFiles();
     uploadFile({ file, index });
   };
 
@@ -138,7 +143,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     // TODO V1: Show confirmation box
     workspaceService.files.trash(
       session,
-      files.map(f => f.workspaceID!),
+      addedFiles.map(f => f.workspaceID!),
     );
     resetFiles();
     focusRichText();
@@ -151,18 +156,20 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const showAddFilesResults = () => {
+    richText?.current?.blurContentEditor();
     addFilesResultsRef.current?.present();
   };
 
   const handleAddFiles = () => {
     let filesHTML = '';
-    files.forEach(file => {
+    addedFiles.forEach(file => {
       if (file.status === UploadStatus.OK) {
         filesHTML += `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="350" height="NaN">`;
       }
     });
-    richText.current?.insertHTML(filesHTML);
+    richText.current?.insertHTML(`${filesHTML}`);
     hideAddFilesResults();
+    setTimeout(() => richText.current?.insertHTML(`\r\n`), 500);
   };
 
   const fileStatusIcon = (index: number, status: UploadStatus) => {
@@ -170,7 +177,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
       case UploadStatus.OK:
         return <IconButton icon="ui-success" color={theme.palette.status.success.regular} />;
       case UploadStatus.KO:
-        return <IconButton icon="ui-restore" color={theme.palette.grey.black} action={() => handleRetryFile(index)} />;
+        return <IconButton icon="ui-restore" color={theme.palette.status.failure.regular} action={() => handleRetryFile(index)} />;
       default:
         return <ActivityIndicator size={UI_SIZES.elements.icon.small} color={theme.palette.primary.regular} />;
     }
@@ -179,6 +186,9 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const addFilesResults = () => {
     return (
       <BottomSheetModal ref={addFilesResultsRef} onDismiss={handleAddFilesResultsDismissed}>
+        <HeadingXSText style={styles.addFilesResultsTitle}>
+          {addedFiles.length} {I18n.get(`richeditor-showfiles-${addedFiles.length > 1 ? 'multiple' : 'single'}title`)}
+        </HeadingXSText>
         <FlatList
           data={files}
           renderItem={({ item, index }) => (
@@ -218,7 +228,12 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             </View>
           )}
         />
-        <PrimaryButton style={styles.addButton} text={`Ajouter (${files.length})`} action={handleAddFiles} />
+        <PrimaryButton
+          style={styles.addButton}
+          text={I18n.get('richeditor-addfiles')}
+          disabled={addedFiles.some(f => f.status === UploadStatus.PENDING)}
+          action={handleAddFiles}
+        />
       </BottomSheetModal>
     );
   };
@@ -243,20 +258,12 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
-    await galleryAction({ callback: handleAddPics, multiple: true })
-      .action({ callbackOnce: true })
-      .then(() => {
-        showAddFilesResults();
-      });
+    await galleryAction({ callback: handleAddPics, multiple: true }).action({ callbackOnce: true });
   };
 
   const handleTakePic = async () => {
     hideChoosePicsMenu();
-    await cameraAction({ callback: handleAddPics })
-      .action()
-      .then(() => {
-        showAddFilesResults();
-      });
+    await cameraAction({ callback: file => handleAddPics([file]) }).action();
   };
 
   const choosePicsMenu = () => {
