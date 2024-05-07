@@ -109,18 +109,19 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           if (file.workspaceID === undefined) {
             addedFiles.splice(index, 1);
             updateFiles();
+            if (isEmpty(addedFiles)) hideAddFilesResults();
           } else {
             workspaceService.files
               .trash(session, [file.workspaceID!])
               .then(() => {
                 addedFiles.splice(index, 1);
                 updateFiles();
+                if (isEmpty(addedFiles)) hideAddFilesResults();
               })
               .catch(error => {
                 console.debug(`Rich Editor file removal failed: ${error}`);
               });
           }
-          if (isEmpty(addedFiles)) hideAddFilesResults();
         },
       },
     ]);
@@ -169,7 +170,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     });
     richText.current?.insertHTML(`${filesHTML}`);
     hideAddFilesResults();
-    setTimeout(() => richText.current?.insertHTML(`\r\n`), 500);
+    setTimeout(() => richText.current?.insertHTML(`<br>\r\n`), 300);
   };
 
   const fileStatusIcon = (index: number, status: UploadStatus) => {
