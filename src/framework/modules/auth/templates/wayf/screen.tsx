@@ -292,7 +292,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if (error instanceof Error.SamlMultipleVectorError && errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
-
             (error.data.users as OAuthCustomTokens).forEach(token => {
               this.dropdownItems.push({ label: token.structureName, value: token.key });
             });
