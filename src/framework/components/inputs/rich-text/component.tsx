@@ -56,8 +56,8 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const [files, setFiles] = React.useState<UploadFile[]>([]);
 
   const updateFiles = () => {
-    setFiles([...addedFiles]);
     if (isEmpty(addedFiles)) hideAddFilesResults();
+    else setFiles([...addedFiles]);
   };
 
   const resetFiles = () => {
@@ -160,20 +160,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     addFilesResultsRef.current?.present();
   };
 
-  const handleAddFiles = () => {
-    if (!addedFiles.some(f => f.status !== UploadStatus.KO)) {
-      Alert.alert(I18n.get('richeditor-showfilesresult-cancel'), '', [
-        {
-          text: I18n.get('common-cancel'),
-          onPress: () => {},
-        },
-        {
-          text: I18n.get('common-ok'),
-          onPress: hideAddFilesResults,
-        },
-      ]);
-      return;
-    }
+  const addHtmlFiles = () => {
     let filesHTML = '';
     addedFiles.forEach(file => {
       if (file.status === UploadStatus.OK) {
@@ -183,6 +170,42 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     richText.current?.insertHTML(`${filesHTML}`);
     hideAddFilesResults();
     setTimeout(() => richText.current?.insertHTML(`<br>\r\n`), 300);
+  };
+
+  const handleAddFiles = () => {
+    const nbErrorFiles = addedFiles.filter(file => file.status === UploadStatus.KO).length;
+    if (nbErrorFiles === addedFiles.length) {
+      Alert.alert(I18n.get('richeditor-showfilesresult-canceltitle'), I18n.get('richeditor-showfilesresult-canceltext'), [
+        {
+          text: I18n.get('common-cancel'),
+          onPress: () => {},
+        },
+        {
+          text: I18n.get('common-quit'),
+          style: 'destructive',
+          onPress: hideAddFilesResults,
+        },
+      ]);
+      return;
+    }
+    if (!isEmpty(nbErrorFiles)) {
+      Alert.alert(
+        I18n.get(`richeditor-showfilesresult-addfileswitherror${nbErrorFiles > 1 ? 's' : ''}`, { nb: nbErrorFiles }),
+        '',
+        [
+          {
+            text: I18n.get('common-cancel'),
+            onPress: () => {},
+          },
+          {
+            text: I18n.get('common-ok'),
+            onPress: addHtmlFiles,
+          },
+        ],
+      );
+      return;
+    }
+    addHtmlFiles();
   };
 
   const fileStatusIcon = (index: number, status: UploadStatus) => {
@@ -199,9 +222,6 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const addFilesResults = () => {
     return (
       <BottomSheetModal ref={addFilesResultsRef} onDismiss={handleAddFilesResultsDismissed}>
-        <HeadingXSText style={styles.addFilesResultsTitle}>
-          {addedFiles.length} {I18n.get(`richeditor-showfilesresult-${addedFiles.length > 1 ? 'multiple' : 'single'}title`)}
-        </HeadingXSText>
         <FlatList
           data={files}
           renderItem={({ item, index }) => (
@@ -240,14 +260,21 @@ const RichEditorForm = (props: RichEditorFormProps) => {
               />
             </View>
           )}
-        />
-        <PrimaryButton
-          style={styles.addButton}
-          text={I18n.get(
-            addedFiles.some(f => f.status !== UploadStatus.KO) ? 'richeditor-showfilesresult-addfiles' : 'common-cancel',
-          )}
-          disabled={addedFiles.some(f => f.status === UploadStatus.PENDING)}
-          action={handleAddFiles}
+          ListHeaderComponent={
+            <HeadingXSText style={styles.addFilesResultsTitle}>
+              {addedFiles.length} {I18n.get(`richeditor-showfilesresult-${addedFiles.length > 1 ? 'multiple' : 'single'}title`)}
+            </HeadingXSText>
+          }
+          ListFooterComponent={
+            <PrimaryButton
+              style={styles.addButton}
+              text={I18n.get(
+                addedFiles.some(f => f.status !== UploadStatus.KO) ? 'richeditor-showfilesresult-addfiles' : 'common-cancel',
+              )}
+              disabled={addedFiles.some(f => f.status === UploadStatus.PENDING)}
+              action={handleAddFiles}
+            />
+          }
         />
       </BottomSheetModal>
     );
