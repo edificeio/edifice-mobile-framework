@@ -57,6 +57,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const updateFiles = () => {
     setFiles([...addedFiles]);
+    if (isEmpty(addedFiles)) hideAddFilesResults();
   };
 
   const resetFiles = () => {
@@ -96,7 +97,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleRemoveFile = async index => {
     if (index >= addedFiles.length) return;
-    Alert.alert(I18n.get('richeditor-deletefile-title'), I18n.get('richeditor-deletefile-text'), [
+    Alert.alert(I18n.get('richeditor-showfilesresult-deletefiletitle'), I18n.get('richeditor-showfilesresult-deletefiletext'), [
       {
         text: I18n.get('common-cancel'),
         onPress: () => {},
@@ -109,14 +110,12 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           if (file.workspaceID === undefined) {
             addedFiles.splice(index, 1);
             updateFiles();
-            if (isEmpty(addedFiles)) hideAddFilesResults();
           } else {
             workspaceService.files
               .trash(session, [file.workspaceID!])
               .then(() => {
                 addedFiles.splice(index, 1);
                 updateFiles();
-                if (isEmpty(addedFiles)) hideAddFilesResults();
               })
               .catch(error => {
                 console.debug(`Rich Editor file removal failed: ${error}`);
@@ -162,6 +161,19 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const handleAddFiles = () => {
+    if (!addedFiles.some(f => f.status !== UploadStatus.KO)) {
+      Alert.alert(I18n.get('richeditor-showfilesresult-cancel'), '', [
+        {
+          text: I18n.get('common-cancel'),
+          onPress: () => {},
+        },
+        {
+          text: I18n.get('common-ok'),
+          onPress: hideAddFilesResults,
+        },
+      ]);
+      return;
+    }
     let filesHTML = '';
     addedFiles.forEach(file => {
       if (file.status === UploadStatus.OK) {
@@ -188,7 +200,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     return (
       <BottomSheetModal ref={addFilesResultsRef} onDismiss={handleAddFilesResultsDismissed}>
         <HeadingXSText style={styles.addFilesResultsTitle}>
-          {addedFiles.length} {I18n.get(`richeditor-showfiles-${addedFiles.length > 1 ? 'multiple' : 'single'}title`)}
+          {addedFiles.length} {I18n.get(`richeditor-showfilesresult-${addedFiles.length > 1 ? 'multiple' : 'single'}title`)}
         </HeadingXSText>
         <FlatList
           data={files}
@@ -212,7 +224,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
               <View style={styles.addFilesResultsFile}>
                 <SmallText>{item.localFile.filename}</SmallText>
                 {item.status === UploadStatus.KO ? (
-                  <CaptionBoldText>{I18n.get('richeditor-uploaderror')}</CaptionBoldText>
+                  <CaptionBoldText>{I18n.get('richeditor-showfilesresult-uploaderror')}</CaptionBoldText>
                 ) : (
                   <CaptionText>
                     {item.localFile.filetype} - {formatBytes(item.localFile.filesize)}
@@ -231,7 +243,9 @@ const RichEditorForm = (props: RichEditorFormProps) => {
         />
         <PrimaryButton
           style={styles.addButton}
-          text={I18n.get('richeditor-addfiles')}
+          text={I18n.get(
+            addedFiles.some(f => f.status !== UploadStatus.KO) ? 'richeditor-showfilesresult-addfiles' : 'common-cancel',
+          )}
           disabled={addedFiles.some(f => f.status === UploadStatus.PENDING)}
           action={handleAddFiles}
         />
