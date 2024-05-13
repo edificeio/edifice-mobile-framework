@@ -65,11 +65,11 @@ const compress = async pic => {
         };
       })
       .catch(err => {
-        console.log(err);
+        console.error(err);
       });
     return result;
   } catch (error) {
-    console.log(error, 'Unable to resize the photo');
+    console.error(error, 'Unable to resize the photo');
     return undefined;
   }
 };

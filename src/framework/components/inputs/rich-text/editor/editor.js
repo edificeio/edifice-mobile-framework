@@ -41,7 +41,6 @@ async function loadFont(fontInfo) {
           ${cursive ? 'size-adjust: 187.5%;' : ''}
         }
     `;
-    console.debug(`${fontFamily} font loaded from ${fontFile}`);
   } catch (error) {
     console.error(`Error loading ${fontFamily} font from ${fontFile}`, error);
   }
@@ -50,7 +49,6 @@ async function loadFont(fontInfo) {
 async function loadIcon(iconFile) {
   try {
     const base64Icon = await loadBase64File(iconFile, base64Type.IMAGE);
-    console.debug(`Icon loaded from ${iconFile}`);
     return `data:image/svg+xml;base64,${base64Icon}`;
   } catch (error) {
     console.error(`Error loading pic`, error);
@@ -173,7 +171,7 @@ function createHTML(options = {}) {
 <script>
     var __DEV__ = !!${window.__DEV__};
     var _ = (function (exports) {
-        var anchorNode, focusNode, anchorOffset, focusOffset, _focusCollapse = false, cNode;
+        var anchorNode, focusNode, anchorOffset, focusOffset, _focusCollapse = false, cNode, cursorPos;
         var _log = console.log;
         var placeholderColor = '${placeholderColor}';
         var _randomID = 99;
@@ -328,6 +326,48 @@ function createHTML(options = {}) {
             } catch(e){
                 console.log(e)
             }
+        }
+
+        function saveCursorPosition() {
+            var selection = window.getSelection();
+            var range = selection.getRangeAt(0);
+            var preSelectionRange = range.cloneRange();
+            preSelectionRange.selectNodeContents(editor);
+            preSelectionRange.setEnd(range.startContainer, range.startOffset);
+            var start = preSelectionRange.toString().length;
+            cursorPos = {
+                start: start,
+                end: start + range.toString().length
+            };
+        }
+
+        function restoreCursorPosition() {
+            var charIndex = 0, range = document.createRange();
+            range.setStart(editor, 0);
+            range.collapse(true);
+            var nodeStack = [editor], node, foundStart = false, stop = false;
+            while (!stop && (node = nodeStack.pop())) {
+                if (node.nodeType == 3) {
+                    var nextCharIndex = charIndex + node.length;
+                    if (!foundStart && cursorPos.start >= charIndex && cursorPos.start <= nextCharIndex) {
+                        range.setStart(node, cursorPos.start - charIndex);
+                        foundStart = true;
+                    }
+                    if (foundStart && cursorPos.end >= charIndex && cursorPos.end <= nextCharIndex) {
+                        range.setEnd(node, cursorPos.end - charIndex);
+                        stop = true;
+                    }
+                    charIndex = nextCharIndex;
+                } else {
+                    var i = node.childNodes.length;
+                    while (i--) {
+                        nodeStack.push(node.childNodes[i]);
+                    }
+                }
+            }
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
         }
 
         var _keyDown = false;
@@ -532,10 +572,12 @@ function createHTML(options = {}) {
                 setHtml: function(html) { editor.content.innerHTML = html; Actions.UPDATE_HEIGHT(); },
                 getHtml: function() { return editor.content.innerHTML; },
                 blur: function() {
-                    editor.content.blur(); 
+                    saveCursorPosition();
+                    editor.content.blur();
                 },
-                focus: function() { 
+                focus: function() {
                     focusCurrent();
+                    restoreCursorPosition();
                  },
                 postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
                 setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
