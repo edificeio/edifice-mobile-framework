@@ -1,3 +1,9 @@
+import {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetFlatList,
+  BottomSheetModal as RNBottomSheetModal,
+} from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import * as React from 'react';
 import {
@@ -17,7 +23,6 @@ import DefaultButton from '~/framework/components/buttons/default';
 import IconButton from '~/framework/components/buttons/icon';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
-import FlatList from '~/framework/components/list/flat-list';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
@@ -190,8 +195,8 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     }
     if (!isEmpty(nbErrorFiles)) {
       Alert.alert(
-        I18n.get(`richeditor-showfilesresult-addfileswitherror${nbErrorFiles > 1 ? 's' : ''}`, { nb: nbErrorFiles }),
-        '',
+        I18n.get(`richeditor-showfilesresult-addfileswitherror${nbErrorFiles > 1 ? 's' : ''}title`),
+        I18n.get(`richeditor-showfilesresult-addfileswitherror${nbErrorFiles > 1 ? 's' : ''}text`, { nb: nbErrorFiles }),
         [
           {
             text: I18n.get('common-cancel'),
@@ -219,11 +224,22 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     }
   };
 
+  const snapPoints = React.useMemo(() => ['25%', '50%', '70%'], []);
+
+  const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
+    return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
+  };
+
   const addFilesResults = () => {
     return (
-      <BottomSheetModal ref={addFilesResultsRef} onDismiss={handleAddFilesResultsDismissed}>
-        <FlatList
+      <RNBottomSheetModal
+        ref={addFilesResultsRef}
+        snapPoints={snapPoints}
+        backdropComponent={renderBackdrop}
+        onDismiss={handleAddFilesResultsDismissed}>
+        <BottomSheetFlatList
           data={files}
+          contentContainerStyle={styles.addFilesResults}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.addFilesResultsItem}>
               <View
@@ -276,7 +292,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             />
           }
         />
-      </BottomSheetModal>
+      </RNBottomSheetModal>
     );
   };
 

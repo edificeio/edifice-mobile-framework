@@ -7,6 +7,9 @@ const styles = StyleSheet.create({
   addButton: {
     marginTop: UI_SIZES.spacing.big,
   },
+  addFilesResults: {
+    padding: UI_SIZES.spacing.medium,
+  },
   addFilesResultsFile: { flex: 1 },
   addFilesResultsItem: {
     flexDirection: 'row',
