@@ -110,6 +110,10 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
     this.animate(false);
   }
 
+  hideKeyboard = () => {
+    this.editor?.blurContentEditor();
+  };
+
   render() {
     const interpolatedValueEnter = this.state.animatedValueEnter.interpolate({
       inputRange: [0, 1],
@@ -176,7 +180,7 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
               ]}
             />
             <View>
-              <RichToolbarCustomItem icon="ui-keyboardHide" action={() => this.editor?.blurContentEditor()} />
+              <RichToolbarCustomItem icon="ui-keyboardHide" action={this.hideKeyboard} />
             </View>
           </Animated.View>
           <Animated.View style={[animatedStyleEnter, styles.row]}>

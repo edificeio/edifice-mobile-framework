@@ -52,4 +52,4 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     </>
   ));
 
-setModalModeForRoutes([blogRouteNames.blogCreatePost]);
+setModalModeForRoutes([blogRouteNames.blogCreatePost, blogRouteNames.blogEditPost]);

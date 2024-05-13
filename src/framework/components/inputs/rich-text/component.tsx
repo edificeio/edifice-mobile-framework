@@ -48,10 +48,13 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   // Editor management
   //
 
+  const [isFocus, setIsFocus] = React.useState<boolean>(false);
+
   const richText = React.useRef<RichEditor>(null);
 
   const focusRichText = () => {
     richText.current?.focusContentEditor();
+    setIsFocus(true);
   };
 
   //
@@ -162,6 +165,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const showAddFilesResults = () => {
     richText?.current?.blurContentEditor();
+    setIsFocus(false);
     addFilesResultsRef.current?.present();
   };
 
@@ -224,7 +228,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
     }
   };
 
-  const snapPoints = React.useMemo(() => ['25%', '50%', '70%'], []);
+  const snapPoints = React.useMemo(() => ['50%', '70%'], []);
 
   const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
     return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
@@ -396,6 +400,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleBlur = React.useCallback(() => {
     animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
+    setIsFocus(false);
   }, [animateToolbar]);
 
   const handleChange = React.useCallback(
@@ -411,6 +416,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleFocus = React.useCallback(() => {
     animateToolbar({ opacity: 1, ypos: UI_SIZES.elements.editor.toolbarHeight });
+    setIsFocus(true);
   }, [animateToolbar]);
 
   return (
@@ -448,7 +454,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             autoCapitalize
           />
         </ScrollView>
-        {toolbar()}
+        {isFocus ? toolbar() : null}
         {choosePicsMenu()}
         {addFilesResults()}
       </KeyboardAvoidingView>
