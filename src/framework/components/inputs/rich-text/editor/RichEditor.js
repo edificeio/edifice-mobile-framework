@@ -124,7 +124,7 @@ export default class RichEditor extends Component {
         console.debug(`oneSessionId retrieved: ${osi}`);
         this.setState({ oneSessionId: osi ?? '' });
       })
-      .catch(err => console.warn(`Unable to retrieve oneSessionId: ${err.message}`))
+      .catch(err => console.error(`Unable to retrieve oneSessionId: ${err.message}`))
       .finally(() => this.setState({ loading: false }));
     // IFrame video auto play bug fix
     setTimeout(async () => {
@@ -228,7 +228,7 @@ export default class RichEditor extends Component {
           that._onLinkTouched(that._getAbsoluteUrl(data));
           break;
         case messages.LOG:
-          console.log('FROM EDIT:', ...data);
+          console.debug('FROM EDIT:', ...data);
           break;
         case messages.SELECTION_CHANGE:
           // eslint-disable-next-line no-case-declarations
