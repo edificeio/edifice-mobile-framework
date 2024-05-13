@@ -208,7 +208,7 @@ export default class RichEditor extends Component {
 
   onMessage(event) {
     const that = this;
-    const { onFocus, onBlur, onChange, onPaste, onKeyUp, onKeyDown, onInput, onMessage, onCursorPosition, onLink } = that.props;
+    const { onFocus, onBlur, onChange, onPaste, onKeyUp, onKeyDown, onInput, onMessage, onCursorPosition } = that.props;
     try {
       const message = JSON.parse(event.nativeEvent.data);
       const data = message.data;
@@ -285,7 +285,7 @@ export default class RichEditor extends Component {
           onMessage?.(message);
           break;
       }
-    } catch (e) {
+    } catch {
       //alert('NON JSON MESSAGE');
     }
   }
@@ -390,8 +390,8 @@ export default class RichEditor extends Component {
     this.sendAction(actions.content, 'setPlaceholder', placeholder);
   }
 
-  setContentStyle(styles) {
-    this.sendAction(actions.content, 'setContentStyle', styles);
+  setContentStyle(contentStyles) {
+    this.sendAction(actions.content, 'setContentStyle', contentStyles);
   }
 
   setDisable(dis) {
@@ -419,12 +419,6 @@ export default class RichEditor extends Component {
     // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2363
     // + editor.js - "audio:"
     this.sendAction(actions.insertVideo, 'result', attributes, style);
-  }
-
-  insertImage(attributes, style) {
-    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2357
-    // + editor.js - "image:"
-    this.sendAction(actions.insertImage, 'result', attributes, style);
   }
 
   insertVideo(attributes, style) {
