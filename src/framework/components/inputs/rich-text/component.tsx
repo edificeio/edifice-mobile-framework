@@ -193,7 +193,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
       ]);
       return;
     }
-    if (!isEmpty(nbErrorFiles)) {
+    if (nbErrorFiles > 0) {
       Alert.alert(
         I18n.get(`richeditor-showfilesresult-addfileswitherror${nbErrorFiles > 1 ? 's' : ''}title`),
         I18n.get(`richeditor-showfilesresult-addfileswitherror${nbErrorFiles > 1 ? 's' : ''}text`, { nb: nbErrorFiles }),
