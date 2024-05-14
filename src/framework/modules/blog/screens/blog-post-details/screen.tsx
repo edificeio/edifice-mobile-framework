@@ -35,7 +35,6 @@ import {
   publishBlogPostCommentAction,
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
-import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
@@ -51,6 +50,7 @@ import { markViewAudience } from '~/framework/modules/core/audience';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
+import { commentsString } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';

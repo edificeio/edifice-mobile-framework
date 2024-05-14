@@ -27,7 +27,6 @@ import ScrollView from '~/framework/components/scrollView';
 import { CaptionItalicText, HeadingSText } from '~/framework/components/text';
 import { TextAvatar } from '~/framework/components/textAvatar';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
 import {
   deleteCommentNewsItemAction,
   deleteNewsItemAction,
@@ -47,6 +46,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { displayDate, today } from '~/framework/util/date';
 import { isEmpty } from '~/framework/util/object';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
+import { commentsString } from '~/framework/util/string';
 import HtmlContentView from '~/ui/HtmlContentView';
 
 import styles from './styles';
