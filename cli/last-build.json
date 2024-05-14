@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-05-14 23:41:30",
-  "notes": "chore(eslint): Clean some TODOs && remove relative imports\nchore: move rich-editor-form files\nchore: handle all source type form own webview component\nfix(editor): MB-2543 , fix padding bottom in editor\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfix(editor): fix popup when dont have error files\nfeat(editor): MB-2690, Save/Restore cursor position on Blur/Focus.\nchore(editor): MB-1781, fix lint errors in RichEditor\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfix(editor): MB-2691, fix height bottomsheet when has many pics\nchore: Typo fix\nfeat(editor): MB-2693 , show popup when add files with errors\nfeat(editor): MB-2692 , show popup when cancel add files\nfix(editor) fix cursor position after add files\nrelease: 1.13.0-alpha.9(1130010)",
-  "version": "1.13.0-alpha.10(1130011)"
+  "last": "2024-05-14 23:54:31",
+  "notes": "release: 1.13.0-alpha.10(1130011)",
+  "version": "1.13.0-alpha.11(1130012)"
 }
