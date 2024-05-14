@@ -485,7 +485,7 @@ function createHTML(options = {}) {
             fontName: { result: function(name) { return exec('fontName', name); }},
             link: {
                 result: function(data) {
-                    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2404
+                    // TODO: - https://edifice-community.atlassian.net/browse/MB-2404
                     var sel = document.getSelection();
                     data = data || {};
                     var url = data.url || window.prompt('Enter the link URL');

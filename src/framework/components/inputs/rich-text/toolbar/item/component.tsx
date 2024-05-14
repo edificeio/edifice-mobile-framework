@@ -18,7 +18,7 @@ export const RichToolbarItem = (props: RichToolbarItemProps) => {
     <TouchableOpacity
       disabled={props.disabled}
       onPress={props.onSelected}
-      style={[styles.item, props.selected ? styles.itemSelected : {}]}>
+      style={[styles.item, props.selected ? styles.selected : {}]}>
       <NamedSVG name={props.icon} fill={renderColor()} height={UI_SIZES.elements.icon.small} width={UI_SIZES.elements.icon.small} />
     </TouchableOpacity>
   );

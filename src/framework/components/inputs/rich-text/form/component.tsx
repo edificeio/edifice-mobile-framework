@@ -23,6 +23,8 @@ import DefaultButton from '~/framework/components/buttons/default';
 import IconButton from '~/framework/components/buttons/icon';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
+import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
@@ -33,8 +35,6 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
 import { isEmpty } from '~/framework/util/object';
 
-import RichEditor from '../editor/RichEditor';
-import RichToolbar from '../toolbar/component';
 import styles from './styles';
 import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
 

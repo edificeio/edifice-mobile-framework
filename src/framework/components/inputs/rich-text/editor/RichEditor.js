@@ -196,7 +196,7 @@ export default class RichEditor extends Component {
 
   _onLinkTouched(url) {
     openUrl(url);
-    // TODO LEA: V2 - https://edifice-community.atlassian.net/browse/MB-2437
+    // TODO: https://edifice-community.atlassian.net/browse/MB-2437
   }
 
   _onVideoTouched(url) {
@@ -416,13 +416,13 @@ export default class RichEditor extends Component {
   }
 
   insertAudio(attributes, style) {
-    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2363
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2363
     // + editor.js - "audio:"
     this.sendAction(actions.insertVideo, 'result', attributes, style);
   }
 
   insertVideo(attributes, style) {
-    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2360
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2360
     // + editor.js - "video:"
     this.sendAction(actions.insertVideo, 'result', attributes, style);
   }
@@ -436,7 +436,7 @@ export default class RichEditor extends Component {
   }
 
   insertLink(title, url) {
-    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2404
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2404
     if (url) {
       this.showAndroidKeyboard();
       this.sendAction(actions.insertLink, 'result', { title, url });

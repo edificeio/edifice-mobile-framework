@@ -48,7 +48,6 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
 
   componentDidMount() {
     setTimeout(() => {
-      // TODO LEA: Fix that
       const { editor: { current: editor } = { current: this.props.getEditor?.() } } = this.props;
       if (!editor) {
         // No longer throw an error, just try to re-load it when needed.
