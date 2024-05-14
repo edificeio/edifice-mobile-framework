@@ -33,9 +33,9 @@ import workspaceService from '~/framework/modules/workspace/service';
 import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
 import { isEmpty } from '~/framework/util/object';
 
-import RichEditor from './editor/RichEditor';
+import RichEditor from '../editor/RichEditor';
+import RichToolbar from '../toolbar/component';
 import styles from './styles';
-import RichToolbar from './toolbar/component';
 import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
 
 let addedFiles: UploadFile[] = [];
