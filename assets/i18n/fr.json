@@ -199,6 +199,7 @@
   "auth-wayf-select-text": "Votre compte EduConnect est lié à plusieurs comptes de l'ENT.\n\nChoisissez le compte avec lequel vous voulez vous connecter.",
   "auth-wayf-select-title": "Choix du compte",
   "blog-appname": "Blog",
+  "blog-audience-title": "Audience du billet",
   "blog-createpost-bottommenu-addmedia": "Ajouter du contenu multimédia",
   "blog-createpost-confirmation-unsavedpublication": "Publication non enregistrée",
   "blog-createpost-create": "Enregistrer",

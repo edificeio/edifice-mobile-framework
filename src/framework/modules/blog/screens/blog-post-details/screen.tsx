@@ -9,10 +9,10 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
+import AudienceMeasurement from '~/framework/components/audience-measurement';
 import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -22,8 +22,7 @@ import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
+import { HeadingSText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -50,7 +49,6 @@ import { markViewAudience } from '~/framework/modules/core/audience';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { commentsString } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
 
 import styles from './styles';
@@ -552,7 +550,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   renderBlogPostDetails() {
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
-    const blogPostComments = blogPostData?.comments;
     console.debug('---------- HTML ----------');
     console.debug(blogPostContent);
     console.debug('---------- HTML ----------');
@@ -580,10 +577,10 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (
-          <View style={styles.detailsNbComments}>
-            <Icon style={styles.detailsIconComments} size={18} name="chat3" color={theme.ui.text.regular} />
-            <CaptionBoldText style={styles.detailsTextNbComments}>{commentsString(blogPostComments?.length || 0)}</CaptionBoldText>
-          </View>
+          <AudienceMeasurement
+            containerStyle={styles.footer}
+            actionViews={() => this.props.navigation.navigate(blogRouteNames.blogAudience, {})}
+          />
         ) : null}
       </View>
     );

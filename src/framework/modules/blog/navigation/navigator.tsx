@@ -4,6 +4,7 @@ import moduleConfig from '~/framework/modules/blog/module-config';
 import BlogExplorerScreen, { computeNavBar as blogExplorerNavBar } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import BlogPostListScreen, { computeNavBar as blogPostListNavBar } from '~/framework/modules/blog/screens/BlogPostListScreen';
 import BlogSelectScreen, { computeNavBar as blogSelectNavBar } from '~/framework/modules/blog/screens/BlogSelectScreen';
+import BlogAudienceScreen, { computeNavBar as blogAudienceNavBar } from '~/framework/modules/blog/screens/audience';
 import BlogPostDetailsScreen, { computeNavBar as blogPostDetailsNavBar } from '~/framework/modules/blog/screens/blog-post-details';
 import BlogCreatePostScreen, { computeNavBar as blogCreatePostNavBar } from '~/framework/modules/blog/screens/create-post';
 import BlogEditPostScreen, { computeNavBar as blogEditPostNavBar } from '~/framework/modules/blog/screens/edit';
@@ -46,6 +47,14 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={blogRouteNames.blogEditPost}
           component={BlogEditPostScreen}
           options={blogEditPostNavBar}
+          initialParams={{}}
+        />
+      </Stack.Group>
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen
+          name={blogRouteNames.blogAudience}
+          component={BlogAudienceScreen}
+          options={blogAudienceNavBar}
           initialParams={{}}
         />
       </Stack.Group>

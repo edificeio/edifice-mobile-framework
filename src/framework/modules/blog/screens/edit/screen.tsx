@@ -26,7 +26,7 @@ import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPost
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogCreatePost>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogEditPost>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
