@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-05-14 23:54:31",
-  "notes": "release: 1.13.0-alpha.10(1130011)",
-  "version": "1.13.0-alpha.11(1130012)"
+  "last": "2024-05-15 13:14:20",
+  "notes": "fix(editor): fix string attachments\nrelease: 1.13.0-alpha.11(1130012)",
+  "version": "1.13.0-alpha.12(1130013)"
 }
