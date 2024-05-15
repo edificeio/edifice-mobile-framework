@@ -143,7 +143,7 @@ function createHTML(options = {}) {
         .download-attachments h2, .download-attachments a, .attachments a {color: ${theme.palette.grey.black}; text-decoration: none;}
         .download-attachments h2 {margin: 0 0 ${UI_SIZES.spacing.small}px 0; font-size: ${getScaleFontSize(12)}px; line-height: ${getScaleFontSize(20)}px}
         .attachments {display: flex; flex-direction: column;}
-        .attachments::before {content: ${I18n.get('attachment-attachments')};margin-bottom: ${UI_SIZES.spacing.small}px; font-size: ${getScaleFontSize(12)}px; font-weight: 700;}
+        .attachments::before {content: '${I18n.get('attachment-attachments')}'; margin-bottom: ${UI_SIZES.spacing.small}px; font-size: ${getScaleFontSize(12)}px; font-weight: 700;}
         .attachments a { padding: ${UI_SIZES.spacing.minor}px ${UI_SIZES.spacing.small}px; border:  ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; border-radius: ${UI_SIZES.radius.mediumPlus}px; display: flex; align-items: center; margin-bottom: ${UI_SIZES.spacing.small}px; background-color: ${theme.palette.grey.white};}
         .attachments a:last-child {margin-bottom: 0;}
         .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: ${UI_SIZES.elements.icon.medium}px ${UI_SIZES.elements.icon.medium}px; height: ${UI_SIZES.elements.icon.medium}px; width: ${UI_SIZES.elements.icon.medium}px; margin-right: ${UI_SIZES.spacing.minor}px;}
