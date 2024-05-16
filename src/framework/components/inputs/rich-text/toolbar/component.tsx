@@ -4,7 +4,7 @@ import { Animated, TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
-import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
+import type RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { actions } from '~/framework/components/inputs/rich-text/editor/const';
 import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text/toolbar/list';
 import { NamedSVG } from '~/framework/components/picture';

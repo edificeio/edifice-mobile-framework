@@ -1,6 +1,6 @@
 import { Animated } from 'react-native';
 
-import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
+import type RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 
 export interface RichToolbarProps {
   editor?: RichEditor;

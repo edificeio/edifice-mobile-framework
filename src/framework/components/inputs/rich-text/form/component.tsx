@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -31,16 +32,17 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionBoldText, CaptionText, HeadingXSText, SmallText } from '~/framework/components/text';
 import { assertSession } from '~/framework/modules/auth/reducer';
+import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import workspaceService from '~/framework/modules/workspace/service';
 import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
 import { isEmpty } from '~/framework/util/object';
 
 import styles from './styles';
-import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
+import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 let addedFiles: UploadFile[] = [];
 
-const RichEditorForm = (props: RichEditorFormProps) => {
+const RichEditorForm = (props: RichEditorFormAllProps) => {
   const headerHeight = useHeaderHeight();
   const session = assertSession();
 
@@ -452,6 +454,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             onFocus={handleFocus}
             autoCorrect
             autoCapitalize
+            oneSessionId={props.oneSessionId}
           />
         </ScrollView>
         {isFocus ? toolbar() : null}
@@ -462,4 +465,6 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   );
 };
 
-export default RichEditorForm;
+export default connect(state => ({
+  oneSessionId: authSelectors.oneSessionId(state),
+}))(RichEditorForm);

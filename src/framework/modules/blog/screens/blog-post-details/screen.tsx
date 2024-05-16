@@ -52,6 +52,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
+import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
 import styles from './styles';
 import {
@@ -130,6 +131,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
       await this.doGetBlogPostDetails();
       await this.doGetBlogInfos();
+      console.debug('AAAAAAAAAAAAA');
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+      console.debug('BBBBBBBBBBBBB');
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
@@ -370,13 +374,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { route } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
 
     if (blog && blogPost) {
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
       this.setState({
         blogInfos: blog,
         blogPostData: blogPost,

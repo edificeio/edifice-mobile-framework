@@ -5,11 +5,11 @@ import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { LoadingIndicator } from '~/framework/components/loading';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
+import { urlSigner } from '~/infra/oauth';
 
 import { actions, messages } from './const';
 import { createHTML } from './editor';
@@ -44,6 +44,7 @@ export default class RichEditor extends Component {
     defaultParagraphSeparator: 'div',
     editorInitializedCallback: () => {},
     initialHeight: 0,
+    oneSessionId: undefined,
   };
 
   constructor(props) {
@@ -89,6 +90,7 @@ export default class RichEditor extends Component {
       disabled,
       styleWithCSS,
       useComposition,
+      oneSessionId,
     } = props;
     that.state = {
       html: {
@@ -114,19 +116,8 @@ export default class RichEditor extends Component {
       },
       height: initialHeight,
       keyboardHeight: 0,
-      loading: true,
-      oneSessionId: '',
     };
     that.focusListeners = [];
-    // Retrieve oneSessionId to view ENT resources properly
-    OAuth2RessourceOwnerPasswordClient?.connection
-      ?.getOneSessionId()
-      .then(osi => {
-        console.debug(`oneSessionId retrieved: ${osi}`);
-        this.setState({ oneSessionId: osi ?? '' });
-      })
-      .catch(err => console.error(`Unable to retrieve oneSessionId: ${err.message}`))
-      .finally(() => this.setState({ loading: false }));
     // IFrame video auto play bug fix
     setTimeout(async () => {
       that.htmlLoaded = true;
@@ -324,8 +315,8 @@ export default class RichEditor extends Component {
   renderWebView() {
     const that = this;
     const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
-    const { html: viewHTML, oneSessionId } = that.state;
-    const js = `document.cookie="oneSessionId=${oneSessionId}"; true;`;
+    const { html: viewHTML } = that.state;
+    const js = `document.cookie="oneSessionId=${this.props.oneSessionId?.value}"; true;`;
     return (
       // eslint-disable-next-line react/jsx-filename-extension
       <>
@@ -363,10 +354,8 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    // Waiting for oneSessionId to be retrieved
-    const { loading } = this.state;
-    const { useContainer, style } = this.props;
-    if (loading) return <LoadingIndicator />;
+    const { useContainer, style, oneSessionId } = this.props;
+    if (!oneSessionId) return <EmptyConnectionScreen />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
     const { height } = this.state;
@@ -376,8 +365,6 @@ export default class RichEditor extends Component {
           {this.renderWebView()}
         </View>
       );
-    // If set to false, it will not use a View wrapper
-    return this.renderWebView();
   }
 
   //-------------------------------------------------------------------------------

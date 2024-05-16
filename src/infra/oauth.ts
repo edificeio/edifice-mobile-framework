@@ -549,6 +549,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
       const response = await fetch(request);
       const cookie = response.headers.get('set-cookie') || undefined;
+      let newSessionId: string | undefined;
       // Continue if set-cookie header found
       // Otherwise, last oneSessionId will be returned
       if (!isEmpty(cookie)) {
@@ -556,7 +557,12 @@ export class OAuth2RessourceOwnerPasswordClient {
         const match = cookie!.match(/oneSessionId=([^;]+)/);
         // Update oneSessionId if found
         // Otherwise, last oneSessionId will be returned
-        if (!isEmpty(match)) this.oneSessionId = match![1];
+        if (!isEmpty(match)) newSessionId = match![1];
+      }
+      if (newSessionId && this.oneSessionId !== newSessionId) {
+        this.oneSessionId = newSessionId;
+        const session = assertSession();
+        getStore().dispatch(authActions.setOneSessionId(session.user.id, { value: newSessionId }));
       }
     } catch (e) {
       console.error('Unable to retrieve oneSessionId => ', e);
