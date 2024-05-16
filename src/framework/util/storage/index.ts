@@ -84,7 +84,7 @@ export const OldStorageFunctions = {
     try {
       Storage.global.set(key, JSON.stringify(data));
     } catch (error) {
-      console.warn(
+      console.error(
         `[Storage] setItemJson: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'setItemJson ERROR', (error as Error | null)?.message || '');
@@ -100,7 +100,7 @@ export const OldStorageFunctions = {
     try {
       Storage.global.set(key, data);
     } catch (error) {
-      console.warn(
+      console.error(
         `[Storage] setItem: failed to write key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'setItem ERROR', (error as Error | null)?.message || '');
@@ -118,7 +118,7 @@ export const OldStorageFunctions = {
       const parsedItem = item && JSON.parse(item);
       return parsedItem as T | undefined;
     } catch (error) {
-      console.warn(
+      console.error(
         `[Storage] getItemJson: failed to load key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'getItemJson ERROR', (error as Error | null)?.message || '');
@@ -136,7 +136,7 @@ export const OldStorageFunctions = {
       const item = Storage.global.getString(key);
       return item as T | undefined;
     } catch (error) {
-      console.warn(
+      console.error(
         `[Storage] getItem: failed to load key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'getItem ERROR', (error as Error | null)?.message || '');
@@ -153,7 +153,7 @@ export const OldStorageFunctions = {
     try {
       Storage.global.delete(key);
     } catch (error) {
-      console.warn(
+      console.error(
         `[Storage] removeItemJson: failed to remove key "${key}" ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'removeItem ERROR', (error as Error | null)?.message || '');
@@ -171,7 +171,7 @@ export const OldStorageFunctions = {
         Storage.global.delete(key);
       }
     } catch (error) {
-      console.warn(
+      console.error(
         `[Storage] removeItems: failed to remove items ${error instanceof Error ? `: ${(error as Error).message}` : ''}`,
       );
       Trackers.trackDebugEvent('Storage', 'removeItems ERROR', (error as Error | null)?.message || '');
@@ -188,7 +188,7 @@ export const OldStorageFunctions = {
       const keys = Storage.global.getAllKeys();
       return keys;
     } catch (error) {
-      console.warn(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
+      console.error(`[Storage] getKeys: failed to get all keys ${error instanceof Error ? `: ${(error as Error).message}` : ''}`);
       Trackers.trackDebugEvent('Storage', 'getKeys ERROR', (error as Error | null)?.message || '');
       return null;
     }

@@ -54,9 +54,7 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
         // This is because the webview may go away during long periods of inactivity,
         // and the ref will be lost, causing the entire app to crash in this throw new error.
         //throw new Error('Toolbar has no editor!');
-        if (__DEV__) {
-          console.warn('Toolbar has no editor. Please make sure the prop getEditor returns a ref to the editor component.');
-        }
+        console.error('Toolbar has no editor. Please make sure the prop getEditor returns a ref to the editor component.');
       } else {
         editor.registerToolbar(selectedItems => this.setSelectedItems(selectedItems));
         this.editor = editor;

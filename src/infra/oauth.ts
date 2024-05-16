@@ -473,7 +473,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.updateToken(userId, this.exportToken(), updateRedux);
       return this.token!;
     } catch (err) {
-      console.warn('[oAuth2] failed refresh token', err);
+      console.error('[oAuth2] failed refresh token', err);
       throw err;
     }
   }
@@ -559,7 +559,7 @@ export class OAuth2RessourceOwnerPasswordClient {
         if (!isEmpty(match)) this.oneSessionId = match![1];
       }
     } catch (e) {
-      console.warn('Unable to retrieve oneSessionId => ', e);
+      console.error('Unable to retrieve oneSessionId => ', e);
       // We leave the catch and returned value will be last oneSessionId
     }
     return this.oneSessionId;

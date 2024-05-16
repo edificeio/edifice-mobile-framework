@@ -135,7 +135,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       if (this.state.blogPostData?._id)
         markViewAudience({ module: 'blog', resourceType: 'post', resourceId: this.state.blogPostData._id });
       else {
-        if (__DEV__) console.warn(`[Audience] cannot recieve blog post id.`);
+        console.warn(`[Audience] cannot recieve blog post id.`);
       }
     }
   }

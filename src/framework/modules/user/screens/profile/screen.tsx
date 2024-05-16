@@ -107,7 +107,7 @@ const callPhoneNumber = tel => {
       console.debug(`L'appel du numéro ${telWithoutSpaces} n'est pas supporté.`);
     })
     .catch(err => {
-      if (__DEV__) console.error("Une erreur s'est produite lors de l'appel du numéro.", err);
+      console.error("Une erreur s'est produite lors de l'appel du numéro.", err);
     });
 };
 
