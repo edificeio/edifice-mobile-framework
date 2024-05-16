@@ -4,4 +4,5 @@ export interface AudienceMeasurementProps {
   containerStyle?: ViewStyle;
   preview?: boolean;
   actionViews?: () => void;
+  actionReactions?: () => void;
 }

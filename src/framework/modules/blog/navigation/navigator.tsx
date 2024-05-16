@@ -8,6 +8,7 @@ import BlogAudienceScreen, { computeNavBar as blogAudienceNavBar } from '~/frame
 import BlogPostDetailsScreen, { computeNavBar as blogPostDetailsNavBar } from '~/framework/modules/blog/screens/blog-post-details';
 import BlogCreatePostScreen, { computeNavBar as blogCreatePostNavBar } from '~/framework/modules/blog/screens/create-post';
 import BlogEditPostScreen, { computeNavBar as blogEditPostNavBar } from '~/framework/modules/blog/screens/edit';
+import BlogReactionsScreen, { computeNavBar as blogReactionsNavBar } from '~/framework/modules/blog/screens/reactions';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
@@ -55,6 +56,12 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
           name={blogRouteNames.blogAudience}
           component={BlogAudienceScreen}
           options={blogAudienceNavBar}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name={blogRouteNames.blogReactions}
+          component={BlogReactionsScreen}
+          options={blogReactionsNavBar}
           initialParams={{}}
         />
       </Stack.Group>

@@ -580,6 +580,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           <AudienceMeasurement
             containerStyle={styles.footer}
             actionViews={() => this.props.navigation.navigate(blogRouteNames.blogAudience, {})}
+            actionReactions={() => this.props.navigation.navigate(blogRouteNames.blogReactions, {})}
           />
         ) : null}
       </View>

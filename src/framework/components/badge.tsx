@@ -4,8 +4,7 @@ import { ColorValue, StyleSheet, View } from 'react-native';
 import theme from '~/app/theme';
 
 import { UI_SIZES } from './constants';
-import { Icon } from './icon';
-import { Picture, PictureProps } from './picture';
+import { NamedSVG, Picture, PictureProps } from './picture';
 import { CaptionBoldText } from './text';
 
 export interface IBadgeProps {
@@ -32,7 +31,7 @@ export const Badge = ({ content, color }: IBadgeProps) => {
     } else if (typeof content === 'number') {
       return <CaptionBoldText style={{ color: theme.ui.text.inverse }}>{content > 99 ? '99+' : content}</CaptionBoldText>;
     } else if (typeof content === 'string') {
-      return <Icon size={12} color={theme.ui.text.inverse} name={content} />;
+      return <NamedSVG height={12} width={12} color={theme.ui.text.inverse} name={content} />;
     } else {
       if (content.type === 'Icon') {
         return <Picture {...content} size={12} color={theme.ui.text.inverse} />;

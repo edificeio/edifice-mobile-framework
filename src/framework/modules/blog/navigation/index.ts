@@ -8,6 +8,7 @@ import { BlogAudienceScreenNavParams } from '~/framework/modules/blog/screens/au
 import { BlogPostDetailsScreenNavParams } from '~/framework/modules/blog/screens/blog-post-details/types';
 import { BlogCreatePostScreenNavParams } from '~/framework/modules/blog/screens/create-post/types';
 import { BlogEditPostScreenNavParams } from '~/framework/modules/blog/screens/edit/types';
+import { BlogReactionsScreenNavParams } from '~/framework/modules/blog/screens/reactions/types';
 
 export interface BlogNavigationParams extends ParamListBase {
   home: BlogSelectScreenNavParams;
@@ -17,6 +18,7 @@ export interface BlogNavigationParams extends ParamListBase {
   blogCreatePost: BlogCreatePostScreenNavParams;
   blogEditPost: BlogEditPostScreenNavParams;
   blogAudience: BlogAudienceScreenNavParams;
+  blogReactions: BlogReactionsScreenNavParams;
 }
 
 export const blogRouteNames = {
@@ -27,4 +29,5 @@ export const blogRouteNames = {
   blogCreatePost: `${moduleConfig.routeName}/create` as 'blogCreatePost',
   blogEditPost: `${moduleConfig.routeName}/edit` as 'blogEditPost',
   blogAudience: `${moduleConfig.routeName}/audience` as 'blogAudience',
+  blogReactions: `${moduleConfig.routeName}/reactions` as 'blogReactions',
 };

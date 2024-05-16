@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     backgroundColor: theme.palette.grey.white,
+    pointerEvents: 'none',
   },
   stats: {
     flexDirection: 'row',

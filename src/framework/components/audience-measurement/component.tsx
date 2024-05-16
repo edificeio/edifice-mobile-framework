@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Animated, TouchableOpacity, View } from 'react-native';
 
@@ -15,7 +14,6 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
   const reactionsOpacity = React.useRef(new Animated.Value(0)).current;
   const reactionsYPos = React.useRef(new Animated.Value(0)).current;
   const scaleItem = React.useRef(new Animated.Value(1)).current;
-  const navigation = useNavigation();
 
   const animateReactions = React.useCallback(
     ({ opacity, ypos }: { opacity: number; ypos: number }) => {
@@ -50,7 +48,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
   return (
     <View style={props.containerStyle}>
       <View style={styles.stats}>
-        <View style={styles.statsItem}>
+        <TouchableOpacity onPress={props.actionReactions} style={styles.statsItem}>
           <SmallText style={styles.statsItemText}>7</SmallText>
           <View style={styles.statsReactions}>
             <NamedSVG
@@ -74,7 +72,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
               width={UI_SIZES.elements.icon.default}
             />
           </View>
-        </View>
+        </TouchableOpacity>
         <TouchableOpacity onPress={props.actionViews} style={styles.statsItem}>
           <SmallText style={styles.statsItemText}>48</SmallText>
           <NamedSVG
