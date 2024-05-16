@@ -171,7 +171,7 @@ function createHTML(options = {}) {
 <script>
     var __DEV__ = !!${window.__DEV__};
     var _ = (function (exports) {
-        var anchorNode, focusNode, anchorOffset, focusOffset, _focusCollapse = false, cNode, cursorPos;
+        var anchorNode, focusNode, anchorOffset, focusOffset, _focusCollapse = false, cNode, cursorPos, selectionLocked = false;
         var _log = console.log;
         var placeholderColor = '${placeholderColor}';
         var _randomID = 99;
@@ -469,9 +469,12 @@ function createHTML(options = {}) {
                 return flag;
              }},
             line: { result: function() { return exec('insertHorizontalRule'); }},
-            redo: { state: function() { return queryCommandEnabled('redo'); }, result: function() { return exec('redo'); }},
-            undo: { state: function() { return queryCommandEnabled('undo'); }, result: function() { return exec('undo'); }},
-            selection: { state: function() { return window.getSelection().type === 'Range'; }},
+            redo: { state: function() { return queryCommandEnabled('redo'); }, result: function() { selectionLocked = true; return exec('redo'); }},
+            undo: { state: function() { return queryCommandEnabled('undo'); }, result: function() { selectionLocked = true; return exec('undo'); }},
+            selection: { state: function() {
+                if (selectionLocked) {selectionLocked = false; return false;}
+                return window.getSelection().type === 'Range'; }
+            },
             indent: { result: function() { return exec('indent'); }},
             outdent: { result: function() { return exec('outdent'); }},
             outdent: { result: function() { return exec('outdent'); }},
