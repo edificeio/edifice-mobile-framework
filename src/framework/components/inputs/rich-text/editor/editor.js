@@ -534,7 +534,8 @@ function createHTML(options = {}) {
                     if (html){
                         exec('insertHTML', html);
                         Actions.UPDATE_HEIGHT();
-                        Actions.GET_IMAGE_URLS();
+                        Actions.GET_IMAGES_URLS();
+                        Actions.GET_LINKS_URLS();
                     }
 
                     // if (anchorNode) {
@@ -607,7 +608,8 @@ function createHTML(options = {}) {
                 init: function() {
                     Actions.FORMAT_AUDIOS();
                     Actions.FORMAT_VIDEOS();
-                    Actions.GET_IMAGE_URLS();
+                    Actions.GET_IMAGES_URLS();
+                    Actions.GET_LINKS_URLS();
                     Actions.UPDATE_HEIGHT();
                 }
             },
@@ -682,14 +684,24 @@ function createHTML(options = {}) {
                 }
             },
 
-            GET_IMAGE_URLS: function() {
+            GET_IMAGES_URLS: function() {
                 var images = document.getElementsByTagName('img');
-                var imageUrls = [];
+                var imagesUrls = [];
                 for (var i = 0; i < images.length; i++) {
-                    imageUrls.push(images[i].src);
+                    imagesUrls.push(images[i].src);
                 }
-                postAction({type: 'IMAGE_URLS', data: imageUrls}, true);
+                postAction({type: 'IMAGES_URLS', data: imagesUrls}, true);
             },
+
+            GET_LINKS_URLS: function() {
+                var links = document.getElementsByTagName('a');
+                var linksUrls = [];
+                for (var l = 0; l < links.length; l++) {
+                    linksUrls.push(links[l].getAttribute('href'));
+                }
+                postAction({type: 'LINKS_URLS', data: linksUrls}, true);
+            },
+
         };
 
         var init = function init(settings) {

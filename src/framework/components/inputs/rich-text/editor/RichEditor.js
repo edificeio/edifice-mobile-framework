@@ -65,7 +65,8 @@ export default class RichEditor extends Component {
     that.selectionChangeListeners = [];
     that.pfUrl = getSession()?.platform?.url || '';
     that.htmlLoaded = false;
-    that.imageUrls = [];
+    that.imagesUrls = [];
+    that.linksUrls = [];
     that._onAudioTouched = that._onAudioTouched.bind(that);
     that._onImageTouched = that._onImageTouched.bind(that);
     that._onLinkTouched = that._onLinkTouched.bind(that);
@@ -186,16 +187,21 @@ export default class RichEditor extends Component {
     });
   }
 
-  _onImageTouched(url, imageUrls) {
-    const images = imageUrls.map(imgSrc => ({
+  _onImageTouched(url, imagesUrls) {
+    const images = imagesUrls.map(imgSrc => ({
       type: 'image',
       src: { uri: imgSrc },
     }));
-    openCarousel({ data: images, startIndex: imageUrls.indexOf(url) });
+    openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
   }
 
-  _onLinkTouched(url) {
+  _onLinkTouched(url, linksUrls) {
     openUrl(url);
+    /*const links = linksUrls.map(href => ({
+      type: 'link',
+      src: { uri: href },
+    }));
+    openCarousel({ data: links, startIndex: linksUrls.indexOf(url) });*/
     // TODO: https://edifice-community.atlassian.net/browse/MB-2437
   }
 
@@ -225,7 +231,7 @@ export default class RichEditor extends Component {
           }
           break;
         case messages.LINK_TOUCHED:
-          that._onLinkTouched(that._getAbsoluteUrl(data));
+          that._onLinkTouched(that._getAbsoluteUrl(data), that.linksUrls);
           break;
         case messages.LOG:
           console.debug('FROM EDIT:', ...data);
@@ -273,10 +279,13 @@ export default class RichEditor extends Component {
           that._onAudioTouched(that._getAbsoluteUrl(data));
           break;
         case messages.IMAGE_TOUCHED:
-          that._onImageTouched(that._getAbsoluteUrl(data), that.imageUrls);
+          that._onImageTouched(that._getAbsoluteUrl(data), that.imagesUrls);
           break;
-        case messages.IMAGE_URLS:
-          that.imageUrls = data.map(url => that._getAbsoluteUrl(url));
+        case messages.IMAGES_URLS:
+          that.imagesUrls = data.map(url => that._getAbsoluteUrl(url));
+          break;
+        case messages.LINKS_URLS:
+          that.linksUrls = data.map(url => that._getAbsoluteUrl(url));
           break;
         case messages.VIDEO_TOUCHED:
           that._onVideoTouched(that._getAbsoluteUrl(data));
