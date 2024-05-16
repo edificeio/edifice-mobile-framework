@@ -131,9 +131,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
       await this.doGetBlogPostDetails();
       await this.doGetBlogInfos();
-      console.debug('AAAAAAAAAAAAA');
       await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
-      console.debug('BBBBBBBBBBBBB');
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
@@ -558,9 +556,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
     const blogPostComments = blogPostData?.comments;
-    console.debug('---------- HTML ----------');
-    console.debug(blogPostContent);
-    console.debug('---------- HTML ----------');
+    // console.debug('---------- HTML ----------');
+    // console.debug(blogPostContent);
+    // console.debug('---------- HTML ----------');
     return (
       <View style={styles.detailsMain}>
         <View style={styles.detailsPost}>
