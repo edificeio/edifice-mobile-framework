@@ -10,5 +10,7 @@ import { RichEditorViewerProps } from './types';
 export const RichEditorViewer = connect(state => ({
   oneSessionId: authSelectors.oneSessionId(state),
 }))((props: RichEditorViewerProps & { oneSessionId: AuthActiveAccount['tokens']['oneSessionId'] }) => {
-  return <RichEditor disabled useContainer initialContentHTML={props.content} oneSessionId={props.oneSessionId} />;
+  return (
+    <RichEditor disabled useContainer initialContentHTML={props.content} oneSessionId={props.oneSessionId} onLoad={props.onLoad} />
+  );
 });

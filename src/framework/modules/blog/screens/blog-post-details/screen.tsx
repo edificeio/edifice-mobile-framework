@@ -126,6 +126,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   listHeight = 0;
 
+  loaderRef = React.createRef<View>();
+
   async doInit() {
     try {
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
@@ -552,6 +554,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : null;
   }
 
+  _setRichContentReady() {
+    this.loaderRef.current?.setNativeProps({
+      style: { opacity: 0 },
+    });
+  }
+
+  setRichContentReady = this._setRichContentReady.bind(this);
+
   renderBlogPostDetails() {
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
@@ -579,7 +589,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditorViewer content={blogPostContent} />
+            <RichEditorViewer content={blogPostContent} onLoad={this.setRichContentReady} />
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (
@@ -668,13 +678,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       <>
         <PreventBack infoComment={this.state.infoComment} />
         <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
-          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
+          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState)
+            ? null
+            : errorState
+              ? this.renderError()
+              : this.renderContent()}
+
+          <View ref={this.loaderRef} style={styles.loader}>
             <BlogPlaceholderDetails />
-          ) : errorState ? (
-            this.renderError()
-          ) : (
-            this.renderContent()
-          )}
+          </View>
         </PageComponent>
       </>
     );

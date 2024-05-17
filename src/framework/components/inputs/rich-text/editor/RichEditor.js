@@ -45,6 +45,7 @@ export default class RichEditor extends Component {
     editorInitializedCallback: () => {},
     initialHeight: 0,
     oneSessionId: undefined,
+    onLoad: undefined,
   };
 
   constructor(props) {
@@ -90,7 +91,6 @@ export default class RichEditor extends Component {
       disabled,
       styleWithCSS,
       useComposition,
-      oneSessionId,
     } = props;
     that.state = {
       html: {
@@ -291,13 +291,16 @@ export default class RichEditor extends Component {
   }
 
   setWebHeight(height) {
-    const { onHeightChange, useContainer, initialHeight } = this.props;
+    const { onHeightChange, useContainer, initialHeight, onLoad } = this.props;
     if (height !== this.state.height) {
       const maxHeight = Math.max(height, initialHeight);
       if (!this.unmount && useContainer && maxHeight >= initialHeight) {
         this.setState({ height: maxHeight });
       }
       if (onHeightChange) onHeightChange(height);
+      if (height > 0) {
+        onLoad?.();
+      }
     }
   }
 
