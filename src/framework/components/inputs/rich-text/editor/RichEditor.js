@@ -406,6 +406,10 @@ export default class RichEditor extends Component {
     this.sendAction(actions.content, 'focus');
   }
 
+  lockContentEditor() {
+    this.sendAction(actions.content, 'lock');
+  }
+
   showAndroidKeyboard() {
     const that = this;
     if (Platform.OS === 'android') {
@@ -414,32 +418,15 @@ export default class RichEditor extends Component {
     }
   }
 
-  insertAudio(attributes, style) {
-    // TODO: - https://edifice-community.atlassian.net/browse/MB-2363
-    // + editor.js - "audio:"
-    this.sendAction(actions.insertVideo, 'result', attributes, style);
-  }
-
-  insertVideo(attributes, style) {
-    // TODO: - https://edifice-community.atlassian.net/browse/MB-2360
-    // + editor.js - "video:"
-    this.sendAction(actions.insertVideo, 'result', attributes, style);
-  }
-
   insertText(text) {
     this.sendAction(actions.insertText, 'result', text);
   }
 
   insertHTML(html) {
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2404 => Use insertHTML
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2360 => Use insertHTML
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2363 => Use insertHTML
     this.sendAction(actions.insertHTML, 'result', html);
-  }
-
-  insertLink(title, url) {
-    // TODO: - https://edifice-community.atlassian.net/browse/MB-2404
-    if (url) {
-      this.showAndroidKeyboard();
-      this.sendAction(actions.insertLink, 'result', { title, url });
-    }
   }
 
   injectJavascript(script) {

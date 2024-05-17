@@ -50,13 +50,16 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   // Editor management
   //
 
-  const [isFocus, setIsFocus] = React.useState<boolean>(false);
+  const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
   const richText = React.useRef<RichEditor>(null);
 
+  const blurRichText = () => {
+    setIsFocused(false);
+  };
+
   const focusRichText = () => {
-    richText.current?.focusContentEditor();
-    setIsFocus(true);
+    setIsFocused(true);
   };
 
   //
@@ -66,6 +69,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   const [files, setFiles] = React.useState<UploadFile[]>([]);
 
   const updateFiles = () => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (isEmpty(addedFiles)) hideAddFilesResults();
     else setFiles([...addedFiles]);
   };
@@ -166,21 +170,20 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   };
 
   const showAddFilesResults = () => {
-    richText?.current?.blurContentEditor();
-    setIsFocus(false);
+    blurRichText();
     addFilesResultsRef.current?.present();
   };
 
-  const addHtmlFiles = () => {
-    let filesHTML = '';
+  const addFiles = () => {
+    let html = '';
     addedFiles.forEach(file => {
       if (file.status === UploadStatus.OK) {
-        filesHTML += `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="350" height="NaN">`;
+        html += `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="350" height="NaN">`;
       }
     });
-    richText.current?.insertHTML(`${filesHTML}`);
     hideAddFilesResults();
-    setTimeout(() => richText.current?.insertHTML(`<br>\r\n`), 300);
+    richText.current?.focusContentEditor();
+    richText.current?.insertHTML(`${html}`);
   };
 
   const handleAddFiles = () => {
@@ -210,13 +213,13 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           },
           {
             text: I18n.get('common-ok'),
-            onPress: addHtmlFiles,
+            onPress: addFiles,
           },
         ],
       );
       return;
     }
-    addHtmlFiles();
+    addFiles();
   };
 
   const fileStatusIcon = (index: number, status: UploadStatus) => {
@@ -317,6 +320,8 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   };
 
   const showChoosePicsMenu = () => {
+    richText?.current?.lockContentEditor();
+    blurRichText();
     choosePicsMenuRef.current?.present();
   };
 
@@ -402,7 +407,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
 
   const handleBlur = React.useCallback(() => {
     animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
-    setIsFocus(false);
+    setIsFocused(false);
   }, [animateToolbar]);
 
   const handleChange = React.useCallback(
@@ -418,7 +423,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
 
   const handleFocus = React.useCallback(() => {
     animateToolbar({ opacity: 1, ypos: UI_SIZES.elements.editor.toolbarHeight });
-    setIsFocus(true);
+    setIsFocused(true);
   }, [animateToolbar]);
 
   return (
@@ -437,7 +442,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           {props.topForm}
           <RichEditor
             disabled={false}
-            enterKeyHint="done"
+            enterKeyHint="enter"
             editorStyle={styles.container}
             firstFocusEnd={false}
             initialContentHTML={props.initialContentHtml ?? ''}
@@ -457,7 +462,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
             oneSessionId={props.oneSessionId}
           />
         </ScrollView>
-        {isFocus ? toolbar() : null}
+        {isFocused ? toolbar() : null}
         {choosePicsMenu()}
         {addFilesResults()}
       </KeyboardAvoidingView>
