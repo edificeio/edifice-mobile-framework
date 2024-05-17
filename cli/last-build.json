@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-05-15 13:14:20",
-  "notes": "fix(editor): fix string attachments\nrelease: 1.13.0-alpha.11(1130012)",
-  "version": "1.13.0-alpha.12(1130013)"
+  "last": "2024-05-17 18:56:45",
+  "notes": "feat(editor): MB-235§, MB-2357, Review add images flow completely\nfix: better handling loading time of rich content\nchore: remove some console.\nchore: oneSessionId in redux + prop in rich-text components\nfix(editor): MB-2426, Ignore selection state after undo/redo\nfeat(editor): Links list management addition\nchore(log): Review some log statements\nrelease: 1.13.0-alpha.12(1130013)",
+  "version": "1.13.0-alpha.13(1130014)"
 }
