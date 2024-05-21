@@ -52,7 +52,7 @@ export const deleteCommentNewsItemAction =
   };
 
 /**
- * Delete comment
+ * Publish comment
  */
 export const publishCommentNewsItemAction =
   (infoId: number, comment: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {

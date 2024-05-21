@@ -1,42 +1,64 @@
 import React from 'react';
 import { ColorValue, View } from 'react-native';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, HeadingMText } from '~/framework/components/text';
+import { AccountType } from '~/framework/modules/auth/model';
 
 import styles from './styles';
 import { AudienceMeasurementViewsModalProps } from './types';
 
 const AudienceMeasurementViewsModal = (props: AudienceMeasurementViewsModalProps) => {
-  const renderItem = ({ item }: { item: { nb: number; label: string; icon: string; color?: ColorValue; last?: boolean } }) => {
+  const renderItem = ({
+    nb,
+    label,
+    icon,
+    color,
+    last,
+  }: {
+    nb: number;
+    label: string;
+    icon: string;
+    color?: ColorValue;
+    last?: boolean;
+  }) => {
     return (
-      <View style={[styles.item, item.last ? styles.lastItem : {}]}>
-        <View style={[styles.icon, { backgroundColor: item.color ?? theme.palette.grey.pearl }]}>
+      <View style={[styles.item, last ? styles.lastItem : {}]}>
+        <View style={[styles.icon, { backgroundColor: color ?? theme.palette.grey.pearl }]}>
           <NamedSVG
-            name={item.icon}
-            fill={item.color ? theme.palette.grey.white : theme.palette.grey.black}
+            name={icon}
+            fill={color ? theme.palette.grey.white : theme.palette.grey.black}
             height={UI_SIZES.elements.icon.small}
             width={UI_SIZES.elements.icon.small}
           />
         </View>
-        <HeadingMText style={styles.nb}>{item.nb}</HeadingMText>
-        <BodyText>{item.label}</BodyText>
+        <HeadingMText style={styles.nb}>{nb}</HeadingMText>
+        <BodyText>{label}</BodyText>
       </View>
     );
   };
 
   return (
     <PageView style={styles.container}>
-      {renderItem({ item: { nb: 48, label: 'Vues totales', icon: 'ui-see' } })}
-      {renderItem({ item: { nb: 23, label: 'Personnes ont vu le billet', icon: 'ui-users' } })}
+      {renderItem({ nb: props.nbViews, label: I18n.get('audiencemeasurement-views'), icon: 'ui-see' })}
+      {renderItem({ nb: props.nbUniqueViews, label: I18n.get('audiencemeasurement-uniqueviews'), icon: 'ui-users' })}
       <View style={styles.subItems}>
-        {renderItem({ item: { nb: 4, label: 'Élèves', icon: 'ui-backpack', color: theme.palette.complementary.orange.regular } })}
-        {renderItem({
-          item: { nb: 11, label: 'Parents', icon: 'ui-cottage', color: theme.palette.complementary.blue.regular, last: true },
-        })}
+        {props.viewsPerProfile.map((item, index) =>
+          renderItem({
+            nb: item.counter,
+            label: I18n.get(`user-profiletypes-${item.profile.toLocaleLowerCase()}`),
+            icon: item.profile === AccountType.Student ? 'ui-backpack' : 'ui-cottage',
+            color:
+              item.profile === AccountType.Student
+                ? theme.palette.complementary.orange.regular
+                : theme.palette.complementary.blue.regular,
+            last: index === props.viewsPerProfile.length - 1,
+          }),
+        )}
       </View>
     </PageView>
   );

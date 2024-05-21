@@ -13,6 +13,8 @@
   "attachment-downloadsuccess-all": "Fichiers enregistrés dans Téléchargements",
   "attachment-downloadsuccess-name": "{{name}} enregistré dans Téléchargements",
   "attachment-tryagain": "Réessayer",
+  "audiencemeasurement-uniqueviews": "Personnes ont vu le billet",
+  "audiencemeasurement-views": "Vues totales",
   "auth-account-select-error": "Une erreur est survenue.",
   "auth-accountbutton-add": "Ajouter un compte",
   "auth-accountbutton-change": "Changer de compte",

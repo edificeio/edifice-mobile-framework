@@ -579,8 +579,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         {blogPostData?.state === 'PUBLISHED' ? (
           <AudienceMeasurement
             containerStyle={styles.footer}
-            actionViews={() => this.props.navigation.navigate(blogRouteNames.blogAudience, {})}
-            actionReactions={() => this.props.navigation.navigate(blogRouteNames.blogReactions, {})}
+            actionViews={() => this.props.navigation.navigate(blogRouteNames.blogAudience, { blogPostId: blogPostData._id })}
+            actionReactions={() => this.props.navigation.navigate(blogRouteNames.blogReactions, { blogPostId: blogPostData._id })}
           />
         ) : null}
       </View>
