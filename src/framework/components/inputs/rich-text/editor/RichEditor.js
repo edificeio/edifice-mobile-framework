@@ -5,7 +5,6 @@ import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
@@ -357,8 +356,8 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    const { useContainer, style, oneSessionId } = this.props;
-    if (!oneSessionId) return <EmptyConnectionScreen />;
+    const { useContainer, style } = this.props;
+    // if (!oneSessionId) return <EmptyConnectionScreen />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
     const { height } = this.state;
