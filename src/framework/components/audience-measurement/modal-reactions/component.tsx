@@ -1,12 +1,13 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import theme from '~/app/theme';
+import { I18n } from '~/app/i18n';
 import { BadgeAvatar, BadgePosition } from '~/framework/components/badgeAvatar';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionBoldText, SmallText } from '~/framework/components/text';
+import { reactionsInfo } from '~/framework/modules/core/audience/util';
 
 import styles from './styles';
 import { AudienceMeasurementReactionsModalProps } from './types';
@@ -26,11 +27,11 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
   const renderHeaderList = () => {
     return (
       <View style={styles.header}>
-        <SmallText>Tout</SmallText>
-        {renderHeaderItem({ item: { icon: 'reaction-thankyou', nb: 12 } })}
-        {renderHeaderItem({ item: { icon: 'reaction-awesome', nb: 4 } })}
-        {renderHeaderItem({ item: { icon: 'reaction-welldone', nb: 23 } })}
-        {renderHeaderItem({ item: { icon: 'reaction-instructive', nb: 1 } })}
+        <SmallText>{I18n.get('audiencemeasurement-reactions-all')}</SmallText>
+        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_1.icon, nb: props.countByType.REACTION_1 ?? 0 } })}
+        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_2.icon, nb: props.countByType.REACTION_2 ?? 0 } })}
+        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_3.icon, nb: props.countByType.REACTION_3 ?? 0 } })}
+        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_4.icon, nb: props.countByType.REACTION_4 ?? 0 } })}
       </View>
     );
   };
@@ -38,18 +39,18 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
     <PageView style={styles.container}>
       <FlatList
         ListHeaderComponent={renderHeaderList}
-        data={[1, 2, 3]}
+        data={props.userReactions}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <BadgeAvatar
-              userId="0afae690-7a12-4419-bbb5-ae6ebaed4fe0"
-              badgeContent="reaction-thankyou"
-              badgeColor={theme.palette.complementary.blue.pale}
+              userId={item.userId}
+              badgeContent={reactionsInfo[item.reactionType].icon}
+              badgeColor={reactionsInfo[item.reactionType].color}
               badgePosition={BadgePosition.bottom}
             />
             <View>
-              <BodyText>Carpentier Lucie</BodyText>
-              <CaptionBoldText>Élève</CaptionBoldText>
+              <BodyText>{item.displayName}</BodyText>
+              <CaptionBoldText>{I18n.get(`user-profiletypes-${item.profile.toLowerCase()}`)}</CaptionBoldText>
             </View>
           </View>
         )}

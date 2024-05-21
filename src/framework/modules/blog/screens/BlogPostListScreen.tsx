@@ -7,6 +7,7 @@ import moment from 'moment';
 import React from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import { connect } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
@@ -16,7 +17,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { PageView } from '~/framework/components/page';
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { getSession } from '~/framework/modules/auth/reducer';
 import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder/list';
 import BlogPostResourceCard from '~/framework/modules/blog/components/post-resource-card';
@@ -31,7 +32,7 @@ import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 export interface BlogPostListScreenDataProps {
   initialLoadingState: AsyncPagedLoadingState;
-  session?: AuthLoggedAccount;
+  session?: AuthActiveAccount;
 }
 export interface BlogPostListScreenEventProps {
   // doFetch: (selectedBlogId: string) => Promise<BlogPost[] | undefined>; // unused ?
@@ -340,10 +341,17 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   );
 };
 
-const BlogPostListScreenConnected = connect((gs: IGlobalState) => {
-  return {
-    session: getSession(),
-    initialLoadingState: AsyncPagedLoadingState.PRISTINE,
-  };
-})(BlogPostListScreen);
+const mapStateToProps: (s: IGlobalState) => BlogPostListScreenDataProps = s => ({
+  session: getSession(),
+  initialLoadingState: AsyncPagedLoadingState.PRISTINE,
+});
+
+const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => BlogPostListScreenEventProps = (
+  dispatch,
+  getState,
+) => ({
+  dispatch,
+});
+
+const BlogPostListScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogPostListScreen);
 export default BlogPostListScreenConnected;

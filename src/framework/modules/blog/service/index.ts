@@ -4,7 +4,6 @@
 import moment from 'moment';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { BlogPostViewer, BlogPostViews } from '~/framework/modules/blog/model';
 import {
   Blog,
   BlogFolder,
@@ -14,6 +13,7 @@ import {
   BlogPostComments,
   BlogPostList,
 } from '~/framework/modules/blog/reducer';
+import { AudienceReactions, AudienceViewer, AudienceViews } from '~/framework/modules/core/audience/types';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetch, signedFetchJson } from '~/infra/fetchWithCache';
 
@@ -115,7 +115,12 @@ export interface IEntcoreBlogReactions {
     allReactionsCounter: number;
     countByType: object;
   };
-  userReactions: any[];
+  userReactions: {
+    userId: string;
+    profile: string;
+    reactionType: string;
+    displayName: string;
+  }[];
 }
 
 export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>) => {
@@ -204,9 +209,17 @@ export const blogFolderAdapter = (blogFolder: IEntcoreBlogFolder) => {
 export const blogViewsAdapter = (blogViews: IEntcoreBlogViews) => {
   return {
     uniqueViewsCounter: blogViews.uniqueViewsCounter,
-    uniqueViewsPerProfile: blogViews.uniqueViewsPerProfile as BlogPostViewer[],
+    uniqueViewsPerProfile: blogViews.uniqueViewsPerProfile as AudienceViewer[],
     viewsCounter: blogViews.viewsCounter,
-  } as BlogPostViews;
+  } as AudienceViews;
+};
+
+export const blogReactionsAdapter = (blogReactions: IEntcoreBlogReactions) => {
+  return {
+    allReactionsCounter: blogReactions.reactionCounters.allReactionsCounter,
+    countByType: blogReactions.reactionCounters.countByType,
+    userReactions: blogReactions.userReactions,
+  } as AudienceReactions;
 };
 
 export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: string; postId: string }> = url => {
@@ -365,8 +378,14 @@ export const blogService = {
       get: async (blogPostId: string) => {
         const api = `/audience/views/details/blog/post/${blogPostId}`;
         const entcoreBlogPostViews = (await fetchJSONWithCache(api)) as IEntcoreBlogViews;
-        return blogViewsAdapter(entcoreBlogPostViews) as BlogPostViews;
+        return blogViewsAdapter(entcoreBlogPostViews) as AudienceViews;
       },
+      getForManyPosts: async (blogPostIds: string[]) => {
+        const api = `/audience/views/count/blog/post?resourceIds=${blogPostIds.join('&')}`;
+        const entcoreBlogPostsViews = await fetchJSONWithCache(api);
+        return entcoreBlogPostsViews;
+      },
+
       post: async (session: AuthActiveAccount, blogPostId: string) => {
         const api = `/audience/views/blog/post/${blogPostId}`;
         const body = JSON.stringify({});
@@ -380,9 +399,7 @@ export const blogService = {
       get: async (blogPostId: string) => {
         const api = `/audience/reactions/blog/post/${blogPostId}?page=1&size=30`;
         const entcoreBlogPostReactions = (await fetchJSONWithCache(api)) as IEntcoreBlogReactions;
-        console.log(entcoreBlogPostReactions);
-        // TODO ADAPTER ?
-        return entcoreBlogPostReactions;
+        return blogReactionsAdapter(entcoreBlogPostReactions) as AudienceReactions;
       },
       post: async (session: AuthActiveAccount, blogPostId: string, reaction: string) => {
         const api = `/audience/reactions/blog/post`;
@@ -393,7 +410,7 @@ export const blogService = {
         return signedFetchJson(`${session.platform.url}${api}`, {
           method: 'POST',
           body,
-        }) as Promise<{ number: number }>;
+        }) as Promise<any>;
       },
       update: async (session: AuthActiveAccount, blogPostId: string, reaction: string) => {
         const api = `/audience/reactions/blog/post`;

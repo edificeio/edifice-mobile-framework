@@ -10,8 +10,8 @@ import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { getViewsBlogPost } from '~/framework/modules/blog/actions';
-import { BlogPostViews } from '~/framework/modules/blog/model';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
+import { AudienceViews } from '~/framework/modules/core/audience/types';
 import { UserNavigationParams } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
@@ -32,7 +32,7 @@ function BlogAudienceScreen(props: BlogAudienceScreenProps) {
   const { handleGetBlogPostViews } = props;
   const { blogPostId } = props.route.params;
 
-  const [data, setData] = React.useState<BlogPostViews | null>(null);
+  const [data, setData] = React.useState<AudienceViews | null>(null);
 
   const loadData = React.useCallback(async () => {
     try {
@@ -68,7 +68,7 @@ const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () 
   getState,
 ) => ({
   handleGetBlogPostViews: async (blogPostId: string) => {
-    return (await dispatch(getViewsBlogPost(blogPostId))) as BlogPostViews;
+    return (await dispatch(getViewsBlogPost(blogPostId))) as AudienceViews;
   },
 });
 

@@ -563,6 +563,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   renderBlogPostDetails() {
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
+    console.debug(blogPostData?._id, 'blogPostId');
     // console.debug('---------- HTML ----------');
     // console.debug(blogPostContent);
     // console.debug('---------- HTML ----------');

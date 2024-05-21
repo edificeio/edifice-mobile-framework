@@ -1,7 +1,7 @@
-import { BlogPostViewer } from '~/framework/modules/blog/model';
+import { AudienceViewer } from '~/framework/modules/core/audience/types';
 
 export interface AudienceMeasurementViewsModalProps {
   nbUniqueViews: number;
   nbViews: number;
-  viewsPerProfile: BlogPostViewer[];
+  viewsPerProfile: AudienceViewer[];
 }

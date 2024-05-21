@@ -11,6 +11,14 @@ export const getViewsBlogPost = (blogPostId: string) => async (dispatch: ThunkDi
 };
 
 /**
+ * Get views for many blog post by id
+ */
+export const getViewsManyBlogPost =
+  (blogPostIds: string[]) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    return blogService.audience.views.getForManyPosts(blogPostIds);
+  };
+
+/**
  * Post view to blog post by active session
  */
 export const postViewBlogPost =
