@@ -498,7 +498,7 @@ const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platfor
           }
         }
       } catch (e) {
-        console.warn(`[Auth] Login credentials error :`, e);
+        console.error(`[Auth] Login credentials error :`, e);
         dispatch(
           actions.authError({
             key,
@@ -573,7 +573,7 @@ const loginFederationAction = (
             ? new Error.LoginError(Error.OAuth2ErrorType.SAML_INVALID, undefined, { cause: e.cause })
             : e;
 
-        console.warn(`[Auth] Login federation error :`, error);
+        console.error(`[Auth] Login federation error :`, error);
         dispatch(
           actions.authError({
             key,
@@ -628,7 +628,7 @@ const loadAccountAction = (functions: AuthLoginFunctions, account: AuthSavedLogg
       writeReplaceAccount(account.user.id, session, getAuthState(getState()).showOnboarding);
       return session;
     } catch (e) {
-      console.warn(`[Auth] Restore error :`, e);
+      console.error(`[Auth] Restore error :`, e);
       dispatch(
         actions.authError({
           key: undefined,

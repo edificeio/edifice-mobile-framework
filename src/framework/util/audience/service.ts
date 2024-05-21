@@ -7,7 +7,7 @@ export default {
         method: 'POST',
       });
     } catch (e) {
-      if (__DEV__) console.warn('[Audience] failed to request', e);
+      console.error('[Audience] failed to request', e);
     }
   },
 };

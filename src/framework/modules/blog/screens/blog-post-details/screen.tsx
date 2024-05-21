@@ -50,6 +50,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
+import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
 import styles from './styles';
 import {
@@ -123,17 +124,20 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   listHeight = 0;
 
+  loaderRef = React.createRef<View>();
+
   async doInit() {
     try {
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
       await this.doGetBlogPostDetails();
       await this.doGetBlogInfos();
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
         markViewAudience({ module: 'blog', resourceType: 'post', resourceId: this.state.blogPostData._id });
       else {
-        if (__DEV__) console.warn(`[Audience] cannot recieve blog post id.`);
+        console.warn(`[Audience] cannot recieve blog post id.`);
       }
     }
   }
@@ -368,13 +372,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { route } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
 
     if (blog && blogPost) {
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
       this.setState({
         blogInfos: blog,
         blogPostData: blogPost,
@@ -547,12 +552,20 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : null;
   }
 
+  _setRichContentReady() {
+    this.loaderRef.current?.setNativeProps({
+      style: { opacity: 0 },
+    });
+  }
+
+  setRichContentReady = this._setRichContentReady.bind(this);
+
   renderBlogPostDetails() {
     const { blogInfos, blogPostData } = this.state;
     const blogPostContent = blogPostData?.content;
-    console.debug('---------- HTML ----------');
-    console.debug(blogPostContent);
-    console.debug('---------- HTML ----------');
+    // console.debug('---------- HTML ----------');
+    // console.debug(blogPostContent);
+    // console.debug('---------- HTML ----------');
     return (
       <View style={styles.detailsMain}>
         <View style={styles.detailsPost}>
@@ -573,7 +586,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             ) : null}
             <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
             <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditorViewer content={blogPostContent} />
+            <RichEditorViewer content={blogPostContent} onLoad={this.setRichContentReady} />
           </ResourceView>
         </View>
         {blogPostData?.state === 'PUBLISHED' ? (
@@ -663,13 +676,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       <>
         <PreventBack infoComment={this.state.infoComment} />
         <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
-          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
+          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState)
+            ? null
+            : errorState
+              ? this.renderError()
+              : this.renderContent()}
+
+          <View ref={this.loaderRef} style={styles.loader}>
             <BlogPlaceholderDetails />
-          ) : errorState ? (
-            this.renderError()
-          ) : (
-            this.renderContent()
-          )}
+          </View>
         </PageComponent>
       </>
     );

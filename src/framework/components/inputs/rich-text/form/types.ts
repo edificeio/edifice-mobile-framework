@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { LocalFile } from '~/framework/util/fileHandler';
 
@@ -9,6 +10,12 @@ export interface RichEditorFormProps {
   onChangeText: (html: string) => void;
   uploadParams: IWorkspaceUploadParams;
 }
+
+export interface RichEditorFormReduxProps {
+  oneSessionId: AuthActiveAccount['tokens']['oneSessionId'];
+}
+
+export interface RichEditorFormAllProps extends RichEditorFormProps, RichEditorFormReduxProps {}
 
 export enum UploadStatus {
   OK,

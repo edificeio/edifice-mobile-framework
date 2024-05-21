@@ -4,7 +4,7 @@ import { Animated, TouchableOpacity, View } from 'react-native';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { UI_SIZES } from '~/framework/components/constants';
-import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
+import type RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { actions } from '~/framework/components/inputs/rich-text/editor/const';
 import { RichToolbarItemsList } from '~/framework/components/inputs/rich-text/toolbar/list';
 import { NamedSVG } from '~/framework/components/picture';
@@ -48,16 +48,13 @@ export default class RichToolbar extends Component<RichToolbarProps, RichToolbar
 
   componentDidMount() {
     setTimeout(() => {
-      // TODO LEA: Fix that
       const { editor: { current: editor } = { current: this.props.getEditor?.() } } = this.props;
       if (!editor) {
         // No longer throw an error, just try to re-load it when needed.
         // This is because the webview may go away during long periods of inactivity,
         // and the ref will be lost, causing the entire app to crash in this throw new error.
         //throw new Error('Toolbar has no editor!');
-        if (__DEV__) {
-          console.warn('Toolbar has no editor. Please make sure the prop getEditor returns a ref to the editor component.');
-        }
+        console.error('Toolbar has no editor. Please make sure the prop getEditor returns a ref to the editor component.');
       } else {
         editor.registerToolbar(selectedItems => this.setSelectedItems(selectedItems));
         this.editor = editor;
