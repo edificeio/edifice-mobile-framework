@@ -9,21 +9,17 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
-import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
+import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -35,7 +31,6 @@ import {
   publishBlogPostCommentAction,
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
-import { commentsString } from '~/framework/modules/blog/components/BlogPostResourceCard';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
@@ -54,6 +49,7 @@ import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
+import BlogPostDetails from '../../components/blog-post-details';
 import styles from './styles';
 import {
   BlogPostCommentLoadingState,
@@ -375,6 +371,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   };
 
   async componentDidMount() {
+    console.debug('DID MOUNT Screen');
     const { route } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
@@ -399,6 +396,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   }
 
   componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
+    console.debug('DID UPDATE Screen');
+    for (const pp in this.props) {
+      if (this.props[pp] !== prevProps[pp]) console.debug('cause prop ' + pp + 'changed');
+    }
+    for (const st in this.state) {
+      if (this.state[st] !== prevState[st]) console.debug('cause state ' + st + 'changed');
+    }
     const { blogPostData } = this.state;
     this.setActionNavbar();
     if (prevState.blogPostData !== blogPostData) {
@@ -478,7 +482,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             contentContainerStyle={styles.content}
             data={blogPostComments}
             keyExtractor={(item: BlogPostComment) => item.id.toString()}
-            ListHeaderComponent={this.renderBlogPostDetails()}
+            ListHeaderComponent={
+              blogInfos && blogPostData ? (
+                <BlogPostDetails blog={blogInfos} post={blogPostData} onReady={this.setRichContentReady} />
+              ) : null
+            }
             removeClippedSubviews={false}
             refreshControl={
               <RefreshControl
@@ -562,45 +570,45 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   setRichContentReady = this._setRichContentReady.bind(this);
 
-  renderBlogPostDetails() {
-    const { blogInfos, blogPostData } = this.state;
-    const blogPostContent = blogPostData?.content;
-    const blogPostComments = blogPostData?.comments;
-    // console.debug('---------- HTML ----------');
-    // console.debug(blogPostContent);
-    // console.debug('---------- HTML ----------');
-    return (
-      <View style={styles.detailsMain}>
-        <View style={styles.detailsPost}>
-          <ResourceView
-            header={
-              <ContentCardHeader
-                icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
-                text={
-                  blogPostData?.author.username ? (
-                    <SmallBoldText numberOfLines={1}>{`${I18n.get('common-by')} ${blogPostData?.author.username}`}</SmallBoldText>
-                  ) : undefined
-                }
-                date={blogPostData?.modified}
-              />
-            }>
-            {blogPostData?.state === 'SUBMITTED' ? (
-              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
-            ) : null}
-            <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
-            <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditorViewer content={blogPostContent} onLoad={this.setRichContentReady} />
-          </ResourceView>
-        </View>
-        {blogPostData?.state === 'PUBLISHED' ? (
-          <View style={styles.detailsNbComments}>
-            <Icon style={styles.detailsIconComments} size={18} name="chat3" color={theme.ui.text.regular} />
-            <CaptionBoldText style={styles.detailsTextNbComments}>{commentsString(blogPostComments?.length || 0)}</CaptionBoldText>
-          </View>
-        ) : null}
-      </View>
-    );
-  }
+  // renderBlogPostDetails() {
+  //   const { blogInfos, blogPostData } = this.state;
+  //   const blogPostContent = blogPostData?.content;
+  //   const blogPostComments = blogPostData?.comments;
+  //   // console.debug('---------- HTML ----------');
+  //   console.debug('renderBlogPostDetails', blogPostContent);
+  //   // console.debug('---------- HTML ----------');
+  //   return (
+  //     <View style={styles.detailsMain}>
+  //       <View style={styles.detailsPost}>
+  //         <ResourceView
+  //           header={
+  //             <ContentCardHeader
+  //               icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
+  //               text={
+  //                 blogPostData?.author.username ? (
+  //                   <SmallBoldText numberOfLines={1}>{`${I18n.get('common-by')} ${blogPostData?.author.username}`}</SmallBoldText>
+  //                 ) : undefined
+  //               }
+  //               date={blogPostData?.modified}
+  //             />
+  //           }>
+  //           {blogPostData?.state === 'SUBMITTED' ? (
+  //             <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
+  //           ) : null}
+  //           <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
+  //           <HeadingSText>{blogPostData?.title}</HeadingSText>
+  //           <RichEditorViewer content={blogPostContent} onLoad={this.setRichContentReady} />
+  //         </ResourceView>
+  //       </View>
+  //       {blogPostData?.state === 'PUBLISHED' ? (
+  //         <View style={styles.detailsNbComments}>
+  //           <Icon style={styles.detailsIconComments} size={18} name="chat3" color={theme.ui.text.regular} />
+  //           <CaptionBoldText style={styles.detailsTextNbComments}>{commentsString(blogPostComments?.length || 0)}</CaptionBoldText>
+  //         </View>
+  //       ) : null}
+  //     </View>
+  //   );
+  // }
 
   renderComment(blogPostComment: BlogPostComment, index: number) {
     const { session } = this.props;
@@ -658,7 +666,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     );
   }
 
+  UNSAFE_componentWillMount(): void {
+    console.debug('WILL MOUNT Screen');
+  }
+
   render() {
+    console.debug('RENDER Screen');
     const { route, session } = this.props;
     const { loadingState, errorState, blogPostData, blogInfos } = this.state;
 
