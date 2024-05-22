@@ -171,35 +171,45 @@ export default class RichEditor extends Component {
   }
 
   _onAudioTouched(url) {
-    openMediaPlayer({
-      type: MediaType.AUDIO,
-      source: urlSigner.signURISource(url),
-    });
+    const { disabled } = this.props;
+    if (disabled)
+      openMediaPlayer({
+        type: MediaType.AUDIO,
+        source: urlSigner.signURISource(url),
+      });
   }
 
   _onImageTouched(url, imagesUrls) {
-    const images = imagesUrls.map(imgSrc => ({
-      type: 'image',
-      src: { uri: imgSrc },
-    }));
-    openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
+    const { disabled } = this.props;
+    if (disabled) {
+      const images = imagesUrls.map(imgSrc => ({
+        type: 'image',
+        src: { uri: imgSrc },
+      }));
+      openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
+    }
   }
 
   _onLinkTouched(url, linksUrls) {
-    openUrl(url);
-    /*const links = linksUrls.map(href => ({
+    const { disabled } = this.props;
+    if (disabled) {
+      openUrl(url);
+      /*const links = linksUrls.map(href => ({
       type: 'link',
       src: { uri: href },
     }));
     openCarousel({ data: links, startIndex: linksUrls.indexOf(url) });*/
-    // TODO: https://edifice-community.atlassian.net/browse/MB-2437
+      // TODO: https://edifice-community.atlassian.net/browse/MB-2437
+    }
   }
 
   _onVideoTouched(url) {
-    openMediaPlayer({
-      type: MediaType.VIDEO,
-      source: urlSigner.signURISource(url),
-    });
+    const { disabled } = this.props;
+    if (disabled)
+      openMediaPlayer({
+        type: MediaType.VIDEO,
+        source: urlSigner.signURISource(url),
+      });
   }
 
   onMessage(event) {
