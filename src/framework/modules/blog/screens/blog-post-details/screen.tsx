@@ -371,7 +371,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   };
 
   async componentDidMount() {
-    console.debug('DID MOUNT Screen');
     const { route } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
@@ -396,13 +395,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   }
 
   componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
-    console.debug('DID UPDATE Screen');
-    for (const pp in this.props) {
-      if (this.props[pp] !== prevProps[pp]) console.debug('cause prop ' + pp + 'changed');
-    }
-    for (const st in this.state) {
-      if (this.state[st] !== prevState[st]) console.debug('cause state ' + st + 'changed');
-    }
     const { blogPostData } = this.state;
     this.setActionNavbar();
     if (prevState.blogPostData !== blogPostData) {
@@ -570,46 +562,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   setRichContentReady = this._setRichContentReady.bind(this);
 
-  // renderBlogPostDetails() {
-  //   const { blogInfos, blogPostData } = this.state;
-  //   const blogPostContent = blogPostData?.content;
-  //   const blogPostComments = blogPostData?.comments;
-  //   // console.debug('---------- HTML ----------');
-  //   console.debug('renderBlogPostDetails', blogPostContent);
-  //   // console.debug('---------- HTML ----------');
-  //   return (
-  //     <View style={styles.detailsMain}>
-  //       <View style={styles.detailsPost}>
-  //         <ResourceView
-  //           header={
-  //             <ContentCardHeader
-  //               icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
-  //               text={
-  //                 blogPostData?.author.username ? (
-  //                   <SmallBoldText numberOfLines={1}>{`${I18n.get('common-by')} ${blogPostData?.author.username}`}</SmallBoldText>
-  //                 ) : undefined
-  //               }
-  //               date={blogPostData?.modified}
-  //             />
-  //           }>
-  //           {blogPostData?.state === 'SUBMITTED' ? (
-  //             <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
-  //           ) : null}
-  //           <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
-  //           <HeadingSText>{blogPostData?.title}</HeadingSText>
-  //           <RichEditorViewer content={blogPostContent} onLoad={this.setRichContentReady} />
-  //         </ResourceView>
-  //       </View>
-  //       {blogPostData?.state === 'PUBLISHED' ? (
-  //         <View style={styles.detailsNbComments}>
-  //           <Icon style={styles.detailsIconComments} size={18} name="chat3" color={theme.ui.text.regular} />
-  //           <CaptionBoldText style={styles.detailsTextNbComments}>{commentsString(blogPostComments?.length || 0)}</CaptionBoldText>
-  //         </View>
-  //       ) : null}
-  //     </View>
-  //   );
-  // }
-
   renderComment(blogPostComment: BlogPostComment, index: number) {
     const { session } = this.props;
     const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;
@@ -666,12 +618,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     );
   }
 
-  UNSAFE_componentWillMount(): void {
-    console.debug('WILL MOUNT Screen');
-  }
-
   render() {
-    console.debug('RENDER Screen');
     const { route, session } = this.props;
     const { loadingState, errorState, blogPostData, blogInfos } = this.state;
 

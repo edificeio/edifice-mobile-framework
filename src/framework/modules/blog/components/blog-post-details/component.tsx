@@ -28,12 +28,7 @@ export const commentsString = (comments: number) =>
 export function BlogPostDetails(props: BlogPostDetailsProps) {
   const { blog, post, onReady } = props;
 
-  React.useEffect(() => {
-    console.debug('BlogPostDetails mounted');
-  }, []);
-
   const richContent = React.useMemo(() => {
-    console.debug('render richEditorViewer');
     return <RichEditorViewer content={post.content} onLoad={onReady} />;
   }, [post.content, onReady]);
 
