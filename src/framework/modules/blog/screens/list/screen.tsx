@@ -148,6 +148,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
               ...newBlogPosts,
               ...(flushAfter ? [] : blogPosts.slice(pagingSize * (pageToFetch + 1))),
             ]);
+            fetchAudience(newBlogPosts);
           }
 
           if (!fromPage) {
@@ -155,7 +156,6 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           } else if (flushAfter) {
             setNextPageToFetch(fromPage + 1);
           }
-          fetchAudience(newBlogPosts);
           // Only increment pagecount when fromPage is not specified
         } else setBlogPosts([]);
       } catch {

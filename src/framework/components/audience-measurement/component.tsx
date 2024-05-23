@@ -51,6 +51,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
     try {
       await audienceService.reaction.post(props.session, props.referer, reaction);
       refreshData();
+      setShowPopup(false);
     } catch (e) {
       console.error('[AudienceMeasurement] postReaction error :', e);
     }

@@ -1,5 +1,5 @@
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { fetchJSONWithCache, signedFetch, signedFetchJson, signedFetchRelative } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetch, signedFetchRelative } from '~/infra/fetchWithCache';
 
 import {
   AudienceReactionType,
@@ -34,8 +34,7 @@ export const audienceService = {
         resourceId: referer.resourceId,
         reactionType: reaction,
       });
-      console.log('body', body);
-      return signedFetchJson(`${session.platform.url}${api}`, {
+      return signedFetch(`${session.platform.url}${api}`, {
         method: 'POST',
         body,
       }) as Promise<any>;
@@ -46,7 +45,7 @@ export const audienceService = {
         resourceId: referer.resourceId,
         reactionType: reaction,
       });
-      return signedFetchJson(`${session.platform.url}${api}`, {
+      return signedFetch(`${session.platform.url}${api}`, {
         method: 'PUT',
         body,
       }) as Promise<any>;
