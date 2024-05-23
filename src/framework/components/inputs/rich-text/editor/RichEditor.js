@@ -5,7 +5,6 @@ import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
@@ -142,7 +141,7 @@ export default class RichEditor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { editorStyle, disabled, placeholder } = this.props;
+    const { editorStyle, disabled, placeholder, initialContentHTML, editorInitializedCallback } = this.props;
     if (editorStyle && prevProps.editorStyle !== editorStyle) {
       this.setContentStyle(editorStyle);
     }
@@ -151,6 +150,10 @@ export default class RichEditor extends Component {
     }
     if (placeholder !== prevProps.placeholder) {
       this.setPlaceholder(placeholder);
+    }
+    if (initialContentHTML !== prevProps.initialContentHTML) {
+      this.setContentHTML(initialContentHTML);
+      editorInitializedCallback();
     }
   }
 
@@ -172,35 +175,45 @@ export default class RichEditor extends Component {
   }
 
   _onAudioTouched(url) {
-    openMediaPlayer({
-      type: MediaType.AUDIO,
-      source: urlSigner.signURISource(url),
-    });
+    const { disabled } = this.props;
+    if (disabled)
+      openMediaPlayer({
+        type: MediaType.AUDIO,
+        source: urlSigner.signURISource(url),
+      });
   }
 
   _onImageTouched(url, imagesUrls) {
-    const images = imagesUrls.map(imgSrc => ({
-      type: 'image',
-      src: { uri: imgSrc },
-    }));
-    openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
+    const { disabled } = this.props;
+    if (disabled) {
+      const images = imagesUrls.map(imgSrc => ({
+        type: 'image',
+        src: { uri: imgSrc },
+      }));
+      openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
+    }
   }
 
   _onLinkTouched(url, linksUrls) {
-    openUrl(url);
-    /*const links = linksUrls.map(href => ({
+    const { disabled } = this.props;
+    if (disabled) {
+      openUrl(url);
+      /*const links = linksUrls.map(href => ({
       type: 'link',
       src: { uri: href },
     }));
     openCarousel({ data: links, startIndex: linksUrls.indexOf(url) });*/
-    // TODO: https://edifice-community.atlassian.net/browse/MB-2437
+      // TODO: https://edifice-community.atlassian.net/browse/MB-2437
+    }
   }
 
   _onVideoTouched(url) {
-    openMediaPlayer({
-      type: MediaType.VIDEO,
-      source: urlSigner.signURISource(url),
-    });
+    const { disabled } = this.props;
+    if (disabled)
+      openMediaPlayer({
+        type: MediaType.VIDEO,
+        source: urlSigner.signURISource(url),
+      });
   }
 
   onMessage(event) {
@@ -357,8 +370,8 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    const { useContainer, style, oneSessionId } = this.props;
-    if (!oneSessionId) return <EmptyConnectionScreen />;
+    const { useContainer, style } = this.props;
+    // if (!oneSessionId) return <EmptyConnectionScreen />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
     const { height } = this.state;

@@ -463,6 +463,10 @@ const performLogin = async (
   } else {
     await dispatch(deactivateLoggedAccountActionIfApplicable(reduxActions.success(accountInfo)));
   }
+
+  // Launch oneSessionId fetch to prevent errors in rich-content. This is non-preventing in case of fails, so no await !
+  OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+
   return accountInfo;
 };
 
