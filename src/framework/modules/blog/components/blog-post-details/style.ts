@@ -35,4 +35,8 @@ export default StyleSheet.create({
   contentHeader: {
     paddingBottom: UI_SIZES.spacing.medium,
   },
+  footer: {
+    padding: UI_SIZES.spacing.medium,
+    paddingTop: 0,
+  },
 });

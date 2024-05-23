@@ -2,19 +2,22 @@ import * as React from 'react';
 import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
-import { Icon } from '~/framework/components/picture';
-import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
-import type { Blog, BlogPost } from '~/framework/modules/blog/reducer';
+import { HeadingSText, SmallBoldText } from '~/framework/components/text';
+import type { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 
+import { useNavigation } from '@react-navigation/native';
+import AudienceMeasurement from '~/framework/components/audience-measurement';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
+import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import styles from './style';
 
 interface BlogPostDetailsProps {
   blog: DisplayedBlog | Blog;
-  post: BlogPost;
+  post: BlogPostWithAudience;
+  session: AuthActiveAccount;
   onReady?: () => void;
 }
 
@@ -27,6 +30,8 @@ export const commentsString = (comments: number) =>
 
 export function BlogPostDetails(props: BlogPostDetailsProps) {
   const { blog, post, onReady } = props;
+
+  const navigation = useNavigation();
 
   const richContent = React.useMemo(() => {
     return <RichEditorViewer content={post.content} onLoad={onReady} />;
@@ -54,10 +59,16 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
         {richContent}
       </View>
       {post.state === 'PUBLISHED' ? (
-        <View style={styles.postCommentsTotal}>
-          <Icon style={styles.postCommentsIcon} size={18} name="chat3" color={theme.ui.text.regular} />
-          <CaptionBoldText style={styles.postCommentsTotalText}>{commentsString(post.comments?.length || 0)}</CaptionBoldText>
-        </View>
+        <AudienceMeasurement
+          containerStyle={styles.footer}
+          actionViews={() => navigation.navigate(blogRouteNames.blogAudience, { blogPostId: post._id })}
+          actionReactions={() => navigation.navigate(blogRouteNames.blogReactions, { blogPostId: post._id })}
+          nbComments={post.comments?.length}
+          nbViews={post.audience?.views}
+          infosReactions={post.audience?.reactions}
+          referer={{ module: 'blog', resourceType: 'post', resourceId: post._id }}
+          session={props.session}
+        />
       ) : null}
     </View>
   );

@@ -103,6 +103,7 @@ function BlogPostDetailsFlatList(props: {
   onContentSizeChange;
   onLayout;
   footer;
+  session;
 }) {
   return (
     <Viewport.Tracker>
@@ -116,7 +117,7 @@ function BlogPostDetailsFlatList(props: {
           keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
           ListHeaderComponent={
             props.blogInfos && props.blogPostData ? (
-              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} />
+              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} session={props.session} />
             ) : null
           }
           removeClippedSubviews={false}
@@ -586,6 +587,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           onContentSizeChange={this.contentSizeChange}
           onLayout={this.contentOnLayout}
           footer={footer}
+          session={this.props.session!}
         />
       </>
     );
