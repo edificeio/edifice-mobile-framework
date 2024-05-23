@@ -2,25 +2,23 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
-import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import DefaultButton from '~/framework/components/buttons/default';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { audienceService } from '~/framework/modules/core/audience/service';
 import { AudienceReactionType } from '~/framework/modules/core/audience/types';
-import { audienceReactionsInfos, validReactionTypes } from '~/framework/modules/core/audience/util';
+import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
 import { isEmpty } from '~/framework/util/object';
 
+import AudienceReactButton from './react-button';
 import styles from './styles';
 import { AudienceMeasurementProps } from './types';
 
 const AudienceMeasurement = (props: AudienceMeasurementProps) => {
-  const [userReaction, setUserReaction] = React.useState<AudienceReactionType | null>(props.infosReactions?.userReaction ?? null);
   const [totalReactions, setTotalReactions] = React.useState<number>(props.infosReactions?.total ?? 0);
   const [typesReactions, setTypesReactions] = React.useState<AudienceReactionType[]>(props.infosReactions?.types ?? []);
-  const [showPopup, setShowPopup] = React.useState<boolean>(false);
+  const [userReaction, setUserReaction] = React.useState<AudienceReactionType | null>(props.infosReactions?.userReaction ?? null);
 
   const refreshData = async () => {
     try {
@@ -49,34 +47,20 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
     try {
       await audienceService.reaction.post(props.session, props.referer, reaction);
       refreshData();
-      setShowPopup(false);
     } catch (e) {
       console.error('[AudienceMeasurement] postReaction error :', e);
     }
   };
 
-  const renderReactButton = () => {
-    if (userReaction) {
-      return (
-        <DefaultButton
-          text={audienceReactionsInfos[userReaction].label}
-          iconLeft={audienceReactionsInfos[userReaction].icon}
-          contentColor={theme.palette.grey.black}
-          style={styles.button}
-          action={deleteReaction}
-        />
-      );
-    } else
-      return (
-        <DefaultButton
-          text={I18n.get('audiencemeasurement-reactbutton')}
-          iconLeft="ui-reaction"
-          contentColor={theme.palette.grey.black}
-          style={styles.button}
-          action={() => setShowPopup(!showPopup)}
-        />
-      );
+  const updateReaction = async (reaction: AudienceReactionType) => {
+    try {
+      await audienceService.reaction.update(props.session, props.referer, reaction);
+      refreshData();
+    } catch (e) {
+      console.error('[AudienceMeasurement] updateReaction error :', e);
+    }
   };
+
   const renderPlaceholder = () => {
     return (
       <Placeholder Animation={Fade}>
@@ -137,16 +121,12 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
               />
             </View>
           </View>
-          {showPopup && (
-            <View style={styles.reactions}>
-              {validReactionTypes.map(reaction => (
-                <TouchableOpacity key={reaction} onPress={() => postReaction(reaction)}>
-                  <NamedSVG name={audienceReactionsInfos[reaction].icon} />
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-          {renderReactButton()}
+          <AudienceReactButton
+            postReaction={postReaction}
+            deleteReaction={deleteReaction}
+            updateReaction={updateReaction}
+            userReaction={userReaction}
+          />
         </>
       )}
     </View>
