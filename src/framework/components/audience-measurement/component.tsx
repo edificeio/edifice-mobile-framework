@@ -10,13 +10,11 @@ import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
 import { audienceService } from '~/framework/modules/core/audience/service';
 import { AudienceReactionType } from '~/framework/modules/core/audience/types';
-import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
+import { audienceReactionsInfos, validReactionTypes } from '~/framework/modules/core/audience/util';
 import { isEmpty } from '~/framework/util/object';
 
 import styles from './styles';
 import { AudienceMeasurementProps } from './types';
-
-const validReactionTypes = Object.values(AudienceReactionType);
 
 const AudienceMeasurement = (props: AudienceMeasurementProps) => {
   const [userReaction, setUserReaction] = React.useState<AudienceReactionType | null>(props.infosReactions?.userReaction ?? null);

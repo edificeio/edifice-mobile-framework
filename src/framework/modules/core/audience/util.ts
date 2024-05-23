@@ -29,3 +29,5 @@ export const audienceReactionsInfos = {
     color: theme.palette.complementary.yellow.pale,
   },
 };
+
+export const validReactionTypes = Object.values(AudienceReactionType);

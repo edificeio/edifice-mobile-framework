@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { BadgeAvatar, BadgePosition } from '~/framework/components/badgeAvatar';
@@ -7,31 +7,51 @@ import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionBoldText, SmallText } from '~/framework/components/text';
-import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
+import { AudienceReactionType, AudienceUserReaction } from '~/framework/modules/core/audience/types';
+import { audienceReactionsInfos, validReactionTypes } from '~/framework/modules/core/audience/util';
 
 import styles from './styles';
 import { AudienceMeasurementReactionsModalProps } from './types';
 
 const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsModalProps) => {
-  const renderHeaderItem = ({ item }: { item: { icon: string; nb: number } }) => {
+  const [userReactions, setUserReactions] = React.useState<AudienceUserReaction[]>(props.userReactions);
+  const [itemSelected, setItemSelected] = React.useState<AudienceReactionType | null>(null);
+
+  const resetFilter = () => {
+    if (itemSelected === null) return;
+    setUserReactions(props.userReactions);
+    setItemSelected(null);
+  };
+  const filterByType = (reactionType: AudienceReactionType) => {
+    if (itemSelected === reactionType) return;
+    setUserReactions(props.userReactions.filter(reaction => reaction.reactionType === reactionType));
+    setItemSelected(reactionType);
+  };
+
+  const renderHeaderItem = ({ item }: { item: { icon: string; nb: number; type: AudienceReactionType } }) => {
     return (
       <>
         <View style={styles.separator} />
-        <View style={styles.headerItem}>
+        <TouchableOpacity
+          style={[styles.headerItem, itemSelected === item.type ? styles.headerItemSelected : null]}
+          onPress={() => filterByType(item.type)}>
           <NamedSVG name={item.icon} />
           <SmallText>{item.nb}</SmallText>
-        </View>
+        </TouchableOpacity>
       </>
     );
   };
   const renderHeaderList = () => {
     return (
       <View style={styles.header}>
-        <SmallText>{I18n.get('audiencemeasurement-reactions-all')}</SmallText>
-        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_1.icon, nb: props.countByType.REACTION_1 ?? 0 } })}
-        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_2.icon, nb: props.countByType.REACTION_2 ?? 0 } })}
-        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_3.icon, nb: props.countByType.REACTION_3 ?? 0 } })}
-        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_4.icon, nb: props.countByType.REACTION_4 ?? 0 } })}
+        <TouchableOpacity onPress={resetFilter}>
+          <SmallText>{I18n.get('audiencemeasurement-reactions-all')}</SmallText>
+        </TouchableOpacity>
+        {validReactionTypes.map(reactionType =>
+          renderHeaderItem({
+            item: { icon: audienceReactionsInfos[reactionType].icon, nb: props.countByType[reactionType] ?? 0, type: reactionType },
+          }),
+        )}
       </View>
     );
   };
@@ -39,7 +59,7 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
     <PageView style={styles.container}>
       <FlatList
         ListHeaderComponent={renderHeaderList}
-        data={props.userReactions}
+        data={userReactions}
         renderItem={({ item }) => (
           <View style={styles.item}>
             <BadgeAvatar

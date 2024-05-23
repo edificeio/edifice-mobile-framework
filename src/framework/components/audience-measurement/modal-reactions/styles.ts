@@ -25,11 +25,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: UI_SIZES.spacing.minor,
   },
+  headerItemSelected: {},
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: UI_SIZES.spacing.minor,
-    columnGap: UI_SIZES.spacing.small,
+    paddingHorizontal: UI_SIZES.spacing.small,
   },
 });
 
