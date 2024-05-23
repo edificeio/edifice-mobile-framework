@@ -16,9 +16,6 @@ import workspaceFileTransferActions from '~/framework/modules/workspace/actions/
 import { LocalFile } from '~/framework/util/fileHandler';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
-import { deleteReactionBlogPost, editReactionBlogPost, getReactionsBlogPost, postReactionBlogPost } from './reactions';
-import { getViewsBlogPost, postViewBlogPost } from './views';
-
 /**
  * Fetch the details of a given blog post.
  * Info: no reducer is used in this action.
@@ -285,12 +282,3 @@ export const fetchBlogsAndFoldersAction =
     await dispatch({ type: actionTypes.tree.compute, blogs: data[0], folders: data[1] });
     return data;
   };
-
-export {
-  deleteReactionBlogPost,
-  editReactionBlogPost,
-  getReactionsBlogPost,
-  getViewsBlogPost,
-  postReactionBlogPost,
-  postViewBlogPost,
-};

@@ -7,7 +7,7 @@ import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionBoldText, SmallText } from '~/framework/components/text';
-import { reactionsInfo } from '~/framework/modules/core/audience/util';
+import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
 
 import styles from './styles';
 import { AudienceMeasurementReactionsModalProps } from './types';
@@ -28,10 +28,10 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
     return (
       <View style={styles.header}>
         <SmallText>{I18n.get('audiencemeasurement-reactions-all')}</SmallText>
-        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_1.icon, nb: props.countByType.REACTION_1 ?? 0 } })}
-        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_2.icon, nb: props.countByType.REACTION_2 ?? 0 } })}
-        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_3.icon, nb: props.countByType.REACTION_3 ?? 0 } })}
-        {renderHeaderItem({ item: { icon: reactionsInfo.REACTION_4.icon, nb: props.countByType.REACTION_4 ?? 0 } })}
+        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_1.icon, nb: props.countByType.REACTION_1 ?? 0 } })}
+        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_2.icon, nb: props.countByType.REACTION_2 ?? 0 } })}
+        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_3.icon, nb: props.countByType.REACTION_3 ?? 0 } })}
+        {renderHeaderItem({ item: { icon: audienceReactionsInfos.REACTION_4.icon, nb: props.countByType.REACTION_4 ?? 0 } })}
       </View>
     );
   };
@@ -44,8 +44,8 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
           <View style={styles.item}>
             <BadgeAvatar
               userId={item.userId}
-              badgeContent={reactionsInfo[item.reactionType].icon}
-              badgeColor={reactionsInfo[item.reactionType].color}
+              badgeContent={audienceReactionsInfos[item.reactionType].icon}
+              badgeColor={audienceReactionsInfos[item.reactionType].color}
               badgePosition={BadgePosition.bottom}
             />
             <View>

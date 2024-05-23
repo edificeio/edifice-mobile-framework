@@ -4,16 +4,7 @@
 import moment from 'moment';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import {
-  Blog,
-  BlogFolder,
-  BlogList,
-  BlogPost,
-  BlogPostComment,
-  BlogPostComments,
-  BlogPostList,
-} from '~/framework/modules/blog/reducer';
-import { AudienceReactions, AudienceViewer, AudienceViews } from '~/framework/modules/core/audience/types';
+import { Blog, BlogFolder, BlogList, BlogPost, BlogPostComment, BlogPostComments } from '~/framework/modules/blog/reducer';
 import { IResourceUriCaptureFunction } from '~/framework/util/notifications';
 import { fetchJSONWithCache, signedFetch, signedFetchJson } from '~/infra/fetchWithCache';
 
@@ -101,28 +92,6 @@ export interface IEntcoreBlogFolder {
   trashed?: boolean;
 }
 
-export interface IEntcoreBlogViews {
-  uniqueViewsCounter: number;
-  uniqueViewsPerProfile: {
-    counter: number;
-    profile: string;
-  }[];
-  viewsCounter: number;
-}
-
-export interface IEntcoreBlogReactions {
-  reactionCounters: {
-    allReactionsCounter: number;
-    countByType: object;
-  };
-  userReactions: {
-    userId: string;
-    profile: string;
-    reactionType: string;
-    displayName: string;
-  }[];
-}
-
 export const blogFetchPostAdapter = (blogPost: Omit<IEntcoreBlogPost, 'content'>) => {
   const ret = {
     _id: blogPost._id,
@@ -206,22 +175,6 @@ export const blogFolderAdapter = (blogFolder: IEntcoreBlogFolder) => {
   } as BlogFolder;
 };
 
-export const blogViewsAdapter = (blogViews: IEntcoreBlogViews) => {
-  return {
-    uniqueViewsCounter: blogViews.uniqueViewsCounter,
-    uniqueViewsPerProfile: blogViews.uniqueViewsPerProfile as AudienceViewer[],
-    viewsCounter: blogViews.viewsCounter,
-  } as AudienceViews;
-};
-
-export const blogReactionsAdapter = (blogReactions: IEntcoreBlogReactions) => {
-  return {
-    allReactionsCounter: blogReactions.reactionCounters.allReactionsCounter,
-    countByType: blogReactions.reactionCounters.countByType,
-    userReactions: blogReactions.userReactions,
-  } as AudienceReactions;
-};
-
 export const blogUriCaptureFunction: IResourceUriCaptureFunction<{ blogId: string; postId: string }> = url => {
   const blogPostIdRegex = /^\/blog.+\/([a-z0-9-]{36})\/([a-z0-9-]{36})\/?/;
   const blogIdRegex = /^\/blog.+\/([a-z0-9-]{36})\/?/;
@@ -271,7 +224,7 @@ export const blogService = {
       let api = `/blog/post/list/all/${blogId}?content=true`;
       if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
-      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPostList;
+      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPost[];
       return blogPosts;
     },
     page: async (session: AuthActiveAccount, blogId: string, page: number, state?: string | string[]) => {
@@ -283,7 +236,7 @@ export const blogService = {
       let api = `/blog/post/list/all/${blogId}?content=true&page=${page}`;
       if (stateAsArray) api += `&states=${stateAsArray.join(',')}`;
       const entcoreBlogPostList = (await fetchJSONWithCache(api)) as IEntcoreBlogPostList;
-      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPostList;
+      const blogPosts = entcoreBlogPostList.map(bp => blogPostAdapter(bp)) as BlogPost[];
       return blogPosts;
     },
   },
@@ -371,64 +324,6 @@ export const blogService = {
       return signedFetchJson(`${session.platform.url}${api}`, {
         method: 'DELETE',
       }) as Promise<{ number: number }>;
-    },
-  },
-  audience: {
-    views: {
-      get: async (blogPostId: string) => {
-        const api = `/audience/views/details/blog/post/${blogPostId}`;
-        const entcoreBlogPostViews = (await fetchJSONWithCache(api)) as IEntcoreBlogViews;
-        return blogViewsAdapter(entcoreBlogPostViews) as AudienceViews;
-      },
-      getForManyPosts: async (blogPostIds: string[]) => {
-        const api = `/audience/views/count/blog/post?resourceIds=${blogPostIds.join('&')}`;
-        const entcoreBlogPostsViews = await fetchJSONWithCache(api);
-        return entcoreBlogPostsViews;
-      },
-
-      post: async (session: AuthActiveAccount, blogPostId: string) => {
-        const api = `/audience/views/blog/post/${blogPostId}`;
-        const body = JSON.stringify({});
-        return signedFetchJson(`${session.platform.url}${api}`, {
-          method: 'POST',
-          body,
-        }) as Promise<{ number: number }>;
-      },
-    },
-    reactions: {
-      get: async (blogPostId: string) => {
-        const api = `/audience/reactions/blog/post/${blogPostId}?page=1&size=30`;
-        const entcoreBlogPostReactions = (await fetchJSONWithCache(api)) as IEntcoreBlogReactions;
-        return blogReactionsAdapter(entcoreBlogPostReactions) as AudienceReactions;
-      },
-      post: async (session: AuthActiveAccount, blogPostId: string, reaction: string) => {
-        const api = `/audience/reactions/blog/post`;
-        const body = JSON.stringify({
-          ressourceId: blogPostId,
-          reactionType: reaction,
-        });
-        return signedFetchJson(`${session.platform.url}${api}`, {
-          method: 'POST',
-          body,
-        }) as Promise<any>;
-      },
-      update: async (session: AuthActiveAccount, blogPostId: string, reaction: string) => {
-        const api = `/audience/reactions/blog/post`;
-        const body = JSON.stringify({
-          ressourceId: blogPostId,
-          reactionType: reaction,
-        });
-        return signedFetchJson(`${session.platform.url}${api}`, {
-          method: 'PUT',
-          body,
-        }) as Promise<{ number: number }>;
-      },
-      delete: async (session: AuthActiveAccount, blogPostId: string) => {
-        const api = `/audience/reactions/blog/post/${blogPostId}`;
-        return signedFetchJson(`${session.platform.url}${api}`, {
-          method: 'DELETE',
-        }) as Promise<{ number: number }>;
-      },
     },
   },
 };

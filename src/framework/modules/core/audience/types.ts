@@ -15,9 +15,22 @@ export interface AudienceUserReaction {
 }
 
 export interface AudienceReactions {
-  allReactionsCounter: number;
-  countByType: Record<AudienceReactionType, number>;
+  reactionCounters: {
+    allReactionsCounter: number;
+    countByType: Record<AudienceReactionType, number>;
+  };
   userReactions: AudienceUserReaction[];
+}
+
+export interface AudienceSummaryReactions {
+  reactionsByResource: Record<
+    string,
+    { reactionTypes: AudienceReactionType[]; userReaction: AudienceReactionType; totalReactionsCounter: number }
+  >;
+}
+
+export interface AudienceValidReactionTypes {
+  ['reaction-types']: AudienceReactionType[];
 }
 
 export interface AudienceViewer {
@@ -30,6 +43,8 @@ export interface AudienceViews {
   uniqueViewsPerProfile: AudienceViewer[];
   viewsCounter: number;
 }
+
+export type AudienceSummaryViews = Record<string, number>;
 
 export interface AudienceReferer {
   module: string;

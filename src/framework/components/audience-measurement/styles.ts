@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     backgroundColor: theme.palette.grey.white,
-    pointerEvents: 'none',
   },
   stats: {
     flexDirection: 'row',
@@ -39,6 +38,19 @@ const styles = StyleSheet.create({
   statsReactions: {
     flexDirection: 'row',
     columnGap: -UI_SIZES.spacing.minor,
+  },
+  placeholderRow: {
+    flexDirection: 'row',
+    columnGap: UI_SIZES.spacing.small,
+  },
+  mb0: {
+    marginBottom: 0,
+  },
+  h24: {
+    height: 24,
+  },
+  h30: {
+    height: 30,
   },
 });
 

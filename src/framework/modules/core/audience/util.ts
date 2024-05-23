@@ -3,7 +3,7 @@ import theme from '~/app/theme';
 
 import { AudienceReactionType } from './types';
 
-export const reactionsInfo = {
+export const audienceReactionsInfos = {
   [AudienceReactionType.REACTION_1]: {
     icon: 'reaction-thankyou',
     roundIcon: 'reaction-thankyou-round',

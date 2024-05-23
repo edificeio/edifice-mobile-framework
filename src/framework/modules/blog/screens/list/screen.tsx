@@ -5,7 +5,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import React from 'react';
-import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -23,32 +23,15 @@ import BlogPlaceholderList from '~/framework/modules/blog/components/placeholder
 import BlogPostResourceCard from '~/framework/modules/blog/components/post-resource-card';
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { Blog, BlogPost, BlogPostList } from '~/framework/modules/blog/reducer';
+import { Blog, BlogPost, BlogPostList, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import { getBlogPostRight } from '~/framework/modules/blog/rights';
-import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import { blogService } from '~/framework/modules/blog/service';
+import { audienceService } from '~/framework/modules/core/audience/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
-export interface BlogPostListScreenDataProps {
-  initialLoadingState: AsyncPagedLoadingState;
-  session?: AuthActiveAccount;
-}
-export interface BlogPostListScreenEventProps {
-  // doFetch: (selectedBlogId: string) => Promise<BlogPost[] | undefined>; // unused ?
-}
-export interface BlogPostListScreenNavigationParams {
-  selectedBlog: DisplayedBlog;
-}
-export type BlogPostListScreenProps = BlogPostListScreenDataProps &
-  BlogPostListScreenEventProps &
-  NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogPostList>;
-
-const styles = StyleSheet.create({
-  flexGrow1: {
-    flexGrow: 1,
-  },
-});
+import { styles } from './styles';
+import { BlogPostListScreenDataProps, BlogPostListScreenEventProps, BlogPostListScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -61,7 +44,7 @@ export const computeNavBar = ({
   }),
 });
 
-const BlogPostListItem = ({ blog, post }: { blog: Blog; post: BlogPost }) => {
+const BlogPostListItem = ({ blog, post, session }: { blog: Blog; post: BlogPostWithAudience; session: AuthActiveAccount }) => {
   const navigation = useNavigation<NavigationProp<BlogNavigationParams, typeof blogRouteNames.blogPostList>>();
   const onOpenBlogPost = React.useCallback(() => {
     navigation.navigate(blogRouteNames.blogPostDetails, {
@@ -83,6 +66,8 @@ const BlogPostListItem = ({ blog, post }: { blog: Blog; post: BlogPost }) => {
       title={post.title}
       state={post.state as 'PUBLISHED' | 'SUBMITTED'}
       resourceId={post._id}
+      audience={post.audience}
+      session={session}
     />
   );
 };
@@ -102,6 +87,40 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   const loadingRef = React.useRef<AsyncPagedLoadingState>();
   loadingRef.current = loadingState;
   // /!\ Need to use Ref of the state because of hooks Closure issue. @see https://stackoverflow.com/a/56554056/6111343
+
+  const fetchAudience = React.useCallback(async (newBlogPosts: BlogPost[]) => {
+    try {
+      const viewsForPosts = await audienceService.view.getSummary(
+        'blog',
+        'post',
+        newBlogPosts.map(p => p._id),
+      );
+      const reactionsForPosts = await audienceService.reaction.getSummary(
+        'blog',
+        'post',
+        newBlogPosts.map(p => p._id),
+      );
+      setBlogPosts(
+        newBlogPosts.map(p => {
+          const views = viewsForPosts[p._id];
+          const reactions = reactionsForPosts.reactionsByResource[p._id];
+          return {
+            ...p,
+            audience: {
+              views,
+              reactions: {
+                total: reactions?.totalReactionsCounter ?? 0,
+                types: reactions?.reactionTypes ?? [],
+                userReaction: reactions?.userReaction ?? null,
+              },
+            },
+          };
+        }),
+      );
+    } catch (e) {
+      console.error('[BlogPostListScreen] fetchViews error :', e);
+    }
+  }, []);
 
   // Fetch a page of blog posts.
   // Auto-increment nextPageNumber unless `fromPage` is provided.
@@ -136,13 +155,14 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
           } else if (flushAfter) {
             setNextPageToFetch(fromPage + 1);
           }
+          fetchAudience(newBlogPosts);
           // Only increment pagecount when fromPage is not specified
         } else setBlogPosts([]);
       } catch {
         throw new Error();
       }
     },
-    [blogPosts, nextPageToFetchState, pagingSizeState, props.session],
+    [blogPosts, fetchAudience, nextPageToFetchState, pagingSizeState, props.session],
   );
 
   const fetchFromStart = React.useCallback(
@@ -272,9 +292,12 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
     );
   }, [loadingState, reload, selectedBlogId]);
 
-  const renderItem = React.useCallback(({ item }) => <BlogPostListItem blog={selectedBlog} post={item} />, [selectedBlog]);
+  const renderItem = React.useCallback(
+    ({ item }) => <BlogPostListItem blog={selectedBlog} post={item} session={props.session!} />,
+    [props.session, selectedBlog],
+  );
 
-  const keyExtractor = React.useCallback((item: BlogPost) => item._id, []);
+  const keyExtractor = React.useCallback((item: BlogPostWithAudience) => item._id, []);
 
   const onEndReached = React.useCallback(() => {
     fetchNextPage(selectedBlogId);

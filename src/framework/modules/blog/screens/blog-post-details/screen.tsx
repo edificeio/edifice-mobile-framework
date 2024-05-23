@@ -36,7 +36,7 @@ import {
 } from '~/framework/modules/blog/actions';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
+import { BlogPostComment, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
@@ -46,6 +46,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { markViewAudience } from '~/framework/modules/core/audience';
+import { audienceService } from '~/framework/modules/core/audience/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
@@ -193,6 +194,28 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     await this.doGetBlogPostDetails();
   }
 
+  async doGetAudienceInfos() {
+    try {
+      const blogPostId = this.state.blogPostData?._id!;
+      const views = await audienceService.view.getSummary('blog', 'post', [blogPostId]);
+      const reactions = await audienceService.reaction.getSummary('blog', 'post', [blogPostId]);
+      const newBlogPostData = {
+        ...this.state.blogPostData,
+        audience: {
+          views: views[blogPostId],
+          reactions: {
+            total: reactions.reactionsByResource[blogPostId].totalReactionsCounter ?? 0,
+            types: reactions.reactionsByResource[blogPostId].reactionTypes,
+            userReaction: reactions.reactionsByResource[blogPostId].userReaction ?? null,
+          },
+        },
+      } as BlogPostWithAudience;
+      this.setState(prevState => ({ ...prevState, blogPostData: newBlogPostData }));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   async doGetBlogPostDetails() {
     try {
       const { route, handleGetBlogPostDetails } = this.props;
@@ -205,6 +228,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       } else blogPostState = route.params.blogPost?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       this.setState({ blogPostData });
+      this.doGetAudienceInfos();
     } catch {
       // ToDo: Error handling
       this.setState({ errorState: true });
@@ -295,7 +319,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   setActionNavbar = () => {
     const { route, navigation, session } = this.props;
-    const { blogPostData, blogInfos, errorState, loadingState } = this.state;
+    const { blogPostData, blogInfos, errorState } = this.state;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
     const blogId = route.params.blog?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -595,6 +619,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
             containerStyle={styles.footer}
             actionViews={() => this.props.navigation.navigate(blogRouteNames.blogAudience, { blogPostId: blogPostData._id })}
             actionReactions={() => this.props.navigation.navigate(blogRouteNames.blogReactions, { blogPostId: blogPostData._id })}
+            nbComments={blogPostData.comments?.length}
+            nbViews={blogPostData.audience?.views}
+            infosReactions={blogPostData.audience?.reactions}
+            referer={{ module: 'blog', resourceType: 'post', resourceId: blogPostData._id }}
+            session={this.props.session!}
           />
         ) : null}
       </View>
@@ -701,7 +730,7 @@ const mapDispatchToProps: (
   getState: () => IGlobalState,
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
-    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPost | undefined;
+    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPostWithAudience | undefined;
   }, // TS BUG: dispatch mishandled
   handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
     return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;

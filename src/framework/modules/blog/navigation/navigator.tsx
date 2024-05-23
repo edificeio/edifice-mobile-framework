@@ -2,12 +2,12 @@ import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/blog/module-config';
 import BlogExplorerScreen, { computeNavBar as blogExplorerNavBar } from '~/framework/modules/blog/screens/BlogExplorerScreen';
-import BlogPostListScreen, { computeNavBar as blogPostListNavBar } from '~/framework/modules/blog/screens/BlogPostListScreen';
 import BlogSelectScreen, { computeNavBar as blogSelectNavBar } from '~/framework/modules/blog/screens/BlogSelectScreen';
 import BlogAudienceScreen, { computeNavBar as blogAudienceNavBar } from '~/framework/modules/blog/screens/audience';
 import BlogPostDetailsScreen, { computeNavBar as blogPostDetailsNavBar } from '~/framework/modules/blog/screens/blog-post-details';
 import BlogCreatePostScreen, { computeNavBar as blogCreatePostNavBar } from '~/framework/modules/blog/screens/create-post';
 import BlogEditPostScreen, { computeNavBar as blogEditPostNavBar } from '~/framework/modules/blog/screens/edit';
+import BlogPostListScreen, { computeNavBar as blogPostListNavBar } from '~/framework/modules/blog/screens/list';
 import BlogReactionsScreen, { computeNavBar as blogReactionsNavBar } from '~/framework/modules/blog/screens/reactions';
 import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
@@ -68,4 +68,9 @@ export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
     </>
   ));
 
-setModalModeForRoutes([blogRouteNames.blogCreatePost, blogRouteNames.blogEditPost]);
+setModalModeForRoutes([
+  blogRouteNames.blogCreatePost,
+  blogRouteNames.blogEditPost,
+  blogRouteNames.blogAudience,
+  blogRouteNames.blogReactions,
+]);

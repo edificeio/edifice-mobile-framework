@@ -1,21 +1,17 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
-import { IGlobalState } from '~/app/store';
 import AudienceMeasurementViewsModal from '~/framework/components/audience-measurement/modal-views';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ContentLoader } from '~/framework/hooks/loader';
-import { getSession } from '~/framework/modules/auth/reducer';
-import { getViewsBlogPost } from '~/framework/modules/blog/actions';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
+import { audienceService } from '~/framework/modules/core/audience/service';
 import { AudienceViews } from '~/framework/modules/core/audience/types';
 import { UserNavigationParams } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import { BlogAudienceScreenDataProps, BlogAudienceScreenEventProps, BlogAudienceScreenProps } from './types';
+import { BlogAudienceScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -29,19 +25,18 @@ export const computeNavBar = ({
 });
 
 function BlogAudienceScreen(props: BlogAudienceScreenProps) {
-  const { handleGetBlogPostViews } = props;
   const { blogPostId } = props.route.params;
 
   const [data, setData] = React.useState<AudienceViews | null>(null);
 
   const loadData = React.useCallback(async () => {
     try {
-      const dt = await handleGetBlogPostViews(blogPostId);
+      const dt = await audienceService.view.getDetails({ module: 'blog', resourceType: 'post', resourceId: blogPostId });
       setData(dt);
     } catch (e) {
       console.error('[BlogAudienceScreen] error :', e);
     }
-  }, [blogPostId, handleGetBlogPostViews]);
+  }, [blogPostId]);
 
   // TODO LEA - add placeholder ?
   return (
@@ -59,18 +54,4 @@ function BlogAudienceScreen(props: BlogAudienceScreenProps) {
   );
 }
 
-const mapStateToProps: (s: IGlobalState) => BlogAudienceScreenDataProps = s => ({
-  session: getSession()!,
-});
-
-const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>, getState: () => IGlobalState) => BlogAudienceScreenEventProps = (
-  dispatch,
-  getState,
-) => ({
-  handleGetBlogPostViews: async (blogPostId: string) => {
-    return (await dispatch(getViewsBlogPost(blogPostId))) as AudienceViews;
-  },
-});
-
-const BlogAudienceScreenConnected = connect(mapStateToProps, mapDispatchToProps)(BlogAudienceScreen);
-export default BlogAudienceScreenConnected;
+export default BlogAudienceScreen;

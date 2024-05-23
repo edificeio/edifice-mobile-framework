@@ -13,7 +13,19 @@ import { ArticleContainer } from '~/ui/ContainerContent';
 import { BlogPostResourceCardProps } from './types';
 
 export const BlogPostResourceCard = React.memo(
-  ({ action, authorId, authorName, comments, contentHtml, date, title, state, resourceId }: BlogPostResourceCardProps) => {
+  ({
+    action,
+    authorId,
+    authorName,
+    comments,
+    contentHtml,
+    date,
+    title,
+    state,
+    resourceId,
+    audience,
+    session,
+  }: BlogPostResourceCardProps) => {
     const authorTextMaxLines = 1;
     const contentTextMaxLines = 5;
     const blogPostText = extractTextFromHtml(contentHtml);
@@ -46,7 +58,17 @@ export const BlogPostResourceCard = React.memo(
               <ContentCardTitle>{title}</ContentCardTitle>
             </>
           }
-          footer={state !== 'SUBMITTED' ? <AudienceMeasurement /> : undefined}>
+          footer={
+            state !== 'SUBMITTED' ? (
+              <AudienceMeasurement
+                nbComments={comments}
+                nbViews={audience?.views}
+                infosReactions={audience?.reactions}
+                referer={{ module: 'blog', resourceType: 'post', resourceId }}
+                session={session}
+              />
+            ) : undefined
+          }>
           {hasBlogPostText ? (
             <SmallText
               style={{ marginBottom: blogPostMedia?.length ? UI_SIZES.spacing.small : undefined }}

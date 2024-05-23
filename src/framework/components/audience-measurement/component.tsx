@@ -1,117 +1,155 @@
 import React from 'react';
-import { Animated, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
+import { audienceService } from '~/framework/modules/core/audience/service';
+import { AudienceReactionType } from '~/framework/modules/core/audience/types';
+import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
+import { isEmpty } from '~/framework/util/object';
 
 import styles from './styles';
 import { AudienceMeasurementProps } from './types';
 
+const validReactionTypes = Object.values(AudienceReactionType);
+
 const AudienceMeasurement = (props: AudienceMeasurementProps) => {
-  const reactionsOpacity = React.useRef(new Animated.Value(0)).current;
-  const reactionsYPos = React.useRef(new Animated.Value(0)).current;
-  const scaleItem = React.useRef(new Animated.Value(1)).current;
+  const [userReaction, setUserReaction] = React.useState<AudienceReactionType | null>(props.infosReactions?.userReaction ?? null);
+  const [totalReactions, setTotalReactions] = React.useState<number>(props.infosReactions?.total ?? 0);
+  const [typesReactions, setTypesReactions] = React.useState<AudienceReactionType[]>(props.infosReactions?.types ?? []);
+  const [showPopup, setShowPopup] = React.useState<boolean>(false);
 
-  const animateReactions = React.useCallback(
-    ({ opacity, ypos }: { opacity: number; ypos: number }) => {
-      Animated.parallel([
-        Animated.timing(reactionsOpacity, {
-          toValue: opacity,
-          duration: 100,
-          useNativeDriver: false,
-        }),
-        Animated.timing(reactionsYPos, {
-          toValue: ypos,
-          duration: 100,
-          useNativeDriver: false,
-        }),
-      ]).start();
-    },
-    [reactionsOpacity, reactionsYPos],
-  );
+  const refreshData = async () => {
+    try {
+      const dt = await audienceService.reaction.getSummary(props.referer.module, props.referer.resourceType, [
+        props.referer.resourceId,
+      ]);
+      const newReactionInfos = dt.reactionsByResource[props.referer.resourceId];
+      setUserReaction(newReactionInfos?.userReaction);
+      setTotalReactions(newReactionInfos?.totalReactionsCounter);
+      setTypesReactions(newReactionInfos?.reactionTypes);
+    } catch (e) {
+      console.error('[AudienceMeasurement] refreshData error :', e);
+    }
+  };
 
-  const animateItem = React.useCallback(
-    ({ scale }: { scale: number }) => {
-      Animated.parallel([
-        Animated.timing(scaleItem, {
-          toValue: scale,
-          duration: 200,
-          useNativeDriver: false,
-        }),
-      ]).start();
-    },
-    [scaleItem],
-  );
+  const deleteReaction = async () => {
+    try {
+      await audienceService.reaction.delete(props.session, props.referer);
+      refreshData();
+    } catch (e) {
+      console.error('[AudienceMeasurement] deleteReaction error :', e);
+    }
+  };
+
+  const postReaction = async (reaction: AudienceReactionType) => {
+    try {
+      await audienceService.reaction.post(props.session, props.referer, reaction);
+      refreshData();
+    } catch (e) {
+      console.error('[AudienceMeasurement] postReaction error :', e);
+    }
+  };
+
+  const renderReactButton = () => {
+    if (userReaction) {
+      return (
+        <DefaultButton
+          text={audienceReactionsInfos[userReaction].label}
+          iconLeft={audienceReactionsInfos[userReaction].icon}
+          contentColor={theme.palette.grey.black}
+          style={styles.button}
+          action={deleteReaction}
+        />
+      );
+    } else
+      return (
+        <DefaultButton
+          text={I18n.get('audiencemeasurement-reactbutton')}
+          iconLeft="ui-reaction"
+          contentColor={theme.palette.grey.black}
+          style={styles.button}
+          action={() => setShowPopup(!showPopup)}
+        />
+      );
+  };
+  const renderPlaceholder = () => {
+    return (
+      <Placeholder Animation={Fade}>
+        <View style={styles.placeholderRow}>
+          <PlaceholderLine style={styles.h24} width={15} />
+          <PlaceholderLine style={styles.h24} width={10} />
+          <PlaceholderLine style={styles.h24} width={10} />
+        </View>
+        <PlaceholderLine style={[styles.h30, styles.mb0]} width={30} />
+      </Placeholder>
+    );
+  };
+
   return (
     <View style={props.containerStyle}>
-      <View style={styles.stats}>
-        <TouchableOpacity onPress={props.actionReactions} style={styles.statsItem}>
-          <SmallText style={styles.statsItemText}>7</SmallText>
-          <View style={styles.statsReactions}>
-            <NamedSVG
-              name="reaction-thankyou-round"
-              height={UI_SIZES.elements.icon.default}
-              width={UI_SIZES.elements.icon.default}
-            />
-            <NamedSVG
-              name="reaction-awesome-round"
-              height={UI_SIZES.elements.icon.default}
-              width={UI_SIZES.elements.icon.default}
-            />
-            <NamedSVG
-              name="reaction-welldone-round"
-              height={UI_SIZES.elements.icon.default}
-              width={UI_SIZES.elements.icon.default}
-            />
-            <NamedSVG
-              name="reaction-instructive-round"
-              height={UI_SIZES.elements.icon.default}
-              width={UI_SIZES.elements.icon.default}
-            />
+      {props.nbViews === undefined ? (
+        renderPlaceholder()
+      ) : (
+        <>
+          <View style={styles.stats}>
+            <TouchableOpacity onPress={props.actionReactions} style={styles.statsItem}>
+              <SmallText style={styles.statsItemText}>{totalReactions ?? 0}</SmallText>
+              <View style={styles.statsReactions}>
+                {!isEmpty(typesReactions) ? (
+                  typesReactions.map(reaction => (
+                    <NamedSVG
+                      key={reaction}
+                      name={audienceReactionsInfos[reaction].roundIcon}
+                      height={UI_SIZES.elements.icon.default}
+                      width={UI_SIZES.elements.icon.default}
+                    />
+                  ))
+                ) : (
+                  <NamedSVG
+                    name={audienceReactionsInfos[AudienceReactionType.REACTION_1].roundIcon}
+                    height={UI_SIZES.elements.icon.default}
+                    width={UI_SIZES.elements.icon.default}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={props.actionViews} style={styles.statsItem}>
+              <SmallText style={styles.statsItemText}>{props.nbViews ?? 0}</SmallText>
+              <NamedSVG
+                name="ui-see"
+                fill={theme.palette.grey.graphite}
+                height={UI_SIZES.elements.icon.small}
+                width={UI_SIZES.elements.icon.small}
+              />
+            </TouchableOpacity>
+            <View style={styles.statsItem}>
+              <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
+              <NamedSVG
+                name="ui-messageInfo"
+                fill={theme.palette.grey.graphite}
+                height={UI_SIZES.elements.icon.small}
+                width={UI_SIZES.elements.icon.small}
+              />
+            </View>
           </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={props.actionViews} style={styles.statsItem}>
-          <SmallText style={styles.statsItemText}>48</SmallText>
-          <NamedSVG
-            name="ui-see"
-            fill={theme.palette.grey.graphite}
-            height={UI_SIZES.elements.icon.small}
-            width={UI_SIZES.elements.icon.small}
-          />
-        </TouchableOpacity>
-        <View style={styles.statsItem}>
-          <SmallText style={styles.statsItemText}>6</SmallText>
-          <NamedSVG
-            name="ui-messageInfo"
-            fill={theme.palette.grey.graphite}
-            height={UI_SIZES.elements.icon.small}
-            width={UI_SIZES.elements.icon.small}
-          />
-        </View>
-      </View>
-      <Animated.View style={[styles.reactions, { transform: [{ translateY: reactionsYPos }], opacity: reactionsOpacity }]}>
-        <TouchableOpacity onLongPress={() => animateItem({ scale: 2 })}>
-          <Animated.View style={{ transform: [{ scale: scaleItem }] }}>
-            <NamedSVG name="reaction-thankyou" />
-          </Animated.View>
-        </TouchableOpacity>
-
-        <NamedSVG name="reaction-welldone" />
-        <NamedSVG name="reaction-awesome" />
-        <NamedSVG name="reaction-instructive" />
-      </Animated.View>
-      <DefaultButton
-        text="Réagir"
-        iconLeft="ui-reaction"
-        contentColor={theme.palette.grey.black}
-        style={styles.button}
-        onLongPress={() => animateReactions({ opacity: 1, ypos: -UI_SIZES.spacing.minor })}
-        onPressOut={() => animateReactions({ opacity: 0, ypos: 0 })}
-        pressRetentionOffset={{ top: 20, left: 20, right: 20, bottom: 20 }}
-      />
+          {showPopup && (
+            <View style={styles.reactions}>
+              {validReactionTypes.map(reaction => (
+                <TouchableOpacity key={reaction} onPress={() => postReaction(reaction)}>
+                  <NamedSVG name={audienceReactionsInfos[reaction].icon} />
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+          {renderReactButton()}
+        </>
+      )}
     </View>
   );
 };
