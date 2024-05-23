@@ -3,7 +3,7 @@ import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
+import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { Icon } from '~/framework/components/picture';
 import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
@@ -34,8 +34,8 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
 
   return (
     <View style={styles.container}>
-      <ResourceView
-        header={
+      <View style={styles.content}>
+        <View style={styles.contentHeader}>
           <ContentCardHeader
             icon={<ContentCardIcon userIds={[post.author.userId || require('ASSETS/images/system-avatar.png')]} />}
             text={
@@ -45,14 +45,14 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
             }
             date={blog.modified}
           />
-        }>
+        </View>
         {post.state === 'SUBMITTED' ? (
           <SmallBoldText style={styles.postNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
         ) : null}
         <SmallBoldText style={styles.blogTitle}>{blog.title}</SmallBoldText>
         <HeadingSText>{post.title}</HeadingSText>
         {richContent}
-      </ResourceView>
+      </View>
       {post.state === 'PUBLISHED' ? (
         <View style={styles.postCommentsTotal}>
           <Icon style={styles.postCommentsIcon} size={18} name="chat3" color={theme.ui.text.regular} />

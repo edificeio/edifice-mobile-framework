@@ -141,7 +141,7 @@ export default class RichEditor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { editorStyle, disabled, placeholder } = this.props;
+    const { editorStyle, disabled, placeholder, initialContentHTML, editorInitializedCallback } = this.props;
     if (editorStyle && prevProps.editorStyle !== editorStyle) {
       this.setContentStyle(editorStyle);
     }
@@ -150,6 +150,10 @@ export default class RichEditor extends Component {
     }
     if (placeholder !== prevProps.placeholder) {
       this.setPlaceholder(placeholder);
+    }
+    if (initialContentHTML !== prevProps.initialContentHTML) {
+      this.setContentHTML(initialContentHTML);
+      editorInitializedCallback();
     }
   }
 

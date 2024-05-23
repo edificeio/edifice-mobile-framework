@@ -29,4 +29,10 @@ export default StyleSheet.create({
   container: {
     backgroundColor: theme.ui.background.card,
   },
+  content: {
+    padding: UI_SIZES.spacing.medium,
+  },
+  contentHeader: {
+    paddingBottom: UI_SIZES.spacing.medium,
+  },
 });

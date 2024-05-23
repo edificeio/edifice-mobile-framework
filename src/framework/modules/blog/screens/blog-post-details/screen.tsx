@@ -2,7 +2,7 @@ import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import * as React from 'react';
-import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, View } from 'react-native';
+import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -15,6 +15,7 @@ import { BottomSheet } from '~/framework/components/BottomSheet';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
@@ -31,6 +32,7 @@ import {
   publishBlogPostCommentAction,
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
+import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
@@ -49,7 +51,6 @@ import { resourceHasRight } from '~/framework/util/resourceRights';
 import { Trackers } from '~/framework/util/tracker';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
-import BlogPostDetails from '../../components/blog-post-details';
 import styles from './styles';
 import {
   BlogPostCommentLoadingState,
@@ -83,10 +84,61 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   return null;
 }
 
+const ListComponent = Platform.select<React.ComponentType<any>>({
+  ios: FlatList,
+  android: KeyboardAvoidingFlatList,
+})!;
+
+function BlogPostDetailsFlatList(props: {
+  contentSetRef;
+  initialNumToRender;
+  data;
+  blogInfos;
+  blogPostData;
+  onReady;
+  renderItem;
+  onRefresh;
+  loadingState;
+  onContentSizeChange;
+  onLayout;
+  footer;
+}) {
+  return (
+    <Viewport.Tracker>
+      <>
+        <ListComponent
+          ref={props.contentSetRef}
+          initialNumToRender={props.initialNumToRender}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.content}
+          data={props.data}
+          keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
+          ListHeaderComponent={
+            props.blogInfos && props.blogPostData ? (
+              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} />
+            ) : null
+          }
+          removeClippedSubviews={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(props.loadingState)}
+              onRefresh={props.onRefresh}
+            />
+          }
+          renderItem={props.renderItem}
+          style={styles.contentStyle2}
+          onContentSizeChange={props.onContentSizeChange}
+          onLayout={props.onLayout}
+          {...React.useMemo(() => Platform.select({ ios: {}, android: { stickyFooter: props.footer } }), [props.footer])}
+        />
+        {React.useMemo(() => Platform.select({ ios: props.footer, android: null }), [props.footer])}
+      </>
+    </Viewport.Tracker>
+  );
+}
+
 export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsScreenProps, BlogPostDetailsScreenState> {
-  flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList | null>() as React.MutableRefObject<
-    FlatList | typeof KeyboardAvoidingFlatList | null
-  >;
+  flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList | null>();
 
   commentFieldRefs = [];
 
@@ -449,6 +501,42 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     return <EmptyConnectionScreen />;
   }
 
+  static contentKeyExtractor(item: BlogPostComment) {
+    return item.id.toString();
+  }
+
+  contentSetRef(node: any) {
+    this.flatListRef.current = node;
+  }
+
+  contentRenderItem({ item, index }) {
+    return this.renderComment(item, index);
+  }
+
+  contentSizeChange(width, height) {
+    this.listHeight = height;
+  }
+
+  contentOnLayout() {
+    // Scroll to last comment if coming from blog spot comment notification
+    if (this.flatListRef.current && this.event === 'PUBLISH-COMMENT')
+      setTimeout(() => {
+        (this.flatListRef.current as FlatList)?.scrollToEnd();
+        this.event = null;
+      }, 50);
+  }
+
+  constructor(props) {
+    super(props);
+    this.contentSetRef = this.contentSetRef.bind(this);
+    this.contentRenderItem = this.contentRenderItem.bind(this);
+    this.contentSizeChange = this.contentSizeChange.bind(this);
+    this.contentOnLayout = this.contentOnLayout.bind(this);
+    this.doRefresh = this.doRefresh.bind(this);
+    this.doRefreshSilent = this.doRefreshSilent.bind(this);
+    this.setRichContentReady = this.setRichContentReady.bind(this);
+  }
+
   renderContent() {
     const { session } = this.props;
     const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
@@ -456,54 +544,25 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const hasPublishBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
-    const ListComponent = Platform.select<React.ComponentType<any>>({
-      ios: FlatList,
-      android: KeyboardAvoidingFlatList,
-    })!;
+
     const footer = this.renderFooter(isPublishingComment, hasCommentBlogPostRight ?? false, hasPublishBlogPostRight ?? false);
 
     return (
       <>
-        <Viewport.Tracker>
-          <ListComponent
-            ref={ref => {
-              this.flatListRef.current = ref;
-            }}
-            initialNumToRender={blogPostComments?.length}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.content}
-            data={blogPostComments}
-            keyExtractor={(item: BlogPostComment) => item.id.toString()}
-            ListHeaderComponent={
-              blogInfos && blogPostData ? (
-                <BlogPostDetails blog={blogInfos} post={blogPostData} onReady={this.setRichContentReady} />
-              ) : null
-            }
-            removeClippedSubviews={false}
-            refreshControl={
-              <RefreshControl
-                refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
-                onRefresh={() => this.doRefresh()}
-              />
-            }
-            renderItem={({ item, index }) => this.renderComment(item, index)}
-            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-            style={styles.contentStyle2}
-            onContentSizeChange={(width, height) => {
-              this.listHeight = height;
-            }}
-            onLayout={() => {
-              // Scroll to last comment if coming from blog spot comment notification
-              if (this.flatListRef.current && this.event === 'PUBLISH-COMMENT')
-                setTimeout(() => {
-                  (this.flatListRef.current as FlatList)?.scrollToEnd();
-                  this.event = null;
-                }, 50);
-            }}
-            {...Platform.select({ ios: {}, android: { stickyFooter: footer } })}
-          />
-        </Viewport.Tracker>
-        {Platform.select({ ios: footer, android: null })}
+        <BlogPostDetailsFlatList
+          data={blogPostComments}
+          blogInfos={blogInfos}
+          blogPostData={blogPostData}
+          onReady={this.setRichContentReady}
+          contentSetRef={this.contentSetRef}
+          initialNumToRender={blogPostComments?.length}
+          renderItem={this.contentRenderItem}
+          onRefresh={this.doRefresh}
+          loadingState={loadingState}
+          onContentSizeChange={this.contentSizeChange}
+          onLayout={this.contentOnLayout}
+          footer={footer}
+        />
       </>
     );
   }
@@ -554,13 +613,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : null;
   }
 
-  _setRichContentReady() {
+  setRichContentReady() {
     this.loaderRef.current?.setNativeProps({
       style: { opacity: 0 },
     });
   }
-
-  setRichContentReady = this._setRichContentReady.bind(this);
 
   renderComment(blogPostComment: BlogPostComment, index: number) {
     const { session } = this.props;
