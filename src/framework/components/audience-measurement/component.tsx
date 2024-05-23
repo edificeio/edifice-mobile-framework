@@ -20,6 +20,8 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
   const [typesReactions, setTypesReactions] = React.useState<AudienceReactionType[]>(props.infosReactions?.types ?? []);
   const [userReaction, setUserReaction] = React.useState<AudienceReactionType | null>(props.infosReactions?.userReaction ?? null);
 
+  const Component = props.actionReactions && props.actionViews ? TouchableOpacity : View;
+
   const refreshData = async () => {
     try {
       const dt = await audienceService.reaction.getSummary(props.referer.module, props.referer.resourceType, [
@@ -81,7 +83,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
       ) : (
         <>
           <View style={styles.stats}>
-            <TouchableOpacity onPress={props.actionReactions} style={styles.statsItem}>
+            <Component onPress={props.actionReactions} style={styles.statsItem}>
               <SmallText style={styles.statsItemText}>{totalReactions ?? 0}</SmallText>
               <View style={styles.statsReactions}>
                 {!isEmpty(typesReactions) ? (
@@ -101,8 +103,8 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
                   />
                 )}
               </View>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={props.actionViews} style={styles.statsItem}>
+            </Component>
+            <Component onPress={props.actionViews} style={styles.statsItem}>
               <SmallText style={styles.statsItemText}>{props.nbViews ?? 0}</SmallText>
               <NamedSVG
                 name="ui-see"
@@ -110,7 +112,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
                 height={UI_SIZES.elements.icon.small}
                 width={UI_SIZES.elements.icon.small}
               />
-            </TouchableOpacity>
+            </Component>
             <View style={styles.statsItem}>
               <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
               <NamedSVG
