@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-05-17 18:56:45",
-  "notes": "feat(editor): MB-235§, MB-2357, Review add images flow completely\nfix: better handling loading time of rich content\nchore: remove some console.\nchore: oneSessionId in redux + prop in rich-text components\nfix(editor): MB-2426, Ignore selection state after undo/redo\nfeat(editor): Links list management addition\nchore(log): Review some log statements\nrelease: 1.13.0-alpha.12(1130013)",
-  "version": "1.13.0-alpha.13(1130014)"
+  "last": "2024-05-24 07:46:57",
+  "notes": "Revert \"changes\"\nchanges\nfeat(audience-measurement): fix merge\nSquashed commit of the following:\nfeat(audience-measurement): fix empty touchable opacity\nfeat(audience-measurement): MB-2481 add animation to add reaction blog post\nfeat(audience-measurement):add filter to reactions modal\nfeat(audience-measurement): MB-2481 , we can post reaction to blog post\nfeat(audience-measurement): improve feature\nfeat(audience-measurement): MB-2480 audience reactions modal\nSquashed commit of the following:\nfeat(audience-measurement): MB-2482",
+  "version": "1.13.1-alpha.1(1130101)"
 }
