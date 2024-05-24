@@ -7,19 +7,20 @@ import { UI_SIZES, getScaleFontSize, getScaleWidth } from '~/framework/component
 import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 
-let audioIcon = '';
-let attachmentIcon = '';
-let playIcon = '';
-let fontFaces = '';
-
-const playIconSize = getScaleWidth(40);
-
 const base64Type = {
   FONT: 'fonts',
   IMAGE: 'images',
 };
 
+const isIOS = Platform.OS === 'ios';
 const pfUrl = getSession()?.platform?.url || '';
+const playIconSize = getScaleWidth(40);
+const thumbnailSize = `${UI_SIZES.standardScreen.width}x0`;
+
+let audioIcon = '';
+let attachmentIcon = '';
+let playIcon = '';
+let fontFaces = '';
 
 async function loadBase64File(fileName, type) {
   let base64String = '';
@@ -542,7 +543,10 @@ function createHTML(options = {}) {
                     Actions.FORMAT_VIDEOS();
                     Actions.GET_IMAGES_URLS();
                     Actions.GET_LINKS_URLS();
-                    Actions.UPDATE_HEIGHT();
+                    setTimeout(() => {
+                        Actions.UPDATE_HEIGHT();
+                        _postMessage({type: 'LOG', data: 'EDITOR INIT DONE!'});
+                    }, 250);
                 }
             },
 
@@ -620,7 +624,14 @@ function createHTML(options = {}) {
                 var images = document.getElementsByTagName('img');
                 var imagesUrls = [];
                 for (var i = 0; i < images.length; i++) {
-                    imagesUrls.push(images[i].src);
+                    const img = images[i];
+                    if (${isIOS}) {
+                        const uri = new URL(img.src);
+                        uri.searchParams.delete('thumbnail');
+                        uri.searchParams.append('thumbnail', '${thumbnailSize}');
+                        img.src = uri.toString();
+                    }
+                    imagesUrls.push(img.src);
                 }
                 postAction({type: 'IMAGES_URLS', data: imagesUrls}, true);
             },

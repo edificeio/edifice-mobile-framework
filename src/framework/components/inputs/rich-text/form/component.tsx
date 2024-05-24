@@ -178,12 +178,12 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     let html = '';
     addedFiles.forEach(file => {
       if (file.status === UploadStatus.OK) {
-        html += `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="350" height="NaN">`;
+        html += `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="${UI_SIZES.standardScreen.width}" height="NaN">`;
       }
     });
     hideAddFilesResults();
     richText.current?.focusContentEditor();
-    richText.current?.insertHTML(`${html}`);
+    if (!isEmpty(html)) richText.current?.insertHTML(`${html}`);
   };
 
   const handleAddFiles = () => {
