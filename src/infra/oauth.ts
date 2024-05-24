@@ -545,10 +545,13 @@ export class OAuth2RessourceOwnerPasswordClient {
 
   public async getOneSessionId() {
     try {
+      // Clear cookies before calling token-as-cookie
+      await CookieManager.clearAll();
       // Call token-as-cookie
       const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
       const response = await fetch(request);
       const cookie = response.headers.get('set-cookie') || undefined;
+
       let newSessionId: string | undefined;
       // Continue if set-cookie header found
       // Otherwise, last oneSessionId will be returned
@@ -565,8 +568,8 @@ export class OAuth2RessourceOwnerPasswordClient {
         getStore().dispatch(authActions.setOneSessionId(session.user.id, { value: newSessionId }));
       }
     } catch (e) {
-      console.error('Unable to retrieve oneSessionId => ', e);
       // We leave the catch and returned value will be last oneSessionId
+      console.error('Unable to retrieve oneSessionId => ', e);
     }
     return this.oneSessionId;
   }
