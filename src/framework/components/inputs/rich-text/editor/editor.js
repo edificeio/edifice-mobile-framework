@@ -16,6 +16,7 @@ const isIOS = Platform.OS === 'ios';
 const pfUrl = getSession()?.platform?.url || '';
 const playIconSize = getScaleWidth(40);
 const thumbnailSize = `${UI_SIZES.standardScreen.width}x0`;
+const updateHeightTimeout = 300;
 
 let audioIcon = '';
 let attachmentIcon = '';
@@ -108,7 +109,6 @@ function createHTML(options = {}) {
     // Enable/Disable composition
     useComposition = true,
   } = options;
-  //ERROR: HTML height not 100%;
 
   const placeholderColor = theme.palette.grey.stone;
 
@@ -470,11 +470,11 @@ function createHTML(options = {}) {
                         selectionLocked = false;
                         saveSelection();
                         editor.settings.onChange();
+                        Actions.GET_IMAGES_URLS();
+                        Actions.GET_LINKS_URLS();
                         setTimeout(() => {
                             Actions.UPDATE_HEIGHT();
-                            Actions.GET_IMAGES_URLS();
-                            Actions.GET_LINKS_URLS();
-                        }, 300);
+                        }, ${updateHeightTimeout});
                     }
                 }
             },
@@ -546,13 +546,12 @@ function createHTML(options = {}) {
                     setTimeout(() => {
                         Actions.UPDATE_HEIGHT();
                         _postMessage({type: 'LOG', data: 'EDITOR INIT DONE!'});
-                    }, 250);
+                    }, ${updateHeightTimeout});
                 }
             },
 
             init: function (){
                 if (${useContainer}){
-                    // setInterval(Actions.UPDATE_HEIGHT, 150);
                     Actions.UPDATE_HEIGHT();
                 } else {
                     // react-native-webview There is a bug in the body and html height setting of a certain version of 100%
