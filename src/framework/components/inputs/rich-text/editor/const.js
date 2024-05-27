@@ -77,3 +77,5 @@ export const messages = {
   SELECTION_CHANGE: 'SELECTION_CHANGE',
   VIDEO_TOUCHED: 'VIDEO_TOUCHED',
 };
+
+export const updateHeightTimeout = 300;

@@ -7,6 +7,8 @@ import { UI_SIZES, getScaleFontSize, getScaleWidth } from '~/framework/component
 import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 
+import { updateHeightTimeout } from './const';
+
 const base64Type = {
   FONT: 'fonts',
   IMAGE: 'images',
@@ -16,7 +18,6 @@ const isIOS = Platform.OS === 'ios';
 const pfUrl = getSession()?.platform?.url || '';
 const playIconSize = getScaleWidth(40);
 const thumbnailSize = `${UI_SIZES.standardScreen.width}x0`;
-const updateHeightTimeout = 300;
 
 let audioIcon = '';
 let attachmentIcon = '';
