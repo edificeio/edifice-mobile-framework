@@ -184,7 +184,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       console.debug(`IMAGE ADDED: ${file.workspaceID}`);
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, ui.updateHeightTimeout * 0.5);
+      }, ui.updateHeightTimeout * 1.5);
     }
   };
 
