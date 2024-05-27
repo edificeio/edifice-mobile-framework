@@ -32,6 +32,7 @@ import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/component
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionBoldText, CaptionText, HeadingXSText, SmallText } from '~/framework/components/text';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import workspaceService from '~/framework/modules/workspace/service';
@@ -421,11 +422,14 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     setIsFocused(false);
   }, [animateToolbar]);
 
+  const [isContentModified, setIsContentModified] = React.useState(false);
+
   const handleChange = React.useCallback(
     (html: string) => {
       props.onChangeText(html);
+      if (!isContentModified) setIsContentModified(true);
     },
-    [props],
+    [props, isContentModified],
   );
 
   const handleCursorPosition = React.useCallback((scrollY: number) => {
@@ -436,6 +440,20 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     animateToolbar({ opacity: 1, ypos: UI_SIZES.elements.editor.toolbarHeight });
     setIsFocused(true);
   }, [animateToolbar]);
+
+  usePreventBack({
+    title: I18n.get(props.preventBackI18n?.title ?? 'editor-generic-alert-title'),
+    text: I18n.get(props.preventBackI18n?.text ?? 'editor-generic-alert-text'),
+    showAlert: isContentModified,
+  });
+
+  const { topForm } = props;
+
+  const realTopForm = React.useMemo(
+    () =>
+      React.isValidElement(topForm) ? topForm : typeof topForm === 'function' ? topForm(() => setIsContentModified(true)) : null,
+    [topForm],
+  );
 
   return (
     <PageView style={styles.page}>
@@ -450,7 +468,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           scrollEventThrottle={20}
           bounces={false}
           style={styles.scrollView}>
-          {props.topForm}
+          {realTopForm}
           <RichEditor
             disabled={false}
             enterKeyHint="enter"
