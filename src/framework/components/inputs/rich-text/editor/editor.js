@@ -7,7 +7,7 @@ import { UI_SIZES, getScaleFontSize, getScaleWidth } from '~/framework/component
 import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 
-import { updateHeightTimeout } from './const';
+import { ui } from './const';
 
 const base64Type = {
   FONT: 'fonts',
@@ -475,7 +475,7 @@ function createHTML(options = {}) {
                         Actions.GET_LINKS_URLS();
                         setTimeout(() => {
                             Actions.UPDATE_HEIGHT();
-                        }, ${updateHeightTimeout});
+                        }, ${ui.updateHeightTimeout});
                     }
                 }
             },
@@ -547,7 +547,7 @@ function createHTML(options = {}) {
                     setTimeout(() => {
                         Actions.UPDATE_HEIGHT();
                         _postMessage({type: 'LOG', data: 'EDITOR INIT DONE!'});
-                    }, ${updateHeightTimeout});
+                    }, ${ui.updateHeightTimeout});
                 }
             },
 

@@ -25,7 +25,7 @@ import IconButton from '~/framework/components/buttons/icon';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
-import { updateHeightTimeout } from '~/framework/components/inputs/rich-text/editor/const';
+import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
@@ -179,12 +179,12 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     if (idx < files.length) {
       const file = toAdd[idx];
       richText.current?.insertHTML(
-        `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="${UI_SIZES.standardScreen.width}" height="NaN">`,
+        `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`,
       );
       console.debug(`IMAGE ADDED: ${file.workspaceID}`);
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, updateHeightTimeout + 100);
+      }, ui.updateHeightTimeout * 0.5);
     }
   };
 

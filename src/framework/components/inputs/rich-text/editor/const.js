@@ -78,4 +78,11 @@ export const messages = {
   VIDEO_TOUCHED: 'VIDEO_TOUCHED',
 };
 
-export const updateHeightTimeout = 300;
+export const ui = {
+  image: {
+    class: 'custom-image',
+    height: 'NaN',
+    width: 250,
+  },
+  updateHeightTimeout: 100,
+};
