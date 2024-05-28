@@ -466,7 +466,8 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           nestedScrollEnabled
           ref={scrollRef}
           scrollEventThrottle={20}
-          bounces={false}
+          alwaysBounceVertical={false}
+          bounces
           style={styles.scrollView}>
           {realTopForm}
           <RichEditor
