@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import AudienceMeasurement from '~/framework/components/audience-measurement';
+import Audience from '~/framework/components/audience';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
@@ -60,7 +60,7 @@ export const BlogPostResourceCard = React.memo(
           }
           footer={
             state !== 'SUBMITTED' ? (
-              <AudienceMeasurement
+              <Audience
                 nbComments={comments}
                 nbViews={audience?.views}
                 infosReactions={audience?.reactions}

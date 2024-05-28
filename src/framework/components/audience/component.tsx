@@ -11,11 +11,11 @@ import { AudienceReactionType } from '~/framework/modules/core/audience/types';
 import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
 import { isEmpty } from '~/framework/util/object';
 
-import AudienceReactButton from './react-button';
+import AudienceReactButton from './button';
 import styles from './styles';
-import { AudienceMeasurementProps } from './types';
+import { AudienceProps } from './types';
 
-const AudienceMeasurement = (props: AudienceMeasurementProps) => {
+const Audience = (props: AudienceProps) => {
   const [totalReactions, setTotalReactions] = React.useState<number>(props.infosReactions?.total ?? 0);
   const [typesReactions, setTypesReactions] = React.useState<AudienceReactionType[]>(props.infosReactions?.types ?? []);
   const [userReaction, setUserReaction] = React.useState<AudienceReactionType | null>(props.infosReactions?.userReaction ?? null);
@@ -32,7 +32,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
       setTotalReactions(newReactionInfos?.totalReactionsCounter);
       setTypesReactions(newReactionInfos?.reactionTypes);
     } catch (e) {
-      console.error('[AudienceMeasurement] refreshData error :', e);
+      console.error('[Audience] refreshData error :', e);
     }
   };
 
@@ -41,7 +41,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
       await audienceService.reaction.delete(props.session, props.referer);
       refreshData();
     } catch (e) {
-      console.error('[AudienceMeasurement] deleteReaction error :', e);
+      console.error('[Audience] deleteReaction error :', e);
     }
   };
 
@@ -50,7 +50,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
       await audienceService.reaction.post(props.session, props.referer, reaction);
       refreshData();
     } catch (e) {
-      console.error('[AudienceMeasurement] postReaction error :', e);
+      console.error('[Audience] postReaction error :', e);
     }
   };
 
@@ -59,7 +59,7 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
       await audienceService.reaction.update(props.session, props.referer, reaction);
       refreshData();
     } catch (e) {
-      console.error('[AudienceMeasurement] updateReaction error :', e);
+      console.error('[Audience] updateReaction error :', e);
     }
   };
 
@@ -135,4 +135,4 @@ const AudienceMeasurement = (props: AudienceMeasurementProps) => {
   );
 };
 
-export default AudienceMeasurement;
+export default Audience;

@@ -7,25 +7,25 @@ export const audienceReactionsInfos = {
   [AudienceReactionType.REACTION_1]: {
     icon: 'reaction-thankyou',
     roundIcon: 'reaction-thankyou-round',
-    label: I18n.get('audiencemeasurement-reaction-1'),
+    label: I18n.get('audience-reaction-1'),
     color: theme.palette.complementary.blue.pale,
   },
   [AudienceReactionType.REACTION_2]: {
     icon: 'reaction-awesome',
     roundIcon: 'reaction-awesome-round',
-    label: I18n.get('audiencemeasurement-reaction-2'),
+    label: I18n.get('audience-reaction-2'),
     color: theme.palette.complementary.red.pale,
   },
   [AudienceReactionType.REACTION_3]: {
     icon: 'reaction-welldone',
     roundIcon: 'reaction-welldone-round',
-    label: I18n.get('audiencemeasurement-reaction-3'),
+    label: I18n.get('audience-reaction-3'),
     color: theme.palette.complementary.green.pale,
   },
   [AudienceReactionType.REACTION_4]: {
     icon: 'reaction-instructive',
     roundIcon: 'reaction-instructive-round',
-    label: I18n.get('audiencemeasurement-reaction-4'),
+    label: I18n.get('audience-reaction-4'),
     color: theme.palette.complementary.yellow.pale,
   },
 };

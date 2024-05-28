@@ -3,7 +3,7 @@ import { ViewStyle } from 'react-native';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { AudienceReactionType, AudienceReferer } from '~/framework/modules/core/audience/types';
 
-export interface AudienceMeasurementProps {
+export interface AudienceProps {
   referer: AudienceReferer;
   session: AuthActiveAccount;
   nbComments?: number;
@@ -14,7 +14,6 @@ export interface AudienceMeasurementProps {
     userReaction?: AudienceReactionType;
   };
   containerStyle?: ViewStyle;
-  preview?: boolean;
   actionViews?: () => void;
   actionReactions?: () => void;
 }

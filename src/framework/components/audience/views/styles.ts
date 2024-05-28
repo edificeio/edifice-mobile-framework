@@ -7,6 +7,10 @@ const styles = StyleSheet.create({
   container: {
     padding: UI_SIZES.spacing.medium,
   },
+  icon: {
+    padding: UI_SIZES.spacing.minor,
+    borderRadius: UI_SIZES.radius.medium,
+  },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -17,15 +21,11 @@ const styles = StyleSheet.create({
   lastItem: {
     borderBottomWidth: 0,
   },
-  subItems: {
-    paddingLeft: UI_SIZES.spacing.major,
-  },
-  icon: {
-    padding: UI_SIZES.spacing.minor,
-    borderRadius: UI_SIZES.radius.medium,
-  },
   nb: {
     marginHorizontal: UI_SIZES.spacing.small,
+  },
+  subItems: {
+    paddingLeft: UI_SIZES.spacing.major,
   },
 });
 

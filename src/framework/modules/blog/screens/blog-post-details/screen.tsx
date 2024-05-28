@@ -647,52 +647,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   setRichContentReady = this._setRichContentReady.bind(this);
 
-  renderBlogPostDetails() {
-    const { blogInfos, blogPostData } = this.state;
-    const blogPostContent = blogPostData?.content;
-    console.debug(blogPostData?._id, 'blogPostId');
-    // console.debug('---------- HTML ----------');
-    // console.debug(blogPostContent);
-    // console.debug('---------- HTML ----------');
-    return (
-      <View style={styles.detailsMain}>
-        <View style={styles.detailsPost}>
-          <ResourceView
-            header={
-              <ContentCardHeader
-                icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
-                text={
-                  blogPostData?.author.username ? (
-                    <SmallBoldText numberOfLines={1}>{`${I18n.get('common-by')} ${blogPostData?.author.username}`}</SmallBoldText>
-                  ) : undefined
-                }
-                date={blogPostData?.modified}
-              />
-            }>
-            {blogPostData?.state === 'SUBMITTED' ? (
-              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
-            ) : null}
-            <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
-            <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditorViewer content={blogPostContent} onLoad={this.setRichContentReady} />
-          </ResourceView>
-        </View>
-        {blogPostData?.state === 'PUBLISHED' ? (
-          <AudienceMeasurement
-            containerStyle={styles.footer}
-            actionViews={() => this.props.navigation.navigate(blogRouteNames.blogAudience, { blogPostId: blogPostData._id })}
-            actionReactions={() => this.props.navigation.navigate(blogRouteNames.blogReactions, { blogPostId: blogPostData._id })}
-            nbComments={blogPostData.comments?.length}
-            nbViews={blogPostData.audience?.views}
-            infosReactions={blogPostData.audience?.reactions}
-            referer={{ module: 'blog', resourceType: 'post', resourceId: blogPostData._id }}
-            session={this.props.session!}
-          />
-        ) : null}
-      </View>
-    );
-  }
-
   renderComment(blogPostComment: BlogPostComment, index: number) {
     const { session } = this.props;
     const { blogInfos, blogPostData, updateCommentLoadingState } = this.state;

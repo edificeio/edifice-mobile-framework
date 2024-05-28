@@ -39,18 +39,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: -UI_SIZES.spacing.minor,
   },
-  placeholderRow: {
-    flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.small,
-  },
-  mb0: {
-    marginBottom: 0,
-  },
+  //PLACEHOLDER
   h24: {
     height: 24,
   },
   h30: {
     height: 30,
+  },
+  mb0: {
+    marginBottom: 0,
+  },
+  placeholderRow: {
+    flexDirection: 'row',
+    columnGap: UI_SIZES.spacing.small,
   },
 });
 

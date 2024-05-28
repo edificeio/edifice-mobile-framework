@@ -11,21 +11,21 @@ import { AudienceReactionType, AudienceUserReaction } from '~/framework/modules/
 import { audienceReactionsInfos, validReactionTypes } from '~/framework/modules/core/audience/util';
 
 import styles from './styles';
-import { AudienceMeasurementReactionsModalProps } from './types';
+import { AudienceReactionsModalProps } from './types';
 
-const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsModalProps) => {
+const AudienceReactionsModal = (props: AudienceReactionsModalProps) => {
   const [userReactions, setUserReactions] = React.useState<AudienceUserReaction[]>(props.userReactions);
-  const [itemSelected, setItemSelected] = React.useState<AudienceReactionType | null>(null);
+  const [selectedItem, setSelectedItem] = React.useState<AudienceReactionType | null>(null);
 
   const resetFilter = () => {
-    if (itemSelected === null) return;
+    if (selectedItem === null) return;
     setUserReactions(props.userReactions);
-    setItemSelected(null);
+    setSelectedItem(null);
   };
   const filterByType = (reactionType: AudienceReactionType) => {
-    if (itemSelected === reactionType) return;
+    if (selectedItem === reactionType) return;
     setUserReactions(props.userReactions.filter(reaction => reaction.reactionType === reactionType));
-    setItemSelected(reactionType);
+    setSelectedItem(reactionType);
   };
 
   const renderHeaderItem = ({ item }: { item: { icon: string; nb: number; type: AudienceReactionType } }) => {
@@ -33,7 +33,7 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
       <>
         <View style={styles.separator} />
         <TouchableOpacity
-          style={[styles.headerItem, itemSelected === item.type ? styles.headerItemSelected : null]}
+          style={[styles.headerItem, selectedItem === item.type ? styles.headerSelectedItem : null]}
           onPress={() => filterByType(item.type)}>
           <NamedSVG name={item.icon} />
           <SmallText>{item.nb}</SmallText>
@@ -45,7 +45,7 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
     return (
       <View style={styles.header}>
         <TouchableOpacity onPress={resetFilter}>
-          <SmallText>{I18n.get('audiencemeasurement-reactions-all')}</SmallText>
+          <SmallText>{I18n.get('audience-reactions-all')}</SmallText>
         </TouchableOpacity>
         {validReactionTypes.map(reactionType =>
           renderHeaderItem({
@@ -79,4 +79,4 @@ const AudienceMeasurementReactionsModal = (props: AudienceMeasurementReactionsMo
   );
 };
 
-export default AudienceMeasurementReactionsModal;
+export default AudienceReactionsModal;

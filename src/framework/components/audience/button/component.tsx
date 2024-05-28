@@ -121,7 +121,7 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
     } else
       return (
         <DefaultButton
-          text={I18n.get('audiencemeasurement-reactbutton')}
+          text={I18n.get('audience-reactbutton')}
           iconLeft="ui-reaction"
           contentColor={theme.palette.grey.black}
           style={styles.button}

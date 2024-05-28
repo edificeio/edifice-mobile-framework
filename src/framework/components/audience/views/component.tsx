@@ -10,9 +10,9 @@ import { BodyText, HeadingMText } from '~/framework/components/text';
 import { AccountType } from '~/framework/modules/auth/model';
 
 import styles from './styles';
-import { AudienceMeasurementViewsModalProps } from './types';
+import { AudienceViewsModalProps } from './types';
 
-const AudienceMeasurementViewsModal = (props: AudienceMeasurementViewsModalProps) => {
+const AudienceViewsModal = (props: AudienceViewsModalProps) => {
   const renderItem = ({
     nb,
     label,
@@ -44,8 +44,8 @@ const AudienceMeasurementViewsModal = (props: AudienceMeasurementViewsModalProps
 
   return (
     <PageView style={styles.container}>
-      {renderItem({ nb: props.nbViews, label: I18n.get('audiencemeasurement-views-views'), icon: 'ui-see' })}
-      {renderItem({ nb: props.nbUniqueViews, label: I18n.get('audiencemeasurement-views-uniqueviews'), icon: 'ui-users' })}
+      {renderItem({ nb: props.nbViews, label: I18n.get('audience-views-views'), icon: 'ui-see' })}
+      {renderItem({ nb: props.nbUniqueViews, label: I18n.get('audience-views-uniqueviews'), icon: 'ui-users' })}
       <View style={styles.subItems}>
         {props.viewsPerProfile.map((item, index) =>
           renderItem({
@@ -64,4 +64,4 @@ const AudienceMeasurementViewsModal = (props: AudienceMeasurementViewsModalProps
   );
 };
 
-export default AudienceMeasurementViewsModal;
+export default AudienceViewsModal;

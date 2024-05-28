@@ -16,21 +16,21 @@ const styles = StyleSheet.create({
     borderColor: theme.palette.grey.cloudy,
     paddingVertical: UI_SIZES.spacing.small,
   },
-  separator: {
-    width: UI_SIZES.border.thin,
-    height: getScaleHeight(14),
-    backgroundColor: theme.palette.grey.cloudy,
-  },
   headerItem: {
     flexDirection: 'row',
     columnGap: UI_SIZES.spacing.minor,
   },
-  headerItemSelected: {},
+  headerSelectedItem: {},
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
+  },
+  separator: {
+    width: UI_SIZES.border.thin,
+    height: getScaleHeight(14),
+    backgroundColor: theme.palette.grey.cloudy,
   },
 });
 

@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import AudienceMeasurementViewsModal from '~/framework/components/audience-measurement/modal-views';
+import AudienceViewsModal from '~/framework/components/audience/views';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
@@ -43,7 +43,7 @@ function BlogAudienceScreen(props: BlogAudienceScreenProps) {
     <ContentLoader
       loadContent={loadData}
       renderContent={() => (
-        <AudienceMeasurementViewsModal
+        <AudienceViewsModal
           nbUniqueViews={data?.uniqueViewsCounter!}
           nbViews={data?.viewsCounter!}
           viewsPerProfile={data?.uniqueViewsPerProfile!}

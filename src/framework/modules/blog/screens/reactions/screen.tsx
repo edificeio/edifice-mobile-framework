@@ -2,7 +2,7 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
-import AudienceMeasurementReactionsModal from '~/framework/components/audience-measurement/modal-reactions';
+import AudienceReactionsModal from '~/framework/components/audience/reactions';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { blogRouteNames } from '~/framework/modules/blog/navigation';
@@ -51,7 +51,7 @@ function BlogReactionsScreen(props: BlogReactionsScreenProps) {
     <ContentLoader
       loadContent={loadData}
       renderContent={() => (
-        <AudienceMeasurementReactionsModal
+        <AudienceReactionsModal
           allReactionsCounter={data?.reactionCounters.allReactionsCounter!}
           countByType={data?.reactionCounters.countByType!}
           userReactions={data?.userReactions!}
