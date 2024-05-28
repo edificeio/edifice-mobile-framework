@@ -77,3 +77,12 @@ export const messages = {
   SELECTION_CHANGE: 'SELECTION_CHANGE',
   VIDEO_TOUCHED: 'VIDEO_TOUCHED',
 };
+
+export const ui = {
+  image: {
+    class: 'custom-image',
+    height: 'NaN',
+    width: 250,
+  },
+  updateHeightTimeout: 100,
+};
