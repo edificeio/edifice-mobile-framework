@@ -185,7 +185,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       setTimeout(() => {
         addFile(toAdd, idx + 1);
       }, ui.updateHeightTimeout * 2);
-    }
+    } else richText.current?.insertHTML('<br>');
   };
 
   const addFiles = () => {

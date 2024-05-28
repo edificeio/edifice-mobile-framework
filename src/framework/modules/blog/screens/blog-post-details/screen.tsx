@@ -194,7 +194,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doRefresh() {
     try {
-      this.setState({ loadingState: BlogPostDetailsLoadingState.REFRESH });
+      this.setState({ loadingState: BlogPostDetailsLoadingState.PRISTINE });
       await this.doGetBlogPostDetails();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
@@ -203,8 +203,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doRefreshSilent() {
     try {
-      if (this.state.loadingState !== BlogPostDetailsLoadingState.DONE) return;
-      await this.doGetBlogPostDetails();
+      //await this.doGetBlogPostDetails();
+      await this.doInit();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
     }
@@ -254,6 +254,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         blogPostState = undefined; // Will be got by an additional request to api
       } else blogPostState = route.params.blogPost?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
+      console.debug('BLOG POST DETAILS RETRIEVED\r\n' + blogPostData);
       this.setState({ blogPostData });
     } catch {
       // ToDo: Error handling
@@ -345,7 +346,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   setActionNavbar = () => {
     const { route, navigation, session } = this.props;
-    const { blogPostData, blogInfos, errorState, loadingState } = this.state;
+    const { blogPostData, blogInfos, errorState } = this.state;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
     const blogId = route.params.blog?.id;
     let resourceUri = notification && notification?.resource.uri;

@@ -311,6 +311,36 @@ function createHTML(options = {}) {
             focusOffset = sel.focusOffset;
         }
 
+        function insertElement(el) {
+            if (el) {
+                var sel = document.getSelection();
+                var mustFormat = false;
+                if (sel.anchorNode && sel.anchorNode.innerHTML === '<br>') {
+                    sel.anchorNode.innerHTML = '';
+                } else if (!sel.anchorNode || sel.anchorNode === editor.content) {
+                    mustFormat = true;
+                }
+                var range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(el);
+                range.setStartAfter(el);
+                range.setEndAfter(el);
+                sel.removeAllRanges();
+                sel.addRange(range);
+                if (mustFormat){
+                    formatParagraph();
+                }
+                selectionLocked = false;
+                saveSelection();
+                editor.settings.onChange();
+                Actions.GET_IMAGES_URLS();
+                Actions.GET_LINKS_URLS();
+                setTimeout(() => {
+                    Actions.UPDATE_HEIGHT();
+                }, ${ui.updateHeightTimeout});
+            }
+        }
+
         function focusCurrent(){
             editor.content.focus();
             try {
@@ -327,6 +357,10 @@ function createHTML(options = {}) {
                 }
             } catch(e){
                 console.log(e)
+            } finally {
+                setTimeout(() => {
+                    Actions.UPDATE_HEIGHT();
+                }, ${ui.updateHeightTimeout});
             }
         }
 
@@ -447,35 +481,11 @@ function createHTML(options = {}) {
             fontSize: { state: function() { return queryCommandValue('fontSize'); }, result: function(size) { return exec('fontSize', size); }},
             fontName: { result: function(name) { return exec('fontName', name); }},
             html: {
-                result: function (html){
+                result: function(html) {
                     if (html) {
-                        var sel = document.getSelection();
                         var el = document.createElement("div");
                         el.innerHTML = html;
-                        var mustFormat = false;
-                        if (sel.anchorNode && sel.anchorNode.innerHTML === '<br>') {
-                            sel.anchorNode.innerHTML = '';
-                        } else if (!sel.anchorNode || sel.anchorNode === editor.content) {
-                            mustFormat = true;
-                        }
-                        var range = sel.getRangeAt(0);
-                        range.deleteContents();
-                        range.insertNode(el);
-                        range.setStartAfter(el);
-                        range.setEndAfter(el);
-                        sel.removeAllRanges();
-                        sel.addRange(range);
-                        if (mustFormat){
-                            formatParagraph();
-                        }
-                        selectionLocked = false;
-                        saveSelection();
-                        editor.settings.onChange();
-                        Actions.GET_IMAGES_URLS();
-                        Actions.GET_LINKS_URLS();
-                        setTimeout(() => {
-                            Actions.UPDATE_HEIGHT();
-                        }, ${ui.updateHeightTimeout});
+                        insertElement(el);
                     }
                 }
             },
@@ -546,7 +556,6 @@ function createHTML(options = {}) {
                     Actions.GET_LINKS_URLS();
                     setTimeout(() => {
                         Actions.UPDATE_HEIGHT();
-                        _postMessage({type: 'LOG', data: 'EDITOR INIT DONE!'});
                     }, ${ui.updateHeightTimeout});
                 }
             },
