@@ -441,8 +441,8 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   }, [animateToolbar]);
 
   usePreventBack({
-    title: I18n.get(props.preventBackI18n?.title ?? 'editor-generic-alert-title'),
-    text: I18n.get(props.preventBackI18n?.text ?? 'editor-generic-alert-text'),
+    title: I18n.get(props.preventBackI18n?.title ?? 'richeditor-generic-alert-title'),
+    text: I18n.get(props.preventBackI18n?.text ?? 'richeditor-generic-alert-text'),
     showAlert: isContentModified && !props.saving,
   });
 
