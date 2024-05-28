@@ -444,7 +444,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   usePreventBack({
     title: I18n.get(props.preventBackI18n?.title ?? 'editor-generic-alert-title'),
     text: I18n.get(props.preventBackI18n?.text ?? 'editor-generic-alert-text'),
-    showAlert: isContentModified,
+    showAlert: isContentModified && !props.saving,
   });
 
   const { topForm } = props;

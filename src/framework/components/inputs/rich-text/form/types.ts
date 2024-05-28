@@ -10,6 +10,7 @@ export interface RichEditorFormProps {
   onChangeText: (html: string) => void;
   uploadParams: IWorkspaceUploadParams;
   preventBackI18n?: { title: string; text: string };
+  saving?: boolean;
 }
 
 export interface RichEditorFormReduxProps {

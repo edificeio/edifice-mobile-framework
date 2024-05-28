@@ -44,6 +44,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
   const [title, setTitle] = React.useState(props.route.params.title);
   const [content, setContent] = React.useState(props.route.params.content);
+  const [saving, setSaving] = React.useState(false);
 
   const { route, navigation, session, handleEditBlogPost } = props;
   const blog = route.params.blog;
@@ -75,9 +76,11 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
     Keyboard.dismiss();
     try {
       setLoadingState(true);
+      setSaving(true);
       await doEditPost();
     } finally {
       setLoadingState(false);
+      setSaving(false);
     }
   };
 
@@ -133,6 +136,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
         }
         onChangeText={value => setContent(value)}
         preventBackI18n={preventBackI18n}
+        saving={saving}
       />
     );
   };
