@@ -84,5 +84,5 @@ export const ui = {
     height: 'NaN',
     width: 250,
   },
-  updateHeightTimeout: 100,
+  updateHeightTimeout: 300,
 };

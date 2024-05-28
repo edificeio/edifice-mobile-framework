@@ -287,7 +287,6 @@ export default class RichEditor extends Component {
           break;
         case messages.IMAGES_URLS:
           that.imagesUrls = data.map(url => that._getAbsoluteUrl(url));
-          console.debug('IMAGES URLS: ' + that.imagesUrls);
           break;
         case messages.LINKS_URLS:
           that.linksUrls = data.map(url => that._getAbsoluteUrl(url));
@@ -357,7 +356,10 @@ export default class RichEditor extends Component {
           javaScriptEnabled
           source={viewHTML}
           onLoad={that.init}
-          onShouldStartLoadWithRequest={() => !that.htmlLoaded}
+          onShouldStartLoadWithRequest={request => {
+            console.debug('onShouldStartLoadWithRequest: ' + request.url);
+            return !that.htmlLoaded;
+          }}
           setSupportMultipleWindows={false}
         />
         {Platform.OS === 'android' && <TextInput ref={ref => (that._input = ref)} style={styles._input} />}

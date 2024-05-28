@@ -134,7 +134,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
                 updateFiles();
               })
               .catch(error => {
-                console.debug(`Rich Editor file removal failed: ${error}`);
+                console.error(`Rich Editor file removal failed: ${error}`);
               });
           }
         },
@@ -182,10 +182,9 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       richText.current?.insertHTML(
         `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`,
       );
-      console.debug(`IMAGE ADDED: ${file.workspaceID}`);
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, ui.updateHeightTimeout * 1.5);
+      }, ui.updateHeightTimeout * 2);
     }
   };
 
