@@ -564,6 +564,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       }
       if (newSessionId && this.oneSessionId !== newSessionId) {
         this.oneSessionId = newSessionId;
+        console.debug(`New oneSessionId retrieved: ${this.oneSessionId}`);
         const session = assertSession();
         getStore().dispatch(authActions.setOneSessionId(session.user.id, { value: newSessionId }));
       }

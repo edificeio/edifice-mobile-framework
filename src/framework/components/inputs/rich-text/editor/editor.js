@@ -625,6 +625,8 @@ function createHTML(options = {}) {
                 var imagesUrls = [];
                 for (var i = 0; i < images.length; i++) {
                     const img = images[i];
+                    img.setAttribute('width', ${ui.image.width});
+                    img.setAttribute('height', ${ui.image.height});
                     if (${isIOS}) {
                         const uri = new URL(img.src);
                         uri.searchParams.delete('thumbnail');

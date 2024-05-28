@@ -179,9 +179,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
   async doInit() {
     try {
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
       await this.doGetBlogPostDetails();
       await this.doGetBlogInfos();
-      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
