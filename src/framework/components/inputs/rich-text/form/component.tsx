@@ -244,8 +244,6 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     }
   };
 
-  const snapPoints = React.useMemo(() => ['50%', '70%'], []);
-
   const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
     return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
   };
@@ -254,12 +252,16 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     return (
       <RNBottomSheetModal
         ref={addFilesResultsRef}
-        snapPoints={snapPoints}
+        enableDynamicSizing
         backdropComponent={renderBackdrop}
-        onDismiss={handleAddFilesResultsDismissed}>
+        onDismiss={handleAddFilesResultsDismissed}
+        enablePanDownToClose
+        enableDismissOnClose
+        topInset={UI_SIZES.spacing.medium}>
         <BottomSheetFlatList
           data={files}
           contentContainerStyle={styles.addFilesResults}
+          alwaysBounceVertical={false}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.addFilesResultsItem}>
               <View
