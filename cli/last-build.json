@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-05-17 18:56:45",
-  "notes": "feat(editor): MB-235§, MB-2357, Review add images flow completely\nfix: better handling loading time of rich content\nchore: remove some console.\nchore: oneSessionId in redux + prop in rich-text components\nfix(editor): MB-2426, Ignore selection state after undo/redo\nfeat(editor): Links list management addition\nchore(log): Review some log statements\nrelease: 1.13.0-alpha.12(1130013)",
-  "version": "1.13.0-alpha.13(1130014)"
+  "last": "2024-05-28 19:18:51",
+  "notes": "fix(editor): MB-2722, force refresjh when going back from edition to blog post details\nfix(editor): better sizing of picture bottomsheet\nfeat(editor): rename editor-* i18n keys to richeditor-*\nfeat(editor): modify editor height update tmeout\nchore: bounce on editor\nfix(editor): MB-2720 no close confirmation when saving\nfeat(editor): improve images rendering in editor\nfix(editor, blog): MB-2720 close confirmation in rich-editor\nchore(editor): more timeout when adding files\nfeat(editor): tune tiemouts\neditor(fix): MB-27-12, review images addition\nfix(editor): improve oneSessionId management\nfix(editor): inject oneSessionId once before content loading\nfix(editor): improve height update management\nfix(editor): MB-2689, improve images rendering in rich editor\nfix(blog): MB-2643, MB-2707, MB-2710 fix blog rich-content reloads\nfix(editor): MB-2708, Disable multimedia viewers when editing\nchore: remove console.\nchore: refacto blog post details outside the screen component\nchore: remove old unused create post page\nfeat: more flexibility over oneSessionId\nfix(audio): MB-2696, fix animation audio by app\nrelease: 1.13.0-alpha.13(1130014)",
+  "version": "1.13.0-rc.2(1130015)"
 }
