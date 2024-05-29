@@ -16,6 +16,7 @@ export const RichToolbarItemsList = (props: RichToolbarItemsListProps) => {
       data={props.list}
       alwaysBounceHorizontal={false}
       showsHorizontalScrollIndicator={false}
+      scrollEnabled={false}
       renderItem={({ item }) => item}
       ItemSeparatorComponent={renderSpaceBetweenItem}
       contentContainerStyle={styles.list}
