@@ -16,7 +16,7 @@ import CommentField, { InfoCommentField } from '~/framework/components/commentFi
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
-import { deleteAction, linkAction } from '~/framework/components/menus/actions';
+import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
@@ -46,9 +46,7 @@ import {
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { markViewAudience } from '~/framework/modules/core/audience';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { Trackers } from '~/framework/util/tracker';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
 import styles from './styles';
@@ -354,19 +352,9 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       resourceUri = blogPostGenerateResourceUriFunction({ blogId, postId: blogPostData._id });
     }
 
-    const menuItemOpenBrowser = linkAction({
-      title: I18n.get('blog-postdetails-openinbrowser'),
-      action: () => {
-        if (!session) return;
-        const url = `${session.platform!.url}${resourceUri}`;
-        openUrl(url);
-        Trackers.trackEvent('Blog', 'GO TO', 'View in Browser');
-      },
-    });
     const menuData =
       session && (hasPermissionManager(blogInfos!, session) || blogPostData?.author.userId === session.user.id)
         ? [
-            menuItemOpenBrowser,
             {
               title: I18n.get('common-edit'),
               icon: {
@@ -401,7 +389,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
               },
             }),
           ]
-        : [menuItemOpenBrowser];
+        : [];
 
     this.props.navigation.setOptions({
       ...navBarOptions({
