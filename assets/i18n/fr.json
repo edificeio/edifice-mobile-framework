@@ -1274,6 +1274,7 @@
   "user-lang-dropdownvalue-en": "Anglais",
   "user-lang-dropdownvalue-es": "Espagnol",
   "user-lang-dropdownvalue-fr": "Français",
+  "user-lang-dropdownvalue-it": "Italien",
   "user-lang-dropdownvalue-keys": "Clé de wording (alpha uniquement)",
   "user-lang-text": "En mode automatique, la langue de l’application est définie par la langue de votre téléphone ou à défaut l'anglais. Attention, cela ne change pas la langue des contenus.",
   "user-lang-title": "Modifier la langue",

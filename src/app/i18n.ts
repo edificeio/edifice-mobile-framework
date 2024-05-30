@@ -65,7 +65,7 @@ export namespace I18n {
   const fallbackLng = 'en';
 
   // Supported locales
-  const supportedLanguages = ['fr', 'en', 'es'] as const;
+  const supportedLanguages = ['fr', 'en', 'es', 'it'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
 
   // Transform translations for all embeded locales
@@ -73,6 +73,7 @@ export namespace I18n {
     fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
     en: { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
     es: { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
+    it: { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
   };
 
   // Phrase stuff

@@ -35,6 +35,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
     { label: I18n.get('user-lang-dropdownvalue-fr'), value: 'fr' },
     { label: I18n.get('user-lang-dropdownvalue-en'), value: 'en' },
     { label: I18n.get('user-lang-dropdownvalue-es'), value: 'es' },
+    { label: I18n.get('user-lang-dropdownvalue-it'), value: 'it' },
   ];
 
   const setInitialValue = async () => {
