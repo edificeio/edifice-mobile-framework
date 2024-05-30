@@ -5,11 +5,10 @@ import { WebView } from 'react-native-webview';
 
 import theme from '~/app/theme';
 import { openCarousel } from '~/framework/components/carousel/openCarousel';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { MediaType, openMediaPlayer } from '~/framework/components/media/player';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { openUrl } from '~/framework/util/linking';
-import { OAuth2RessourceOwnerPasswordClient, urlSigner } from '~/infra/oauth';
+import { urlSigner } from '~/infra/oauth';
 
 import { actions, messages } from './const';
 import { createHTML } from './editor';
@@ -44,6 +43,8 @@ export default class RichEditor extends Component {
     defaultParagraphSeparator: 'div',
     editorInitializedCallback: () => {},
     initialHeight: 0,
+    oneSessionId: undefined,
+    onLoad: undefined,
   };
 
   constructor(props) {
@@ -65,7 +66,8 @@ export default class RichEditor extends Component {
     that.selectionChangeListeners = [];
     that.pfUrl = getSession()?.platform?.url || '';
     that.htmlLoaded = false;
-    that.imageUrls = [];
+    that.imagesUrls = [];
+    that.linksUrls = [];
     that._onAudioTouched = that._onAudioTouched.bind(that);
     that._onImageTouched = that._onImageTouched.bind(that);
     that._onLinkTouched = that._onLinkTouched.bind(that);
@@ -113,19 +115,8 @@ export default class RichEditor extends Component {
       },
       height: initialHeight,
       keyboardHeight: 0,
-      loading: true,
-      oneSessionId: '',
     };
     that.focusListeners = [];
-    // Retrieve oneSessionId to view ENT resources properly
-    OAuth2RessourceOwnerPasswordClient?.connection
-      ?.getOneSessionId()
-      .then(osi => {
-        console.debug(`oneSessionId retrieved: ${osi}`);
-        this.setState({ oneSessionId: osi ?? '' });
-      })
-      .catch(err => console.error(`Unable to retrieve oneSessionId: ${err.message}`))
-      .finally(() => this.setState({ loading: false }));
     // IFrame video auto play bug fix
     setTimeout(async () => {
       that.htmlLoaded = true;
@@ -150,7 +141,7 @@ export default class RichEditor extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { editorStyle, disabled, placeholder } = this.props;
+    const { editorStyle, disabled, placeholder, initialContentHTML, editorInitializedCallback } = this.props;
     if (editorStyle && prevProps.editorStyle !== editorStyle) {
       this.setContentStyle(editorStyle);
     }
@@ -159,6 +150,10 @@ export default class RichEditor extends Component {
     }
     if (placeholder !== prevProps.placeholder) {
       this.setPlaceholder(placeholder);
+    }
+    if (initialContentHTML !== prevProps.initialContentHTML) {
+      this.setContentHTML(initialContentHTML);
+      editorInitializedCallback();
     }
   }
 
@@ -180,30 +175,45 @@ export default class RichEditor extends Component {
   }
 
   _onAudioTouched(url) {
-    openMediaPlayer({
-      type: MediaType.AUDIO,
-      source: urlSigner.signURISource(url),
-    });
+    const { disabled } = this.props;
+    if (disabled)
+      openMediaPlayer({
+        type: MediaType.AUDIO,
+        source: urlSigner.signURISource(url),
+      });
   }
 
-  _onImageTouched(url, imageUrls) {
-    const images = imageUrls.map(imgSrc => ({
-      type: 'image',
-      src: { uri: imgSrc },
+  _onImageTouched(url, imagesUrls) {
+    const { disabled } = this.props;
+    if (disabled) {
+      const images = imagesUrls.map(imgSrc => ({
+        type: 'image',
+        src: { uri: imgSrc },
+      }));
+      openCarousel({ data: images, startIndex: imagesUrls.indexOf(url) });
+    }
+  }
+
+  _onLinkTouched(url, linksUrls) {
+    const { disabled } = this.props;
+    if (disabled) {
+      openUrl(url);
+      /*const links = linksUrls.map(href => ({
+      type: 'link',
+      src: { uri: href },
     }));
-    openCarousel({ data: images, startIndex: imageUrls.indexOf(url) });
-  }
-
-  _onLinkTouched(url) {
-    openUrl(url);
-    // TODO LEA: V2 - https://edifice-community.atlassian.net/browse/MB-2437
+    openCarousel({ data: links, startIndex: linksUrls.indexOf(url) });*/
+      // TODO: https://edifice-community.atlassian.net/browse/MB-2437
+    }
   }
 
   _onVideoTouched(url) {
-    openMediaPlayer({
-      type: MediaType.VIDEO,
-      source: urlSigner.signURISource(url),
-    });
+    const { disabled } = this.props;
+    if (disabled)
+      openMediaPlayer({
+        type: MediaType.VIDEO,
+        source: urlSigner.signURISource(url),
+      });
   }
 
   onMessage(event) {
@@ -225,7 +235,7 @@ export default class RichEditor extends Component {
           }
           break;
         case messages.LINK_TOUCHED:
-          that._onLinkTouched(that._getAbsoluteUrl(data));
+          that._onLinkTouched(that._getAbsoluteUrl(data), that.linksUrls);
           break;
         case messages.LOG:
           console.debug('FROM EDIT:', ...data);
@@ -273,10 +283,14 @@ export default class RichEditor extends Component {
           that._onAudioTouched(that._getAbsoluteUrl(data));
           break;
         case messages.IMAGE_TOUCHED:
-          that._onImageTouched(that._getAbsoluteUrl(data), that.imageUrls);
+          that._onImageTouched(that._getAbsoluteUrl(data), that.imagesUrls);
           break;
-        case messages.IMAGE_URLS:
-          that.imageUrls = data.map(url => that._getAbsoluteUrl(url));
+        case messages.IMAGES_URLS:
+          that.imagesUrls = data.map(url => that._getAbsoluteUrl(url));
+          console.debug('IMAGES URLS: ' + that.imagesUrls);
+          break;
+        case messages.LINKS_URLS:
+          that.linksUrls = data.map(url => that._getAbsoluteUrl(url));
           break;
         case messages.VIDEO_TOUCHED:
           that._onVideoTouched(that._getAbsoluteUrl(data));
@@ -291,13 +305,16 @@ export default class RichEditor extends Component {
   }
 
   setWebHeight(height) {
-    const { onHeightChange, useContainer, initialHeight } = this.props;
+    const { onHeightChange, useContainer, initialHeight, onLoad } = this.props;
     if (height !== this.state.height) {
       const maxHeight = Math.max(height, initialHeight);
       if (!this.unmount && useContainer && maxHeight >= initialHeight) {
         this.setState({ height: maxHeight });
       }
       if (onHeightChange) onHeightChange(height);
+      if (height > 0) {
+        onLoad?.();
+      }
     }
   }
 
@@ -315,13 +332,13 @@ export default class RichEditor extends Component {
   renderWebView() {
     const that = this;
     const { html, editorStyle, useContainer, style, onLink, ...rest } = that.props;
-    const { html: viewHTML, oneSessionId } = that.state;
-    const js = `document.cookie="oneSessionId=${oneSessionId}"; true;`;
+    const { html: viewHTML } = that.state;
+    const js = `document.cookie="oneSessionId=${this.props.oneSessionId?.value}"; true;`;
     return (
       // eslint-disable-next-line react/jsx-filename-extension
       <>
         <WebView
-          injectedJavaScript={js}
+          injectedJavaScriptBeforeContentLoaded={js}
           useWebKit={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView
@@ -354,10 +371,8 @@ export default class RichEditor extends Component {
   }
 
   render() {
-    // Waiting for oneSessionId to be retrieved
-    const { loading } = this.state;
     const { useContainer, style } = this.props;
-    if (loading) return <LoadingIndicator />;
+    // if (!oneSessionId) return <EmptyConnectionScreen />;
     // useContainer is an optional prop with default value of true
     // If set to true, it will use a View wrapper with styles and height.
     const { height } = this.state;
@@ -367,8 +382,6 @@ export default class RichEditor extends Component {
           {this.renderWebView()}
         </View>
       );
-    // If set to false, it will not use a View wrapper
-    return this.renderWebView();
   }
 
   //-------------------------------------------------------------------------------
@@ -407,6 +420,10 @@ export default class RichEditor extends Component {
     this.sendAction(actions.content, 'focus');
   }
 
+  lockContentEditor() {
+    this.sendAction(actions.content, 'lock');
+  }
+
   showAndroidKeyboard() {
     const that = this;
     if (Platform.OS === 'android') {
@@ -415,32 +432,15 @@ export default class RichEditor extends Component {
     }
   }
 
-  insertAudio(attributes, style) {
-    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2363
-    // + editor.js - "audio:"
-    this.sendAction(actions.insertVideo, 'result', attributes, style);
-  }
-
-  insertVideo(attributes, style) {
-    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2360
-    // + editor.js - "video:"
-    this.sendAction(actions.insertVideo, 'result', attributes, style);
-  }
-
   insertText(text) {
     this.sendAction(actions.insertText, 'result', text);
   }
 
   insertHTML(html) {
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2404 => Use insertHTML
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2360 => Use insertHTML
+    // TODO: - https://edifice-community.atlassian.net/browse/MB-2363 => Use insertHTML
     this.sendAction(actions.insertHTML, 'result', html);
-  }
-
-  insertLink(title, url) {
-    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2404
-    if (url) {
-      this.showAndroidKeyboard();
-      this.sendAction(actions.insertLink, 'result', { title, url });
-    }
   }
 
   injectJavascript(script) {

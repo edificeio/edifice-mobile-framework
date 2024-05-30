@@ -7,19 +7,22 @@ import { UI_SIZES, getScaleFontSize, getScaleWidth } from '~/framework/component
 import { TextSizeStyle } from '~/framework/components/text';
 import { getSession } from '~/framework/modules/auth/reducer';
 
-let audioIcon = '';
-let attachmentIcon = '';
-let playIcon = '';
-let fontFaces = '';
-
-const playIconSize = getScaleWidth(40);
+import { ui } from './const';
 
 const base64Type = {
   FONT: 'fonts',
   IMAGE: 'images',
 };
 
+const isIOS = Platform.OS === 'ios';
 const pfUrl = getSession()?.platform?.url || '';
+const playIconSize = getScaleWidth(40);
+const thumbnailSize = `${UI_SIZES.standardScreen.width}x0`;
+
+let audioIcon = '';
+let attachmentIcon = '';
+let playIcon = '';
+let fontFaces = '';
 
 async function loadBase64File(fileName, type) {
   let base64String = '';
@@ -107,7 +110,6 @@ function createHTML(options = {}) {
     // Enable/Disable composition
     useComposition = true,
   } = options;
-  //ERROR: HTML height not 100%;
 
   const placeholderColor = theme.palette.grey.stone;
 
@@ -143,7 +145,7 @@ function createHTML(options = {}) {
         .download-attachments h2, .download-attachments a, .attachments a {color: ${theme.palette.grey.black}; text-decoration: none;}
         .download-attachments h2 {margin: 0 0 ${UI_SIZES.spacing.small}px 0; font-size: ${getScaleFontSize(12)}px; line-height: ${getScaleFontSize(20)}px}
         .attachments {display: flex; flex-direction: column;}
-        .attachments::before {content: ${I18n.get('attachment-attachments')};margin-bottom: ${UI_SIZES.spacing.small}px; font-size: ${getScaleFontSize(12)}px; font-weight: 700;}
+        .attachments::before {content: '${I18n.get('attachment-attachments')}'; margin-bottom: ${UI_SIZES.spacing.small}px; font-size: ${getScaleFontSize(12)}px; font-weight: 700;}
         .attachments a { padding: ${UI_SIZES.spacing.minor}px ${UI_SIZES.spacing.small}px; border:  ${UI_SIZES.elements.border.thin}px solid ${theme.palette.grey.pearl}; border-radius: ${UI_SIZES.radius.mediumPlus}px; display: flex; align-items: center; margin-bottom: ${UI_SIZES.spacing.small}px; background-color: ${theme.palette.grey.white};}
         .attachments a:last-child {margin-bottom: 0;}
         .attachments a::before {content: ""; background-image: url(${attachmentIcon}); background-size: ${UI_SIZES.elements.icon.medium}px ${UI_SIZES.elements.icon.medium}px; height: ${UI_SIZES.elements.icon.medium}px; width: ${UI_SIZES.elements.icon.medium}px; margin-right: ${UI_SIZES.spacing.minor}px;}
@@ -171,7 +173,7 @@ function createHTML(options = {}) {
 <script>
     var __DEV__ = !!${window.__DEV__};
     var _ = (function (exports) {
-        var anchorNode, focusNode, anchorOffset, focusOffset, _focusCollapse = false, cNode, cursorPos;
+        var anchorNode, focusNode, anchorOffset, focusOffset, _focusCollapse = false, cNode, undoRedo = false, selectionLocked = false;
         var _log = console.log;
         var placeholderColor = '${placeholderColor}';
         var _randomID = 99;
@@ -301,8 +303,8 @@ function createHTML(options = {}) {
         }
 
         function saveSelection(){
+            if (selectionLocked) return;
             var sel = window.getSelection();
-            currentSelection = sel;
             anchorNode = sel.anchorNode;
             anchorOffset = sel.anchorOffset;
             focusNode = sel.focusNode;
@@ -326,48 +328,6 @@ function createHTML(options = {}) {
             } catch(e){
                 console.log(e)
             }
-        }
-
-        function saveCursorPosition() {
-            var selection = window.getSelection();
-            var range = selection.getRangeAt(0);
-            var preSelectionRange = range.cloneRange();
-            preSelectionRange.selectNodeContents(editor);
-            preSelectionRange.setEnd(range.startContainer, range.startOffset);
-            var start = preSelectionRange.toString().length;
-            cursorPos = {
-                start: start,
-                end: start + range.toString().length
-            };
-        }
-
-        function restoreCursorPosition() {
-            var charIndex = 0, range = document.createRange();
-            range.setStart(editor, 0);
-            range.collapse(true);
-            var nodeStack = [editor], node, foundStart = false, stop = false;
-            while (!stop && (node = nodeStack.pop())) {
-                if (node.nodeType == 3) {
-                    var nextCharIndex = charIndex + node.length;
-                    if (!foundStart && cursorPos.start >= charIndex && cursorPos.start <= nextCharIndex) {
-                        range.setStart(node, cursorPos.start - charIndex);
-                        foundStart = true;
-                    }
-                    if (foundStart && cursorPos.end >= charIndex && cursorPos.end <= nextCharIndex) {
-                        range.setEnd(node, cursorPos.end - charIndex);
-                        stop = true;
-                    }
-                    charIndex = nextCharIndex;
-                } else {
-                    var i = node.childNodes.length;
-                    while (i--) {
-                        nodeStack.push(node.childNodes[i]);
-                    }
-                }
-            }
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
         }
 
         var _keyDown = false;
@@ -469,9 +429,12 @@ function createHTML(options = {}) {
                 return flag;
              }},
             line: { result: function() { return exec('insertHorizontalRule'); }},
-            redo: { state: function() { return queryCommandEnabled('redo'); }, result: function() { return exec('redo'); }},
-            undo: { state: function() { return queryCommandEnabled('undo'); }, result: function() { return exec('undo'); }},
-            selection: { state: function() { return window.getSelection().type === 'Range'; }},
+            redo: { state: function() { return queryCommandEnabled('redo'); }, result: function() { undoRedo = true; return exec('redo'); }},
+            undo: { state: function() { return queryCommandEnabled('undo'); }, result: function() { undoRedo = true; return exec('undo'); }},
+            selection: { state: function() {
+                if (undoRedo) {undoRedo = false; return false;}
+                return window.getSelection().type === 'Range'; }
+            },
             indent: { result: function() { return exec('indent'); }},
             outdent: { result: function() { return exec('outdent'); }},
             outdent: { result: function() { return exec('outdent'); }},
@@ -483,66 +446,37 @@ function createHTML(options = {}) {
             foreColor: { state: function() { return queryCommandValue('foreColor'); }, result: function(color) { return exec('foreColor', color); }},
             fontSize: { state: function() { return queryCommandValue('fontSize'); }, result: function(size) { return exec('fontSize', size); }},
             fontName: { result: function(name) { return exec('fontName', name); }},
-            link: {
-                result: function(data) {
-                    // TODO LEA: - https://edifice-community.atlassian.net/browse/MB-2404
-                    var sel = document.getSelection();
-                    data = data || {};
-                    var url = data.url || window.prompt('Enter the link URL');
-
-                    if (url) {
-                        var el = document.createElement("a");
-                        el.setAttribute("href", url);
-
-                        var title = data.title || sel.toString() || url;
-                        el.text = title;
-
-                        // when adding a link, if our current node is empty, it may have a <br>
-                        // if so, replace it with '' so the added link doesn't end up with an extra space.
-                        // Also, if totally empty, we must format the paragraph to add the link into the container.
+            html: {
+                result: function (html){
+                    if (html) {
+                        var sel = document.getSelection();
+                        var el = document.createElement("div");
+                        el.innerHTML = html;
                         var mustFormat = false;
                         if (sel.anchorNode && sel.anchorNode.innerHTML === '<br>') {
                             sel.anchorNode.innerHTML = '';
                         } else if (!sel.anchorNode || sel.anchorNode === editor.content) {
                             mustFormat = true;
                         }
-
-                        // insert like this so we can replace current selection, if any
                         var range = sel.getRangeAt(0);
                         range.deleteContents();
                         range.insertNode(el);
-
-                        // restore cursor to end
                         range.setStartAfter(el);
                         range.setEndAfter(el);
                         sel.removeAllRanges();
                         sel.addRange(range);
-
-                        // format paragraph if needed
                         if (mustFormat){
                             formatParagraph();
                         }
-
-                        // save selection, and fire on change to our webview
+                        selectionLocked = false;
                         saveSelection();
                         editor.settings.onChange();
+                        Actions.GET_IMAGES_URLS();
+                        Actions.GET_LINKS_URLS();
+                        setTimeout(() => {
+                            Actions.UPDATE_HEIGHT();
+                        }, ${ui.updateHeightTimeout});
                     }
-                }
-            },
-            html: {
-                result: function (html){
-                    if (html){
-                        exec('insertHTML', html);
-                        Actions.UPDATE_HEIGHT();
-                        Actions.GET_IMAGE_URLS();
-                    }
-
-                    // if (anchorNode) {
-                    //     anchorNode.innerHTML = html;
-                    // } else {
-                    //     exec('insertHTML', html);
-                    // }
-                    // Actions.UPDATE_HEIGHT();
                 }
             },
             text: { result: function (text){ text && exec('insertText', text); }},
@@ -572,12 +506,13 @@ function createHTML(options = {}) {
                 setHtml: function(html) { editor.content.innerHTML = html; Actions.UPDATE_HEIGHT(); },
                 getHtml: function() { return editor.content.innerHTML; },
                 blur: function() {
-                    saveCursorPosition();
                     editor.content.blur();
                 },
                 focus: function() {
                     focusCurrent();
-                    restoreCursorPosition();
+                 },
+                 lock: function() {
+                    selectionLocked = true;
                  },
                 postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
                 setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
@@ -607,14 +542,17 @@ function createHTML(options = {}) {
                 init: function() {
                     Actions.FORMAT_AUDIOS();
                     Actions.FORMAT_VIDEOS();
-                    Actions.GET_IMAGE_URLS();
-                    Actions.UPDATE_HEIGHT();
+                    Actions.GET_IMAGES_URLS();
+                    Actions.GET_LINKS_URLS();
+                    setTimeout(() => {
+                        Actions.UPDATE_HEIGHT();
+                        _postMessage({type: 'LOG', data: 'EDITOR INIT DONE!'});
+                    }, ${ui.updateHeightTimeout});
                 }
             },
 
             init: function (){
                 if (${useContainer}){
-                    // setInterval(Actions.UPDATE_HEIGHT, 150);
                     Actions.UPDATE_HEIGHT();
                 } else {
                     // react-native-webview There is a bug in the body and html height setting of a certain version of 100%
@@ -682,14 +620,33 @@ function createHTML(options = {}) {
                 }
             },
 
-            GET_IMAGE_URLS: function() {
+            GET_IMAGES_URLS: function() {
                 var images = document.getElementsByTagName('img');
-                var imageUrls = [];
+                var imagesUrls = [];
                 for (var i = 0; i < images.length; i++) {
-                    imageUrls.push(images[i].src);
+                    const img = images[i];
+                    img.setAttribute('width', ${ui.image.width});
+                    img.setAttribute('height', ${ui.image.height});
+                    if (${isIOS}) {
+                        const uri = new URL(img.src);
+                        uri.searchParams.delete('thumbnail');
+                        uri.searchParams.append('thumbnail', '${thumbnailSize}');
+                        img.src = uri.toString();
+                    }
+                    imagesUrls.push(img.src);
                 }
-                postAction({type: 'IMAGE_URLS', data: imageUrls}, true);
+                postAction({type: 'IMAGES_URLS', data: imagesUrls}, true);
             },
+
+            GET_LINKS_URLS: function() {
+                var links = document.getElementsByTagName('a');
+                var linksUrls = [];
+                for (var l = 0; l < links.length; l++) {
+                    linksUrls.push(links[l].getAttribute('href'));
+                }
+                postAction({type: 'LINKS_URLS', data: linksUrls}, true);
+            },
+
         };
 
         var init = function init(settings) {

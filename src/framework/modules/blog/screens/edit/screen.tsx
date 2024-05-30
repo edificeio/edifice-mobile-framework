@@ -26,7 +26,7 @@ import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPost
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogCreatePost>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogEditPost>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -34,6 +34,11 @@ export const computeNavBar = ({
     titleStyle: { width: undefined },
   }),
 });
+
+const preventBackI18n = {
+  title: 'blog-createpost-confirmation-unsavedpublication',
+  text: 'blog-createpost-unsavedpublication',
+};
 
 const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
@@ -96,18 +101,26 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, loadingState, content]);
 
+  const topForm = React.useCallback(
+    onChange => (
+      <MultilineTextInput
+        style={styles.inputTitle}
+        placeholder={I18n.get('blog-editpost-inputtitle')}
+        numberOfLines={1}
+        onChangeText={text => {
+          setTitle(text);
+          onChange();
+        }}
+        value={title}
+      />
+    ),
+    [title],
+  );
+
   const renderPostInfos = () => {
     return (
       <RichEditorForm
-        topForm={
-          <MultilineTextInput
-            style={styles.inputTitle}
-            placeholder={I18n.get('blog-editpost-inputtitle')}
-            numberOfLines={1}
-            onChangeText={text => setTitle(text)}
-            value={title}
-          />
-        }
+        topForm={topForm}
         initialContentHtml={props.route.params.content}
         uploadParams={
           blog.visibility === 'PUBLIC'
@@ -119,6 +132,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
               }
         }
         onChangeText={value => setContent(value)}
+        preventBackI18n={preventBackI18n}
       />
     );
   };

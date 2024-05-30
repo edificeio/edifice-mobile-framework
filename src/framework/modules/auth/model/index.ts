@@ -230,6 +230,7 @@ export interface AuthTokenSet {
   access: AuthBearerToken;
   refresh: AuthToken;
   queryParam?: AuthQueryParamToken;
+  oneSessionId?: AuthToken;
   scope: string[];
 }
 

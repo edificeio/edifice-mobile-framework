@@ -446,7 +446,7 @@ function useAccountsFeature(
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);
-          console.warn(e);
+          console.error(e);
           redirect(item);
         }
       } else {
@@ -464,7 +464,7 @@ function useAccountsFeature(
         await tryRemoveAccount(account);
         if (session?.user.id !== item.user.id) toast.showSuccess(I18n.get('auth-accountlist-delete-success'));
       } catch (e) {
-        console.warn(e);
+        console.error(e);
       }
     },
     [accounts, session?.user.id, tryRemoveAccount],

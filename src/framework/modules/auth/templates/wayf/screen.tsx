@@ -341,7 +341,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Called each time a navigation error occurs in WebView
   // See WebView onError property
   onError({ nativeEvent }: WebViewErrorEvent) {
-    console.debug('WAYFScreen::onError => ', nativeEvent);
+    console.error('WAYFScreen::onError => ', nativeEvent);
     if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url);
     // Display empty screen
     this.displayEmpty();
@@ -350,7 +350,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Called each time an http error occurs in WebView
   // See WebView onError property
   onHttpError({ nativeEvent }: WebViewHttpErrorEvent) {
-    console.debug('WAYFScreen::onHttpError => ', nativeEvent.statusCode);
+    console.error('WAYFScreen::onHttpError => ', nativeEvent.statusCode);
     if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url, nativeEvent.statusCode);
     // Display empty screen
     this.displayEmpty();

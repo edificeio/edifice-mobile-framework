@@ -96,7 +96,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
           setLoadingState(LoginState.DONE);
         } catch (e) {
           setLoadingState(LoginState.IDLE);
-          console.warn(e);
+          console.error(e);
           redirect(item);
         }
       } else {
@@ -115,7 +115,7 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
         accountListRef.current?.dismiss();
         toast.showSuccess(I18n.get('auth-accountlist-delete-success'));
       } catch (e) {
-        console.warn(e);
+        console.error(e);
       }
     },
     [accounts, tryRemoveAccount],

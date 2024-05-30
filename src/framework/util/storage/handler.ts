@@ -67,7 +67,7 @@ export class StorageHandler {
           storage.init?.();
         }
       } catch (e) {
-        console.warn(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to init`, e);
+        console.error(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to init`, e);
       }
     }
     StorageHandler.initPhaseDone = true;
@@ -78,7 +78,7 @@ export class StorageHandler {
       try {
         storage.sessionInit?.(session);
       } catch (e) {
-        console.warn(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to session init`, e);
+        console.error(`[Storage] storage '${storage.name ?? storage.constructor.name}' failed to session init`, e);
       }
     }
   }

@@ -20,12 +20,8 @@ export const actions = {
   insertBulletsList: 'unorderedList',
   insertOrderedList: 'orderedList',
   checkboxList: 'checkboxList',
-  insertLink: 'link',
   insertText: 'text',
   insertHTML: 'html',
-  insertAudio: 'audio',
-  insertImage: 'image',
-  insertVideo: 'video',
   fontSize: 'fontSize',
   fontName: 'fontName',
   setSubscript: 'subscript',
@@ -69,7 +65,8 @@ export const messages = {
   CONTENT_KEYUP: 'CONTENT_KEYUP',
   CONTENT_PASTED: 'CONTENT_PASTED',
   IMAGE_TOUCHED: 'IMAGE_TOUCHED',
-  IMAGE_URLS: 'IMAGE_URLS',
+  IMAGES_URLS: 'IMAGES_URLS',
+  LINKS_URLS: 'LINKS_URLS',
   LINK_TOUCHED: 'LINK_TOUCHED',
   LOG: 'LOG',
   OFFSET_HEIGHT: 'OFFSET_HEIGHT',
@@ -79,4 +76,13 @@ export const messages = {
   SELECTED_TEXT_RESPONSE: 'SELECTED_TEXT_RESPONSE',
   SELECTION_CHANGE: 'SELECTION_CHANGE',
   VIDEO_TOUCHED: 'VIDEO_TOUCHED',
+};
+
+export const ui = {
+  image: {
+    class: 'custom-image',
+    height: 'NaN',
+    width: 250,
+  },
+  updateHeightTimeout: 100,
 };

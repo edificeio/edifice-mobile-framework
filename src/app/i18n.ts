@@ -152,7 +152,7 @@ export namespace I18n {
   export async function init() {
     // Initialize keys toggling
     if (canShowKeys) {
-      const stored: boolean | undefined = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
+      const stored: boolean | null | undefined = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
       if (stored) showKeys = stored;
     }
     // Initalize language

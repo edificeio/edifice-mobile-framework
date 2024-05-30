@@ -2,7 +2,7 @@ import { blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { Module } from '~/framework/util/moduleTool';
 
 import config from './module-config';
-import service from './service';
+import { audienceService } from './service';
 import { AudienceParameter, AudienceReferer } from './types';
 
 export default new Module({ config, reducer: () => null });
@@ -25,5 +25,5 @@ export function markViewAudience(referer: AudienceParameter) {
       ? computeAudienceRefererFromResourceUri(referer)
       : referer
     : undefined;
-  if (realReferer) return service.post(realReferer.module, realReferer.resourceType, realReferer.resourceId);
+  if (realReferer) return audienceService.view.post(realReferer.module, realReferer.resourceType, realReferer.resourceId);
 }

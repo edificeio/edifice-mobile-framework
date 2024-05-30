@@ -27,11 +27,7 @@ const ERRORS_I18N = {
 
 const DELAY_STATUS_HIDE = Platform.select({ ios: 250, default: 0 });
 
-export const ANIMATION_AUDIO = {
-  one: require('ASSETS/animations/audio/disque-one.json'),
-  neo: require('ASSETS/animations/audio/disque-neo.json'),
-  default: require('ASSETS/animations/audio/disque.json'),
-};
+export const ANIMATION_AUDIO = require('ASSETS/animations/audio/disque.json');
 
 function MediaPlayer(props: MediaPlayerProps) {
   const { route, navigation, connected, session } = props;
@@ -47,12 +43,6 @@ function MediaPlayer(props: MediaPlayerProps) {
   const [orientation, setOrientation] = React.useState(PORTRAIT);
 
   const isPortrait = React.useMemo(() => orientation === PORTRAIT, [orientation]);
-
-  const platform = React.useMemo(() => {
-    if (session?.platform.name === 'prod-neo') return 'neo';
-    if (session?.platform.name === 'prod-one') return 'one';
-    return 'default';
-  }, [session]);
 
   // Manage orientation
 
@@ -215,9 +205,7 @@ function MediaPlayer(props: MediaPlayerProps) {
           videoStyle={isPortrait ? styles.playerPortrait : styles.playerLandscape}
           {...(isAudio
             ? {
-                posterElement: (
-                  <LottieView ref={animationRef} source={ANIMATION_AUDIO[platform]} style={styles.poster} speed={0.5} />
-                ),
+                posterElement: <LottieView ref={animationRef} source={ANIMATION_AUDIO} style={styles.poster} speed={0.5} />,
               }
             : {})}
         />
@@ -236,7 +224,6 @@ function MediaPlayer(props: MediaPlayerProps) {
     onPause,
     onPlay,
     isAudio,
-    platform,
   ]);
 
   // Manage Lottie after passed app in background

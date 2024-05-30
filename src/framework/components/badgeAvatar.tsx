@@ -34,17 +34,17 @@ export const BadgeAvatar = ({ userId, badgeContent, badgeColor, badgePosition, c
           right: 0,
         }
       : badgePosition === BadgePosition.bottom
-      ? {
-          bottom: 0,
-          right: 0,
-        }
-      : {
-          top: 0,
-          right: 0,
-        };
+        ? {
+            bottom: 0,
+            right: 0,
+          }
+        : {
+            top: 0,
+            right: 0,
+          };
 
   return (
-    <View>
+    <View style={{ alignSelf: 'flex-start' }}>
       <SingleAvatar size={size || 48} userId={userId} status={status} />
       <View style={[{ position: 'absolute', ...position }, customStyle]}>
         {badgeContent ? <Badge content={badgeContent} color={badgeColor} /> : null}

@@ -34,7 +34,7 @@ export function useAppStartup(dispatch: ThunkDispatch<any, any, any>) {
         await (dispatch(tryRestore(startupAccount)) as unknown as ReturnType<ReturnType<typeof restoreAccountAction>>); // TS-issue with dispatch async
       }
     } catch (e) {
-      console.warn('[Startup] Startup failed. Cause :', e);
+      console.error('[Startup] Startup failed. Cause :', e);
     } finally {
       initEditor().finally(null);
       dispatch(appReadyAction());

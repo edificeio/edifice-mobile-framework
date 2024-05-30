@@ -139,7 +139,7 @@ const ChangePasswordScreen = (props: ChangePasswordScreenPrivateProps & { contex
     try {
       tryLogout();
     } catch (e) {
-      console.warn('Error while refusing terms:', e);
+      console.error('Error while refusing terms:', e);
     }
   }, [tryLogout]);
 

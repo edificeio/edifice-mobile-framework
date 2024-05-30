@@ -61,7 +61,7 @@ export class ForgotPage extends React.PureComponent<ForgotScreenPrivateProps, IF
       const result = await this.props.trySubmit(route.params.platform, { login, firstName, structureId }, forgotMode);
       this.setState({ editing: false, forgotState: 'DONE', result });
     } catch (e) {
-      console.warn(e);
+      console.error(e);
       this.setState({
         forgotState: 'IDLE',
         editing: false,

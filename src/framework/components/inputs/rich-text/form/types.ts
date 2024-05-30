@@ -1,14 +1,22 @@
 import { ReactNode } from 'react';
 
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { IWorkspaceUploadParams } from '~/framework/modules/workspace/service';
 import { LocalFile } from '~/framework/util/fileHandler';
 
 export interface RichEditorFormProps {
   initialContentHtml: string;
-  topForm: ReactNode;
+  topForm: ReactNode | ((onChange: () => void) => ReactNode);
   onChangeText: (html: string) => void;
   uploadParams: IWorkspaceUploadParams;
+  preventBackI18n?: { title: string; text: string };
 }
+
+export interface RichEditorFormReduxProps {
+  oneSessionId: AuthActiveAccount['tokens']['oneSessionId'];
+}
+
+export interface RichEditorFormAllProps extends RichEditorFormProps, RichEditorFormReduxProps {}
 
 export enum UploadStatus {
   OK,

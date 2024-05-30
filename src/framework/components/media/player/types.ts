@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-import type { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import type { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { AudienceParameter } from '~/framework/modules/core/audience/types';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 
@@ -19,5 +19,5 @@ export interface MediaPlayerParams {
 
 export interface MediaPlayerProps extends NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.MediaPlayer> {
   connected: boolean;
-  session?: AuthLoggedAccount;
+  session?: AuthActiveAccount;
 }

@@ -68,7 +68,7 @@ const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
     try {
       tryLogout();
     } catch (e) {
-      if (__DEV__) console.warn('refuseTerms: could not refuse terms', e);
+      console.error('refuseTerms: could not refuse terms', e);
     }
   }, [tryLogout]);
 
@@ -77,7 +77,7 @@ const RevalidateTermsScreen = (props: IRevalidateTermsScreenProps) => {
       await tryRevalidate();
     } catch (e) {
       Toast.showError(I18n.get('toast-error-text'));
-      if (__DEV__) console.warn('revalidateTerms: could not revalidate terms', e);
+      console.error('revalidateTerms: could not revalidate terms', e);
     }
     // Manually specified deps here
     // eslint-disable-next-line react-hooks/exhaustive-deps

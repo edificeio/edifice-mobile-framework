@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -23,24 +24,27 @@ import DefaultButton from '~/framework/components/buttons/default';
 import IconButton from '~/framework/components/buttons/icon';
 import PrimaryButton from '~/framework/components/buttons/primary';
 import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
+import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
+import { ui } from '~/framework/components/inputs/rich-text/editor/const';
+import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionBoldText, CaptionText, HeadingXSText, SmallText } from '~/framework/components/text';
+import usePreventBack from '~/framework/hooks/prevent-back';
 import { assertSession } from '~/framework/modules/auth/reducer';
+import * as authSelectors from '~/framework/modules/auth/redux/selectors';
 import workspaceService from '~/framework/modules/workspace/service';
 import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
 import { isEmpty } from '~/framework/util/object';
 
-import RichEditor from '../editor/RichEditor';
-import RichToolbar from '../toolbar/component';
 import styles from './styles';
-import { RichEditorFormProps, UploadFile, UploadStatus } from './types';
+import { RichEditorFormAllProps, UploadFile, UploadStatus } from './types';
 
 let addedFiles: UploadFile[] = [];
 
-const RichEditorForm = (props: RichEditorFormProps) => {
+const RichEditorForm = (props: RichEditorFormAllProps) => {
   const headerHeight = useHeaderHeight();
   const session = assertSession();
 
@@ -48,13 +52,16 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   // Editor management
   //
 
-  const [isFocus, setIsFocus] = React.useState<boolean>(false);
+  const [isFocused, setIsFocused] = React.useState<boolean>(false);
 
   const richText = React.useRef<RichEditor>(null);
 
+  const blurRichText = () => {
+    setIsFocused(false);
+  };
+
   const focusRichText = () => {
-    richText.current?.focusContentEditor();
-    setIsFocus(true);
+    setIsFocused(true);
   };
 
   //
@@ -64,6 +71,7 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   const [files, setFiles] = React.useState<UploadFile[]>([]);
 
   const updateFiles = () => {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     if (isEmpty(addedFiles)) hideAddFilesResults();
     else setFiles([...addedFiles]);
   };
@@ -164,21 +172,30 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const showAddFilesResults = () => {
-    richText?.current?.blurContentEditor();
-    setIsFocus(false);
+    blurRichText();
     addFilesResultsRef.current?.present();
   };
 
-  const addHtmlFiles = () => {
-    let filesHTML = '';
-    addedFiles.forEach(file => {
-      if (file.status === UploadStatus.OK) {
-        filesHTML += `<img class="custom-image" src="/workspace/document/${file.workspaceID}" width="350" height="NaN">`;
-      }
-    });
-    richText.current?.insertHTML(`${filesHTML}`);
+  const addFile = (toAdd: UploadFile[], idx: number) => {
+    if (idx < files.length) {
+      const file = toAdd[idx];
+      richText.current?.insertHTML(
+        `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`,
+      );
+      console.debug(`IMAGE ADDED: ${file.workspaceID}`);
+      setTimeout(() => {
+        addFile(toAdd, idx + 1);
+      }, ui.updateHeightTimeout * 1.5);
+    }
+  };
+
+  const addFiles = () => {
+    addFile(
+      addedFiles.filter(file => file.status === UploadStatus.OK),
+      0,
+    );
     hideAddFilesResults();
-    setTimeout(() => richText.current?.insertHTML(`<br>\r\n`), 300);
+    richText.current?.focusContentEditor();
   };
 
   const handleAddFiles = () => {
@@ -208,13 +225,13 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           },
           {
             text: I18n.get('common-ok'),
-            onPress: addHtmlFiles,
+            onPress: addFiles,
           },
         ],
       );
       return;
     }
-    addHtmlFiles();
+    addFiles();
   };
 
   const fileStatusIcon = (index: number, status: UploadStatus) => {
@@ -315,6 +332,8 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   };
 
   const showChoosePicsMenu = () => {
+    richText?.current?.lockContentEditor();
+    blurRichText();
     choosePicsMenuRef.current?.present();
   };
 
@@ -400,14 +419,17 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleBlur = React.useCallback(() => {
     animateToolbar({ opacity: 0, ypos: 2 * UI_SIZES.elements.editor.toolbarHeight });
-    setIsFocus(false);
+    setIsFocused(false);
   }, [animateToolbar]);
+
+  const [isContentModified, setIsContentModified] = React.useState(false);
 
   const handleChange = React.useCallback(
     (html: string) => {
       props.onChangeText(html);
+      if (!isContentModified) setIsContentModified(true);
     },
-    [props],
+    [props, isContentModified],
   );
 
   const handleCursorPosition = React.useCallback((scrollY: number) => {
@@ -416,8 +438,22 @@ const RichEditorForm = (props: RichEditorFormProps) => {
 
   const handleFocus = React.useCallback(() => {
     animateToolbar({ opacity: 1, ypos: UI_SIZES.elements.editor.toolbarHeight });
-    setIsFocus(true);
+    setIsFocused(true);
   }, [animateToolbar]);
+
+  usePreventBack({
+    title: I18n.get(props.preventBackI18n?.title ?? 'editor-generic-alert-title'),
+    text: I18n.get(props.preventBackI18n?.text ?? 'editor-generic-alert-text'),
+    showAlert: isContentModified,
+  });
+
+  const { topForm } = props;
+
+  const realTopForm = React.useMemo(
+    () =>
+      React.isValidElement(topForm) ? topForm : typeof topForm === 'function' ? topForm(() => setIsContentModified(true)) : null,
+    [topForm],
+  );
 
   return (
     <PageView style={styles.page}>
@@ -432,10 +468,10 @@ const RichEditorForm = (props: RichEditorFormProps) => {
           scrollEventThrottle={20}
           bounces={false}
           style={styles.scrollView}>
-          {props.topForm}
+          {realTopForm}
           <RichEditor
             disabled={false}
-            enterKeyHint="done"
+            enterKeyHint="enter"
             editorStyle={styles.container}
             firstFocusEnd={false}
             initialContentHTML={props.initialContentHtml ?? ''}
@@ -452,9 +488,10 @@ const RichEditorForm = (props: RichEditorFormProps) => {
             onFocus={handleFocus}
             autoCorrect
             autoCapitalize
+            oneSessionId={props.oneSessionId}
           />
         </ScrollView>
-        {isFocus ? toolbar() : null}
+        {isFocused ? toolbar() : null}
         {choosePicsMenu()}
         {addFilesResults()}
       </KeyboardAvoidingView>
@@ -462,4 +499,6 @@ const RichEditorForm = (props: RichEditorFormProps) => {
   );
 };
 
-export default RichEditorForm;
+export default connect(state => ({
+  oneSessionId: authSelectors.oneSessionId(state),
+}))(RichEditorForm);

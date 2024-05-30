@@ -14,3 +14,13 @@ export const session = (s: IGlobalState) => {
   }
   return account;
 };
+
+export const oneSessionId = (s: IGlobalState) => {
+  const connectedId = authState(s).connected;
+  const account = connectedId !== undefined ? authState(s).accounts[connectedId] : undefined;
+  if (account && !accountIsActive(account)) {
+    console.warn(`[Auth | session] Store corruption : account ${connectedId} is logged but does not have rights.`);
+    return undefined;
+  }
+  return account?.tokens.oneSessionId;
+};

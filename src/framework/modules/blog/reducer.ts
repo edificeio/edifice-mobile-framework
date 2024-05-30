@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AudienceReactionType } from '~/framework/modules/core/audience/types';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 import { createSessionReducer } from '~/framework/util/redux/reducerFactory';
 import { resourceRightFilter } from '~/framework/util/resourceRights';
@@ -73,7 +74,18 @@ export interface BlogPost {
   _id: string;
 }
 
-export type BlogPostList = BlogPost[];
+export interface BlogPostWithAudience extends BlogPost {
+  audience?: {
+    views?: number;
+    reactions?: {
+      total: number;
+      types: AudienceReactionType[];
+      userReaction: AudienceReactionType;
+    };
+  };
+}
+
+export type BlogPostList = BlogPostWithAudience[];
 
 export interface BlogFolder {
   id: string;

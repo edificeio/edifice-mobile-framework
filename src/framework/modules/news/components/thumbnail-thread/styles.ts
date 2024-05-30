@@ -21,7 +21,7 @@ export default StyleSheet.create({
   thumbnailContainerSelected: {
     position: 'relative',
   },
-  thumbnailItemSelected: {
+  thumbnailSelectedItem: {
     width: WIDTH_THUMBNAIL_THREAD_ITEM_RECTANGLE + BORDER_WIDTH,
     aspectRatio: UI_SIZES.aspectRatios.thumbnail,
     borderWidth: BORDER_WIDTH,

@@ -42,6 +42,11 @@ export const computeNavBar = ({
   }),
 });
 
+const preventBackI18n = {
+  title: 'blog-createpost-confirmation-unsavedpublication',
+  text: 'blog-createpost-unsavedpublication',
+};
+
 const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
   const [title, setTitle] = React.useState('');
@@ -128,18 +133,26 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, loadingState, content]);
 
+  const topForm = React.useCallback(
+    onChange => (
+      <MultilineTextInput
+        style={styles.inputTitle}
+        placeholder={I18n.get('blog-createpost-post-title-placeholder')}
+        numberOfLines={1}
+        onChangeText={text => {
+          setTitle(text);
+          onChange();
+        }}
+        value={title}
+      />
+    ),
+    [title],
+  );
+
   const renderPostInfos = () => {
     return (
       <RichEditorForm
-        topForm={
-          <MultilineTextInput
-            style={styles.inputTitle}
-            placeholder={I18n.get('blog-createpost-post-title-placeholder')}
-            numberOfLines={1}
-            onChangeText={text => setTitle(text)}
-            value={title}
-          />
-        }
+        topForm={topForm}
         initialContentHtml=""
         uploadParams={
           blog.visibility === 'PUBLIC'
@@ -151,6 +164,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
               }
         }
         onChangeText={value => setContent(value)}
+        preventBackI18n={preventBackI18n}
       />
     );
   };

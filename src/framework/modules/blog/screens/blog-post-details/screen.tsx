@@ -2,28 +2,25 @@ import { CommonActions } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Viewport } from '@skele/components';
 import * as React from 'react';
-import { Alert, EmitterSubscription, FlatList, Keyboard, Platform, RefreshControl, View } from 'react-native';
+import { Alert, EmitterSubscription, Keyboard, Platform, RefreshControl, View } from 'react-native';
 import { KeyboardAvoidingFlatList } from 'react-native-keyboard-avoiding-scroll-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import theme from '~/app/theme';
 import { BottomButtonSheet } from '~/framework/components/BottomButtonSheet';
 import BottomEditorSheet from '~/framework/components/BottomEditorSheet';
 import { BottomSheet } from '~/framework/components/BottomSheet';
-import { ContentCardHeader, ContentCardIcon, ResourceView } from '~/framework/components/card';
 import CommentField, { InfoCommentField } from '~/framework/components/commentField';
 import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
-import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
+import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction, linkAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
 import NavBarAction from '~/framework/components/navigation/navbar-action';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
-import { Icon } from '~/framework/components/picture/Icon';
-import { CaptionBoldText, HeadingSText, SmallBoldText } from '~/framework/components/text';
+import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -35,9 +32,10 @@ import {
   publishBlogPostCommentAction,
   updateBlogPostCommentAction,
 } from '~/framework/modules/blog/actions';
+import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
+import { BlogPostComment, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
@@ -47,11 +45,12 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { markViewAudience } from '~/framework/modules/core/audience';
+import { audienceService } from '~/framework/modules/core/audience/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { openUrl } from '~/framework/util/linking';
 import { resourceHasRight } from '~/framework/util/resourceRights';
-import { commentsString } from '~/framework/util/string';
 import { Trackers } from '~/framework/util/tracker';
+import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
 import styles from './styles';
 import {
@@ -86,10 +85,62 @@ function PreventBack(props: { infoComment: InfoCommentField }) {
   return null;
 }
 
+const ListComponent = Platform.select<React.ComponentType<any>>({
+  ios: FlatList,
+  android: KeyboardAvoidingFlatList,
+})!;
+
+function BlogPostDetailsFlatList(props: {
+  contentSetRef;
+  initialNumToRender;
+  data;
+  blogInfos;
+  blogPostData;
+  onReady;
+  renderItem;
+  onRefresh;
+  loadingState;
+  onContentSizeChange;
+  onLayout;
+  footer;
+  session;
+}) {
+  return (
+    <Viewport.Tracker>
+      <>
+        <ListComponent
+          ref={props.contentSetRef}
+          initialNumToRender={props.initialNumToRender}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={styles.content}
+          data={props.data}
+          keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
+          ListHeaderComponent={
+            props.blogInfos && props.blogPostData ? (
+              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} session={props.session} />
+            ) : null
+          }
+          removeClippedSubviews={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(props.loadingState)}
+              onRefresh={props.onRefresh}
+            />
+          }
+          renderItem={props.renderItem}
+          style={styles.contentStyle2}
+          onContentSizeChange={props.onContentSizeChange}
+          onLayout={props.onLayout}
+          {...React.useMemo(() => Platform.select({ ios: {}, android: { stickyFooter: props.footer } }), [props.footer])}
+        />
+        {React.useMemo(() => Platform.select({ ios: props.footer, android: null }), [props.footer])}
+      </>
+    </Viewport.Tracker>
+  );
+}
+
 export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsScreenProps, BlogPostDetailsScreenState> {
-  flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList | null>() as React.MutableRefObject<
-    FlatList | typeof KeyboardAvoidingFlatList | null
-  >;
+  flatListRef = React.createRef<FlatList | typeof KeyboardAvoidingFlatList | null>();
 
   commentFieldRefs = [];
 
@@ -125,17 +176,21 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   listHeight = 0;
 
+  loaderRef = React.createRef<View>();
+
   async doInit() {
     try {
       this.setState({ loadingState: BlogPostDetailsLoadingState.INIT });
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
       await this.doGetBlogPostDetails();
       await this.doGetBlogInfos();
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
         markViewAudience({ module: 'blog', resourceType: 'post', resourceId: this.state.blogPostData._id });
       else {
-        if (__DEV__) console.warn(`[Audience] cannot recieve blog post id.`);
+        console.warn(`[Audience] cannot recieve blog post id.`);
       }
     }
   }
@@ -191,6 +246,28 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     await this.doGetBlogPostDetails();
   }
 
+  async doGetAudienceInfos() {
+    try {
+      const blogPostId = this.state.blogPostData?._id!;
+      const views = await audienceService.view.getSummary('blog', 'post', [blogPostId]);
+      const reactions = await audienceService.reaction.getSummary('blog', 'post', [blogPostId]);
+      const newBlogPostData = {
+        ...this.state.blogPostData,
+        audience: {
+          views: views[blogPostId],
+          reactions: {
+            total: reactions.reactionsByResource[blogPostId].totalReactionsCounter ?? 0,
+            types: reactions.reactionsByResource[blogPostId].reactionTypes,
+            userReaction: reactions.reactionsByResource[blogPostId].userReaction ?? null,
+          },
+        },
+      } as BlogPostWithAudience;
+      this.setState(prevState => ({ ...prevState, blogPostData: newBlogPostData }));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   async doGetBlogPostDetails() {
     try {
       const { route, handleGetBlogPostDetails } = this.props;
@@ -203,6 +280,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       } else blogPostState = route.params.blogPost?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       this.setState({ blogPostData });
+      this.doGetAudienceInfos();
     } catch {
       // ToDo: Error handling
       this.setState({ errorState: true });
@@ -293,7 +371,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   setActionNavbar = () => {
     const { route, navigation, session } = this.props;
-    const { blogPostData, blogInfos, errorState, loadingState } = this.state;
+    const { blogPostData, blogInfos, errorState } = this.state;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
     const blogId = route.params.blog?.id;
     let resourceUri = notification && notification?.resource.uri;
@@ -370,13 +448,14 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     const { route } = this.props;
     const blogPost = route.params.blogPost;
     const blog = route.params.blog;
     const notification = (route.params.useNotification ?? true) && route.params.notification;
 
     if (blog && blogPost) {
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
       this.setState({
         blogInfos: blog,
         blogPostData: blogPost,
@@ -448,6 +527,42 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     return <EmptyConnectionScreen />;
   }
 
+  static contentKeyExtractor(item: BlogPostComment) {
+    return item.id.toString();
+  }
+
+  contentSetRef(node: any) {
+    this.flatListRef.current = node;
+  }
+
+  contentRenderItem({ item, index }) {
+    return this.renderComment(item, index);
+  }
+
+  contentSizeChange(width, height) {
+    this.listHeight = height;
+  }
+
+  contentOnLayout() {
+    // Scroll to last comment if coming from blog spot comment notification
+    if (this.flatListRef.current && this.event === 'PUBLISH-COMMENT')
+      setTimeout(() => {
+        (this.flatListRef.current as FlatList)?.scrollToEnd();
+        this.event = null;
+      }, 50);
+  }
+
+  constructor(props) {
+    super(props);
+    this.contentSetRef = this.contentSetRef.bind(this);
+    this.contentRenderItem = this.contentRenderItem.bind(this);
+    this.contentSizeChange = this.contentSizeChange.bind(this);
+    this.contentOnLayout = this.contentOnLayout.bind(this);
+    this.doRefresh = this.doRefresh.bind(this);
+    this.doRefreshSilent = this.doRefreshSilent.bind(this);
+    this.setRichContentReady = this.setRichContentReady.bind(this);
+  }
+
   renderContent() {
     const { session } = this.props;
     const { loadingState, publishCommentLoadingState, blogPostData, blogInfos } = this.state;
@@ -455,50 +570,26 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     const isPublishingComment = publishCommentLoadingState === BlogPostCommentLoadingState.PUBLISH;
     const hasCommentBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, commentBlogPostResourceRight, session);
     const hasPublishBlogPostRight = session && blogInfos && resourceHasRight(blogInfos, publishBlogPostResourceRight, session);
-    const ListComponent = Platform.select<React.ComponentType<any>>({
-      ios: FlatList,
-      android: KeyboardAvoidingFlatList,
-    })!;
+
     const footer = this.renderFooter(isPublishingComment, hasCommentBlogPostRight ?? false, hasPublishBlogPostRight ?? false);
 
     return (
       <>
-        <Viewport.Tracker>
-          <ListComponent
-            ref={ref => {
-              this.flatListRef.current = ref;
-            }}
-            initialNumToRender={blogPostComments?.length}
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={styles.content}
-            data={blogPostComments}
-            keyExtractor={(item: BlogPostComment) => item.id.toString()}
-            ListHeaderComponent={this.renderBlogPostDetails()}
-            removeClippedSubviews={false}
-            refreshControl={
-              <RefreshControl
-                refreshing={[BlogPostDetailsLoadingState.REFRESH, BlogPostDetailsLoadingState.INIT].includes(loadingState)}
-                onRefresh={() => this.doRefresh()}
-              />
-            }
-            renderItem={({ item, index }) => this.renderComment(item, index)}
-            scrollIndicatorInsets={{ right: 0.001 }} // 🍎 Hack to guarantee scrollbar to be stick on the right edge of the screen.
-            style={styles.contentStyle2}
-            onContentSizeChange={(width, height) => {
-              this.listHeight = height;
-            }}
-            onLayout={() => {
-              // Scroll to last comment if coming from blog spot comment notification
-              if (this.flatListRef.current && this.event === 'PUBLISH-COMMENT')
-                setTimeout(() => {
-                  (this.flatListRef.current as FlatList)?.scrollToEnd();
-                  this.event = null;
-                }, 50);
-            }}
-            {...Platform.select({ ios: {}, android: { stickyFooter: footer } })}
-          />
-        </Viewport.Tracker>
-        {Platform.select({ ios: footer, android: null })}
+        <BlogPostDetailsFlatList
+          data={blogPostComments}
+          blogInfos={blogInfos}
+          blogPostData={blogPostData}
+          onReady={this.setRichContentReady}
+          contentSetRef={this.contentSetRef}
+          initialNumToRender={blogPostComments?.length}
+          renderItem={this.contentRenderItem}
+          onRefresh={this.doRefresh}
+          loadingState={loadingState}
+          onContentSizeChange={this.contentSizeChange}
+          onLayout={this.contentOnLayout}
+          footer={footer}
+          session={this.props.session!}
+        />
       </>
     );
   }
@@ -549,45 +640,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : null;
   }
 
-  renderBlogPostDetails() {
-    const { blogInfos, blogPostData } = this.state;
-    const blogPostContent = blogPostData?.content;
-    const blogPostComments = blogPostData?.comments;
-    console.debug('---------- HTML ----------');
-    console.debug(blogPostContent);
-    console.debug('---------- HTML ----------');
-    return (
-      <View style={styles.detailsMain}>
-        <View style={styles.detailsPost}>
-          <ResourceView
-            header={
-              <ContentCardHeader
-                icon={<ContentCardIcon userIds={[blogPostData?.author.userId || require('ASSETS/images/system-avatar.png')]} />}
-                text={
-                  blogPostData?.author.username ? (
-                    <SmallBoldText numberOfLines={1}>{`${I18n.get('common-by')} ${blogPostData?.author.username}`}</SmallBoldText>
-                  ) : undefined
-                }
-                date={blogPostData?.modified}
-              />
-            }>
-            {blogPostData?.state === 'SUBMITTED' ? (
-              <SmallBoldText style={styles.detailsNeedValidation}>{I18n.get('blog-postdetails-needvalidation')}</SmallBoldText>
-            ) : null}
-            <SmallBoldText style={styles.detailsTitleBlog}>{blogInfos?.title}</SmallBoldText>
-            <HeadingSText>{blogPostData?.title}</HeadingSText>
-            <RichEditorViewer content={blogPostContent} />
-          </ResourceView>
-        </View>
-        {blogPostData?.state === 'PUBLISHED' ? (
-          <View style={styles.detailsNbComments}>
-            <Icon style={styles.detailsIconComments} size={18} name="chat3" color={theme.ui.text.regular} />
-            <CaptionBoldText style={styles.detailsTextNbComments}>{commentsString(blogPostComments?.length || 0)}</CaptionBoldText>
-          </View>
-        ) : null}
-      </View>
-    );
+  _setRichContentReady() {
+    this.loaderRef.current?.setNativeProps({
+      style: { opacity: 0 },
+    });
   }
+
+  setRichContentReady = this._setRichContentReady.bind(this);
 
   renderComment(blogPostComment: BlogPostComment, index: number) {
     const { session } = this.props;
@@ -665,13 +724,15 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       <>
         <PreventBack infoComment={this.state.infoComment} />
         <PageComponent {...Platform.select({ ios: { safeArea: !isBottomSheetVisible }, android: {} })}>
-          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState) ? (
+          {[BlogPostDetailsLoadingState.PRISTINE, BlogPostDetailsLoadingState.INIT].includes(loadingState)
+            ? null
+            : errorState
+              ? this.renderError()
+              : this.renderContent()}
+
+          <View ref={this.loaderRef} style={styles.loader}>
             <BlogPlaceholderDetails />
-          ) : errorState ? (
-            this.renderError()
-          ) : (
-            this.renderContent()
-          )}
+          </View>
         </PageComponent>
       </>
     );
@@ -687,7 +748,7 @@ const mapDispatchToProps: (
   getState: () => IGlobalState,
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
-    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPost | undefined;
+    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPostWithAudience | undefined;
   }, // TS BUG: dispatch mishandled
   handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
     return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;

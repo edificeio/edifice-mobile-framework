@@ -93,6 +93,7 @@ export const actionTypes = {
   updateRequirement: moduleConfig.namespaceActionType('UPDATE_REQUIREMENT'),
   refreshToken: moduleConfig.namespaceActionType('REFRESH_TOKEN'),
   setQueryParamToken: moduleConfig.namespaceActionType('SET_QUERY_PARAM_TOKEN'),
+  setOneSessionId: moduleConfig.namespaceActionType('SET_ONE_SESSION_ID'),
   authError: moduleConfig.namespaceActionType('AUTH_ERROR'),
   logout: moduleConfig.namespaceActionType('LOGOUT'),
   deactivate: moduleConfig.namespaceActionType('DEACTIVATE'),
@@ -129,6 +130,7 @@ export interface ActionPayloads {
   updateRequirement: { requirement: AuthRequirement; account: AuthLoggedAccount; context?: PlatformAuthContext };
   refreshToken: { id: keyof IAuthState['accounts']; tokens: AuthTokenSet };
   setQueryParamToken: { id: keyof IAuthState['accounts']; token: AuthTokenSet['queryParam'] };
+  setOneSessionId: { id: keyof IAuthState['accounts']; token: AuthTokenSet['oneSessionId'] };
   authError: {
     account: keyof IAuthState['accounts'];
     error: NonNullable<Required<IAuthState['error']>>;
@@ -222,6 +224,12 @@ export const actions = {
 
   setQueryParamToken: (id: string, token: AuthTokenSet['queryParam']) => ({
     type: actionTypes.setQueryParamToken,
+    id,
+    token,
+  }),
+
+  setOneSessionId: (id: string, token: AuthTokenSet['oneSessionId']) => ({
+    type: actionTypes.setOneSessionId,
     id,
     token,
   }),
@@ -457,6 +465,22 @@ const reducer = createReducer(initialState, {
     const { id, token } = action as unknown as ActionPayloads['setQueryParamToken'];
     const tokens = (state.accounts[id] as Partial<AuthActiveAccount | AuthSavedLoggedInAccount>).tokens
       ? { ...(state.accounts[id] as AuthActiveAccount | AuthSavedLoggedInAccount).tokens, queryParam: token }
+      : undefined;
+    return tokens
+      ? {
+          ...state,
+          accounts: {
+            ...state.accounts,
+            [id]: { ...state.accounts[id], tokens },
+          },
+        }
+      : state;
+  },
+
+  [actionTypes.setOneSessionId]: (state, action) => {
+    const { id, token } = action as unknown as ActionPayloads['setOneSessionId'];
+    const tokens = (state.accounts[id] as Partial<AuthActiveAccount | AuthSavedLoggedInAccount>).tokens
+      ? { ...(state.accounts[id] as AuthActiveAccount | AuthSavedLoggedInAccount).tokens, oneSessionId: token }
       : undefined;
     return tokens
       ? {
