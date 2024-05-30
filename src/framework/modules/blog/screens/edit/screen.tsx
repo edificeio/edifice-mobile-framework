@@ -59,12 +59,10 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       if (!blogPostRight) {
         throw new Error('[doEditPost] user has no post rights for this blog');
       }
-
       // Translate entered content to httml
       const htmlContent = content.replace(/\n/g, '<br>').trim();
-
+      // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
       await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent);
-
       navigation.goBack();
       Toast.showSuccess(I18n.get('blog-createpost-publish-success'));
     } catch {
@@ -85,6 +83,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   };
 
   React.useEffect(() => {
+    //console.debug(`HTML CONTENT:\r\n${props.route.params.content}`);
     props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (

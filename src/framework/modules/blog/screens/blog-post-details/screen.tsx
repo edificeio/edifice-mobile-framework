@@ -252,7 +252,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         blogPostState = undefined; // Will be got by an additional request to api
       } else blogPostState = route.params.blogPost?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
-      console.debug('BLOG POST DETAILS RETRIEVED\r\n' + blogPostData);
       this.setState({ blogPostData });
     } catch {
       // ToDo: Error handling
