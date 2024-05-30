@@ -44,6 +44,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
   const [title, setTitle] = React.useState(props.route.params.title);
   const [content, setContent] = React.useState(props.route.params.content);
+  const [saving, setSaving] = React.useState(false);
 
   const { route, navigation, session, handleEditBlogPost } = props;
   const blog = route.params.blog;
@@ -58,12 +59,10 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       if (!blogPostRight) {
         throw new Error('[doEditPost] user has no post rights for this blog');
       }
-
       // Translate entered content to httml
       const htmlContent = content.replace(/\n/g, '<br>').trim();
-
+      // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
       await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent);
-
       navigation.goBack();
       Toast.showSuccess(I18n.get('blog-createpost-publish-success'));
     } catch {
@@ -75,13 +74,16 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
     Keyboard.dismiss();
     try {
       setLoadingState(true);
+      setSaving(true);
       await doEditPost();
     } finally {
       setLoadingState(false);
+      setSaving(false);
     }
   };
 
   React.useEffect(() => {
+    //console.debug(`HTML CONTENT:\r\n${props.route.params.content}`);
     props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
@@ -133,6 +135,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
         }
         onChangeText={value => setContent(value)}
         preventBackI18n={preventBackI18n}
+        saving={saving}
       />
     );
   };

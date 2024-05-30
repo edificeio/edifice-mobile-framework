@@ -214,7 +214,7 @@ const raceTimeoutAction = <ReturnType>(fn: ThunkAction<ReturnType, any, any, any
           info: e as Error,
         }),
       );
-      console.debug('[Auth] Login Timeout exceeded', e);
+      console.error('[Auth] Login Timeout exceeded', e);
       throw e;
     }
   };

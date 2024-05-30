@@ -51,6 +51,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const [loadingState, setLoadingState] = React.useState(false);
   const [title, setTitle] = React.useState('');
   const [content, setContent] = React.useState('');
+  const [saving, setSaving] = React.useState(false);
 
   const { route, navigation, session, handleSendBlogPost, handleInitTimeline } = props;
   const blog = route.params.blog;
@@ -106,10 +107,12 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
   const doSend = async () => {
     Keyboard.dismiss();
     try {
+      setSaving(true);
       setLoadingState(true);
       await doSendPost();
     } finally {
       setLoadingState(false);
+      setSaving(false);
     }
   };
 
@@ -165,6 +168,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
         }
         onChangeText={value => setContent(value)}
         preventBackI18n={preventBackI18n}
+        saving={saving}
       />
     );
   };

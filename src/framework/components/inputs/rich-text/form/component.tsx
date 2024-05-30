@@ -134,7 +134,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
                 updateFiles();
               })
               .catch(error => {
-                console.debug(`Rich Editor file removal failed: ${error}`);
+                console.error(`Rich Editor file removal failed: ${error}`);
               });
           }
         },
@@ -182,11 +182,10 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       richText.current?.insertHTML(
         `<img class="${ui.image.class}" src="/workspace/document/${file.workspaceID}" width="${ui.image.width}" height="${ui.image.height}">`,
       );
-      console.debug(`IMAGE ADDED: ${file.workspaceID}`);
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, ui.updateHeightTimeout * 1.5);
-    }
+      }, ui.updateHeightTimeout * 2);
+    } else richText.current?.insertHTML('<br>');
   };
 
   const addFiles = () => {
@@ -245,8 +244,6 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     }
   };
 
-  const snapPoints = React.useMemo(() => ['50%', '70%'], []);
-
   const renderBackdrop = (backdropProps: BottomSheetBackdropProps) => {
     return <BottomSheetBackdrop {...backdropProps} disappearsOnIndex={-1} appearsOnIndex={0} />;
   };
@@ -255,12 +252,16 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     return (
       <RNBottomSheetModal
         ref={addFilesResultsRef}
-        snapPoints={snapPoints}
+        enableDynamicSizing
         backdropComponent={renderBackdrop}
-        onDismiss={handleAddFilesResultsDismissed}>
+        onDismiss={handleAddFilesResultsDismissed}
+        enablePanDownToClose
+        enableDismissOnClose
+        topInset={UI_SIZES.spacing.medium}>
         <BottomSheetFlatList
           data={files}
           contentContainerStyle={styles.addFilesResults}
+          alwaysBounceVertical={false}
           renderItem={({ item, index }) => (
             <View key={index} style={styles.addFilesResultsItem}>
               <View
@@ -442,9 +443,9 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   }, [animateToolbar]);
 
   usePreventBack({
-    title: I18n.get(props.preventBackI18n?.title ?? 'editor-generic-alert-title'),
-    text: I18n.get(props.preventBackI18n?.text ?? 'editor-generic-alert-text'),
-    showAlert: isContentModified,
+    title: I18n.get(props.preventBackI18n?.title ?? 'richeditor-generic-alert-title'),
+    text: I18n.get(props.preventBackI18n?.text ?? 'richeditor-generic-alert-text'),
+    showAlert: isContentModified && !props.saving,
   });
 
   const { topForm } = props;
@@ -466,7 +467,8 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
           nestedScrollEnabled
           ref={scrollRef}
           scrollEventThrottle={20}
-          bounces={false}
+          alwaysBounceVertical={false}
+          bounces
           style={styles.scrollView}>
           {realTopForm}
           <RichEditor

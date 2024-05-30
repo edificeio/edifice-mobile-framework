@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
   },
   addFilesResults: {
     padding: UI_SIZES.spacing.medium,
+    paddingBottom: UI_SIZES.screen.bottomInset,
   },
   addFilesResultsFile: { flex: 1 },
   addFilesResultsItem: {

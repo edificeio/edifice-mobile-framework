@@ -276,8 +276,8 @@ switch (actionType) {
   case 'merge':
     // Get & check language
     const language = process.argv.slice(2)[1];
-    if (!['en', 'es', 'fr'].includes(language)) {
-      console.error('!!! Second argument should be "en", "es" or "fr" !!!');
+    if (!['en', 'es', 'fr', 'it'].includes(language)) {
+      console.error('!!! Second argument should be "en", "es", "fr" or "it" !!!');
       process.exit(3);
     }
     // Get & check newTranslationsFile
