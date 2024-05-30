@@ -39,6 +39,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     return 'ReactNativeWebView.postMessage(document.documentElement.innerHTML); true;';
   }
 
+  // Used to set X-APP cookie used backend side
+  // Injected in WebView with injectedJavaScriptBeforeContentLoaded property
+  static get INJECTED_JS_BEFORE() {
+    return 'document.cookie="X-APP=mobile"; true;';
+  }
+
   // User selection dropdown items
   private dropdownItems: any = [];
 
@@ -171,6 +177,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
+          injectedJavaScriptBeforeContentLoaded={WayfScreen.INJECTED_JS_BEFORE}
           injectedJavaScript={WayfScreen.INJECTED_JS}
           javaScriptEnabled
           onError={this.onError.bind(this)}
