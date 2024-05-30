@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: UI_SIZES.spacing.minor,
     paddingHorizontal: UI_SIZES.spacing.small,
+    columnGap: UI_SIZES.spacing.small,
   },
   separator: {
     width: UI_SIZES.border.thin,

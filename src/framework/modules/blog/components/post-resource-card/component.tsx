@@ -2,10 +2,10 @@ import * as React from 'react';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
-import Audience from '~/framework/components/audience';
 import { ContentCardHeader, ContentCardIcon, ContentCardTitle, TouchableResourceCard } from '~/framework/components/card';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import Audience from '~/framework/modules/core/audience/components';
 import { extractMediaFromHtml, extractTextFromHtml, renderMediaPreview } from '~/framework/util/htmlParser/content';
 import { isStringEmpty } from '~/framework/util/string';
 import { ArticleContainer } from '~/ui/ContainerContent';
@@ -66,6 +66,7 @@ export const BlogPostResourceCard = React.memo(
                 infosReactions={audience?.reactions}
                 referer={{ module: 'blog', resourceType: 'post', resourceId }}
                 session={session}
+                preview
               />
             ) : undefined
           }>

@@ -12,6 +12,8 @@ import {
   getState as getAuthState,
   getSession,
 } from '~/framework/modules/auth/reducer';
+import { audienceService } from '~/framework/modules/core/audience/service';
+import { AudienceValidReactionTypes } from '~/framework/modules/core/audience/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
@@ -127,6 +129,17 @@ export const loadPlatformLegalUrlsAction = (platform: Platform) => async (dispat
   if (!legalUrls) return;
   dispatch(actions.loadPfLegalUrls(platform.name, legalUrls));
   return legalUrls;
+};
+
+/**
+ * fetchs the valid reaction types of current platform and stores it in redux.
+ * @returns
+ */
+export const loadValidReactionTypesAction = () => async (dispatch: AuthDispatch) => {
+  const validReactionTypes = (await audienceService.reaction.getValidReactionTypes()) as AudienceValidReactionTypes;
+  if (!validReactionTypes) return;
+  dispatch(actions.loadPfValidReactionTypes(validReactionTypes));
+  return validReactionTypes;
 };
 
 /**
@@ -466,6 +479,9 @@ const performLogin = async (
 
   // Launch oneSessionId fetch to prevent errors in rich-content. This is non-preventing in case of fails, so no await !
   OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+
+  // Get valid reaction types
+  await dispatch(loadValidReactionTypesAction());
 
   return accountInfo;
 };

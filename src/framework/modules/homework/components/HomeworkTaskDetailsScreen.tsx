@@ -126,7 +126,7 @@ export class HomeworkTaskDetailsScreen extends React.PureComponent<IHomeworkTask
       await handleToggleHomeworkEntryStatus(diaryId, taskId, finished);
       await handleGetHomeworkTasks(diaryId);
       this.setState({ checked: !checked, playAnimation: !checked });
-      Feedback.homeworkDone();
+      Feedback.actionDone();
     } catch {
       Toast.showError(I18n.get('homework-taskdetails-status-error'));
     }

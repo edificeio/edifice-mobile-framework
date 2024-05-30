@@ -1,7 +1,6 @@
 import { Moment } from 'moment';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { AudienceReactionType } from '~/framework/modules/core/audience/types';
 
 export interface BlogPostResourceCardProps {
   action: () => void;
@@ -17,8 +16,8 @@ export interface BlogPostResourceCardProps {
     views?: number;
     reactions?: {
       total: number;
-      types: AudienceReactionType[];
-      userReaction?: AudienceReactionType;
+      types: string[];
+      userReaction?: string;
     };
   };
   session: AuthActiveAccount;

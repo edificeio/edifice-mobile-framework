@@ -1,39 +1,31 @@
 import * as React from 'react';
 import { Animated, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { NamedSVG } from '~/framework/components/picture';
-import { AudienceReactionType } from '~/framework/modules/core/audience/types';
-import { audienceReactionsInfos, validReactionTypes } from '~/framework/modules/core/audience/util';
+import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
+import Feedback from '~/framework/util/feedback/feedback';
 
 import styles from './styles';
-import { AudienceReactButtonProps } from './types';
+import { AudienceReactButtonAllProps } from './types';
 
-const AudienceReactButton = (props: AudienceReactButtonProps) => {
+const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const { userReaction } = props;
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   const opacityBlocReactions = React.useRef(new Animated.Value(0)).current;
-  const animationReactions = {
-    [AudienceReactionType.REACTION_1]: {
+  const animationReactions = props.validReactionTypes.reduce((acc, reaction) => {
+    acc[reaction] = {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       transform: React.useRef(new Animated.Value(-100)).current,
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       opacity: React.useRef(new Animated.Value(0)).current,
-    },
-    [AudienceReactionType.REACTION_2]: {
-      transform: React.useRef(new Animated.Value(-100)).current,
-      opacity: React.useRef(new Animated.Value(0)).current,
-    },
-    [AudienceReactionType.REACTION_3]: {
-      transform: React.useRef(new Animated.Value(-100)).current,
-      opacity: React.useRef(new Animated.Value(0)).current,
-    },
-    [AudienceReactionType.REACTION_4]: {
-      transform: React.useRef(new Animated.Value(-100)).current,
-      opacity: React.useRef(new Animated.Value(0)).current,
-    },
-  };
+    };
+    return acc;
+  }, {});
 
   const showReactions = () => {
     setIsOpen(true);
@@ -42,7 +34,7 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
       duration: 150,
       useNativeDriver: true,
     }).start();
-    validReactionTypes.forEach((reaction, index) => {
+    props.validReactionTypes.forEach((reaction, index) => {
       Animated.parallel([
         Animated.timing(animationReactions[reaction].transform, {
           toValue: 0,
@@ -61,7 +53,7 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
   };
 
   const hideReactions = () => {
-    validReactionTypes.forEach((reaction, index) => {
+    props.validReactionTypes.forEach((reaction, index) => {
       Animated.parallel([
         Animated.timing(animationReactions[reaction].transform, {
           toValue: -100,
@@ -88,6 +80,7 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
   };
 
   const openReactions = () => {
+    Feedback.actionDone();
     if (!isOpen) showReactions();
     else hideReactions();
   };
@@ -98,7 +91,7 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
     if (isOpen) hideReactions();
   };
 
-  const postReaction = (reaction: AudienceReactionType) => {
+  const postReaction = (reaction: string) => {
     if (userReaction) props.postReaction(reaction);
     else props.updateReaction(reaction);
 
@@ -109,8 +102,8 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
     if (userReaction) {
       return (
         <DefaultButton
-          text={audienceReactionsInfos[userReaction].label}
-          iconLeft={audienceReactionsInfos[userReaction].icon}
+          text={I18n.get(`audience-${userReaction.toLowerCase()}`)}
+          iconLeft={userReaction.toLowerCase()}
           contentColor={theme.palette.grey.black}
           style={styles.button}
           action={deleteReaction}
@@ -135,7 +128,7 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
     <>
       {isOpen && (
         <Animated.View style={[styles.reactions, { opacity: opacityBlocReactions }]}>
-          {validReactionTypes.map(reaction => (
+          {props.validReactionTypes.map(reaction => (
             <Animated.View
               key={reaction}
               style={{
@@ -143,7 +136,7 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
                 opacity: animationReactions[reaction].opacity,
               }}>
               <TouchableOpacity onPress={() => postReaction(reaction)}>
-                <NamedSVG name={audienceReactionsInfos[reaction].icon} width={30} height={30} />
+                <NamedSVG name={reaction.toLowerCase()} width={30} height={30} />
               </TouchableOpacity>
             </Animated.View>
           ))}
@@ -154,4 +147,6 @@ const AudienceReactButton = (props: AudienceReactButtonProps) => {
   );
 };
 
-export default AudienceReactButton;
+export default connect(state => ({
+  validReactionTypes: getValidReactionTypes(),
+}))(AudienceReactButton);

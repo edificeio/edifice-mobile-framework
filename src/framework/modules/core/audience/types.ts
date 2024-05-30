@@ -1,36 +1,26 @@
 import { AccountType } from '~/framework/modules/auth/model';
 
-export enum AudienceReactionType {
-  REACTION_1 = 'REACTION_1',
-  REACTION_2 = 'REACTION_2',
-  REACTION_3 = 'REACTION_3',
-  REACTION_4 = 'REACTION_4',
-}
-
 export interface AudienceUserReaction {
   userId: string;
   profile: AccountType;
-  reactionType: AudienceReactionType;
+  reactionType: string;
   displayName: string;
 }
 
 export interface AudienceReactions {
   reactionCounters: {
     allReactionsCounter: number;
-    countByType: Record<AudienceReactionType, number>;
+    countByType: Record<string, number>;
   };
   userReactions: AudienceUserReaction[];
 }
 
 export interface AudienceSummaryReactions {
-  reactionsByResource: Record<
-    string,
-    { reactionTypes: AudienceReactionType[]; userReaction: AudienceReactionType; totalReactionsCounter: number }
-  >;
+  reactionsByResource: Record<string, { reactionTypes: string[]; userReaction: string; totalReactionsCounter: number }>;
 }
 
 export interface AudienceValidReactionTypes {
-  ['reaction-types']: AudienceReactionType[];
+  ['reaction-types']: string[];
 }
 
 export interface AudienceViewer {

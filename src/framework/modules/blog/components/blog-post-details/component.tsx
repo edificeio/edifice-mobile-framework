@@ -1,16 +1,14 @@
-import { useNavigation } from '@react-navigation/native';
 import * as React from 'react';
 import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import Audience from '~/framework/components/audience';
 import { ContentCardHeader, ContentCardIcon } from '~/framework/components/card';
 import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { HeadingSText, SmallBoldText } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { blogRouteNames } from '~/framework/modules/blog/navigation';
 import type { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
+import Audience from '~/framework/modules/core/audience/components';
 
 import styles from './style';
 
@@ -30,8 +28,6 @@ export const commentsString = (comments: number) =>
 
 export function BlogPostDetails(props: BlogPostDetailsProps) {
   const { blog, post, onReady } = props;
-
-  const navigation = useNavigation();
 
   const richContent = React.useMemo(() => {
     return <RichEditorViewer content={post.content} onLoad={onReady} />;
@@ -61,8 +57,6 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
       {post.state === 'PUBLISHED' ? (
         <Audience
           containerStyle={styles.footer}
-          actionViews={() => navigation.navigate(blogRouteNames.blogAudience, { blogPostId: post._id })}
-          actionReactions={() => navigation.navigate(blogRouteNames.blogReactions, { blogPostId: post._id })}
           nbComments={post.comments?.length}
           nbViews={post.audience?.views}
           infosReactions={post.audience?.reactions}

@@ -2,15 +2,16 @@ import { Platform } from 'react-native';
 import { trigger } from 'react-native-haptic-feedback';
 
 enum FeedbackType {
-  ERROR_DISPLAYED = 0,
-  TAB_PRESSED = ERROR_DISPLAYED + 1,
-  HOMEWORK_DONE = ERROR_DISPLAYED + 1,
+  ACTION_DONE,
+  ERROR_DISPLAYED,
+  TAB_PRESSED,
 }
 
-const HapticFeebackType = [
-  Platform.select({ ios: 'notificationError', default: 'notificationError' }), // FeedbackType.ERROR_DISPLAYED
-  Platform.select({ ios: 'soft', default: 'keyboardTap' }), // FeedbackType.TAB_PRESSED
-];
+const HapticFeebackType = {
+  ACTION_DONE: Platform.select({ ios: 'soft', default: 'keyboardTap' }),
+  ERROR_DISPLAYED: Platform.select({ ios: 'notificationError', default: 'notificationError' }),
+  TAB_PRESSED: Platform.select({ ios: 'soft', default: 'keyboardTap' }),
+};
 
 export default class Feedback {
   private static feedback(type: FeedbackType) {
@@ -21,11 +22,11 @@ export default class Feedback {
     });
   }
 
-  static errorDisplayed() {
-    this.feedback(FeedbackType.ERROR_DISPLAYED);
+  static actionDone() {
+    this.feedback(FeedbackType.ACTION_DONE);
   }
 
-  static warningDisplayed() {
+  static errorDisplayed() {
     this.feedback(FeedbackType.ERROR_DISPLAYED);
   }
 
@@ -33,7 +34,7 @@ export default class Feedback {
     this.feedback(FeedbackType.TAB_PRESSED);
   }
 
-  static homeworkDone() {
-    this.feedback(FeedbackType.HOMEWORK_DONE);
+  static warningDisplayed() {
+    this.feedback(FeedbackType.ERROR_DISPLAYED);
   }
 }

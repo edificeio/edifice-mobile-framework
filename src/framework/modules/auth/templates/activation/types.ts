@@ -27,6 +27,7 @@ export interface ActivationPrivateProps {}
 export interface ActivationScreenStoreProps {
   legalUrls?: LegalUrls;
   context?: PlatformAuthContext;
+  validReactionTypes?: string[];
 }
 export interface ActivationScreenDispatchProps {
   trySubmit: (

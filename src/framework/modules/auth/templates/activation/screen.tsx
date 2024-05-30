@@ -16,7 +16,7 @@ import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { PFLogo } from '~/framework/components/pfLogo';
 import { SmallActionText, SmallText } from '~/framework/components/text';
 import { useConstructor } from '~/framework/hooks/constructor';
-import { loadAuthContextAction, loadPlatformLegalUrlsAction } from '~/framework/modules/auth/actions';
+import { loadAuthContextAction, loadPlatformLegalUrlsAction, loadValidReactionTypesAction } from '~/framework/modules/auth/actions';
 import {
   ActivationFormModel,
   InputEmail,
@@ -190,7 +190,7 @@ export class ActivationScreen extends React.PureComponent<
 }
 
 const ActivationScreenLoader = (props: ActivationScreenProps) => {
-  const { context, legalUrls, route } = props;
+  const { context, legalUrls, validReactionTypes, route } = props;
 
   const platform = route.params.platform;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -202,10 +202,13 @@ const ActivationScreenLoader = (props: ActivationScreenProps) => {
     if (!legalUrls && platform) {
       dispatch(loadPlatformLegalUrlsAction(platform));
     }
+    if (!validReactionTypes && platform) {
+      dispatch(loadValidReactionTypesAction());
+    }
   });
 
   if (!platform) return <EmptyConnectionScreen />;
-  if (!context || !legalUrls) return <Loading />;
+  if (!context || !legalUrls || !validReactionTypes) return <Loading />;
   else return <ActivationScreen {...props} context={context} legalUrls={legalUrls} />;
 };
 

@@ -1,7 +1,7 @@
 import { ViewStyle } from 'react-native';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { AudienceReactionType, AudienceReferer } from '~/framework/modules/core/audience/types';
+import { AudienceReferer } from '~/framework/modules/core/audience/types';
 
 export interface AudienceProps {
   referer: AudienceReferer;
@@ -10,10 +10,9 @@ export interface AudienceProps {
   nbViews?: number;
   infosReactions?: {
     total: number;
-    types: AudienceReactionType[];
-    userReaction?: AudienceReactionType;
+    types: string[];
+    userReaction?: string;
   };
   containerStyle?: ViewStyle;
-  actionViews?: () => void;
-  actionReactions?: () => void;
+  preview?: boolean;
 }

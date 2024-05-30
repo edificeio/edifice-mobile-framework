@@ -462,6 +462,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
       markViewAudience({ module: 'blog', resourceType: 'post', resourceId: blogPost._id });
+      this.doGetAudienceInfos();
     } else this.doInit();
 
     // Update notification event if any

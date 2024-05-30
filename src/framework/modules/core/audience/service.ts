@@ -2,7 +2,6 @@ import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { fetchJSONWithCache, signedFetch, signedFetchRelative } from '~/infra/fetchWithCache';
 
 import {
-  AudienceReactionType,
   AudienceReactions,
   AudienceReferer,
   AudienceSummaryReactions,
@@ -28,7 +27,7 @@ export const audienceService = {
       const audienceSummaryReactions = await fetchJSONWithCache(api);
       return audienceSummaryReactions as AudienceSummaryReactions;
     },
-    post: async (session: AuthActiveAccount, referer: AudienceReferer, reaction: AudienceReactionType) => {
+    post: async (session: AuthActiveAccount, referer: AudienceReferer, reaction: string) => {
       const api = `/audience/reactions/${referer.module}/${referer.resourceType}`;
       const body = JSON.stringify({
         resourceId: referer.resourceId,
@@ -39,7 +38,7 @@ export const audienceService = {
         body,
       }) as Promise<any>;
     },
-    update: async (session: AuthActiveAccount, referer: AudienceReferer, reaction: AudienceReactionType) => {
+    update: async (session: AuthActiveAccount, referer: AudienceReferer, reaction: string) => {
       const api = `/audience/reactions/${referer.module}/${referer.resourceType}`;
       const body = JSON.stringify({
         resourceId: referer.resourceId,
