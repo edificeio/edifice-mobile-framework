@@ -215,6 +215,7 @@
   "blog-createpost-title": "Ajouter un billet",
   "blog-createpost-unsavedpublication": "Si vous quittez, le billet que vous avez rédigé sera perdu.",
   "blog-createpost-uploadattachments-error-text": "Erreur d'envoi des pièces jointes : verifiez votre accès à internet et que votre espace documentaire dispose d'assez d'espace libre",
+  "blog-editpost-title": "Modifier le billet",
   "blog-explorer-emptyscreen-button": "Créer un blog sur le web",
   "blog-explorer-emptyscreen-text": "Endossez la casquette du petit reporter en créant votre premier blog !",
   "blog-explorer-emptyscreen-text-nocreationrights": "Proposez des idées de blog à votre école (la vie de la classe, les sorties scolaires, les exposés, ...)",
