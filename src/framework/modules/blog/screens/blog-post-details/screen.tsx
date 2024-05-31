@@ -436,7 +436,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
     const { blogPostData } = this.state;
-    this.setActionNavbar();
+    if (this.state.loadingState === BlogPostDetailsLoadingState.DONE) this.setActionNavbar();
     if (prevState.blogPostData !== blogPostData) {
       this.showSubscription?.remove();
       this.showSubscription = Keyboard.addListener(
