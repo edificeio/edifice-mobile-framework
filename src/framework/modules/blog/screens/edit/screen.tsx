@@ -83,7 +83,6 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
   };
 
   React.useEffect(() => {
-    //console.debug(`HTML CONTENT:\r\n${props.route.params.content}`);
     props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
@@ -93,7 +92,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
               ...(loadingState ? (
                 <LoadingIndicator small customColor={theme.ui.text.inverse} />
               ) : (
-                <NavBarAction icon="ui-save" onPress={doEdit} />
+                <NavBarAction icon="ui-save" onPress={doEdit} disabled={title.length === 0 || content.length === 0} />
               )),
             },
           ]}
