@@ -49,7 +49,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   private dropdownItems: any = [];
 
   //  User selection dropdown selected value
-  dropdownValue: string | null = null;
+  private dropdownValue: string | null = null;
 
   // Auth url if defined
   private authUrl: string | undefined = undefined;
@@ -59,6 +59,9 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   // Flag first webview page loading completion
   private isFirstLoadFinished = false;
+
+  // OpenID custom token if any
+  private oidResponse: string | undefined = undefined;
 
   // Platform url
   private pfUrl: string | null = null;
@@ -243,6 +246,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         this.error = undefined;
         this.dropdownItems = [];
         this.dropdownValue = null;
+        this.oidResponse = undefined;
         this.samlResponse = undefined;
         // Execute given callack
         callback();
@@ -321,15 +325,34 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
 
   // Login with selected token
   async loginWithCustomToken() {
-    if (!this.dropdownValue) return;
+    const customToken = this.dropdownValue;
+    if (!customToken) return;
     this.displayLoading();
     try {
-      await this.props.tryLogin(this.props.route.params.platform, { customToken: this.dropdownValue }, this.state.errkey);
+      await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
     } catch (error) {
       const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
       if (errtype) {
         this.displayError(errtype);
       }
+    } finally {
+      this.dropdownValue = null;
+    }
+  }
+
+  // Login with OpenID custom token
+  async loginWithOpenID() {
+    const customToken = this.oidResponse;
+    if (!customToken) return;
+    try {
+      await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
+    } catch (error) {
+      const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
+      if (errtype) {
+        this.displayError(errtype);
+      }
+    } finally {
+      this.oidResponse = undefined;
     }
   }
 
@@ -378,10 +401,16 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     const innerHTML = event?.nativeEvent?.data || '';
     console.debug('innerHTML :\n' + innerHTML);
     // Retrieve potential SAML token (Stored in <input type="hidden" name="SAMLResponse" value="[saml]"/>)
-    const components = innerHTML.split('name="SAMLResponse" value="');
-    if (components?.length === 2) {
-      const index = components[1].indexOf('"');
-      if (index > 0) this.samlResponse = components[1].substring(0, index);
+    const saml = innerHTML.split('name="SAMLResponse" value="');
+    if (saml?.length === 2) {
+      const index = saml[1].indexOf('"');
+      if (index > 0) this.samlResponse = saml[1].substring(0, index);
+    }
+    // Retrieve potential OpenID custom token (Stored via customToken=“..." format)
+    const oid = innerHTML.split('customToken=“');
+    if (oid?.length === 2) {
+      const index = oid[1].indexOf('"');
+      if (index > 0) this.oidResponse = oid[1].substring(0, index);
     }
   }
 
@@ -410,6 +439,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       }
       // If WAYF redirects to ENT
       //   - Try to login with SAML token if any retrieved previously
+      //   - Try to login with OpenID custom token if any retrieved previously
       //   - Otherwise go to standard login page
       //   - Block navigation
       if (this.pfUrl && url.startsWith(this.pfUrl)) {
@@ -418,6 +448,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
             'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse,
           );
           this.loginWithSaml();
+        } else if (this.oidResponse) {
+          console.debug(
+            'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with OpenID custom token\n' +
+              this.oidResponse,
+          );
+          this.loginWithOpenID();
         } else {
           console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
           this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
