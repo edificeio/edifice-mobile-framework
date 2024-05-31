@@ -227,9 +227,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
   React.useEffect(() => {
     const hasError =
       !selectedBlog || loadingState === AsyncPagedLoadingState.RETRY || loadingState === AsyncPagedLoadingState.INIT_FAILED;
-
     props.navigation.setOptions({
-      headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog-appname')),
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () =>
         hasBlogPostCreationRights && !hasError ? (
@@ -242,7 +240,11 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         ) : null,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedBlogTitle]);
+  }, []);
+
+  props.navigation.setOptions({
+    headerTitle: navBarTitle(selectedBlogTitle ?? I18n.get('blog-appname')),
+  });
 
   const renderEmpty = React.useCallback(() => {
     return (
