@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-05-24 07:46:57",
-  "notes": "Revert \"changes\"\nchanges\nfeat(audience-measurement): fix merge\nSquashed commit of the following:\nfeat(audience-measurement): fix empty touchable opacity\nfeat(audience-measurement): MB-2481 add animation to add reaction blog post\nfeat(audience-measurement):add filter to reactions modal\nfeat(audience-measurement): MB-2481 , we can post reaction to blog post\nfeat(audience-measurement): improve feature\nfeat(audience-measurement): MB-2480 audience reactions modal\nSquashed commit of the following:\nfeat(audience-measurement): MB-2482",
-  "version": "1.13.1-alpha.1(1130101)"
+  "last": "2024-05-31 08:36:40",
+  "notes": "Squashed commit of the following:\nMerge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nchore(audience) upgrade code & modifs DST\nfeat(wayf): MB-2673, Inject X-APP=mobile cookie before loading WAYF\nchore: build.gradle merge fix\nSquashed commit of the following:\nMerge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nchore(audience) clean code\nrelease: 1.13.1-alpha.1(1130101)",
+  "version": "1.13.1-alpha.2(1130102)"
 }
