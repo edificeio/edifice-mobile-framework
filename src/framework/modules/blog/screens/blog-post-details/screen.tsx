@@ -192,7 +192,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doRefresh() {
     try {
-      this.setState({ loadingState: BlogPostDetailsLoadingState.PRISTINE });
       await this.doGetBlogPostDetails();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
@@ -201,8 +200,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doRefreshSilent() {
     try {
-      //await this.doGetBlogPostDetails();
-      await this.doInit();
+      await this.doGetBlogPostDetails();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
     }
