@@ -250,10 +250,12 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         blogPostState = undefined; // Will be got by an additional request to api
       } else blogPostState = route.params.blogPost?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
+      if (!blogPostData) throw new Error('blogPostData is undefined');
       this.setState({ blogPostData });
     } catch {
       // ToDo: Error handling
       this.setState({ errorState: true });
+      this.removePlaceholder();
     }
   }
 
@@ -520,7 +522,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     this.contentOnLayout = this.contentOnLayout.bind(this);
     this.doRefresh = this.doRefresh.bind(this);
     this.doRefreshSilent = this.doRefreshSilent.bind(this);
-    this.setRichContentReady = this.setRichContentReady.bind(this);
+    this.removePlaceholder = this.removePlaceholder.bind(this);
   }
 
   renderContent() {
@@ -539,7 +541,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           data={blogPostComments}
           blogInfos={blogInfos}
           blogPostData={blogPostData}
-          onReady={this.setRichContentReady}
+          onReady={this.removePlaceholder}
           contentSetRef={this.contentSetRef}
           initialNumToRender={blogPostComments?.length}
           renderItem={this.contentRenderItem}
@@ -599,7 +601,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : null;
   }
 
-  setRichContentReady() {
+  removePlaceholder() {
     this.loaderRef.current?.setNativeProps({
       style: { opacity: 0 },
     });
