@@ -41,15 +41,17 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     route.params.files.map(pic => ({
       localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
       status: UploadStatus.PENDING,
+      error: undefined as string | undefined,
       workspaceID: undefined as string | undefined,
     })),
   );
 
   const updateFileStatusAndID = React.useCallback(
-    ({ index, status, id }: { index: number; status: UploadStatus; id?: string }) => {
+    ({ index, status, id, error }: { index: number; status: UploadStatus; id?: string; error?: string }) => {
       const file = files[index];
       file.status = status;
       if (id) file.workspaceID = id;
+      if (error) file.error = error;
       setFiles([...files]);
     },
     [files],
@@ -60,6 +62,15 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     text: I18n.get('import-back-confirm-text'),
     showAlert: files.length > 0 && !validateImport,
   });
+
+  const textErrorUploadFile: (error) => string = error => {
+    switch (error) {
+      case '{"error":"file.too.large"}':
+        return I18n.get('import-error-filetoolarge');
+      default:
+        return I18n.get('import-uploaderror');
+    }
+  };
 
   const uploadFile = React.useCallback(
     ({ file, index }: { file: UploadFile; index: number }) => {
@@ -74,7 +85,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         })
         .catch(error => {
           console.debug(`Import File Upload Failed: ${error}`);
-          updateFileStatusAndID({ index, status: UploadStatus.KO });
+          updateFileStatusAndID({ index, status: UploadStatus.KO, error: textErrorUploadFile(error.response?.body) });
         });
     },
     [route.params.uploadParams, session, updateFileStatusAndID],
@@ -199,7 +210,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
             <View style={styles.addFilesResultsFile}>
               <SmallText>{item.localFile.filename}</SmallText>
               {item.status === UploadStatus.KO ? (
-                <CaptionBoldText>{I18n.get('import-uploaderror')}</CaptionBoldText>
+                <CaptionBoldText>{item.error}</CaptionBoldText>
               ) : (
                 <CaptionText>
                   {item.localFile.filetype} - {formatBytes(item.localFile.filesize)}
