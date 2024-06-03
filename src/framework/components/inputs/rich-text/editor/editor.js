@@ -636,12 +636,10 @@ function createHTML(options = {}) {
                     const img = images[i];
                     img.setAttribute('width', ${ui.image.width});
                     img.setAttribute('height', ${ui.image.height});
-                    if (${isIOS}) {
-                        const uri = new URL(img.src);
-                        uri.searchParams.delete('thumbnail');
-                        uri.searchParams.append('thumbnail', '${thumbnailSize}');
-                        img.src = uri.toString();
-                    }
+                    /*const uri = new URL(img.src);
+                    uri.searchParams.delete('thumbnail');
+                    uri.searchParams.append('thumbnail', '${thumbnailSize}');
+                    img.src = uri.toString();*/
                     imagesUrls.push(img.src);
                 }
                 postAction({type: 'IMAGES_URLS', data: imagesUrls}, true);
