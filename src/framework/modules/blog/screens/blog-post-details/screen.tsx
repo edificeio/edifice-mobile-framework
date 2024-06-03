@@ -18,7 +18,7 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
+import { NavBarAction } from '~/framework/components/navigation';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -45,7 +45,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { markViewAudience } from '~/framework/modules/core/audience';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
@@ -394,8 +394,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       ...navBarOptions({
         navigation,
         route,
-        ...(blogPostData?.title ? { title: blogPostData?.title, titleTestID: blogPostData?.title } : undefined),
       }),
+      headerTitle: navBarTitle(blogPostData?.title),
       ...(menuData.length
         ? {
             // eslint-disable-next-line react/no-unstable-nested-components

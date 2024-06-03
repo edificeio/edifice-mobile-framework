@@ -1,7 +1,7 @@
 /**
  * constants used for the navBar setup accross navigators
  */
-import { HeaderBackButton, HeaderTitle } from '@react-navigation/elements';
+import { HeaderBackButton } from '@react-navigation/elements';
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationOptions, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as React from 'react';
@@ -39,17 +39,7 @@ export const navBarTitle = (title?: string, style?: TextStyle, testID?: string) 
         {title ?? ''}
       </BodyBoldText>
     ),
-    default: () => (
-      <HeaderTitle
-        style={[
-          styles.navBarTitleStyle,
-          { maxWidth: UI_SIZES.screen.width - 2 * UI_SIZES.elements.navbarIconSize - 4 * UI_SIZES.elements.navbarMargin },
-          style ?? {},
-        ]}
-        testID={testID}>
-        {title ?? ''}
-      </HeaderTitle>
-    ),
+    default: title,
   });
 
 export const navBarOptions: (props: {
@@ -65,6 +55,7 @@ export const navBarOptions: (props: {
       backgroundColor: theme.palette.primary.regular,
     },
     headerTitle: navBarTitle(title, titleStyle, titleTestID),
+    headerTitleStyle: styles.navBarTitleStyle,
     headerTitleAlign: 'center',
     headerLeft: props => {
       const navState = navigation.getState();
