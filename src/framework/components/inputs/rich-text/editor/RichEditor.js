@@ -290,7 +290,6 @@ export default class RichEditor extends Component {
           break;
         case messages.IMAGES_URLS:
           that.imagesUrls = data.map(url => that._getAbsoluteUrl(url));
-          console.debug(`IMAGES URLS:\r\n${this.imagesUrls}`);
           break;
         case messages.LINKS_URLS:
           that.linksUrls = data.map(url => that._getAbsoluteUrl(url));
