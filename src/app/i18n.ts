@@ -133,7 +133,7 @@ export namespace I18n {
     return i18n.language;
   }
 
-  export const changeLanguage = async (lang: 'fr' | 'en' | 'es' | 'auto') => {
+  export const changeLanguage = async (lang: SupportedLocales | 'auto') => {
     if (showKeys) await OldStorageFunctions.setItemJson(I18N_SHOW_KEYS_KEY, false);
     if (lang === 'auto') await OldStorageFunctions.removeItem(I18N_APP_LANG);
     else await OldStorageFunctions.setItemJson(I18N_APP_LANG, lang);
