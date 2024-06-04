@@ -1,37 +1,164 @@
-import { CommonActions, NavigationState, PartialState, StackActions } from '@react-navigation/native';
+import { CommonActions, NavigationProp, ParamListBase, StackActions } from '@react-navigation/native';
 
 import {
+  AuthActiveAccount,
   AuthPendingRedirection,
   AuthRequirement,
   AuthSavedAccount,
+  AuthSavedLoggedInAccountWithCredentials,
   InitialAuthenticationMethod,
 } from '~/framework/modules/auth/model';
-import { AuthPendingRestore, IAuthState, getPlatform, getSession } from '~/framework/modules/auth/reducer';
+import { AuthPendingRestore, IAuthState, getAccountsNumber, getPlatform, getSession } from '~/framework/modules/auth/reducer';
 import { RouteStack } from '~/framework/navigation/helper';
 import { StackNavigationAction } from '~/framework/navigation/types';
 import appConf, { Platform } from '~/framework/util/appConf';
 
 import { authRouteNames, simulateNavAction } from '..';
 
-export const getLoginNextScreen: (
+/**
+ * Return the navigation route object corresponding to returning to the login screen of the given platform.
+ * @param platform
+ * @param account Saved account information to skip identification input for the user.
+ * @param loginUsed When account is not provided, given loginUsed will be passed to the screen as a param.
+ * @returns
+ */
+const getNavRoutesForLoginRedirection = (
   platform: Platform,
-  account?: Pick<AuthSavedAccount, 'method'>,
-) => PartialState<NavigationState>['routes'][0] = (platform, account) => {
-  return platform.wayf && account?.method !== InitialAuthenticationMethod.LOGIN_PASSWORD
-    ? { name: authRouteNames.loginWayf, params: { platform } }
-    : { name: authRouteNames.loginCredentials, params: { platform } };
+  account?: Pick<AuthSavedAccount | AuthActiveAccount, 'method'> & {
+    user: Pick<(AuthSavedAccount | AuthActiveAccount)['user'], 'id'>;
+  },
+  loginUsed?: string,
+) => {
+  if (platform.wayf) {
+    if (account?.method === InitialAuthenticationMethod.LOGIN_PASSWORD) {
+      if (getAccountsNumber() > 1) {
+        // If we have multiple accounts, just put the login crentials screen. The user can go back to account-select screen and manage accounts.
+        return [
+          {
+            name: authRouteNames.loginCredentials,
+            params: { platform, accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined },
+          },
+        ];
+      } else {
+        // If we have only one account, we have to put the login wayf screen before to allow user change account.
+        // Note that the loginWayf screen has NOT accountId param to prevent login to be pre-written for guest accounts.
+        return [
+          { name: authRouteNames.loginWayf, params: { platform } },
+          {
+            name: authRouteNames.loginCredentials,
+            params: { platform, accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined },
+          },
+        ];
+      }
+    } else {
+      return [{ name: authRouteNames.loginWayf, params: { platform } }];
+    }
+  } else {
+    if (account) {
+      return [
+        {
+          name: authRouteNames.loginCredentials,
+          params: { platform, accountId: account.user.id, loginUsed: account === undefined ? loginUsed : undefined },
+        },
+      ];
+    } else {
+      return [
+        {
+          name: authRouteNames.loginCredentials,
+          params: { platform, loginUsed: account === undefined ? loginUsed : undefined },
+        },
+      ];
+    }
+  }
 };
 
-export const getLoginNextScreenNavAction = (platform: Platform, account: Pick<AuthSavedAccount, 'method'>) => {
-  return CommonActions.navigate(getLoginNextScreen(platform, account));
+/**
+ * Return the navigation actions to be performed for returning to the login screen of the given platform.
+ * The result is an array in case multiple actions must be performed
+ * @param platform
+ * @param account Saved account information to skip identification input for the user.
+ * @param loginUsed When account is not provided, given loginUsed will be passed to the screen as a param.
+ * @returns
+ */
+export const getNavActionsForLoginRedirection = (
+  platform: Platform,
+  account?: Pick<AuthSavedAccount | AuthActiveAccount, 'method'> & {
+    user: Pick<(AuthSavedAccount | AuthActiveAccount)['user'], 'id'>;
+  },
+  loginUsed?: string,
+) => {
+  return getNavRoutesForLoginRedirection(platform, account, loginUsed).map(r => CommonActions.navigate(r));
 };
 
-export const getOnboardingNextScreen = () => {
+/**
+ * Return the navigation action to be performed when selecting a platform.
+ * No account information can be provided, as selecting a platform allow any user to log in.
+ * @param platform
+ * @returns
+ */
+export const getNavActionForPlatformSelect = (platform: Platform) => {
+  return getNavActionsForLoginRedirection(platform);
+};
+
+/**
+ * Return the navigation action to be performed when leaving the onboarding screen, depending on number of platforms available.
+ * @returns
+ */
+export const getNavActionForOnboarding = () => {
   return appConf.hasMultiplePlatform
     ? CommonActions.navigate({ name: authRouteNames.platforms })
-    : CommonActions.navigate(getLoginNextScreen(appConf.platforms[0]));
+    : getNavActionsForLoginRedirection(appConf.platforms[0]);
 };
 
+/**
+ * Return the navigation action to be performed when leaving the onboarding screen, depending on number of platforms available.
+ * @returns
+ */
+export const getNavActionForAccountSwitch = (
+  account: Pick<AuthSavedAccount | AuthActiveAccount, 'platform' | 'method' | 'user'>,
+) => {
+  const platform = appConf.getExpandedPlatform(account.platform);
+  if (!platform) return undefined;
+  return getNavActionsForLoginRedirection(platform, account);
+};
+
+/**
+ * Return the navigation action to be performed when leaving the onboarding screen, depending on number of platforms available.
+ * @returns
+ */
+export const getNavActionForAccountLoad = (account: {
+  id: (AuthSavedAccount | AuthActiveAccount)['user']['id'];
+  platform: Platform | undefined;
+  login: Partial<AuthSavedLoggedInAccountWithCredentials['user']>['loginUsed'];
+  method: InitialAuthenticationMethod | undefined;
+}) => {
+  if (!account.platform) return undefined;
+  return getNavActionsForLoginRedirection(account.platform, { method: account.method, user: { id: account.id } }, account.login);
+};
+
+/**
+ * Dispatch given actions, can work with multiple actions as an array.
+ * @param navigation
+ * @param actions
+ */
+export const navigationDispatchMultiple = (
+  navigation: NavigationProp<ParamListBase>,
+  actions: (CommonActions.Action | StackNavigationAction)[] | CommonActions.Action | StackNavigationAction,
+) => {
+  if (Array.isArray(actions)) {
+    actions.forEach(a => {
+      navigation.dispatch(a);
+    });
+  } else {
+    navigation.dispatch(actions);
+  }
+};
+
+/**
+ * Return the navigation action to be performed when login requirement is recieved.
+ * @param requirement
+ * @returns
+ */
 export const getNavActionForRequirement = (requirement: AuthRequirement) => {
   switch (requirement) {
     case AuthRequirement.MUST_CHANGE_PASSWORD:
@@ -181,11 +308,8 @@ export const getAuthNavigationState = (
 
   // 3.4 – Put the platform login route into the stack
   if (platform && (!multipleAccounts || (pending as AuthPendingRestore)?.account)) {
-    const nextScreen = getLoginNextScreen(platform, accountObject);
-    routes.push({
-      ...nextScreen,
-      params: { ...nextScreen.params, accountId, loginUsed: accountId === undefined ? loginWithoutAccountId : undefined },
-    });
+    const nextRoutes = getNavRoutesForLoginRedirection(platform, accountObject, loginWithoutAccountId);
+    routes.push(...nextRoutes);
   }
 
   // 4 – Requirement & login redirections

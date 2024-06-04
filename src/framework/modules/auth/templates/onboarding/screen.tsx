@@ -10,6 +10,7 @@ import SecondaryButton from '~/framework/components/buttons/secondary';
 import { PageView } from '~/framework/components/page';
 import { HeadingLText, HeadingSText } from '~/framework/components/text';
 import { authRouteNames } from '~/framework/modules/auth/navigation';
+import { navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import appConf from '~/framework/util/appConf';
 import { Image } from '~/framework/util/media';
 
@@ -95,7 +96,7 @@ class OnboardingScreen extends React.PureComponent<AuthOnboardingScreenPrivatePr
           <PrimaryButton
             text={I18n.get('user-onboarding-joinmynetwork')}
             action={() => {
-              navigation.dispatch(nextScreenAction);
+              navigationDispatchMultiple(navigation, nextScreenAction);
             }}
             style={{ width: buttonsWidth }}
             testID="onboarding-join"

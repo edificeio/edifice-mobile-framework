@@ -5,7 +5,7 @@ import { StackNavigationAction } from '~/framework/navigation/types';
 import { Platform } from '~/framework/util/appConf';
 
 export interface AuthPlatformGridScreenProps {
-  getNextRoute: (platform: Platform) => StackNavigationAction;
+  getNextRoute: (platform: Platform) => StackNavigationAction | StackNavigationAction[];
 }
 
 export type AuthPlatformGridScreenNavParams = undefined;
