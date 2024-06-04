@@ -340,7 +340,7 @@ export default class RichEditor extends Component {
       // eslint-disable-next-line react/jsx-filename-extension
       <>
         <WebView
-          injectedJavaScriptBeforeContentLoaded={js}
+          injectedJavaScript={js}
           useWebKit={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView
