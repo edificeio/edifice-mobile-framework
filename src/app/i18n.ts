@@ -11,6 +11,7 @@ import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
+import 'moment/locale/it';
 import { initReactI18next } from 'react-i18next';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
@@ -29,7 +30,7 @@ export namespace I18n {
   // Transform local translations (in a given language)
   //   - by applying the current override keys
   //   - and removing all overriden keys
-  const getOverridenTranslations = (translations: object) => {
+  const getOverridenTranslations = (translations: object): object => {
     // Get Overriden keys for this override
     const overrideName = getOverrideName();
     const overridenKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));

@@ -220,7 +220,7 @@ const workspaceService = {
         : {
             parent: params.parent,
             ...getImplicitWorkspaceUploadParams(params),
-            ...getThumbnailWorkspaceUploadParams(),
+            //...getThumbnailWorkspaceUploadParams(),
           };
       const url = queryString.stringifyUrl({
         url: api,

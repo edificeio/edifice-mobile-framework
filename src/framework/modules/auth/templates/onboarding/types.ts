@@ -6,7 +6,7 @@ import { StackNavigationAction } from '~/framework/navigation/types';
 export interface AuthOnboardingScreenProps {
   pictures: any[];
   texts: string[];
-  nextScreenAction: StackNavigationAction;
+  nextScreenAction: StackNavigationAction | StackNavigationAction[];
 }
 
 export type AuthOnboardingScreenNavParams = undefined;

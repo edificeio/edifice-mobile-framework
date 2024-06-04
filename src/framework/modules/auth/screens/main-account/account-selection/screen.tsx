@@ -24,7 +24,7 @@ import {
   getOrderedAccounts,
 } from '~/framework/modules/auth/model';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
+import { getNavActionForAccountLoad, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import { getState as getAuthState } from '~/framework/modules/auth/reducer';
 import styles from '~/framework/modules/auth/screens/main-account/account-selection/styles';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
@@ -74,18 +74,13 @@ const AccountSelectionScreen = (props: AuthAccountSelectionScreenPrivateProps) =
   const onItemPress = React.useCallback(
     async (item: (typeof dataforList)[0], index: number) => {
       const redirect = (i: typeof item) => {
-        if (!i.platform) {
+        const navAction = getNavActionForAccountLoad(i);
+        if (!navAction) {
           console.warn('AccountSelectionScreen: Missing platform for this account');
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        const nextScreen = getLoginNextScreen(i.platform, item);
-        if (!nextScreen) {
-          console.warn('AccountSelectionScreen: Next screen cannot be determined for this user');
-          toast.showError(I18n.get('auth-account-select-error'));
-          return;
-        }
-        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, accountId: item.id } });
+        navigationDispatchMultiple(navigation, navAction);
       };
       if (loadingState !== LoginState.IDLE) return;
       if (item.isLoggable) {
