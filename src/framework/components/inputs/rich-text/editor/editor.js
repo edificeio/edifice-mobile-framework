@@ -23,6 +23,7 @@ let audioIcon = '';
 let attachmentIcon = '';
 let playIcon = '';
 let fontFaces = '';
+let imagePlaceholder = '';
 
 async function loadBase64File(fileName, type) {
   let base64String = '';
@@ -89,6 +90,7 @@ async function initEditor() {
   attachmentIcon = await loadIcon('attachment.svg');
   audioIcon = await loadIcon('audio.svg');
   playIcon = await loadIcon('play.svg');
+  imagePlaceholder = await loadIcon('image-not-found.svg');
 }
 
 function createHTML(options = {}) {
@@ -412,6 +414,21 @@ function createHTML(options = {}) {
             }
         }
 
+        function detectImageErrors() {
+            if (!window.imageErrorStyle) {
+                    var head = document.getElementsByTagName('head')[0];
+                    window.imageErrorStyle = document.createElement('style');
+                    window.imageErrorStyle.setAttribute('type', 'text/css');
+                    head.appendChild(window.imageErrorStyle);
+                    window.imageErrorStyle.setAttribute('id', 'imageErrorStyle');
+                }
+                document.querySelectorAll('img').forEach(function(img){
+                    img.addEventListener('error', function(){
+                        window.imageErrorStyle.appendChild(document.createTextNode('img[src="'+ img.getAttribute('src') +'"]{ width: 100%; aspect-ratio: auto 16/10; background-image: url(${imagePlaceholder}); background-position: center; background-repeat: no-repeat; background-size: contain; background-color: ${theme.palette.grey.pearl} }'));
+                    });
+                })
+        }
+
         var Actions = {
             bold: { state: function() { return queryCommandState('bold'); }, result: function() { return exec('bold'); }},
             italic: { state: function() { return queryCommandState('italic'); }, result: function() { return exec('italic'); }},
@@ -513,7 +530,7 @@ function createHTML(options = {}) {
             },
             content: {
                 setDisable: function(dis){ this.blur(); editor.content.contentEditable = !dis},
-                setHtml: function(html) { editor.content.innerHTML = html; Actions.UPDATE_HEIGHT(); },
+                setHtml: function(html) { editor.content.innerHTML = html; Actions.UPDATE_HEIGHT(); detectImageErrors(); },
                 getHtml: function() { return editor.content.innerHTML; },
                 blur: function() {
                     editor.content.blur();
