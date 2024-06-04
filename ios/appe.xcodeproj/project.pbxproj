@@ -50,6 +50,7 @@
 		F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */; };
 		F0CB47602BC6BF83006A73F3 /* ZendeskUnified.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */; };
 		F0CB47612BC6BF83006A73F3 /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */; };
+		F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */; };
 		F0FDEEF32BDBE64F00056775 /* attachment.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF02BDBE64F00056775 /* attachment.svg */; };
 		F0FDEEF42BDBE64F00056775 /* audio.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF12BDBE64F00056775 /* audio.svg */; };
 		F0FDEEF52BDBE64F00056775 /* play.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF22BDBE64F00056775 /* play.svg */; };
@@ -122,6 +123,7 @@
 		F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = appe/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZendeskUnified.swift; path = appe/ZendeskUnified.swift; sourceTree = "<group>"; };
 		F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
+		F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "image-not-found.svg"; path = "appe/images/image-not-found.svg"; sourceTree = "<group>"; };
 		F0FDEEF02BDBE64F00056775 /* attachment.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = attachment.svg; path = appe/images/attachment.svg; sourceTree = "<group>"; };
 		F0FDEEF12BDBE64F00056775 /* audio.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = audio.svg; path = appe/images/audio.svg; sourceTree = "<group>"; };
 		F0FDEEF22BDBE64F00056775 /* play.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = play.svg; path = appe/images/play.svg; sourceTree = "<group>"; };
@@ -178,6 +180,7 @@
 		74264AB722DF7D2E00A0E2A6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */,
 				F0FDEEF02BDBE64F00056775 /* attachment.svg */,
 				F0FDEEF12BDBE64F00056775 /* audio.svg */,
 				F0FDEEF22BDBE64F00056775 /* play.svg */,
@@ -358,6 +361,7 @@
 				1D20446D2B6BD1810020EABA /* font_italic.woff in Resources */,
 				1D20446E2B6BD1810020EABA /* font_regular.woff in Resources */,
 				1D20446F2B6BD1810020EABA /* ibmplexmono_bold.woff in Resources */,
+				F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */,
 				1D2044702B6BD1810020EABA /* ibmplexmono_bolditalic.woff in Resources */,
 				1D2044712B6BD1810020EABA /* ibmplexmono_italic.woff in Resources */,
 				1D2044722B6BD1810020EABA /* ibmplexmono_regular.woff in Resources */,
