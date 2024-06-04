@@ -20,7 +20,10 @@ export default StyleSheet.create({
     borderRadius: UI_SIZES.radius.card,
     marginRight: UI_SIZES.spacing.minor,
   },
-  addFilesResultsFile: { flex: 1 },
+  addFilesResultsFile: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   addFilesResultsTitle: {
     textAlign: 'center',
     marginBottom: UI_SIZES.spacing.minor,

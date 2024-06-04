@@ -56,7 +56,7 @@ const compress = async pic => {
     )
       .then(response => {
         result = {
-          fileName: response.name,
+          fileName: moment().format('YYYYMMDD-HHmmssSS'),
           fileSize: response.size,
           height: response.height,
           type: 'image/jpg',

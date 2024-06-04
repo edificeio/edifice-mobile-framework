@@ -12,12 +12,13 @@ import { imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { CaptionBoldText, CaptionText, HeadingXSText, SmallText } from '~/framework/components/text';
+import { CaptionBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { LocalFile, formatBytes } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler';
+import { Image } from '~/framework/util/media';
 
 import styles from './styles';
 import { FileImportScreenProps } from './types';
@@ -182,6 +183,27 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     }
   };
 
+  const renderThumbnail = (file: UploadFile) => {
+    if (file.status === UploadStatus.OK) return <Image style={styles.addFilesResultsType} src={file.localFile._filepathNative} />;
+    return (
+      <View
+        style={[
+          styles.addFilesResultsType,
+          {
+            backgroundColor:
+              file.status === UploadStatus.KO ? theme.palette.status.failure.pale : theme.palette.complementary.green.pale,
+          },
+        ]}>
+        <NamedSVG
+          name={file.status === UploadStatus.KO ? 'ui-error' : 'ui-image'}
+          height={UI_SIZES.elements.icon.small}
+          width={UI_SIZES.elements.icon.small}
+          fill={file.status === UploadStatus.KO ? theme.palette.status.failure.regular : theme.palette.grey.black}
+        />
+      </View>
+    );
+  };
+
   if (!session) return <EmptyContentScreen />;
 
   return (
@@ -192,30 +214,10 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         alwaysBounceVertical={false}
         renderItem={({ item, index }) => (
           <View key={index} style={styles.addFilesResultsItem}>
-            <View
-              style={[
-                styles.addFilesResultsType,
-                {
-                  backgroundColor:
-                    item.status === UploadStatus.KO ? theme.palette.status.failure.pale : theme.palette.complementary.green.pale,
-                },
-              ]}>
-              <NamedSVG
-                name={item.status === UploadStatus.KO ? 'ui-error' : 'ui-image'}
-                height={UI_SIZES.elements.icon.small}
-                width={UI_SIZES.elements.icon.small}
-                fill={item.status === UploadStatus.KO ? theme.palette.status.failure.regular : theme.palette.grey.black}
-              />
-            </View>
+            {renderThumbnail(item)}
             <View style={styles.addFilesResultsFile}>
-              <SmallText>{item.localFile.filename}</SmallText>
-              {item.status === UploadStatus.KO ? (
-                <CaptionBoldText>{item.error}</CaptionBoldText>
-              ) : (
-                <CaptionText>
-                  {item.localFile.filetype} - {formatBytes(item.localFile.filesize)}
-                </CaptionText>
-              )}
+              <SmallText numberOfLines={1}>{item.localFile.filename}</SmallText>
+              {item.status === UploadStatus.KO ? <CaptionBoldText>{item.error}</CaptionBoldText> : null}
             </View>
             {fileStatusIcon(index, item.status)}
             <IconButton
