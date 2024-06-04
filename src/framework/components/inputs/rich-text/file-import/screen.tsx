@@ -58,10 +58,19 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     [files],
   );
 
+  const removeAllFiles = React.useCallback(() => {
+    workspaceService.files.trash(
+      session!,
+      files.map(f => f.workspaceID!),
+    );
+    setFiles([]);
+  }, [files, session]);
+
   usePreventBack({
     title: I18n.get('import-back-confirm-title'),
     text: I18n.get('import-back-confirm-text'),
     showAlert: files.length > 0 && !validateImport,
+    actionOnBack: removeAllFiles,
   });
 
   const textErrorUploadFile: (error) => string = error => {
