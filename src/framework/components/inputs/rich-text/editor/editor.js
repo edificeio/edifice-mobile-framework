@@ -166,7 +166,7 @@ function createHTML(options = {}) {
         .video-wrapper::before {content: ""; background-image: url(${playIcon}); background-size: ${playIconSize}px ${playIconSize}px; height: ${playIconSize}px; width: ${playIconSize}px; position: absolute; top: 0; left: 0; z-index: 1; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;}
         video {border-radius: ${UI_SIZES.radius.small}px;}
         img {max-width: 100vw; max-height: 100vw; height: auto; width: auto; border-radius: ${UI_SIZES.radius.small}px; margin: ${UI_SIZES.spacing.tiny}px auto; display: flex;}
-        ul, ol {list-style-position: inside; padding-left: ${UI_SIZES.spacing.big}px;}
+        ul, ol {list-style-position: outside; }
         li p {margin: 0; padding: 0;}
     </style>
 </head>
