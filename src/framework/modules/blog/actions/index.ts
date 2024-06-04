@@ -107,8 +107,7 @@ export const createBlogPostAction =
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
 
-    const postContentHtml = `<p class="ng-scope" style="">${postContent}</p>`;
-    const createdPost = await blogService.post.create(session, blogId, postTitle, postContentHtml);
+    const createdPost = await blogService.post.create(session, blogId, postTitle, postContent);
     const postId = createdPost._id;
     return postId;
   };
