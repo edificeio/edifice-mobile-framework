@@ -155,6 +155,7 @@ export const editBlogPostAction =
     }
 
     await blogService.post.edit(session, blogId, postId, postTitle, postContent);
+    await blogService.post.submit(session, blogId, postId);
   };
 
 /**
