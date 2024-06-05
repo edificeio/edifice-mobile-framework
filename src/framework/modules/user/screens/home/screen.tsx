@@ -33,7 +33,7 @@ import {
 } from '~/framework/modules/auth/model';
 import { userCanAddAccount } from '~/framework/modules/auth/model/business';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getLoginNextScreen } from '~/framework/modules/auth/navigation/main-account/router';
+import { getNavActionForAccountSwitch, navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import { assertSession, getState as getAuthState, getSession } from '~/framework/modules/auth/reducer';
 import { AuthChangeEmailScreenNavParams } from '~/framework/modules/auth/screens/change-email/types';
 import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screens/change-mobile/types';
@@ -423,19 +423,13 @@ function useAccountsFeature(
       if (activeSession.user.id === item.user.id) return;
 
       const redirect = (i: typeof item) => {
-        const platform = appConf.getExpandedPlatform(i.platform);
-        if (!platform) {
+        const navAction = getNavActionForAccountSwitch(i);
+        if (!navAction) {
           console.warn('AccountSelectionScreen: Missing platform for this account');
           toast.showError(I18n.get('auth-account-select-error'));
           return;
         }
-        const nextScreen = getLoginNextScreen(platform, item);
-        if (!nextScreen) {
-          console.warn('AccountSelectionScreen: Next screen cannot be determined for this user');
-          toast.showError(I18n.get('auth-account-select-error'));
-          return;
-        }
-        navigation.navigate({ ...nextScreen, params: { ...nextScreen.params, accountId: item.user.id } });
+        navigationDispatchMultiple(navigation, navAction);
       };
       if (loadingState !== LoginState.IDLE) return;
       if (accountIsLoggable(item)) {

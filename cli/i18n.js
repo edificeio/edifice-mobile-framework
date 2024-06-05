@@ -1,24 +1,17 @@
 //
 // i18n.js
 //
-// Automatically display required translation actions or merge new translations
+// Automatically display required translation actions new translations
 //
 // Args:
-//   - diff|merge to determine action type
-//   - fr|en|es to merge new translations into fr.json || en.json || es.json
+//   - diff|unused to determine action type
 //   - newTranslationsFile to declare path of new translations file
-//
-// Update (merge):
-//   - fr.json, en.json or es.json
 //
 
 // As this is a cli tool, we disable some rules
-/* eslint-disable no-case-declarations */
 
 const execSync = require('child_process').execSync;
 const fs = require('fs');
-
-const lastFile = 'cli/last-build.json';
 
 /**
  * Verify if object is empty.
@@ -131,114 +124,6 @@ const getTranslationActions = () => {
 };
 
 /**
- * Add new translation keys located within an external JSON file to the local JSON file of the same language.
- * New keys are inserted alphabetically.
- * Changes are commited and pushed to GitHub.
- * @param language language of local JSON file to merge new translations into
- * @param newTranslationsFile path of external JSON file containing the new translations
- */
-const mergeNewTranslations = (language, newTranslationsFile) => {
-  const localTranslationsFile = getLocalFile(language);
-
-  console.info(`==> Will merge new translations from ${newTranslationsFile} into ${localTranslationsFile}`);
-
-  //
-  // Read local translations
-  //
-
-  let localTranslationsContent = null;
-
-  try {
-    localTranslationsContent = JSON.parse(fs.readFileSync(localTranslationsFile, 'utf-8'));
-  } catch (error) {
-    console.error(`!!! Unable to read ${localTranslationsFile} !!!`);
-    console.log(error);
-    process.exit(5);
-  }
-
-  //
-  // Read new translations
-  //
-
-  let newTranslationsContent = null;
-
-  try {
-    newTranslationsContent = JSON.parse(fs.readFileSync(newTranslationsFile, 'utf-8'));
-  } catch (error) {
-    console.error(`!!! Unable to read ${newTranslationsFile} !!!`);
-    console.log(error);
-    process.exit(6);
-  }
-
-  //
-  // Update translations
-  //
-
-  try {
-    // Merge
-    localTranslationsContent = { ...localTranslationsContent, ...newTranslationsContent };
-
-    // Sort alphabetically
-    localTranslationsContent = Object.keys(localTranslationsContent)
-      .sort()
-      .reduce(
-        (acc, key) => ({
-          ...acc,
-          [key]: localTranslationsContent[key],
-        }),
-        {},
-      );
-  } catch (error) {
-    console.error('!!! Unable to update translations !!!');
-    console.log(error);
-    process.exit(7);
-  }
-
-  //
-  // Write new translations
-  //
-
-  try {
-    fs.writeFileSync(localTranslationsFile, JSON.stringify(localTranslationsContent, null, 2), 'utf-8');
-    console.info(`==> ${localTranslationsFile} updated`);
-  } catch (error) {
-    console.error(`!!! Unable to update ${localTranslationsFile} !!!`);
-    console.log(error);
-    process.exit(8);
-  }
-
-  //
-  // Read prepare-build.json & compute version number
-  //
-
-  let lastContent = null;
-  let lastVersion = null;
-
-  try {
-    lastContent = JSON.parse(fs.readFileSync(lastFile, 'utf-8'));
-    lastVersion = lastContent.version;
-  } catch (error) {
-    console.error('!!! Unable to read last-build.json !!!');
-    console.log(error);
-    process.exit(9);
-  }
-
-  //
-  // Commit && Push changes
-  //
-
-  try {
-    execSync(`git add -A`);
-    execSync(`git commit -m "translations (${lastVersion}): ${language}.json"`);
-    execSync('git push');
-  } catch (error) {
-    console.error('!!! Unable to commit && push changes !!!');
-    console.log(error);
-    process.exit(10);
-  }
-};
-
-/**
  * Display unsused keys
  */
 const getUnusedKeys = () => {
@@ -273,23 +158,6 @@ switch (actionType) {
     getTranslationActions();
     break;
 
-  case 'merge':
-    // Get & check language
-    const language = process.argv.slice(2)[1];
-    if (!['en', 'es', 'fr', 'it'].includes(language)) {
-      console.error('!!! Second argument should be "en", "es", "fr" or "it" !!!');
-      process.exit(3);
-    }
-    // Get & check newTranslationsFile
-    const newTranslationsFile = process.argv.slice(2)[2];
-    if (!newTranslationsFile) {
-      console.error('!!! Third argument newTranslationsFile missing !!!');
-      process.exit(4);
-    }
-    // Process merge
-    mergeNewTranslations(language, newTranslationsFile);
-    break;
-
   case 'unused':
     // Get unused keys
     getUnusedKeys();
@@ -297,6 +165,6 @@ switch (actionType) {
 
   // Display error message
   default:
-    console.error('!!! First argument should be "diff", "merge" or "unused" !!!');
+    console.error('!!! First argument should be "diff" or "unused" !!!');
     process.exit(1);
 }

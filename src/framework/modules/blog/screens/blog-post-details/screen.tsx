@@ -18,7 +18,7 @@ import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { deleteAction } from '~/framework/components/menus/actions';
 import PopupMenu from '~/framework/components/menus/popup';
-import NavBarAction from '~/framework/components/navigation/navbar-action';
+import { NavBarAction } from '~/framework/components/navigation';
 import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -46,7 +46,7 @@ import {
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { markViewAudience } from '~/framework/modules/core/audience';
 import { audienceService } from '~/framework/modules/core/audience/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 
@@ -195,7 +195,6 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doRefresh() {
     try {
-      this.setState({ loadingState: BlogPostDetailsLoadingState.PRISTINE });
       await this.doGetBlogPostDetails();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
@@ -204,8 +203,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   async doRefreshSilent() {
     try {
-      //await this.doGetBlogPostDetails();
-      await this.doInit();
+      await this.doGetBlogPostDetails();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
     }
@@ -277,11 +275,13 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         blogPostState = undefined; // Will be got by an additional request to api
       } else blogPostState = route.params.blogPost?.state;
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
+      if (!blogPostData) throw new Error('blogPostData is undefined');
       this.setState({ blogPostData });
       this.doGetAudienceInfos();
     } catch {
       // ToDo: Error handling
       this.setState({ errorState: true });
+      this.removePlaceholder();
     }
   }
 
@@ -420,8 +420,8 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       ...navBarOptions({
         navigation,
         route,
-        ...(blogPostData?.title ? { title: blogPostData?.title, titleTestID: blogPostData?.title } : undefined),
       }),
+      headerTitle: navBarTitle(blogPostData?.title),
       ...(menuData.length
         ? {
             // eslint-disable-next-line react/no-unstable-nested-components
@@ -463,7 +463,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
 
   componentDidUpdate(prevProps: BlogPostDetailsScreenProps, prevState: BlogPostDetailsScreenState) {
     const { blogPostData } = this.state;
-    this.setActionNavbar();
+    if (this.state.loadingState === BlogPostDetailsLoadingState.DONE && !this.state.errorState) this.setActionNavbar();
     if (prevState.blogPostData !== blogPostData) {
       this.showSubscription?.remove();
       this.showSubscription = Keyboard.addListener(
@@ -549,7 +549,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     this.contentOnLayout = this.contentOnLayout.bind(this);
     this.doRefresh = this.doRefresh.bind(this);
     this.doRefreshSilent = this.doRefreshSilent.bind(this);
-    this.setRichContentReady = this.setRichContentReady.bind(this);
+    this.removePlaceholder = this.removePlaceholder.bind(this);
   }
 
   renderContent() {
@@ -568,7 +568,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           data={blogPostComments}
           blogInfos={blogInfos}
           blogPostData={blogPostData}
-          onReady={this.setRichContentReady}
+          onReady={this.removePlaceholder}
           contentSetRef={this.contentSetRef}
           initialNumToRender={blogPostComments?.length}
           renderItem={this.contentRenderItem}
@@ -629,13 +629,11 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     ) : null;
   }
 
-  _setRichContentReady() {
+  removePlaceholder() {
     this.loaderRef.current?.setNativeProps({
       style: { opacity: 0 },
     });
   }
-
-  setRichContentReady = this._setRichContentReady.bind(this);
 
   renderComment(blogPostComment: BlogPostComment, index: number) {
     const { session } = this.props;

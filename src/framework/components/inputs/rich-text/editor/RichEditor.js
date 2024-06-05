@@ -154,6 +154,9 @@ export default class RichEditor extends Component {
     if (initialContentHTML !== prevProps.initialContentHTML) {
       this.setContentHTML(initialContentHTML);
       editorInitializedCallback();
+      setTimeout(() => {
+        this.sendAction(actions.content, 'init');
+      });
     }
   }
 

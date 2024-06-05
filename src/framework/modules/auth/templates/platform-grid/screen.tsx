@@ -9,6 +9,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { PageView } from '~/framework/components/page';
 import { HeadingSText, SmallText } from '~/framework/components/text';
 import { AuthNavigationTemplatesParams } from '~/framework/modules/auth/navigation';
+import { navigationDispatchMultiple } from '~/framework/modules/auth/navigation/main-account/router';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf, { Platform } from '~/framework/util/appConf';
 
@@ -28,7 +29,10 @@ export const computeNavBar = ({
 
 export function AuthPlatformGridScreen(props: AuthPlatformGridScreenPrivateProps) {
   const { navigation, getNextRoute } = props;
-  const onOpenItem = React.useCallback((item: Platform) => navigation.dispatch(getNextRoute(item)), [getNextRoute, navigation]);
+  const onOpenItem = React.useCallback(
+    (item: Platform) => navigationDispatchMultiple(navigation, getNextRoute(item)),
+    [getNextRoute, navigation],
+  );
   return (
     <PageView statusBar="none">
       <GridList

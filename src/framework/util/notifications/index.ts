@@ -2,6 +2,7 @@
  * Notifications
  * Types and tools for managing Notification data
  */
+import { decode } from 'html-entities';
 import moment, { Moment } from 'moment';
 import { ImageURISource } from 'react-native';
 
@@ -168,7 +169,7 @@ export const notificationAdapter = (n: IEntcoreAbstractNotification) => {
   }
   if ((n as IEntcoreTimelineNotification).preview) {
     (ret as IEnrichedNotification).preview = {
-      text: (n as IEntcoreTimelineNotification).preview!.text,
+      text: decode((n as IEntcoreTimelineNotification).preview!.text),
       images: (n as IEntcoreTimelineNotification).preview!.images,
       media: (n as IEntcoreTimelineNotification).preview!.medias,
     };

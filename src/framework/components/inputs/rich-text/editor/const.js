@@ -1,6 +1,5 @@
 export const actions = {
   content: 'content',
-  updateHeight: 'UPDATE_HEIGHT',
   setBold: 'bold',
   setItalic: 'italic',
   setUnderline: 'underline',
