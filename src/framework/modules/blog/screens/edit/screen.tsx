@@ -65,9 +65,9 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
       await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent);
       navigation.goBack();
-      Toast.showSuccess(I18n.get('blog-createpost-publish-success'));
+      Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
     } catch {
-      Toast.showError(I18n.get('blog-createpost-publish-error-text'));
+      Toast.showError(I18n.get('blog-editpost-edit-errortext'));
     }
   };
 
