@@ -366,6 +366,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
                   title: this.state.blogPostData.title,
                   content: this.state.blogPostData?.content,
                   postId: this.state.blogPostData?._id,
+                  postState: this.state.blogPostData?.state,
                 }),
             },
             deleteAction({

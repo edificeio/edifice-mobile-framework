@@ -27,7 +27,7 @@ import { BlogEditPostScreenDataProps, BlogEditPostScreenEventProps, BlogEditPost
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogCreatePost>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<BlogNavigationParams, typeof blogRouteNames.blogEditPost>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -49,6 +49,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
 
   const { route, navigation, session, handleEditBlogPost } = props;
   const blog = route.params.blog;
+  const postState = route.params.postState;
 
   const doEditPost = async () => {
     try {
@@ -63,7 +64,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       // Translate entered content to httml
       const htmlContent = content.replace(/\n/g, '<br>').trim();
       // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
-      await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent);
+      await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent, postState);
       navigation.goBack();
       Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
     } catch {
@@ -159,8 +160,8 @@ const mapStateToProps: (s: IGlobalState) => BlogEditPostScreenDataProps = s => {
 };
 
 const mapDispatchToProps: (dispatch: ThunkDispatch<any, any, any>) => BlogEditPostScreenEventProps = dispatch => ({
-  handleEditBlogPost: async (blog: Blog, postId: string, title: string, content: string) => {
-    return (await dispatch(editBlogPostAction(blog, postId, title, content))) as unknown as string | undefined;
+  handleEditBlogPost: async (blog: Blog, postId: string, title: string, content: string, postState: string) => {
+    return (await dispatch(editBlogPostAction(blog, postId, title, content, postState))) as unknown as string | undefined;
   },
   handleInitTimeline: async () => {
     await dispatch(startLoadNotificationsAction());
