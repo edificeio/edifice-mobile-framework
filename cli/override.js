@@ -64,15 +64,16 @@ const _override_copyMergePaths = {
   'modules.ts': 'src/app/override/modules.ts', // Included modules in the override
   'theme.ts': 'src/app/override/theme.ts', // Theme override
   assets: 'assets', // All specific assets
+  'android/google-services.json': 'android/app/google-services.json', // Firebase Android config
+  'android/appcenter-config.json': 'android/app/src/main/assets/appcenter-config.json', // AppCenter Android config
+  'android/res': 'android/app/src/main/res', // Android specific native assets
+  'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
+  'android/images': 'android/app/src/main/assets/images', // Android specific fonts
   'ios/AppCenter-Config.plist': 'ios/appe/AppCenter-Config.plist', // AppCenter iOS config
   'ios/GoogleService-Info.plist': 'ios/appe/GoogleService-Info.plist', // Firebase iOS config
-  'android/appcenter-config.json': 'android/app/src/main/assets/appcenter-config.json', // AppCenter Android config
-  'android/google-services.json': 'android/app/google-services.json', // Firebase Android config
   'ios/Assets.xcassets': 'ios/appe/Assets.xcassets', // iOS specific native assets
-  'android/res': 'android/app/src/main/res', // Android specific native assets
   'ios/Fonts': 'ios/Fonts', // iOS specific fonts
   'ios/images': 'ios/appe/images', // iOS specific images
-  'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
 };
 
 // Manual proceeded files
