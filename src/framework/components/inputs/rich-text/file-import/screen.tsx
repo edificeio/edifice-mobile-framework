@@ -74,11 +74,12 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   });
 
   const textErrorUploadFile: (error) => string = error => {
-    switch (error) {
-      case '{"error":"file.too.large"}':
-        return I18n.get('import-error-filetoolarge');
-      default:
-        return I18n.get('import-uploaderror');
+    // Full storage management
+    // statusCode = 400 on iOS and code = 'ENOENT' on Android
+    if (error?.response?.statusCode === 400 || error?.code === 'ENOENT') {
+      return I18n.get('import-error-filetoolarge');
+    } else {
+      return I18n.get('import-uploaderror');
     }
   };
 
@@ -95,7 +96,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         })
         .catch(error => {
           console.debug(`Import File Upload Failed: ${error}`);
-          updateFileStatusAndID({ index, status: UploadStatus.KO, error: textErrorUploadFile(error.response?.body) });
+          updateFileStatusAndID({ index, status: UploadStatus.KO, error: textErrorUploadFile(error) });
         });
     },
     [route.params.uploadParams, session, updateFileStatusAndID],
