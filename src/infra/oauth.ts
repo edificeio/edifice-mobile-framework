@@ -551,6 +551,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
       const response = await fetch(request);
       const cookie = response.headers.get('set-cookie') || undefined;
+
       let newSessionId: string | undefined;
       // Continue if set-cookie header found
       // Otherwise, last oneSessionId will be returned

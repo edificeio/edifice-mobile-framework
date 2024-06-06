@@ -1,4 +1,3 @@
-import CookieManager from '@react-native-cookies/cookies';
 import React, { Component } from 'react';
 import { Keyboard, Platform, StyleSheet, TextInput, View } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -121,7 +120,6 @@ export default class RichEditor extends Component {
     setTimeout(async () => {
       that.htmlLoaded = true;
       this.sendAction(actions.content, 'init');
-      await CookieManager.clearAll();
     }, 1000);
   }
 
@@ -152,6 +150,8 @@ export default class RichEditor extends Component {
       this.setPlaceholder(placeholder);
     }
     if (initialContentHTML !== prevProps.initialContentHTML) {
+      // Fix Android Weird Cookies behavior before updating HTML content
+      this.setCookie();
       this.setContentHTML(initialContentHTML);
       editorInitializedCallback();
       setTimeout(() => {
@@ -290,6 +290,7 @@ export default class RichEditor extends Component {
           break;
         case messages.IMAGES_URLS:
           that.imagesUrls = data.map(url => that._getAbsoluteUrl(url));
+          console.debug(`IMAGES URLS:\r\n${that.imagesUrls}`);
           break;
         case messages.LINKS_URLS:
           that.linksUrls = data.map(url => that._getAbsoluteUrl(url));
@@ -344,6 +345,8 @@ export default class RichEditor extends Component {
           useWebKit={false}
           scrollEnabled={false}
           hideKeyboardAccessoryView
+          sharedCookiesEnabled
+          thirdPartyCookiesEnabled
           keyboardDisplayRequiresUserAction={false}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
@@ -401,6 +404,10 @@ export default class RichEditor extends Component {
     this.sendAction(actions.content, 'setHtml', html);
   }
 
+  setCookie() {
+    this.sendAction(actions.content, 'setCookie', `oneSessionId=${this.props.oneSessionId?.value}`);
+  }
+
   setPlaceholder(placeholder) {
     this.sendAction(actions.content, 'setPlaceholder', placeholder);
   }
@@ -442,6 +449,8 @@ export default class RichEditor extends Component {
     // TODO: - https://edifice-community.atlassian.net/browse/MB-2404 => Use insertHTML
     // TODO: - https://edifice-community.atlassian.net/browse/MB-2360 => Use insertHTML
     // TODO: - https://edifice-community.atlassian.net/browse/MB-2363 => Use insertHTML
+    // Fix Android Weird Cookies behavior before inserting html
+    this.setCookie();
     this.sendAction(actions.insertHTML, 'result', html);
   }
 

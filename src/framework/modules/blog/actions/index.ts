@@ -15,6 +15,7 @@ import { blogService } from '~/framework/modules/blog/service';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+import { resourceHasRight } from '~/framework/util/resourceRights';
 
 /**
  * Fetch the details of a given blog post.
@@ -145,7 +146,7 @@ export const submitBlogPostAction =
  * Info: no reducer is used in this action.
  */
 export const editBlogPostAction =
-  (blog: Blog, postId: string, postTitle: string, postContent: string) =>
+  (blog: Blog, postId: string, postTitle: string, postContent: string, postState: string) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
     const blogId = blog.id;
@@ -155,7 +156,9 @@ export const editBlogPostAction =
     }
 
     await blogService.post.edit(session, blogId, postId, postTitle, postContent);
-    await blogService.post.submit(session, blogId, postId);
+    const hasPublishBlogPostRight = resourceHasRight(blog, publishBlogPostResourceRight, session);
+    if (!hasPublishBlogPostRight || postState === 'SUBMITTED') await blogService.post.submit(session, blogId, postId);
+    else await blogService.post.publish(session, blogId, postId);
   };
 
 /**

@@ -17,7 +17,7 @@ const base64Type = {
 const isIOS = Platform.OS === 'ios';
 const pfUrl = getSession()?.platform?.url || '';
 const playIconSize = getScaleWidth(40);
-const thumbnailSize = `${UI_SIZES.standardScreen.width}x0`;
+const thumbnailSize = Platform.OS === 'ios' ? `${UI_SIZES.standardScreen.width}x0` : '2600x0';
 
 let audioIcon = '';
 let attachmentIcon = '';
@@ -335,9 +335,9 @@ function createHTML(options = {}) {
                 selectionLocked = false;
                 saveSelection();
                 editor.settings.onChange();
-                Actions.GET_IMAGES_URLS();
-                Actions.GET_LINKS_URLS();
                 setTimeout(() => {
+                    Actions.GET_IMAGES_URLS();
+                    Actions.GET_LINKS_URLS();
                     Actions.UPDATE_HEIGHT();
                 }, ${ui.updateHeightTimeout});
             }
@@ -531,6 +531,12 @@ function createHTML(options = {}) {
             content: {
                 setDisable: function(dis){ this.blur(); editor.content.contentEditable = !dis},
                 setHtml: function(html) { editor.content.innerHTML = html; Actions.UPDATE_HEIGHT(); detectImageErrors(); },
+                setCookie: function(cookie) {
+                    if (cookie) {
+                        document.cookie=cookie;
+                        true;
+                    }
+                },
                 getHtml: function() { return editor.content.innerHTML; },
                 blur: function() {
                     editor.content.blur();
@@ -650,7 +656,7 @@ function createHTML(options = {}) {
                 var images = document.getElementsByTagName('img');
                 var imagesUrls = [];
                 for (var i = 0; i < images.length; i++) {
-                    const img = images[i];
+                    var img = images[i];
                     img.setAttribute('width', ${ui.image.width});
                     img.setAttribute('height', ${ui.image.height});
                     /*const uri = new URL(img.src);

@@ -1,17 +1,31 @@
 import * as React from 'react';
-import { FlatList, SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { TouchableOpacity as RNGHTouchableOpacity } from 'react-native-gesture-handler';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { Icon } from '~/framework/components/picture/Icon';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import { markViewAudience } from '~/framework/modules/core/audience';
 import { AudienceParameter } from '~/framework/modules/core/audience/types';
 
 import Attachment, { IRemoteAttachment } from './Attachment';
-import { BubbleStyle } from './BubbleStyle';
+
+const styles = StyleSheet.create({
+  container: {
+    padding: UI_SIZES.spacing.small,
+    backgroundColor: theme.palette.grey.fog,
+    borderRadius: UI_SIZES.radius.newCard,
+    borderWidth: UI_SIZES.elements.border.thin,
+    borderColor: theme.palette.grey.pearl,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: UI_SIZES.spacing.small,
+  },
+});
 
 export class AttachmentGroup extends React.PureComponent<
   {
@@ -39,42 +53,13 @@ export class AttachmentGroup extends React.PureComponent<
   }
 
   public render() {
-    const {
-      attachments,
-      editMode,
-      containerStyle,
-      isContainerHalfScreen,
-      attachmentsHeightHalfScreen,
-      onRemove,
-      onDownload,
-      onDownloadAll,
-      onError,
-      onOpen,
-    } = this.props;
+    const { attachments, editMode, containerStyle, onRemove, onDownload, onDownloadAll, onError, onOpen } = this.props;
     const { downloadAll } = this.state;
     return (
-      <TouchableOpacity activeOpacity={1} style={containerStyle}>
+      <TouchableOpacity activeOpacity={1} style={[styles.container, containerStyle]}>
         {editMode ? null : (
-          <BubbleStyle
-            style={{
-              flex: 1,
-              marginTop: 0,
-              marginBottom: 0,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}>
-            <View style={{ flexDirection: 'row' }}>
-              <SmallBoldText style={{ marginRight: UI_SIZES.spacing.tiny }}>
-                {I18n.get(`attachment-attachment${attachments.length > 1 ? 's' : ''}`)}
-              </SmallBoldText>
-              <Icon
-                color={theme.ui.text.regular}
-                size={16}
-                name="attached"
-                style={{ flex: 0, marginRight: UI_SIZES.spacing.minor, transform: [{ rotate: '270deg' }] }}
-              />
-            </View>
+          <View style={styles.header}>
+            <SmallBoldText>{I18n.get(`attachment-attachment${attachments.length > 1 ? 's' : ''}`)}</SmallBoldText>
             {attachments.length > 1 ? (
               <RNGHTouchableOpacity
                 onPress={() => {
@@ -82,14 +67,12 @@ export class AttachmentGroup extends React.PureComponent<
                   onDownloadAll && onDownloadAll();
                   if (this.props.referer) markViewAudience(this.props.referer);
                 }}>
-                <CaptionText style={{ color: theme.palette.complementary.blue.regular }}>
-                  {I18n.get('attachment-download-all')}
-                </CaptionText>
+                <CaptionText style={{ color: theme.palette.primary.regular }}>{I18n.get('attachment-download-all')}</CaptionText>
               </RNGHTouchableOpacity>
             ) : null}
-          </BubbleStyle>
+          </View>
         )}
-        <BubbleStyle
+        <View
           style={{
             flex: 0,
             paddingVertical: UI_SIZES.spacing.tiny / 2,
@@ -121,7 +104,7 @@ export class AttachmentGroup extends React.PureComponent<
               )}
             />
           </SafeAreaView>
-        </BubbleStyle>
+        </View>
       </TouchableOpacity>
     );
   }

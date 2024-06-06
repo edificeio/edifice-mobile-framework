@@ -9,7 +9,7 @@ export interface BlogEditPostScreenDataProps {
 }
 
 export interface BlogEditPostScreenEventProps {
-  handleEditBlogPost(blog: Blog, postId: string, title: string, content: string): Promise<string | undefined>;
+  handleEditBlogPost(blog: Blog, postId: string, title: string, content: string, postState: string): Promise<string | undefined>;
 }
 
 export interface BlogEditPostScreenNavParams {
@@ -17,6 +17,7 @@ export interface BlogEditPostScreenNavParams {
   title: string;
   content: string;
   postId: string;
+  postState: string;
 }
 
 export type BlogEditPostScreenProps = BlogEditPostScreenDataProps &

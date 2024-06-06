@@ -180,10 +180,15 @@ class Attachment extends React.PureComponent<
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            height: 30,
+            backgroundColor: theme.palette.grey.white,
+            paddingVertical: UI_SIZES.spacing.minor,
+            paddingHorizontal: UI_SIZES.spacing.small,
+            borderRadius: UI_SIZES.radius.mediumPlus,
+            borderWidth: UI_SIZES.elements.border.thin,
+            borderColor: theme.palette.grey.pearl,
           }}>
           <Pressable
-            style={{ flexDirection: 'row', flex: 1 }}
+            style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
             onPress={() => this.onPressAttachment(notifierId, this.props.navigation)}>
             <View>
               {downloadState === DownloadState.Downloading ? (
