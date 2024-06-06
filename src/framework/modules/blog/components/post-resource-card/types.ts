@@ -21,4 +21,5 @@ export interface BlogPostResourceCardProps {
     };
   };
   session: AuthActiveAccount;
+  blogVisibility: string;
 }

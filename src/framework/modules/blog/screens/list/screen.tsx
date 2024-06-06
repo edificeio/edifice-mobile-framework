@@ -68,6 +68,7 @@ const BlogPostListItem = ({ blog, post, session }: { blog: Blog; post: BlogPostW
       resourceId={post._id}
       audience={post.audience}
       session={session}
+      blogVisibility={blog.visibility}
     />
   );
 };

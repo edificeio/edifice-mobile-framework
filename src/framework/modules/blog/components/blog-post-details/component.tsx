@@ -54,7 +54,7 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
         <HeadingSText>{post.title}</HeadingSText>
         {richContent}
       </View>
-      {post.state === 'PUBLISHED' ? (
+      {post.state === 'PUBLISHED' && blog.visibility !== 'PUBLIC' ? (
         <Audience
           containerStyle={styles.footer}
           nbComments={post.comments?.length}

@@ -25,6 +25,7 @@ export const BlogPostResourceCard = React.memo(
     resourceId,
     audience,
     session,
+    blogVisibility,
   }: BlogPostResourceCardProps) => {
     const authorTextMaxLines = 1;
     const contentTextMaxLines = 5;
@@ -59,7 +60,7 @@ export const BlogPostResourceCard = React.memo(
             </>
           }
           footer={
-            state !== 'SUBMITTED' ? (
+            state !== 'SUBMITTED' && blogVisibility !== 'PUBLIC' ? (
               <Audience
                 nbComments={comments}
                 nbViews={audience?.views}
