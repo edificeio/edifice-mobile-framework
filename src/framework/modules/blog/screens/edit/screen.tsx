@@ -118,7 +118,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
     onChange => (
       <MultilineTextInput
         style={styles.inputTitle}
-        placeholder={I18n.get('blog-createpost-post-title-placeholder')}
+        placeholder={I18n.get('blog-editpost-inputtitle')}
         numberOfLines={1}
         onChangeText={text => {
           setTitle(text);
