@@ -101,6 +101,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
                     title.trim().length === 0 ||
                     decode(content)
                       .replace(/<\/?div>/g, '')
+                      .replace(/<br\s*\/?>/g, '')
                       .trim().length === 0
                   }
                 />

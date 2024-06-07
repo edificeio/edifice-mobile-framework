@@ -133,6 +133,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
                     title.trim().length === 0 ||
                     decode(content)
                       .replace(/<\/?div>/g, '')
+                      .replace(/<br\s*\/?>/g, '')
                       .trim().length === 0
                   }
                   onPress={doSend}
