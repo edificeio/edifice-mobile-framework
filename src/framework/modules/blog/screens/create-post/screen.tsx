@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { decode } from 'html-entities';
 import * as React from 'react';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
@@ -127,17 +126,7 @@ const BlogCreatePostScreen = (props: BlogCreatePostScreenProps) => {
               ...(loadingState ? (
                 <LoadingIndicator small customColor={theme.ui.text.inverse} />
               ) : (
-                <NavBarAction
-                  icon="ui-send"
-                  disabled={
-                    title.trim().length === 0 ||
-                    decode(content)
-                      .replace(/<\/?div>/g, '')
-                      .replace(/<br\s*\/?>/g, '')
-                      .trim().length === 0
-                  }
-                  onPress={doSend}
-                />
+                <NavBarAction icon="ui-send" disabled={title.trim().length === 0 || content.trim().length === 0} onPress={doSend} />
               )),
             },
           ]}
