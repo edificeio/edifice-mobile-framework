@@ -58,5 +58,4 @@ export interface BlogPostDetailsScreenState {
   errorState: boolean;
   isCommentFieldFocused: boolean;
   infoComment: InfoCommentField;
-  richContentReady: boolean;
 }
