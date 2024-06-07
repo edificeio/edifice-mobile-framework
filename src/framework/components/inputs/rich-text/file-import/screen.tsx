@@ -180,6 +180,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     const file = files[index];
     file.status = UploadStatus.PENDING;
     setFiles([...files]);
+    uploadFile({ file, index });
   };
 
   const fileStatusIcon = (index: number, status: UploadStatus) => {
