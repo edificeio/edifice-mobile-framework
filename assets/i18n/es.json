@@ -217,6 +217,7 @@
   "blog-createpost-uploadattachments-error-text": "Error al enviar archivos adjuntos: compruebe el acceso a Internet y que haya suficiente espacio libre en su espacio documental",
   "blog-editpost-edit-errortext": "Error al editar",
   "blog-editpost-edit-success": "El ticket ha sido modificado.",
+  "blog-editpost-inputitle": "Título de la entrada",
   "blog-editpost-title": "Cambiar billete",
   "blog-explorer-emptyscreen-button": "Crear un blog en la web",
   "blog-explorer-emptyscreen-text": "¡Póngase la gorra del pequeño reportero para crear el primer blog! ",

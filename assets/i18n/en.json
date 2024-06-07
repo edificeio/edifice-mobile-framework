@@ -217,6 +217,7 @@
   "blog-createpost-uploadattachments-error-text": "Attachment upload error: Check that you are connected to the Internet and that your Filespace has enough free storage space",
   "blog-editpost-edit-errortext": "Error while editing",
   "blog-editpost-edit-success": "The post has been modified.",
+  "blog-editpost-inputitle": "Post title",
   "blog-editpost-title": "Edit post",
   "blog-explorer-emptyscreen-button": "Create a blog online",
   "blog-explorer-emptyscreen-text": "Put on your reporter hat and write your first blog!",
