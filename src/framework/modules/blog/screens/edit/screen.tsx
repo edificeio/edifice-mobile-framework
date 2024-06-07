@@ -64,8 +64,10 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       const htmlContent = content.replace(/\n/g, '<br>').trim();
       // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
       await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent, postState);
-      navigation.goBack();
-      Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
+      setTimeout(() => {
+        navigation.goBack();
+        Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
+      });
     } catch {
       Toast.showError(I18n.get('blog-editpost-edit-errortext'));
     }
@@ -79,7 +81,9 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       await doEditPost();
     } finally {
       setLoadingState(false);
-      setSaving(false);
+      setTimeout(() => {
+        setSaving(false);
+      });
     }
   };
 
