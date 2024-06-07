@@ -260,7 +260,7 @@
   "camera-permissionblocked-title": "Accesso alla telecamera negato",
   "cameraaction-take": "Scattare una foto",
   "carnetdebord": "Diario di bordo Pronote",
-  "carousel-counter": "{{attuale}} / {{totale}}",
+  "carousel-counter": "{{current}} / {{total}}",
   "carousel-imagenotfound": "Immagine inaccessibile o non trovata.",
   "carousel-privacy-button": "Ho capito",
   "carousel-privacy-text": "In conformità con l'informativa sui dati personali accettata, questi contenuti devono essere utilizzati per uso strettamente personale.",
