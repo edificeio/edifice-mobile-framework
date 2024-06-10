@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-06-07 21:27:09",
-  "notes": "Updated translations from Phrase (#149)\nfix(i18n): add italian to Phrase configuration file\nUpdated translations from Phrase (#148)\nfix(i18n): Wrong italian translation\nUpdated translations from Phrase (#146)\nfix(editor): move setSaving to fix release build problem\nfix(blog): unused state value removal\nfix(blog): MB-2770 , fix edit title on blog post\nfix(file-import): MB-2771 , fix infinity loader when retry upload\nfeat(file-import): MB-2755 , change file name when import\nfix(blog): MB-2741 remove condition to post or edit blog post with no content\nfix(blog): use right i18n key\nUpdated translations from Phrase (#145)\nfix(editor): MB-2773, fix some italian translations\nfix(attachments): MB-2768 , fix position icon attachment in editor\nfix(blog): MB-2741 , fix can create or save post just with line break\nrelease: 1.13.0-rc.4(1130017)",
-  "version": "1.13.0-rc.5(1130018)"
+  "last": "2024-06-10 12:40:25",
+  "notes": "fix(Editor): MB-2773, modify translations && i18n key\nUpdated translations from Phrase (#150)\ni18n: add italian && review i18n CLI\nrelease: 1.13.0-rc.5(1130018)",
+  "version": "1.13.0-rc.6(1130019)"
 }
