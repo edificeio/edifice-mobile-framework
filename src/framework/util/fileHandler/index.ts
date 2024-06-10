@@ -34,7 +34,7 @@ namespace LocalFile {
 
 export const IMAGE_MAX_DIMENSION = 1440;
 
-const compress = async pic => {
+const compress = async (pic, index) => {
   if (!pic.uri) return;
   if (pic.type === 'image/gif') return pic;
   try {
@@ -56,7 +56,7 @@ const compress = async pic => {
     )
       .then(response => {
         result = {
-          fileName: moment().format('YYYYMMDD-HHmmssSS'),
+          fileName: `${moment().format('YYYYMMDD-HHmmss')}${index > 0 ? `-${index}` : ''}`,
           fileSize: response.size,
           height: response.height,
           type: 'image/jpg',
@@ -154,7 +154,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            pickedFiles = await Promise.all(res.assets.map(compress));
+            pickedFiles = await Promise.all(res.assets.map((asset, index) => compress(asset, index)));
             resolve();
           }
         };

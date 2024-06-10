@@ -1,5 +1,4 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { decode } from 'html-entities';
 import * as React from 'react';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
@@ -61,12 +60,15 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
       if (!blogPostRight) {
         throw new Error('[doEditPost] user has no post rights for this blog');
       }
+      setSaving(true);
       // Translate entered content to httml
       const htmlContent = content.replace(/\n/g, '<br>').trim();
       // console.debug(`SAVED HTML CONTENT:\r\n${htmlContent}`);
       await handleEditBlogPost(blog, props.route.params.postId, title.trim(), htmlContent, postState);
-      navigation.goBack();
-      Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
+      setTimeout(() => {
+        navigation.goBack();
+        Toast.showSuccess(I18n.get('blog-editpost-edit-success'));
+      });
     } catch {
       Toast.showError(I18n.get('blog-editpost-edit-errortext'));
     }
@@ -95,16 +97,7 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
               ...(loadingState ? (
                 <LoadingIndicator small customColor={theme.ui.text.inverse} />
               ) : (
-                <NavBarAction
-                  icon="ui-save"
-                  onPress={doEdit}
-                  disabled={
-                    title.trim().length === 0 ||
-                    decode(content)
-                      .replace(/<\/?div>/g, '')
-                      .trim().length === 0
-                  }
-                />
+                <NavBarAction icon="ui-save" onPress={doEdit} disabled={title.trim().length === 0 || content.trim().length === 0} />
               )),
             },
           ]}

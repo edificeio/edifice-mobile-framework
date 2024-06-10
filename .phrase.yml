@@ -14,6 +14,9 @@ phrase:
       - file: ./assets/i18n/es.json
         params:
           locale_id: 80f576935a8cb9630a4a8bd0f2c4c122
+      - file: ./assets/i18n/it.json
+        params:
+          locale_id: f314cbcc1eb240bf4620f7c3e88a531e
     update_translations: true
 
   pull:
@@ -27,3 +30,6 @@ phrase:
       - file: ./assets/i18n/es.json
         params:
           locale_id: 80f576935a8cb9630a4a8bd0f2c4c122
+      - file: ./assets/i18n/it.json
+        params:
+          locale_id: f314cbcc1eb240bf4620f7c3e88a531e

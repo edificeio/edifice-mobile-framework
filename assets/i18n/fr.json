@@ -227,6 +227,7 @@
   "blog-createpost-uploadattachments-error-text": "Erreur d'envoi des pièces jointes : verifiez votre accès à internet et que votre espace documentaire dispose d'assez d'espace libre",
   "blog-editpost-edit-errortext": "Erreur lors de la modification",
   "blog-editpost-edit-success": "Le billet a bien été modifié.",
+  "blog-editpost-inputitle": "Titre du billet",
   "blog-editpost-title": "Modifier le billet",
   "blog-explorer-emptyscreen-button": "Créer un blog sur le web",
   "blog-explorer-emptyscreen-text": "Endossez la casquette du petit reporter en créant votre premier blog !",
