@@ -9,7 +9,6 @@
 //
 
 // As this is a cli tool, we disable some rules
-
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 
@@ -42,26 +41,6 @@ const getKeysDifference = (object1, object2) => {
 };
 
 /**
- * Check if two objects are equal.
- * @param object1 base object
- * @param object2 compared object
- */
-// from https://dmitripavlutin.com/how-to-compare-objects-in-javascript
-const shallowEqual = (object1, object2) => {
-  const keys1 = Object.keys(object1);
-  const keys2 = Object.keys(object2);
-  if (keys1.length !== keys2.length) {
-    return false;
-  }
-  for (const key of keys1) {
-    if (object1[key] !== object2[key]) {
-      return false;
-    }
-  }
-  return true;
-};
-
-/**
  * Get path of local translations JSON file (based on language).
  * @param language language of local translations JSON file
  */
@@ -77,50 +56,41 @@ const getLocalFile = language => {
  * -a reminder to manually verify & update the "mobileapp-config" repository
  */
 const getTranslationActions = () => {
-  console.info('==> Will display translation actions');
-
-  //
   // Read local translations files
-  //
-
   let localFrContent = null;
   let localEnContent = null;
   let localEsContent = null;
-
+  let localItContent = null;
   try {
     localFrContent = JSON.parse(fs.readFileSync(getLocalFile('fr'), 'utf-8'));
     localEnContent = JSON.parse(fs.readFileSync(getLocalFile('en'), 'utf-8'));
     localEsContent = JSON.parse(fs.readFileSync(getLocalFile('es'), 'utf-8'));
+    localItContent = JSON.parse(fs.readFileSync(getLocalFile('it'), 'utf-8'));
   } catch (error) {
-    console.error('!!! Unable to read fr.json, en.json or es.json !!!');
+    console.error('!!! Unable to read fr.json, en.json, es.json or it.json !!!');
+    console.error(error);
     process.exit(2);
   }
 
   //
   // Display translation actions
   //
-
   const displayObject = object => (isObjectEmpty(object) ? '✅' : object);
   const frEnDiff = getKeysDifference(localFrContent, localEnContent);
   const frEsDiff = getKeysDifference(localFrContent, localEsContent);
-  const areTranslateValuesEqual = shallowEqual(frEnDiff.extraKeysObject1, frEsDiff.extraKeysObject1);
-  const areDeleteValuesEqual = shallowEqual(frEnDiff.extraKeysObject2, frEsDiff.extraKeysObject2);
-  const translationActions = {
-    translate: areTranslateValuesEqual
-      ? displayObject(frEnDiff.extraKeysObject1)
-      : {
-          english: displayObject(frEnDiff.extraKeysObject1),
-          spanish: displayObject(frEsDiff.extraKeysObject1),
-        },
-    delete: areDeleteValuesEqual
-      ? displayObject(frEnDiff.extraKeysObject2)
-      : {
-          english: displayObject(frEnDiff.extraKeysObject2),
-          spanish: displayObject(frEsDiff.extraKeysObject2),
-        },
-    mobileappConfigRepository: '🔎 Verify & update manually',
-  };
-  console.log(translationActions);
+  const frItDiff = getKeysDifference(localFrContent, localItContent);
+  console.info({
+    translate: {
+      english: displayObject(frEnDiff.extraKeysObject1),
+      spanish: displayObject(frEsDiff.extraKeysObject1),
+      italian: displayObject(frItDiff.extraKeysObject1),
+    },
+    delete: {
+      english: displayObject(frEnDiff.extraKeysObject2),
+      spanish: displayObject(frEsDiff.extraKeysObject2),
+      italian: displayObject(frItDiff.extraKeysObject2),
+    },
+  });
 };
 
 /**
@@ -128,20 +98,19 @@ const getTranslationActions = () => {
  */
 const getUnusedKeys = () => {
   try {
-    console.info('==> Unused keys:');
     const keys = Object.keys(JSON.parse(fs.readFileSync(getLocalFile('fr'), 'utf-8')));
     let unused = 0;
     keys.forEach(key => {
       const result = execSync(`grep --recursive "${key}" ./src | wc -l`).toString().trim();
       if (result === '0') {
         unused++;
-        console.log(key);
+        console.info(key);
       }
     });
     console.info(`==> Unused : ${unused} / ${keys.length}`);
   } catch (error) {
     console.error(`!!! Unable display unused keys !!!`);
-    console.log(error);
+    console.error(error);
     process.exit(11);
   }
 };
@@ -149,9 +118,7 @@ const getUnusedKeys = () => {
 //
 // Launch translations process
 //
-
 const actionType = process.argv.slice(2)[0];
-
 switch (actionType) {
   case 'diff':
     // Process diff
