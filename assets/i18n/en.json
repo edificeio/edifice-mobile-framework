@@ -29,7 +29,7 @@
   "auth-activation-activate": "Activate account",
   "auth-activation-cgu": "Terms of Service",
   "auth-activation-cgu-accept": "I accept the ",
-  "auth-activation-cgu-accept-and": "and the",
+  "auth-activation-cgu-accept-and": " and the",
   "auth-activation-email": "Email",
   "auth-activation-errorsubmit": "Network errors.",
   "auth-activation-login": "Username",
