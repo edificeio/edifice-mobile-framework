@@ -364,6 +364,7 @@ export default class RichEditor extends Component {
           onLoad={that.init}
           onShouldStartLoadWithRequest={() => !that.htmlLoaded}
           setSupportMultipleWindows={false}
+          webviewDebuggingEnabled={__DEV__}
         />
         {Platform.OS === 'android' && <TextInput ref={ref => (that._input = ref)} style={styles._input} />}
       </>
