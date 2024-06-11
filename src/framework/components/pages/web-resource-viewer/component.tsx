@@ -144,6 +144,7 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
         source={sourceObject}
         startInLoadingState
         style={styles.webview}
+        webviewDebuggingEnabled={__DEV__}
         onError={onError}
         onHttpError={onError}
         onLoad={onLoad}

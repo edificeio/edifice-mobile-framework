@@ -192,11 +192,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest.bind(this)}
           renderLoading={() => <Loading />}
           scalesPageToFit
+          setSupportMultipleWindows={false}
           showsHorizontalScrollIndicator={false}
           source={{ uri: this.wayfUrl!, headers: { 'X-APP': 'mobile' } }}
-          setSupportMultipleWindows={false}
           startInLoadingState
           style={styles.webview}
+          webviewDebuggingEnabled={__DEV__}
         />
       );
     },
