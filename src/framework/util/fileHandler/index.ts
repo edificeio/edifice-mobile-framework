@@ -21,13 +21,14 @@ import { assertPermissions } from '~/framework/util/permissions';
 
 import { openDocument } from './actions';
 
+export interface IPickOptions {
+  source: 'documents' | 'galery' | 'camera';
+  multiple?: boolean; // Useless for source = 'camera'
+  type?: LocalFile.IPickOptionsType | LocalFile.IPickOptionsType[];
+}
+
 namespace LocalFile {
   export type IPickOptionsType = 'image' | 'audio' | 'video';
-  export interface IPickOptions {
-    source: 'documents' | 'galery' | 'camera';
-    multiple?: boolean; // Useless for source = 'camera'
-    type?: IPickOptionsType | IPickOptionsType[];
-  }
 
   export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
@@ -98,7 +99,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
    * Pick a file from the user's device storage.
    */
   static async pick(
-    opts: LocalFile.IPickOptions,
+    opts: IPickOptions,
     cameraOptions?: Omit<CameraOptions, 'mediaType'>,
     galeryOptions?: Omit<ImageLibraryOptions, 'mediaType'>,
   ) {
