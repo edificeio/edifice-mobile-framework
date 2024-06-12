@@ -80,7 +80,7 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       );
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, ui.updateHeightTimeout);
+      }, ui.addImageTimeout);
     } else {
       richText.current?.insertHTML('<br>');
       richText.current?.finalizeInsertion();

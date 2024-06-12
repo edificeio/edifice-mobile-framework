@@ -78,6 +78,7 @@ export const messages = {
 };
 
 export const ui = {
+  addImageTimeout: 100,
   image: {
     class: 'custom-image',
     height: 'NaN',
