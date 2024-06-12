@@ -68,18 +68,6 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
   // Add files results bottom sheet management
   //
 
-  // const addFilesResultsRef = React.useRef<BottomSheetModalMethods>(null);
-
-  // const handleAddFilesResultsDismissed = async () => {
-  //   // TODO V1: Show confirmation box
-  //   workspaceService.files.trash(
-  //     session,
-  //     addedFiles.map(f => f.workspaceID!),
-  //   );
-  //   resetFiles();
-  //   focusRichText();
-  // };
-
   const hideAddFilesResults = React.useCallback(() => {
     focusRichText();
   }, []);
@@ -92,8 +80,12 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       );
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, ui.updateHeightTimeout * 2);
-    } else richText.current?.insertHTML('<br>');
+      }, ui.updateHeightTimeout);
+    } else {
+      richText.current?.insertHTML('<br>');
+      richText.current?.finalizeInsertion();
+      richText?.current?.unlockContentEditor();
+    }
   }, []);
 
   const addFiles = React.useCallback(

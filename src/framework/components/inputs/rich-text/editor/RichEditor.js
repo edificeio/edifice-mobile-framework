@@ -433,6 +433,10 @@ export default class RichEditor extends Component {
     this.sendAction(actions.content, 'lock');
   }
 
+  unlockContentEditor() {
+    this.sendAction(actions.content, 'unlock');
+  }
+
   showAndroidKeyboard() {
     const that = this;
     if (Platform.OS === 'android') {
@@ -452,6 +456,10 @@ export default class RichEditor extends Component {
     // Fix Android Weird Cookies behavior before inserting html
     this.setCookie();
     this.sendAction(actions.insertHTML, 'result', html);
+  }
+
+  finalizeInsertion() {
+    this.sendAction(actions.content, 'finalize');
   }
 
   injectJavascript(script) {
