@@ -35,53 +35,11 @@ namespace LocalFile {
 export const IMAGE_MAX_DIMENSION = 1440;
 export const IMAGE_MAX_QUALITY: PhotoQuality = 0.8;
 
-const imagePickerOptions = {
+const compressionOptions = {
   maxHeight: IMAGE_MAX_DIMENSION,
   maxWidth: IMAGE_MAX_DIMENSION,
-  presentationStyle: 'pageSheet',
   quality: IMAGE_MAX_QUALITY,
-  selectionLimit: 0,
 };
-
-/*const compress = async (pic, index) => {
-  if (!pic.uri) return;
-  if (pic.type === 'image/gif') return pic;
-  try {
-    let result;
-    const maxCompression = 80;
-    await ImageResizer.createResizedImage(
-      pic.uri,
-      IMAGE_MAX_DIMENSION,
-      IMAGE_MAX_DIMENSION,
-      'JPEG',
-      maxCompression,
-      0,
-      undefined,
-      false,
-      {
-        mode: 'contain',
-        onlyScaleDown: true,
-      },
-    )
-      .then(response => {
-        result = {
-          fileName: `${moment().format('YYYYMMDD-HHmmss')}${index > 0 ? `-${index}` : ''}`,
-          fileSize: response.size,
-          height: response.height,
-          type: 'image/jpg',
-          uri: response.uri,
-          width: response.width,
-        };
-      })
-      .catch(err => {
-        console.error(err);
-      });
-    return result;
-  } catch (error) {
-    console.error(error, 'Unable to resize the photo');
-    return undefined;
-  }
-};*/
 
 export function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -94,6 +52,15 @@ export function formatBytes(bytes, decimals = 2) {
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+const renameAssets = (assets: Asset[]) => {
+  const prefix = moment().format('YYYYMMDD-HHmmss');
+  const renamedAssets = assets.map((asset, index) => ({
+    ...asset,
+    fileName: `${prefix}${index > 0 ? `-${index}` : ''}`,
+  }));
+  return renamedAssets;
+};
 
 /**
  * Represent a file that exists on the user's device.
@@ -163,34 +130,20 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            const prefix = moment().format('YYYYMMDD-HHmmss');
-            // TODO: ADD FILES RENAMING HERE
-            // TODO: USE PREFIX ABOVE INSTEAD OF CALLING MOMENT fOR EACH FILE
-            //  => fileName: `$prefix}${index > 0 ? `-${index}` : ''}`,
-            // TODO: REMOVE COMMENTED "compress" AT TOP OF FILE
-            pickedFiles = res.assets;
+            pickedFiles = renameAssets(res.assets);
             resolve();
           }
         };
-        if (opts.multiple) {
-          launchImageLibrary(
-            {
-              mediaType: LocalFile._getImagePickerTypeArg(opts.type),
-              ...imagePickerOptions,
-              ...galeryOptions,
-            },
-            callback,
-          );
-        } else {
-          launchImageLibrary(
-            {
-              mediaType: LocalFile._getImagePickerTypeArg(opts.type),
-              ...imagePickerOptions,
-              ...galeryOptions,
-            },
-            callback,
-          );
-        }
+        launchImageLibrary(
+          {
+            mediaType: LocalFile._getImagePickerTypeArg(opts.type),
+            selectionLimit: opts.multiple ? 0 : 1,
+            presentationStyle: 'pageSheet',
+            ...compressionOptions,
+            ...galeryOptions,
+          },
+          callback,
+        );
       });
     } /* if (opts.source === 'camera') */ else {
       await assertPermissions('camera');
@@ -199,7 +152,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            pickedFiles.push(await compress(res.assets[0]));
+            pickedFiles = renameAssets(res.assets);
             resolve();
           }
         };
@@ -208,6 +161,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             mediaType: LocalFile._getImagePickerTypeArg(opts.type),
             presentationStyle: 'fullScreen',
             saveToPhotos: false,
+            ...compressionOptions,
             ...cameraOptions,
           },
           callback,
