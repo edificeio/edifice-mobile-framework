@@ -108,13 +108,10 @@ const WebviewResourceViewer = (props: WebResourceViewerPrivateProps & Required<W
   const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = React.useCallback(
     request => {
       if (firstLoadRef.current) return true;
-
       const reqUrl = request.url;
-      if (!reqUrl.startsWith(platform.url)) {
-        openUrl(reqUrl);
-        return false;
-      }
+
       if (
+        !reqUrl.startsWith(platform.url) &&
         !reqUrl.includes('embed') &&
         !reqUrl.includes('imasdk.googleapis.com') &&
         !reqUrl.includes('player.vimeo.com') &&
