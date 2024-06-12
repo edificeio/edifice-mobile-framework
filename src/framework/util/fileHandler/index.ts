@@ -1,7 +1,6 @@
 /**
  * File Manager
  */
-import ImageResizer from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Platform } from 'react-native';
@@ -13,6 +12,7 @@ import {
   ImageLibraryOptions,
   ImagePickerResponse,
   MediaType,
+  PhotoQuality,
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
@@ -33,8 +33,17 @@ namespace LocalFile {
 }
 
 export const IMAGE_MAX_DIMENSION = 1440;
+export const IMAGE_MAX_QUALITY: PhotoQuality = 0.8;
 
-const compress = async (pic, index) => {
+const imagePickerOptions = {
+  maxHeight: IMAGE_MAX_DIMENSION,
+  maxWidth: IMAGE_MAX_DIMENSION,
+  presentationStyle: 'pageSheet',
+  quality: IMAGE_MAX_QUALITY,
+  selectionLimit: 0,
+};
+
+/*const compress = async (pic, index) => {
   if (!pic.uri) return;
   if (pic.type === 'image/gif') return pic;
   try {
@@ -72,7 +81,7 @@ const compress = async (pic, index) => {
     console.error(error, 'Unable to resize the photo');
     return undefined;
   }
-};
+};*/
 
 export function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -154,7 +163,12 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
         const callback = async (res: ImagePickerResponse) => {
           if (!res.assets || res.didCancel || res.errorCode) reject(res);
           else {
-            pickedFiles = await Promise.all(res.assets.map((asset, index) => compress(asset, index)));
+            const prefix = moment().format('YYYYMMDD-HHmmss');
+            // TODO: ADD FILES RENAMING HERE
+            // TODO: USE PREFIX ABOVE INSTEAD OF CALLING MOMENT fOR EACH FILE
+            //  => fileName: `$prefix}${index > 0 ? `-${index}` : ''}`,
+            // TODO: REMOVE COMMENTED "compress" AT TOP OF FILE
+            pickedFiles = res.assets;
             resolve();
           }
         };
@@ -162,8 +176,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           launchImageLibrary(
             {
               mediaType: LocalFile._getImagePickerTypeArg(opts.type),
-              presentationStyle: 'fullScreen',
-              selectionLimit: 0,
+              ...imagePickerOptions,
               ...galeryOptions,
             },
             callback,
@@ -172,7 +185,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           launchImageLibrary(
             {
               mediaType: LocalFile._getImagePickerTypeArg(opts.type),
-              presentationStyle: 'fullScreen',
+              ...imagePickerOptions,
               ...galeryOptions,
             },
             callback,
