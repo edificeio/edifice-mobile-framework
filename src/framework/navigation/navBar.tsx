@@ -13,7 +13,7 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { BodyBoldText, TextFontStyle } from '~/framework/components/text';
 import { AuthNavigationParams } from '~/framework/modules/auth/navigation';
 
-import { isModalModeOnThisRoute } from './hideTabBarAndroid';
+import { addCrossIconBlackOnThisRoute, isModalModeOnThisRoute } from './hideTabBarAndroid';
 
 const styles = StyleSheet.create({
   navBarTitleStyle: {
@@ -63,7 +63,15 @@ export const navBarOptions: (props: {
       if (navigation.canGoBack() && navState.routes.length > 1 && navState.routes.findIndex(r => r.key === route.key) > 0) {
         // On modals, we want to use a close button instead of a back button
         if (isModalModeOnThisRoute(route.name)) {
-          return <NavBarAction {...props} onPress={navigation.goBack} icon="ui-close" testID={backButtonTestID} />;
+          return (
+            <NavBarAction
+              {...props}
+              {...(addCrossIconBlackOnThisRoute(route.name) ? { color: theme.palette.grey.darkness } : {})}
+              onPress={navigation.goBack}
+              icon="ui-close"
+              testID={backButtonTestID}
+            />
+          );
         } else {
           return (
             <HeaderBackButton

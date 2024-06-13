@@ -13,7 +13,7 @@ import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { CaptionBoldText, HeadingXSText, SmallText } from '~/framework/components/text';
+import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
@@ -348,12 +348,6 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
               />
             </View>
           )}
-          ListHeaderComponent={
-            <HeadingXSText style={styles.addFilesResultsTitle}>
-              {filesRef.current.length}{' '}
-              {I18n.get(`richeditor-showfilesresult-${filesRef.current.length > 1 ? 'multiple' : 'single'}title`)}
-            </HeadingXSText>
-          }
         />
       )}
     </PageView>

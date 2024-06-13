@@ -5,7 +5,7 @@ import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
-import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
+import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
@@ -42,3 +42,5 @@ setModalModeForRoutes([
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.FileImport,
 ]);
+
+setCrossIconBlackForRoutes([ModalsRouteNames.FileImport]);
