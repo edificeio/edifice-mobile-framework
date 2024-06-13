@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: UI_SIZES.spacing.small,
     alignItems: 'center',
-    marginBottom: UI_SIZES.spacing.small,
+    marginBottom: UI_SIZES.spacing.minor,
   },
   statsItem: {
     flexDirection: 'row',

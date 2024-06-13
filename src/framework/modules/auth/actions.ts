@@ -480,6 +480,9 @@ const performLogin = async (
   // Launch oneSessionId fetch to prevent errors in rich-content. This is non-preventing in case of fails, so no await !
   OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
 
+  // GET the audience valid reaction types for the platform
+  await dispatch(loadValidReactionTypesAction());
+
   return accountInfo;
 };
 

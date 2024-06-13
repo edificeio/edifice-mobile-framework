@@ -9,6 +9,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: UI_SIZES.spacing.minor,
   },
+  flex1: {
+    flex: 1,
+  },
   reactions: {
     borderColor: theme.palette.grey.cloudy,
     borderWidth: UI_SIZES.border.thin,
@@ -18,8 +21,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: UI_SIZES.spacing.big,
     position: 'absolute',
-    top: '-50%',
     backgroundColor: theme.palette.grey.white,
+    shadowColor: theme.ui.shadowColor,
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    elevation: 16,
   },
 });
 

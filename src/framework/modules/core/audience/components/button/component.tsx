@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { Animated, TouchableOpacity } from 'react-native';
+import { Animated, Modal, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
+import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
 import Feedback from '~/framework/util/feedback/feedback';
@@ -12,9 +13,16 @@ import Feedback from '~/framework/util/feedback/feedback';
 import styles from './styles';
 import { AudienceReactButtonAllProps } from './types';
 
+const REACTION_ICON_SIZE = 30;
+const HEIGHT_VIEW_REACTIONS = REACTION_ICON_SIZE + UI_SIZES.spacing.medium * 2;
+
 const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const { userReaction } = props;
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [offsetY, setOffsetY] = React.useState(0);
+  const [offsetX, setOffsetX] = React.useState(0);
+
+  let component = React.useRef(null);
 
   const opacityBlocReactions = React.useRef(new Animated.Value(0)).current;
   const animationReactions = props.validReactionTypes.reduce((acc, reaction) => {
@@ -53,6 +61,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   };
 
   const hideReactions = () => {
+    Feedback.actionDone();
     props.validReactionTypes.forEach((reaction, index) => {
       Animated.parallel([
         Animated.timing(animationReactions[reaction].transform, {
@@ -80,18 +89,24 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   };
 
   const openReactions = () => {
+    component.measure((fx, fy, width, height, px, py) => {
+      setOffsetY(UI_SIZES.elements.navbarHeight + HEIGHT_VIEW_REACTIONS < py ? py - HEIGHT_VIEW_REACTIONS - 10 : py + height + 10);
+      setOffsetX(px);
+    });
     Feedback.actionDone();
     if (!isOpen) showReactions();
     else hideReactions();
   };
 
   const deleteReaction = () => {
+    Feedback.actionDone();
     props.deleteReaction();
 
     if (isOpen) hideReactions();
   };
 
   const postReaction = (reaction: string) => {
+    Feedback.actionDone();
     if (userReaction) props.postReaction(reaction);
     else props.updateReaction(reaction);
 
@@ -108,7 +123,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
           style={styles.button}
           action={deleteReaction}
           onLongPress={openReactions}
-          delayLongPress={150}
+          delayLongPress={100}
         />
       );
     } else
@@ -120,33 +135,35 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
           style={styles.button}
           action={openReactions}
           onLongPress={openReactions}
-          delayLongPress={150}
+          delayLongPress={0}
         />
       );
   };
   return (
-    <>
-      {isOpen && (
-        <Animated.View style={[styles.reactions, { opacity: opacityBlocReactions }]}>
-          {props.validReactionTypes.map(reaction => (
-            <Animated.View
-              key={reaction}
-              style={{
-                transform: [{ translateY: animationReactions[reaction].transform }],
-                opacity: animationReactions[reaction].opacity,
-              }}>
-              <TouchableOpacity onPress={() => postReaction(reaction)}>
-                <NamedSVG name={reaction.toLowerCase()} width={30} height={30} />
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </Animated.View>
-      )}
+    <View ref={view => (component = view)}>
+      <Modal transparent animationType="fade" visible={isOpen} onRequestClose={hideReactions}>
+        <TouchableOpacity style={styles.flex1} activeOpacity={1} onPress={hideReactions}>
+          <Animated.View style={[styles.reactions, { opacity: opacityBlocReactions, left: offsetX, top: offsetY }]}>
+            {props.validReactionTypes.map(reaction => (
+              <Animated.View
+                key={reaction}
+                style={{
+                  transform: [{ translateY: animationReactions[reaction].transform }],
+                  opacity: animationReactions[reaction].opacity,
+                }}>
+                <TouchableOpacity onPress={() => postReaction(reaction)}>
+                  <NamedSVG name={reaction.toLowerCase()} width={REACTION_ICON_SIZE} height={REACTION_ICON_SIZE} />
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+          </Animated.View>
+        </TouchableOpacity>
+      </Modal>
       {renderReactButton()}
-    </>
+    </View>
   );
 };
 
-export default connect(state => ({
+export default connect(() => ({
   validReactionTypes: getValidReactionTypes(),
 }))(AudienceReactButton);

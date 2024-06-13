@@ -8,9 +8,9 @@ enum FeedbackType {
 }
 
 const HapticFeebackType = {
-  ACTION_DONE: Platform.select({ ios: 'soft', default: 'keyboardTap' }),
-  ERROR_DISPLAYED: Platform.select({ ios: 'notificationError', default: 'notificationError' }),
-  TAB_PRESSED: Platform.select({ ios: 'soft', default: 'keyboardTap' }),
+  [FeedbackType.ACTION_DONE]: Platform.select({ ios: 'impactHeavy', default: 'impactHeavy' }),
+  [FeedbackType.ERROR_DISPLAYED]: Platform.select({ ios: 'notificationError', default: 'notificationError' }),
+  [FeedbackType.TAB_PRESSED]: Platform.select({ ios: 'soft', default: 'keyboardTap' }),
 };
 
 export default class Feedback {

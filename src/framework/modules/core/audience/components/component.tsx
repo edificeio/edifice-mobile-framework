@@ -6,7 +6,7 @@ import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
-import { SmallText } from '~/framework/components/text';
+import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { audienceService } from '~/framework/modules/core/audience/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { isEmpty } from '~/framework/util/object';
@@ -87,6 +87,7 @@ const Audience = (props: AudienceProps) => {
     );
   };
 
+  const TextComponent = userReaction ? SmallBoldText : SmallText;
   return (
     <View style={props.containerStyle}>
       {props.nbViews === undefined ? (
@@ -97,7 +98,7 @@ const Audience = (props: AudienceProps) => {
             <Component
               onPress={() => navigation.navigate(ModalsRouteNames.AudienceReactions, { referer: props.referer })}
               style={styles.statsItem}>
-              <SmallText style={styles.statsItemText}>{totalReactions ?? 0}</SmallText>
+              <TextComponent style={styles.statsItemText}>{totalReactions ?? 0}</TextComponent>
               <View style={styles.statsReactions}>
                 {!isEmpty(typesReactions) ? (
                   typesReactions.map(reaction => (

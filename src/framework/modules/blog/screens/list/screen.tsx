@@ -101,23 +101,21 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         'post',
         newBlogPosts.map(p => p._id),
       );
-      setBlogPosts(
-        newBlogPosts.map(p => {
-          const views = viewsForPosts[p._id];
-          const reactions = reactionsForPosts.reactionsByResource[p._id];
-          return {
-            ...p,
-            audience: {
-              views,
-              reactions: {
-                total: reactions?.totalReactionsCounter ?? 0,
-                types: reactions?.reactionTypes ?? [],
-                userReaction: reactions?.userReaction ?? null,
-              },
+      return newBlogPosts.map(p => {
+        const views = viewsForPosts[p._id];
+        const reactions = reactionsForPosts.reactionsByResource[p._id];
+        return {
+          ...p,
+          audience: {
+            views,
+            reactions: {
+              total: reactions?.totalReactionsCounter ?? 0,
+              types: reactions?.reactionTypes ?? [],
+              userReaction: reactions?.userReaction ?? null,
             },
-          };
-        }),
-      );
+          },
+        };
+      });
     } catch (e) {
       console.error('[BlogPostListScreen] fetchViews error :', e);
     }
@@ -136,20 +134,25 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         if (pageToFetch < 0) return; // Negatives values are used to tell end has been reached.
         const session = props.session;
         if (!session) throw new Error('BlogPostListScreen.fetchPage: no session');
-        const newBlogPosts = await blogService.posts.page(session, blogId, pageToFetch, ['PUBLISHED', 'SUBMITTED']);
+        let newBlogPosts: BlogPostWithAudience[] = await blogService.posts.page(session, blogId, pageToFetch, [
+          'PUBLISHED',
+          'SUBMITTED',
+        ]);
         let pagingSize = pagingSizeState;
         if (!pagingSize) {
           setPagingSize(newBlogPosts.length);
           pagingSize = newBlogPosts.length;
         }
         if (pagingSize) {
-          if (newBlogPosts.length) {
+          if (selectedBlog.visibility !== 'PUBLIC') {
+            newBlogPosts = (await fetchAudience(newBlogPosts)) ?? newBlogPosts;
+          }
+          if (newBlogPosts!.length) {
             setBlogPosts([
               ...blogPosts.slice(0, pagingSize * pageToFetch),
               ...newBlogPosts,
               ...(flushAfter ? [] : blogPosts.slice(pagingSize * (pageToFetch + 1))),
             ]);
-            fetchAudience(newBlogPosts);
           }
 
           if (!fromPage) {
@@ -163,7 +166,7 @@ const BlogPostListScreen = (props: BlogPostListScreenProps) => {
         throw new Error();
       }
     },
-    [blogPosts, fetchAudience, nextPageToFetchState, pagingSizeState, props.session],
+    [blogPosts, fetchAudience, nextPageToFetchState, pagingSizeState, props.session, selectedBlog.visibility],
   );
 
   const fetchFromStart = React.useCallback(
