@@ -107,7 +107,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
 
   // The bucket of allowed simultaneous uploading processes.
   const uploadingTasksRef = React.useRef<Set<UploadFile>>(new Set());
-  const MAX_PARALLEL_UPLOADS_TASKS = 4;
+  const MAX_PARALLEL_UPLOADS_TASKS = 6;
 
   const updateFileStatusAndID = React.useCallback(
     ({ file, status, id, error }: { file: UploadFile; status: UploadStatus; id?: string; error?: string }) => {
