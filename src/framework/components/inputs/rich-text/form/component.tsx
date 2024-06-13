@@ -11,7 +11,6 @@ import { UI_ANIMATIONS, UI_SIZES } from '~/framework/components/constants';
 import RichEditor from '~/framework/components/inputs/rich-text/editor/RichEditor';
 import { ui } from '~/framework/components/inputs/rich-text/editor/const';
 import RichToolbar from '~/framework/components/inputs/rich-text/toolbar/component';
-import { ImagePicked, cameraAction, galleryAction } from '~/framework/components/menus/actions';
 import BottomSheetModal, { BottomSheetModalMethods } from '~/framework/components/modals/bottom-sheet';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
@@ -47,38 +46,9 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
     setIsFocused(true);
   };
 
-  const handleAddPics = React.useCallback(
-    async (pics: ImagePicked[]) => {
-      setTimeout(() => {
-        // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
-        navigation.navigate({
-          name: ModalsRouteNames.FileImport,
-          params: {
-            files: pics,
-            uploadParams: props.uploadParams,
-            redirectTo: route,
-          },
-        });
-      }, OPEN_FILE_IMPORT_TIMEOUT);
-    },
-    [navigation, props.uploadParams, route],
-  );
-
   //
   // Add files results bottom sheet management
   //
-
-  // const addFilesResultsRef = React.useRef<BottomSheetModalMethods>(null);
-
-  // const handleAddFilesResultsDismissed = async () => {
-  //   // TODO V1: Show confirmation box
-  //   workspaceService.files.trash(
-  //     session,
-  //     addedFiles.map(f => f.workspaceID!),
-  //   );
-  //   resetFiles();
-  //   focusRichText();
-  // };
 
   const hideAddFilesResults = React.useCallback(() => {
     focusRichText();
@@ -92,8 +62,12 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       );
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, ui.updateHeightTimeout * 2);
-    } else richText.current?.insertHTML('<br>');
+      }, ui.addImageTimeout);
+    } else {
+      richText.current?.insertHTML('<br>');
+      richText.current?.finalizeInsertion();
+      richText?.current?.unlockContentEditor();
+    }
   }, []);
 
   const addFiles = React.useCallback(
@@ -177,12 +151,32 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
 
   const handleChoosePics = async () => {
     hideChoosePicsMenu();
-    await galleryAction({ callback: handleAddPics, multiple: true }).action({ callbackOnce: true });
+    setTimeout(() => {
+      // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
+      navigation.navigate({
+        name: ModalsRouteNames.FileImport,
+        params: {
+          uploadParams: props.uploadParams,
+          redirectTo: route,
+          source: 'galery',
+        },
+      });
+    }, OPEN_FILE_IMPORT_TIMEOUT);
   };
 
   const handleTakePic = async () => {
     hideChoosePicsMenu();
-    await cameraAction({ callback: file => handleAddPics([file]) }).action();
+    setTimeout(() => {
+      // ToDo : Modals parma types are enum that prevent type-checking working properly. Use the module route syntax.
+      navigation.navigate({
+        name: ModalsRouteNames.FileImport,
+        params: {
+          uploadParams: props.uploadParams,
+          redirectTo: route,
+          source: 'camera',
+        },
+      });
+    }, OPEN_FILE_IMPORT_TIMEOUT);
   };
 
   const choosePicsMenu = () => {

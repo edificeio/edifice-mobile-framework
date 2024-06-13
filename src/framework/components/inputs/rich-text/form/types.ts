@@ -29,6 +29,7 @@ export interface RichEditorFormAllProps
     NativeStackScreenProps<IModalsNavigationParams, ModalsRouteNames.RichTextEditor> {}
 
 export enum UploadStatus {
+  IDLE,
   OK,
   KO,
   PENDING,
@@ -36,6 +37,12 @@ export enum UploadStatus {
 
 export interface UploadFile {
   localFile: LocalFile;
+  status: UploadStatus;
+  workspaceID?: string;
+  error?: string;
+}
+
+export interface UploadedFile {
   status: UploadStatus;
   workspaceID?: string;
 }

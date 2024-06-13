@@ -8,7 +8,8 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { UploadFile, UploadStatus } from '~/framework/components/inputs/rich-text/form/types';
 import FlatList from '~/framework/components/list/flat-list';
-import { imagePickedToLocalFile } from '~/framework/components/menus/actions';
+import { LoadingIndicator } from '~/framework/components/loading';
+import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
@@ -32,75 +33,84 @@ export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, 
   }),
 });
 
+const formatFile = (pic: ImagePicked) =>
+  ({
+    localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
+    status: UploadStatus.IDLE,
+    error: undefined as string | undefined,
+    workspaceID: undefined as string | undefined,
+  }) as UploadFile;
+
+const textErrorUploadFile: (error) => string = error => {
+  // Full storage management
+  // statusCode = 400 on iOS and code = 'ENOENT' on Android
+  if (error?.response?.statusCode === 400 || error?.code === 'ENOENT') {
+    return I18n.get('import-error-filetoolarge');
+  } else {
+    return I18n.get('import-uploaderror');
+  }
+};
+
 export default function FileImportScreen(props: FileImportScreenProps.AllProps) {
   const { navigation, route } = props;
   const session = getSession();
 
   const [validateImport, setValidateImport] = React.useState(false);
-
-  const [files, setFiles] = React.useState(
-    route.params.files.map(pic => ({
-      localFile: { ...imagePickedToLocalFile(pic), filesize: pic.fileSize } as LocalFile,
-      status: UploadStatus.PENDING,
-      error: undefined as string | undefined,
-      workspaceID: undefined as string | undefined,
-    })),
-  );
+  const [listReady, setListReady] = React.useState(0);
+  const filesRef = React.useRef<UploadFile[]>(route.params.files ? route.params.files.map(formatFile) : []);
 
   const updateFileStatusAndID = React.useCallback(
-    ({ index, status, id, error }: { index: number; status: UploadStatus; id?: string; error?: string }) => {
-      const file = files[index];
+    ({ file, status, id, error }: { file: UploadFile; status: UploadStatus; id?: string; error?: string }) => {
       file.status = status;
       if (id) file.workspaceID = id;
       if (error) file.error = error;
-      setFiles([...files]);
+      setListReady(val => val + 1); // Update view
     },
-    [files],
+    [],
   );
 
-  const removeAllFiles = React.useCallback(() => {
-    workspaceService.files.trash(
-      session!,
-      files.map(f => f.workspaceID!),
-    );
-    setFiles([]);
-  }, [files, session]);
-
-  usePreventBack({
-    title: I18n.get('import-back-confirm-title'),
-    text: I18n.get('import-back-confirm-text'),
-    showAlert: files.length > 0 && !validateImport,
-    actionOnBack: removeAllFiles,
-  });
-
-  const textErrorUploadFile: (error) => string = error => {
-    // Full storage management
-    // statusCode = 400 on iOS and code = 'ENOENT' on Android
-    if (error?.response?.statusCode === 400 || error?.code === 'ENOENT') {
-      return I18n.get('import-error-filetoolarge');
-    } else {
-      return I18n.get('import-uploaderror');
-    }
-  };
-
   const uploadFile = React.useCallback(
-    ({ file, index }: { file: UploadFile; index: number }) => {
+    (file: UploadFile, index: number) => {
+      if (file.status === UploadStatus.PENDING || file.status === UploadStatus.OK) return;
       if (!session) {
-        updateFileStatusAndID({ index, status: UploadStatus.KO });
+        updateFileStatusAndID({ file, status: UploadStatus.KO });
         return;
       }
       workspaceService.file
         .uploadFile(session, file.localFile, route.params.uploadParams)
         .then(resp => {
-          updateFileStatusAndID({ index, status: UploadStatus.OK, id: resp.df.id });
+          updateFileStatusAndID({ file, status: UploadStatus.OK, id: resp.df.id });
         })
         .catch(error => {
           console.debug(`Import File Upload Failed: ${error}`);
-          updateFileStatusAndID({ index, status: UploadStatus.KO, error: textErrorUploadFile(error) });
+          updateFileStatusAndID({ file, status: UploadStatus.KO, error: textErrorUploadFile(error) });
         });
     },
     [route.params.uploadParams, session, updateFileStatusAndID],
   );
+
+  const setFiles = React.useCallback(
+    (f: ReturnType<typeof formatFile>[]) => {
+      filesRef.current = f;
+      setListReady(val => val + 1);
+      filesRef.current.forEach(uploadFile);
+    },
+    [uploadFile],
+  );
+
+  const removeAllFiles = React.useCallback(() => {
+    workspaceService.files.trash(
+      session!,
+      filesRef.current.map(f => f.workspaceID!),
+    );
+  }, [session]);
+
+  usePreventBack({
+    title: I18n.get('import-back-confirm-title'),
+    text: I18n.get('import-back-confirm-text'),
+    showAlert: filesRef.current.length > 0 && !validateImport,
+    actionOnBack: removeAllFiles,
+  });
 
   // Manage nav bar actions
   React.useEffect(() => {
@@ -109,44 +119,63 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <NavBarAction
-          title={I18n.get('import-confirm-button', { count: files.length })}
+          title={I18n.get('import-confirm-button', { count: filesRef.current.length })}
           onPress={() => {
             setValidateImport(true);
           }}
-          disabled={files.length > 0 && files.some(f => f.status === UploadStatus.PENDING)}
+          disabled={
+            !listReady ||
+            (filesRef.current.length > 0 &&
+              filesRef.current.some(f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE))
+          }
         />
       ),
     });
-  }, [navigation, files]);
-
-  React.useEffect(() => {
-    files.forEach((file, index) => uploadFile({ file, index }));
-    // This method is executed only when component is mounted
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [navigation, listReady]);
 
   React.useEffect(() => {
     if (validateImport) {
       navigation.navigate(route.params.redirectTo.name, {
         ...route.params.redirectTo.params,
-        importResult: files.map(f => ({
+        importResult: filesRef.current.map(f => ({
           status: f.status,
           workspaceID: f.workspaceID,
         })),
       });
     }
-  }, [validateImport, navigation, route, files]);
+  }, [validateImport, navigation, route]);
 
   React.useEffect(() => {
-    if (files.length === 0) {
+    if (filesRef.current.length === 0 && listReady) {
       navigation.goBack();
     }
-  }, [files.length, navigation]);
+  }, [listReady, navigation]);
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      if (route.params.source === 'galery') {
+        galleryAction({
+          callback: (pics: ImagePicked[]) => {
+            setFiles(pics.map(formatFile));
+          },
+          multiple: true,
+        }).action({ callbackOnce: true });
+      } else if (route.params.source === 'camera') {
+        cameraAction({
+          callback: (pic: ImagePicked) => {
+            setFiles([formatFile(pic)]);
+          },
+        }).action();
+      }
+    });
+    // On purpose : only when component is mounted.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const removeFile = React.useCallback(
     async (index: number) => {
       if (!session) return;
-      if (index >= files.length) return;
+      if (index >= filesRef.current.length) return;
       Alert.alert(I18n.get('richeditor-showfilesresult-deletefiletitle'), I18n.get('richeditor-showfilesresult-deletefiletext'), [
         {
           text: I18n.get('common-cancel'),
@@ -156,7 +185,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           text: I18n.get('common-delete'),
           style: 'destructive',
           onPress: () => {
-            const file = files[index];
+            const file = filesRef.current[index];
             if (file.workspaceID === undefined) {
               setFiles(f => f.filter((it, i) => i !== index));
             } else {
@@ -173,14 +202,13 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         },
       ]);
     },
-    [files, session],
+    [session, setFiles],
   );
 
   const retryFile = async (index: number) => {
-    const file = files[index];
+    const file = filesRef.current[index];
     file.status = UploadStatus.PENDING;
-    setFiles([...files]);
-    uploadFile({ file, index });
+    uploadFile(file, index);
   };
 
   const fileStatusIcon = (index: number, status: UploadStatus) => {
@@ -219,32 +247,37 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
 
   return (
     <PageView>
-      <FlatList
-        data={files}
-        contentContainerStyle={styles.addFilesResults}
-        alwaysBounceVertical={false}
-        renderItem={({ item, index }) => (
-          <View key={index} style={styles.addFilesResultsItem}>
-            {renderThumbnail(item)}
-            <View style={styles.addFilesResultsFile}>
-              <SmallText numberOfLines={1}>{item.localFile.filename}</SmallText>
-              {item.status === UploadStatus.KO ? <CaptionBoldText>{item.error}</CaptionBoldText> : null}
+      {!listReady ? (
+        <LoadingIndicator />
+      ) : (
+        <FlatList
+          data={filesRef.current}
+          contentContainerStyle={styles.addFilesResults}
+          alwaysBounceVertical={false}
+          renderItem={({ item, index }) => (
+            <View key={index} style={styles.addFilesResultsItem}>
+              {renderThumbnail(item)}
+              <View style={styles.addFilesResultsFile}>
+                <SmallText numberOfLines={1}>{item.localFile.filename}</SmallText>
+                {item.status === UploadStatus.KO ? <CaptionBoldText>{item.error}</CaptionBoldText> : null}
+              </View>
+              {fileStatusIcon(index, item.status)}
+              <IconButton
+                icon="ui-close"
+                style={{ marginLeft: UI_SIZES.spacing.small }}
+                color={theme.palette.grey.black}
+                action={() => removeFile(index)}
+              />
             </View>
-            {fileStatusIcon(index, item.status)}
-            <IconButton
-              icon="ui-close"
-              style={{ marginLeft: UI_SIZES.spacing.small }}
-              color={theme.palette.grey.black}
-              action={() => removeFile(index)}
-            />
-          </View>
-        )}
-        ListHeaderComponent={
-          <HeadingXSText style={styles.addFilesResultsTitle}>
-            {files.length} {I18n.get(`richeditor-showfilesresult-${files.length > 1 ? 'multiple' : 'single'}title`)}
-          </HeadingXSText>
-        }
-      />
+          )}
+          ListHeaderComponent={
+            <HeadingXSText style={styles.addFilesResultsTitle}>
+              {filesRef.current.length}{' '}
+              {I18n.get(`richeditor-showfilesresult-${filesRef.current.length > 1 ? 'multiple' : 'single'}title`)}
+            </HeadingXSText>
+          }
+        />
+      )}
     </PageView>
   );
 }

@@ -68,7 +68,7 @@ const _override_copyMergePaths = {
   'android/appcenter-config.json': 'android/app/src/main/assets/appcenter-config.json', // AppCenter Android config
   'android/res': 'android/app/src/main/res', // Android specific native assets
   'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
-  'android/images': 'android/app/src/main/assets/images', // Android specific images
+  'android/images': 'android/app/src/main/assets/images', // Android specific fonts
   'ios/AppCenter-Config.plist': 'ios/appe/AppCenter-Config.plist', // AppCenter iOS config
   'ios/GoogleService-Info.plist': 'ios/appe/GoogleService-Info.plist', // Firebase iOS config
   'ios/Assets.xcassets': 'ios/appe/Assets.xcassets', // iOS specific native assets

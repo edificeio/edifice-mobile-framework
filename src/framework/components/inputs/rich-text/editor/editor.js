@@ -336,8 +336,6 @@ function createHTML(options = {}) {
                 saveSelection();
                 editor.settings.onChange();
                 setTimeout(() => {
-                    Actions.GET_IMAGES_URLS();
-                    Actions.GET_LINKS_URLS();
                     Actions.UPDATE_HEIGHT();
                 }, ${ui.updateHeightTimeout});
             }
@@ -409,7 +407,6 @@ function createHTML(options = {}) {
                         parentNode.remove()
                     }
                 }
-
                 selection.collapse(anchorNode, anchorOffset);
             }
         }
@@ -530,7 +527,11 @@ function createHTML(options = {}) {
             },
             content: {
                 setDisable: function(dis){ this.blur(); editor.content.contentEditable = !dis},
-                setHtml: function(html) { editor.content.innerHTML = html; Actions.UPDATE_HEIGHT(); detectImageErrors(); },
+                setHtml: function(html) {
+                    editor.content.innerHTML = html;
+                    Actions.content.init();
+                    detectImageErrors();
+                },
                 setCookie: function(cookie) {
                     if (cookie) {
                         document.cookie=cookie;
@@ -543,10 +544,22 @@ function createHTML(options = {}) {
                 },
                 focus: function() {
                     focusCurrent();
-                 },
-                 lock: function() {
+                },
+                lock: function() {
                     selectionLocked = true;
-                 },
+                },
+                unlock: function() {
+                    selectionLocked = false;
+                },
+                finalize: function() {
+                    Actions.FORMAT_AUDIOS();
+                    Actions.FORMAT_VIDEOS();
+                    Actions.GET_IMAGES_URLS();
+                    Actions.GET_LINKS_URLS();
+                    setTimeout(() => {
+                        Actions.UPDATE_HEIGHT();
+                    }, ${ui.updateHeightTimeout});
+                },
                 postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
                 setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
                 setContentStyle: function(styles) {
@@ -597,7 +610,9 @@ function createHTML(options = {}) {
                 // var height = Math.max(docEle.scrollHeight, body.scrollHeight);
                 var height = editor.content.scrollHeight + ${TextSizeStyle.Huge.lineHeight};
                 if (o_height !== height){
-                    _postMessage({type: 'OFFSET_HEIGHT', data: o_height = height});
+                    setTimeout(() => {
+                        _postMessage({type: 'OFFSET_HEIGHT', data: o_height = height});
+                    }, ${ui.updateHeightTimeout});
                 }
             },
 
