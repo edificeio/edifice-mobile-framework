@@ -167,7 +167,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           },
         }).action();
       }
-    });
+    }, 350);
     // On purpose : only when component is mounted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
