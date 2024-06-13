@@ -155,11 +155,15 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
 
   const setFiles = React.useCallback(
     (f: ReturnType<typeof formatFile>[]) => {
+      if (f.length === 0) {
+        navigation.goBack();
+        return;
+      }
       filesRef.current = f;
       setListReady(val => val + 1);
       uploadFiles();
     },
-    [uploadFiles],
+    [uploadFiles, navigation],
   );
 
   const removeAllFiles = React.useCallback(() => {

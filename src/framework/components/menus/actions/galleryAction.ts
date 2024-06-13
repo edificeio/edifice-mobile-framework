@@ -29,18 +29,22 @@ export default function galleryAction(props: MenuPickerActionProps & { multiple?
   const action = async ({ callbackOnce }: { callbackOnce: boolean } = { callbackOnce: false }) => {
     try {
       await assertPermissions('galery.read');
-      LocalFile.pick({ source: 'galery', multiple: props.multiple }).then(lf => {
-        let images = lf;
-        if (Platform.OS === 'android') {
-          lf.forEach(item => {
-            if (item.filetype.startsWith('video/')) {
-              Toast.showError(I18n.get('pickfile-error-filetype'));
-            }
-          });
-        }
-        images = lf.filter(item => !item.filetype.startsWith('video/'));
-        return imageCallback(images, callbackOnce);
-      });
+      LocalFile.pick({ source: 'galery', multiple: props.multiple })
+        .then(lf => {
+          let images = lf;
+          if (Platform.OS === 'android') {
+            lf.forEach(item => {
+              if (item.filetype.startsWith('video/')) {
+                Toast.showError(I18n.get('pickfile-error-filetype'));
+              }
+            });
+          }
+          images = lf.filter(item => !item.filetype.startsWith('video/'));
+          return imageCallback(images, callbackOnce);
+        })
+        .catch(() => {
+          return imageCallback([], callbackOnce);
+        });
     } catch {
       Alert.alert(
         I18n.get('gallery-readpermissionblocked-title'),
