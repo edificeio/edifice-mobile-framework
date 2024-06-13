@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ActivityIndicator, Alert, View } from 'react-native';
+import { Fade, Placeholder, PlaceholderLine, PlaceholderMedia } from 'rn-placeholder';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
@@ -8,7 +9,6 @@ import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import { UploadFile, UploadStatus } from '~/framework/components/inputs/rich-text/form/types';
 import FlatList from '~/framework/components/list/flat-list';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { ImagePicked, cameraAction, galleryAction, imagePickedToLocalFile } from '~/framework/components/menus/actions';
 import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
@@ -31,6 +31,20 @@ export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, 
     route,
     title: I18n.get('import-title'),
   }),
+  headerStyle: {
+    position: 'absolute',
+    backgroundColor: theme.ui.background.page,
+    zIndex: 100,
+    top: 0,
+    left: 0,
+    right: 0,
+    elevation: 0,
+    shadowOpacity: 0,
+    borderBottomWidth: 0,
+  },
+  headerTitleStyle: {
+    color: theme.palette.grey.darkness,
+  },
 });
 
 const formatFile = (pic: ImagePicked) =>
@@ -49,6 +63,33 @@ const textErrorUploadFile: (error) => string = error => {
   } else {
     return I18n.get('import-uploaderror');
   }
+};
+
+const renderPlaceholder = () => {
+  return (
+    <Placeholder style={styles.placeholder} Animation={Fade}>
+      <View style={styles.placeholderRow}>
+        <PlaceholderMedia style={styles.placeholderMedia} size={36} />
+        <PlaceholderLine style={styles.h22} width={80} />
+      </View>
+      <View style={styles.placeholderRow}>
+        <PlaceholderMedia style={styles.placeholderMedia} size={36} />
+        <PlaceholderLine style={styles.h22} width={55} />
+      </View>
+      <View style={styles.placeholderRow}>
+        <PlaceholderMedia style={styles.placeholderMedia} size={36} />
+        <PlaceholderLine style={styles.h22} width={65} />
+      </View>
+      <View style={styles.placeholderRow}>
+        <PlaceholderMedia style={styles.placeholderMedia} size={36} />
+        <PlaceholderLine style={styles.h22} width={35} />
+      </View>
+      <View style={styles.placeholderRow}>
+        <PlaceholderMedia style={styles.placeholderMedia} size={36} />
+        <PlaceholderLine style={styles.h22} width={70} />
+      </View>
+    </Placeholder>
+  );
 };
 
 export default function FileImportScreen(props: FileImportScreenProps.AllProps) {
@@ -120,6 +161,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
       headerRight: () => (
         <NavBarAction
           title={I18n.get('import-confirm-button', { count: filesRef.current.length })}
+          titleStyle={{ color: theme.palette.grey.darkness }}
           onPress={() => {
             setValidateImport(true);
           }}
@@ -248,7 +290,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   return (
     <PageView>
       {!listReady ? (
-        <LoadingIndicator />
+        renderPlaceholder()
       ) : (
         <FlatList
           data={filesRef.current}

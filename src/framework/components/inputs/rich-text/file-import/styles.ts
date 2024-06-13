@@ -28,4 +28,19 @@ export default StyleSheet.create({
     textAlign: 'center',
     marginBottom: UI_SIZES.spacing.minor,
   },
+  //PLACEHOLDER
+  placeholder: { padding: UI_SIZES.spacing.minor },
+  placeholderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.minor,
+    padding: UI_SIZES.spacing.minor,
+  },
+  placeholderMedia: {
+    borderRadius: UI_SIZES.radius.card,
+  },
+  h22: {
+    height: 22,
+    marginBottom: 0,
+  },
 });
