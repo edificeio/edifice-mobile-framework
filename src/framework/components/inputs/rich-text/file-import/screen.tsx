@@ -96,9 +96,18 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
   const { navigation, route } = props;
   const session = getSession();
 
+  // State that triggers exit the screen without confirmation prompt.
   const [validateImport, setValidateImport] = React.useState(false);
+
+  // State that indicates the files to upload has been received from the device' storage
   const [listReady, setListReady] = React.useState(0);
+
+  // The list of files to import and their import status
   const filesRef = React.useRef<UploadFile[]>(route.params.files ? route.params.files.map(formatFile) : []);
+
+  // The bucket of allowed simultaneous uploading processes.
+  const uploadingTasksRef = React.useRef<Set<UploadFile>>(new Set());
+  const MAX_PARALLEL_UPLOADS_TASKS = 4;
 
   const updateFileStatusAndID = React.useCallback(
     ({ file, status, id, error }: { file: UploadFile; status: UploadStatus; id?: string; error?: string }) => {
@@ -117,6 +126,8 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         updateFileStatusAndID({ file, status: UploadStatus.KO });
         return;
       }
+      uploadingTasksRef.current.add(file);
+      updateFileStatusAndID({ file, status: UploadStatus.PENDING });
       workspaceService.file
         .uploadFile(session, file.localFile, route.params.uploadParams)
         .then(resp => {
@@ -125,18 +136,30 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         .catch(error => {
           console.debug(`Import File Upload Failed: ${error}`);
           updateFileStatusAndID({ file, status: UploadStatus.KO, error: textErrorUploadFile(error) });
+        })
+        .finally(() => {
+          uploadingTasksRef.current.delete(file);
         });
     },
     [route.params.uploadParams, session, updateFileStatusAndID],
   );
 
+  const uploadFiles = React.useCallback(() => {
+    for (let i = 0; i < filesRef.current.length; ++i) {
+      if (uploadingTasksRef.current.size >= MAX_PARALLEL_UPLOADS_TASKS) break;
+      const file = filesRef.current[i];
+      if (file.status !== UploadStatus.IDLE) continue;
+      uploadFile(file, i);
+    }
+  }, [uploadFile]);
+
   const setFiles = React.useCallback(
     (f: ReturnType<typeof formatFile>[]) => {
       filesRef.current = f;
       setListReady(val => val + 1);
-      filesRef.current.forEach(uploadFile);
+      uploadFiles();
     },
-    [uploadFile],
+    [uploadFiles],
   );
 
   const removeAllFiles = React.useCallback(() => {
@@ -193,6 +216,13 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
     }
   }, [listReady, navigation]);
 
+  // Refresh remaining tasks everytime a file has been handled.
+  React.useEffect(() => {
+    if (listReady) {
+      uploadFiles();
+    }
+  }, [listReady, uploadFiles]);
+
   React.useEffect(() => {
     setTimeout(() => {
       if (route.params.source === 'galery') {
@@ -209,7 +239,7 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           },
         }).action();
       }
-    });
+    }, 350);
     // On purpose : only when component is mounted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -259,8 +289,10 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         return <IconButton icon="ui-success" color={theme.palette.status.success.regular} />;
       case UploadStatus.KO:
         return <IconButton icon="ui-restore" color={theme.palette.status.failure.regular} action={() => retryFile(index)} />;
-      default:
+      case UploadStatus.PENDING:
         return <ActivityIndicator size={UI_SIZES.elements.icon.small} color={theme.palette.primary.regular} />;
+      default:
+        return null;
     }
   };
 
