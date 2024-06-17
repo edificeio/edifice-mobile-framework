@@ -17,7 +17,7 @@ import { CaptionBoldText, SmallText } from '~/framework/components/text';
 import usePreventBack from '~/framework/hooks/prevent-back';
 import { getSession } from '~/framework/modules/auth/reducer';
 import workspaceService from '~/framework/modules/workspace/service';
-import { navBarOptions } from '~/framework/navigation/navBar';
+import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { LocalFile } from '~/framework/util/fileHandler';
 import { Image } from '~/framework/util/media';
 
@@ -182,23 +182,32 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
 
   // Manage nav bar actions
   React.useEffect(() => {
+    const fileCount = filesRef.current.length;
     navigation.setOptions({
       // navigation.setOptions() requires to define the component on demand.
       // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () => (
-        <NavBarAction
-          title={I18n.get('import-confirm-button', { count: filesRef.current.length })}
-          titleStyle={{ color: theme.palette.grey.darkness }}
-          onPress={() => {
-            setValidateImport(true);
-          }}
-          disabled={
-            !listReady ||
-            (filesRef.current.length > 0 &&
-              filesRef.current.some(f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE))
-          }
-        />
-      ),
+      headerRight: () =>
+        filesRef.current.some(upload => upload.status === UploadStatus.PENDING) ? (
+          <ActivityIndicator size={UI_SIZES.elements.navbarIconSize} color={theme.palette.grey.black} />
+        ) : (
+          <NavBarAction
+            title={I18n.get('import-confirm-button', { count: filesRef.current.filter(f => f.status === UploadStatus.OK).length })}
+            titleStyle={{ color: theme.palette.grey.darkness }}
+            onPress={() => {
+              setValidateImport(true);
+            }}
+            disabled={
+              !listReady ||
+              (fileCount > 0 && filesRef.current.some(f => f.status === UploadStatus.PENDING || f.status === UploadStatus.IDLE))
+            }
+          />
+        ),
+      headerTitle:
+        fileCount === 0
+          ? navBarTitle(I18n.get('import-title'))
+          : fileCount > 1
+            ? navBarTitle(I18n.get('import-title-multipleimages', { count: fileCount }))
+            : navBarTitle(I18n.get('import-title-singleimage', { count: fileCount })),
     });
   }, [navigation, listReady]);
 

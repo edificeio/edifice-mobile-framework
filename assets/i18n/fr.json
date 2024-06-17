@@ -692,6 +692,8 @@
   "import-confirm-button": "OK ({{count}})",
   "import-error-filetoolarge": "Espace de stockage insuffisant",
   "import-title": "Importer",
+  "import-title-singleimage": "Importer {{count}} image",
+  "import-title-multipleimages": "Importer {{count}} images",
   "import-uploaderror": "Erreur de téléversement",
   "linking-redirectapp-message": "Vous allez être redirigés sur l'application dédiée.",
   "linking-redirectapp-title": "Redirection sur l'application",
