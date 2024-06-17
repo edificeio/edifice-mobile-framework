@@ -11,3 +11,4 @@ index afe4b3e..e47fd3b 100644
 +            callback.invoke(getResponseMap(java.util.Collections.emptyList(), options, reactContext));
              return;
          }
+
