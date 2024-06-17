@@ -204,10 +204,8 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         ),
       headerTitle:
         fileCount === 0
-          ? navBarTitle(I18n.get('import-title'))
-          : fileCount > 1
-            ? navBarTitle(I18n.get('import-title-multipleimages', { count: fileCount }))
-            : navBarTitle(I18n.get('import-title-singleimage', { count: fileCount })),
+          ? navBarTitle(I18n.get('import-title_zero'))
+          : navBarTitle(I18n.get('import-title_other', { count: fileCount })),
     });
   }, [navigation, listReady]);
 
@@ -272,12 +270,12 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
           onPress: () => {
             const file = filesRef.current[index];
             if (file.workspaceID === undefined) {
-              setFiles(f => f.filter((it, i) => i !== index));
+              setFiles(filesRef.current.filter((_, i) => i !== index));
             } else {
               workspaceService.files
                 .trash(session, [file.workspaceID!])
                 .then(() => {
-                  setFiles(f => f.filter((it, i) => i !== index));
+                  setFiles(filesRef.current.filter((_, i) => i !== index));
                 })
                 .catch(error => {
                   console.error(`Rich Editor file removal failed: ${error}`);
