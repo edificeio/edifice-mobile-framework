@@ -154,11 +154,11 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       // Pick files
       await new Promise<void>((resolve, reject) => {
         const callback = async (res: ImagePickerResponse) => {
-          if (!res.assets || res.errorCode) reject(res);
-          else if (res.didCancel) {
+          if (res.didCancel) {
             pickedFiles = [];
             resolve();
-          } else {
+          } else if (!res.assets || res.errorCode) reject(res);
+          else {
             pickedFiles = renameAssets(res.assets);
             resolve();
           }

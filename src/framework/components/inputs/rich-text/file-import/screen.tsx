@@ -245,10 +245,10 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         }).action({ callbackOnce: true });
       } else if (route.params.source === 'camera') {
         cameraAction({
-          callback: (pic: ImagePicked) => {
-            setFiles([formatFile(pic)]);
+          callback: (pics: ImagePicked[]) => {
+            setFiles(pics.map(formatFile));
           },
-        }).action();
+        }).action({ callbackOnce: true });
       }
     }, 350);
     // On purpose : only when component is mounted.
