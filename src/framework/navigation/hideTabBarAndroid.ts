@@ -17,6 +17,14 @@ export const setModalModeForRoutes = (routeNames: string[]) => {
 
 export const isModalModeOnThisRoute = (routeName: string) => routesWithTabBarHiddenOnAndroid.includes(routeName);
 
+const routesWithCrossIconBlack: string[] = [];
+
+export const setCrossIconBlackForRoutes = (routeNames: string[]) => {
+  routesWithCrossIconBlack.push(...routeNames);
+};
+
+export const addCrossIconBlackOnThisRoute = (routeName: string) => routesWithCrossIconBlack.includes(routeName);
+
 export const getAndroidTabBarStyleForNavState = (navState: NavigationState) => {
   const currentTab = navState.routes[navState.index];
   const currentScreen =

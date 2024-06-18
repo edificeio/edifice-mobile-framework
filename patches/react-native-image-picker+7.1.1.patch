@@ -1,13 +1,14 @@
 diff --git a/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java b/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java
-index afe4b3e..447931e 100644
+index afe4b3e..e47fd3b 100644
 --- a/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java
 +++ b/node_modules/react-native-image-picker/android/src/main/java/com/imagepicker/ImagePickerModuleImpl.java
-@@ -183,7 +183,7 @@ public class ImagePickerModuleImpl implements ActivityEventListener {
+@@ -183,7 +183,8 @@ public class ImagePickerModuleImpl implements ActivityEventListener {
      public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
  
          // onActivityResult is called even when ActivityNotFoundException occurs
 -        if (!isValidRequestCode(requestCode) || (this.callback == null)) {
 +        if (!isValidRequestCode(requestCode) || (this.callback == null) || ((requestCode == REQUEST_LAUNCH_LIBRARY) && (data == null))) {
++            callback.invoke(getResponseMap(java.util.Collections.emptyList(), options, reactContext));
              return;
          }
- 
+

@@ -1,4 +1,6 @@
 {
+  "LoginWeb": "Connettiti dal web",
+  "News": "Notizie",
   "accountlistitem-removealert-description": "Sei sicuro di voler eliminare questo identificatore?",
   "accountlistitem-removealert-title": "Confermare l'eliminazione",
   "attachment-attachment": "Allegato",
@@ -698,7 +700,6 @@
   "linking-redirectbrowser-error": "Errore di reindirizzamento.",
   "linking-redirectbrowser-message": "Verrai reindirizzato a un sito esterno nel tuo browser.",
   "linking-redirectbrowser-title": "Reindirizzamento del browser",
-  "LoginWeb": "Connettiti dal web",
   "lvs-home-title": "LVS",
   "lvs-moduleconfig-appname": "LVS",
   "lvs-redirect-error-text": "Impossibile reindirizzare a LVS.",
@@ -758,7 +759,6 @@
   "myapp-infobubble-text": "Con {{appName}}, ricevi tutte le tue notifiche nella scheda Novità. Cliccando su determinate attività, verrai reindirizzato alla versione online della tua rete educativa.",
   "myapp-infobubble-title": "Dove sono le altre applicazioni?",
   "myapp-infobubble-understood": "Ho capito",
-  "News": "Notizie",
   "news-details-appname": "Notizie",
   "news-details-comment": "Commento",
   "news-details-comment-confirmation-unsaved-modification": "Le modifiche apportate al commento andranno perse. Sei sicuro di partire?",

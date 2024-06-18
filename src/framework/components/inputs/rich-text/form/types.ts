@@ -46,8 +46,3 @@ export interface UploadedFile {
   status: UploadStatus;
   workspaceID?: string;
 }
-
-export interface UploadedFile {
-  status: UploadStatus;
-  workspaceID?: string;
-}

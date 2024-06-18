@@ -9,7 +9,7 @@ import AudienceReactionsScreen, {
   computeNavBar as audienceReactionsNavBar,
 } from '~/framework/modules/core/audience/screens/reactions';
 import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/core/audience/screens/views';
-import { setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
+import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
@@ -52,3 +52,5 @@ setModalModeForRoutes([
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.FileImport,
 ]);
+
+setCrossIconBlackForRoutes([ModalsRouteNames.FileImport]);
