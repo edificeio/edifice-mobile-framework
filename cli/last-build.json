@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-06-13 20:00:15",
-  "notes": "feat(editor): MB-2782 , edit navbar on file import modale\nchore(import): 6 files simultaneous uploading\nfix(import): close modal when user cancel galery\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfeat(editor): MB-2782 , add skeleton & transparent nav bar to file import modale\nfeat(import): maximum parallel uploading tasks\nfix(import): update timeout before opening gallery\nfix: MB-2782 show import modal before galery/camera\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nchore(editor): rename file after pick file\nfix(editor): improve image addition speed\nfix(editor): remove custom photo compression and use react-native-image-picker one instead\nfix(editor): Improve images addition rendering\nfix(scrapbook): MB-2790, fix redirection on scrapbook\nrelease: 1.13.0-rc.6(1130019)",
-  "version": "1.13.0-rc.7(1130020)"
+  "last": "2024-06-18 20:21:17",
+  "notes": "fix(override): MB-2801, avoid animation files in json format) to be merged\nfix(editor): MB-2722, review content height update method\nUpdated translations from Phrase (#153)\nchore: fix patch of react-native-image-picker\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfix(file-import): MB-2795 , fix crash when delete file\nfix(picker): MB-2799 fix cancel photo take\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfeat(editor): MB-2800 , add some changes in navbar on file import modal\nfix(picker): MB-2792 fix galery picking cancel on android\nrelease: 1.13.0-rc.7(1130020)",
+  "version": "1.13.0-rc.8(1130021)"
 }
