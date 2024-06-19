@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-06-18 20:21:17",
-  "notes": "fix(override): MB-2801, avoid animation files in json format) to be merged\nfix(editor): MB-2722, review content height update method\nUpdated translations from Phrase (#153)\nchore: fix patch of react-native-image-picker\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfix(file-import): MB-2795 , fix crash when delete file\nfix(picker): MB-2799 fix cancel photo take\nMerge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfeat(editor): MB-2800 , add some changes in navbar on file import modal\nfix(picker): MB-2792 fix galery picking cancel on android\nrelease: 1.13.0-rc.7(1130020)",
-  "version": "1.13.0-rc.8(1130021)"
+  "last": "2024-06-19 08:36:07",
+  "notes": "Updated translations from Phrase (#154)\nrelease: 1.13.0-rc.8(1130021)",
+  "version": "1.13.0-rc.9(1130022)"
 }
