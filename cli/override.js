@@ -83,6 +83,8 @@ const _override_specialUpdates = {
   android: 'android/gradle.properties',
 };
 
+const _override_forceCopy = ['assets/animations/audio/disque.json'];
+
 // Project constants
 const _projectPathAbsolute = process.cwd();
 
@@ -557,8 +559,7 @@ async function _override_performCopyMerge(overridesPathAbsolute, overrideName) {
   // 2. Execute copy-list
   copyFiles.forEach(cp => {
     fs.mkdirSync(path.dirname(cp[1]), { recursive: true });
-
-    if (/.json$/.test(cp[0]) && fs.existsSync(cp[1])) {
+    if (!_override_forceCopy.includes(cp[1]) && /.json$/.test(cp[0]) && fs.existsSync(cp[1])) {
       // JSON files are deeply merged to each other in the override stack.
       opts.verbose && console.log(`Merging JSON :\r`);
       opts.verbose && console.log(`  from: "${cp[0]}"\r`);

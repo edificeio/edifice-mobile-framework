@@ -62,11 +62,9 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
       );
       setTimeout(() => {
         addFile(toAdd, idx + 1);
-      }, ui.addImageTimeout);
+      }, ui.insertElementTimeout);
     } else {
       richText.current?.insertHTML('<br>');
-      richText.current?.finalizeInsertion();
-      richText?.current?.unlockContentEditor();
     }
   }, []);
 
@@ -76,6 +74,8 @@ const RichEditorForm = (props: RichEditorFormAllProps) => {
         filesToAdd.filter(file => file.status === UploadStatus.OK),
         0,
       );
+      richText.current?.finalizeInsertion();
+      richText?.current?.unlockContentEditor();
       hideAddFilesResults();
       richText.current?.focusContentEditor();
     },
