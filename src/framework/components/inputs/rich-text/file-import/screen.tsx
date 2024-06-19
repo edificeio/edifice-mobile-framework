@@ -24,6 +24,10 @@ import { Image } from '~/framework/util/media';
 import styles from './styles';
 import { FileImportScreenProps } from './types';
 
+const headerTitleStyle = {
+  color: theme.palette.grey.darkness,
+};
+
 export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, route }) => ({
   presentation: 'modal',
   ...navBarOptions({
@@ -42,9 +46,7 @@ export const computeNavBar: FileImportScreenProps.NavBarConfig = ({ navigation, 
     shadowOpacity: 0,
     borderBottomWidth: 0,
   },
-  headerTitleStyle: {
-    color: theme.palette.grey.darkness,
-  },
+  headerTitleStyle,
 });
 
 const formatFile = (pic: ImagePicked) =>
@@ -204,8 +206,8 @@ export default function FileImportScreen(props: FileImportScreenProps.AllProps) 
         ),
       headerTitle:
         fileCount === 0
-          ? navBarTitle(I18n.get('import-title_zero'))
-          : navBarTitle(I18n.get('import-title_other', { count: fileCount })),
+          ? navBarTitle(I18n.get('import-title_zero'), headerTitleStyle)
+          : navBarTitle(I18n.get('import-title_other', { count: fileCount }), headerTitleStyle),
     });
   }, [navigation, listReady]);
 

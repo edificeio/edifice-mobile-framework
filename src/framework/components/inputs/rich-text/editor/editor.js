@@ -337,7 +337,7 @@ function createHTML(options = {}) {
                 editor.settings.onChange();
                 setTimeout(() => {
                     Actions.UPDATE_HEIGHT();
-                }, ${ui.updateHeightTimeout});
+                }, ${ui.insertElementTimeout});
             }
         }
 
@@ -358,9 +358,11 @@ function createHTML(options = {}) {
             } catch(e){
                 console.log(e)
             } finally {
-                setTimeout(() => {
-                    Actions.UPDATE_HEIGHT();
-                }, ${ui.updateHeightTimeout});
+                for (var t=0; t < 5; t=t+2) {
+                    setTimeout(() => {
+                        Actions.UPDATE_HEIGHT();
+                    }, t * ${ui.updateHeightTimeout});
+                }
             }
         }
 
@@ -368,7 +370,6 @@ function createHTML(options = {}) {
         function handleChange (event){
             var node = anchorNode;
             Actions.UPDATE_HEIGHT();
-            Actions.UPDATE_OFFSET_Y();
             if (_keyDown){
                 if(_checkboxFlag === 1 && checkboxNode(node)){
                     _checkboxFlag = 0;
@@ -556,9 +557,11 @@ function createHTML(options = {}) {
                     Actions.FORMAT_VIDEOS();
                     Actions.GET_IMAGES_URLS();
                     Actions.GET_LINKS_URLS();
-                    setTimeout(() => {
-                        Actions.UPDATE_HEIGHT();
-                    }, ${ui.updateHeightTimeout});
+                    for (var t=0; t < 5; t=t+2) {
+                        setTimeout(() => {
+                            Actions.UPDATE_HEIGHT();
+                        }, t * ${ui.updateHeightTimeout});
+                    }
                 },
                 postHtml: function (){ postAction({type: 'CONTENT_HTML_RESPONSE', data: editor.content.innerHTML}); },
                 setPlaceholder: function(placeholder){ editor.content.setAttribute("placeholder", placeholder) },
@@ -590,9 +593,11 @@ function createHTML(options = {}) {
                     Actions.FORMAT_VIDEOS();
                     Actions.GET_IMAGES_URLS();
                     Actions.GET_LINKS_URLS();
-                    setTimeout(() => {
-                        Actions.UPDATE_HEIGHT();
-                    }, ${ui.updateHeightTimeout});
+                    for (var t=0; t <= 10; t=t+2) {
+                        setTimeout(() => {
+                            Actions.UPDATE_HEIGHT();
+                        }, t * ${ui.updateHeightTimeout});
+                    }
                 }
             },
 
@@ -612,7 +617,8 @@ function createHTML(options = {}) {
                 if (o_height !== height){
                     setTimeout(() => {
                         _postMessage({type: 'OFFSET_HEIGHT', data: o_height = height});
-                    }, ${ui.updateHeightTimeout});
+                        Actions.UPDATE_OFFSET_Y();
+                    });
                 }
             },
 
@@ -628,7 +634,6 @@ function createHTML(options = {}) {
                         var rect = range.getClientRects()[0];
                         rectOffset = rect ? rect.y : null;
                     }
-
                     var offsetY = node.offsetTop || siblingOffset || rectOffset || node.parentNode.offsetTop;
                     if (offsetY){
                         _postMessage({type: 'OFFSET_Y', data: offsetY});
@@ -658,12 +663,14 @@ function createHTML(options = {}) {
                     video.style.width = width + 'px';
                     video.style.height = width * 10 / 16 + 'px';
                     video.poster = '${pfUrl}'+videoSrc+'?thumbnail='+videoRes;
+                    setTimeout(() => { Actions.UPDATE_HEIGHT(); });
                 }
                 var iframes = document.getElementsByTagName('iframe');
                 for (var i = 0; i < iframes.length; i++) {
                     const iframe = iframes[i];
                     iframe.style.width = width + 'px';
                     iframe.style.height = width * 10 / 16 + 'px';
+                    setTimeout(() => { Actions.UPDATE_HEIGHT(); }, ${ui.insertElementTimeout});
                 }
             },
 
@@ -679,6 +686,7 @@ function createHTML(options = {}) {
                     uri.searchParams.append('thumbnail', '${thumbnailSize}');
                     img.src = uri.toString();*/
                     imagesUrls.push(img.src);
+                    setTimeout(() => { Actions.UPDATE_HEIGHT(); }, ${ui.insertElementTimeout});
                 }
                 postAction({type: 'IMAGES_URLS', data: imagesUrls}, true);
             },
