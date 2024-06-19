@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-06-19 08:36:07",
-  "notes": "Updated translations from Phrase (#154)\nrelease: 1.13.0-rc.8(1130021)",
-  "version": "1.13.0-rc.9(1130022)"
+  "last": "2024-06-19 20:01:49",
+  "notes": "Merge branch 'dev/1.13.0' of github.com:edificeio/edifice-mobile-framework into dev/1.13.0\nfix(editor): MB-2802 , fix color navbar on android in file import modal\nrelease: 1.13.0-rc.9(1130022)",
+  "version": "1.13.0-rc.10(1130023)"
 }
