@@ -18,6 +18,7 @@ import {
 } from '~/framework/util/notifications/routing';
 
 import { schoolbookRouteNames } from './navigation';
+import { AccountType } from '../auth/model';
 
 export interface ISchoolbookNotification extends ITimelineNotification, IResourceUriNotification {}
 
