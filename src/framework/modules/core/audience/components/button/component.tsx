@@ -7,6 +7,7 @@ import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
+import { ScrollContext } from '~/framework/components/scrollView';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
 import Feedback from '~/framework/util/feedback/feedback';
 
@@ -21,6 +22,8 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [offsetY, setOffsetY] = React.useState(0);
   const [offsetX, setOffsetX] = React.useState(0);
+
+  const scrollRef = React.useContext(ScrollContext);
 
   let component = React.useRef(null);
 
@@ -61,6 +64,11 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   };
 
   const hideReactions = () => {
+    if (scrollRef) {
+      scrollRef.current?.setNativeProps({
+        scrollEnabled: true,
+      });
+    }
     Feedback.actionDone();
     props.validReactionTypes.forEach((reaction, index) => {
       Animated.parallel([
@@ -89,6 +97,11 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   };
 
   const openReactions = () => {
+    if (scrollRef) {
+      scrollRef.current?.setNativeProps({
+        scrollEnabled: false,
+      });
+    }
     component.measure((fx, fy, width, height, px, py) => {
       setOffsetY(UI_SIZES.elements.navbarHeight + HEIGHT_VIEW_REACTIONS < py ? py - HEIGHT_VIEW_REACTIONS - 10 : py + height + 10);
       setOffsetX(px);
