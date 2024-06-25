@@ -694,7 +694,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = appe;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ode.mobile;
 				PRODUCT_NAME = appe;
 				SWIFT_OBJC_BRIDGING_HEADER = "appe-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -785,7 +785,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = appe;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ode.mobile;
 				PRODUCT_NAME = appe;
 				SWIFT_OBJC_BRIDGING_HEADER = "appe-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
