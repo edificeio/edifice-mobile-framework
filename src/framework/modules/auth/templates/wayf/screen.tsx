@@ -292,7 +292,6 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
         if (error instanceof Error.SamlMultipleVectorError && errtype === Error.OAuth2ErrorType.SAML_MULTIPLE_VECTOR) {
           try {
             // Extract users from error description
-
             (error.data.users as OAuthCustomTokens).forEach(token => {
               this.dropdownItems.push({ label: token.structureName, value: token.key });
             });
@@ -335,7 +334,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Called each time a navigation error occurs in WebView
   // See WebView onError property
   onError({ nativeEvent }: WebViewErrorEvent) {
-    if (__DEV__) console.debug('WAYFScreen::onError => ', nativeEvent);
+    console.error('WAYFScreen::onError => ', nativeEvent);
     if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url);
     // Display empty screen
     this.displayEmpty();
@@ -344,7 +343,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Called each time an http error occurs in WebView
   // See WebView onError property
   onHttpError({ nativeEvent }: WebViewHttpErrorEvent) {
-    if (__DEV__) console.debug('WAYFScreen::onHttpError => ', nativeEvent.statusCode);
+    console.error('WAYFScreen::onHttpError => ', nativeEvent.statusCode);
     if (!this.isFirstLoadFinished) trackingWayfEvents.loadError(nativeEvent.url, nativeEvent.statusCode);
     // Display empty screen
     this.displayEmpty();
@@ -370,14 +369,12 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   onMessage(event: WebViewMessageEvent) {
     // Get HTML code
     const innerHTML = event?.nativeEvent?.data || '';
-    if (__DEV__) console.debug('innerHTML :\n' + innerHTML);
+    console.debug('innerHTML :\n' + innerHTML);
     // Retrieve potential SAML token (Stored in <input type="hidden" name="SAMLResponse" value="[saml]"/>)
     const components = innerHTML.split('name="SAMLResponse" value="');
     if (components?.length === 2) {
       const index = components[1].indexOf('"');
-      // Call oauth2 token api with received SAML if any
       if (index > 0) this.samlResponse = components[1].substring(0, index);
-      if (this.samlResponse) this.loginWithSaml();
     }
   }
 
@@ -395,30 +392,35 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // See WebView onNavigationStateChange property
   onShouldStartLoadWithRequest(request: ShouldStartLoadRequest) {
     const url = request.url;
-    if (__DEV__) {
-      console.debug('WAYFScreen::onShouldStartLoadWithRequest: isFirstLoadFinished = ', this.isFirstLoadFinished);
-      console.debug('WAYFScreen::onShouldStartLoadWithRequest: url = ', url);
-    }
+    console.debug('WAYFScreen::onShouldStartLoadWithRequest: isFirstLoadFinished = ', this.isFirstLoadFinished);
+    console.debug('WAYFScreen::onShouldStartLoadWithRequest: url = ', url);
     // If current url is outside the WAYF
     if (this.wayfUrl && this.isFirstLoadFinished && !url.startsWith(this.wayfUrl)) {
       // Allow navigation to SP-Initiated WAYFs via auth config field
       if (this.authUrl && url.startsWith(this.authUrl)) {
-        if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: authUrl received => Navigation allowed');
+        console.debug('WAYFScreen::onShouldStartLoadWithRequest: authUrl received => Navigation allowed');
         return true;
       }
-      // Go to standard login page and block navigation when
-      //   - No SAMLResponse has been detected
-      //   - WAYF redirects to ENT
+      // If WAYF redirects to ENT
+      //   - Try to login with SAML token if any retrieved previously
+      //   - Otherwise go to standard login page
+      //   - Block navigation
       if (this.pfUrl && url.startsWith(this.pfUrl)) {
-        if (!this.samlResponse) {
-          if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
+        if (this.samlResponse) {
+          console.debug(
+            'WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Try to login with SAML token\n' + this.samlResponse,
+          );
+          this.loginWithSaml();
+        } else {
+          console.debug('WAYFScreen::onShouldStartLoadWithRequest: pfUrl received => Will show login page');
           this.props.navigation.dispatch(this.props.loginCredentialsNavAction);
         }
+        // Block navigation
         return false;
       }
     }
     // Allow navigation
-    if (__DEV__) console.debug('WAYFScreen::onShouldStartLoadWithRequest: Navigation allowed');
+    console.debug('WAYFScreen::onShouldStartLoadWithRequest: Navigation allowed');
     return true;
   }
 

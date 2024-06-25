@@ -57,16 +57,21 @@ const spaceString = ' ';
 export const ResourceItem = (props: ResourceExplorerItemProps) => {
   const CustomView = styled(ThumbnailView)({ ...styles.custom, backgroundColor: props.color });
 
+  const [error, setError] = React.useState<boolean>(false);
+
+  const renderThumbnail = () => {
+    if (props.image && !error) {
+      return <Image source={props.image} style={styles.image} onError={() => setError(true)} />;
+    }
+    if (props.base) return props.base;
+    return null;
+  };
+
   return (
     <View style={props.style ?? resourceItemTouchableStyle}>
       <ThumbnailView>
-        {props.showBgColor
-          ? (() => {
-              return <CustomView />;
-            })()
-          : null}
-        {props.base ? props.base : null}
-        {props.image ? <Image source={props.image} style={styles.image} /> : null}
+        {props.showBgColor ? <CustomView /> : null}
+        {renderThumbnail()}
       </ThumbnailView>
       <MetadataView>
         <View>

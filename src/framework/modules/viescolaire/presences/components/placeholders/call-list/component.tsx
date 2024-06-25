@@ -30,6 +30,8 @@ export default function CallListPlaceholder(props: CallListPlaceholderProps) {
       <View style={styles.listContainer}>
         <CallCardPlaceholder />
         <CallCardPlaceholder />
+        <CallCardPlaceholder />
+        <CallCardPlaceholder />
       </View>
     </Placeholder>
   );

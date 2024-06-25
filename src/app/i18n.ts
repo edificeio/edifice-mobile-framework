@@ -11,6 +11,7 @@ import resourcesToBackend from 'i18next-resources-to-backend';
 import moment from 'moment';
 import 'moment/locale/es';
 import 'moment/locale/fr';
+import 'moment/locale/it';
 import { initReactI18next } from 'react-i18next';
 import DeviceInfo from 'react-native-device-info';
 import * as RNLocalize from 'react-native-localize';
@@ -29,7 +30,7 @@ export namespace I18n {
   // Transform local translations (in a given language)
   //   - by applying the current override keys
   //   - and removing all overriden keys
-  const getOverridenTranslations = (translations: object) => {
+  const getOverridenTranslations = (translations: object): object => {
     // Get Overriden keys for this override
     const overrideName = getOverrideName();
     const overridenKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
@@ -65,7 +66,7 @@ export namespace I18n {
   const fallbackLng = 'en';
 
   // Supported locales
-  const supportedLanguages = ['fr', 'en', 'es'] as const;
+  const supportedLanguages = ['fr', 'en', 'es', 'it'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
 
   // Transform translations for all embeded locales
@@ -73,6 +74,7 @@ export namespace I18n {
     fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
     en: { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
     es: { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
+    it: { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
   };
 
   // Phrase stuff
@@ -132,7 +134,7 @@ export namespace I18n {
     return i18n.language;
   }
 
-  export const changeLanguage = async (lang: 'fr' | 'en' | 'es' | 'auto') => {
+  export const changeLanguage = async (lang: SupportedLocales | 'auto') => {
     if (showKeys) await OldStorageFunctions.setItemJson(I18N_SHOW_KEYS_KEY, false);
     if (lang === 'auto') await OldStorageFunctions.removeItem(I18N_APP_LANG);
     else await OldStorageFunctions.setItemJson(I18N_APP_LANG, lang);
@@ -152,7 +154,7 @@ export namespace I18n {
   export async function init() {
     // Initialize keys toggling
     if (canShowKeys) {
-      const stored: boolean | undefined = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
+      const stored: boolean | null | undefined = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
       if (stored) showKeys = stored;
     }
     // Initalize language

@@ -66,13 +66,6 @@ const snowFirstLaunchWait = 1000;
 let snowfallTimer: NodeJS.Timeout;
 
 Sound.setCategory('Playback');
-// export const jingleBells = new Sound('jingle_bells.mp3', Sound.MAIN_BUNDLE, error => {
-//   if (error) {
-//     console.log('failed to load the sound', error);
-//   } else
-//     console.log('duration in seconds: ' + jingleBells.getDuration() + 'number of channels: ' + jingleBells.getNumberOfChannels());
-// });
-// jingleBells.setVolume(0.5);
 
 const getIsWithinXmasPeriod = (startDay: number, startMonth: number, endDay: number, endMonth: number) => {
   const getDateForYear = (startOfYear: Moment, day: number, month: number) => {

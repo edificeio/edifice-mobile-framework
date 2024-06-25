@@ -38,9 +38,8 @@ export default StyleSheet.create({
     borderBottomColor: theme.palette.grey.pearl,
   },
   listContainer: {
-    rowGap: UI_SIZES.spacing.big,
-    paddingHorizontal: UI_SIZES.spacing.medium,
-    paddingVertical: UI_SIZES.spacing.big,
+    rowGap: UI_SIZES.spacing.medium,
+    padding: UI_SIZES.spacing.medium,
   },
   rowContainer: {
     flexDirection: 'row',

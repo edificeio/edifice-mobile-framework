@@ -47,6 +47,10 @@ export const UI_ANIMATIONS = {
     duration: 300,
     useNativeDriver: false,
   },
+  translate: {
+    duration: 300,
+    useNativeDriver: false,
+  },
   toast: {
     duration: 3000,
   },
@@ -86,12 +90,18 @@ export const UI_SIZES = {
   },
   elements: {
     border: {
+      thin: 1,
       default: 2,
       large: 4,
     },
+    editor: {
+      toolbarHeight: getScaleWidth(20) + 2 * getScaleWidth(8) + getScaleWidth(4) * 2,
+    },
     icon: {
+      xxsmall: getScaleWidth(12),
       xsmall: getScaleWidth(16),
       small: getScaleWidth(20),
+      medium: getScaleWidth(22),
       default: getScaleWidth(24),
     },
     logoSize: { height: getScaleHeight(64), width: getScaleWidth(300) },
@@ -129,6 +139,7 @@ export const UI_SIZES = {
     mediumPlus: getScaleWidth(16),
     large: getScaleWidth(21),
     extraLarge: getScaleWidth(24),
+    big: getScaleWidth(32),
     huge: getScaleWidth(48),
   },
   screen: {

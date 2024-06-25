@@ -191,8 +191,6 @@ export function Carousel(props: ICarouselProps) {
     [imageViewerRef],
   );
 
-  const headerHeight = useHeaderHeight();
-
   const downloadFile = React.useCallback(
     async (url: string | ImageURISource) => {
       const realUrl = urlSigner.getRelativeUrl(urlSigner.getSourceURIAsString(url));
@@ -200,7 +198,7 @@ export function Carousel(props: ICarouselProps) {
       const androidVersionMajor = Platform.OS === 'android' && parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10);
       const permissions = Platform.select<Permission[]>({
         ios: [],
-        android: androidVersionMajor >= 13 ? [] : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
+        android: (androidVersionMajor as number) >= 13 ? [] : [PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE],
       })!;
       await assertPermissions(permissions);
       const foundData = data.find(d => (d.src = url));

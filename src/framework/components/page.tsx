@@ -8,6 +8,7 @@
  * - Handle keyboard
  */
 import styled from '@emotion/native';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import * as React from 'react';
@@ -76,8 +77,7 @@ export const PageView = (props: PageViewProps) => {
   );
 
   const isModal = isModalModeOnThisRoute(route.name);
-
-  return (
+  const page = (
     <PageViewStyle {...viewProps}>
       <>
         {statusBarComponent}
@@ -89,6 +89,8 @@ export const PageView = (props: PageViewProps) => {
       </>
     </PageViewStyle>
   );
+
+  return <BottomSheetModalProvider>{page}</BottomSheetModalProvider>;
 };
 
 export const KeyboardPageView = (

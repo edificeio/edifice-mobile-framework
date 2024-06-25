@@ -92,4 +92,5 @@ setModalModeForRoutes([
   userRouteNames.editHobbies,
   userRouteNames.editDescription,
   userRouteNames.editMoodMotto,
+  userRouteNames.space,
 ]);

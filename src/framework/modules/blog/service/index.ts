@@ -272,6 +272,14 @@ export const blogService = {
         body,
       }) as Promise<IEntcoreCreatedBlogPost>;
     },
+    edit: async (session: AuthLoggedAccount, blogId: string, postId: string, postTitle: string, postContentHtml: string) => {
+      const api = `/blog/post/${blogId}/${postId}`;
+      const body = JSON.stringify({ title: postTitle, content: postContentHtml });
+      return signedFetchJson(`${session.platform.url}${api}`, {
+        method: 'PUT',
+        body,
+      });
+    },
     submit: async (session: AuthLoggedAccount, blogId: string, postId: string) => {
       const api = `/blog/post/submit/${blogId}/${postId}`;
       return signedFetchJson(`${session.platform.url}${api}`, { method: 'PUT' }) as Promise<{ number: number }>;

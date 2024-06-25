@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ColorValue, TouchableOpacity, View } from 'react-native';
+import { ColorValue, TextStyle, TouchableOpacity, View } from 'react-native';
 
 import theme from '~/app/theme';
 import { UI_SIZES, genericHitSlop } from '~/framework/components/constants';
@@ -11,6 +11,7 @@ import styles from './styles';
 export default function NavBarAction(props: {
   icon?: string;
   title?: string;
+  titleStyle?: TextStyle;
   disabled?: boolean;
   color?: ColorValue;
   testID?: string;
@@ -40,7 +41,7 @@ export default function NavBarAction(props: {
           style={[opacityIconStyle, styles.navBarActionIcon]}
         />
       ) : null}
-      {props.title ? <SmallInverseText style={opacityTextStyle}>{props.title}</SmallInverseText> : null}
+      {props.title ? <SmallInverseText style={[props.titleStyle, opacityTextStyle]}>{props.title}</SmallInverseText> : null}
     </Component>
   );
 }

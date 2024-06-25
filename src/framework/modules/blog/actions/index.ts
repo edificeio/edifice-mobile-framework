@@ -13,8 +13,9 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import workspaceFileTransferActions from '~/framework/modules/workspace/actions/fileTransfer';
-import { IDistantFile, IMAGE_MAX_DIMENSION, LocalFile } from '~/framework/util/fileHandler';
+import { LocalFile } from '~/framework/util/fileHandler';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
+import { resourceHasRight } from '~/framework/util/resourceRights';
 
 /**
  * Fetch the details of a given blog post.
@@ -103,25 +104,11 @@ export const uploadBlogPostImagesAction =
  * Info: no reducer is used in this action.
  */
 export const createBlogPostAction =
-  (blogId: string, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
+  (blogId: string, postTitle: string, postContent: string) =>
   async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
 
-    let postContentHtml = `<p class="ng-scope" style="">${postContent}</p>`;
-    if (uploadedPostImages) {
-      const postImageUploads = Object.values(uploadedPostImages);
-      const images = postImageUploads
-        .map(postImageUpload => `<img src="${postImageUpload.url}?thumbnail=${IMAGE_MAX_DIMENSION}x0" class="">`)
-        .join('');
-      const imagesHtml = `<p class="ng-scope" style="">
-        <span contenteditable="false" class="image-container ng-scope" style="">
-          ${images}
-        </span>
-      </p>`;
-      postContentHtml = postContentHtml + imagesHtml;
-    }
-
-    const createdPost = await blogService.post.create(session, blogId, postTitle, postContentHtml);
+    const createdPost = await blogService.post.create(session, blogId, postTitle, postContent);
     const postId = createdPost._id;
     return postId;
   };
@@ -155,12 +142,31 @@ export const submitBlogPostAction =
   };
 
 /**
+ * Edit a post for a given blog.
+ * Info: no reducer is used in this action.
+ */
+export const editBlogPostAction =
+  (blog: Blog, postId: string, postTitle: string, postContent: string, postState: string) =>
+  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+    const session = assertSession();
+    const blogId = blog.id;
+    const blogPostRight = getBlogPostRight(blog, session);
+    if (!blogPostRight) {
+      throw new Error('[editBlogPostAction] user has no post rights for this blog');
+    }
+
+    await blogService.post.edit(session, blogId, postId, postTitle, postContent);
+    const hasPublishBlogPostRight = resourceHasRight(blog, publishBlogPostResourceRight, session);
+    if (!hasPublishBlogPostRight || postState === 'SUBMITTED') await blogService.post.submit(session, blogId, postId);
+    else await blogService.post.publish(session, blogId, postId);
+  };
+
+/**
  * Create and submit/publish a post for a given blog.
  * Info: no reducer is used in this action.
  */
 export const sendBlogPostAction =
-  (blog: Blog, postTitle: string, postContent: string, uploadedPostImages?: IDistantFile[]) =>
-  async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
+  (blog: Blog, postTitle: string, postContent: string) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => any) => {
     const session = assertSession();
     const blogId = blog.id;
     const blogPostRight = getBlogPostRight(blog, session);
@@ -169,7 +175,7 @@ export const sendBlogPostAction =
     }
 
     // Create post
-    const postId = (await dispatch(createBlogPostAction(blogId, postTitle, postContent, uploadedPostImages))) as unknown as string;
+    const postId = (await dispatch(createBlogPostAction(blogId, postTitle, postContent))) as unknown as string;
 
     // Submit or publish post
     if (!postId) {

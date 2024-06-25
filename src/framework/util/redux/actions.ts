@@ -82,7 +82,7 @@ export function tryAction<Args extends any[], R, E>(
   return performAction(
     action,
     e => {
-      if (__DEV__) console.warn(action.name, e);
+      console.error(action.name, e);
       throw e;
     },
     opts,
@@ -104,7 +104,7 @@ export function handleAction<Args extends any[], R, E>(
   return performAction(
     action,
     e => {
-      if (__DEV__) console.warn(action.name, e);
+      console.error(action.name, e);
     },
     opts,
   );

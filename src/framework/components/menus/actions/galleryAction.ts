@@ -9,36 +9,36 @@ import { assertPermissions } from '~/framework/util/permissions';
 import { ImagePicked, MenuPickerActionProps } from './types';
 
 export default function galleryAction(props: MenuPickerActionProps & { multiple?: boolean; synchrone?: boolean }) {
-  const imageCallback = async (images: LocalFile[]) => {
+  const imageCallback = async (images: LocalFile[], callbackOnce: boolean = false) => {
     try {
-      for (const img of images) {
-        const imgFormatted = {
-          ...img.nativeInfo,
-          ...img,
-        };
-        if (props.synchrone) await props.callback!(imgFormatted as ImagePicked);
-        else props.callback!(imgFormatted as ImagePicked);
+      const formattedImages = images.map(img => ({ ...img.nativeInfo, ...img })) as ImagePicked[];
+      if (callbackOnce) {
+        if (props.synchrone) await props.callback!(formattedImages);
+        else props.callback!(formattedImages);
+      } else {
+        formattedImages.forEach(async image => {
+          if (props.synchrone) await props.callback!(image);
+          else props.callback!(image);
+        });
       }
     } catch {
       /* empty */
     }
   };
 
-  const action = async () => {
+  const action = async ({ callbackOnce }: { callbackOnce: boolean } = { callbackOnce: false }) => {
     try {
       await assertPermissions('galery.read');
-      LocalFile.pick({ source: 'galery', multiple: props.multiple }).then(lf => {
-        let images = lf;
-        if (Platform.OS === 'android') {
-          lf.forEach(item => {
-            if (item.filetype.startsWith('video/')) {
-              Toast.showError(I18n.get('pickfile-error-filetype'));
-            }
-          });
-        }
-        images = lf.filter(item => !item.filetype.startsWith('video/'));
-        return imageCallback(images);
-      });
+      const localFiles = await LocalFile.pick({ source: 'galery', multiple: props.multiple });
+      if (Platform.OS === 'android') {
+        localFiles.forEach(item => {
+          if (item.filetype.startsWith('video/')) {
+            Toast.showError(I18n.get('pickfile-error-filetype'));
+          }
+        });
+      }
+      const images = localFiles.filter(item => !item.filetype.startsWith('video/'));
+      return await imageCallback(images, callbackOnce);
     } catch {
       Alert.alert(
         I18n.get('gallery-readpermissionblocked-title'),

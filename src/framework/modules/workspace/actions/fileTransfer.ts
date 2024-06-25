@@ -127,7 +127,7 @@ export const trashWorkspaceFilesAction = (parentId: string, files: string[]) => 
   try {
     const session = assertSession();
     dispatch(workspaceTrashActionsCreators.request());
-    await workspaceService.files.trash(session, parentId, files);
+    await workspaceService.files.trash(session, files, parentId);
     dispatch(workspaceTrashActionsCreators.receipt(files.length));
     Toast.showSuccess(I18n.get('workspace-filelist-filetransfer-successfully-deleted'));
   } catch (e) {

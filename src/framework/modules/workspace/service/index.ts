@@ -5,11 +5,12 @@ import moment from 'moment';
 import queryString from 'query-string';
 
 import { I18n } from '~/app/i18n';
+import { UI_SIZES } from '~/framework/components/constants';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { Filter, IFile } from '~/framework/modules/workspace/reducer';
 import { workspaceFolderListAdapter } from '~/framework/modules/workspace/service/folderAdaptater';
-import { LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
+import { IMAGE_MAX_DIMENSION, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import fileTransferService, { IUploadCallbaks, IUploadCommonParams } from '~/framework/util/fileHandler/service';
 import { fetchJSONWithCache, signedFetchJson } from '~/infra/fetchWithCache';
 
@@ -126,7 +127,15 @@ const getImplicitWorkspaceUploadParams = (params: IWorkspaceUploadParams) => {
 const getThumbnailWorkspaceUploadParams = () => {
   return {
     quality: '1',
-    thumbnail: ['100x100', '120x120', '290x290', '381x381', '1600x0'],
+    thumbnail: [
+      '100x100',
+      '120x120',
+      '150x150',
+      '2600x0',
+      `${UI_SIZES.standardScreen.width / 2}x0`,
+      `${UI_SIZES.standardScreen.width}x0`,
+      `${IMAGE_MAX_DIMENSION}x0`,
+    ],
   };
 };
 
@@ -172,7 +181,7 @@ const workspaceService = {
         body,
       });
     },
-    trash: async (session: AuthLoggedAccount, parentId: string, ids: string[]) => {
+    trash: async (session: AuthLoggedAccount, ids: string[], parentId?: string) => {
       const api = '/workspace/documents/trash';
       const body = JSON.stringify({ parentId, ids });
       return signedFetchJson(`${session?.platform.url}${api}`, {
@@ -220,7 +229,7 @@ const workspaceService = {
         : {
             parent: params.parent,
             ...getImplicitWorkspaceUploadParams(params),
-            ...getThumbnailWorkspaceUploadParams(),
+            //...getThumbnailWorkspaceUploadParams(),
           };
       const url = queryString.stringifyUrl({
         url: api,

@@ -1,4 +1,4 @@
-import { blogUriCaptureFunction } from '~/framework/modules//blog/service';
+import { blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { Module } from '~/framework/util/moduleTool';
 
 import config from './module-config';

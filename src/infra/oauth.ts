@@ -24,6 +24,7 @@ import { updateAccount } from '~/framework/modules/auth/storage';
 import { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { ModuleArray } from '~/framework/util/moduleTool';
+import { isEmpty } from '~/framework/util/object';
 import { OldStorageFunctions } from '~/framework/util/storage';
 
 // This is a big hack to prevent circular dependencies. AllModules.tsx must not included from modules theirself.
@@ -472,7 +473,7 @@ export class OAuth2RessourceOwnerPasswordClient {
       this.updateToken(userId, this.exportToken(), updateRedux);
       return this.token!;
     } catch (err) {
-      console.warn('[oAuth2] failed refresh token', err);
+      console.error('[oAuth2] failed refresh token', err);
       throw err;
     }
   }
@@ -535,6 +536,43 @@ export class OAuth2RessourceOwnerPasswordClient {
   public generateUniqueSesionIdentifier() {
     this.uniqueSessionIdentifier = Math.random().toString(36).substring(7);
     return this.uniqueSessionIdentifier;
+  }
+
+  /**
+   * oneSessionId management (for rich editor)
+   */
+  private oneSessionId?: string = undefined;
+
+  public async getOneSessionId() {
+    try {
+      // Clear cookies before calling token-as-cookie
+      await CookieManager.clearAll();
+      // Call token-as-cookie
+      const request = this.signRequest(`${assertSession().platform.url}/auth/oauth2/token-as-cookie`, { method: 'POST' });
+      const response = await fetch(request);
+      const cookie = response.headers.get('set-cookie') || undefined;
+
+      let newSessionId: string | undefined;
+      // Continue if set-cookie header found
+      // Otherwise, last oneSessionId will be returned
+      if (!isEmpty(cookie)) {
+        // Extract oneSessionId from set-cookie header
+        const match = cookie!.match(/oneSessionId=([^;]+)/);
+        // Update oneSessionId if found
+        // Otherwise, last oneSessionId will be returned
+        if (!isEmpty(match)) newSessionId = match![1];
+      }
+      if (newSessionId && this.oneSessionId !== newSessionId) {
+        this.oneSessionId = newSessionId;
+        console.debug(`New oneSessionId retrieved: ${this.oneSessionId}`);
+        const session = assertSession();
+        getStore().dispatch(authActions.setOneSessionId(session.user.id, { value: newSessionId }));
+      }
+    } catch (e) {
+      // We leave the catch and returned value will be last oneSessionId
+      console.error('Unable to retrieve oneSessionId => ', e);
+    }
+    return this.oneSessionId;
   }
 
   /**

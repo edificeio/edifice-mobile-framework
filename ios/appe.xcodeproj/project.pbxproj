@@ -9,6 +9,27 @@
 /* Begin PBXBuildFile section */
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1D20446B2B6BD1810020EABA /* font_bold.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20445D2B6BD1500020EABA /* font_bold.woff */; };
+		1D20446C2B6BD1810020EABA /* font_bolditalic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044622B6BD1500020EABA /* font_bolditalic.woff */; };
+		1D20446D2B6BD1810020EABA /* font_italic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044682B6BD1510020EABA /* font_italic.woff */; };
+		1D20446E2B6BD1810020EABA /* font_regular.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044642B6BD1510020EABA /* font_regular.woff */; };
+		1D20446F2B6BD1810020EABA /* ibmplexmono_bold.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044602B6BD1500020EABA /* ibmplexmono_bold.woff */; };
+		1D2044702B6BD1810020EABA /* ibmplexmono_bolditalic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044662B6BD1510020EABA /* ibmplexmono_bolditalic.woff */; };
+		1D2044712B6BD1810020EABA /* ibmplexmono_italic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044592B6BD1500020EABA /* ibmplexmono_italic.woff */; };
+		1D2044722B6BD1810020EABA /* ibmplexmono_regular.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044572B6BD14F0020EABA /* ibmplexmono_regular.woff */; };
+		1D2044732B6BD1810020EABA /* lora_bold.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044632B6BD1500020EABA /* lora_bold.woff */; };
+		1D2044742B6BD1810020EABA /* lora_bolditalic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20445B2B6BD1500020EABA /* lora_bolditalic.woff */; };
+		1D2044752B6BD1810020EABA /* lora_italic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044672B6BD1510020EABA /* lora_italic.woff */; };
+		1D2044762B6BD1810020EABA /* lora_regular.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044582B6BD1500020EABA /* lora_regular.woff */; };
+		1D2044772B6BD1810020EABA /* opendyslexic_bold.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044652B6BD1510020EABA /* opendyslexic_bold.woff */; };
+		1D2044782B6BD1810020EABA /* opendyslexic_bolditalic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20445A2B6BD1500020EABA /* opendyslexic_bolditalic.woff */; };
+		1D2044792B6BD1810020EABA /* opendyslexic_italic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20445C2B6BD1500020EABA /* opendyslexic_italic.woff */; };
+		1D20447A2B6BD1810020EABA /* opendyslexic_regular.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20445F2B6BD1500020EABA /* opendyslexic_regular.woff */; };
+		1D20447F2B6BD70B0020EABA /* ecriturea_italic.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20447D2B6BD6C60020EABA /* ecriturea_italic.woff */; };
+		1D2044802B6BD70B0020EABA /* ecriturea_regular.woff in Resources */ = {isa = PBXBuildFile; fileRef = 1D20447E2B6BD6C60020EABA /* ecriturea_regular.woff */; };
+		1D2044862B7267190020EABA /* attachment.svg in Resources */ = {isa = PBXBuildFile; fileRef = 1D2044852B7267190020EABA /* attachment.svg */; };
+		1D4670A22B7509C2001EFD9F /* audio.svg in Resources */ = {isa = PBXBuildFile; fileRef = 1D4670A12B7509C2001EFD9F /* audio.svg */; };
+		1DCD7ADC2B7E01460010EB27 /* play.svg in Resources */ = {isa = PBXBuildFile; fileRef = 1DCD7ADB2B7E01460010EB27 /* play.svg */; };
 		7404C07422E8B012008546A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7404C07322E8B012008546A8 /* Assets.xcassets */; };
 		741ACC0D23B632380075BCE4 /* AppCenter-Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 741ACC0C23B632380075BCE4 /* AppCenter-Config.plist */; };
 		745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 745D891422DE014D0038F1FA /* GoogleService-Info.plist */; };
@@ -29,6 +50,10 @@
 		F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */; };
 		F0CB47602BC6BF83006A73F3 /* ZendeskUnified.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */; };
 		F0CB47612BC6BF83006A73F3 /* ZendeskUnified.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */; };
+		F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */; };
+		F0FDEEF32BDBE64F00056775 /* attachment.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF02BDBE64F00056775 /* attachment.svg */; };
+		F0FDEEF42BDBE64F00056775 /* audio.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF12BDBE64F00056775 /* audio.svg */; };
+		F0FDEEF52BDBE64F00056775 /* play.svg in Resources */ = {isa = PBXBuildFile; fileRef = F0FDEEF22BDBE64F00056775 /* play.svg */; };
 		F313A3B02C1DD5E7D4836B61 /* libPods-appe.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 611EEA89A9B54F0CB20EFC25 /* libPods-appe.a */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +65,27 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = appe/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 1; lastKnownFileType = sourcecode.c.objc; name = main.m; path = appe/main.m; sourceTree = "<group>"; };
 		1B95597B3CEBB7E33AE92F2C /* libPods-appe-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-appe-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D2044572B6BD14F0020EABA /* ibmplexmono_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = ibmplexmono_regular.woff; sourceTree = "<group>"; };
+		1D2044582B6BD1500020EABA /* lora_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = lora_regular.woff; sourceTree = "<group>"; };
+		1D2044592B6BD1500020EABA /* ibmplexmono_italic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = ibmplexmono_italic.woff; sourceTree = "<group>"; };
+		1D20445A2B6BD1500020EABA /* opendyslexic_bolditalic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = opendyslexic_bolditalic.woff; sourceTree = "<group>"; };
+		1D20445B2B6BD1500020EABA /* lora_bolditalic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = lora_bolditalic.woff; sourceTree = "<group>"; };
+		1D20445C2B6BD1500020EABA /* opendyslexic_italic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = opendyslexic_italic.woff; sourceTree = "<group>"; };
+		1D20445D2B6BD1500020EABA /* font_bold.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font_bold.woff; sourceTree = "<group>"; };
+		1D20445F2B6BD1500020EABA /* opendyslexic_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = opendyslexic_regular.woff; sourceTree = "<group>"; };
+		1D2044602B6BD1500020EABA /* ibmplexmono_bold.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = ibmplexmono_bold.woff; sourceTree = "<group>"; };
+		1D2044622B6BD1500020EABA /* font_bolditalic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font_bolditalic.woff; sourceTree = "<group>"; };
+		1D2044632B6BD1500020EABA /* lora_bold.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = lora_bold.woff; sourceTree = "<group>"; };
+		1D2044642B6BD1510020EABA /* font_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font_regular.woff; sourceTree = "<group>"; };
+		1D2044652B6BD1510020EABA /* opendyslexic_bold.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = opendyslexic_bold.woff; sourceTree = "<group>"; };
+		1D2044662B6BD1510020EABA /* ibmplexmono_bolditalic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = ibmplexmono_bolditalic.woff; sourceTree = "<group>"; };
+		1D2044672B6BD1510020EABA /* lora_italic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = lora_italic.woff; sourceTree = "<group>"; };
+		1D2044682B6BD1510020EABA /* font_italic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = font_italic.woff; sourceTree = "<group>"; };
+		1D20447D2B6BD6C60020EABA /* ecriturea_italic.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = ecriturea_italic.woff; sourceTree = "<group>"; };
+		1D20447E2B6BD6C60020EABA /* ecriturea_regular.woff */ = {isa = PBXFileReference; lastKnownFileType = file; path = ecriturea_regular.woff; sourceTree = "<group>"; };
+		1D2044852B7267190020EABA /* attachment.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = attachment.svg; path = appe/images/attachment.svg; sourceTree = "<group>"; };
+		1D4670A12B7509C2001EFD9F /* audio.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = audio.svg; path = appe/images/audio.svg; sourceTree = "<group>"; };
+		1DCD7ADB2B7E01460010EB27 /* play.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = play.svg; path = appe/images/play.svg; sourceTree = "<group>"; };
 		1DFE6EE83479AB48105B003E /* Pods-appe-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe-tvOS.release.xcconfig"; path = "Target Support Files/Pods-appe-tvOS/Pods-appe-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		301566A10115CCDFC94DA2A6 /* Pods-appe-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-appe-tvOSTests/Pods-appe-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		42FDC4360830EB2D0044A292 /* Pods-appe.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-appe.debug.xcconfig"; path = "Target Support Files/Pods-appe/Pods-appe.debug.xcconfig"; sourceTree = "<group>"; };
@@ -77,6 +123,10 @@
 		F0CB475C2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = appe/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F0CB475D2BC6BF83006A73F3 /* ZendeskUnified.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ZendeskUnified.swift; path = appe/ZendeskUnified.swift; sourceTree = "<group>"; };
 		F0CB475E2BC6BF83006A73F3 /* ZendeskUnified.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ZendeskUnified.mm; path = appe/ZendeskUnified.mm; sourceTree = "<group>"; };
+		F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "image-not-found.svg"; path = "appe/images/image-not-found.svg"; sourceTree = "<group>"; };
+		F0FDEEF02BDBE64F00056775 /* attachment.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = attachment.svg; path = appe/images/attachment.svg; sourceTree = "<group>"; };
+		F0FDEEF12BDBE64F00056775 /* audio.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = audio.svg; path = appe/images/audio.svg; sourceTree = "<group>"; };
+		F0FDEEF22BDBE64F00056775 /* play.svg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = play.svg; path = appe/images/play.svg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +180,10 @@
 		74264AB722DF7D2E00A0E2A6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F0E1FD472C0F1D6C00B9CE7C /* image-not-found.svg */,
+				F0FDEEF02BDBE64F00056775 /* attachment.svg */,
+				F0FDEEF12BDBE64F00056775 /* audio.svg */,
+				F0FDEEF22BDBE64F00056775 /* play.svg */,
 				7E6F88D32B17570A000B4E95 /* jingle_bells.mp3 */,
 				F06C18652B61837F00FBA3A2 /* splash-screen.png */,
 				F06C18672B61837F00FBA3A2 /* splash-screen@2x.png */,
@@ -143,6 +197,24 @@
 		74EC2C3F26E63F04008EB301 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				1D20447D2B6BD6C60020EABA /* ecriturea_italic.woff */,
+				1D20447E2B6BD6C60020EABA /* ecriturea_regular.woff */,
+				1D20445D2B6BD1500020EABA /* font_bold.woff */,
+				1D2044622B6BD1500020EABA /* font_bolditalic.woff */,
+				1D2044682B6BD1510020EABA /* font_italic.woff */,
+				1D2044642B6BD1510020EABA /* font_regular.woff */,
+				1D2044602B6BD1500020EABA /* ibmplexmono_bold.woff */,
+				1D2044662B6BD1510020EABA /* ibmplexmono_bolditalic.woff */,
+				1D2044592B6BD1500020EABA /* ibmplexmono_italic.woff */,
+				1D2044572B6BD14F0020EABA /* ibmplexmono_regular.woff */,
+				1D2044632B6BD1500020EABA /* lora_bold.woff */,
+				1D20445B2B6BD1500020EABA /* lora_bolditalic.woff */,
+				1D2044672B6BD1510020EABA /* lora_italic.woff */,
+				1D2044582B6BD1500020EABA /* lora_regular.woff */,
+				1D2044652B6BD1510020EABA /* opendyslexic_bold.woff */,
+				1D20445A2B6BD1500020EABA /* opendyslexic_bolditalic.woff */,
+				1D20445C2B6BD1500020EABA /* opendyslexic_italic.woff */,
+				1D20445F2B6BD1500020EABA /* opendyslexic_regular.woff */,
 				F0440EEA28AF98A50065A34A /* Comfortaa-Bold.ttf */,
 				91D2CEF828D0D33A00A1A1C2 /* Font-Bold.ttf */,
 				91D2CEF728D0D33A00A1A1C2 /* Font-BoldItalic.ttf */,
@@ -169,6 +241,7 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				A1567E90EE2E6859F48B30B6 /* Pods */,
 				83CBBA001A601CBA00E9B192 /* Products */,
+				F0FDEEEF2BDBE53000056775 /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -198,6 +271,16 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		F0FDEEEF2BDBE53000056775 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				1D4670A12B7509C2001EFD9F /* audio.svg */,
+				1D2044852B7267190020EABA /* attachment.svg */,
+				1DCD7ADB2B7E01460010EB27 /* play.svg */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -212,7 +295,7 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				519768880520012D590F3637 /* [CP] Copy Pods Resources */,
 				249738A3779437DBACCFB77C /* [CP-User] [RNFB] Core Configuration */,
-				7A8AEAE3AB9A5558A9CE7721 /* [CP] Embed Pods Frameworks */,
+				9177BEECCF98298145120B2F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -271,6 +354,28 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D20447F2B6BD70B0020EABA /* ecriturea_italic.woff in Resources */,
+				1D2044802B6BD70B0020EABA /* ecriturea_regular.woff in Resources */,
+				1D20446B2B6BD1810020EABA /* font_bold.woff in Resources */,
+				1D20446C2B6BD1810020EABA /* font_bolditalic.woff in Resources */,
+				1D20446D2B6BD1810020EABA /* font_italic.woff in Resources */,
+				1D20446E2B6BD1810020EABA /* font_regular.woff in Resources */,
+				1D20446F2B6BD1810020EABA /* ibmplexmono_bold.woff in Resources */,
+				F0E1FD482C0F1D6C00B9CE7C /* image-not-found.svg in Resources */,
+				1D2044702B6BD1810020EABA /* ibmplexmono_bolditalic.woff in Resources */,
+				1D2044712B6BD1810020EABA /* ibmplexmono_italic.woff in Resources */,
+				1D2044722B6BD1810020EABA /* ibmplexmono_regular.woff in Resources */,
+				1D2044732B6BD1810020EABA /* lora_bold.woff in Resources */,
+				1D2044742B6BD1810020EABA /* lora_bolditalic.woff in Resources */,
+				1D2044752B6BD1810020EABA /* lora_italic.woff in Resources */,
+				1D2044762B6BD1810020EABA /* lora_regular.woff in Resources */,
+				1D2044772B6BD1810020EABA /* opendyslexic_bold.woff in Resources */,
+				1D2044782B6BD1810020EABA /* opendyslexic_bolditalic.woff in Resources */,
+				1D2044792B6BD1810020EABA /* opendyslexic_italic.woff in Resources */,
+				1D4670A22B7509C2001EFD9F /* audio.svg in Resources */,
+				1D20447A2B6BD1810020EABA /* opendyslexic_regular.woff in Resources */,
+				1D2044862B7267190020EABA /* attachment.svg in Resources */,
+				F0FDEEF32BDBE64F00056775 /* attachment.svg in Resources */,
 				F0440EF328AF98A50065A34A /* Comfortaa-Bold.ttf in Resources */,
 				7404C07422E8B012008546A8 /* Assets.xcassets in Resources */,
 				F06C18692B61837F00FBA3A2 /* splash-screen@3x.png in Resources */,
@@ -280,11 +385,14 @@
 				F0CB475F2BC6BF83006A73F3 /* PrivacyInfo.xcprivacy in Resources */,
 				745D891522DE014D0038F1FA /* GoogleService-Info.plist in Resources */,
 				91D2CEFA28D0D33A00A1A1C2 /* Font-Italic.ttf in Resources */,
+				1DCD7ADC2B7E01460010EB27 /* play.svg in Resources */,
 				91D2CEFC28D0D33A00A1A1C2 /* Font-Bold.ttf in Resources */,
 				91D2CEFB28D0D33A00A1A1C2 /* Font-BoldItalic.ttf in Resources */,
+				F0FDEEF42BDBE64F00056775 /* audio.svg in Resources */,
 				F06C18682B61837F00FBA3A2 /* splash-screen.png in Resources */,
 				7E6F88D42B17570A000B4E95 /* jingle_bells.mp3 in Resources */,
 				74EC2C4926E63F04008EB301 /* icomoon.ttf in Resources */,
+				F0FDEEF52BDBE64F00056775 /* play.svg in Resources */,
 				F09C4A402B0400800075018F /* SplashScreen.xib in Resources */,
 				91D2CEFD28D0D33A00A1A1C2 /* Font-Regular.ttf in Resources */,
 				F0AC1B422BDAA6A900563199 /* help_center_article_style.css in Resources */,
@@ -403,7 +511,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-appe/Pods-appe-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7A8AEAE3AB9A5558A9CE7721 /* [CP] Embed Pods Frameworks */ = {
+		9177BEECCF98298145120B2F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -580,7 +688,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = fr.openent.mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = appe;
 				PRODUCT_NAME = appe;
 				SWIFT_OBJC_BRIDGING_HEADER = "appe-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -671,7 +779,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = fr.openent.mobile;
+				PRODUCT_BUNDLE_IDENTIFIER = appe;
 				PRODUCT_NAME = appe;
 				SWIFT_OBJC_BRIDGING_HEADER = "appe-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

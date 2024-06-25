@@ -25,5 +25,8 @@ export interface MenuActionProps {
 }
 
 export interface MenuPickerActionProps {
-  callback: (document: ImagePicked | DocumentPicked, sourceType?: string) => Promise<void> | void;
+  callback: (
+    document: ImagePicked | DocumentPicked | (ImagePicked | DocumentPicked)[],
+    sourceType?: string,
+  ) => Promise<void> | void;
 }

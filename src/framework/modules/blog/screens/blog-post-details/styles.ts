@@ -49,4 +49,14 @@ export default StyleSheet.create({
   footerWaitingValidation: {
     color: theme.palette.secondary.regular,
   },
+  loader: {
+    position: 'absolute',
+    zIndex: 1000,
+    pointerEvents: 'none',
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    opacity: 0.999,
+    backgroundColor: theme.ui.background.page,
+  },
 });

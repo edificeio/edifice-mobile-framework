@@ -279,7 +279,7 @@ export default React.forwardRef(
         zIndex: active ? 1 : -1,
         width: '100%',
         height: '100%',
-      } as ViewStyle);
+      }) as ViewStyle;
 
     const onRowOpen = (rowKey: string, rowMap: RowMap<ItemT>) => {
       if (preventTouchRefs.current) {
@@ -310,7 +310,7 @@ export default React.forwardRef(
     const realRenderItem = React.useCallback(
       (info, rowMap) => {
         if (!renderItem) {
-          if (__DEV__) console.warn('[swipeableList] renderItem not provided.');
+          console.error('[swipeableList] renderItem not provided.');
           return null;
         }
         const onSwipeValueChange = (swipeData: { key: string; value: number; direction: 'left' | 'right'; isOpen: boolean }) => {
@@ -353,7 +353,7 @@ export default React.forwardRef(
     );
 
     if (!renderItem) {
-      if (__DEV__) console.warn('[swipeableList] renderItem not provided.');
+      console.error('[swipeableList] renderItem not provided.');
       return null;
     }
 

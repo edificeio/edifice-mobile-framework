@@ -7,27 +7,29 @@ import { assertPermissions } from '~/framework/util/permissions';
 
 import { ImagePicked, MenuPickerActionProps } from './types';
 
-export default function cameraAction(props: MenuPickerActionProps & { useFrontCamera?: boolean }) {
-  const imageCallback = async (images: LocalFile[]) => {
+export default function cameraAction(props: MenuPickerActionProps & { useFrontCamera?: boolean; synchrone?: boolean }) {
+  const imageCallback = async (images: LocalFile[], callbackOnce: boolean = false) => {
     try {
-      for (const img of images) {
-        const imgFormatted = {
-          ...img.nativeInfo,
-          ...img,
-        };
-        props.callback!(imgFormatted as ImagePicked);
+      const formattedImages = images.map(img => ({ ...img.nativeInfo, ...img })) as ImagePicked[];
+      if (callbackOnce) {
+        if (props.synchrone) await props.callback!(formattedImages);
+        else props.callback!(formattedImages);
+      } else {
+        formattedImages.forEach(async image => {
+          if (props.synchrone) await props.callback!(image);
+          else props.callback!(image);
+        });
       }
     } catch {
       /* empty */
     }
   };
 
-  const action = async () => {
+  const action = async ({ callbackOnce }: { callbackOnce: boolean } = { callbackOnce: false }) => {
     try {
       await assertPermissions('camera');
-      LocalFile.pick({ source: 'camera' }, props.useFrontCamera ? { cameraType: 'front' } : undefined).then(lf => {
-        return imageCallback(lf);
-      });
+      const localFiles = await LocalFile.pick({ source: 'camera' }, props.useFrontCamera ? { cameraType: 'front' } : undefined);
+      return await imageCallback(localFiles, callbackOnce);
     } catch {
       Alert.alert(
         I18n.get('camera-permissionblocked-title'),

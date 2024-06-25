@@ -1,7 +1,6 @@
 /**
  * File Manager
  */
-import ImageResizer from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Platform } from 'react-native';
@@ -13,6 +12,7 @@ import {
   ImageLibraryOptions,
   ImagePickerResponse,
   MediaType,
+  PhotoQuality,
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
@@ -21,57 +21,46 @@ import { assertPermissions } from '~/framework/util/permissions';
 
 import { openDocument } from './actions';
 
+export interface IPickOptions {
+  source: 'documents' | 'galery' | 'camera';
+  multiple?: boolean; // Useless for source = 'camera'
+  type?: LocalFile.IPickOptionsType | LocalFile.IPickOptionsType[];
+}
+
 namespace LocalFile {
   export type IPickOptionsType = 'image' | 'audio' | 'video';
-  export interface IPickOptions {
-    source: 'documents' | 'galery' | 'camera';
-    multiple?: boolean; // Useless for source = 'camera'
-    type?: IPickOptionsType | IPickOptionsType[];
-  }
 
   export type CustomUploadFileItem = Omit<UploadFileItem, 'name'>;
 }
 
 export const IMAGE_MAX_DIMENSION = 1440;
+export const IMAGE_MAX_QUALITY: PhotoQuality = 0.8;
 
-const compress = async pic => {
-  if (!pic.uri) return;
-  if (pic.type === 'image/gif') return pic;
-  try {
-    let result;
-    const maxCompression = 80;
-    await ImageResizer.createResizedImage(
-      pic.uri,
-      IMAGE_MAX_DIMENSION,
-      IMAGE_MAX_DIMENSION,
-      'JPEG',
-      maxCompression,
-      0,
-      undefined,
-      false,
-      {
-        mode: 'contain',
-        onlyScaleDown: true,
-      },
-    )
-      .then(response => {
-        result = {
-          fileName: response.name,
-          fileSize: response.size,
-          height: response.height,
-          type: 'image/jpg',
-          uri: response.uri,
-          width: response.width,
-        };
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    return result;
-  } catch (error) {
-    console.log(error, 'Unable to resize the photo');
-    return undefined;
-  }
+const compressionOptions = {
+  maxHeight: IMAGE_MAX_DIMENSION,
+  maxWidth: IMAGE_MAX_DIMENSION,
+  quality: IMAGE_MAX_QUALITY,
+};
+
+export function formatBytes(bytes, decimals = 2) {
+  if (!+bytes) return '0 Bytes';
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+const renameAssets = (assets: Asset[]) => {
+  const prefix = moment().format('YYYYMMDD-HHmmss');
+  const renamedAssets = assets.map((asset, index) => ({
+    ...asset,
+    fileName: `${prefix}${index > 0 ? `-${index}` : ''}`,
+  }));
+  return renamedAssets;
 };
 
 /**
@@ -110,7 +99,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
    * Pick a file from the user's device storage.
    */
   static async pick(
-    opts: LocalFile.IPickOptions,
+    opts: IPickOptions,
     cameraOptions?: Omit<CameraOptions, 'mediaType'>,
     galeryOptions?: Omit<ImageLibraryOptions, 'mediaType'>,
   ) {
@@ -140,41 +129,37 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       // Pick files
       await new Promise<void>((resolve, reject) => {
         const callback = async (res: ImagePickerResponse) => {
-          if (!res.assets || res.didCancel || res.errorCode) reject(res);
+          if (res.didCancel) {
+            pickedFiles = [];
+            resolve();
+          } else if (!res.assets || res.errorCode) reject(res);
           else {
-            pickedFiles = await Promise.all(res.assets.map(compress));
+            pickedFiles = renameAssets(res.assets);
             resolve();
           }
         };
-        if (opts.multiple) {
-          launchImageLibrary(
-            {
-              mediaType: LocalFile._getImagePickerTypeArg(opts.type),
-              presentationStyle: 'fullScreen',
-              selectionLimit: 0,
-              ...galeryOptions,
-            },
-            callback,
-          );
-        } else {
-          launchImageLibrary(
-            {
-              mediaType: LocalFile._getImagePickerTypeArg(opts.type),
-              presentationStyle: 'fullScreen',
-              ...galeryOptions,
-            },
-            callback,
-          );
-        }
+        launchImageLibrary(
+          {
+            mediaType: LocalFile._getImagePickerTypeArg(opts.type),
+            selectionLimit: opts.multiple ? 0 : 1,
+            presentationStyle: 'pageSheet',
+            ...compressionOptions,
+            ...galeryOptions,
+          },
+          callback,
+        );
       });
     } /* if (opts.source === 'camera') */ else {
       await assertPermissions('camera');
       // Pick files
       await new Promise<void>((resolve, reject) => {
         const callback = async (res: ImagePickerResponse) => {
-          if (!res.assets || res.didCancel || res.errorCode) reject(res);
+          if (res.didCancel) {
+            pickedFiles = [];
+            resolve();
+          } else if (!res.assets || res.errorCode) reject(res);
           else {
-            pickedFiles.push(await compress(res.assets[0]));
+            pickedFiles = renameAssets(res.assets);
             resolve();
           }
         };
@@ -183,6 +168,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             mediaType: LocalFile._getImagePickerTypeArg(opts.type),
             presentationStyle: 'fullScreen',
             saveToPhotos: false,
+            ...compressionOptions,
             ...cameraOptions,
           },
           callback,
@@ -200,6 +186,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   filepath: string; // Absolute url to the file on the device, starting by '/'
 
   _filepathNative: string; // Absolute url to the file on the device, including 'file://' protocol.
+
+  filesize?: number;
 
   filetype: string; // Mime type of the file
 

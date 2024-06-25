@@ -64,15 +64,16 @@ const _override_copyMergePaths = {
   'modules.ts': 'src/app/override/modules.ts', // Included modules in the override
   'theme.ts': 'src/app/override/theme.ts', // Theme override
   assets: 'assets', // All specific assets
+  'android/google-services.json': 'android/app/google-services.json', // Firebase Android config
+  'android/appcenter-config.json': 'android/app/src/main/assets/appcenter-config.json', // AppCenter Android config
+  'android/res': 'android/app/src/main/res', // Android specific native assets
+  'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
+  'android/images': 'android/app/src/main/assets/images', // Android specific fonts
   'ios/AppCenter-Config.plist': 'ios/appe/AppCenter-Config.plist', // AppCenter iOS config
   'ios/GoogleService-Info.plist': 'ios/appe/GoogleService-Info.plist', // Firebase iOS config
-  'android/appcenter-config.json': 'android/app/src/main/assets/appcenter-config.json', // AppCenter Android config
-  'android/google-services.json': 'android/app/google-services.json', // Firebase Android config
   'ios/Assets.xcassets': 'ios/appe/Assets.xcassets', // iOS specific native assets
-  'android/res': 'android/app/src/main/res', // Android specific native assets
   'ios/Fonts': 'ios/Fonts', // iOS specific fonts
   'ios/images': 'ios/appe/images', // iOS specific images
-  'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
 };
 
 // Manual proceeded files
@@ -81,6 +82,8 @@ const _override_specialUpdates = {
   'ios.pbxproj': 'ios/appe.xcodeproj/project.pbxproj',
   android: 'android/gradle.properties',
 };
+
+const _override_forceCopy = ['assets/animations/audio/disque.json'];
 
 // Project constants
 const _projectPathAbsolute = process.cwd();
@@ -556,8 +559,7 @@ async function _override_performCopyMerge(overridesPathAbsolute, overrideName) {
   // 2. Execute copy-list
   copyFiles.forEach(cp => {
     fs.mkdirSync(path.dirname(cp[1]), { recursive: true });
-
-    if (/.json$/.test(cp[0]) && fs.existsSync(cp[1])) {
+    if (!_override_forceCopy.includes(cp[1]) && /.json$/.test(cp[0]) && fs.existsSync(cp[1])) {
       // JSON files are deeply merged to each other in the override stack.
       opts.verbose && console.log(`Merging JSON :\r`);
       opts.verbose && console.log(`  from: "${cp[0]}"\r`);

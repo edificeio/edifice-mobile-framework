@@ -21,7 +21,10 @@ import Images from '~/ui/Images';
 export const extractTextFromHtml = (html: string) => {
   if (!html) return;
   const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
-  const textWithoutAttachmentGroups = html.replaceAll(attachmentGroupRegex, '');
+  const attachmentGroupRegexNewEditor = /<div class="attachments">.*?<\/div>/gs;
+  let textWithoutAttachmentGroups = '';
+  textWithoutAttachmentGroups = html.replaceAll(attachmentGroupRegex, '');
+  textWithoutAttachmentGroups = textWithoutAttachmentGroups.replaceAll(attachmentGroupRegexNewEditor, '');
   const onlyText = textWithoutAttachmentGroups.replaceAll(/<(\/div|\/p|\/li|br|)>/g, '\n').replaceAll(/<.*?>/g, '');
   const unescaped = decode(onlyText);
   const trimmedToNull = unescaped === null ? null : unescaped.trim().length === 0 ? null : unescaped.trim();
@@ -45,19 +48,29 @@ export const extractMediaFromHtml = (html: string) => {
   const videoRegex = /<video(\s+[^>]*)>/g;
   const tagAttributesPattern = /(data-)?([^= ]+)=\"([^\"]*)\"/g;
   const iframeRegex = /<iframe(\s+[^>]*)?\ssrc=\"([^\"]+)\"/g;
+
   const attachmentGroupRegex = /<div class="download-attachments">.*?<\/a><\/div><\/div>/g;
   const attachmentRegex = /<a.*?>.*?<\/a>/g;
+  const attachmentGroupRegexNewEditor = /<div class="attachments">.*?<\/div>/gs;
+  const attachmentRegexNewEditor = /<a.*?>.*?<\/a>/gs;
 
   const foundImages = [...html.matchAll(imageRegex)];
   const foundAudios = [...html.matchAll(audioRegex)];
   const foundVideos = [...html.matchAll(videoRegex)];
   const foundIframes = [...html.matchAll(iframeRegex)];
   const foundAttachmentGroups = [...html.matchAll(attachmentGroupRegex)];
+  const foundAttachmentGroupsNewEditor = [...html.matchAll(attachmentGroupRegexNewEditor)];
   const foundAttachmentsByGroup =
     foundAttachmentGroups &&
     foundAttachmentGroups.map(foundAttachmentGroup => ({
       index: foundAttachmentGroup.index,
       attachments: foundAttachmentGroup[0].match(attachmentRegex),
+    }));
+  const foundAttachmentsByGroupNewEditor =
+    foundAttachmentGroupsNewEditor &&
+    foundAttachmentGroupsNewEditor.map(foundAttachmentGroup => ({
+      index: foundAttachmentGroup.index,
+      attachments: foundAttachmentGroup[0].match(attachmentRegexNewEditor),
     }));
 
   const unsortedMedia = [] as IMedia[];
@@ -97,6 +110,21 @@ export const extractMediaFromHtml = (html: string) => {
             type: 'attachment',
             src: attUrl && `${attUrl[0].replace('href="', '').replace('"', '')}`,
             name: attDisplayName && attDisplayName[0].replace(/<\/div>/g, '').replace(/<\/a>/g, ''),
+            index: attGroup.index || 0,
+          });
+      }
+    });
+  foundAttachmentsByGroupNewEditor &&
+    foundAttachmentsByGroupNewEditor.forEach(attGroup => {
+      for (const attHtml of attGroup.attachments || []) {
+        const attUrl = attHtml.match(/href="(.*?)"/gs);
+        const attDisplayName = attHtml.match(/<a\s+[^>]*>(.*?)<\/a>/s);
+        attUrl &&
+          attDisplayName &&
+          unflattenedAttachments.push({
+            type: 'attachment',
+            src: attUrl && `${attUrl[0].replace('href="', '').replace('"', '')}`,
+            name: attDisplayName && attDisplayName[1].trim(),
             index: attGroup.index || 0,
           });
       }
