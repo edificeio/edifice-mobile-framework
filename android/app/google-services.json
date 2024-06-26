@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "42",
+    "firebase_url": "https://abc-xyz-123.firebaseio.com",
+    "project_id": "abc-xyz-123",
+    "storage_bucket": "project-id-123.storage.firebase.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1:android:1",
+        "android_client_info": {
+          "package_name": "com.ode.appe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1234-somefakeid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "A--------------------------------------"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
