@@ -9,10 +9,10 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/picture/Icon';
 import { SmallText } from '~/framework/components/text';
-import { ISearchUsers, IUser } from '~/framework/modules/conversation/service/newMail';
+import { ISearchUsers } from '~/framework/modules/conversation/service/newMail';
 import {
-  IVisibleGroup,
-  IVisibleUser,
+  IVisible,
+  IVisibles,
   IVisiblesState,
   getVisiblesState,
   searchVisibles,
@@ -102,8 +102,8 @@ const MailContactField = connect((state: IGlobalState) => ({
 }: {
   style?: ViewStyle;
   title: string;
-  value?: IUser[];
-  onChange?: (value: IUser[]) => void;
+  value?: IVisibles;
+  onChange?: (value: IVisibles) => void;
   children?: ReactChild;
   autoFocus?: boolean;
   rightComponent?: ReactElement;
@@ -114,13 +114,13 @@ const MailContactField = connect((state: IGlobalState) => ({
   const selectedUsersOrGroups = value || [];
   const [search, updateSearch] = React.useState('');
   const previousVisibles = React.useRef<IVisiblesState>();
-  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<(IVisibleUser | IVisibleGroup)[]>([]);
+  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<IVisibles>([]);
   const searchTimeout = React.useRef<NodeJS.Timeout>();
   const inputRef: { current: TextInput | undefined } = { current: undefined };
 
   const onUserType = (s: string) => {
     updateSearch(s);
-    if (s.length >= 3) {
+    if (s.length >= 1) {
       updateFoundUsersOrGroups([]);
       onOpenSearch?.(true);
       if (searchTimeout.current) clearTimeout(searchTimeout.current);
@@ -151,7 +151,7 @@ const MailContactField = connect((state: IGlobalState) => ({
   const addUser = userOrGroup => {
     onChange?.([
       ...selectedUsersOrGroups,
-      { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IUser,
+      { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id } as IVisible,
     ]);
     onUserType('');
     inputRef.current?.focus();

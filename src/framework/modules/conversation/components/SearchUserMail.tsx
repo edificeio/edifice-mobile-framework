@@ -2,40 +2,17 @@ import * as React from 'react';
 import { FlatList, StyleSheet, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleFontSize } from '~/framework/components/constants';
 import { Icon } from '~/framework/components/icon';
-import { SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
-import { newMailService } from '~/framework/modules/conversation/service/newMail';
-import { SingleAvatar } from '~/ui/avatars/SingleAvatar';
+import { SmallBoldText, SmallText, TextFontStyle, TextSizeStyle } from '~/framework/components/text';
+import ConversationResultItem from '~/framework/modules/conversation/components/result-item';
 
 //FIXME: create/move to styles.ts
 const styles = StyleSheet.create({
-  displayName: { flex: 1, marginLeft: UI_SIZES.spacing.small },
-  foundUserOrGroupContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: UI_SIZES.spacing.minor,
-    marginLeft: UI_SIZES.spacing.minor,
-  },
   selectedListContainer: { flexDirection: 'row', flexWrap: 'wrap', flex: 0 },
-  userOrGroupSearch: {
-    overflow: 'visible',
-    marginHorizontal: UI_SIZES.spacing.minor,
-    flex: 1,
-  },
 });
-
-const FoundUserOrGroup = ({ id, displayName, onPress }) => {
-  return (
-    <TouchableOpacity style={styles.foundUserOrGroupContainer} onPress={onPress}>
-      <SingleAvatar size={undefined} status={undefined} userId={id} />
-      <SmallText numberOfLines={1} ellipsizeMode="tail" style={styles.displayName}>
-        {displayName}
-      </SmallText>
-    </TouchableOpacity>
-  );
-};
 
 export const FoundList = ({ foundUserOrGroup, addUser }) => {
   const insets = useSafeAreaInsets();
@@ -51,29 +28,36 @@ export const FoundList = ({ foundUserOrGroup, addUser }) => {
     shadowRadius: 2,
   } as ViewStyle;
 
-  return foundUserOrGroup.length > 0 ? (
+  return (
     <FlatList
       keyboardShouldPersistTaps="always"
       keyboardDismissMode="on-drag"
       removeClippedSubviews
       nestedScrollEnabled
       contentContainerStyle={{
+        paddingHorizontal: UI_SIZES.spacing.medium,
+        paddingTop: UI_SIZES.spacing.small,
         paddingBottom: insets.bottom,
       }}
       style={absoluteListStyle}
       data={foundUserOrGroup}
+      ListHeaderComponent={
+        <SmallBoldText>
+          {foundUserOrGroup.length}{' '}
+          {I18n.get(
+            foundUserOrGroup.length > 1 ? 'conversation-newmail-communicationresults' : 'conversation-newmail-communicationresult',
+          )}
+        </SmallBoldText>
+      }
       renderItem={({ item }) => (
-        <FoundUserOrGroup
-          id={item.id}
-          displayName={item.name || item.displayName}
+        <ConversationResultItem
+          item={item}
           onPress={() => {
             addUser(item);
           }}
         />
       )}
     />
-  ) : (
-    <View />
   );
 };
 
@@ -153,52 +137,3 @@ export const SelectedList = ({ selectedUsersOrGroups, onItemClick }) => {
     <View />
   );
 };
-
-export const UserOrGroupSearch = ({ selectedUsersOrGroups, onChange, autoFocus }) => {
-  const [search, updateSearch] = React.useState('');
-  const [foundUsersOrGroups, updateFoundUsersOrGroups] = React.useState<any[]>([]);
-  const searchTimeout = React.useRef<NodeJS.Timeout>();
-
-  React.useEffect(() => {
-    const filterUsersOrGroups = found => selectedUsersOrGroups?.every(selected => selected.id !== found.id);
-    if (search.length >= 3) {
-      updateFoundUsersOrGroups([]);
-      clearTimeout(searchTimeout.current);
-      searchTimeout.current = setTimeout(() => {
-        newMailService.searchUsers(search).then(({ groups, users }) => {
-          const filteredUsers = users?.filter(filterUsersOrGroups) || [];
-          const filteredGroups = groups?.filter(filterUsersOrGroups) || [];
-          updateFoundUsersOrGroups([...filteredUsers, ...filteredGroups]);
-        });
-      }, 500);
-    }
-
-    return () => {
-      updateFoundUsersOrGroups([]);
-      clearTimeout(searchTimeout.current);
-    };
-  }, [search, selectedUsersOrGroups]);
-
-  const removeUser = id => onChange(selectedUsersOrGroups?.filter(user => user.id !== id) || []);
-  const addUser = userOrGroup => {
-    onChange([...selectedUsersOrGroups, { displayName: userOrGroup.name || userOrGroup.displayName, id: userOrGroup.id }]);
-    updateSearch('');
-  };
-
-  return (
-    <View style={styles.userOrGroupSearch}>
-      <SelectedList selectedUsersOrGroups={selectedUsersOrGroups} onItemClick={removeUser} />
-      <Input
-        key={1}
-        inputRef={undefined}
-        autoFocus={autoFocus}
-        value={search}
-        onChangeText={updateSearch}
-        onSubmit={() => addUser({ displayName: search, id: search })}
-      />
-      <FoundList foundUserOrGroup={foundUsersOrGroups} addUser={addUser} />
-    </View>
-  );
-};
-
-export default UserOrGroupSearch;
