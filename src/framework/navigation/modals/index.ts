@@ -3,7 +3,7 @@
  */
 import { ParamListBase } from '@react-navigation/native';
 
-import type { CarouselScreen } from '~/framework/components/carousel/types';
+import type { CarouselScreenProps } from '~/framework/components/carousel/types';
 import type { ICarouselNavParams } from '~/framework/components/carousel-old/screen';
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
@@ -34,5 +34,5 @@ export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.AudienceViews]: AudienceViewsScreenNavParams;
   'file-import': FileImportScreenProps.NavParams;
   [ModalsRouteNames.RichTextEditor]: RichEditorFormReduxNavParams;
-  carousel: CarouselScreen.NavParams;
+  carousel: CarouselScreenProps.NavParams;
 }
