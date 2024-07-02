@@ -56,6 +56,7 @@ setModalModeForRoutes([
   ModalsRouteNames.MediaPlayer,
   ModalsRouteNames.RichTextEditor,
   globalRouteNames['file-import'],
+  globalRouteNames.carousel,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.FileImport]);
