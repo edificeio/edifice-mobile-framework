@@ -406,12 +406,13 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
     if (saml?.length === 2) {
       const index = saml[1].indexOf('"');
       if (index > 0) this.samlResponse = saml[1].substring(0, index);
-    }
-    // Retrieve potential OpenID custom token (Stored via customToken=“..." format)
-    const oid = innerHTML.split('customToken=“');
-    if (oid?.length === 2) {
-      const index = oid[1].indexOf('"');
-      if (index > 0) this.oidResponse = oid[1].substring(0, index);
+    } else {
+      // Retrieve potential OpenID custom token (Stored via customToken=“..." format)
+      const oid = innerHTML.split('customToken=“');
+      if (oid?.length === 2) {
+        const index = oid[1].indexOf('"');
+        if (index > 0) this.oidResponse = oid[1].substring(0, index);
+      }
     }
   }
 
