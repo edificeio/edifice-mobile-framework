@@ -344,17 +344,21 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Login with OpenID custom token
   async loginWithOpenID() {
     const customToken = this.oidResponse;
-    if (!customToken) return;
-    try {
-      await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
-    } catch (error) {
-      const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-      if (errtype) {
-        this.displayError(errtype);
+    this.clearDatas(async () => {
+      if (!customToken) return;
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'OpenID'));
+      this.displayLoading();
+      try {
+        await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
+      } catch (error) {
+        const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
+        if (errtype) {
+          this.displayError(errtype);
+        }
+      } finally {
+        this.oidResponse = undefined;
       }
-    } finally {
-      this.oidResponse = undefined;
-    }
+    });
   }
 
   // Navbar back handler
