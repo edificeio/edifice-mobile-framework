@@ -20,6 +20,7 @@ import { AudienceReactions, AudienceUserReaction } from '~/framework/modules/cor
 import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { accountTypeInfos } from '~/framework/util/accountType';
 
 import styles from './styles';
 import { AudienceReactionsScreenProps } from './types';
@@ -90,7 +91,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
             />
             <View>
               <BodyText>{item.displayName}</BodyText>
-              <CaptionBoldText>{I18n.get(`user-profiletypes-${item.profile.toLowerCase()}`)}</CaptionBoldText>
+              <CaptionBoldText>{accountTypeInfos[item.profile].text}</CaptionBoldText>
             </View>
           </View>
         )}

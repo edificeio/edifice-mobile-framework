@@ -14,6 +14,7 @@ import { AccountType } from '~/framework/modules/auth/model';
 import { audienceService } from '~/framework/modules/core/audience/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { accountTypeInfos } from '~/framework/util/accountType';
 
 import styles from './styles';
 import { AudienceViewsScreenProps } from './types';
@@ -57,9 +58,10 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
     nb: number;
     label: string;
     icon: string;
-    color?: ColorValue;
+    color: ColorValue;
     last?: boolean;
   }) => {
+    console.log(label, color);
     return (
       <View style={[styles.item, last ? styles.lastItem : {}]}>
         <View style={[styles.icon, { backgroundColor: color ?? theme.palette.grey.pearl }]}>
@@ -85,12 +87,9 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
           {viewsPerProfile.map((item, index) =>
             renderItem({
               nb: item.counter,
-              label: I18n.get(`user-profiletypes-${item.profile.toLocaleLowerCase()}`),
-              icon: item.profile === AccountType.Student ? 'ui-backpack' : 'ui-cottage',
-              color:
-                item.profile === AccountType.Student
-                  ? theme.palette.complementary.orange.regular
-                  : theme.palette.complementary.blue.regular,
+              label: accountTypeInfos[item.profile].text,
+              icon: accountTypeInfos[item.profile].icon,
+              color: accountTypeInfos[item.profile].color.regular,
               last: index === viewsPerProfile.length - 1,
             }),
           )}
