@@ -15,4 +15,5 @@ export interface AudienceProps {
   };
   containerStyle?: ViewStyle;
   preview?: boolean;
+  isManager?: boolean;
 }

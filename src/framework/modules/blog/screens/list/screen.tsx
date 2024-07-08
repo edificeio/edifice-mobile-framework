@@ -24,7 +24,7 @@ import BlogPostResourceCard from '~/framework/modules/blog/components/post-resou
 import moduleConfig from '~/framework/modules/blog/module-config';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
 import { Blog, BlogPost, BlogPostList, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
-import { getBlogPostRight } from '~/framework/modules/blog/rights';
+import { getBlogPostRight, hasPermissionManager } from '~/framework/modules/blog/rights';
 import { blogService } from '~/framework/modules/blog/service';
 import { audienceService } from '~/framework/modules/core/audience/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
@@ -69,6 +69,7 @@ const BlogPostListItem = ({ blog, post, session }: { blog: Blog; post: BlogPostW
       audience={post.audience}
       session={session}
       blogVisibility={blog.visibility}
+      isManager={session && hasPermissionManager(blog, session)}
     />
   );
 };

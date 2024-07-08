@@ -7,6 +7,7 @@ import { RichEditorViewer } from '~/framework/components/inputs/rich-text';
 import { HeadingSText, SmallBoldText } from '~/framework/components/text';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import type { Blog, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
+import { hasPermissionManager } from '~/framework/modules/blog/rights';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import Audience from '~/framework/modules/core/audience/components';
 
@@ -27,7 +28,7 @@ export const commentsString = (comments: number) =>
     : I18n.get('blog-postlist-comment-nocomments');
 
 export function BlogPostDetails(props: BlogPostDetailsProps) {
-  const { blog, post, onReady } = props;
+  const { blog, post, session, onReady } = props;
 
   const richContent = React.useMemo(() => {
     return <RichEditorViewer content={post.content} onLoad={onReady} />;
@@ -62,6 +63,7 @@ export function BlogPostDetails(props: BlogPostDetailsProps) {
           infosReactions={post.audience?.reactions}
           referer={{ module: 'blog', resourceType: 'post', resourceId: post._id }}
           session={props.session}
+          isManager={session && hasPermissionManager(blog, session)}
         />
       ) : null}
     </View>

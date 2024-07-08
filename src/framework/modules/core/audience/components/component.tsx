@@ -118,17 +118,19 @@ const Audience = (props: AudienceProps) => {
                 )}
               </View>
             </Component>
-            <Component
-              onPress={() => navigation.navigate(ModalsRouteNames.AudienceViews, { referer: props.referer })}
-              style={styles.statsItem}>
-              <SmallText style={styles.statsItemText}>{props.nbViews ?? 0}</SmallText>
-              <NamedSVG
-                name="ui-see"
-                fill={theme.palette.grey.graphite}
-                height={UI_SIZES.elements.icon.small}
-                width={UI_SIZES.elements.icon.small}
-              />
-            </Component>
+            {props.isManager ? (
+              <Component
+                onPress={() => navigation.navigate(ModalsRouteNames.AudienceViews, { referer: props.referer })}
+                style={styles.statsItem}>
+                <SmallText style={styles.statsItemText}>{props.nbViews ?? 0}</SmallText>
+                <NamedSVG
+                  name="ui-see"
+                  fill={theme.palette.grey.graphite}
+                  height={UI_SIZES.elements.icon.small}
+                  width={UI_SIZES.elements.icon.small}
+                />
+              </Component>
+            ) : null}
             <View style={styles.statsItem}>
               <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
               <NamedSVG
