@@ -35,7 +35,7 @@ export namespace I18n {
     const overrideName = getOverrideName();
     const overridenKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
     // Get all overriden keys
-    const overrides = ['leducdenormandie', 'lyceeconnecte', 'monlyceenet', 'neo', 'one', 'openent'];
+    const overrides = ['leducdenormandie', 'lyceeconnecte', 'monlyceenet', 'neo', 'one', 'openent', 'ent77'];
     const overridesKeys: string[] = [];
     overrides.forEach(override => {
       const keys = Object.keys(translations).filter(key => key.endsWith(`-${override}`));
