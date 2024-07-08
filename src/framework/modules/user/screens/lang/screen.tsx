@@ -33,6 +33,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
   const values: { label: string; value: string }[] = [
     { label: I18n.get('user-lang-dropdownvalue-auto'), value: 'auto' },
     { label: I18n.get('user-lang-dropdownvalue-fr'), value: 'fr' },
+    { label: I18n.get('user-lang-dropdownvalue-co'), value: 'co' },
     { label: I18n.get('user-lang-dropdownvalue-en'), value: 'en' },
     { label: I18n.get('user-lang-dropdownvalue-es'), value: 'es' },
     { label: I18n.get('user-lang-dropdownvalue-it'), value: 'it' },

@@ -66,15 +66,25 @@ export namespace I18n {
   const fallbackLng = 'en';
 
   // Supported locales
-  const supportedLanguages = ['fr', 'en', 'es', 'it'] as const;
+  const supportedLanguages = ['co', 'en', 'es', 'fr', 'it'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
 
   // Transform translations for all embeded locales
   const localResources = {
-    fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
+    co: { translation: getOverridenTranslations(require('ASSETS/i18n/co.json')) },
     en: { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
     es: { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
+    fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
     it: { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
+  };
+
+  const momentLocales = {
+    co: 'fr',
+    en: 'en',
+    es: 'es',
+    fr: 'fr',
+    it: 'it',
+    default: fallbackLng,
   };
 
   // Phrase stuff
@@ -130,7 +140,7 @@ export namespace I18n {
     } else {
       i18n.language = (lang as string) ?? fallbackLng;
     }
-    moment.locale(i18n.language?.split('-')[0]);
+    moment.locale(momentLocales[i18n.language?.split('-')[0]] ?? momentLocales.default);
     return i18n.language;
   }
 
