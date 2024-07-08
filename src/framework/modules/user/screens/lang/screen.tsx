@@ -29,14 +29,13 @@ const I18N_SHOW_KEYS_KEY = 'showKeys';
 
 function UserLangScreen(props: UserLangScreenPrivateProps) {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState<boolean>(false);
-  const [value, setValue] = React.useState<string>('fr');
+  const [selected, setSelected] = React.useState<string>('fr');
+
   const values: { label: string; value: string }[] = [
     { label: I18n.get('user-lang-dropdownvalue-auto'), value: 'auto' },
-    { label: I18n.get('user-lang-dropdownvalue-fr'), value: 'fr' },
-    { label: I18n.get('user-lang-dropdownvalue-co'), value: 'co' },
-    { label: I18n.get('user-lang-dropdownvalue-en'), value: 'en' },
-    { label: I18n.get('user-lang-dropdownvalue-es'), value: 'es' },
-    { label: I18n.get('user-lang-dropdownvalue-it'), value: 'it' },
+    ...Object.entries(I18n.supportedLanguagesDisplayNames)
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label)),
   ];
 
   const setInitialValue = async () => {
@@ -44,7 +43,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
     const showI18nKeys = await OldStorageFunctions.getItemJson(I18N_SHOW_KEYS_KEY);
 
     const initialLang = showI18nKeys ? 'wordingKeys' : lang ?? 'auto';
-    setValue(initialLang as string);
+    setSelected(initialLang as string);
   };
 
   React.useEffect(() => {
@@ -52,7 +51,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
   }, []);
 
   const onChangeLang = lang => {
-    if (lang.value === value) return;
+    if (lang.value === selected) return;
     Alert.alert(I18n.get('user-lang-alerttitle'), I18n.get('user-lang-alerttext'), [
       {
         text: I18n.get('common-cancel'),
@@ -74,7 +73,7 @@ function UserLangScreen(props: UserLangScreenPrivateProps) {
       <SmallText style={styles.text}>{I18n.get('user-lang-text')}</SmallText>
       <DropdownPicker
         open={isDropdownOpen}
-        value={value}
+        value={selected}
         items={I18n.canShowKeys ? [...values, { label: I18n.get('user-lang-dropdownvalue-keys'), value: 'wordingKeys' }] : values}
         setOpen={setIsDropdownOpen}
         setValue={() => {}}

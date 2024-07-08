@@ -161,6 +161,24 @@ export namespace I18n {
     }
   };
 
+  // Langues names in their respective language
+  export const supportedLanguagesDisplayNames: Record<string, string> = {};
+  // Get langues names in their respectivelanguage
+  const computeLangDisplayNames = () => {
+    Object.assign(
+      supportedLanguagesDisplayNames,
+      Object.fromEntries(
+        Object.entries({
+          co: 'user-lang-dropdownvalue-co',
+          en: 'user-lang-dropdownvalue-en',
+          es: 'user-lang-dropdownvalue-es',
+          fr: 'user-lang-dropdownvalue-fr',
+          it: 'user-lang-dropdownvalue-it',
+        }).map(([lng, i18nKey]) => [lng, get(i18nKey, { lng, fallbackLng })]),
+      ),
+    );
+  };
+
   export async function init() {
     // Initialize keys toggling
     if (canShowKeys) {
@@ -200,5 +218,6 @@ export namespace I18n {
         returnObjects: true,
       });
     }
+    computeLangDisplayNames();
   }
 }
