@@ -1,6 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Image, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Platform, ScrollView, TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -71,6 +71,15 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
     }
   };
 
+  const onFocusMottoInput = () => {
+    Alert.alert(I18n.get('user-profile-editMoodMotto-alerttitle'), I18n.get('user-profile-editMoodMotto-alerttext'), [
+      {
+        text: I18n.get('user-profile-editMoodMotto-alertbutton'),
+        onPress: () => setTimeout(() => scrollViewRef.current?.scrollToEnd(), 500),
+      },
+    ]);
+  };
+
   const renderMoodItem = moodValue => {
     const degre = appConf.is1d ? '1d' : '2d';
     return (
@@ -103,13 +112,14 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
 
   return (
     <PageComponent style={styles.page}>
-      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false} bounces={false} style={styles.scrollview}>
         <InputContainer
           label={{ text: I18n.get('user-profile-mood') }}
           input={<View style={styles.moods}>{moods.map(mood => renderMoodItem(mood))}</View>}
         />
         <InputContainer
           label={{ text: I18n.get('user-profile-motto') }}
+          style={styles.mottoInput}
           input={
             <MultilineTextInput
               placeholder={I18n.get('user-profile-mottoEmpty')}
@@ -117,7 +127,7 @@ const UserEditMoodMottoScreen = (props: UserEditMoodMottoScreenProps) => {
               numberOfLines={4}
               onChangeText={txt => setMotto(txt)}
               maxLength={75}
-              onFocus={() => scrollViewRef.current?.scrollToEnd()}
+              onFocus={onFocusMottoInput}
               annotation={`${motto ? motto.length : '0'}/75`}
               annotationStyle={styles.annotationMotto}
             />
