@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-07-05 19:37:29",
-  "notes": "chore(build): Reorder build scripts alphabetically\nchore(build): add ent77 build scripts\nfix(wayf): Add missing steps for OpenID connection\nfix(wayf): Retrieve openID token if no SAML token detected\nfix(audience): MB-2482 , fix icon & color details in views screen\nfeat(audience): MB-2818, MB-2817 , add tabbar on reactions screen & add empty screen too\nchore: rewrite react-native-image-picker patch\nrelease: 1.13.1-alpha.3(1130103)",
-  "version": "1.13.1-alpha.4(1130104)"
+  "last": "2024-07-08 11:42:24",
+  "notes": "Merge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nfix(audience): MB-2839 , show views only if is manager\nrelease: 1.13.1-alpha.4(1130104)",
+  "version": "1.13.1-alpha.5(1130105)"
 }
