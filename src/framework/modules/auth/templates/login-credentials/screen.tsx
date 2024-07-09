@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ScrollView, View } from 'react-native';
 
-import appconf from '~/app/appconf';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
@@ -155,7 +154,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     return (
       <View style={styles.platform}>
         <Picture type={platform.logoType} source={platform.logo} name={platform.logo} style={logoStyle} resizeMode="contain" />
-        {appconf.platforms.length > 1 ? <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText> : null}
+        <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText>
       </View>
     );
   }, [platform]);
