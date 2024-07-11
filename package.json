@@ -51,7 +51,7 @@
     "override-silent": "node cli/override.js -v --no-i $CONFIG_TO",
     "override-restore": "node cli/override.js restore",
     "override-restore-local": "node cli/override.js restore --local",
-    "patch": "npx patch-package --exclude 'nothing'",
+    "patch-package": "npx patch-package --exclude 'nothing'",
     "pod-install-dev": "cd ios && rm -rf pods && rm -f Podfile.lock && pod install --repo-update && cd ..",
     "pod-install-rel": "cd ios && rm -rf pods && rm -f Podfile.lock && export NO_FLIPPER=1 && pod install --repo-update && cd ..",
     "postinstall": "npx react-native-jetifier; npx patch-package;",
@@ -125,12 +125,11 @@
     "react": "18.2.0",
     "react-i18next": "14.1.0",
     "react-is": "18.2.0",
-    "react-native": "0.73.6",
+    "react-native": "0.73.9",
     "react-native-action-sheet": "2.2.0",
     "react-native-app-link": "1.0.1",
     "react-native-blob-util": "0.19.8",
     "react-native-bottomsheet": "2.9.0",
-    "react-native-codegen": "0.72.0",
     "react-native-color-matrix-image-filters": "6.0.7",
     "react-native-config-reader": "4.1.1",
     "react-native-confirmation-code-field": "7.3.2",
@@ -167,7 +166,7 @@
     "react-native-restart": "0.0.27",
     "react-native-safe-area-context": "4.9.0",
     "react-native-screens": "3.29.0",
-    "react-native-shake": "5.6.0",
+    "react-native-shake": "5.3.2",
     "react-native-share": "10.0.2",
     "react-native-snap-carousel": "3.9.1",
     "react-native-snow-bg": "1.0.0",
@@ -288,5 +287,5 @@
       "defaultBranch": "main"
     }
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  "packageManager": "yarn@4.3.1"
 }
