@@ -51,6 +51,8 @@ setModalModeForRoutes([
   ModalsRouteNames.MediaPlayer,
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.FileImport,
+  ModalsRouteNames.AudienceReactions,
+  ModalsRouteNames.AudienceViews,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.FileImport]);
