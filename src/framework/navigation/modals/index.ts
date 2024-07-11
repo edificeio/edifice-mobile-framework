@@ -11,12 +11,12 @@ import { AudienceReactionsScreenNavParams } from '~/framework/modules/core/audie
 import { AudienceViewsScreenNavParams } from '~/framework/modules/core/audience/screens/views/types';
 
 export enum ModalsRouteNames {
-  Pdf = '$pdf',
-  Carousel = '$carousel',
-  MediaPlayer = '$mediaPlayer',
-  RichTextEditor = '$richTextEditor',
-  AudienceReactions = '$audienceReactions',
-  AudienceViews = '$audienceViews',
+  Pdf = 'pdf',
+  Carousel = 'carousel',
+  MediaPlayer = 'media-player',
+  RichTextEditor = 'rich-editor',
+  AudienceReactions = 'audience-reactions',
+  AudienceViews = 'audience-views',
   FileImport = 'file-import',
 }
 

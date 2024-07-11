@@ -10,7 +10,8 @@ import InputContainer from '~/framework/components/inputs/container';
 import PasswordInput from '~/framework/components/inputs/password';
 import TextInput from '~/framework/components/inputs/text';
 import { KeyboardPageView } from '~/framework/components/page';
-import { NamedSVG, Picture } from '~/framework/components/picture';
+import { PFLogo } from '~/framework/components/pfLogo';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, HeadingXSText } from '~/framework/components/text';
 import { AuthActiveAccountWithCredentials, AuthSavedLoggedOutAccountWithCredentials } from '~/framework/modules/auth/model';
 import { getAccountById } from '~/framework/modules/auth/reducer';
@@ -153,7 +154,7 @@ const LoginCredentialsScreen = (props: LoginCredentialsScreenPrivateProps) => {
     if (platform.logoStyle) Object.assign(logoStyle, platform.logoStyle);
     return (
       <View style={styles.platform}>
-        <Picture type={platform.logoType} source={platform.logo} name={platform.logo} style={logoStyle} resizeMode="contain" />
+        <PFLogo pf={platform} />
         <HeadingXSText style={styles.platformName}>{platform.displayName}</HeadingXSText>
       </View>
     );

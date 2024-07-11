@@ -35,7 +35,7 @@ export namespace I18n {
     const overrideName = getOverrideName();
     const overridenKeys = Object.keys(translations).filter(key => key.endsWith(`-${overrideName}`));
     // Get all overriden keys
-    const overrides = ['leducdenormandie', 'lyceeconnecte', 'monlyceenet', 'neo', 'one', 'openent'];
+    const overrides = ['leducdenormandie', 'lyceeconnecte', 'monlyceenet', 'neo', 'one', 'openent', 'ent77'];
     const overridesKeys: string[] = [];
     overrides.forEach(override => {
       const keys = Object.keys(translations).filter(key => key.endsWith(`-${override}`));
@@ -66,15 +66,25 @@ export namespace I18n {
   const fallbackLng = 'en';
 
   // Supported locales
-  const supportedLanguages = ['fr', 'en', 'es', 'it'] as const;
+  const supportedLanguages = ['co', 'en', 'es', 'fr', 'it'] as const;
   export type SupportedLocales = (typeof supportedLanguages)[number];
 
   // Transform translations for all embeded locales
   const localResources = {
-    fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
+    co: { translation: getOverridenTranslations(require('ASSETS/i18n/co.json')) },
     en: { translation: getOverridenTranslations(require('ASSETS/i18n/en.json')) },
     es: { translation: getOverridenTranslations(require('ASSETS/i18n/es.json')) },
+    fr: { translation: getOverridenTranslations(require('ASSETS/i18n/fr.json')) },
     it: { translation: getOverridenTranslations(require('ASSETS/i18n/it.json')) },
+  };
+
+  const momentLocales = {
+    co: 'fr',
+    en: 'en',
+    es: 'es',
+    fr: 'fr',
+    it: 'it',
+    default: fallbackLng,
   };
 
   // Phrase stuff
@@ -130,7 +140,7 @@ export namespace I18n {
     } else {
       i18n.language = (lang as string) ?? fallbackLng;
     }
-    moment.locale(i18n.language?.split('-')[0]);
+    moment.locale(momentLocales[i18n.language?.split('-')[0]] ?? momentLocales.default);
     return i18n.language;
   }
 
@@ -149,6 +159,24 @@ export namespace I18n {
       await OldStorageFunctions.setItemJson(I18N_SHOW_KEYS_KEY, showKeys);
       RNRestart.restart();
     }
+  };
+
+  // Langues names in their respective language
+  export const supportedLanguagesDisplayNames: Record<string, string> = {};
+  // Get langues names in their respectivelanguage
+  const computeLangDisplayNames = () => {
+    Object.assign(
+      supportedLanguagesDisplayNames,
+      Object.fromEntries(
+        Object.entries({
+          co: 'user-lang-dropdownvalue-co',
+          en: 'user-lang-dropdownvalue-en',
+          es: 'user-lang-dropdownvalue-es',
+          fr: 'user-lang-dropdownvalue-fr',
+          it: 'user-lang-dropdownvalue-it',
+        }).map(([lng, i18nKey]) => [lng, get(i18nKey, { lng, fallbackLng })]),
+      ),
+    );
   };
 
   export async function init() {
@@ -190,5 +218,6 @@ export namespace I18n {
         returnObjects: true,
       });
     }
+    computeLangDisplayNames();
   }
 }
