@@ -1,5 +1,5 @@
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import { Fade, Placeholder, PlaceholderLine } from 'rn-placeholder';
 
@@ -16,9 +16,9 @@ import styles from './styles';
 import { AudienceProps } from './types';
 
 const Audience = (props: AudienceProps) => {
-  const [totalReactions, setTotalReactions] = React.useState<number>(0);
-  const [typesReactions, setTypesReactions] = React.useState<string[]>([]);
-  const [userReaction, setUserReaction] = React.useState<string | null>(null);
+  const [totalReactions, setTotalReactions] = React.useState<number>(props.infosReactions?.total ?? 0);
+  const [typesReactions, setTypesReactions] = React.useState<string[]>(props.infosReactions?.types ?? []);
+  const [userReaction, setUserReaction] = React.useState<string | null>(props.infosReactions?.userReaction ?? null);
 
   const Component = props.preview ? View : TouchableOpacity;
 
@@ -26,12 +26,6 @@ const Audience = (props: AudienceProps) => {
     useNavigation<
       NavigationProp<IModalsNavigationParams, typeof ModalsRouteNames.AudienceReactions | typeof ModalsRouteNames.AudienceViews>
     >();
-
-  useEffect(() => {
-    setTotalReactions(props.infosReactions?.total ?? 0);
-    setTypesReactions(props.infosReactions?.types ?? []);
-    setUserReaction(props.infosReactions?.userReaction ?? null);
-  }, [props.infosReactions]);
 
   const refreshData = async () => {
     try {
@@ -90,65 +84,58 @@ const Audience = (props: AudienceProps) => {
   const TextComponent = userReaction ? SmallBoldText : SmallText;
   return (
     <View style={props.containerStyle}>
-      {props.nbViews === undefined ? (
-        renderPlaceholder()
-      ) : (
-        <>
-          <View style={styles.stats}>
-            <Component
-              onPress={() => navigation.navigate(ModalsRouteNames.AudienceReactions, { referer: props.referer })}
-              style={styles.statsItem}>
-              <TextComponent style={styles.statsItemText}>{totalReactions ?? 0}</TextComponent>
-              <View style={styles.statsReactions}>
-                {!isEmpty(typesReactions) ? (
-                  typesReactions.map(reaction => (
-                    <NamedSVG
-                      key={reaction}
-                      name={`${reaction.toLowerCase()}-round`}
-                      height={UI_SIZES.elements.icon.default}
-                      width={UI_SIZES.elements.icon.default}
-                    />
-                  ))
-                ) : (
-                  <NamedSVG
-                    name="reaction_1-round"
-                    height={UI_SIZES.elements.icon.default}
-                    width={UI_SIZES.elements.icon.default}
-                  />
-                )}
-              </View>
-            </Component>
-            {props.isManager ? (
-              <Component
-                onPress={() => navigation.navigate(ModalsRouteNames.AudienceViews, { referer: props.referer })}
-                style={styles.statsItem}>
-                <SmallText style={styles.statsItemText}>{props.nbViews ?? 0}</SmallText>
+      <View style={styles.stats}>
+        <Component
+          onPress={() => navigation.navigate(ModalsRouteNames.AudienceReactions, { referer: props.referer })}
+          style={styles.statsItem}>
+          <TextComponent style={styles.statsItemText}>{totalReactions ?? 0}</TextComponent>
+          <View style={styles.statsReactions}>
+            {!isEmpty(typesReactions) ? (
+              typesReactions.map(reaction => (
                 <NamedSVG
-                  name="ui-see"
-                  fill={theme.palette.grey.graphite}
-                  height={UI_SIZES.elements.icon.small}
-                  width={UI_SIZES.elements.icon.small}
+                  key={reaction}
+                  name={`${reaction.toLowerCase()}-round`}
+                  height={UI_SIZES.elements.icon.default}
+                  width={UI_SIZES.elements.icon.default}
+                  cached
                 />
-              </Component>
-            ) : null}
-            <View style={styles.statsItem}>
-              <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
-              <NamedSVG
-                name="ui-messageInfo"
-                fill={theme.palette.grey.graphite}
-                height={UI_SIZES.elements.icon.small}
-                width={UI_SIZES.elements.icon.small}
-              />
-            </View>
+              ))
+            ) : (
+              <NamedSVG name="reaction_1-round" height={UI_SIZES.elements.icon.default} width={UI_SIZES.elements.icon.default} />
+            )}
           </View>
-          <AudienceReactButton
-            postReaction={postReaction}
-            deleteReaction={deleteReaction}
-            updateReaction={updateReaction}
-            userReaction={userReaction}
+        </Component>
+        {props.isManager ? (
+          <Component
+            onPress={() => navigation.navigate(ModalsRouteNames.AudienceViews, { referer: props.referer })}
+            style={styles.statsItem}>
+            <SmallText style={styles.statsItemText}>{props.nbViews ?? 0}</SmallText>
+            <NamedSVG
+              name="ui-see"
+              fill={theme.palette.grey.graphite}
+              height={UI_SIZES.elements.icon.small}
+              width={UI_SIZES.elements.icon.small}
+              cached
+            />
+          </Component>
+        ) : null}
+        <View style={styles.statsItem}>
+          <SmallText style={styles.statsItemText}>{props.nbComments ?? 0}</SmallText>
+          <NamedSVG
+            name="ui-messageInfo"
+            fill={theme.palette.grey.graphite}
+            height={UI_SIZES.elements.icon.small}
+            width={UI_SIZES.elements.icon.small}
+            cached
           />
-        </>
-      )}
+        </View>
+      </View>
+      <AudienceReactButton
+        postReaction={postReaction}
+        deleteReaction={deleteReaction}
+        updateReaction={updateReaction}
+        userReaction={userReaction}
+      />
     </View>
   );
 };
