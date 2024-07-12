@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-07-12 11:06:48",
-  "notes": "fix(audience): MB-2845 , fix ui details\nchore(build): Go to yarn berry\nMerge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nfeat(audience): MB-2819 , audience reactions animations\nchore(build): yarn version addition\nchore: rename misnamed routes\nfix: MB-2842 apply UI scale for platform logos\nRevert \"fix(ent77): MB-2842 hide platform name when there is only one\"\nfix(ent77): MB-2842 hide platform name when there is only one\nchore(i18n, user): compute dynamically the select options for lang change\nfix: add 'ent77' into i18n overrides\nfeat(i18n): MB-2805 add corsu language\nfix(audience): MB-2834 , change reaction icons position\nfix(audience): MB-2834 , change reaction icons colors\nfix(profile): MB-2838 , fix auto scroll when edit motto & show positive alert\nrelease: 1.13.1-alpha.6(1130106)",
-  "version": "1.13.1-alpha.7(1130107)"
+  "last": "2024-07-12 14:22:49",
+  "notes": "chore(build): update react-native-vector-icons to fix android build error\nrelease: 1.13.1-alpha.7(1130107)",
+  "version": "1.13.1-alpha.8(1130108)"
 }
