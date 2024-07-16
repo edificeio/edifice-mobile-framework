@@ -206,7 +206,7 @@
   "blog-createpost-post-title": "Post title",
   "blog-createpost-post-title-placeholder": "Write title",
   "blog-createpost-postcontent": "Post content",
-  "blog-createpost-postcontent-placeholder": "Write a message...",
+  "blog-createpost-postcontent-placeholder": "Write your content...",
   "blog-createpost-publish": "Publish",
   "blog-createpost-publish-error-text": "Publishing error",
   "blog-createpost-publish-success": "Your post was published.",

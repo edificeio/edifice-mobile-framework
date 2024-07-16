@@ -206,7 +206,7 @@
   "blog-createpost-post-title": "Título de la entrada",
   "blog-createpost-post-title-placeholder": "Escribir el título",
   "blog-createpost-postcontent": "Contenido de la entrada",
-  "blog-createpost-postcontent-placeholder": "Escribir un mensaje...",
+  "blog-createpost-postcontent-placeholder": "Escribe tu contenido...",
   "blog-createpost-publish": "Publicar",
   "blog-createpost-publish-error-text": "Error al publicar",
   "blog-createpost-publish-success": "Su entrada de blog se ha publicado correctamente.",
