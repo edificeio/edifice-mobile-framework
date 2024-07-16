@@ -404,18 +404,25 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   onMessage(event: WebViewMessageEvent) {
     // Get HTML code
     const innerHTML = event?.nativeEvent?.data || '';
-    console.debug('innerHTML :\n' + innerHTML);
+    console.debug('WAYFScreen::onMessage: url = ', event?.nativeEvent?.url);
+    //console.debug('WAYFScreen::onMessage: innerHTML =\n' + innerHTML);
     // Retrieve potential SAML token (Stored in <input type="hidden" name="SAMLResponse" value="[saml]"/>)
     const saml = innerHTML.split('name="SAMLResponse" value="');
     if (saml?.length === 2) {
       const index = saml[1].indexOf('"');
-      if (index > 0) this.samlResponse = saml[1].substring(0, index);
+      if (index > 0) {
+        this.samlResponse = saml[1].substring(0, index);
+        console.debug('WAYFScreen::onMessage: SAMLResponse retrieved');
+      }
     } else {
       // Retrieve potential OpenID custom token (Stored via customToken=“..." format)
       const oid = innerHTML.split('customToken=“');
       if (oid?.length === 2) {
         const index = oid[1].indexOf('"');
-        if (index > 0) this.oidResponse = oid[1].substring(0, index);
+        if (index > 0) {
+          this.oidResponse = oid[1].substring(0, index);
+          console.debug('WAYFScreen::onMessage: customToken retrieved');
+        }
       }
     }
   }
