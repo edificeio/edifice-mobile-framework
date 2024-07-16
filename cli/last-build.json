@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-07-12 14:22:49",
-  "notes": "chore(build): update react-native-vector-icons to fix android build error\nrelease: 1.13.1-alpha.7(1130107)",
-  "version": "1.13.1-alpha.8(1130108)"
+  "last": "2024-07-16 17:43:44",
+  "notes": "update(stack): packages update\nfix(upload): MB-2791, add file extension to asset \"name\" field\nUpdated translations from Phrase (#155)\nchore(debug): add some debug log to wayf screen\nrelease: 1.13.1-alpha.8(1130108)",
+  "version": "1.13.1-rc.1(1130109)"
 }
