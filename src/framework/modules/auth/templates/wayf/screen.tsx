@@ -180,6 +180,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
+          incognito
           injectedJavaScriptBeforeContentLoaded={WayfScreen.INJECTED_JS_BEFORE}
           injectedJavaScript={WayfScreen.INJECTED_JS}
           javaScriptEnabled
