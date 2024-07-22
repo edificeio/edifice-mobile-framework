@@ -94,6 +94,7 @@ export class Platform {
 // App Conf =======================================================================================
 
 export interface IAppConfDeclaration {
+  debugEnabled?: boolean;
   i18nOTA?: boolean;
   level?: '1d' | '2d';
   matomo: {
@@ -123,6 +124,8 @@ export interface IAppConfDeclaration {
 }
 
 export class AppConf {
+  debugEnabled = false;
+
   i18nOTA = false;
 
   level: '1d' | '2d' = '2d'; // 2d by default
@@ -168,6 +171,10 @@ export class AppConf {
     );
   };
 
+  get isDebugEnabled() {
+    return this.debugEnabled;
+  }
+
   get hasMultiplePlatform() {
     return this.platforms.length > 1;
   }
@@ -182,6 +189,10 @@ export class AppConf {
 
   get is2d() {
     return this.level === '2d';
+  }
+
+  get isDevOrAlpha() {
+    return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
   }
 
   get zendeskEnabled() {
@@ -202,12 +213,8 @@ export class AppConf {
     return this.zendesk?.sections;
   }
 
-  // Determine wether the app is in dev mode or alpha
-  get isDevOrAlpha() {
-    return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
-  }
-
   constructor(opts: IAppConfDeclaration) {
+    this.debugEnabled = opts?.debugEnabled || true;
     this.i18nOTA = opts?.i18nOTA || false;
     if (opts.level) this.level = opts.level;
     this.matomo = opts.matomo;

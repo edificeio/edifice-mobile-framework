@@ -526,53 +526,48 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
 }
 
 /**
- * Setup an i18n keys toggle feature.
- * @returns the React Element of the toggle
- */
-function useToggleKeysFeature() {
-  if (!I18n.canShowKeys) return;
-  return (
-    <DefaultButton
-      text="Toggle i18n Keys"
-      action={() => {
-        I18n.toggleShowKeys();
-      }}
-      contentColor={theme.palette.primary.regular}
-      style={styles.toggleKeysButton}
-    />
-  );
-}
-
-/**
  * Setup a version details feature.
  * @returns the React Element of the version details text
  */
-function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']) {
+function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session'], debugVisible: boolean) {
   const currentPlatform = session?.platform.displayName;
+  const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
-    return (
-      <SmallBoldText style={styles.version}>
-        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
-      </SmallBoldText>
-    );
-  }, [currentPlatform]);
+    if (debugVisible && appConf.isDebugEnabled)
+      return (
+        <>
+          <SmallBoldText style={styles.version}>
+            {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
+          </SmallBoldText>
+          <DefaultButton
+            text="Debug infos"
+            action={() => {
+              navigation.navigate(userRouteNames.debug, {});
+            }}
+            contentColor={theme.palette.primary.regular}
+            style={styles.debugButton}
+          />
+        </>
+      );
+    return null;
+  }, [currentPlatform, debugVisible, navigation]);
 }
 
 /**
  * Setup a version number feature that can secretly display detailed information when long pressed.
  * @returns the React Element of the touchable version text
  */
-function useVersionFeature(setAreDetailsVisible, scrollViewRef) {
+function useVersionFeature(setDebugVisible, scrollViewRef) {
   /**
    * When true, additional information is displayed above (build/platform/override)
    */
   const toggleVersionDetails = React.useCallback(() => {
-    setAreDetailsVisible(oldState => !oldState);
+    setDebugVisible(oldState => !oldState);
     // setTimeout is used to wait for the ScrollView height to update (after details are shown).
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd();
     }, 0);
-  }, [scrollViewRef, setAreDetailsVisible]);
+  }, [scrollViewRef, setDebugVisible]);
   return React.useMemo(() => {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
@@ -599,8 +594,8 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
+  const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
   const { handleLogout, trySwitch, tryRemoveAccount, session, accounts } = props;
-  const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
   const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
@@ -622,9 +617,8 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const accountMenu = useAccountMenuFeature(session, focusedRef);
   const accountsButton = useAccountsFeature(session, accounts, trySwitch, tryRemoveAccount);
   const logoutButton = useLogoutFeature(handleLogout);
-  const toggleKeysButton = useToggleKeysFeature();
-  const versionDetails = useVersionDetailsFeature(session);
-  const versionButton = useVersionFeature(setAreDetailsVisible, scrollViewRef);
+  const versionDetails = useVersionDetailsFeature(session, debugVisible);
+  const versionButton = useVersionFeature(setDebugVisible, scrollViewRef);
 
   return (
     <PageView style={styles.page} showNetworkBar={false}>
@@ -643,12 +637,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         <View style={styles.sectionBottom}>
           {accountsButton}
           {logoutButton}
-          {areDetailsVisible ? (
-            <>
-              {toggleKeysButton}
-              {versionDetails}
-            </>
-          ) : null}
+          {versionDetails}
           <BottomRoundDecoration style={styles.bottomRoundDecoration} child={versionButton} />
         </View>
       </ScrollView>
