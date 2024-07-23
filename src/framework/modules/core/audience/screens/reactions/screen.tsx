@@ -39,7 +39,7 @@ export const computeNavBar = ({
 const renderTabReaction = (key, nb, focused) => {
   const TextComponent = focused ? SmallBoldText : SmallText;
   if (key === 'all')
-    return <TextComponent style={focused ? styles.headerItemTextFocused : {}}>{I18n.get('audience-reactions-all')}</TextComponent>;
+    return <TextComponent style={focused ? styles.headerItemTextFocused : {}}>{I18n.get('audience-reactions-all')} </TextComponent>;
   return (
     <View style={styles.headerItem}>
       <NamedSVG name={key.toLowerCase()} />
