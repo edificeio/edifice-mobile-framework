@@ -61,7 +61,6 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
     color: ColorValue;
     last?: boolean;
   }) => {
-    console.log(label, color);
     return (
       <View style={[styles.item, last ? styles.lastItem : {}]}>
         <View style={[styles.icon, { backgroundColor: color ?? theme.palette.grey.pearl }]}>

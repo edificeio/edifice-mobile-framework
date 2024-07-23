@@ -73,7 +73,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
       setUserReactions(dt.userReactions);
       setCountByType(dt.reactionCounters.countByType);
     } catch (e) {
-      console.log('[AudienceReactionsScreen] error :', e);
+      console.error('[AudienceReactionsScreen] error :', e);
     }
   }, [module, resourceId, resourceType]);
 
