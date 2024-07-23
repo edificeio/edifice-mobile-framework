@@ -7,6 +7,7 @@ import PushNotifsItemsListScreen, {
 import PushNotifsTopicsListScreen, {
   computeNavBar as pushNotifsTopicsListNavBar,
 } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import DebugScreen, { computeNavBar as debugNavBar } from '~/framework/modules/user/screens/debug';
 import UserHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/user/screens/home';
 import UserLangScreen, { computeNavBar as langNavBar } from '~/framework/modules/user/screens/lang';
 import UserLegalNoticeScreen, { computeNavBar as legalNoticeNavBar } from '~/framework/modules/user/screens/legal-notice';
@@ -30,6 +31,7 @@ import { UserNavigationParams, userRouteNames } from './';
 export default (apps: IEntcoreApp[], widgets: IEntcoreWidget[]) =>
   createModuleNavigator<UserNavigationParams>(moduleConfig.name, Stack => (
     <>
+      <Stack.Screen name={userRouteNames.debug} component={DebugScreen} options={debugNavBar} initialParams={{}} />
       <Stack.Screen name={userRouteNames.home} component={UserHomeScreen} options={homeNavBar} initialParams={{}} />
       <Stack.Screen name={userRouteNames.profile} component={UserProfileScreen} options={profileNavBar} initialParams={{}} />
       <Stack.Screen

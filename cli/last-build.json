@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-07-16 17:43:44",
-  "notes": "update(stack): packages update\nfix(upload): MB-2791, add file extension to asset \"name\" field\nUpdated translations from Phrase (#155)\nchore(debug): add some debug log to wayf screen\nrelease: 1.13.1-alpha.8(1130108)",
-  "version": "1.13.1-rc.1(1130109)"
+  "last": "2024-07-22 16:14:40",
+  "notes": "chore(debug): add network requests history screen for dev/alpha/support builds\nchore: yarn clean\nwayf: put webview in private mode\nrelease: 1.13.1-rc.1(1130109)",
+  "version": "1.13.1-alpha.9(1130110)"
 }
