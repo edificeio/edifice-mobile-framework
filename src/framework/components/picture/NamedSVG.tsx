@@ -28,7 +28,6 @@ const imports = {
   'ui-block': async () => import('ASSETS/icons/uiIcons/block.svg'),
   'ui-bold': async () => import('ASSETS/icons/uiIcons/bold.svg'),
   'ui-book': async () => import('ASSETS/icons/uiIcons/book.svg'),
-  'ui-bookmark': async () => import('ASSETS/icons/uiIcons/bookmark.svg'),
   'ui-burgerMenu': async () => import('ASSETS/icons/uiIcons/burgerMenu.svg'),
   'ui-calendar': async () => import('ASSETS/icons/uiIcons/calendar.svg'),
   'ui-calendarLight': async () => import('ASSETS/icons/uiIcons/calendarLight.svg'),
