@@ -29,7 +29,7 @@
   "auth-activation-activate": "Activar la cuenta",
   "auth-activation-cgu": "Condiciones generales de uso",
   "auth-activation-cgu-accept": "Acepto las ",
-  "auth-activation-cgu-accept-and": " y los(las)",
+  "auth-activation-cgu-accept-and": " y las",
   "auth-activation-email": "Correo electrónico",
   "auth-activation-errorsubmit": "No hemos podido activar la cuenta. Inténtelo de nuevo más tarde.",
   "auth-activation-login": "Usuario",
