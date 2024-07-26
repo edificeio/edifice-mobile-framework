@@ -24,7 +24,7 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
 const styles = StyleSheet.create({
   container: { flexGrow: 1 },
   image: { height: 64, width: '100%' },
-  otherModules: { padding: UI_SIZES.spacing.medium, paddingTop: 0 },
+  otherModules: { paddingHorizontal: UI_SIZES.spacing.medium, paddingTop: UI_SIZES.spacing.small },
   otherModulesTitle: { color: theme.palette.primary.regular, marginBottom: UI_SIZES.spacing.minor },
 });
 
@@ -71,6 +71,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
         alwaysBounceVertical={false}
         overScrollMode="never"
         contentContainerStyle={styles.container}
+        bottomInset={false}
       />
     );
   };
@@ -85,7 +86,11 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     return (
       <View style={styles.otherModules}>
         <HeadingXSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingXSText>
-        <FlatList renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />} data={secondaryModules} />
+        <FlatList
+          bottomInset={false}
+          renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
+          data={secondaryModules}
+        />
         <FlatList renderItem={({ item }) => <OtherModuleElement item={item} type="connector" />} data={connectors} />
       </View>
     );
