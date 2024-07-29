@@ -194,6 +194,8 @@
   "auth-navigation-forgot-password": "Mot de passe oublié",
   "auth-platformselect-select": "Sélectionnez votre réseau social éducatif !",
   "auth-platformselect-welcome": "Bienvenue",
+  "auth-redirect-button": "Ouvrir l'app ENT 77",
+  "auth-redirect-text": "Une nouvelle application est disponible pour tous les collèges du département Seine et Marne.",
   "auth-revalidateterms-accept": "Accepter",
   "auth-revalidateterms-cgu": "Conditions générales d'utilisation",
   "auth-wayf-empty-text": "Nous n'arrivons pas à afficher le contenu. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",

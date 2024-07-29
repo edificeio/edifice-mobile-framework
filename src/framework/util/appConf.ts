@@ -24,6 +24,7 @@ export type IPlatformAccessDeclaration = {
   oauth: [string, string]; // oAuth2 configuration as [clientId, clientSecret]
   url: string; // Access url WITHOUT trailing slash and WITH protocol
   wayf?: string; // WAYF url to redirect onto federation login process instead of standard one
+  redirect?: string; // Redirect url to redirect in external browser
   webTheme: string; // web theme applied to the activated accounts
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
   showWhoAreWe?: boolean; // To show or not the team link in profile page
@@ -53,6 +54,8 @@ export class Platform {
 
   wayf: IPlatformAccessDeclaration['wayf'];
 
+  redirect: IPlatformAccessDeclaration['redirect'];
+
   webTheme!: IPlatformAccessDeclaration['webTheme'];
 
   showWhoAreWe!: IPlatformAccessDeclaration['showWhoAreWe'];
@@ -73,6 +76,7 @@ export class Platform {
     this._oauth = pf.oauth;
     this.url = pf.url;
     this.wayf = pf.wayf;
+    this.redirect = pf.redirect;
     this.webTheme = pf.webTheme;
     this.showWhoAreWe = pf.showWhoAreWe;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
