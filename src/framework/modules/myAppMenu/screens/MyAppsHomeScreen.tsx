@@ -3,7 +3,6 @@ import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
-import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
@@ -24,8 +23,13 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
 const styles = StyleSheet.create({
   container: { flexGrow: 1 },
   image: { height: 64, width: '100%' },
-  otherModules: { paddingHorizontal: UI_SIZES.spacing.medium, paddingTop: UI_SIZES.spacing.small },
-  otherModulesTitle: { color: theme.palette.primary.regular, marginBottom: UI_SIZES.spacing.minor },
+  otherModules: { paddingBottom: UI_SIZES.screen.bottomInset },
+  flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
+  otherModulesTitle: {
+    marginBottom: UI_SIZES.spacing.minor,
+    marginTop: UI_SIZES.spacing.small,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+  },
 });
 
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
@@ -86,12 +90,19 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     return (
       <View style={styles.otherModules}>
         <HeadingXSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingXSText>
+
         <FlatList
           bottomInset={false}
           renderItem={({ item }) => <OtherModuleElement item={item} type="secondaryModule" />}
           data={secondaryModules}
+          style={styles.flatlist}
         />
-        <FlatList renderItem={({ item }) => <OtherModuleElement item={item} type="connector" />} data={connectors} />
+        <FlatList
+          bottomInset={false}
+          renderItem={({ item }) => <OtherModuleElement item={item} type="connector" />}
+          data={connectors}
+          style={styles.flatlist}
+        />
       </View>
     );
   };

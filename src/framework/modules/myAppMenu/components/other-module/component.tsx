@@ -6,7 +6,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
-import { SmallBoldText } from '~/framework/components/text';
+import { SmallText } from '~/framework/components/text';
 import { Image } from '~/framework/util/media';
 
 import styles from './styles';
@@ -32,11 +32,11 @@ export const OtherModuleElement = (props: OtherModuleElementProps) => {
     <TouchableOpacity style={styles.container} onPress={() => navigation.navigate(item.config.routeName)}>
       <View style={styles.infos}>
         {renderPicture()}
-        <SmallBoldText>{I18n.get(item.config.displayI18n)}</SmallBoldText>
+        <SmallText>{I18n.get(item.config.displayI18n)}</SmallText>
       </View>
       <NamedSVG
         name={type === 'connector' ? 'ui-external-link' : 'ui-rafterRight'}
-        fill={theme.palette.grey.black}
+        fill={theme.palette.primary.regular}
         height={UI_SIZES.elements.icon.default}
         width={UI_SIZES.elements.icon.default}
       />
