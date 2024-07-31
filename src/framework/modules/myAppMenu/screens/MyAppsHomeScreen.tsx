@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import GridList from '~/framework/components/GridList';
+import SecondaryButton from '~/framework/components/buttons/secondary';
 import { TouchableSelectorPictureCard } from '~/framework/components/card/pictureCard';
 import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
@@ -13,6 +14,7 @@ import { HeadingXSText } from '~/framework/components/text';
 import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
+import { isEmpty } from '~/framework/util/object';
 
 export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNavigationParams, typeof myAppsRouteNames.Home> {
   modules: NavigableModuleArray;
@@ -81,6 +83,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
   };
 
   const renderOtherModules = () => {
+    if (isEmpty(props.secondaryModules) && isEmpty(props.connectors)) return null;
     const secondaryModules = (props.secondaryModules ?? [])?.sort((a, b) =>
       I18n.get(a.config.displayI18n).localeCompare(I18n.get(b.config.displayI18n)),
     ) as NavigableModuleArray;
@@ -112,6 +115,9 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
       <ScrollView>
         {renderGrid()}
         {renderOtherModules()}
+        <View>
+          <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
+        </View>
       </ScrollView>
     </PageView>
   );
