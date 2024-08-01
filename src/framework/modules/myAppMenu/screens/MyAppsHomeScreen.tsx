@@ -10,7 +10,7 @@ import { UI_SIZES } from '~/framework/components/constants';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
 import ScrollView from '~/framework/components/scrollView';
-import { HeadingXSText } from '~/framework/components/text';
+import { HeadingSText } from '~/framework/components/text';
 import OtherModuleElement from '~/framework/modules/myAppMenu/components/other-module';
 import { IMyAppsNavigationParams, myAppsRouteNames } from '~/framework/modules/myAppMenu/navigation';
 import { AnyNavigableModule, NavigableModuleArray } from '~/framework/util/moduleTool';
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   otherModules: { paddingBottom: UI_SIZES.screen.bottomInset },
   flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
   otherModulesTitle: {
-    marginBottom: UI_SIZES.spacing.minor,
+    marginBottom: UI_SIZES.spacing.small,
     marginTop: UI_SIZES.spacing.small,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
@@ -92,7 +92,7 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
     ) as NavigableModuleArray;
     return (
       <View style={styles.otherModules}>
-        <HeadingXSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingXSText>
+        <HeadingSText style={styles.otherModulesTitle}>{I18n.get('myapp-othermodules-title')}</HeadingSText>
 
         <FlatList
           bottomInset={false}
