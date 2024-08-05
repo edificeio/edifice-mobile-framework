@@ -1322,6 +1322,8 @@
   "timeline-notiftype-support-bugtracker-issue-closed": "Fermeture d'une demande escaladée",
   "timeline-notiftype-support-bugtracker-issue-resolved": "Résolution d'une demande escaladée",
   "timeline-notiftype-support-bugtracker-issue-updated": "Mise à jour d'une demande escaladée",
+  "timeline-notiftype-support-export-events": "Export des demandes de support",
+  "timeline-notiftype-support-export-events-error": "Erreur lors de l'export des tickets",
   "timeline-notiftype-support-ticket-created": "Création d'une demande de support",
   "timeline-notiftype-support-ticket-updated": "Mise à jour d'une demande de support",
   "timeline-notiftype-timeline-notify-report": "Signalement d'une notification",
