@@ -5,6 +5,7 @@ import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
+import SplashaddScreen, { computeNavBar as SplashaddNavBar } from '~/framework/components/splashadd';
 import AudienceReactionsScreen, {
   computeNavBar as audienceReactionsNavBar,
 } from '~/framework/modules/core/audience/screens/reactions';
@@ -41,6 +42,12 @@ export default (
         component={FileImportScreen}
         initialParams={{}}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.SplashAdd}
+        options={SplashaddNavBar}
+        component={SplashaddScreen}
+        initialParams={{}}
+      />
     </RootStack.Group>
   </>
 );
@@ -53,6 +60,7 @@ setModalModeForRoutes([
   ModalsRouteNames.FileImport,
   ModalsRouteNames.AudienceReactions,
   ModalsRouteNames.AudienceViews,
+  ModalsRouteNames.SplashAdd,
 ]);
 
 setCrossIconBlackForRoutes([ModalsRouteNames.FileImport]);

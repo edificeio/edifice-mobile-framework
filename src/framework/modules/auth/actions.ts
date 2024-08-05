@@ -4,6 +4,7 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { openSplashaddScreen } from '~/framework/components/splashadd';
 import {
   ERASE_ALL_ACCOUNTS,
   IAuthState,
@@ -479,6 +480,45 @@ const performLogin = async (
 
   // Launch oneSessionId fetch to prevent errors in rich-content. This is non-preventing in case of fails, so no await !
   OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
+
+  // Splashadd
+  const timeoutPromise = new Promise((resolve, reject) => {
+    setTimeout(() => reject(new global.Error('Request timed out')), 2000);
+  });
+
+  const fetchData = async url => {
+    try {
+      const response = await Promise.race([timeoutPromise, fetch(url)]);
+      return response;
+    } catch (error) {
+      throw new global.Error('Fetch operation failed: ' + error.message);
+    }
+  };
+
+  const fetchDataAndHandleResponse = async () => {
+    let source = `${platform.splashadd}/all`;
+
+    try {
+      let response = await fetchData(source);
+
+      if (response.status === 200) {
+        openSplashaddScreen({ resourceUri: source });
+      } else {
+        source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}`;
+        response = await fetchData(source);
+
+        if (response.status === 200) {
+          openSplashaddScreen({ resourceUri: source });
+        } else {
+          throw new global.Error('Failed to fetch splashadd');
+        }
+      }
+    } catch (error) {
+      throw new global.Error('Failed to fetch splashadd: ' + error.message);
+    }
+  };
+
+  fetchDataAndHandleResponse();
 
   // GET the audience valid reaction types for the platform
   await dispatch(loadValidReactionTypesAction());
