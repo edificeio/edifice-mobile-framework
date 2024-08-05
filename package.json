@@ -103,7 +103,7 @@
     "depcheck": "1.4.7",
     "deprecated-react-native-prop-types": "5.0.0",
     "events": "3.3.0",
-    "fast-xml-parser": "4.3.5",
+    "fast-xml-parser": "4.4.1",
     "filesize": "10.1.0",
     "flat": "6.0.1",
     "global": "4.4.0",
