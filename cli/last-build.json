@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-07-31 11:20:36",
-  "notes": "fix(fileimport) MB-2807, disabled ok button when 0 files upload success\nMerge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nfeat(myapps): MB-2858, fix myapps feedbacks\nchore(build): update yarn deps cache\nrelease: 1.13.1-rc.2(1130113)",
-  "version": "1.13.1-rc.3(1130114)"
+  "last": "2024-08-05 13:03:45",
+  "notes": "chore(build): yarn deps cache\nMerge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nfeat(splashadd): MB-2728, add splashadd\nUpdated translations from Phrase\nfeat(myapps): MB-2858, change details on myapps screen\nfeat(audience): MB-2853 , add pagination on details reactions view\nfeat(myapps): MB-2858, add access web button & hide otherModules if is empty\nrelease: 1.13.1-rc.3(1130114)",
+  "version": "1.13.1-alpha.12(1130115)"
 }
