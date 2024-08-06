@@ -111,7 +111,7 @@ useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
  */
 function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session']) {
   const userProfilePicture = React.useMemo(() => {
-    const uri = session?.platform && session?.user.avatar ? new URL(`${session.platform.url}${session.user.avatar}`) : undefined;
+    const uri = session?.platform && session?.user.avatar ? new URL(session.user.avatar, session.platform.url) : undefined;
     if (uri) {
       const uti = OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier();
       if (uti) uri.searchParams.append('uti', uti);
