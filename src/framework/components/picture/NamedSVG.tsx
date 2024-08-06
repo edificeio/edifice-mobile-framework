@@ -8,7 +8,7 @@
  */
 import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
-import { SvgProps } from 'react-native-svg';
+import type { SvgProps } from 'react-native-svg';
 
 const imports = {
   // UI Icons
