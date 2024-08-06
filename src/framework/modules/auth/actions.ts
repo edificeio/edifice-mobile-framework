@@ -533,7 +533,7 @@ const performLogin = async (
   }
 
   // GET the audience valid reaction types for the platform
-  await dispatch(loadValidReactionTypesAction());
+  dispatch(loadValidReactionTypesAction());
 
   return accountInfo;
 };
