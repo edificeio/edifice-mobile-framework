@@ -16,7 +16,7 @@ export interface AuthStorageData {
     anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
-  splashadds: Record<string, Moment>;
+  splashadds: Record<string, { date: Moment; url: string }>;
 }
 
 export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
@@ -117,18 +117,18 @@ export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
 
 export const readSplashaddsData = () => storage.getJSON('splashadds') ?? {};
 
-export const updateSplashadd = (name: string, date: Moment) => {
+export const updateSplashadd = (name: string, date: Moment, url: string) => {
   const splashadds = readSplashaddsData();
-  splashadds[name] = date;
+  splashadds[name] = { date, url };
   storage.setJSON('splashadds', splashadds);
 };
 
-export const writeSplashadd = (name: string, date: Moment) => {
+export const writeSplashadd = (name: string, date: Moment, url: string) => {
   const splashadds = readSplashaddsData();
   if (!splashadds[name]) {
-    splashadds[name] = date;
+    splashadds[name] = { date, url };
     storage.setJSON('splashadds', splashadds);
   } else {
-    updateSplashadd(name, date);
+    updateSplashadd(name, date, url);
   }
 };

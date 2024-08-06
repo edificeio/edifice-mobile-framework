@@ -505,14 +505,14 @@ const performLogin = async (
       let response = await fetchData(source);
 
       if (response.status === 200) {
-        writeSplashadd(platform.name, moment().startOf('day'));
+        writeSplashadd(platform.name, moment().startOf('day'), source);
         openSplashaddScreen({ resourceUri: source });
       } else {
         source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}`;
         response = await fetchData(source);
 
         if (response.status === 200) {
-          writeSplashadd(platform.name, moment().startOf('day'));
+          writeSplashadd(platform.name, moment().startOf('day'), source);
           openSplashaddScreen({ resourceUri: source });
         } else {
           console.error('[Splashadd]: Failed to fetch splashadd');
@@ -527,7 +527,8 @@ const performLogin = async (
     const splashadds = readSplashaddsData();
     const today = moment().startOf('day');
     const splashaddDay = splashadds[platform.name];
-    if (splashadds[platform.name] && today.isSameOrAfter(splashaddDay.clone().add(7, 'days'), 'day')) fetchDataAndHandleResponse();
+    if (splashadds[platform.name] && today.isSameOrAfter(splashaddDay.date.clone().add(7, 'days'), 'day'))
+      fetchDataAndHandleResponse();
     if (!splashaddDay) fetchDataAndHandleResponse();
   }
 
