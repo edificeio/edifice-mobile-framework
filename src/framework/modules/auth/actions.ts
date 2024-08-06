@@ -527,8 +527,8 @@ const performLogin = async (
     const splashadds = readSplashaddsData();
     const today = moment().startOf('day');
     const splashaddDay = splashadds[platform.name];
-    if (splashadds[platform.name] && today.isSameOrAfter(splashaddDay.date.clone().add(7, 'days'), 'day'))
-      fetchDataAndHandleResponse();
+    if (splashaddDay && today.isSameOrAfter(splashaddDay.date.clone().add(7, 'days'), 'day')) fetchDataAndHandleResponse();
+    else if (splashaddDay && platform.splashadd === 'https://edifice.io/splashads/test') fetchDataAndHandleResponse();
     if (!splashaddDay) fetchDataAndHandleResponse();
   }
 

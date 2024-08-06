@@ -247,7 +247,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
   const splashadds = readSplashaddsData();
-  const showSplashadd = session?.platform.splashadd
+  const showSplashadd = splashadds[session?.platform.name]
     ? moment().startOf('day').toISOString() === splashadds[session?.platform.name].date.toString()
     : false;
 
