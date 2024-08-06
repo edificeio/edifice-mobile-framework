@@ -1,3 +1,4 @@
+import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
@@ -67,11 +68,13 @@ import {
   readSavedAccounts,
   readSavedStartup,
   readShowOnbording,
+  readSplashaddsData,
   writeCreateAccount,
   writeDeleteAccount,
   writeLogout,
   writeRemoveToken,
   writeReplaceAccount,
+  writeSplashadd,
 } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
@@ -491,7 +494,7 @@ const performLogin = async (
       const response = await Promise.race([timeoutPromise, fetch(url)]);
       return response;
     } catch (error) {
-      throw new global.Error('Fetch operation failed: ' + error.message);
+      console.error('[Splashadd]: Fetch operation failed: ' + error.message);
     }
   };
 
@@ -502,23 +505,31 @@ const performLogin = async (
       let response = await fetchData(source);
 
       if (response.status === 200) {
+        writeSplashadd(platform.name, moment().startOf('day'));
         openSplashaddScreen({ resourceUri: source });
       } else {
         source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}`;
         response = await fetchData(source);
 
         if (response.status === 200) {
+          writeSplashadd(platform.name, moment().startOf('day'));
           openSplashaddScreen({ resourceUri: source });
         } else {
-          throw new global.Error('Failed to fetch splashadd');
+          console.error('[Splashadd]: Failed to fetch splashadd');
         }
       }
     } catch (error) {
-      throw new global.Error('Failed to fetch splashadd: ' + error.message);
+      console.error('[Splashadd]: Failed to fetch splashadd: ' + error.message);
     }
   };
 
-  fetchDataAndHandleResponse();
+  if (platform.splashadd) {
+    const splashadds = readSplashaddsData();
+    const today = moment().startOf('day');
+    const splashaddDay = splashadds[platform.name];
+    if (splashadds[platform.name] && today.isSameOrAfter(splashaddDay.clone().add(7, 'days'), 'day')) fetchDataAndHandleResponse();
+    if (!splashaddDay) fetchDataAndHandleResponse();
+  }
 
   // GET the audience valid reaction types for the platform
   await dispatch(loadValidReactionTypesAction());
