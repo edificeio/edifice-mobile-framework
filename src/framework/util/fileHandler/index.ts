@@ -61,7 +61,7 @@ const renameAssets = (assets: Asset[]) => {
     const ext = getExtension(asset.fileName);
     return {
       ...asset,
-      fileName: `${prefix}${index > 0 ? `-${index}` : ''}${ext ? `.${ext}` : ''}`,
+      fileName: `${prefix}${index > 0 ? `-${index}` : ''}${ext ?? ''}`,
     };
   });
   return renamedAssets;

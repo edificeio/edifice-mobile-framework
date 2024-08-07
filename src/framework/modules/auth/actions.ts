@@ -498,7 +498,7 @@ const performLogin = async (
     }
   };
 
-  const fetchDataAndHandleResponse = async () => {
+  const fetchSplashadd = async () => {
     let source = `${platform.splashadd}/all`;
 
     try {
@@ -527,9 +527,9 @@ const performLogin = async (
     const splashadds = readSplashaddsData();
     const today = moment().startOf('day');
     const splashaddDay = splashadds[platform.name];
-    if (splashaddDay && today.isSameOrAfter(splashaddDay.date.clone().add(7, 'days'), 'day')) fetchDataAndHandleResponse();
-    else if (splashaddDay && platform.splashadd === 'https://edifice.io/splashads/test') fetchDataAndHandleResponse();
-    if (!splashaddDay) fetchDataAndHandleResponse();
+    if (splashaddDay && today.isSameOrAfter(splashaddDay.date.clone().add(7, 'days'), 'day')) fetchSplashadd();
+    else if (splashaddDay && platform.splashadd === 'https://edifice.io/splashads/test') fetchSplashadd();
+    if (!splashaddDay) fetchSplashadd();
   }
 
   // GET the audience valid reaction types for the platform
