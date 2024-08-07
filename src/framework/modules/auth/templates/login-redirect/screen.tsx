@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView, View } from 'react-native';
+import { Platform, SafeAreaView, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import PrimaryButton from '~/framework/components/buttons/primary';
@@ -23,7 +23,10 @@ const LoginRedirectPage = (props: LoginRedirectScreenPrivateProps) => {
             <BodyText style={styles.text}>{I18n.get('auth-redirect-text')}</BodyText>
             <Image source={require('ASSETS/platforms/icon-ent77.png')} style={styles.icon} />
           </View>
-          <PrimaryButton text={I18n.get('auth-redirect-button')} url="test.fr" />
+          <PrimaryButton
+            text={I18n.get('auth-redirect-button')}
+            url={I18n.get(Platform.OS === 'android' ? 'auth-redirect-androidurl' : 'auth-redirect-iosurl')}
+          />
         </View>
       </SafeAreaView>
     </PageView>

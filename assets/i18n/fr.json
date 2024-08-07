@@ -195,6 +195,8 @@
   "auth-platformselect-select": "Sélectionnez votre réseau social éducatif !",
   "auth-platformselect-welcome": "Bienvenue",
   "auth-redirect-button": "Ouvrir l'app ENT 77",
+  "auth-redirect-androidurl": "https://play.google.com/store/apps/details?id=fr.ent77.mobile",
+  "auth-redirect-iosurl": "https://apps.apple.com/fr/app/ent-77/id6547845276",
   "auth-redirect-text": "Une nouvelle application est disponible pour tous les collèges du département Seine et Marne.",
   "auth-revalidateterms-accept": "Accepter",
   "auth-revalidateterms-cgu": "Conditions générales d'utilisation",
