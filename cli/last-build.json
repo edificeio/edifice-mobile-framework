@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-08-08 09:29:53",
-  "notes": "feat(ent77): MB-2860 , add button url to redirect on store for ent77\nfix(file-import): MB-2791 , fix double point extension on file import screen\nfeat(splashadd): MB-2875 , add splashadd test condition\nfix(audience): MB-2876 , fix login when no reactions infos\nMerge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nfeat(splashadd): MB-2730\nfeat(timeline): MB-2716 new flash message look\nMerge branch 'dev/1.13.1' of github.com:edificeio/edifice-mobile-framework into dev/1.13.1\nfeat(splashadds): MB-2728 , add condition to show splashadd\nfix: bad url handling for non-slash avatar urls\nrelease: 1.13.1-alpha.12(1130115)",
-  "version": "1.13.1-rc.4(1130116)"
+  "last": "2024-08-08 12:16:50",
+  "notes": "feat(splashadd): MB-2878 , add lang in splashadd url\nfix(timeline): MB-2877 , add timeout to zimbra call & fix call when is focused\nrelease: 1.13.1-rc.4(1130116)",
+  "version": "1.13.1-rc.5(1130117)"
 }
