@@ -499,7 +499,17 @@ const performLogin = async (
   };
 
   const fetchSplashadd = async () => {
-    let source = `${platform.splashadd}/all`;
+    let sourceSplashadd = platform.splashadd;
+    const lang = I18n.getLanguage();
+    const acceptedLanguages = ['fr', 'en', 'es'];
+    const splashaddLang = acceptedLanguages.includes(lang) ? lang : 'en';
+
+    const partsUrl = platform.splashadd!.split('/');
+    const domain = partsUrl[2];
+    const project = partsUrl[4];
+
+    sourceSplashadd = `https://${domain}/${splashaddLang}/splashadd/${project}`;
+    let source = `${sourceSplashadd}/all`;
 
     try {
       let response = await fetchData(source);
@@ -508,7 +518,7 @@ const performLogin = async (
         writeSplashadd(platform.name, moment().startOf('day'), source);
         openSplashaddScreen({ resourceUri: source });
       } else {
-        source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}`;
+        source = `${sourceSplashadd}/${user.infos.type?.toLowerCase()}`;
         response = await fetchData(source);
 
         if (response.status === 200) {
