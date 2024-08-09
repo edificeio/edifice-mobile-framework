@@ -25,13 +25,14 @@ export interface MyAppsHomeScreenProps extends NativeStackScreenProps<IMyAppsNav
 const styles = StyleSheet.create({
   container: { flexGrow: 1 },
   image: { height: 64, width: '100%' },
-  otherModules: { paddingBottom: UI_SIZES.screen.bottomInset },
+  otherModules: { paddingBottom: UI_SIZES.spacing.major },
   flatlist: { paddingHorizontal: UI_SIZES.spacing.medium },
   otherModulesTitle: {
     marginBottom: UI_SIZES.spacing.small,
     marginTop: UI_SIZES.spacing.small,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
+  webButton: { marginBottom: UI_SIZES.spacing.major },
 });
 
 const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
@@ -112,10 +113,10 @@ const MyAppsHomeScreen = (props: MyAppsHomeScreenProps) => {
 
   return (
     <PageView>
-      <ScrollView>
+      <ScrollView bottomInset={false}>
         {renderGrid()}
         {renderOtherModules()}
-        <View>
+        <View style={styles.webButton}>
           <SecondaryButton text={I18n.get('myapp-accessweb')} url="/welcome" />
         </View>
       </ScrollView>
