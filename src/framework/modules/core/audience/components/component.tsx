@@ -18,9 +18,9 @@ import styles from './styles';
 import { AudienceAllProps } from './types';
 
 const Audience = (props: AudienceAllProps) => {
-  const [totalReactions, setTotalReactions] = React.useState<number>(props.infosReactions?.total ?? 0);
-  const [typesReactions, setTypesReactions] = React.useState<string[]>(props.infosReactions?.types ?? []);
-  const [userReaction, setUserReaction] = React.useState<string | null>(props.infosReactions?.userReaction ?? null);
+  const [totalReactions, setTotalReactions] = React.useState<number>(0);
+  const [typesReactions, setTypesReactions] = React.useState<string[]>([]);
+  const [userReaction, setUserReaction] = React.useState<string | null>(null);
 
   const Component = props.preview ? View : TouchableOpacity;
 
@@ -28,6 +28,12 @@ const Audience = (props: AudienceAllProps) => {
     useNavigation<
       NavigationProp<IModalsNavigationParams, typeof ModalsRouteNames.AudienceReactions | typeof ModalsRouteNames.AudienceViews>
     >();
+
+  React.useEffect(() => {
+    setTotalReactions(props.infosReactions?.total ?? 0);
+    setTypesReactions(props.infosReactions?.types ?? []);
+    setUserReaction(props.infosReactions?.userReaction ?? null);
+  }, [props]);
 
   const refreshData = async () => {
     try {
