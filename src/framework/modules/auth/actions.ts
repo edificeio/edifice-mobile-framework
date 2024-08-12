@@ -508,7 +508,10 @@ const performLogin = async (
     const domain = partsUrl[2];
     const project = partsUrl[4];
 
-    sourceSplashadd = `https://${domain}/${splashaddLang}/splashadd/${project}`;
+    sourceSplashadd =
+      splashaddLang === 'fr'
+        ? `https://${domain}/ssplashads/${project}`
+        : `https://${domain}/${splashaddLang}/splashads/${project}`;
     let source = `${sourceSplashadd}/all`;
 
     try {
