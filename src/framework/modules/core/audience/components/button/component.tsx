@@ -277,7 +277,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     return (
       <Animated.View
         style={[styles.buttonView, { transform: [{ scale: scaleReactionButton }] }]}
-        onTouchStart={onTouchStartButton}
+        onTouchStart={!isOpen ? onTouchStartButton : () => {}}
         onTouchEnd={onTouchEndButton}
         {...panResponder.panHandlers}>
         <DefaultButton
