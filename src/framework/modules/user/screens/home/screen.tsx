@@ -556,14 +556,16 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
           <SmallBoldText style={styles.version}>
             {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
           </SmallBoldText>
-          <DefaultButton
-            text="Debug infos"
-            action={() => {
-              navigation.navigate(userRouteNames.debug, {});
-            }}
-            contentColor={theme.palette.primary.regular}
-            style={styles.debugButton}
-          />
+          {appConf.isDevOrAlpha ? (
+            <DefaultButton
+              text="Debug infos"
+              action={() => {
+                navigation.navigate(userRouteNames.debug, {});
+              }}
+              contentColor={theme.palette.primary.regular}
+              style={styles.debugButton}
+            />
+          ) : null}
         </>
       );
     return null;
