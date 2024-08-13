@@ -9,7 +9,7 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { BadgeAvatar, BadgePosition } from '~/framework/components/badgeAvatar';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen, EmptyScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
@@ -94,6 +94,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
       if (isEmpty(countByType)) setCountByType(dt.reactionCounters.countByType);
     } catch (e) {
       console.error('[AudienceReactionsScreen] error :', e);
+      throw new Error();
     }
   }, [countByType, module, nextPageToFetchState, resourceId, resourceType, userReactions]);
 
@@ -166,7 +167,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
       </PageView>
     );
   };
-  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderError={() => <EmptyContentScreen />} />;
+  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderError={() => <EmptyConnectionScreen />} />;
 };
 
 export default connect(
