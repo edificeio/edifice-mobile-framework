@@ -499,20 +499,11 @@ const performLogin = async (
   };
 
   const fetchSplashadd = async () => {
-    let sourceSplashadd = platform.splashadd;
     const lang = I18n.getLanguage();
     const acceptedLanguages = ['fr', 'en', 'es'];
     const splashaddLang = acceptedLanguages.includes(lang) ? lang : 'en';
 
-    const partsUrl = platform.splashadd!.split('/');
-    const domain = partsUrl[2];
-    const project = partsUrl[4];
-
-    sourceSplashadd =
-      splashaddLang === 'fr'
-        ? `https://${domain}/ssplashads/${project}`
-        : `https://${domain}/${splashaddLang}/splashads/${project}`;
-    let source = `${sourceSplashadd}/all`;
+    let source = `${platform.splashadd}/all/${splashaddLang}`;
 
     try {
       let response = await fetchData(source);
@@ -521,7 +512,7 @@ const performLogin = async (
         writeSplashadd(platform.name, moment().startOf('day'), source);
         openSplashaddScreen({ resourceUri: source });
       } else {
-        source = `${sourceSplashadd}/${user.infos.type?.toLowerCase()}`;
+        source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}/${splashaddLang}`;
         response = await fetchData(source);
 
         if (response.status === 200) {
@@ -536,7 +527,7 @@ const performLogin = async (
     }
   };
 
-  if (platform.splashadd) {
+  if (platform.splashadd && appConf.isDevOrAlpha) {
     const splashadds = readSplashaddsData();
     const today = moment().startOf('day');
     const splashaddDay = splashadds[platform.name];
