@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-08-14 20:19:27",
-  "notes": "chore: yarn update\nchore: update gradle wrapper minimum required version\nfeat(splashadd): MB-2897 change splashads url\nrelease: 1.13.1-alpha.13(1130119)",
-  "version": "1.13.1-alpha.14(1130120)"
+  "last": "2024-08-15 10:39:00",
+  "notes": "release: 1.13.1-alpha.14(1130120)",
+  "version": "1.13.1-alpha.15(1130121)"
 }
