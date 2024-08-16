@@ -519,11 +519,11 @@ const performLogin = async (
           writeSplashadd(platform.name, moment().startOf('day'), source);
           openSplashaddScreen({ resourceUri: source });
         } else {
-          console.error('[Splashadd]: Failed to fetch splashadd');
+          console.error('[Splashadd]: Failed to fetch splashadd', e);
         }
       }
     } catch (error) {
-      console.error('[Splashadd]: Failed to fetch splashadd: ' + error.message);
+      console.error('[Splashadd]: Failed to fetch splashadd: ', error.message);
     }
   };
 
@@ -532,7 +532,7 @@ const performLogin = async (
     const today = moment().startOf('day');
     const splashaddDay = splashadds[platform.name];
     if (splashaddDay && today.isSameOrAfter(splashaddDay.date.clone().add(7, 'days'), 'day')) fetchSplashadd();
-    else if (splashaddDay && platform.splashadd === 'https://edifice.io/splashads/test') fetchSplashadd();
+    else if (splashaddDay && platform.splashadd.includes('test')) fetchSplashadd();
     if (!splashaddDay) fetchSplashadd();
   }
 
