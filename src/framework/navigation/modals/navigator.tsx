@@ -63,4 +63,4 @@ setModalModeForRoutes([
   ModalsRouteNames.SplashAdd,
 ]);
 
-setCrossIconBlackForRoutes([ModalsRouteNames.FileImport]);
+setCrossIconBlackForRoutes([ModalsRouteNames.FileImport, ModalsRouteNames.SplashAdd]);

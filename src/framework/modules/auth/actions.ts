@@ -508,7 +508,7 @@ const performLogin = async (
     try {
       const response = await fetchData(source);
 
-      if (response.status === 200) {
+      if (response && response.status === 200) {
         writeSplashadd(platform.name, moment().startOf('day'), source);
         openSplashaddScreen({ resourceUri: source });
       } else {
