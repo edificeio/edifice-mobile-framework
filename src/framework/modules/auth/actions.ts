@@ -503,24 +503,16 @@ const performLogin = async (
     const acceptedLanguages = ['fr', 'en', 'es'];
     const splashaddLang = acceptedLanguages.includes(lang) ? lang : 'en';
 
-    let source = `${platform.splashadd}/all/${splashaddLang}`;
+    const source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}/${splashaddLang}`;
 
     try {
-      let response = await fetchData(source);
+      const response = await fetchData(source);
 
       if (response.status === 200) {
         writeSplashadd(platform.name, moment().startOf('day'), source);
         openSplashaddScreen({ resourceUri: source });
       } else {
-        source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}/${splashaddLang}`;
-        response = await fetchData(source);
-
-        if (response.status === 200) {
-          writeSplashadd(platform.name, moment().startOf('day'), source);
-          openSplashaddScreen({ resourceUri: source });
-        } else {
-          console.error('[Splashadd]: Failed to fetch splashadd', e);
-        }
+        console.error('[Splashadd]: Failed to fetch splashadd');
       }
     } catch (error) {
       console.error('[Splashadd]: Failed to fetch splashadd: ', error.message);
@@ -534,7 +526,8 @@ const performLogin = async (
     const splashadds = readSplashaddsData();
     const today = moment().startOf('day');
     const splashaddDay = splashadds[platform.name];
-    if (splashaddDay && today.isSameOrAfter(moment(splashaddDay.date).clone().add(7, 'days'), 'day')) fetchSplashadd();
+    console.log(today, splashaddDay.date, 'test');
+    if (splashaddDay && today.isAfter(moment(splashaddDay.date).clone())) fetchSplashadd();
     else if (splashaddDay && platform.splashadd.includes('test')) fetchSplashadd();
     if (!splashaddDay) fetchSplashadd();
   }
