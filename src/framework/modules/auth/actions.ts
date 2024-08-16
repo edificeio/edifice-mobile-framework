@@ -527,17 +527,17 @@ const performLogin = async (
     }
   };
 
+  // GET the audience valid reaction types for the platform
+  dispatch(loadValidReactionTypesAction());
+
   if (platform.splashadd && appConf.isDevOrAlpha) {
     const splashadds = readSplashaddsData();
     const today = moment().startOf('day');
     const splashaddDay = splashadds[platform.name];
-    if (splashaddDay && today.isSameOrAfter(splashaddDay.date.clone().add(7, 'days'), 'day')) fetchSplashadd();
+    if (splashaddDay && today.isSameOrAfter(moment(splashaddDay.date).clone().add(7, 'days'), 'day')) fetchSplashadd();
     else if (splashaddDay && platform.splashadd.includes('test')) fetchSplashadd();
     if (!splashaddDay) fetchSplashadd();
   }
-
-  // GET the audience valid reaction types for the platform
-  dispatch(loadValidReactionTypesAction());
 
   return accountInfo;
 };
