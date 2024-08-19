@@ -5,7 +5,7 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { openSplashaddScreen } from '~/framework/components/splashadd';
+import { openSplashadsScreen } from '~/framework/components/splashads';
 import {
   ERASE_ALL_ACCOUNTS,
   IAuthState,
@@ -68,12 +68,13 @@ import {
   readSavedAccounts,
   readSavedStartup,
   readShowOnbording,
+  readSplashadsData,
   writeCreateAccount,
   writeDeleteAccount,
   writeLogout,
   writeRemoveToken,
   writeReplaceAccount,
-  writeSplashadd,
+  writeSplashads,
 } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
@@ -483,7 +484,7 @@ const performLogin = async (
   // Launch oneSessionId fetch to prevent errors in rich-content. This is non-preventing in case of fails, so no await !
   OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
 
-  // Splashadd
+  // Splashads
   const timeoutPromise = new Promise((resolve, reject) => {
     setTimeout(() => reject(new global.Error('Request timed out')), 2000);
   });
@@ -493,43 +494,43 @@ const performLogin = async (
       const response = await Promise.race([timeoutPromise, fetch(url)]);
       return response;
     } catch (error) {
-      console.error('[Splashadd]: Fetch operation failed: ' + error.message);
+      console.error('[Splashads]: Fetch operation failed: ' + error.message);
     }
   };
 
-  const fetchSplashadd = async () => {
+  const fetchSplashads = async () => {
     const lang = I18n.getLanguage();
     const acceptedLanguages = ['fr', 'en', 'es'];
-    const splashaddLang = acceptedLanguages.includes(lang) ? lang : 'en';
+    const splashadsLang = acceptedLanguages.includes(lang) ? lang : 'en';
 
-    const source = `${platform.splashadd}/${user.infos.type?.toLowerCase()}/${splashaddLang}`;
+    const source = `${platform.splashads}/${user.infos.type?.toLowerCase()}/${splashadsLang}`;
 
     try {
       const response = await fetchData(source);
 
       if (response && response.status === 200) {
-        writeSplashadd(platform.name, moment().startOf('day'), source);
-        openSplashaddScreen({ resourceUri: source });
+        writeSplashads(platform.name, moment().startOf('day'), source);
+        openSplashadsScreen({ resourceUri: source });
       } else {
-        console.error('[Splashadd]: Failed to fetch splashadd');
+        console.error('[Splashads]: Failed to fetch splashads');
       }
     } catch (error) {
-      console.error('[Splashadd]: Failed to fetch splashadd: ', error.message);
+      console.error('[Splashads]: Failed to fetch splashads: ', error.message);
     }
   };
 
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
 
-  // if (platform.splashadd && appConf.isDevOrAlpha) {
-  //   const splashadds = readSplashaddsData();
-  //   const today = moment().startOf('day');
-  //   const splashaddDay = splashadds[platform.name];
-  //   console.log(today, splashaddDay.date, 'test');
-  //   if (splashaddDay && today.isAfter(moment(splashaddDay.date).clone())) fetchSplashadd();
-  //   else if (splashaddDay && platform.splashadd.includes('test')) fetchSplashadd();
-  //   if (!splashaddDay) fetchSplashadd();
-  // }
+  if (appConf.splashadsEnabled && appConf.isDevOrAlpha) {
+    const splashads = readSplashadsData();
+    const today = moment().startOf('day');
+    const splashadsDay = splashads[platform.name];
+    console.log(today, splashadsDay.date, 'test');
+    if (splashadsDay && today.isAfter(moment(splashadsDay.date).clone())) fetchSplashads();
+    else if (splashadsDay && platform.splashads!.includes('test')) fetchSplashads();
+    if (!splashadsDay) fetchSplashads();
+  }
 
   return accountInfo;
 };
