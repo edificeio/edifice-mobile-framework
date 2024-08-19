@@ -68,7 +68,6 @@ import {
   readSavedAccounts,
   readSavedStartup,
   readShowOnbording,
-  readSplashaddsData,
   writeCreateAccount,
   writeDeleteAccount,
   writeLogout,
@@ -522,15 +521,15 @@ const performLogin = async (
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
 
-  if (platform.splashadd && appConf.isDevOrAlpha) {
-    const splashadds = readSplashaddsData();
-    const today = moment().startOf('day');
-    const splashaddDay = splashadds[platform.name];
-    console.log(today, splashaddDay.date, 'test');
-    if (splashaddDay && today.isAfter(moment(splashaddDay.date).clone())) fetchSplashadd();
-    else if (splashaddDay && platform.splashadd.includes('test')) fetchSplashadd();
-    if (!splashaddDay) fetchSplashadd();
-  }
+  // if (platform.splashadd && appConf.isDevOrAlpha) {
+  //   const splashadds = readSplashaddsData();
+  //   const today = moment().startOf('day');
+  //   const splashaddDay = splashadds[platform.name];
+  //   console.log(today, splashaddDay.date, 'test');
+  //   if (splashaddDay && today.isAfter(moment(splashaddDay.date).clone())) fetchSplashadd();
+  //   else if (splashaddDay && platform.splashadd.includes('test')) fetchSplashadd();
+  //   if (!splashaddDay) fetchSplashadd();
+  // }
 
   return accountInfo;
 };
