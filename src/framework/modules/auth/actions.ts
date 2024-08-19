@@ -499,11 +499,7 @@ const performLogin = async (
   };
 
   const fetchSplashads = async () => {
-    const lang = I18n.getLanguage();
-    const acceptedLanguages = ['fr', 'en', 'es'];
-    const splashadsLang = acceptedLanguages.includes(lang) ? lang : 'en';
-
-    const source = `${platform.splashads}/${user.infos.type?.toLowerCase()}/${splashadsLang}`;
+    const source = `${platform.splashads}/${user.infos.type?.toLowerCase()}/${I18n.getSplashadsLocale()}`;
 
     try {
       const response = await fetchData(source);
