@@ -2,7 +2,7 @@ import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-nav
 import * as React from 'react';
 
 import theme from '~/app/theme';
-import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
+import { EmptyContentScreen } from '~/framework/components/empty-screens';
 import WebView from '~/framework/components/webview';
 import { navigate } from '~/framework/navigation/helper';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
@@ -64,7 +64,7 @@ const SplashaddScreen = (props: SplashaddScreenProps) => {
   };
 
   return isTimeout ? (
-    <EmptyConnectionScreen />
+    <EmptyContentScreen />
   ) : (
     <WebView
       javaScriptEnabled
@@ -79,6 +79,9 @@ const SplashaddScreen = (props: SplashaddScreenProps) => {
       onLoadEnd={onLoadEnd}
       bounces={false}
       onLoad={onLoad}
+      incognito
+      onHttpError={() => setIsTimeout(true)}
+      onError={() => setIsTimeout(true)}
     />
   );
 };
