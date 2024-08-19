@@ -47,6 +47,7 @@ react {
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
+    autolinkLibrariesWithApp()
 }
 
 project.ext.vectoricons = [
@@ -148,7 +149,5 @@ dependencies {
     // Packages
     implementation project(':react-native-action-sheet')
 }
-
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
 apply plugin: 'com.google.gms.google-services'
