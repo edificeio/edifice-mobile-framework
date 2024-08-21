@@ -41,7 +41,7 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
-import { readSplashaddsData } from '~/framework/modules/auth/storage';
+import { readSplashadsData } from '~/framework/modules/auth/storage';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
@@ -246,10 +246,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const isFederated = session?.method === InitialAuthenticationMethod.WAYF_SAML;
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
-  const splashadds = readSplashaddsData();
-  const showSplashadd = splashadds[session?.platform.name]
-    ? moment().startOf('day').toISOString() === splashadds[session?.platform.name].date.toString()
-    : false;
+  const splashads = readSplashadsData();
+  const showSplashads =
+    session?.platform.name && splashads[session?.platform.name]
+      ? moment().startOf('day').toISOString() === splashads[session?.platform.name].date.toString()
+      : false;
 
   //
   // Zendesk stuff
@@ -370,12 +371,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 }}
               />
             ) : null}
-            {showSplashadd ? (
+            {showSplashads && session?.platform.name ? (
               <LineButton
-                title={I18n.get('user-page-splashadd')}
+                title={I18n.get('user-page-splashads')}
                 onPress={() => {
-                  navigation.navigate(ModalsRouteNames.SplashAdd, {
-                    resourceUri: splashadds[session?.platform.name] ? splashadds[session?.platform.name].url : '',
+                  navigation.navigate(ModalsRouteNames.SplashAds, {
+                    resourceUri: splashads[session?.platform.name] ? splashads[session?.platform.name].url : '',
                   });
                 }}
               />

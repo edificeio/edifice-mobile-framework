@@ -11,12 +11,12 @@ import { openUrl } from '~/framework/util/linking';
 import { urlSigner } from '~/infra/oauth';
 
 import styles from './styles';
-import { SplashaddScreenProps } from './types';
+import { SplashadsScreenProps } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IModalsNavigationParams, typeof ModalsRouteNames.SplashAdd>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<IModalsNavigationParams, typeof ModalsRouteNames.Splashads>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -30,7 +30,7 @@ export const computeNavBar = ({
   headerShadowVisible: false,
 });
 
-const SplashaddScreen = (props: SplashaddScreenProps) => {
+const SplashadsScreen = (props: SplashadsScreenProps) => {
   const { route } = props;
   const source = route.params.resourceUri;
 
@@ -73,7 +73,7 @@ const SplashaddScreen = (props: SplashaddScreenProps) => {
       showsHorizontalScrollIndicator={false}
       source={{ uri: urlSigner.getAbsoluteUrl(source)! }}
       startInLoadingState
-      style={styles.splashadd}
+      style={styles.splashads}
       webviewDebuggingEnabled={__DEV__}
       onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       onLoadEnd={onLoadEnd}
@@ -86,8 +86,8 @@ const SplashaddScreen = (props: SplashaddScreenProps) => {
   );
 };
 
-export default SplashaddScreen;
+export default SplashadsScreen;
 
-export function openSplashaddScreen(navParams: IModalsNavigationParams[ModalsRouteNames.SplashAdd]) {
-  navigate(ModalsRouteNames.SplashAdd, navParams);
+export function openSplashadsScreen(navParams: IModalsNavigationParams[ModalsRouteNames.SplashAds]) {
+  navigate(ModalsRouteNames.SplashAds, navParams);
 }

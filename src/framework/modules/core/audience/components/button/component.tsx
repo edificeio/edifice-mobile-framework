@@ -7,6 +7,7 @@ import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
+import { ScrollContext } from '~/framework/components/scrollView';
 import { CaptionBoldText } from '~/framework/components/text';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
 import Feedback from '~/framework/util/feedback/feedback';
@@ -30,6 +31,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const [cPageX, setPageX] = React.useState<number>(0);
   const [cPageY, setPageY] = React.useState<number>(0);
 
+  const scrollRef = React.useContext(ScrollContext);
   const opacityBlocReactions = React.useRef(new Animated.Value(0)).current;
   const scaleReactionButton = React.useRef(new Animated.Value(1)).current;
   const animationReactions = props.validReactionTypes.reduce((acc, reaction) => {
@@ -217,6 +219,9 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
     onMoveShouldSetPanResponder: (evt, gestureState) => true,
     onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+    onPanResponderGrant: (evt, gestureState) => {
+      if (scrollRef?.current) scrollRef.current.setNativeProps({ scrollEnabled: false });
+    },
 
     onPanResponderMove: (evt, gestureState) => {
       // The most recent move distance is gestureState.move{X,Y}
@@ -230,14 +235,16 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
       ) {
         const x = gestureState.moveX - cPageX;
         if (x > 0 && x <= cWidth / 4) zoomOnItem('REACTION_1');
-        if (x > cWidth / 4 && x <= (cWidth / 4) * 2) zoomOnItem('REACTION_2');
-        if (x > (cWidth / 4) * 2 && x <= (cWidth / 4) * 3) zoomOnItem('REACTION_3');
-        if (x > (cWidth / 4) * 3 && x <= cWidth) zoomOnItem('REACTION_4');
+        else if (x > cWidth / 4 && x <= (cWidth / 4) * 2) zoomOnItem('REACTION_2');
+        else if (x > (cWidth / 4) * 2 && x <= (cWidth / 4) * 3) zoomOnItem('REACTION_3');
+        else zoomOnItem('REACTION_4');
       } else {
         removeZoomOnSelectedItem();
       }
     },
-    onPanResponderTerminationRequest: (evt, gestureState) => true,
+    onPanResponderTerminationRequest: (evt, gestureState) => {
+      return false;
+    },
     onPanResponderRelease: (evt, gestureState) => {
       // The user has released all touches while this view is the
       // responder. This typically means a gesture has succeeded
@@ -245,6 +252,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
         postReaction(itemSelected);
         removeZoomOnSelectedItem();
       }
+      if (scrollRef?.current) scrollRef.current.setNativeProps({ scrollEnabled: true });
     },
   });
 
@@ -260,7 +268,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     timerLongTouch = setTimeout(() => {
       openReactions();
       setIsLongTouch(true);
-    }, 200);
+    }, 500);
   };
   const onTouchEndButton = () => {
     if (!isLongTouch) {
@@ -325,7 +333,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
                   ],
                   opacity: animationReactions[reaction].opacity,
                 }}>
-                <TouchableOpacity onPress={() => postReaction(reaction)}>
+                <TouchableOpacity style={styles.reactionsIcon} onPress={() => postReaction(reaction)}>
                   <NamedSVG name={reaction.toLowerCase()} width={REACTION_ICON_SIZE} height={REACTION_ICON_SIZE} />
                 </TouchableOpacity>
               </Animated.View>

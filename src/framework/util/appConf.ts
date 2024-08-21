@@ -29,7 +29,7 @@ export type IPlatformAccessDeclaration = {
   webviewIdentifier?: string; // safe-webview unique key. In not provided, fallback to the application's one.
   showWhoAreWe?: boolean; // To show or not the team link in profile page
   showVieScolaireDashboard?: boolean; // To show or not the VieScolaire dashboard
-  splashadd?: string; // splashadd url
+  splashads?: string; // splashads url
 };
 
 export class Platform {
@@ -63,7 +63,7 @@ export class Platform {
 
   showVieScolaireDashboard!: IPlatformAccessDeclaration['showVieScolaireDashboard'];
 
-  splashadd: IPlatformAccessDeclaration['splashadd'];
+  splashads: IPlatformAccessDeclaration['splashads'];
 
   _webviewIdentifier: IPlatformAccessDeclaration['webviewIdentifier'];
 
@@ -83,7 +83,7 @@ export class Platform {
     this.webTheme = pf.webTheme;
     this.showWhoAreWe = pf.showWhoAreWe;
     this.showVieScolaireDashboard = pf.showVieScolaireDashboard;
-    this.splashadd = pf.splashadd;
+    this.splashads = pf.splashads;
     this._webviewIdentifier = pf.webviewIdentifier;
   }
 
@@ -121,6 +121,7 @@ export interface IAppConfDeclaration {
     exceptionProject?: string[];
   };
   platforms: IPlatformAccessDeclaration[];
+  splashads?: string;
   webviewIdentifier: string;
   zendesk?: {
     appId?: string;
@@ -154,6 +155,8 @@ export class AppConf {
   };
 
   platforms: Platform[];
+
+  splashads?: string;
 
   webviewIdentifier: string;
 
@@ -201,6 +204,10 @@ export class AppConf {
 
   get isDevOrAlpha() {
     return __DEV__ || (RNConfigReader.BundleVersionType as string).toLowerCase().startsWith('alpha');
+  }
+
+  get splashadsEnabled() {
+    return this.splashads;
   }
 
   get zendeskEnabled() {

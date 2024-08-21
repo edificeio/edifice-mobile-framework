@@ -87,6 +87,19 @@ export namespace I18n {
     default: fallbackLng,
   };
 
+  const splahadsLocales = {
+    co: fallbackLng,
+    en: 'en',
+    es: 'es',
+    fr: 'fr',
+    it: fallbackLng,
+    default: fallbackLng,
+  };
+
+  export const getSplashadsLocale = () => {
+    return splahadsLocales[i18n.language];
+  };
+
   // Phrase stuff
   const phraseId = phraseSecrets?.distributionId;
   const phraseSecret = appConf.isDevOrAlpha ? phraseSecrets?.devSecret : phraseSecrets?.prodSecret;

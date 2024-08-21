@@ -47,6 +47,7 @@ react {
     //
     //   The list of flags to pass to the Hermes compiler. By default is "-O", "-output-source-map"
     // hermesFlags = ["-O", "-output-source-map"]
+    autolinkLibrariesWithApp()
 }
 
 project.ext.vectoricons = [
@@ -82,11 +83,11 @@ android {
         applicationId APPID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1130200
-        versionName "1.13.2"
+        versionCode 1130124
+        versionName "1.13.1"
         manifestPlaceholders.applicationName = APPNAME
         buildConfigField "String", "BundleVersionOverride", "\"${APPOVERRIDE}\""
-        buildConfigField "String", "BundleVersionType", "\"\""
+        buildConfigField "String", "BundleVersionType", "\"rc.7\""
         resValue "string", "app_name", "${APPNAME}"
         ndk {
             debugSymbolLevel 'FULL'
@@ -148,7 +149,5 @@ dependencies {
     // Packages
     implementation project(':react-native-action-sheet')
 }
-
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 
 apply plugin: 'com.google.gms.google-services'

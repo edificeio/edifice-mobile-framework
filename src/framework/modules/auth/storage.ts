@@ -16,7 +16,7 @@ export interface AuthStorageData {
     anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
-  splashadds: Record<string, { date: Moment; url: string }>;
+  splashads: Record<string, { date: Moment; url: string }>;
 }
 
 export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
@@ -115,20 +115,20 @@ export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
   Storage.erasePreferences(id);
 };
 
-export const readSplashaddsData = () => storage.getJSON('splashadds') ?? {};
+export const readSplashadsData = () => storage.getJSON('splashads') ?? {};
 
-export const updateSplashadd = (name: string, date: Moment, url: string) => {
-  const splashadds = readSplashaddsData();
-  splashadds[name] = { date, url };
-  storage.setJSON('splashadds', splashadds);
+export const updateSplashads = (name: string, date: Moment, url: string) => {
+  const splashads = readSplashadsData();
+  splashads[name] = { date, url };
+  storage.setJSON('splashads', splashads);
 };
 
-export const writeSplashadd = (name: string, date: Moment, url: string) => {
-  const splashadds = readSplashaddsData();
-  if (!splashadds[name]) {
-    splashadds[name] = { date, url };
-    storage.setJSON('splashadds', splashadds);
+export const writeSplashads = (name: string, date: Moment, url: string) => {
+  const splashads = readSplashadsData();
+  if (!splashads[name]) {
+    splashads[name] = { date, url };
+    storage.setJSON('splashads', splashads);
   } else {
-    updateSplashadd(name, date, url);
+    updateSplashads(name, date, url);
   }
 };
