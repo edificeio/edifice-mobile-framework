@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-08-21 18:53:39",
-  "notes": "update(stack): yarn cache update\nSquashed commit of the following:",
-  "version": "1.13.2-alpha.1(1130201)"
+  "last": "2024-08-22 12:26:33",
+  "notes": "chore(stack): remove flipper\nSquashed commit of the following:\nrelease: 1.13.2-alpha.1(1130201)",
+  "version": "1.13.2-alpha.2(1130202)"
 }
