@@ -518,11 +518,10 @@ const performLogin = async (
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
 
-  if (appConf.splashadsEnabled && appConf.isDevOrAlpha) {
+  if (platform.splashads && appConf.isDevOrAlpha) {
     const splashads = readSplashadsData();
     const today = moment().startOf('day');
     const splashadsDay = splashads[platform.name];
-    console.log(today, splashadsDay.date, 'test');
     if (splashadsDay && today.isAfter(moment(splashadsDay.date).clone())) fetchSplashads();
     else if (splashadsDay && platform.splashads!.includes('test')) fetchSplashads();
     if (!splashadsDay) fetchSplashads();
