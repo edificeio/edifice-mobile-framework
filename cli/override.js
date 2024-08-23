@@ -68,7 +68,7 @@ const _override_copyMergePaths = {
   'android/appcenter-config.json': 'android/app/src/main/assets/appcenter-config.json', // AppCenter Android config
   'android/res': 'android/app/src/main/res', // Android specific native assets
   'android/fonts': 'android/app/src/main/assets/fonts', // Android specific fonts
-  'android/images': 'android/app/src/main/assets/images', // Android specific fonts
+  'android/images': 'android/app/src/main/assets/images', // Android specific images
   'ios/AppCenter-Config.plist': 'ios/appe/AppCenter-Config.plist', // AppCenter iOS config
   'ios/GoogleService-Info.plist': 'ios/appe/GoogleService-Info.plist', // Firebase iOS config
   'ios/Assets.xcassets': 'ios/appe/Assets.xcassets', // iOS specific native assets
@@ -83,7 +83,11 @@ const _override_specialUpdates = {
   android: 'android/gradle.properties',
 };
 
-const _override_forceCopy = ['assets/animations/audio/disque.json'];
+const _override_forceCopy = [
+  'assets/animations/audio/disque.json',
+  'android/app/google-services.json',
+  'android/app/src/main/assets/appcenter-config.json',
+];
 
 // Project constants
 const _projectPathAbsolute = process.cwd();
@@ -544,7 +548,7 @@ async function _override_computeLockedFiles() {
   } catch (e) {
     // No to do this because grep returns 1 when no match
     if (e.code === 1) {
-      return undefined;
+      return [];
     } else throw e;
   }
 }
@@ -731,12 +735,12 @@ async function _override_performUnlock() {
 
   // 1. Get file list
   const filesToUnlock = await _override_computeLockedFiles();
-  if (!filesToUnlock) return;
 
   // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
   for (const [status, filepath] of filesToUnlock) {
     await exec(`git update-index --no-skip-worktree "${filepath}"`);
   }
+
   if (fs.existsSync('.git/info/exclude.backup')) {
     fs.copyFileSync('.git/info/exclude.backup', '.git/info/exclude');
     fs.rmSync('.git/info/exclude.backup');

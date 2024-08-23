@@ -78,13 +78,16 @@ const BlogEditPostScreen = (props: BlogEditPostScreenProps) => {
     Keyboard.dismiss();
     try {
       setLoadingState(true);
+      setSaving(true);
       await doEditPost();
     } finally {
       setLoadingState(false);
+      setSaving(false);
     }
   };
 
   React.useEffect(() => {
+    //console.debug(`HTML CONTENT:\r\n${props.route.params.content}`);
     props.navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (

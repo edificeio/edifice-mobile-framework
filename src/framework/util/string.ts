@@ -1,6 +1,8 @@
 import RNConfigReader from 'react-native-config-reader';
 import unorm from 'unorm';
 
+import { I18n } from '~/app/i18n';
+
 /**
  * Check if string is empty (only contains spaces).
  * @param str
@@ -180,3 +182,14 @@ export function createUUID() {
 export function getOverrideName() {
   return (RNConfigReader.BundleVersionOverride as string).split('/')[0];
 }
+
+/**
+ * Get string for comments count.
+ * @returns The new string
+ */
+export const commentsString = (comments: number) =>
+  comments
+    ? comments === 1
+      ? `1 ${I18n.get('blog-postlist-comment').toLowerCase()}`
+      : `${comments} ${I18n.get('blog-postlist-comments').toLowerCase()}`
+    : I18n.get('blog-postlist-comment-nocomments');

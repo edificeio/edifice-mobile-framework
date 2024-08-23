@@ -7,7 +7,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { I18n } from '~/app/i18n';
 import { activateAccountActionAddFirstAccount } from '~/framework/modules/auth/actions';
 import { AuthNavigationParams, authRouteNames } from '~/framework/modules/auth/navigation';
-import { getPlatformContextOf, getPlatformLegalUrlsOf } from '~/framework/modules/auth/reducer';
+import { getPlatformContextOf, getPlatformLegalUrlsOf, getValidReactionTypes } from '~/framework/modules/auth/reducer';
 import ActivationScreen, { ActivationScreenDispatchProps } from '~/framework/modules/auth/templates/activation';
 import track from '~/framework/modules/auth/tracking';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -31,6 +31,7 @@ export default connect(
     return {
       context: getPlatformContextOf(props.route.params.platform),
       legalUrls: getPlatformLegalUrlsOf(props.route.params.platform),
+      validReactionTypes: getValidReactionTypes(),
     };
   },
   (dispatch: ThunkDispatch<any, any, any>, props: AuthActivationScreenPrivateProps) => {

@@ -73,7 +73,18 @@ export interface BlogPost {
   _id: string;
 }
 
-export type BlogPostList = BlogPost[];
+export interface BlogPostWithAudience extends BlogPost {
+  audience?: {
+    views?: number;
+    reactions?: {
+      total: number;
+      types: string[];
+      userReaction: string;
+    };
+  };
+}
+
+export type BlogPostList = BlogPostWithAudience[];
 
 export interface BlogFolder {
   id: string;

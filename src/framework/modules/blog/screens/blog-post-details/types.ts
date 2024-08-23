@@ -4,7 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { InfoCommentField } from '~/framework/components/commentField';
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { Blog, BlogPost } from '~/framework/modules/blog/reducer';
+import { Blog, BlogPost, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import { DisplayedBlog } from '~/framework/modules/blog/screens/BlogExplorerScreen';
 import { IResourceUriNotification } from '~/framework/util/notifications';
 
@@ -29,7 +29,7 @@ export interface BlogPostDetailsScreenEventProps {
 }
 export interface BlogPostDetailsScreenNavParams {
   notification?: IResourceUriNotification;
-  blogPost?: BlogPost;
+  blogPost?: BlogPostWithAudience;
   blogId?: string;
   blog?: DisplayedBlog;
   useNotification?: boolean;
@@ -54,8 +54,9 @@ export interface BlogPostDetailsScreenState {
   publishCommentLoadingState: BlogPostCommentLoadingState;
   updateCommentLoadingState: BlogPostCommentLoadingState;
   blogInfos: DisplayedBlog | Blog | undefined;
-  blogPostData: BlogPost | undefined;
+  blogPostData: BlogPostWithAudience | undefined;
   errorState: boolean;
   isCommentFieldFocused: boolean;
   infoComment: InfoCommentField;
+  richContentReady: boolean;
 }

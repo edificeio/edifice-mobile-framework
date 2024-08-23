@@ -35,7 +35,7 @@ import {
 import BlogPostDetails from '~/framework/modules/blog/components/blog-post-details';
 import BlogPlaceholderDetails from '~/framework/modules/blog/components/placeholder/details';
 import { BlogNavigationParams, blogRouteNames } from '~/framework/modules/blog/navigation';
-import { BlogPost, BlogPostComment } from '~/framework/modules/blog/reducer';
+import { BlogPostComment, BlogPostWithAudience } from '~/framework/modules/blog/reducer';
 import {
   commentBlogPostResourceRight,
   deleteCommentBlogPostResourceRight,
@@ -45,6 +45,7 @@ import {
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
 import { markViewAudience } from '~/framework/modules/core/audience';
+import { audienceService } from '~/framework/modules/core/audience/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
@@ -100,6 +101,7 @@ function BlogPostDetailsFlatList(props: {
   onContentSizeChange;
   onLayout;
   footer;
+  session;
 }) {
   return (
     <Viewport.Tracker>
@@ -113,7 +115,7 @@ function BlogPostDetailsFlatList(props: {
           keyExtractor={BlogPostDetailsScreen.contentKeyExtractor}
           ListHeaderComponent={
             props.blogInfos && props.blogPostData ? (
-              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} />
+              <BlogPostDetails blog={props.blogInfos} post={props.blogPostData} onReady={props.onReady} session={props.session} />
             ) : null
           }
           removeClippedSubviews={false}
@@ -180,6 +182,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
       await this.doGetBlogPostDetails();
       await this.doGetBlogInfos();
+      await OAuth2RessourceOwnerPasswordClient.connection?.getOneSessionId();
     } finally {
       this.setState({ loadingState: BlogPostDetailsLoadingState.DONE });
       if (this.state.blogPostData?._id)
@@ -239,6 +242,28 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
     await this.doGetBlogPostDetails();
   }
 
+  async doGetAudienceInfos() {
+    try {
+      const blogPostId = this.state.blogPostData?._id!;
+      const views = await audienceService.view.getSummary('blog', 'post', [blogPostId]);
+      const reactions = await audienceService.reaction.getSummary('blog', 'post', [blogPostId]);
+      const newBlogPostData = {
+        ...this.state.blogPostData,
+        audience: {
+          views: views[blogPostId],
+          reactions: {
+            total: reactions.reactionsByResource[blogPostId].totalReactionsCounter ?? 0,
+            types: reactions.reactionsByResource[blogPostId].reactionTypes,
+            userReaction: reactions.reactionsByResource[blogPostId].userReaction ?? null,
+          },
+        },
+      } as BlogPostWithAudience;
+      this.setState(prevState => ({ ...prevState, blogPostData: newBlogPostData }));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   async doGetBlogPostDetails() {
     try {
       const { route, handleGetBlogPostDetails } = this.props;
@@ -252,6 +277,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
       const blogPostData = await handleGetBlogPostDetails(ids, blogPostState);
       if (!blogPostData) throw new Error('blogPostData is undefined');
       this.setState({ blogPostData });
+      this.doGetAudienceInfos();
     } catch {
       // ToDo: Error handling
       this.setState({ errorState: true });
@@ -425,6 +451,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
         loadingState: BlogPostDetailsLoadingState.DONE,
       });
       markViewAudience({ module: 'blog', resourceType: 'post', resourceId: blogPost._id });
+      this.doGetAudienceInfos();
     } else this.doInit();
 
     // Update notification event if any
@@ -551,6 +578,7 @@ export class BlogPostDetailsScreen extends React.PureComponent<BlogPostDetailsSc
           onContentSizeChange={this.contentSizeChange}
           onLayout={this.contentOnLayout}
           footer={footer}
+          session={this.props.session!}
         />
       </>
     );
@@ -708,7 +736,7 @@ const mapDispatchToProps: (
   getState: () => IGlobalState,
 ) => BlogPostDetailsScreenEventProps = (dispatch, getState) => ({
   handleGetBlogPostDetails: async (blogPostId: { blogId: string; postId: string }, blogPostState?: string) => {
-    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPost | undefined;
+    return (await dispatch(getBlogPostDetailsAction(blogPostId, blogPostState))) as unknown as BlogPostWithAudience | undefined;
   }, // TS BUG: dispatch mishandled
   handlePublishBlogPostComment: async (blogPostId: { blogId: string; postId: string }, comment: string) => {
     return (await dispatch(publishBlogPostCommentAction(blogPostId, comment))) as unknown as number | undefined;

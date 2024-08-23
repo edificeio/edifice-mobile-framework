@@ -177,6 +177,7 @@ function MediaPlayer(props: MediaPlayerProps) {
             source={realSource}
             startInLoadingState
             style={isPortrait ? [styles.playerPortrait, styles.externalPlayerPortrait] : [styles.playerLandscape]}
+            webviewDebuggingEnabled={__DEV__}
             onHttpError={() => setError('http error')}
             onError={() => setError('error')}
           />

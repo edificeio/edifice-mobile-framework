@@ -17,6 +17,7 @@ import {
   getSerializedLoggedOutAccountInfo,
 } from '~/framework/modules/auth/model';
 import moduleConfig from '~/framework/modules/auth/module-config';
+import { AudienceValidReactionTypes } from '~/framework/modules/core/audience/types';
 import { Platform } from '~/framework/util/appConf';
 import createReducer from '~/framework/util/redux/reducerFactory';
 
@@ -53,6 +54,7 @@ export interface IAuthState {
   showOnboarding: AuthStorageData['show-onboarding'];
   platformContexts: Record<string, PlatformAuthContext>; // Platform contexts by pf name
   platformLegalUrls: Record<string, LegalUrls>; // Platform legal urls by pf name
+  validReactionTypes: string[]; // Valid reaction types for audience
 
   pending?: AuthPendingRestore | AuthPendingActivation | AuthPendingPasswordRenew;
   pendingAddAccount?: AuthPendingRestore | AuthPendingActivation | AuthPendingPasswordRenew;
@@ -76,6 +78,7 @@ export const initialState: IAuthState = {
   showOnboarding: true,
   platformContexts: {},
   platformLegalUrls: {},
+  validReactionTypes: [],
   deviceInfo: {},
   lastAddAccount: 0,
 };
@@ -85,6 +88,7 @@ export const actionTypes = {
   authInit: moduleConfig.namespaceActionType('INIT'),
   loadPfContext: moduleConfig.namespaceActionType('LOAD_PF_CONTEXT'),
   loadPfLegalUrls: moduleConfig.namespaceActionType('LOAD_PF_LEGAL_URLS'),
+  loadPfValidReactionTypes: moduleConfig.namespaceActionType('LOAD_PF_VALID_REACTION_TYPES'),
   addAccount: moduleConfig.namespaceActionType('ADD_ACCOUNT'),
   addAccountRequirement: moduleConfig.namespaceActionType('ADD_ACCOUNT_REQUIREMENT'),
   removeAccount: moduleConfig.namespaceActionType('REMOVE_ACCOUNT'),
@@ -117,6 +121,7 @@ export interface ActionPayloads {
   };
   loadPfContext: { name: Platform['name']; context: PlatformAuthContext };
   loadPfLegalUrls: { name: Platform['name']; legalUrls: LegalUrls };
+  loadPfValidReactionTypes: { validReactionTypes: AudienceValidReactionTypes };
   addAccount: { account: AuthLoggedAccount };
   addAccountRequirement: { account: AuthLoggedAccount; requirement: AuthRequirement; context: PlatformAuthContext };
   removeAccount: { id: keyof IAuthState['accounts'] };
@@ -173,6 +178,11 @@ export const actions = {
   loadPfContext: (name: Platform['name'], context: PlatformAuthContext) => ({ type: actionTypes.loadPfContext, name, context }),
 
   loadPfLegalUrls: (name: Platform['name'], legalUrls: LegalUrls) => ({ type: actionTypes.loadPfLegalUrls, name, legalUrls }),
+
+  loadPfValidReactionTypes: (validReactionTypes: AudienceValidReactionTypes) => ({
+    type: actionTypes.loadPfValidReactionTypes,
+    validReactionTypes,
+  }),
 
   addAccount: (account: AuthLoggedAccount) => ({
     type: actionTypes.addAccount,
@@ -376,6 +386,11 @@ const reducer = createReducer(initialState, {
   [actionTypes.loadPfLegalUrls]: (state, action) => {
     const { name, legalUrls } = action as unknown as ActionPayloads['loadPfLegalUrls'];
     return { ...state, platformLegalUrls: { ...state.platformLegalUrls, [name]: legalUrls } };
+  },
+
+  [actionTypes.loadPfValidReactionTypes]: (state, action) => {
+    const { validReactionTypes } = action as unknown as ActionPayloads['loadPfValidReactionTypes'];
+    return { ...state, validReactionTypes: validReactionTypes['reaction-types'] };
   },
 
   [actionTypes.addAccount]: (state, action) => {
@@ -697,6 +712,11 @@ export function getPlatformLegalUrls() {
 export function getPlatformLegalUrlsOf(platform?: Platform) {
   const state = getState(getStore().getState());
   return platform ? state.platformLegalUrls[platform.name] : undefined;
+}
+
+export function getValidReactionTypes() {
+  const state = getState(getStore().getState());
+  return state.validReactionTypes;
 }
 
 export function getAccountsNumber() {

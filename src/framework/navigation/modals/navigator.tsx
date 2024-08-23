@@ -5,6 +5,10 @@ import { computeNavBar as CarouselNavBar } from '~/framework/components/carousel
 import FileImportScreen, { computeNavBar as FileAddNavBar } from '~/framework/components/inputs/rich-text/file-import';
 import MediaPlayer from '~/framework/components/media/player';
 import { computeNavBar as PDFNavBar, PDFReader } from '~/framework/components/pdf/pdf-reader';
+import AudienceReactionsScreen, {
+  computeNavBar as audienceReactionsNavBar,
+} from '~/framework/modules/core/audience/screens/reactions';
+import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/core/audience/screens/views';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
@@ -18,6 +22,12 @@ export default (
         presentation: 'modal',
       }}>
       <RootStack.Screen name={ModalsRouteNames.Pdf} options={PDFNavBar} component={PDFReader} initialParams={{ title: '' }} />
+      <RootStack.Screen
+        name={ModalsRouteNames.AudienceReactions}
+        options={audienceReactionsNavBar}
+        component={AudienceReactionsScreen}
+      />
+      <RootStack.Screen name={ModalsRouteNames.AudienceViews} options={audienceViewsNavBar} component={AudienceViewsScreen} />
     </RootStack.Group>
     <RootStack.Group
       screenOptions={{

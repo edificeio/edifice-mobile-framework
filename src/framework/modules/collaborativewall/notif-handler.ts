@@ -52,7 +52,7 @@ const handleCollaborativeWallNotificationAction: NotifHandlerThunkAction = notif
 
 export default () =>
   registerNotifHandlers(
-    appConf.isDevOrAlpha
+    appConf.isDevOrAlpha // Remove this line when this modules goes in production !
       ? [
           {
             type: 'COLLABORATIVEWALL',

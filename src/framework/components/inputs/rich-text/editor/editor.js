@@ -14,6 +14,7 @@ const base64Type = {
   IMAGE: 'images',
 };
 
+const isIOS = Platform.OS === 'ios';
 const pfUrl = getSession()?.platform?.url || '';
 const playIconSize = getScaleWidth(40);
 const thumbnailSize = Platform.OS === 'ios' ? `${UI_SIZES.standardScreen.width}x0` : '2600x0';

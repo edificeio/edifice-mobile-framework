@@ -56,10 +56,10 @@ fastlane
 
 # CREDENTIALS for AppCenter & Google Firebase.
 # These files are also ignored with override mechanics. These lines are additinal protection to prevent committing hem.
-**/google-services.json
-**/GoogleService-Info.plist
-**/appcenter-config.json
-**/AppCenter-Config.plist
+# **/google-services.json
+# **/GoogleService-Info.plist
+# **/appcenter-config.json
+# **/AppCenter-Config.plist
 
 # Asset bundles automatically generated
 ios/assets
@@ -78,7 +78,7 @@ yarn.lock
 # Overrides
 __overrides__
 __stashSpec__
-src/platforms
+# src/app/override and src/platforms/* are ingored by override.js cli tool.
 
 # Ruby
 vendor

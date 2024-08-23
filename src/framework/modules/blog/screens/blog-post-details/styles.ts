@@ -27,24 +27,12 @@ export default StyleSheet.create({
   detailsTitlePost: {
     marginBottom: UI_SIZES.spacing.medium,
   },
-  detailsNbComments: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: UI_SIZES.spacing.minor,
-    padding: UI_SIZES.spacing.small,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderTopColor: theme.ui.border.input,
-    borderBottomColor: theme.ui.border.input,
-  },
-  detailsIconComments: {
-    marginRight: UI_SIZES.spacing.minor,
-  },
-  detailsTextNbComments: {
-    color: theme.ui.text.light,
-  },
   footerNoComment: {
     height: 0,
+  },
+  footer: {
+    padding: UI_SIZES.spacing.medium,
+    paddingTop: 0,
   },
   footerWaitingValidation: {
     color: theme.palette.secondary.regular,

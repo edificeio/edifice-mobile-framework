@@ -13,7 +13,7 @@ import styles from './styles';
 import { ThumbnailThreadProps } from './types';
 
 const Selected = () => (
-  <View style={[styles.thumbnailItemSelected, { borderColor: (moduleConfig.displayPicture as NamedSVGProps).fill }]} />
+  <View style={[styles.thumbnailSelectedItem, { borderColor: (moduleConfig.displayPicture as NamedSVGProps).fill }]} />
 );
 
 export default function ThumbnailThread({ status = ThreadItemStatus.DEFAULT, ...props }: ThumbnailThreadProps) {
