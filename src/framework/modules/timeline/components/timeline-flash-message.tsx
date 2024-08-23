@@ -156,6 +156,8 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             onLayout={this.onHtmlWrapperLayout.bind(this)}
             style={expandable !== false && !expanded ? { maxHeight } : null}
             scrollEnabled={false}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             onContentSizeChange={this.onContentSizeChanges.bind(this)}>
             <HtmlContentView
               html={flashMessageHtml}

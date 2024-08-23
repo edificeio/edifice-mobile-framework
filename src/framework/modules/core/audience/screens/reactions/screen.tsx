@@ -157,7 +157,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
   };
   const renderContent = () => {
     return (
-      <PageView style={styles.container}>
+      <PageView style={styles.container} showNetworkBar={false}>
         <TabView
           navigationState={{ index, routes }}
           onIndexChange={setIndex}

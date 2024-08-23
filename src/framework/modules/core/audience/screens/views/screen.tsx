@@ -80,7 +80,7 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
 
   const renderContent = () => {
     return (
-      <PageView style={styles.container}>
+      <PageView style={styles.container} showNetworkBar={false}>
         {renderItem({ nb: nbViews, label: I18n.get('audience-views-views'), icon: 'ui-see' })}
         {renderItem({ nb: nbUniqueViews, label: I18n.get('audience-views-uniqueviews'), icon: 'ui-users' })}
         <View style={styles.subItems}>
