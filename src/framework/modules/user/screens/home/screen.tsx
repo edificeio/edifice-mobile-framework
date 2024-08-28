@@ -21,6 +21,7 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import ScrollView from '~/framework/components/scrollView';
 import { HeadingSText, HeadingXSText, SmallBoldText } from '~/framework/components/text';
+import { i18nAccountTypes } from '~/framework/components/text/account-type';
 import { default as Toast, default as toast } from '~/framework/components/toast';
 import { manualLogoutAction, removeAccountAction, switchAccountAction } from '~/framework/modules/auth/actions';
 import {
@@ -150,7 +151,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
       <>
         <HeadingXSText style={styles.userInfoName}>{session?.user.displayName}</HeadingXSText>
         <SmallBoldText style={{ color: theme.color.profileTypes[session?.user.type!] }}>
-          {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
+          {I18n.get(i18nAccountTypes[session?.user.type!])}
         </SmallBoldText>
         <SecondaryButton
           text={I18n.get('user-page-userfilebutton')}

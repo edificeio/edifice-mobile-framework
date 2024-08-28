@@ -110,6 +110,25 @@ const styles = StyleSheet.create({
   swipeableListStyle: { marginTop: 45, zIndex: 0 },
 });
 
+const emptyFolderTexts = {
+  drafts: {
+    title: 'conversation-maillist-emptyscreen-draftstitle',
+    text: 'conversation-maillist-emptyscreen-draftstext',
+  },
+  mailbox: {
+    title: 'conversation-maillist-emptyscreen-mailboxtitle',
+    text: 'conversation-maillist-emptyscreen-mailboxtext',
+  },
+  sent: {
+    title: 'conversation-maillist-emptyscreen-senttitle',
+    text: 'conversation-maillist-emptyscreen-senttext',
+  },
+  trash: {
+    title: 'conversation-maillist-emptyscreen-trashtitle',
+    text: 'conversation-maillist-emptyscreen-trashtext',
+  },
+};
+
 export default class MailList extends React.PureComponent<ConversationMailListComponentProps, ConversationMailListComponentState> {
   flatListRef = React.createRef<SwipeListView<any>>();
 
@@ -185,8 +204,8 @@ export default class MailList extends React.PureComponent<ConversationMailListCo
     const isFolderDrafts = navigationKey === 'drafts';
     const isFolderOutbox = navigationKey === 'sendMessages';
     const folder = isFolderDrafts ? 'drafts' : isFolderOutbox ? 'sent' : isTrashed ? 'trash' : 'mailbox';
-    const text = I18n.get(`conversation-maillist-emptyscreen-${folder}text`);
-    const title = I18n.get(`conversation-maillist-emptyscreen-${folder}title`);
+    const text = I18n.get(emptyFolderTexts[folder].text);
+    const title = I18n.get(emptyFolderTexts[folder].title);
     return <EmptyScreen svgImage={isTrashed ? 'empty-trash' : 'empty-conversation'} text={text} title={title} />;
   }
 
