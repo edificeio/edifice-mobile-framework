@@ -74,7 +74,11 @@ export const computeNavBar = ({
 function PreventBack(props: { infoComment: InfoCommentField }) {
   const { infoComment } = props;
   usePreventBack({
-    title: I18n.get(`blog-postdetails-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`),
+    title: I18n.get(
+      infoComment.isPublication
+        ? 'blog-postdetails-confirmation-unsaved-publication'
+        : 'blog-postdetails-confirmation-unsaved-modification',
+    ),
     text: I18n.get(
       `blog-postdetails-${infoComment.type}-confirmation-unsaved-${infoComment.isPublication ? 'publication' : 'modification'}`,
     ),

@@ -20,13 +20,6 @@ interface BlogPostDetailsProps {
   onReady?: () => void;
 }
 
-export const commentsString = (comments: number) =>
-  comments
-    ? comments === 1
-      ? `1 ${I18n.get('blog-postlist-comment').toLowerCase()}`
-      : `${comments} ${I18n.get('blog-postlist-comments').toLowerCase()}`
-    : I18n.get('blog-postlist-comment-nocomments');
-
 export function BlogPostDetails(props: BlogPostDetailsProps) {
   const { blog, post, session, onReady } = props;
 

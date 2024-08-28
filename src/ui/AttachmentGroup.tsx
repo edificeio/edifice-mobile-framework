@@ -59,7 +59,7 @@ export class AttachmentGroup extends React.PureComponent<
       <TouchableOpacity activeOpacity={1} style={[styles.container, containerStyle]}>
         {editMode ? null : (
           <View style={styles.header}>
-            <SmallBoldText>{I18n.get(`attachment-attachment${attachments.length > 1 ? 's' : ''}`)}</SmallBoldText>
+            <SmallBoldText>{I18n.get(attachments.length > 1 ? 'attachment-attachments' : 'attachment-attachment')}</SmallBoldText>
             {attachments.length > 1 ? (
               <RNGHTouchableOpacity
                 onPress={() => {
