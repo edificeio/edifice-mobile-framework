@@ -508,7 +508,7 @@ const performLogin = async (
         writeSplashads(platform.name, moment().startOf('day'), source);
         openSplashadsScreen({ resourceUri: source });
       } else {
-        console.error('[Splashads]: Failed to fetch splashads');
+        console.error('[Splashads]: Failed to fetch splashads: ', response.status);
       }
     } catch (error) {
       console.error('[Splashads]: Failed to fetch splashads: ', error.message);
