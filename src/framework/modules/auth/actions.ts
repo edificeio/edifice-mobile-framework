@@ -508,7 +508,7 @@ const performLogin = async (
         writeSplashads(platform.name, moment().startOf('day'), source);
         openSplashadsScreen({ resourceUri: source });
       } else {
-        console.error('[Splashads]: Failed to fetch splashads');
+        console.error('[Splashads]: Failed to fetch splashads: ', response.status);
       }
     } catch (error) {
       console.error('[Splashads]: Failed to fetch splashads: ', error.message);
@@ -518,7 +518,7 @@ const performLogin = async (
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
 
-  if (platform.splashads && appConf.isDevOrAlpha) {
+  if (platform.splashads) {
     const splashads = readSplashadsData();
     const today = moment().startOf('day');
     const splashadsDay = splashads[platform.name];
