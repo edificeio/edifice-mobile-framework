@@ -7,17 +7,19 @@ import type { ICarouselNavParams } from '~/framework/components/carousel/screen'
 import type { FileImportScreenProps } from '~/framework/components/inputs/rich-text/file-import';
 import type { RichEditorFormReduxNavParams } from '~/framework/components/inputs/rich-text/form/types';
 import type { MediaPlayerParams } from '~/framework/components/media/player/types';
+import { SplashadsScreenNavParams } from '~/framework/components/splashads/types';
 import { AudienceReactionsScreenNavParams } from '~/framework/modules/core/audience/screens/reactions/types';
 import { AudienceViewsScreenNavParams } from '~/framework/modules/core/audience/screens/views/types';
 
 export enum ModalsRouteNames {
-  Pdf = '$pdf',
-  Carousel = '$carousel',
-  MediaPlayer = '$mediaPlayer',
-  RichTextEditor = '$richTextEditor',
-  AudienceReactions = '$audienceReactions',
-  AudienceViews = '$audienceViews',
+  Pdf = 'pdf',
+  Carousel = 'carousel',
+  MediaPlayer = 'media-player',
+  RichTextEditor = 'rich-editor',
+  AudienceReactions = 'audience-reactions',
+  AudienceViews = 'audience-views',
   FileImport = 'file-import',
+  SplashAds = 'splashads',
 }
 
 export interface IModalsNavigationParams extends ParamListBase {
@@ -28,4 +30,5 @@ export interface IModalsNavigationParams extends ParamListBase {
   [ModalsRouteNames.AudienceViews]: AudienceViewsScreenNavParams;
   [ModalsRouteNames.FileImport]: FileImportScreenProps.NavParams;
   [ModalsRouteNames.RichTextEditor]: RichEditorFormReduxNavParams;
+  [ModalsRouteNames.SplashAds]: SplashadsScreenNavParams;
 }

@@ -12,6 +12,9 @@ export default StyleSheet.create({
     alignSelf: 'center',
     marginTop: UI_SIZES.spacing.medium,
   },
+  debugButton: {
+    //marginTop: UI_SIZES.spacing.medium,
+  },
   logoutButton: {
     color: theme.palette.status.failure.regular,
     textAlign: 'center',
@@ -75,9 +78,6 @@ export default StyleSheet.create({
     color: theme.palette.grey.white,
     paddingHorizontal: UI_SIZES.spacing.medium,
   },
-  toggleKeysButton: {
-    marginTop: UI_SIZES.spacing.medium,
-  },
   userInfoButton: {
     marginTop: UI_SIZES.spacing.medium,
   },
@@ -88,6 +88,6 @@ export default StyleSheet.create({
   version: {
     color: theme.palette.grey.graphite,
     textAlign: 'center',
-    marginTop: UI_SIZES.spacing.medium,
+    margin: UI_SIZES.spacing.medium,
   },
 });

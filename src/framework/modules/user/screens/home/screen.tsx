@@ -1,6 +1,7 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
@@ -40,6 +41,7 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
+import { readSplashadsData } from '~/framework/modules/auth/storage';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
@@ -48,6 +50,7 @@ import BottomRoundDecoration from '~/framework/modules/user/components/bottom-ro
 import AddAccountButton from '~/framework/modules/user/components/buttons/add-account';
 import ChangeAccountButton from '~/framework/modules/user/components/buttons/change-account';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import { ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import appConf from '~/framework/util/appConf';
 import { formatSource } from '~/framework/util/media';
@@ -111,7 +114,7 @@ useCurvedNavBarFeature.svgDisplayTopOffsetTolerance = 2;
  */
 function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session']) {
   const userProfilePicture = React.useMemo(() => {
-    const uri = session?.platform && session?.user.avatar ? new URL(`${session.platform.url}${session.user.avatar}`) : undefined;
+    const uri = session?.platform && session?.user.avatar ? new URL(session.user.avatar, session.platform.url) : undefined;
     if (uri) {
       const uti = OAuth2RessourceOwnerPasswordClient.connection?.getUniqueSessionIdentifier();
       if (uti) uri.searchParams.append('uti', uti);
@@ -243,6 +246,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const isFederated = session?.method === InitialAuthenticationMethod.WAYF_SAML;
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
+  const splashads = readSplashadsData();
+  const showSplashads =
+    session?.platform.name && splashads[session?.platform.name]
+      ? moment().startOf('day').toISOString() === splashads[session?.platform.name].date.toString()
+      : false;
+
   //
   // Zendesk stuff
   //
@@ -274,7 +283,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const openHelpCenter = async () => {
     if (showHelpCenter)
       try {
@@ -360,6 +368,16 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 title={I18n.get('user-whoarewe-title')}
                 onPress={() => {
                   navigation.navigate(userRouteNames.whoAreWe, {});
+                }}
+              />
+            ) : null}
+            {showSplashads && session?.platform.name ? (
+              <LineButton
+                title={I18n.get('user-page-splashads')}
+                onPress={() => {
+                  navigation.navigate(ModalsRouteNames.SplashAds, {
+                    resourceUri: splashads[session?.platform.name] ? splashads[session?.platform.name].url : '',
+                  });
                 }}
               />
             ) : null}
@@ -526,53 +544,50 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
 }
 
 /**
- * Setup an i18n keys toggle feature.
- * @returns the React Element of the toggle
- */
-function useToggleKeysFeature() {
-  if (!I18n.canShowKeys) return;
-  return (
-    <DefaultButton
-      text="Toggle i18n Keys"
-      action={() => {
-        I18n.toggleShowKeys();
-      }}
-      contentColor={theme.palette.primary.regular}
-      style={styles.toggleKeysButton}
-    />
-  );
-}
-
-/**
  * Setup a version details feature.
  * @returns the React Element of the version details text
  */
-function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']) {
+function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session'], debugVisible: boolean) {
   const currentPlatform = session?.platform.displayName;
+  const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
-    return (
-      <SmallBoldText style={styles.version}>
-        {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
-      </SmallBoldText>
-    );
-  }, [currentPlatform]);
+    if (debugVisible && appConf.isDebugEnabled)
+      return (
+        <>
+          <SmallBoldText style={styles.version}>
+            {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
+          </SmallBoldText>
+          {appConf.isDevOrAlpha ? (
+            <DefaultButton
+              text="Debug infos"
+              action={() => {
+                navigation.navigate(userRouteNames.debug, {});
+              }}
+              contentColor={theme.palette.primary.regular}
+              style={styles.debugButton}
+            />
+          ) : null}
+        </>
+      );
+    return null;
+  }, [currentPlatform, debugVisible, navigation]);
 }
 
 /**
  * Setup a version number feature that can secretly display detailed information when long pressed.
  * @returns the React Element of the touchable version text
  */
-function useVersionFeature(setAreDetailsVisible, scrollViewRef) {
+function useVersionFeature(setDebugVisible, scrollViewRef) {
   /**
    * When true, additional information is displayed above (build/platform/override)
    */
   const toggleVersionDetails = React.useCallback(() => {
-    setAreDetailsVisible(oldState => !oldState);
+    setDebugVisible(oldState => !oldState);
     // setTimeout is used to wait for the ScrollView height to update (after details are shown).
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd();
     }, 0);
-  }, [scrollViewRef, setAreDetailsVisible]);
+  }, [scrollViewRef, setDebugVisible]);
   return React.useMemo(() => {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
@@ -599,8 +614,8 @@ useVersionFeature.versionNumber = DeviceInfo.getVersion();
  * @returns
  */
 function UserHomeScreen(props: UserHomeScreenPrivateProps) {
+  const [debugVisible, setDebugVisible] = React.useState<boolean>(false);
   const { handleLogout, trySwitch, tryRemoveAccount, session, accounts } = props;
-  const [areDetailsVisible, setAreDetailsVisible] = React.useState<boolean>(false);
 
   const scrollViewRef = React.useRef(null);
   // Manages focus to send to others features in this screen.
@@ -622,9 +637,8 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
   const accountMenu = useAccountMenuFeature(session, focusedRef);
   const accountsButton = useAccountsFeature(session, accounts, trySwitch, tryRemoveAccount);
   const logoutButton = useLogoutFeature(handleLogout);
-  const toggleKeysButton = useToggleKeysFeature();
-  const versionDetails = useVersionDetailsFeature(session);
-  const versionButton = useVersionFeature(setAreDetailsVisible, scrollViewRef);
+  const versionDetails = useVersionDetailsFeature(session, debugVisible);
+  const versionButton = useVersionFeature(setDebugVisible, scrollViewRef);
 
   return (
     <PageView style={styles.page} showNetworkBar={false}>
@@ -643,12 +657,7 @@ function UserHomeScreen(props: UserHomeScreenPrivateProps) {
         <View style={styles.sectionBottom}>
           {accountsButton}
           {logoutButton}
-          {areDetailsVisible ? (
-            <>
-              {toggleKeysButton}
-              {versionDetails}
-            </>
-          ) : null}
+          {versionDetails}
           <BottomRoundDecoration style={styles.bottomRoundDecoration} child={versionButton} />
         </View>
       </ScrollView>

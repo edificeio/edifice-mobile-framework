@@ -26,6 +26,7 @@ export const BlogPostResourceCard = React.memo(
     audience,
     session,
     blogVisibility,
+    isManager,
   }: BlogPostResourceCardProps) => {
     const authorTextMaxLines = 1;
     const contentTextMaxLines = 5;
@@ -68,6 +69,7 @@ export const BlogPostResourceCard = React.memo(
                 referer={{ module: 'blog', resourceType: 'post', resourceId }}
                 session={session}
                 preview
+                isManager={isManager}
               />
             ) : undefined
           }>

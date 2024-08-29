@@ -180,6 +180,7 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
       return (
         <WebView
           ref={(ref: WebView) => this.setWebView(ref)}
+          incognito
           injectedJavaScriptBeforeContentLoaded={WayfScreen.INJECTED_JS_BEFORE}
           injectedJavaScript={WayfScreen.INJECTED_JS}
           javaScriptEnabled
@@ -344,17 +345,21 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   // Login with OpenID custom token
   async loginWithOpenID() {
     const customToken = this.oidResponse;
-    if (!customToken) return;
-    try {
-      await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
-    } catch (error) {
-      const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
-      if (errtype) {
-        this.displayError(errtype);
+    this.clearDatas(async () => {
+      if (!customToken) return;
+      Trackers.trackDebugEvent(moduleConfig.trackingName, trackingActionAddSuffix('Wayf', 'OpenID'));
+      this.displayLoading();
+      try {
+        await this.props.tryLogin(this.props.route.params.platform, { customToken }, this.state.errkey);
+      } catch (error) {
+        const errtype = Error.getDeepErrorType<typeof Error.LoginError>(error as Error);
+        if (errtype) {
+          this.displayError(errtype);
+        }
+      } finally {
+        this.oidResponse = undefined;
       }
-    } finally {
-      this.oidResponse = undefined;
-    }
+    });
   }
 
   // Navbar back handler
@@ -400,18 +405,26 @@ class WayfScreen extends React.Component<IWayfScreenProps, IWayfScreenState> {
   onMessage(event: WebViewMessageEvent) {
     // Get HTML code
     const innerHTML = event?.nativeEvent?.data || '';
-    console.debug('innerHTML :\n' + innerHTML);
+    console.debug('WAYFScreen::onMessage: url = ', event?.nativeEvent?.url);
+    //console.debug('WAYFScreen::onMessage: innerHTML =\n' + innerHTML);
     // Retrieve potential SAML token (Stored in <input type="hidden" name="SAMLResponse" value="[saml]"/>)
     const saml = innerHTML.split('name="SAMLResponse" value="');
     if (saml?.length === 2) {
       const index = saml[1].indexOf('"');
-      if (index > 0) this.samlResponse = saml[1].substring(0, index);
-    }
-    // Retrieve potential OpenID custom token (Stored via customToken=“..." format)
-    const oid = innerHTML.split('customToken=“');
-    if (oid?.length === 2) {
-      const index = oid[1].indexOf('"');
-      if (index > 0) this.oidResponse = oid[1].substring(0, index);
+      if (index > 0) {
+        this.samlResponse = saml[1].substring(0, index);
+        console.debug('WAYFScreen::onMessage: SAMLResponse retrieved');
+      }
+    } else {
+      // Retrieve potential OpenID custom token (Stored via customToken=“..." format)
+      const oid = innerHTML.split('customToken=“');
+      if (oid?.length === 2) {
+        const index = oid[1].indexOf('"');
+        if (index > 0) {
+          this.oidResponse = oid[1].substring(0, index);
+          console.debug('WAYFScreen::onMessage: customToken retrieved');
+        }
+      }
     }
   }
 

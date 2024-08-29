@@ -8,7 +8,10 @@ const MOOD_PICTURE_SIZE = getScaleWidth(64);
 export default StyleSheet.create({
   page: {
     backgroundColor: theme.palette.grey.white,
-    padding: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.medium,
+  },
+  scrollview: {
+    paddingTop: UI_SIZES.spacing.medium,
   },
   moods: {
     flexDirection: 'row',
@@ -28,6 +31,9 @@ export default StyleSheet.create({
   moodPicture: {
     height: MOOD_PICTURE_SIZE,
     width: MOOD_PICTURE_SIZE,
+  },
+  mottoInput: {
+    marginBottom: UI_SIZES.spacing.large,
   },
   annotationMotto: {
     textAlign: 'right',

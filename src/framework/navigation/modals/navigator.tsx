@@ -14,6 +14,8 @@ import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
 
+import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/components/splashads';
+
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
   <>
@@ -41,6 +43,12 @@ export default (
         component={FileImportScreen}
         initialParams={{}}
       />
+      <RootStack.Screen
+        name={ModalsRouteNames.SplashAds}
+        options={SplashadsNavBar}
+        component={SplashadsScreen}
+        initialParams={{}}
+      />
     </RootStack.Group>
   </>
 );
@@ -51,6 +59,9 @@ setModalModeForRoutes([
   ModalsRouteNames.MediaPlayer,
   ModalsRouteNames.RichTextEditor,
   ModalsRouteNames.FileImport,
+  ModalsRouteNames.AudienceReactions,
+  ModalsRouteNames.AudienceViews,
+  ModalsRouteNames.SplashAds,
 ]);
 
-setCrossIconBlackForRoutes([ModalsRouteNames.FileImport]);
+setCrossIconBlackForRoutes([ModalsRouteNames.FileImport, ModalsRouteNames.SplashAds]);

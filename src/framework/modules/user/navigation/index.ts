@@ -3,6 +3,7 @@ import { ParamListBase } from '@react-navigation/native';
 import moduleConfig from '~/framework/modules/user/module-config';
 import type { IPushNotifsItemsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsItemsListScreen';
 import type { IPushNotifsTopicsListScreenNavigationParams } from '~/framework/modules/user/screens/PushNotifsTopicsListScreen';
+import type { DebugScreenNavParams } from '~/framework/modules/user/screens/debug/types';
 import type { UserHomeScreenNavParams } from '~/framework/modules/user/screens/home';
 import type { UserLangScreenNavParams } from '~/framework/modules/user/screens/lang/types';
 import type { UserLegalNoticeScreenNavParams } from '~/framework/modules/user/screens/legal-notice';
@@ -16,6 +17,7 @@ import type { UserXmasScreenNavParams } from '~/framework/modules/user/screens/x
 
 export const userRouteNames = {
   home: `${moduleConfig.routeName}` as 'home',
+  debug: `${moduleConfig.routeName}/debug` as 'debug',
   notifPrefs: `${moduleConfig.routeName}/notifPrefs` as 'notifPrefs',
   notifPrefsDetails: `${moduleConfig.routeName}/notifPrefs/details` as 'notifPrefsDetails',
   profile: `${moduleConfig.routeName}/profile` as 'profile',
@@ -29,6 +31,7 @@ export const userRouteNames = {
   lang: `${moduleConfig.routeName}/lang` as 'lang',
 };
 export interface UserNavigationParams extends ParamListBase {
+  debug: DebugScreenNavParams;
   home: UserHomeScreenNavParams;
   notifPrefs: IPushNotifsTopicsListScreenNavigationParams;
   notifPrefsDetails: IPushNotifsItemsListScreenNavigationParams;

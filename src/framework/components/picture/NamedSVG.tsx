@@ -8,7 +8,7 @@
  */
 import React, { useEffect, useRef } from 'react';
 import { Platform } from 'react-native';
-import { SvgProps } from 'react-native-svg';
+import type { SvgProps } from 'react-native-svg';
 
 const imports = {
   // UI Icons
@@ -51,6 +51,7 @@ const imports = {
   'ui-download': async () => import('ASSETS/icons/uiIcons/download.svg'),
   'ui-drag': async () => import('ASSETS/icons/uiIcons/drag.svg'),
   'ui-edit': async () => import('ASSETS/icons/uiIcons/edit.svg'),
+  'ui-environment': async () => import('ASSETS/icons/uiIcons/environment.svg'),
   'ui-error': async () => import('ASSETS/icons/uiIcons/error.svg'),
   'ui-error-past': async () => import('ASSETS/icons/uiIcons/error-past.svg'),
   'ui-external-link': async () => import('ASSETS/icons/uiIcons/external-link.svg'),
@@ -89,6 +90,7 @@ const imports = {
   'ui-options': async () => import('ASSETS/icons/uiIcons/options.svg'),
   'ui-orderedList': async () => import('ASSETS/icons/uiIcons/orderedList.svg'),
   'ui-pause': async () => import('ASSETS/icons/uiIcons/pause.svg'),
+  'ui-personBook': async () => import('ASSETS/icons/uiIcons/person_book.svg'),
   'ui-phone': async () => import('ASSETS/icons/uiIcons/phone.svg'),
   'ui-play': async () => import('ASSETS/icons/uiIcons/play.svg'),
   'ui-play-filled': async () => import('ASSETS/icons/uiIcons/play-filled.svg'),
@@ -125,6 +127,7 @@ const imports = {
   'ui-success_outline': async () => import('ASSETS/icons/uiIcons/success_outline.svg'),
   'ui-success': async () => import('ASSETS/icons/uiIcons/success.svg'),
   'ui-superscript': async () => import('ASSETS/icons/uiIcons/superscript.svg'),
+  'ui-teacher': async () => import('ASSETS/icons/uiIcons/teacher.svg'),
   'ui-textPage': async () => import('ASSETS/icons/uiIcons/textPage.svg'),
   'ui-text-options': async () => import('ASSETS/icons/uiIcons/textOptions.svg'),
   'ui-text-size': async () => import('ASSETS/icons/uiIcons/text-size.svg'),
@@ -233,14 +236,14 @@ const imports = {
   'pictos-send': async () => import('ASSETS/images/pictos/send.svg'),
   'pictos-smartphone': async () => import('ASSETS/images/pictos/smartphone.svg'),
   'pictos-success-outline': async () => import('ASSETS/images/pictos/success-outline.svg'),
-  reaction_1: async () => import('ASSETS/icons/reactions/reaction1.svg'),
-  'reaction_1-round': async () => import('ASSETS/icons/reactions/reaction1_round.svg'),
-  reaction_2: async () => import('ASSETS/icons/reactions/reaction2.svg'),
-  'reaction_2-round': async () => import('ASSETS/icons/reactions/reaction2_round.svg'),
-  reaction_3: async () => import('ASSETS/icons/reactions/reaction3.svg'),
-  'reaction_3-round': async () => import('ASSETS/icons/reactions/reaction3_round.svg'),
-  reaction_4: async () => import('ASSETS/icons/reactions/reaction4.svg'),
-  'reaction_4-round': async () => import('ASSETS/icons/reactions/reaction4_round.svg'),
+  reaction_1: async () => import('ASSETS/reactions/reaction1.svg'),
+  'reaction_1-round': async () => import('ASSETS/reactions/reaction1_round.svg'),
+  reaction_2: async () => import('ASSETS/reactions/reaction2.svg'),
+  'reaction_2-round': async () => import('ASSETS/reactions/reaction2_round.svg'),
+  reaction_3: async () => import('ASSETS/reactions/reaction3.svg'),
+  'reaction_3-round': async () => import('ASSETS/reactions/reaction3_round.svg'),
+  reaction_4: async () => import('ASSETS/reactions/reaction4.svg'),
+  'reaction_4-round': async () => import('ASSETS/reactions/reaction4_round.svg'),
   'schoolbook-canteen': async () => import('ASSETS/images/schoolbook/canteen.svg'),
   'schoolbook-event': async () => import('ASSETS/images/schoolbook/event.svg'),
   'schoolbook-last-minute': async () => import('ASSETS/images/schoolbook/last-minute.svg'),

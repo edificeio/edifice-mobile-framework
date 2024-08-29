@@ -17,6 +17,7 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 
+import { getExtension } from '~/framework/util/file';
 import { assertPermissions } from '~/framework/util/permissions';
 
 import { openDocument } from './actions';
@@ -56,10 +57,13 @@ export function formatBytes(bytes, decimals = 2) {
 
 const renameAssets = (assets: Asset[]) => {
   const prefix = moment().format('YYYYMMDD-HHmmss');
-  const renamedAssets = assets.map((asset, index) => ({
-    ...asset,
-    fileName: `${prefix}${index > 0 ? `-${index}` : ''}`,
-  }));
+  const renamedAssets = assets.map((asset, index) => {
+    const ext = getExtension(asset.fileName);
+    return {
+      ...asset,
+      fileName: `${prefix}${index > 0 ? `-${index}` : ''}${ext ?? ''}`,
+    };
+  });
   return renamedAssets;
 };
 

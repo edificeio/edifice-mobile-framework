@@ -22,4 +22,5 @@ export interface BlogPostResourceCardProps {
   };
   session: AuthActiveAccount;
   blogVisibility: string;
+  isManager: boolean;
 }

@@ -75,7 +75,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
 
       if (!structureId || !studentId || !userId || !userType) throw new Error();
       const initialized = await presencesService.initialization.getStructureStatus(structureId);
-      
+
       if (!initialized) {
         setInitialized(false);
         throw new Error();

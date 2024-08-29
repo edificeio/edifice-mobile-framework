@@ -1,17 +1,20 @@
 import { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
+import { NavigationState, SceneRendererProps, TabBar, TabView } from 'react-native-tab-view';
 import { connect } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { BadgeAvatar, BadgePosition } from '~/framework/components/badgeAvatar';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { UI_SIZES } from '~/framework/components/constants';
+import { EmptyConnectionScreen, EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
-import { BodyText, CaptionBoldText, SmallText } from '~/framework/components/text';
+import { BodyText, CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
 import { audienceService } from '~/framework/modules/core/audience/service';
@@ -19,6 +22,9 @@ import { AudienceReactions, AudienceUserReaction } from '~/framework/modules/cor
 import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { accountTypeInfos } from '~/framework/util/accountType';
+import { isEmpty } from '~/framework/util/object';
+import { AsyncPagedLoadingState } from '~/framework/util/redux/asyncPaged';
 
 import styles from './styles';
 import { AudienceReactionsScreenProps } from './types';
@@ -34,15 +40,45 @@ export const computeNavBar = ({
   }),
 });
 
+const renderTabReaction = (key, nb, focused) => {
+  const TextComponent = focused ? SmallBoldText : SmallText;
+  if (key === 'all')
+    return <TextComponent style={focused ? styles.headerItemTextFocused : {}}>{I18n.get('audience-reactions-all')} </TextComponent>;
+  return (
+    <View style={styles.headerItem}>
+      <NamedSVG name={key.toLowerCase()} />
+      <TextComponent style={focused ? styles.headerItemTextFocused : {}}>{nb}</TextComponent>
+    </View>
+  );
+};
+
+const PAGE_SIZE = 20;
+
 const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
   const { module, resourceId, resourceType } = props.route.params.referer;
 
   const [userReactions, setUserReactions] = React.useState<AudienceUserReaction[]>([]);
-  const [countByType, setCountByType] = React.useState<Record<string, number>>();
-  //const [allReactionsCounter, setAllReactionsCounter] = React.useState<number>(0);
-  const [selectedItem, setSelectedItem] = React.useState<string | null>(null);
+  const [index, setIndex] = React.useState(0);
+  const reactionRoutes = props.validReactionTypes.map(reactionType => ({
+    key: reactionType,
+  }));
+  const routes = [{ key: 'all' }, ...reactionRoutes];
+  const [countByType, setCountByType] = React.useState<Record<string, number>>({});
+  const [nextPageToFetchState, setNextPageToFetch] = React.useState(1);
+  const [loadingState, setLoadingState] = React.useState(AsyncPagedLoadingState.PRISTINE);
+
+  const listFooterComponent = React.useMemo(
+    () => (
+      <>
+        {loadingState === AsyncPagedLoadingState.FETCH_NEXT ? <LoadingIndicator withVerticalMargins /> : null}
+        <View style={{ paddingBottom: UI_SIZES.screen.bottomInset }} />
+      </>
+    ),
+    [loadingState],
+  );
 
   const loadData = React.useCallback(async () => {
+    if (nextPageToFetchState < 0) return;
     try {
       const dt = (await audienceService.reaction.getDetails(
         {
@@ -50,80 +86,88 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
           resourceType,
           resourceId,
         },
-        1,
-        20,
+        nextPageToFetchState,
+        PAGE_SIZE,
       )) as AudienceReactions;
-      setUserReactions(dt.userReactions);
-      //setAllReactionsCounter(dt.reactionCounters.allReactionsCounter);
-      setCountByType(dt.reactionCounters.countByType);
+      setNextPageToFetch(dt.userReactions.length === 0 ? -1 : nextPageToFetchState + 1);
+      setUserReactions([...userReactions, ...dt.userReactions]);
+      if (isEmpty(countByType)) setCountByType(dt.reactionCounters.countByType);
     } catch (e) {
-      console.log('[AudienceReactionsScreen] error :', e);
+      console.error('[AudienceReactionsScreen] error :', e);
+      throw new Error();
     }
-  }, [module, resourceId, resourceType]);
+  }, [countByType, module, nextPageToFetchState, resourceId, resourceType, userReactions]);
 
-  const resetFilter = () => {
-    if (selectedItem === null) return;
-    setUserReactions(userReactions);
-    setSelectedItem(null);
-  };
-  const filterByType = (reactionType: string) => {
-    if (selectedItem === reactionType) return;
-    setUserReactions(userReactions.filter(reaction => reaction.reactionType === reactionType));
-    setSelectedItem(reactionType);
+  const fetchNextPage = () => {
+    if (loadingState === AsyncPagedLoadingState.FETCH_NEXT) return;
+    setLoadingState(AsyncPagedLoadingState.FETCH_NEXT);
+    loadData()
+      .then(() => setLoadingState(AsyncPagedLoadingState.DONE))
+      .catch(() => setLoadingState(AsyncPagedLoadingState.FETCH_NEXT_FAILED));
   };
 
-  const renderHeaderItem = ({ item }: { item: { icon: string; nb: number; type: string } }) => {
+  const renderScene = ({ route }) => {
+    const data = route.key === 'all' ? userReactions : userReactions.filter(reaction => reaction.reactionType === route.key);
     return (
-      <>
-        <View style={styles.separator} />
-        <TouchableOpacity
-          style={[styles.headerItem, selectedItem === item.type ? styles.headerSelectedItem : null]}
-          onPress={() => filterByType(item.type)}>
-          <NamedSVG name={item.icon} />
-          <SmallText>{item.nb}</SmallText>
-        </TouchableOpacity>
-      </>
+      <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <BadgeAvatar
+              userId={item.userId}
+              badgeContent={item.reactionType.toLowerCase()}
+              badgeColor={audienceReactionsInfos[item.reactionType].color}
+              badgePosition={BadgePosition.bottom}
+            />
+            <View>
+              <BodyText>{item.displayName}</BodyText>
+              <CaptionBoldText>{accountTypeInfos[item.profile].text}</CaptionBoldText>
+            </View>
+          </View>
+        )}
+        bounces={!isEmpty(data)}
+        ListEmptyComponent={
+          <EmptyScreen
+            svgImage="empty-timeline"
+            title={I18n.get('audience-reactions-empty')}
+            customTitleStyle={styles.noReactionTitle}
+            customStyle={styles.noReactionView}
+          />
+        }
+        contentContainerStyle={styles.flatlist}
+        ListFooterComponent={listFooterComponent}
+        onEndReached={() => {
+          if (userReactions.length >= (nextPageToFetchState - 1) * PAGE_SIZE) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.5}
+      />
     );
   };
-  const renderHeaderList = () => {
+  const renderTabBar = (
+    tabBarProps: SceneRendererProps & { navigationState: NavigationState<{ key: string; title: string; icon: string }> },
+  ) => {
     return (
-      <View style={styles.header}>
-        <TouchableOpacity onPress={resetFilter}>
-          <SmallText>{I18n.get('audience-reactions-all')}</SmallText>
-        </TouchableOpacity>
-        {props.validReactionTypes.map(reactionType =>
-          renderHeaderItem({
-            item: { icon: reactionType.toLowerCase(), nb: countByType![reactionType] ?? 0, type: reactionType },
-          }),
-        )}
-      </View>
+      <TabBar
+        renderLabel={({ route, focused }) => renderTabReaction(route.key, countByType![route.key] ?? 0, focused)}
+        indicatorStyle={styles.tabBarIndicatorContainer}
+        style={styles.tabBarContainer}
+        {...tabBarProps}
+      />
     );
   };
   const renderContent = () => {
     return (
-      <PageView style={styles.container}>
-        <FlatList
-          ListHeaderComponent={renderHeaderList}
-          data={userReactions}
-          renderItem={({ item }) => (
-            <View style={styles.item}>
-              <BadgeAvatar
-                userId={item.userId}
-                badgeContent={item.reactionType.toLowerCase()}
-                badgeColor={audienceReactionsInfos[item.reactionType].color}
-                badgePosition={BadgePosition.bottom}
-              />
-              <View>
-                <BodyText>{item.displayName}</BodyText>
-                <CaptionBoldText>{I18n.get(`user-profiletypes-${item.profile.toLowerCase()}`)}</CaptionBoldText>
-              </View>
-            </View>
-          )}
+      <PageView style={styles.container} showNetworkBar={false}>
+        <TabView
+          navigationState={{ index, routes }}
+          onIndexChange={setIndex}
+          renderScene={renderScene}
+          renderTabBar={renderTabBar}
         />
       </PageView>
     );
   };
-  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderError={() => <EmptyContentScreen />} />;
+  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderError={() => <EmptyConnectionScreen />} />;
 };
 
 export default connect(

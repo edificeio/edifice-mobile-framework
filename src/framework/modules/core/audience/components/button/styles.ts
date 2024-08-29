@@ -9,6 +9,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     paddingVertical: UI_SIZES.spacing.minor,
   },
+  buttonView: {
+    alignSelf: 'flex-start',
+  },
   flex1: {
     flex: 1,
   },
@@ -16,11 +19,10 @@ const styles = StyleSheet.create({
     borderColor: theme.palette.grey.cloudy,
     borderWidth: UI_SIZES.border.thin,
     borderRadius: UI_SIZES.radius.medium,
-    padding: UI_SIZES.spacing.medium,
     alignSelf: 'flex-start',
     flexDirection: 'row',
-    columnGap: UI_SIZES.spacing.big,
     position: 'absolute',
+    left: 0,
     backgroundColor: theme.palette.grey.white,
     shadowColor: theme.ui.shadowColor,
     shadowOpacity: 0.15,
@@ -30,6 +32,22 @@ const styles = StyleSheet.create({
       height: 4,
     },
     elevation: 16,
+  },
+  reactionsIcon: {
+    paddingVertical: UI_SIZES.spacing.medium,
+    paddingHorizontal: UI_SIZES.spacing.small,
+  },
+  reactionsText: {
+    color: theme.palette.grey.white,
+    textAlign: 'center',
+  },
+  reactionsTextView: {
+    position: 'absolute',
+    backgroundColor: theme.palette.grey.black,
+    top: -30,
+    paddingHorizontal: UI_SIZES.spacing.minor,
+    paddingVertical: UI_SIZES.spacing._LEGACY_tiny,
+    borderRadius: UI_SIZES.radius.medium,
   },
 });
 

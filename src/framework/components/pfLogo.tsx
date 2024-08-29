@@ -10,13 +10,9 @@ import { Picture } from '~/framework/components/picture';
 import { Platform } from '~/framework/util/appConf';
 import { Image } from '~/framework/util/media';
 
-const logoHeight = 64;
-const logoWidth = 300;
-
 const ImageLogo = styled(Image)({
-  height: logoHeight,
+  ...UI_SIZES.elements.logoSize,
   resizeMode: 'contain',
-  width: logoWidth,
 });
 
 export const PFLogo = ({ pf }: { pf: Platform }) => {

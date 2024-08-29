@@ -5,7 +5,7 @@ import { ColorValue, View } from 'react-native';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
-import { EmptyContentScreen } from '~/framework/components/empty-screens';
+import { EmptyConnectionScreen } from '~/framework/components/empty-screens';
 import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, HeadingMText } from '~/framework/components/text';
@@ -14,6 +14,7 @@ import { AccountType } from '~/framework/modules/auth/model';
 import { audienceService } from '~/framework/modules/core/audience/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { accountTypeInfos } from '~/framework/util/accountType';
 
 import styles from './styles';
 import { AudienceViewsScreenProps } from './types';
@@ -44,6 +45,7 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
       setViewsPerProfile(dt.uniqueViewsPerProfile);
     } catch (e) {
       console.error('[BlogAudienceScreen] error :', e);
+      throw new Error();
     }
   }, [module, resourceId, resourceType]);
 
@@ -57,7 +59,7 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
     nb: number;
     label: string;
     icon: string;
-    color?: ColorValue;
+    color: ColorValue;
     last?: boolean;
   }) => {
     return (
@@ -78,19 +80,16 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
 
   const renderContent = () => {
     return (
-      <PageView style={styles.container}>
+      <PageView style={styles.container} showNetworkBar={false}>
         {renderItem({ nb: nbViews, label: I18n.get('audience-views-views'), icon: 'ui-see' })}
         {renderItem({ nb: nbUniqueViews, label: I18n.get('audience-views-uniqueviews'), icon: 'ui-users' })}
         <View style={styles.subItems}>
           {viewsPerProfile.map((item, index) =>
             renderItem({
               nb: item.counter,
-              label: I18n.get(`user-profiletypes-${item.profile.toLocaleLowerCase()}`),
-              icon: item.profile === AccountType.Student ? 'ui-backpack' : 'ui-cottage',
-              color:
-                item.profile === AccountType.Student
-                  ? theme.palette.complementary.orange.regular
-                  : theme.palette.complementary.blue.regular,
+              label: accountTypeInfos[item.profile].text,
+              icon: accountTypeInfos[item.profile].icon,
+              color: accountTypeInfos[item.profile].color.regular,
               last: index === viewsPerProfile.length - 1,
             }),
           )}
@@ -99,7 +98,7 @@ const AudienceViewsScreen = (props: AudienceViewsScreenProps) => {
     );
   };
 
-  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderError={() => <EmptyContentScreen />} />;
+  return <ContentLoader loadContent={loadData} renderContent={renderContent} renderError={() => <EmptyConnectionScreen />} />;
 };
 
 export default AudienceViewsScreen;
