@@ -518,7 +518,7 @@ const performLogin = async (
   // GET the audience valid reaction types for the platform
   dispatch(loadValidReactionTypesAction());
 
-  if (platform.splashads && appConf.isDevOrAlpha) {
+  if (platform.splashads) {
     const splashads = readSplashadsData();
     const today = moment().startOf('day');
     const splashadsDay = splashads[platform.name];
