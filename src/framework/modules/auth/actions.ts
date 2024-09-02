@@ -500,10 +500,8 @@ const performLogin = async (
 
   const fetchSplashads = async () => {
     const source = `${platform.splashads}/${user.infos.type?.toLowerCase()}/${I18n.getSplashadsLocale()}`;
-
     try {
       const response = await fetchData(source);
-
       if (response && response.status === 200) {
         writeSplashads(platform.name, moment().startOf('day'), source);
         openSplashadsScreen({ resourceUri: source });

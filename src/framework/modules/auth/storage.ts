@@ -115,19 +115,23 @@ export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
   Storage.erasePreferences(id);
 };
 
-export const readSplashadsData = () => storage.getJSON('splashads') ?? {};
+// SplashAds management
+
+const SPLASHADS_KEY = 'splashads';
+
+export const readSplashadsData = () => storage.getJSON(SPLASHADS_KEY) ?? {};
 
 export const updateSplashads = (name: string, date: Moment, url: string) => {
   const splashads = readSplashadsData();
   splashads[name] = { date, url };
-  storage.setJSON('splashads', splashads);
+  storage.setJSON(SPLASHADS_KEY, splashads);
 };
 
 export const writeSplashads = (name: string, date: Moment, url: string) => {
   const splashads = readSplashadsData();
   if (!splashads[name]) {
     splashads[name] = { date, url };
-    storage.setJSON('splashads', splashads);
+    storage.setJSON(SPLASHADS_KEY, splashads);
   } else {
     updateSplashads(name, date, url);
   }
