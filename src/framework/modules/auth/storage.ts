@@ -1,5 +1,3 @@
-import { Moment } from 'moment';
-
 import { Storage } from '~/framework/util/storage';
 import type { IOAuthToken } from '~/infra/oauth';
 
@@ -16,7 +14,6 @@ export interface AuthStorageData {
     anonymousToken?: IOAuthToken;
   };
   'show-onboarding': boolean;
-  splashads: Record<string, { date: Moment; url: string }>;
 }
 
 export const storage = Storage.slice<AuthStorageData>().withModule(moduleConfig);
@@ -113,22 +110,4 @@ export const writeDeleteAccount = (id: keyof IAuthState['accounts']) => {
   delete savedAccounts[id];
   storage.setJSON('accounts', savedAccounts);
   Storage.erasePreferences(id);
-};
-
-export const readSplashadsData = () => storage.getJSON('splashads') ?? {};
-
-export const updateSplashads = (name: string, date: Moment, url: string) => {
-  const splashads = readSplashadsData();
-  splashads[name] = { date, url };
-  storage.setJSON('splashads', splashads);
-};
-
-export const writeSplashads = (name: string, date: Moment, url: string) => {
-  const splashads = readSplashadsData();
-  if (!splashads[name]) {
-    splashads[name] = { date, url };
-    storage.setJSON('splashads', splashads);
-  } else {
-    updateSplashads(name, date, url);
-  }
 };

@@ -1,10 +1,10 @@
 import moment from 'moment';
 
 import { I18n } from '~/app/i18n';
+import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { showSplashads } from '~/framework/modules/splashads/screen';
 import { Platform } from '~/framework/util/appConf';
 
-import { AccountType, AuthActiveAccount } from '~/framework/modules/auth/model';
 import { readSplashadsData, writeSplashadsData } from './storage';
 
 const timeoutPromise = new Promise((resolve, reject) => {

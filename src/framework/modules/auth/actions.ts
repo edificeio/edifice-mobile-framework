@@ -14,6 +14,7 @@ import {
 } from '~/framework/modules/auth/reducer';
 import { audienceService } from '~/framework/modules/core/audience/service';
 import { AudienceValidReactionTypes } from '~/framework/modules/core/audience/types';
+import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
 import { createEndSessionAction } from '~/framework/util/redux/reducerFactory';
@@ -22,7 +23,6 @@ import { Trackers } from '~/framework/util/tracker';
 import { clearRequestsCacheLegacy } from '~/infra/cache';
 import { OAuth2RessourceOwnerPasswordClient, destroyOAuth2Legacy } from '~/infra/oauth';
 
-import { checkAndShowSplashAds } from '../splashads';
 import {
   IActivationPayload as ActivationPayload,
   AuthCredentials,

@@ -41,9 +41,10 @@ import { AuthChangeMobileScreenNavParams } from '~/framework/modules/auth/screen
 import { LoginState } from '~/framework/modules/auth/screens/main-account/account-selection/types';
 import { AuthMFAScreenNavParams } from '~/framework/modules/auth/screens/mfa/types';
 import { getAuthContext, getMFAValidationInfos, getUserRequirements } from '~/framework/modules/auth/service';
-import { readSplashadsData } from '~/framework/modules/auth/storage';
 import { ChangePasswordScreenNavParams } from '~/framework/modules/auth/templates/change-password/types';
 import track, { trackingAccountEvents } from '~/framework/modules/auth/tracking';
+import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
+import { readSplashadsData } from '~/framework/modules/splashads/storage';
 import { isWithinXmasPeriod } from '~/framework/modules/user/actions';
 import ChangeAccountList from '~/framework/modules/user/components/account-list/change';
 import BottomRoundDecoration from '~/framework/modules/user/components/bottom-round-decoration';
@@ -59,7 +60,6 @@ import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
-import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
@@ -248,7 +248,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
   const splashads = readSplashadsData();
-
   //
   // Zendesk stuff
   //
@@ -394,9 +393,11 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
       canEditPersonalInfo,
       showHelpCenter,
       showWhoAreWe,
+      session,
       navigation,
       editUserInformation,
       openHelpCenter,
+      splashads,
     ],
   );
 }
