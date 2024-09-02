@@ -1,7 +1,6 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { CommonActions, NavigationProp, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
 import * as React from 'react';
 import { Alert, ImageURISource, TouchableOpacity, View } from 'react-native';
 import RNConfigReader from 'react-native-config-reader';
@@ -60,6 +59,7 @@ import { useZendesk } from '~/framework/util/zendesk';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';
 import Avatar, { Size } from '~/ui/avatars/Avatar';
 
+import { showSplashadsOnUserScreen } from '~/framework/modules/splashads';
 import styles from './styles';
 import { ModificationType, UserHomeScreenDispatchProps, UserHomeScreenPrivateProps } from './types';
 
@@ -248,10 +248,6 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
   const showWhoAreWe = session?.platform.showWhoAreWe;
 
   const splashads = readSplashadsData();
-  const showSplashads =
-    session?.platform.name && splashads[session?.platform.name]
-      ? moment().startOf('day').toISOString() === splashads[session?.platform.name].date.toString()
-      : false;
 
   //
   // Zendesk stuff
@@ -372,12 +368,12 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 }}
               />
             ) : null}
-            {showSplashads && session?.platform.name ? (
+            {showSplashadsOnUserScreen(session!) ? (
               <LineButton
                 title={I18n.get('user-page-splashads')}
                 onPress={() => {
                   navigation.navigate(ModalsRouteNames.SplashAds, {
-                    resourceUri: splashads[session?.platform.name] ? splashads[session?.platform.name].url : '',
+                    resourceUri: splashads[session?.platform.name!] ? splashads[session?.platform.name!].url : '',
                   });
                 }}
               />

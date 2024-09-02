@@ -16,7 +16,7 @@ import { SplashadsScreenProps } from './types';
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<IModalsNavigationParams, typeof ModalsRouteNames.Splashads>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<IModalsNavigationParams, typeof ModalsRouteNames.SplashAds>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -88,6 +88,6 @@ const SplashadsScreen = (props: SplashadsScreenProps) => {
 
 export default SplashadsScreen;
 
-export function openSplashadsScreen(navParams: IModalsNavigationParams[ModalsRouteNames.SplashAds]) {
+export function showSplashads(navParams: IModalsNavigationParams[ModalsRouteNames.SplashAds]) {
   navigate(ModalsRouteNames.SplashAds, navParams);
 }

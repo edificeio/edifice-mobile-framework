@@ -9,12 +9,11 @@ import AudienceReactionsScreen, {
   computeNavBar as audienceReactionsNavBar,
 } from '~/framework/modules/core/audience/screens/reactions';
 import AudienceViewsScreen, { computeNavBar as audienceViewsNavBar } from '~/framework/modules/core/audience/screens/views';
+import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/modules/splashads/screen';
 import { setCrossIconBlackForRoutes, setModalModeForRoutes } from '~/framework/navigation/hideTabBarAndroid';
 import { getTypedRootStack } from '~/framework/navigation/navigators';
 
 import { IModalsNavigationParams, ModalsRouteNames } from '.';
-
-import SplashadsScreen, { computeNavBar as SplashadsNavBar } from '~/framework/components/splashads';
 
 const RootStack = getTypedRootStack<IModalsNavigationParams>();
 export default (
