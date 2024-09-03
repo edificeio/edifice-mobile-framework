@@ -1,11 +1,9 @@
-import moment from 'moment';
 import DeviceInfo from 'react-native-device-info';
 import { AnyAction } from 'redux';
 import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { openSplashadsScreen } from '~/framework/components/splashads';
 import {
   ERASE_ALL_ACCOUNTS,
   IAuthState,
@@ -69,13 +67,11 @@ import {
   readSavedAccounts,
   readSavedStartup,
   readShowOnbording,
-  readSplashadsData,
   writeCreateAccount,
   writeDeleteAccount,
   writeLogout,
   writeRemoveToken,
   writeReplaceAccount,
-  writeSplashads,
 } from './storage';
 
 type AuthDispatch = ThunkDispatch<IAuthState, any, AnyAction>;
