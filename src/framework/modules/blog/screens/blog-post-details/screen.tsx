@@ -23,6 +23,8 @@ import { KeyboardPageView, PageView } from '~/framework/components/page';
 import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import usePreventBack from '~/framework/hooks/prevent-back';
+import { markViewAudience } from '~/framework/modules/audience';
+import { audienceService } from '~/framework/modules/audience/service';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   deleteBlogPostAction,
@@ -44,8 +46,6 @@ import {
   updateCommentBlogPostResourceRight,
 } from '~/framework/modules/blog/rights';
 import { blogPostGenerateResourceUriFunction, blogService, blogUriCaptureFunction } from '~/framework/modules/blog/service';
-import { markViewAudience } from '~/framework/modules/core/audience';
-import { audienceService } from '~/framework/modules/core/audience/service';
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { resourceHasRight } from '~/framework/util/resourceRights';
 import { OAuth2RessourceOwnerPasswordClient } from '~/infra/oauth';

@@ -16,10 +16,9 @@ import { PageView } from '~/framework/components/page';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionBoldText, SmallBoldText, SmallText } from '~/framework/components/text';
 import { ContentLoader } from '~/framework/hooks/loader';
+import { audienceService } from '~/framework/modules/audience/service';
+import { AudienceReactions, AudienceUserReaction } from '~/framework/modules/audience/types';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
-import { audienceService } from '~/framework/modules/core/audience/service';
-import { AudienceReactions, AudienceUserReaction } from '~/framework/modules/core/audience/types';
-import { audienceReactionsInfos } from '~/framework/modules/core/audience/util';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { accountTypeInfos } from '~/framework/util/accountType';
@@ -115,8 +114,7 @@ const AudienceReactionsScreen = (props: AudienceReactionsScreenProps) => {
           <View style={styles.item}>
             <BadgeAvatar
               userId={item.userId}
-              badgeContent={item.reactionType.toLowerCase()}
-              badgeColor={audienceReactionsInfos[item.reactionType].color}
+              badgeContent={{ type: 'NamedSvg', name: `${item.reactionType.toLowerCase()}-round` }}
               badgePosition={BadgePosition.bottom}
             />
             <View>

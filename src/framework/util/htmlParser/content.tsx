@@ -7,7 +7,7 @@ import { IMedia } from '~/framework//util/notifications';
 import { UI_SIZES } from '~/framework/components/constants';
 import MediaButton from '~/framework/components/media/button';
 import { SmallItalicText } from '~/framework/components/text';
-import { AudienceParameter } from '~/framework/modules/core/audience/types';
+import { AudienceParameter } from '~/framework/modules/audience/types';
 import { computeVideoThumbnail } from '~/framework/modules/workspace/service';
 import { formatSource } from '~/framework/util/media';
 import { IRemoteAttachment } from '~/ui/Attachment';

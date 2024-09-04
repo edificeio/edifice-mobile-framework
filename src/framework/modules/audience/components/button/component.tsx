@@ -31,6 +31,8 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const [cPageX, setPageX] = React.useState<number>(0);
   const [cPageY, setPageY] = React.useState<number>(0);
 
+  const [reactionWidth, setReactionWidth] = React.useState<number>(0);
+
   const scrollRef = React.useContext(ScrollContext);
   const opacityBlocReactions = React.useRef(new Animated.Value(0)).current;
   const scaleReactionButton = React.useRef(new Animated.Value(1)).current;
@@ -49,6 +51,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     };
     return acc;
   }, {});
+  const numberOfReactions = props.validReactionTypes.length;
 
   const showReactions = () => {
     setIsOpen(true);
@@ -214,7 +217,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   };
 
   const panResponder = PanResponder.create({
-    // Ask to be the responder:
     onStartShouldSetPanResponder: (evt, gestureState) => true,
     onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
     onMoveShouldSetPanResponder: (evt, gestureState) => true,
@@ -224,9 +226,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     },
 
     onPanResponderMove: (evt, gestureState) => {
-      // The most recent move distance is gestureState.move{X,Y}
-      // The accumulated gesture distance since becoming responder is
-      // gestureState.d{x,y}
       if (
         gestureState.moveY >= cPageY &&
         gestureState.moveY <= cPageY + cHeight &&
@@ -234,10 +233,9 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
         gestureState.moveX <= cPageX + cWidth
       ) {
         const x = gestureState.moveX - cPageX;
-        if (x > 0 && x <= cWidth / 4) zoomOnItem('REACTION_1');
-        else if (x > cWidth / 4 && x <= (cWidth / 4) * 2) zoomOnItem('REACTION_2');
-        else if (x > (cWidth / 4) * 2 && x <= (cWidth / 4) * 3) zoomOnItem('REACTION_3');
-        else zoomOnItem('REACTION_4');
+        const targetIndex = Math.floor(x / reactionWidth);
+
+        zoomOnItem(props.validReactionTypes[targetIndex]);
       } else {
         removeZoomOnSelectedItem();
       }
@@ -246,8 +244,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
       return false;
     },
     onPanResponderRelease: (evt, gestureState) => {
-      // The user has released all touches while this view is the
-      // responder. This typically means a gesture has succeeded
       if (itemSelected) {
         postReaction(itemSelected);
         removeZoomOnSelectedItem();
@@ -264,6 +260,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
       setWidth(width);
       setPageX(pageX);
       setPageY(pageY);
+      setReactionWidth(width / numberOfReactions);
     });
     timerLongTouch = setTimeout(() => {
       openReactions();
@@ -317,7 +314,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
                 style={[
                   styles.reactionsTextView,
                   {
-                    left: i * (cWidth / 4),
+                    left: i * (cWidth / numberOfReactions),
                     opacity: animationReactions[reaction].textOpacity,
                   },
                 ]}>

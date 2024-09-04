@@ -6,8 +6,8 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { CaptionText, SmallBoldText } from '~/framework/components/text';
-import { markViewAudience } from '~/framework/modules/core/audience';
-import { AudienceParameter } from '~/framework/modules/core/audience/types';
+import { markViewAudience } from '~/framework/modules/audience';
+import { AudienceParameter } from '~/framework/modules/audience/types';
 
 import Attachment, { IRemoteAttachment } from './Attachment';
 

@@ -8,8 +8,8 @@ import theme from '~/app/theme';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
+import { audienceService } from '~/framework/modules/audience/service';
 import { getValidReactionTypes } from '~/framework/modules/auth/reducer';
-import { audienceService } from '~/framework/modules/core/audience/service';
 import { IModalsNavigationParams, ModalsRouteNames } from '~/framework/navigation/modals';
 import { isEmpty } from '~/framework/util/object';
 
@@ -111,7 +111,11 @@ const Audience = (props: AudienceAllProps) => {
                 />
               ))
             ) : (
-              <NamedSVG name="reaction_1-round" height={UI_SIZES.elements.icon.default} width={UI_SIZES.elements.icon.default} />
+              <NamedSVG
+                name={`${props.validReactionTypes[0].toLowerCase()}-round`}
+                height={UI_SIZES.elements.icon.default}
+                width={UI_SIZES.elements.icon.default}
+              />
             )}
           </View>
         </Component>

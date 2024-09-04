@@ -1,7 +1,7 @@
 import { ViewStyle } from 'react-native';
 
+import { AudienceReferer } from '~/framework/modules/audience/types';
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
-import { AudienceReferer } from '~/framework/modules/core/audience/types';
 
 export interface AudienceReduxProps {
   validReactionTypes: string[];

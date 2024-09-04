@@ -4,6 +4,8 @@ import { ThunkAction, ThunkDispatch } from 'redux-thunk';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { audienceService } from '~/framework/modules/audience/service';
+import { AudienceValidReactionTypes } from '~/framework/modules/audience/types';
 import {
   ERASE_ALL_ACCOUNTS,
   IAuthState,
@@ -12,8 +14,6 @@ import {
   getState as getAuthState,
   getSession,
 } from '~/framework/modules/auth/reducer';
-import { audienceService } from '~/framework/modules/core/audience/service';
-import { AudienceValidReactionTypes } from '~/framework/modules/core/audience/types';
 import { checkAndShowSplashAds } from '~/framework/modules/splashads';
 import appConf, { Platform } from '~/framework/util/appConf';
 import { Error } from '~/framework/util/error';
