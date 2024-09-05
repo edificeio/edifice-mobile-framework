@@ -56,11 +56,6 @@ const BubbleView = styled.View({
   width: 30,
 });
 
-/*const StretchImage = style.image({
-  height: "100%",
-  width: "100%"
-});*/
-
 const errorImageWidth = getScaleImageSize(UI_SIZES.dimensions.height.huge);
 const errorImageHeight = getScaleImageSize(UI_SIZES.dimensions.height.huge);
 
