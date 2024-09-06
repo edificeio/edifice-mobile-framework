@@ -9,7 +9,7 @@ export namespace Log {
   const logFileName = 'appe.log';
 
   export async function init() {
-    if (appConf.isDevOrAlpha) {
+    if (appConf.isDebugEnabled) {
       try {
         // initialize logger
         log = logger.createLogger({
