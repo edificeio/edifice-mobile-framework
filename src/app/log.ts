@@ -59,23 +59,23 @@ export namespace Log {
     }
   }
 
+  export async function contentsAsArray(): Promise<string[]> {
+    let lines: string[] = [];
+    try {
+      const contents = await RNFS.readFile(logFilePath);
+      lines = contents.split('\n');
+    } catch (e) {
+      console.error('Unable to read log: ', (e as Error).message);
+    } finally {
+      return lines;
+    }
+  }
+
   export function pause() {
     log?.disable();
   }
 
   export function resume() {
     log?.enable();
-  }
-
-  export async function read(): Promise<string[]> {
-    let lines: string[] = [];
-    try {
-      const content = await RNFS.readFile(logFilePath);
-      lines = content.split('\n');
-    } catch (e) {
-      console.error('Unable to read log: ', (e as Error).message);
-    } finally {
-      return lines;
-    }
   }
 }
