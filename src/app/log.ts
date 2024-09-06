@@ -5,8 +5,10 @@ import { consoleTransport, fileAsyncTransport, logger } from 'react-native-logs'
 import appConf from '~/framework/util/appConf';
 
 export namespace Log {
-  let log;
   const logFileName = 'appe.log';
+  export const logFilePath = `${RNFS.DocumentDirectoryPath}/${logFileName}`;
+
+  let log;
 
   export async function init() {
     if (appConf.isDebugEnabled) {
@@ -49,9 +51,9 @@ export namespace Log {
     }
   }
 
-  export async function clear() {
+  export function clear() {
     try {
-      RNFS.unlink(`${RNFS.DocumentDirectoryPath}/${logFileName}`);
+      RNFS.unlink(logFilePath);
     } catch (e) {
       console.error('Unable to clear log: ', (e as Error).message);
     }
@@ -63,5 +65,17 @@ export namespace Log {
 
   export function resume() {
     log?.enable();
+  }
+
+  export async function read(): Promise<string[]> {
+    let lines: string[] = [];
+    try {
+      const content = await RNFS.readFile(logFilePath);
+      lines = content.split('\n');
+    } catch (e) {
+      console.error('Unable to read log: ', (e as Error).message);
+    } finally {
+      return lines;
+    }
   }
 }
