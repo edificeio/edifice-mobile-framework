@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-08-23 10:48:11",
-  "notes": "Squashed commit of the following:\nrelease: 1.13.2-alpha.2(1130202)",
-  "version": "1.13.2-alpha.3(1130203)"
+  "last": "2024-08-29 14:33:29",
+  "notes": "update(yarn): update yarn cache\nupdate(yarn): update yarn cache\nMerge branch 'dev/1.13.3' of github.com:edificeio/edifice-mobile-framework into dev/1.13.3\nfeat(creativeschool): MB-2923 , add creativeschool connector\nSquashed commit of the following:\nSquashed commit of the following:\nrelease: 1.13.3(1130300)\nchore(i18n): Change Phrase Sync Branch\nfix(ent77): MB-2915, add good discover link in other languages\nfix(ent77): MB-2915, add good discover link\nrelease: 1.13.2-alpha.3(1130203)",
+  "version": "1.13.3-alpha.1(1130301)"
 }
