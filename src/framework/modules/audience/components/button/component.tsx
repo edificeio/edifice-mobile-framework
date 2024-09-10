@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Animated, PanResponder, TouchableOpacity, View } from 'react-native';
+import { Animated, Modal, PanResponder, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 
 import { I18n } from '~/app/i18n';
@@ -18,9 +18,14 @@ import { AudienceReactButtonAllProps } from './types';
 const REACTION_ICON_SIZE = 30;
 const HEIGHT_VIEW_REACTIONS = REACTION_ICON_SIZE + UI_SIZES.spacing.medium * 2 + UI_SIZES.border.thin * 2;
 
+enum OpenReactionsMode {
+  MODAL,
+  STANDARD,
+}
+
 const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const { userReaction } = props;
-  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = React.useState<OpenReactionsMode | undefined>(undefined);
   const [isLongTouch, setIsLongTouch] = React.useState<boolean>(false);
   const [itemSelected, setItemSelected] = React.useState<null | string>(null);
 
@@ -53,8 +58,8 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   }, {});
   const numberOfReactions = props.validReactionTypes.length;
 
-  const showReactions = () => {
-    setIsOpen(true);
+  const showReactions = (mode: OpenReactionsMode) => {
+    setIsOpen(mode);
     Animated.timing(opacityBlocReactions, {
       toValue: 1,
       duration: 150,
@@ -103,7 +108,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
         useNativeDriver: true,
       }).start();
     }, 200);
-    setTimeout(() => setIsOpen(false), 400);
+    setTimeout(() => setIsOpen(undefined), 400);
   };
 
   const animReactButton = () => {
@@ -121,9 +126,9 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     ]).start();
   };
 
-  const openReactions = () => {
+  const openReactions = (mode: OpenReactionsMode) => {
     Feedback.actionDone();
-    if (!isOpen) showReactions();
+    if (!isOpen) showReactions(mode);
     else hideReactions();
   };
 
@@ -263,15 +268,15 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
       setReactionWidth(width / numberOfReactions);
     });
     timerLongTouch = setTimeout(() => {
-      openReactions();
       setIsLongTouch(true);
+      openReactions(OpenReactionsMode.STANDARD);
     }, 500);
   };
   const onTouchEndButton = () => {
     if (!isLongTouch) {
       clearTimeout(timerLongTouch);
       if (userReaction) deleteReaction();
-      else openReactions();
+      else openReactions(OpenReactionsMode.MODAL);
     } else {
       hideReactions();
       setIsLongTouch(false);
@@ -295,13 +300,69 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
       </Animated.View>
     );
   };
+
   return (
     <View>
+      <Modal transparent animationType="fade" visible={isOpen === OpenReactionsMode.MODAL} onRequestClose={hideReactions}>
+        <TouchableOpacity style={styles.flex1} activeOpacity={1} onPress={hideReactions}>
+          <Animated.View
+            ref={view => (component = view)}
+            style={[
+              styles.reactions,
+              {
+                opacity: opacityBlocReactions,
+                top: cPageY,
+                left: cPageX,
+                backgroundColor: theme.palette.complementary.red.dark,
+              },
+            ]}>
+            {props.validReactionTypes.map((reaction, i) => {
+              const rotate = animationReactions[reaction].rotate.interpolate({
+                inputRange: [-6, 0, 6],
+                outputRange: ['-6deg', '0deg', '6deg'],
+              });
+              return (
+                <>
+                  <Animated.View
+                    style={[
+                      styles.reactionsTextView,
+                      {
+                        left: i * (cWidth / 4),
+                        opacity: animationReactions[reaction].textOpacity,
+                      },
+                    ]}>
+                    <CaptionBoldText style={styles.reactionsText}>{I18n.get(`audience-${reaction.toLowerCase()}`)}</CaptionBoldText>
+                  </Animated.View>
+                  <Animated.View
+                    key={reaction}
+                    style={{
+                      transform: [
+                        { translateY: animationReactions[reaction].transform },
+                        { scale: animationReactions[reaction].scale },
+                        { rotate },
+                      ],
+                      opacity: animationReactions[reaction].opacity,
+                    }}>
+                    <TouchableOpacity style={styles.reactionsIcon} onPress={() => postReaction(reaction)}>
+                      <NamedSVG name={reaction.toLowerCase()} width={REACTION_ICON_SIZE} height={REACTION_ICON_SIZE} />
+                    </TouchableOpacity>
+                  </Animated.View>
+                </>
+              );
+            })}
+          </Animated.View>
+        </TouchableOpacity>
+      </Modal>
       <Animated.View
         ref={view => (component = view)}
         style={[
           styles.reactions,
-          { opacity: opacityBlocReactions, top: -HEIGHT_VIEW_REACTIONS, pointerEvents: isOpen ? 'auto' : 'none' },
+          {
+            opacity: isOpen === OpenReactionsMode.STANDARD ? opacityBlocReactions : 0,
+            top: -HEIGHT_VIEW_REACTIONS,
+            pointerEvents: isOpen ? 'auto' : 'none',
+            backgroundColor: theme.palette.complementary.blue.dark,
+          },
         ]}>
         {props.validReactionTypes.map((reaction, i) => {
           const rotate = animationReactions[reaction].rotate.interpolate({
