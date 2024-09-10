@@ -58,7 +58,7 @@ export namespace I18n {
   // Toggle button available in UserHomeScreen (src/framework/modules/user/screens/home/screen.tsx)
   const I18N_SHOW_KEYS_KEY = 'showKeys';
   let showKeys = false;
-  export const canShowKeys = appConf.isDevOrAlpha;
+  export const canShowKeys = appConf.isDebugEnabled;
 
   const I18N_APP_LANG = 'appLang';
 
