@@ -399,7 +399,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
           );
         })}
       </Animated.View>
-
       {renderReactButton()}
     </View>
   );
