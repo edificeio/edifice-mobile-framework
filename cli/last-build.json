@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-09-13 09:38:53",
-  "notes": "chore(stack): update yarn cache\nfix(wayf): MB-2852, add specific code for SP-Initiated wayfs\nrelease: 1.13.3(1130300)\nfix(splashads): enhance error message\nfix(splashads): enable splashads in production\nchore(i18n): Change Phrase Sync Branch\nfix(ent77): MB-2915, add good discover link in other languages\nfix(ent77): MB-2915, add good discover link\nrelease: 1.13.2-alpha.3(1130203)",
-  "version": "1.13.3-rc.1(1130301)"
+  "last": "2024-09-13 13:44:19",
+  "notes": "release: 1.13.3-rc.1(1130301)",
+  "version": "1.13.3-rc.2(1130302)"
 }
