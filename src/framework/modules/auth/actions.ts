@@ -546,15 +546,12 @@ const loginCredentialsAction = (functions: AuthLoginFunctions, platform: Platfor
           functions.writeStorage(session, getAuthState(getState()).showOnboarding);
           return session;
         } catch (ee) {
-          if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.CREDENTIALS_MISMATCH) {
-            switch (await loginSteps.checkActivationAndRenew(platform, credentials)) {
-              case AuthPendingRedirection.ACTIVATE:
-                dispatch(functions.activation(platform.name, credentials.username, credentials.password));
-                return AuthPendingRedirection.ACTIVATE;
-              case AuthPendingRedirection.RENEW_PASSWORD:
-                dispatch(functions.passwordRenew(platform.name, credentials.username, credentials.password));
-                return AuthPendingRedirection.RENEW_PASSWORD;
-            }
+          if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.ACTIVATION_CODE) {
+            dispatch(functions.activation(platform.name, credentials.username, credentials.password));
+            return AuthPendingRedirection.ACTIVATE;
+          } else if (Error.getDeepErrorType<typeof Error.LoginError>(ee as Error) === Error.OAuth2ErrorType.PASSWORD_RESET) {
+            dispatch(functions.passwordRenew(platform.name, credentials.username, credentials.password));
+            return AuthPendingRedirection.RENEW_PASSWORD;
           } else {
             throw ee;
           }
