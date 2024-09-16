@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-08-23 10:48:11",
-  "notes": "Squashed commit of the following:\nrelease: 1.13.2-alpha.2(1130202)",
-  "version": "1.13.2-alpha.3(1130203)"
+  "last": "2024-09-13 13:44:19",
+  "notes": "release: 1.13.3-rc.1(1130301)",
+  "version": "1.13.3-rc.2(1130302)"
 }
