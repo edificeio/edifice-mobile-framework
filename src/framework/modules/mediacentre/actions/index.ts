@@ -2,7 +2,6 @@
  * Mediacentre actions
  */
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { IField, ISources } from '~/framework/modules/mediacentre/components/AdvancedSearchModal';
 import { IResource, Source, actionTypes } from '~/framework/modules/mediacentre/reducer';
 import { compareResources, mediacentreService } from '~/framework/modules/mediacentre/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
@@ -84,30 +83,6 @@ export const searchResourcesAction = (sources: string[], query: string) => async
     const resources = await mediacentreService.search.getSimple(session, sources, query);
     if (sources.includes(Source.SIGNET)) {
       const signets = await mediacentreService.signets.searchSimple(session, query);
-      signets.forEach(signet => {
-        if (!resources.find(resource => String(resource.id) === String(signet.id))) {
-          resources.push(signet);
-        }
-      });
-      resources.sort(compareResources);
-    }
-    dispatch(searchActionsCreators.receipt(resources));
-  } catch (e) {
-    dispatch(searchActionsCreators.error(e as Error));
-    throw e;
-  }
-};
-
-/**
- * Search resources using the specified fields and sources.
- */
-export const searchResourcesAdvancedAction = (fields: IField[], sources: ISources) => async (dispatch, getState) => {
-  try {
-    const session = assertSession();
-    dispatch(searchActionsCreators.request());
-    const resources = await mediacentreService.search.getAdvanced(session, fields, sources);
-    if (sources.Signet === true) {
-      const signets = await mediacentreService.signets.searchAdvanced(session, fields);
       signets.forEach(signet => {
         if (!resources.find(resource => String(resource.id) === String(signet.id))) {
           resources.push(signet);

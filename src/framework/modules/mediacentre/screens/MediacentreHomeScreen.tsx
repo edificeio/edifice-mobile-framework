@@ -20,18 +20,11 @@ import {
   fetchTextbooksAction,
   removeFavoriteAction,
   searchResourcesAction,
-  searchResourcesAdvancedAction,
 } from '~/framework/modules/mediacentre/actions';
-import {
-  AdvancedSearchModal,
-  IField,
-  ISearchModalHandle,
-  ISources,
-} from '~/framework/modules/mediacentre/components/AdvancedSearchModal';
 import { FavoritesCarousel } from '~/framework/modules/mediacentre/components/FavoritesCarousel';
 import { ResourceGrid } from '~/framework/modules/mediacentre/components/ResourceGrid';
 import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
-import { ISearchBarHandle, IconButtonText, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
+import { ISearchBarHandle, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { IResource, IResourceList, ISignets, Source } from '~/framework/modules/mediacentre/reducer';
@@ -72,7 +65,6 @@ interface IMediacentreHomeScreenEventProps {
   fetchTextbooks: () => any;
   removeFavorite: (id: string, source: Source) => any;
   searchResources: (sources: string[], query: string) => any;
-  searchResourcesAdvanced: (fields: IField[], sources: ISources) => any;
   dispatch: ThunkDispatch<any, any, any>;
 }
 
@@ -100,11 +92,8 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   const [isFetchingSources, setFetchingSources] = useState<boolean>(true);
   const [sources, setSources] = useState<string[]>([]);
   const searchBarRef = useRef<ISearchBarHandle>(null);
-  const searchModalRef = useRef<ISearchModalHandle>(null);
   const [searchedResources, setSearchedResources] = useState<IResource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
-  const [searchModalVisible, setSearchModalVisible] = useState<boolean>(false);
-  const [searchFields, setSearchFields] = useState<IField[]>([]);
   const sections = [
     { title: 'externalresources', resources: props.externals },
     { title: 'textbooks', resources: props.textbooks },
@@ -159,25 +148,8 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
 
   const onCancelSearch = () => {
     searchBarRef.current?.clear();
-    searchModalRef.current?.resetParams();
     setSearchedResources([]);
     setSearchState(SearchState.NONE);
-  };
-
-  const showSearchModal = () => {
-    setSearchModalVisible(true);
-    searchBarRef.current?.blur();
-  };
-
-  const hideSearchModal = () => {
-    setSearchModalVisible(false);
-  };
-
-  const onAdvancedSearch = (fields: IField[], checkedSources: ISources) => {
-    props.searchResourcesAdvanced(fields, checkedSources);
-    setSearchModalVisible(false);
-    setSearchState(SearchState.ADVANCED);
-    setSearchFields(fields);
   };
 
   const showResources = (resources: IResource[]) => {
@@ -224,14 +196,12 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
         <View style={styles.mainContainer}>
           <View style={styles.searchContainer}>
             <SearchBar onSubmitEditing={onSearch} ref={searchBarRef} />
-            <IconButtonText icon="search" text={I18n.get('mediacentre-home-advancedsearch')} onPress={showSearchModal} />
           </View>
           {searchState !== SearchState.NONE ? (
             <SearchContent
               {...props}
               resources={searchedResources}
               searchState={searchState}
-              fields={searchFields}
               isFetching={props.isFetchingSearch}
               onCancelSearch={onCancelSearch}
               addFavorite={addFavorite}
@@ -271,13 +241,6 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
               }
             />
           )}
-          <AdvancedSearchModal
-            isVisible={searchModalVisible}
-            onSearch={onAdvancedSearch}
-            closeModal={hideSearchModal}
-            availableSources={sources}
-            ref={searchModalRef}
-          />
         </View>
       )}
     </PageView>
@@ -343,9 +306,6 @@ const mapDispatchToProps: (
   },
   searchResources: async (sources: string[], query: string) => {
     return dispatch(searchResourcesAction(sources, query));
-  },
-  searchResourcesAdvanced: async (fields: IField[], sources: ISources) => {
-    return dispatch(searchResourcesAdvancedAction(fields, sources));
   },
   dispatch,
 });

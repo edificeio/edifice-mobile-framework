@@ -8,21 +8,12 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { SmallBoldText, SmallText } from '~/framework/components/text';
 import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 
-import { IField, ISources } from './AdvancedSearchModal';
 import { BigCard } from './BigCard';
 import { SearchFilter } from './SearchFilter';
 
 const styles = StyleSheet.create({
-  fieldContainer: {
-    flexDirection: 'row',
-    marginRight: UI_SIZES.spacing.small,
-  },
-  fieldValueText: {
-    marginLeft: UI_SIZES.spacing.tiny,
-  },
   parametersContainer: {
     marginHorizontal: UI_SIZES.spacing.medium,
     marginBottom: UI_SIZES.spacing.small,
@@ -40,11 +31,6 @@ const styles = StyleSheet.create({
     height: 24,
     marginRight: UI_SIZES.spacing.small,
   },
-  fieldsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: UI_SIZES.spacing.tiny,
-  },
   mainContainer: {
     flex: 1,
   },
@@ -60,7 +46,6 @@ const styles = StyleSheet.create({
 export enum SearchState {
   NONE = 0,
   SIMPLE = 1,
-  ADVANCED = 2,
 }
 
 interface ISearchFilters {
@@ -69,12 +54,14 @@ interface ISearchFilters {
   source: string[];
 }
 
-interface IAdvancedSearchFieldProps {
-  field: IField;
+interface ISources {
+  GAR: boolean;
+  Moodle: boolean;
+  PMB: boolean;
+  Signet: boolean;
 }
 
 interface ISearchParamsProps {
-  fields: IField[];
   searchState: SearchState;
   sources: ISources;
 
@@ -82,7 +69,6 @@ interface ISearchParamsProps {
 }
 
 interface ISearchContentProps {
-  fields: IField[];
   isFetching: boolean;
   resources: IResource[];
   searchState: SearchState;
@@ -122,14 +108,6 @@ const getSources = (resources: IResource[]) => {
   };
 };
 
-const AdvancedSearchField: React.FunctionComponent<IAdvancedSearchFieldProps> = (props: IAdvancedSearchFieldProps) =>
-  props.field.value !== '' ? (
-    <View style={styles.fieldContainer}>
-      <SmallBoldText>{I18n.get(`mediacentre-advancedsearch-${props.field.name}`)}</SmallBoldText>
-      <SmallText style={styles.fieldValueText}>{props.field.value}</SmallText>
-    </View>
-  ) : null;
-
 const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearchParamsProps) => (
   <View style={styles.parametersContainer}>
     <View style={styles.upperContainer}>
@@ -141,13 +119,6 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
       </View>
       <SecondaryButton text={I18n.get('common-cancel')} action={props.onCancelSearch} />
     </View>
-    {props.searchState === SearchState.ADVANCED ? (
-      <View style={styles.fieldsContainer}>
-        {props.fields.map((field, index) => (
-          <AdvancedSearchField field={field} key={index} />
-        ))}
-      </View>
-    ) : null}
   </View>
 );
 
