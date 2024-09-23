@@ -1,17 +1,17 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
-import { UI_SIZES } from '~/framework/components/constants';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
+import { getSession } from '~/framework/modules/auth/reducer';
 import {
   addFavoriteAction,
   fetchExternalsAction,
@@ -27,54 +27,13 @@ import { SearchContent, SearchState } from '~/framework/modules/mediacentre/comp
 import { ISearchBarHandle, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
-import { IResource, IResourceList, ISignets, Source } from '~/framework/modules/mediacentre/reducer';
+import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
+import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { fetchWithCache } from '~/infra/fetchWithCache';
 
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
-  searchContainer: {
-    marginHorizontal: UI_SIZES.spacing.medium,
-    marginTop: UI_SIZES.spacing.small,
-  },
-  loadingIndicator: {
-    marginTop: '45%',
-  },
-});
-
-// TYPES ==========================================================================================
-
-interface IMediacentreHomeScreenDataProps {
-  externals: IResourceList;
-  favorites: IResourceList;
-  isFetchingSearch: boolean;
-  isFetchingSections: boolean;
-  navigation: { navigate };
-  search: IResourceList;
-  signets: ISignets;
-  textbooks: IResourceList;
-}
-
-interface IMediacentreHomeScreenEventProps {
-  addFavorite: (id: string, resource: IResource) => any;
-  fetchExternals: (sources: string[]) => any;
-  fetchFavorites: () => any;
-  fetchSignets: () => any;
-  fetchTextbooks: () => any;
-  removeFavorite: (id: string, source: Source) => any;
-  searchResources: (sources: string[], query: string) => any;
-  dispatch: ThunkDispatch<any, any, any>;
-}
-
-export interface MediacentreHomeScreenNavigationParams {
-  title: string;
-}
-
-type IMediacentreHomeScreenProps = IMediacentreHomeScreenDataProps &
-  IMediacentreHomeScreenEventProps &
-  NativeStackScreenProps<MediacentreNavigationParams, typeof mediacentreRouteNames.home>;
+import styles from './styles';
+import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -87,7 +46,7 @@ export const computeNavBar = ({
   }),
 });
 
-const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
+const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
   const [shouldFetch, setShouldFetch] = useState<boolean>(true);
   const [isFetchingSources, setFetchingSources] = useState<boolean>(true);
   const [sources, setSources] = useState<string[]>([]);
@@ -100,8 +59,6 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
     { title: 'signets', resources: props.signets.shared },
     { title: 'orientationsignets', resources: props.signets.orientation },
   ].filter(section => section.resources.length > 0);
-
-  // LOADER =======================================================================================
 
   const fetchSources = useCallback(async () => {
     const response = await fetchWithCache(`/mediacentre`, {
@@ -122,16 +79,16 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
     const newSources = html.split(',');
     setFetchingSources(false);
     setSources(newSources);
-    props.fetchExternals(newSources);
+    props.tryFetchExternals(newSources);
   }, [props]);
 
   useEffect(() => {
     if (shouldFetch) {
       setShouldFetch(false);
       fetchSources();
-      props.fetchFavorites();
-      props.fetchTextbooks();
-      props.fetchSignets();
+      props.tryFetchFavorites();
+      props.tryFetchTextbooks();
+      props.tryFetchSignets();
     }
   }, [shouldFetch, fetchSources, props]);
 
@@ -139,10 +96,8 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
     setSearchedResources(props.search);
   }, [props.search]);
 
-  // EVENTS =======================================================================================
-
   const onSearch = (query: string) => {
-    props.searchResources(sources, query);
+    props.trySearchResources(sources, query);
     setSearchState(SearchState.SIMPLE);
   };
 
@@ -159,9 +114,9 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
 
   const addFavorite = async (resourceId: string, resource: IResource) => {
     try {
-      await props.addFavorite(resourceId, resource);
+      await props.handleAddFavorite(resourceId, resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-added'));
-      props.fetchFavorites();
+      props.tryFetchFavorites();
     } catch {
       Toast.showError(I18n.get('mediacentre-home-error-text'));
     }
@@ -169,15 +124,13 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
 
   const removeFavorite = async (resourceId: string, resource: Source) => {
     try {
-      await props.removeFavorite(resourceId, resource);
+      await props.handleRemoveFavorite(resourceId, resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-removed'));
-      props.fetchFavorites();
+      props.tryFetchFavorites();
     } catch {
       Toast.showError(I18n.get('mediacentre-home-error-text'));
     }
   };
-
-  // EMPTY SCREEN =================================================================================
 
   const renderEmptyState = () => {
     if (isFetchingSources) {
@@ -185,8 +138,6 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
     }
     return <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre-home-emptyscreen-default')} />;
   };
-
-  // RENDER =======================================================================================
 
   return (
     <PageView>
@@ -247,67 +198,47 @@ const MediacentreHomeScreen = (props: IMediacentreHomeScreenProps) => {
   );
 };
 
-// MAPPING ========================================================================================
-
 const setFavorites = (resources: IResource[], favorites: string[]) => {
   for (const resource of resources) {
     resource.favorite = favorites.includes(String(resource.uid));
   }
 };
 
-const mapStateToProps = (gs: IGlobalState) => {
-  const state = moduleConfig.getState(gs);
-  const externals = state.externals;
-  const favorites = state.favorites;
-  const search = state.search;
-  const signets = state.signets;
-  const textbooks = state.textbooks;
+export default connect(
+  (state: IGlobalState) => {
+    const { externals, favorites, search, signets, textbooks } = moduleConfig.getState(state);
+    const session = getSession();
+    const favIds = favorites.data.map(favorite => String(favorite.uid));
 
-  const favIds = favorites.data.map(favorite => String(favorite.uid));
-  setFavorites(externals.data, favIds);
-  setFavorites(search.data, favIds);
-  setFavorites(signets.data.orientation, favIds);
-  setFavorites(signets.data.shared, favIds);
-  setFavorites(textbooks.data, favIds);
+    setFavorites(externals.data, favIds);
+    setFavorites(search.data, favIds);
+    setFavorites(signets.data.orientation, favIds);
+    setFavorites(signets.data.shared, favIds);
+    setFavorites(textbooks.data, favIds);
 
-  return {
-    externals: externals.data,
-    favorites: favorites.data,
-    isFetchingSearch: search.isFetching,
-    isFetchingSections:
-      externals.isFetching || favorites.isFetching || search.isFetching || signets.isFetching || textbooks.isFetching,
-    search: search.data,
-    signets: signets.data,
-    textbooks: textbooks.data,
-  };
-};
-
-const mapDispatchToProps: (
-  dispatch: ThunkDispatch<any, any, any>,
-  getState: () => IGlobalState,
-) => IMediacentreHomeScreenEventProps = (dispatch, getState) => ({
-  addFavorite: async (resourceId: string, resource: IResource) => {
-    return dispatch(addFavoriteAction(resourceId, resource));
+    return {
+      externals: externals.data,
+      favorites: favorites.data,
+      isFetchingSearch: search.isFetching,
+      isFetchingSections:
+        externals.isFetching || favorites.isFetching || search.isFetching || signets.isFetching || textbooks.isFetching,
+      search: search.data,
+      signets: signets.data,
+      textbooks: textbooks.data,
+      session,
+    };
   },
-  fetchFavorites: async () => {
-    return dispatch(fetchFavoritesAction());
-  },
-  fetchExternals: async (sources: string[]) => {
-    return dispatch(fetchExternalsAction(sources));
-  },
-  fetchSignets: async () => {
-    return dispatch(fetchSignetsAction());
-  },
-  fetchTextbooks: async () => {
-    return dispatch(fetchTextbooksAction());
-  },
-  removeFavorite: async (resourceId: string, source: Source) => {
-    return dispatch(removeFavoriteAction(resourceId, source));
-  },
-  searchResources: async (sources: string[], query: string) => {
-    return dispatch(searchResourcesAction(sources, query));
-  },
-  dispatch,
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MediacentreHomeScreen);
+  dispatch =>
+    bindActionCreators<MediacentreHomeScreenDispatchProps>(
+      {
+        handleAddFavorite: handleAction(addFavoriteAction),
+        handleRemoveFavorite: handleAction(removeFavoriteAction),
+        tryFetchExternals: tryAction(fetchExternalsAction),
+        tryFetchFavorites: tryAction(fetchFavoritesAction),
+        tryFetchSignets: tryAction(fetchSignetsAction),
+        tryFetchTextbooks: tryAction(fetchTextbooksAction),
+        trySearchResources: tryAction(searchResourcesAction),
+      },
+      dispatch,
+    ),
+)(MediacentreHomeScreen);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
-import MediacentreHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/mediacentre/screens/MediacentreHomeScreen';
+import MediacentreHomeScreen, { computeNavBar as homeNavBar } from '~/framework/modules/mediacentre/screens/home';
 import { createModuleNavigator } from '~/framework/navigation/moduleScreens';
 import { IEntcoreApp, IEntcoreWidget } from '~/framework/util/moduleTool';
 

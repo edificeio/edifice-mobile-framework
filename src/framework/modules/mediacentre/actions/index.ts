@@ -36,6 +36,7 @@ export const fetchFavoritesAction = () => async (dispatch, getState) => {
     dispatch(fetchFavoritesActionsCreators.request());
     const favorites = await mediacentreService.favorites.get(session);
     dispatch(fetchFavoritesActionsCreators.receipt(favorites));
+    return favorites;
   } catch (e) {
     dispatch(fetchFavoritesActionsCreators.error(e as Error));
     throw e;
@@ -91,6 +92,7 @@ export const searchResourcesAction = (sources: string[], query: string) => async
       resources.sort(compareResources);
     }
     dispatch(searchActionsCreators.receipt(resources));
+    return resources;
   } catch (e) {
     dispatch(searchActionsCreators.error(e as Error));
     throw e;
@@ -108,6 +110,7 @@ export const fetchSignetsAction = () => async (dispatch, getState) => {
     const shared = await mediacentreService.signets.get(session);
     const orientation = await mediacentreService.signets.getOrientation(session);
     dispatch(signetsActionsCreators.receipt({ orientation, shared }));
+    return { orientation, shared };
   } catch (e) {
     dispatch(signetsActionsCreators.error(e as Error));
     throw e;
@@ -124,6 +127,7 @@ export const fetchTextbooksAction = () => async (dispatch, getState) => {
     dispatch(textbooksActionsCreators.request());
     const textbooks = await mediacentreService.textbooks.get(session);
     dispatch(textbooksActionsCreators.receipt(textbooks));
+    return textbooks;
   } catch (e) {
     dispatch(textbooksActionsCreators.error(e as Error));
     throw e;
