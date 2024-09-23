@@ -6,13 +6,13 @@ import { PageView } from '~/framework/components/page';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
+import type { NetworkScreenPrivateProps } from '~/framework/modules/user/screens/debug/network/types';
 import styles from './styles';
-import type { DebugScreenPrivateProps } from './types';
 
 export const computeNavBar = ({
   navigation,
   route,
-}: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.debug>): NativeStackNavigationOptions => ({
+}: NativeStackScreenProps<UserNavigationParams, typeof userRouteNames.network>): NativeStackNavigationOptions => ({
   ...navBarOptions({
     navigation,
     route,
@@ -20,7 +20,7 @@ export const computeNavBar = ({
   }),
 });
 
-function DebugScreen(props: DebugScreenPrivateProps) {
+function NetworkScreen(props: NetworkScreenPrivateProps) {
   return (
     <PageView style={styles.page}>
       <NetworkLogger maxRows={20} theme="light" />
@@ -28,4 +28,4 @@ function DebugScreen(props: DebugScreenPrivateProps) {
   );
 }
 
-export default DebugScreen;
+export default NetworkScreen;
