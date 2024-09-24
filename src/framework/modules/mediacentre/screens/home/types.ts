@@ -10,17 +10,17 @@ import {
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
+import { Resource, Signets } from '~/framework/modules/mediacentre/model';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
-import { IResourceList, ISignets } from '~/framework/modules/mediacentre/reducer';
 
 export interface MediacentreHomeScreenDispatchProps {
   handleAddFavorite: (...args: Parameters<typeof addFavoriteAction>) => Promise<void>;
   handleRemoveFavorite: (...args: Parameters<typeof removeFavoriteAction>) => Promise<void>;
-  tryFetchExternals: (...args: Parameters<typeof fetchExternalsAction>) => Promise<IResourceList | undefined>;
-  tryFetchFavorites: (...args: Parameters<typeof fetchFavoritesAction>) => Promise<IResourceList>;
-  tryFetchSignets: (...args: Parameters<typeof fetchSignetsAction>) => Promise<ISignets>;
-  tryFetchTextbooks: (...args: Parameters<typeof fetchTextbooksAction>) => Promise<IResourceList>;
-  trySearchResources: (...args: Parameters<typeof searchResourcesAction>) => Promise<IResourceList>;
+  tryFetchExternals: (...args: Parameters<typeof fetchExternalsAction>) => Promise<Resource[] | undefined>;
+  tryFetchFavorites: (...args: Parameters<typeof fetchFavoritesAction>) => Promise<Resource[]>;
+  tryFetchSignets: (...args: Parameters<typeof fetchSignetsAction>) => Promise<Signets>;
+  tryFetchTextbooks: (...args: Parameters<typeof fetchTextbooksAction>) => Promise<Resource[]>;
+  trySearchResources: (...args: Parameters<typeof searchResourcesAction>) => Promise<Resource[]>;
 }
 
 export interface MediacentreHomeScreenNavParams {}
@@ -28,13 +28,13 @@ export interface MediacentreHomeScreenNavParams {}
 export interface MediacentreHomeScreenProps {}
 
 export interface MediacentreHomeScreenStoreProps {
-  externals: IResourceList;
-  favorites: IResourceList;
+  externals: Resource[];
+  favorites: Resource[];
   isFetchingSearch: boolean;
   isFetchingSections: boolean;
-  search: IResourceList;
-  signets: ISignets;
-  textbooks: IResourceList;
+  search: Resource[];
+  signets: Signets;
+  textbooks: Resource[];
   session?: AuthActiveAccount;
 }
 

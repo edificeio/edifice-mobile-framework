@@ -1,8 +1,8 @@
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
-import { IResource, IResourceList, Source } from '~/framework/modules/mediacentre/reducer';
+import { Resource, Source } from '~/framework/modules/mediacentre/model';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
-interface IBackendResource {
+type BackendResource = {
   id: string;
   _id?: string;
   title: string;
@@ -22,11 +22,9 @@ interface IBackendResource {
   orientation?: boolean;
   owner_id?: string;
   owner_name?: string;
-}
+};
 
-type IBackendResourceList = IBackendResource[];
-
-export function compareResources(a: IResource, b: IResource) {
+export function compareResources(a: Resource, b: Resource) {
   return a.title.localeCompare(b.title);
 }
 
@@ -35,8 +33,8 @@ function transformArray(array: string[]) {
   return array;
 }
 
-const resourcesAdapter: (data: IBackendResourceList) => IResourceList = data => {
-  const resources = [] as IResource[];
+const resourcesAdapter: (data: BackendResource[]) => Resource[] = data => {
+  const resources = [] as Resource[];
   for (const resource of data) {
     const id = resource.source === Source.SIGNET ? resource.id : resource._id ?? resource.id;
     const res = {
@@ -57,7 +55,7 @@ const resourcesAdapter: (data: IBackendResourceList) => IResourceList = data => 
       structure_uai: resource.structure_uai,
       orientation: resource.orientation,
       owner_id: resource.owner_id,
-    } as IResource;
+    } as Resource;
     resources.push(res);
   }
   return resources.sort(compareResources);
@@ -85,7 +83,7 @@ export const mediacentreService = {
       }
       return favorites;
     },
-    add: async (session: AuthLoggedAccount, id: string, resource: IResource) => {
+    add: async (session: AuthLoggedAccount, id: string, resource: Resource) => {
       const api = `/mediacentre/favorites?id=${id}`;
       const res: any = resource;
       if (resource.source === Source.SIGNET) {

@@ -8,7 +8,7 @@ import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
-import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
+import { Resource, Source } from '~/framework/modules/mediacentre/model';
 
 import { BigCard } from './BigCard';
 import { SearchFilter } from './SearchFilter';
@@ -57,28 +57,25 @@ interface ISearchFilters {
 interface ISources {
   GAR: boolean;
   Moodle: boolean;
-  PMB: boolean;
   Signet: boolean;
 }
 
 interface ISearchParamsProps {
   searchState: SearchState;
   sources: ISources;
-
   onCancelSearch: () => void;
 }
 
 interface ISearchContentProps {
   isFetching: boolean;
-  resources: IResource[];
+  resources: Resource[];
   searchState: SearchState;
-
-  addFavorite: (id: string, resource: IResource) => any;
+  addFavorite: (id: string, resource: Resource) => any;
   onCancelSearch: () => void;
   removeFavorite: (id: string, source: Source) => any;
 }
 
-const resourceMatchesFilters = (resource: IResource, filters: ISearchFilters) => {
+const resourceMatchesFilters = (resource: Resource, filters: ISearchFilters) => {
   let typeMatches = filters.resourcetype.length === 0;
   let sourceMatches = filters.source.length === 0;
   let levelMatches = filters.level.length === 0;
@@ -99,11 +96,10 @@ const resourceMatchesFilters = (resource: IResource, filters: ISearchFilters) =>
   return typeMatches && sourceMatches && levelMatches;
 };
 
-const getSources = (resources: IResource[]) => {
+const getSources = (resources: Resource[]) => {
   return {
     GAR: resources.some(resource => resource.source === Source.GAR),
     Moodle: resources.some(resource => resource.source === Source.MOODLE),
-    PMB: resources.some(resource => resource.source === Source.PMB),
     Signet: resources.some(resource => resource.source === Source.SIGNET),
   };
 };
@@ -114,7 +110,6 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
       <View style={styles.sourcesContainer}>
         {props.sources.GAR ? <Image source={require('ASSETS/images/logo-gar.png')} style={styles.sourceImage} /> : null}
         {props.sources.Moodle ? <Image source={require('ASSETS/images/logo-moodle.png')} style={styles.sourceImage} /> : null}
-        {props.sources.PMB ? <Image source={require('ASSETS/images/logo-pmb.png')} style={styles.sourceImage} /> : null}
         {props.sources.Signet ? <Icon name="bookmark_outline" size={24} /> : null}
       </View>
       <SecondaryButton text={I18n.get('common-cancel')} action={props.onCancelSearch} />
@@ -123,12 +118,12 @@ const SearchParams: React.FunctionComponent<ISearchParamsProps> = (props: ISearc
 );
 
 export const SearchContent: React.FunctionComponent<ISearchContentProps> = (props: ISearchContentProps) => {
-  const [filteredResources, setFilteredResources] = useState<IResource[]>([]);
+  const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
   const [activeFilters, setActiveFilters] = useState<ISearchFilters>({ resourcetype: [], source: [], level: [] });
   const isFiltering = activeFilters.resourcetype.length > 0 || activeFilters.source.length > 0 || activeFilters.level.length > 0;
   const sources = getSources(isFiltering ? filteredResources : props.resources);
   const filterResources = () => {
-    const filtered: IResource[] = [];
+    const filtered: Resource[] = [];
     for (const resource of props.resources) {
       if (resourceMatchesFilters(resource, activeFilters)) {
         filtered.push(resource);

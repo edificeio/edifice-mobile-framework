@@ -11,7 +11,7 @@ import { SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { FavoriteIcon, IconButton } from '~/framework/modules/mediacentre/components/SmallCard';
-import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
+import { Resource, Source } from '~/framework/modules/mediacentre/model';
 import { openUrl } from '~/framework/util/linking';
 
 import { ResourceImage } from './ResourceImage';
@@ -60,16 +60,14 @@ const styles = StyleSheet.create({
 
 interface ICardProps {
   color: string;
-  resource: IResource;
-
-  addFavorite: (id: string, resource: IResource) => any;
+  resource: Resource;
+  addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
 interface IFavoritesCarouselProps {
-  resources: IResource[];
-
-  addFavorite: (id: string, resource: IResource) => any;
+  resources: Resource[];
+  addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 

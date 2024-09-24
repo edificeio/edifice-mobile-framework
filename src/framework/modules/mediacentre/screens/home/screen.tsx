@@ -25,9 +25,9 @@ import { FavoritesCarousel } from '~/framework/modules/mediacentre/components/Fa
 import { ResourceGrid } from '~/framework/modules/mediacentre/components/ResourceGrid';
 import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
 import { ISearchBarHandle, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
+import { Resource, Source } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
-import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { handleAction, tryAction } from '~/framework/util/redux/actions';
 import { fetchWithCache } from '~/infra/fetchWithCache';
@@ -51,7 +51,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
   const [isFetchingSources, setFetchingSources] = useState<boolean>(true);
   const [sources, setSources] = useState<string[]>([]);
   const searchBarRef = useRef<ISearchBarHandle>(null);
-  const [searchedResources, setSearchedResources] = useState<IResource[]>([]);
+  const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
   const sections = [
     { title: 'externalresources', resources: props.externals },
@@ -107,12 +107,12 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     setSearchState(SearchState.NONE);
   };
 
-  const showResources = (resources: IResource[]) => {
+  const showResources = (resources: Resource[]) => {
     setSearchedResources(resources);
     setSearchState(SearchState.SIMPLE);
   };
 
-  const addFavorite = async (resourceId: string, resource: IResource) => {
+  const addFavorite = async (resourceId: string, resource: Resource) => {
     try {
       await props.handleAddFavorite(resourceId, resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-added'));
@@ -198,7 +198,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
   );
 };
 
-const setFavorites = (resources: IResource[], favorites: string[]) => {
+const setFavorites = (resources: Resource[], favorites: string[]) => {
   for (const resource of resources) {
     resource.favorite = favorites.includes(String(resource.uid));
   }

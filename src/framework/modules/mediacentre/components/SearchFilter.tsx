@@ -7,7 +7,7 @@ import { Checkbox } from '~/framework/components/checkbox';
 import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { SmallText } from '~/framework/components/text';
-import { IResource } from '~/framework/modules/mediacentre/reducer';
+import { Resource } from '~/framework/modules/mediacentre/model';
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -54,21 +54,18 @@ const styles = StyleSheet.create({
 interface IFilterItemProps {
   item: { value: string; active: boolean };
   sectionTitle: string;
-
   onChange: (title: string, item: string, active: boolean) => void;
 }
 
 interface IFilterSectionProps {
   items: any[];
   title: string;
-
   onChange: (title: string, item: string, active: boolean) => void;
 }
 
 interface ISearchFilterProps {
   containerStyle?: ViewStyle;
-  resources: IResource[];
-
+  resources: Resource[];
   onChange: (title: string, item: string, active: boolean) => void;
 }
 
@@ -76,7 +73,7 @@ const compareFilters = (a: { value: string; active: boolean }, b: { value: strin
   return a.value.toLowerCase() > b.value.toLowerCase() ? 1 : -1;
 };
 
-const getFilters = (resources: IResource[]) => {
+const getFilters = (resources: Resource[]) => {
   const types: { value: string; active: boolean }[] = [];
   const sources: { value: string; active: boolean }[] = [];
   const levels: { value: string; active: boolean }[] = [];

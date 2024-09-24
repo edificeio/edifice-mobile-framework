@@ -3,7 +3,7 @@ import { ImageResizeMode, ImageStyle, StyleProp, StyleSheet, View } from 'react-
 
 import { NamedSVG } from '~/framework/components/picture';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { Source } from '~/framework/modules/mediacentre/reducer';
+import { Source } from '~/framework/modules/mediacentre/model';
 import { Image } from '~/framework/util/media';
 
 interface IResourceImageProps {
@@ -51,9 +51,6 @@ export const SourceImage: React.FunctionComponent<ISourceImageProps> = (props: I
       break;
     case Source.MOODLE:
       image = require('ASSETS/images/logo-moodle.png');
-      break;
-    case Source.PMB:
-      image = require('ASSETS/images/logo-pmb.png');
       break;
     default:
       image = require('ASSETS/images/logo-gar.png');

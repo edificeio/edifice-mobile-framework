@@ -44,7 +44,6 @@ interface IIconButtonTextProps {
   color?: string;
   icon: string;
   text: string;
-
   onPress: () => void;
 }
 

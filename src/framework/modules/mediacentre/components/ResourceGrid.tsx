@@ -6,7 +6,7 @@ import theme from '~/app/theme';
 import GridList from '~/framework/components/GridList';
 import { UI_SIZES } from '~/framework/components/constants';
 import { SmallBoldText, SmallText } from '~/framework/components/text';
-import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
+import { Resource, Source } from '~/framework/modules/mediacentre/model';
 
 import { SmallCard } from './SmallCard';
 
@@ -29,12 +29,11 @@ const styles = StyleSheet.create({
 });
 
 interface IResourceGridProps {
-  resources: IResource[];
+  resources: Resource[];
   size: number;
   title: string;
-
-  addFavorite: (id: string, resource: IResource) => any;
-  onShowAll: (resources: IResource[]) => void;
+  addFavorite: (id: string, resource: Resource) => any;
+  onShowAll: (resources: Resource[]) => void;
   removeFavorite: (id: string, source: Source) => any;
 }
 

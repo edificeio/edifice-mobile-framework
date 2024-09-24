@@ -2,7 +2,8 @@
  * Mediacentre actions
  */
 import { assertSession } from '~/framework/modules/auth/reducer';
-import { IResource, Source, actionTypes } from '~/framework/modules/mediacentre/reducer';
+import { Resource, Source } from '~/framework/modules/mediacentre/model';
+import { actionTypes } from '~/framework/modules/mediacentre/reducer';
 import { compareResources, mediacentreService } from '~/framework/modules/mediacentre/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
@@ -47,7 +48,7 @@ export const fetchFavoritesAction = () => async (dispatch, getState) => {
  * Add the resource with specified id as favorite.
  */
 export const addFavoriteActionsCreators = createAsyncActionCreators(actionTypes.addFavorite);
-export const addFavoriteAction = (resourceId: string, resource: IResource) => async (dispatch, getState) => {
+export const addFavoriteAction = (resourceId: string, resource: Resource) => async (dispatch, getState) => {
   try {
     const session = assertSession();
     dispatch(addFavoriteActionsCreators.request());

@@ -11,7 +11,7 @@ import { CaptionText, SmallBoldText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { ResourceImage, SourceImage } from '~/framework/modules/mediacentre/components/ResourceImage';
-import { IResource, Source } from '~/framework/modules/mediacentre/reducer';
+import { Resource, Source } from '~/framework/modules/mediacentre/model';
 import { openUrl } from '~/framework/util/linking';
 
 const styles = StyleSheet.create({
@@ -48,21 +48,18 @@ interface IIconButtonProps {
   color?: ColorValue;
   icon: string;
   size: number;
-
   onPress: () => void;
 }
 
 interface IFavoriteIconProps {
-  resource: IResource;
-
-  addFavorite: (id: string, resource: IResource) => any;
+  resource: Resource;
+  addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
 interface ISmallCardProps {
-  resource: IResource;
-
-  addFavorite: (id: string, resource: IResource) => any;
+  resource: Resource;
+  addFavorite: (id: string, resource: Resource) => any;
   removeFavorite: (id: string, source: Source) => any;
 }
 
