@@ -13,7 +13,7 @@
     "check-dependencies": "ncu --dep \"prod\",\"optional\"",
     "check-dev-dependencies": "ncu --dep \"dev\"",
     "check-patches": "npx patch-package",
-    "clean": "ccache --clear && rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && rm -rf .xcode.env.local && cd .. && node cli/override.js reset-cache",
+    "clean": "ccache --clear && rm -r -f ./android/build && rm -r -f ./android/app/build && rm -r -f ./android/app/release && rm -r -f ./ios/build && rm -r -f ./ios/pods && rm -f ./ios/Podfile.lock && rm -r -f node_modules && rm -f package-lock.json && rm -f yarn.lock && bundle install && npm cache clean --force && yarn install --ignore-engines && cd android && ./gradlew clean && cd ../ios && pod install --repo-update && rm -rf .xcode.env.local && cd .. && node cli/override.js reset-cache",
     "depcheck": "npx depcheck",
     "fast-alpha": "fastlane deploy alpha>&1 | tee -a ./fastlane/build.log",
     "fast-alpha-all": "fastlane deploy alpha_all>&1 | tee -a ./fastlane/build.log",
@@ -284,5 +284,6 @@
       "url": "https://github.com/edificeio/edifice-mobile-config.git",
       "defaultBranch": "main"
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
