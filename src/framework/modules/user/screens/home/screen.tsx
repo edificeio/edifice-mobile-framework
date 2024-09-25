@@ -308,6 +308,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               onPress={() => {
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
+              icon='ui-notif'
             />
             {!isFederated ? (
               <LineButton
@@ -315,6 +316,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 disabled={!!currentLoadingMenu}
                 title={I18n.get('user-page-editpassword')}
                 onPress={() => editUserInformation(ModificationType.PASSWORD)}
+                icon='ui-lock'
               />
             ) : null}
             {canEditPersonalInfo ? (
@@ -324,12 +326,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                   disabled={!!currentLoadingMenu}
                   title={I18n.get('user-page-editemail')}
                   onPress={() => editUserInformation(ModificationType.EMAIL)}
+                  icon='ui-mail'
                 />
                 <LineButton
                   loading={currentLoadingMenu === ModificationType.MOBILE}
                   disabled={!!currentLoadingMenu}
                   title={I18n.get('user-page-editmobile')}
                   onPress={() => editUserInformation(ModificationType.MOBILE)}
+                  icon='ui-smartphone'
                 />
               </>
             ) : null}
@@ -337,26 +341,29 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               disabled={!!currentLoadingMenu}
               title={I18n.get('user-page-editlang')}
               onPress={() => navigation.navigate(userRouteNames.lang, {})}
+              icon="ui-globe"
             />
-          </ButtonLineGroup>
-        </View>
-        <View style={[styles.section, styles.sectionLast]}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-others')}</HeadingSText>
-          <ButtonLineGroup>
             {isWithinXmasPeriod ? (
               <LineButton
                 title={I18n.get('user-xmas-title')}
                 onPress={() => {
                   navigation.navigate(userRouteNames.xmas, {});
                 }}
+                icon="ui-christmas"
               />
             ) : null}
+          </ButtonLineGroup>
+        </View>
+        <View style={[styles.section, styles.sectionLast]}>
+          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-others')}</HeadingSText>
+          <ButtonLineGroup>
             {showHelpCenter ? (
               <LineButton
                 title={I18n.get('user-help-title')}
                 onPress={() => {
                   openHelpCenter();
                 }}
+                icon="ui-question"
               />
             ) : null}
             {showWhoAreWe ? (
@@ -365,6 +372,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 onPress={() => {
                   navigation.navigate(userRouteNames.whoAreWe, {});
                 }}
+                icon="ui-edifice"
               />
             ) : null}
             {showSplashadsOnUserScreen(session!) ? (
@@ -375,13 +383,15 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                     resourceUri: splashads[session?.platform.name!] ? splashads[session?.platform.name!].url : '',
                   });
                 }}
+                icon="ui-megaphone"
               />
-            ) : null}
+            ) : null} 
             <LineButton
               title={I18n.get('user-legalnotice-title')}
               onPress={() => {
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}
+              icon="ui-checklist"
             />
           </ButtonLineGroup>
         </View>
@@ -536,6 +546,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
         contentColor={theme.palette.status.failure.regular}
         action={doLogout}
         loading={isLoggingOut}
+        iconLeft="ui-logout"
       />
     );
   }, [doLogout, isLoggingOut]);
