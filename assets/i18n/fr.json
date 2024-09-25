@@ -490,6 +490,8 @@
   "diary-timetable-title": "Cahier de textes",
   "diary-timetable-todayshomework": "Travail à faire",
   "diary-timetable-week": "Semaine du",
+  "document-permissionblocked-text": "{{appName}} ne peut pas accéder aux documents. Vous pouvez autoriser l'accès via les réglages de l'application dans les paramètres du téléphone.",
+  "document-permissionblocked-title": "Accès aux documents refusé",
   "documentaction-document": "Ajouter un document",
   "editor-generic-alert-text": "Si vous quittez, vos modifications seront perdues.",
   "editor-generic-alert-title": "Modifications non-enregistrées",
