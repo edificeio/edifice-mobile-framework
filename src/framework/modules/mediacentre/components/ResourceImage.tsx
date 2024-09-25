@@ -46,12 +46,10 @@ export const ResourceImage: React.FunctionComponent<IResourceImageProps> = (prop
 export const SourceImage: React.FunctionComponent<ISourceImageProps> = (props: ISourceImageProps) => {
   let image;
   switch (props.source) {
-    case Source.GAR:
-      image = require('ASSETS/images/logo-gar.png');
-      break;
     case Source.MOODLE:
       image = require('ASSETS/images/logo-moodle.png');
       break;
+    case Source.GAR:
     default:
       image = require('ASSETS/images/logo-gar.png');
       break;

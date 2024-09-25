@@ -108,10 +108,9 @@ export const fetchSignetsAction = () => async (dispatch, getState) => {
   try {
     const session = assertSession();
     dispatch(signetsActionsCreators.request());
-    const shared = await mediacentreService.signets.get(session);
-    const orientation = await mediacentreService.signets.getOrientation(session);
-    dispatch(signetsActionsCreators.receipt({ orientation, shared }));
-    return { orientation, shared };
+    const signets = await mediacentreService.signets.get(session);
+    dispatch(signetsActionsCreators.receipt(signets));
+    return signets;
   } catch (e) {
     dispatch(signetsActionsCreators.error(e as Error));
     throw e;

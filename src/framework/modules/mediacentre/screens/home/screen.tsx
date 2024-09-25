@@ -21,15 +21,14 @@ import {
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
-import { FavoritesCarousel } from '~/framework/modules/mediacentre/components/FavoritesCarousel';
-import { ResourceGrid } from '~/framework/modules/mediacentre/components/ResourceGrid';
 import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
 import { ISearchBarHandle, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
+import ResourceList from '~/framework/modules/mediacentre/components/resource-list';
 import { Resource, Source } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
-import { handleAction, tryAction } from '~/framework/util/redux/actions';
+import { tryAction } from '~/framework/util/redux/actions';
 import { fetchWithCache } from '~/infra/fetchWithCache';
 
 import styles from './styles';
@@ -53,12 +52,6 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
   const searchBarRef = useRef<ISearchBarHandle>(null);
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
-  const sections = [
-    { title: 'externalresources', resources: props.externals },
-    { title: 'textbooks', resources: props.textbooks },
-    { title: 'signets', resources: props.signets.shared },
-    { title: 'orientationsignets', resources: props.signets.orientation },
-  ].filter(section => section.resources.length > 0);
 
   const fetchSources = useCallback(async () => {
     const response = await fetchWithCache(`/mediacentre`, {
@@ -112,9 +105,9 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     setSearchState(SearchState.SIMPLE);
   };
 
-  const addFavorite = async (resourceId: string, resource: Resource) => {
+  const handleAddFavorite = async (resourceId: string, resource: Resource) => {
     try {
-      await props.handleAddFavorite(resourceId, resource);
+      await props.tryAddFavorite(resourceId, resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-added'));
       props.tryFetchFavorites();
     } catch {
@@ -122,9 +115,9 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     }
   };
 
-  const removeFavorite = async (resourceId: string, resource: Source) => {
+  const handleRemoveFavorite = async (resourceId: string, resource: Source) => {
     try {
-      await props.handleRemoveFavorite(resourceId, resource);
+      await props.tryRemoveFavorite(resourceId, resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-removed'));
       props.tryFetchFavorites();
     } catch {
@@ -155,34 +148,21 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
               searchState={searchState}
               isFetching={props.isFetchingSearch}
               onCancelSearch={onCancelSearch}
-              addFavorite={addFavorite}
-              removeFavorite={removeFavorite}
+              addFavorite={handleAddFavorite}
+              removeFavorite={handleRemoveFavorite}
             />
           ) : (
             <FlatList
-              data={sections}
+              data={props.sections}
               renderItem={({ item }) => (
-                <ResourceGrid
-                  {...props}
-                  title={I18n.get(`mediacentre-home-section-${item.title}`)}
-                  resources={item.resources}
-                  size={sections.length > 1 ? 4 : 8}
-                  onShowAll={showResources}
-                  addFavorite={addFavorite}
-                  removeFavorite={removeFavorite}
+                <ResourceList
+                  {...item}
+                  onAddFavorite={handleAddFavorite}
+                  onRemoveFavorite={handleRemoveFavorite}
+                  openResourceList={showResources}
                 />
               )}
-              keyExtractor={item => item.title}
-              ListHeaderComponent={
-                props.favorites.length > 0 ? (
-                  <FavoritesCarousel
-                    {...props}
-                    resources={props.favorites}
-                    addFavorite={addFavorite}
-                    removeFavorite={removeFavorite}
-                  />
-                ) : null
-              }
+              keyExtractor={item => item.sectionKey}
               ListEmptyComponent={
                 props.isFetchingSections ? (
                   <LoadingIndicator customStyle={styles.loadingIndicator} />
@@ -212,31 +192,32 @@ export default connect(
 
     setFavorites(externals.data, favIds);
     setFavorites(search.data, favIds);
-    setFavorites(signets.data.orientation, favIds);
-    setFavorites(signets.data.shared, favIds);
+    setFavorites(signets.data, favIds);
     setFavorites(textbooks.data, favIds);
 
     return {
-      externals: externals.data,
-      favorites: favorites.data,
       isFetchingSearch: search.isFetching,
       isFetchingSections:
         externals.isFetching || favorites.isFetching || search.isFetching || signets.isFetching || textbooks.isFetching,
       search: search.data,
-      signets: signets.data,
-      textbooks: textbooks.data,
+      sections: [
+        { sectionKey: 'favorites', resources: favorites.data, iconName: 'ui-star-filled' },
+        { sectionKey: 'textbooks', resources: textbooks.data, iconName: 'ui-book' },
+        ...(!textbooks.data.length ? [{ sectionKey: 'externalresources', resources: externals.data, iconName: 'ui-book' }] : []),
+        { sectionKey: 'signets', resources: signets.data, iconName: 'ui-bookmark' },
+      ].filter(section => section.resources.length),
       session,
     };
   },
   dispatch =>
     bindActionCreators<MediacentreHomeScreenDispatchProps>(
       {
-        handleAddFavorite: handleAction(addFavoriteAction),
-        handleRemoveFavorite: handleAction(removeFavoriteAction),
+        tryAddFavorite: tryAction(addFavoriteAction),
         tryFetchExternals: tryAction(fetchExternalsAction),
         tryFetchFavorites: tryAction(fetchFavoritesAction),
         tryFetchSignets: tryAction(fetchSignetsAction),
         tryFetchTextbooks: tryAction(fetchTextbooksAction),
+        tryRemoveFavorite: tryAction(removeFavoriteAction),
         trySearchResources: tryAction(searchResourcesAction),
       },
       dispatch,

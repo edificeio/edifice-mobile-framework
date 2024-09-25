@@ -23,8 +23,3 @@ export type Resource = {
   orientation?: boolean;
   owner_id?: string;
 };
-
-export type Signets = {
-  orientation: Resource[];
-  shared: Resource[];
-};

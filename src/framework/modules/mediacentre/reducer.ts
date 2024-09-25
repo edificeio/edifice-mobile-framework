@@ -6,14 +6,14 @@ import { combineReducers } from 'redux';
 import { Reducers } from '~/app/store';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
-import { Resource, Signets } from './model';
+import { Resource } from './model';
 import moduleConfig from './module-config';
 
 interface MediacentreReduxStateData {
   externals: Resource[];
   favorites: Resource[];
   search: Resource[];
-  signets: Signets;
+  signets: Resource[];
   textbooks: Resource[];
 }
 
@@ -21,7 +21,7 @@ export interface MediacentreReduxState {
   externals: AsyncState<Resource[]>;
   favorites: AsyncState<Resource[]>;
   search: AsyncState<Resource[]>;
-  signets: AsyncState<Signets>;
+  signets: AsyncState<Resource[]>;
   textbooks: AsyncState<Resource[]>;
 }
 
@@ -29,10 +29,7 @@ const initialState: MediacentreReduxStateData = {
   externals: [],
   favorites: [],
   search: [],
-  signets: {
-    orientation: [],
-    shared: [],
-  },
+  signets: [],
   textbooks: [],
 };
 

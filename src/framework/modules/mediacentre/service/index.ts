@@ -121,7 +121,6 @@ export const mediacentreService = {
       const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
       const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
       return resourcesAdapter(signetsResponse.data.signets.resources)
-        .filter(resource => resource.types.includes('Signet'))
         .concat(resourcesAdapter(mysignetsResponse).filter(resource => session.user.id && resource.owner_id !== session.user.id))
         .sort(compareResources);
     },
