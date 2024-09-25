@@ -6,8 +6,8 @@ import { View } from 'react-native';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
-import { TouchCard } from '~/framework/components/card/base';
-import { CaptionText, SmallBoldText } from '~/framework/components/text';
+import { TouchCard, TouchCardWithoutPadding } from '~/framework/components/card/base';
+import { BodyText, CaptionText, SmallBoldText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { SourceImage } from '~/framework/modules/mediacentre/components/ResourceImage';
@@ -15,10 +15,15 @@ import { Source } from '~/framework/modules/mediacentre/model';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
 
-import styles from './styles';
+import { defaultStyles, previewStyles } from './styles';
 import { ResourceCardProps } from './types';
 
-const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({ resource, onAddFavorite, onRemoveFavorite }) => {
+const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
+  resource,
+  variant = 'default',
+  onAddFavorite,
+  onRemoveFavorite,
+}) => {
   const [isFavorite, setFavorite] = useState(resource.favorite);
 
   const handlePress = () => {
@@ -47,20 +52,43 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({ resource, on
     onRemoveFavorite();
   };
 
-  return (
-    <TouchCard onPress={handlePress} style={styles.mainContainer}>
-      <View style={styles.upperContentContainer}>
-        <SmallBoldText numberOfLines={1} style={styles.titleText}>
-          {resource.title}
-        </SmallBoldText>
-        {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={18} /> : null}
-      </View>
-      <View style={styles.lowerContentContainer}>
-        <Image source={{ uri: resource.image }} style={styles.imageContainer} />
-        <View style={styles.secondaryContainer}>
-          <CaptionText numberOfLines={2}>{resource.source === Source.SIGNET ? resource.authors : resource.editors}</CaptionText>
-          <View style={styles.actionsContainer}>
-            <IconButton icon="ui-copy" action={handleCopyLink} />
+  const renderCard = () => {
+    if (variant === 'preview')
+      return (
+        <TouchCard onPress={handlePress} style={previewStyles.mainContainer}>
+          <View style={previewStyles.upperContentContainer}>
+            <SmallBoldText numberOfLines={1} style={previewStyles.titleText}>
+              {resource.title}
+            </SmallBoldText>
+            {resource.source !== Source.SIGNET ? <SourceImage source={resource.source} size={18} /> : null}
+          </View>
+          <View style={previewStyles.lowerContentContainer}>
+            <Image source={{ uri: resource.image }} style={previewStyles.imageContainer} />
+            <View style={previewStyles.secondaryContainer}>
+              <CaptionText numberOfLines={2}>{resource.source === Source.SIGNET ? resource.authors : resource.editors}</CaptionText>
+              <View style={previewStyles.actionsContainer}>
+                <IconButton icon="ui-copy" action={handleCopyLink} />
+                <IconButton
+                  icon="ui-star-filled"
+                  color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
+                  action={isFavorite ? handleRemoveFavorite : handleAddFavorite}
+                />
+              </View>
+            </View>
+          </View>
+        </TouchCard>
+      );
+
+    return (
+      <TouchCardWithoutPadding onPress={handlePress} style={defaultStyles.mainContainer}>
+        <Image source={{ uri: resource.image }} style={defaultStyles.imageContainer} />
+        <View style={defaultStyles.innerContainer}>
+          <BodyText numberOfLines={2}>{resource.title}</BodyText>
+          <View style={defaultStyles.actionsContainer}>
+            <SmallText numberOfLines={2} style={defaultStyles.secondaryText}>
+              {resource.source === Source.SIGNET ? resource.authors : resource.editors}
+            </SmallText>
+            <IconButton icon="ui-copy" color={theme.palette.primary.regular} action={handleCopyLink} />
             <IconButton
               icon="ui-star-filled"
               color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
@@ -68,9 +96,11 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({ resource, on
             />
           </View>
         </View>
-      </View>
-    </TouchCard>
-  );
+      </TouchCardWithoutPadding>
+    );
+  };
+
+  return renderCard();
 };
 
 export default memo(ResourceCard);

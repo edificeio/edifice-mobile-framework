@@ -15,20 +15,28 @@ import { ResourceListProps } from './types';
 
 const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   resources,
-  sectionKey,
+  type,
   iconName = 'ui-book',
+  onAddFavorite,
+  onRemoveFavorite,
   openResourceList,
-  ...otherProps
 }) => {
-  const renderResource = ({ item }: { item: Resource }) => <ResourceCard resource={item} {...otherProps} />;
+  const renderResource = ({ item }: { item: Resource }) => (
+    <ResourceCard
+      variant="preview"
+      resource={item}
+      onAddFavorite={() => onAddFavorite(item)}
+      onRemoveFavorite={() => onRemoveFavorite(item.id, item.source)}
+    />
+  );
 
-  const handlePressShowAll = () => openResourceList(resources);
+  const handlePressShowAll = () => openResourceList(resources, I18n.get(`mediacentre-sectiontype-${type}`));
 
   return (
     <View>
       <View style={styles.headerContainer}>
         <NamedSVG name={iconName} fill={theme.ui.text.regular} width={20} />
-        <BodyText>{I18n.get(`mediacentre-home-section-${sectionKey}`)}</BodyText>
+        <BodyText>{I18n.get(`mediacentre-sectiontype-${type}`)}</BodyText>
         <IconButton
           icon="ui-rafterRight"
           color={theme.palette.primary.regular}

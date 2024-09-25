@@ -3,7 +3,9 @@ import { StyleSheet } from 'react-native';
 import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
-export default StyleSheet.create({
+export const DEFAULT_CARD_MIN_HEIGHT = getScaleWidth(60);
+
+export const previewStyles = StyleSheet.create({
   mainContainer: {
     width: getScaleWidth(120),
     height: getScaleWidth(120),
@@ -34,5 +36,34 @@ export default StyleSheet.create({
   actionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+});
+
+export const defaultStyles = StyleSheet.create({
+  actionsContainer: {
+    flexDirection: 'row',
+    columnGap: UI_SIZES.spacing.minor,
+  },
+  imageContainer: {
+    height: '100%',
+    width: DEFAULT_CARD_MIN_HEIGHT,
+    borderTopLeftRadius: UI_SIZES.radius.card,
+    borderBottomLeftRadius: UI_SIZES.radius.card,
+  },
+  innerContainer: {
+    flex: 1,
+    marginHorizontal: UI_SIZES.spacing.minor,
+    marginVertical: UI_SIZES.spacing.minor,
+  },
+  mainContainer: {
+    flexDirection: 'row',
+    minHeight: DEFAULT_CARD_MIN_HEIGHT,
+  },
+  secondaryText: {
+    flex: 1,
+    color: theme.ui.text.light,
+  },
+  sourceImage: {
+    alignSelf: 'flex-end',
   },
 });

@@ -30,3 +30,10 @@ export type MediacentreResources = {
   signets: Resource[];
   textbooks: Resource[];
 };
+
+export enum SectionType {
+  EXTERNAL_RESOURCES = 'externalresources',
+  FAVORITES = 'favorites',
+  SIGNETS = 'signets',
+  TEXTBOOKS = 'textbooks',
+}

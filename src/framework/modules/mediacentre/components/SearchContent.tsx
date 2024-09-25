@@ -10,8 +10,8 @@ import { LoadingIndicator } from '~/framework/components/loading';
 import { Icon } from '~/framework/components/picture/Icon';
 import { Resource, Source } from '~/framework/modules/mediacentre/model';
 
-import { BigCard } from './BigCard';
 import { SearchFilter } from './SearchFilter';
+import ResourceCard from './resource-card';
 
 const styles = StyleSheet.create({
   parametersContainer: {
@@ -149,7 +149,7 @@ export const SearchContent: React.FunctionComponent<ISearchContentProps> = (prop
       ) : (
         <FlatList
           data={isFiltering ? filteredResources : props.resources}
-          renderItem={({ item }) => <BigCard {...props} resource={item} key={item.uid || item.id} />}
+          renderItem={({ item }) => <ResourceCard variant="default" {...props} resource={item} />}
           keyExtractor={item => item.uid || item.id}
           ListHeaderComponent={
             props.resources.length ? (

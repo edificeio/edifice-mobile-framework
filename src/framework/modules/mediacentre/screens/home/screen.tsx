@@ -22,7 +22,7 @@ import {
 import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
 import { ISearchBarHandle, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
 import ResourceList from '~/framework/modules/mediacentre/components/resource-list';
-import { Resource, Source } from '~/framework/modules/mediacentre/model';
+import { Resource, SectionType, Source } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -70,14 +70,15 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     setSearchState(SearchState.NONE);
   };
 
-  const showResources = (resources: Resource[]) => {
-    setSearchedResources(resources);
-    setSearchState(SearchState.SIMPLE);
-  };
+  const openResourceList = (resources: Resource[], title: string) =>
+    props.navigation.push(mediacentreRouteNames.resourceList, {
+      resources,
+      title,
+    });
 
-  const handleAddFavorite = async (resourceId: string, resource: Resource) => {
+  const handleAddFavorite = async (resource: Resource) => {
     try {
-      await props.tryAddFavorite(resourceId, resource);
+      await props.tryAddFavorite(resource.id, resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-added'));
       props.tryFetchFavorites();
     } catch {
@@ -85,9 +86,9 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     }
   };
 
-  const handleRemoveFavorite = async (resourceId: string, resource: Source) => {
+  const handleRemoveFavorite = async (resourceId: string, source: Source) => {
     try {
-      await props.tryRemoveFavorite(resourceId, resource);
+      await props.tryRemoveFavorite(resourceId, source);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-removed'));
       props.tryFetchFavorites();
     } catch {
@@ -124,7 +125,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
                 {...item}
                 onAddFavorite={handleAddFavorite}
                 onRemoveFavorite={handleRemoveFavorite}
-                openResourceList={showResources}
+                openResourceList={openResourceList}
               />
             )}
             ListEmptyComponent={renderEmpty()}
@@ -158,12 +159,12 @@ export default connect(
       isFetchingSearch: search.isFetching,
       search: search.data,
       sections: [
-        { sectionKey: 'favorites', resources: resources.data.favorites, iconName: 'ui-star-filled' },
-        { sectionKey: 'textbooks', resources: resources.data.textbooks, iconName: 'ui-book' },
+        { type: SectionType.FAVORITES, resources: resources.data.favorites, iconName: 'ui-star-filled' },
+        { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-book' },
         ...(!resources.data.textbooks.length
-          ? [{ sectionKey: 'externalresources', resources: resources.data.externals, iconName: 'ui-book' }]
+          ? [{ type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-book' }]
           : []),
-        { sectionKey: 'signets', resources: resources.data.signets, iconName: 'ui-bookmark' },
+        { type: SectionType.SIGNETS, resources: resources.data.signets, iconName: 'ui-bookmark' },
       ].filter(section => section.resources.length),
       session,
     };
