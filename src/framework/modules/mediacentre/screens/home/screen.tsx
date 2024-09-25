@@ -1,5 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -8,16 +8,14 @@ import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
-import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
 import Toast from '~/framework/components/toast';
+import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   addFavoriteAction,
-  fetchExternalsAction,
   fetchFavoritesAction,
-  fetchSignetsAction,
-  fetchTextbooksAction,
+  fetchResourcesAction,
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
@@ -29,7 +27,6 @@ import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
-import { fetchWithCache } from '~/infra/fetchWithCache';
 
 import styles from './styles';
 import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps } from './types';
@@ -46,51 +43,24 @@ export const computeNavBar = ({
 });
 
 const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
-  const [shouldFetch, setShouldFetch] = useState<boolean>(true);
-  const [isFetchingSources, setFetchingSources] = useState<boolean>(true);
-  const [sources, setSources] = useState<string[]>([]);
   const searchBarRef = useRef<ISearchBarHandle>(null);
   const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
   const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
 
-  const fetchSources = useCallback(async () => {
-    const response = await fetchWithCache(`/mediacentre`, {
-      method: 'get',
-    });
-    let html = response?.toString();
-    if (!html) {
-      return [];
+  const loadResources = async () => {
+    try {
+      await props.tryFetchResources();
+    } catch {
+      throw new Error();
     }
-    html = html.replace(/\s/g, '');
-    const startIndex = html.indexOf('sources=[');
-    const endIndex = html.indexOf('];');
-    if (!startIndex || !endIndex || startIndex + 9 > endIndex - 2) {
-      setFetchingSources(false);
-      return [];
-    }
-    html = html.substring(startIndex + 9, endIndex - 2).replaceAll('"', '');
-    const newSources = html.split(',');
-    setFetchingSources(false);
-    setSources(newSources);
-    props.tryFetchExternals(newSources);
-  }, [props]);
-
-  useEffect(() => {
-    if (shouldFetch) {
-      setShouldFetch(false);
-      fetchSources();
-      props.tryFetchFavorites();
-      props.tryFetchTextbooks();
-      props.tryFetchSignets();
-    }
-  }, [shouldFetch, fetchSources, props]);
+  };
 
   useEffect(() => {
     setSearchedResources(props.search);
   }, [props.search]);
 
   const onSearch = (query: string) => {
-    props.trySearchResources(sources, query);
+    props.trySearchResources(query);
     setSearchState(SearchState.SIMPLE);
   };
 
@@ -125,57 +95,46 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     }
   };
 
-  const renderEmptyState = () => {
-    if (isFetchingSources) {
-      return <LoadingIndicator />;
-    }
+  const renderEmpty = () => {
     return <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre-home-emptyscreen-default')} />;
   };
 
-  return (
-    <PageView>
-      {!sources.length ? (
-        renderEmptyState()
-      ) : (
-        <View style={styles.mainContainer}>
-          <View style={styles.searchContainer}>
-            <SearchBar onSubmitEditing={onSearch} ref={searchBarRef} />
-          </View>
-          {searchState !== SearchState.NONE ? (
-            <SearchContent
-              {...props}
-              resources={searchedResources}
-              searchState={searchState}
-              isFetching={props.isFetchingSearch}
-              onCancelSearch={onCancelSearch}
-              addFavorite={handleAddFavorite}
-              removeFavorite={handleRemoveFavorite}
-            />
-          ) : (
-            <FlatList
-              data={props.sections}
-              renderItem={({ item }) => (
-                <ResourceList
-                  {...item}
-                  onAddFavorite={handleAddFavorite}
-                  onRemoveFavorite={handleRemoveFavorite}
-                  openResourceList={showResources}
-                />
-              )}
-              keyExtractor={item => item.sectionKey}
-              ListEmptyComponent={
-                props.isFetchingSections ? (
-                  <LoadingIndicator customStyle={styles.loadingIndicator} />
-                ) : (
-                  <EmptyScreen svgImage="empty-mediacentre" title={I18n.get('mediacentre-home-emptyscreen-default')} />
-                )
-              }
-            />
-          )}
+  const renderResources = () => {
+    return (
+      <PageView>
+        <View style={styles.searchContainer}>
+          <SearchBar onSubmitEditing={onSearch} ref={searchBarRef} />
         </View>
-      )}
-    </PageView>
-  );
+        {searchState !== SearchState.NONE ? (
+          <SearchContent
+            {...props}
+            resources={searchedResources}
+            searchState={searchState}
+            isFetching={props.isFetchingSearch}
+            onCancelSearch={onCancelSearch}
+            addFavorite={handleAddFavorite}
+            removeFavorite={handleRemoveFavorite}
+          />
+        ) : (
+          <FlatList
+            data={props.sections}
+            keyExtractor={item => item.sectionKey}
+            renderItem={({ item }) => (
+              <ResourceList
+                {...item}
+                onAddFavorite={handleAddFavorite}
+                onRemoveFavorite={handleRemoveFavorite}
+                openResourceList={showResources}
+              />
+            )}
+            ListEmptyComponent={renderEmpty()}
+          />
+        )}
+      </PageView>
+    );
+  };
+
+  return <ContentLoader loadContent={loadResources} renderContent={renderResources} />;
 };
 
 const setFavorites = (resources: Resource[], favorites: string[]) => {
@@ -186,25 +145,25 @@ const setFavorites = (resources: Resource[], favorites: string[]) => {
 
 export default connect(
   (state: IGlobalState) => {
-    const { externals, favorites, search, signets, textbooks } = moduleConfig.getState(state);
+    const { resources, search } = moduleConfig.getState(state);
     const session = getSession();
-    const favIds = favorites.data.map(favorite => String(favorite.uid));
+    const favIds = resources.data.favorites.map(favorite => String(favorite.uid));
 
-    setFavorites(externals.data, favIds);
+    setFavorites(resources.data.externals, favIds);
     setFavorites(search.data, favIds);
-    setFavorites(signets.data, favIds);
-    setFavorites(textbooks.data, favIds);
+    setFavorites(resources.data.signets, favIds);
+    setFavorites(resources.data.textbooks, favIds);
 
     return {
       isFetchingSearch: search.isFetching,
-      isFetchingSections:
-        externals.isFetching || favorites.isFetching || search.isFetching || signets.isFetching || textbooks.isFetching,
       search: search.data,
       sections: [
-        { sectionKey: 'favorites', resources: favorites.data, iconName: 'ui-star-filled' },
-        { sectionKey: 'textbooks', resources: textbooks.data, iconName: 'ui-book' },
-        ...(!textbooks.data.length ? [{ sectionKey: 'externalresources', resources: externals.data, iconName: 'ui-book' }] : []),
-        { sectionKey: 'signets', resources: signets.data, iconName: 'ui-bookmark' },
+        { sectionKey: 'favorites', resources: resources.data.favorites, iconName: 'ui-star-filled' },
+        { sectionKey: 'textbooks', resources: resources.data.textbooks, iconName: 'ui-book' },
+        ...(!resources.data.textbooks.length
+          ? [{ sectionKey: 'externalresources', resources: resources.data.externals, iconName: 'ui-book' }]
+          : []),
+        { sectionKey: 'signets', resources: resources.data.signets, iconName: 'ui-bookmark' },
       ].filter(section => section.resources.length),
       session,
     };
@@ -213,10 +172,8 @@ export default connect(
     bindActionCreators<MediacentreHomeScreenDispatchProps>(
       {
         tryAddFavorite: tryAction(addFavoriteAction),
-        tryFetchExternals: tryAction(fetchExternalsAction),
         tryFetchFavorites: tryAction(fetchFavoritesAction),
-        tryFetchSignets: tryAction(fetchSignetsAction),
-        tryFetchTextbooks: tryAction(fetchTextbooksAction),
+        tryFetchResources: tryAction(fetchResourcesAction),
         tryRemoveFavorite: tryAction(removeFavoriteAction),
         trySearchResources: tryAction(searchResourcesAction),
       },

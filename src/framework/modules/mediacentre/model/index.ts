@@ -23,3 +23,10 @@ export type Resource = {
   orientation?: boolean;
   owner_id?: string;
 };
+
+export type MediacentreResources = {
+  externals: Resource[];
+  favorites: Resource[];
+  signets: Resource[];
+  textbooks: Resource[];
+};

@@ -102,7 +102,7 @@ export const mediacentreService = {
     },
   },
   search: {
-    getSimple: async (session: AuthLoggedAccount, sources: string[], query: string) => {
+    getSimple: async (session: AuthLoggedAccount, sources: Source[], query: string) => {
       const jsondata = {
         event: 'search',
         state: 'PLAIN_TEXT',
@@ -121,26 +121,8 @@ export const mediacentreService = {
       const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
       const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
       return resourcesAdapter(signetsResponse.data.signets.resources)
-        .concat(resourcesAdapter(mysignetsResponse).filter(resource => session.user.id && resource.owner_id !== session.user.id))
+        .concat(resourcesAdapter(mysignetsResponse))
         .sort(compareResources);
-    },
-    getOrientation: async (session: AuthLoggedAccount) => {
-      const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
-      const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
-      const resources = resourcesAdapter(signetsResponse.data.signets.resources).filter(resource =>
-        resource.types.includes('Orientation'),
-      );
-      for (const res of resourcesAdapter(mysignetsResponse)) {
-        if (res.orientation === true && resources.findIndex(resource => resource.id === String(res.id)) === -1) {
-          resources.push(res);
-        }
-      }
-      return resources.sort(compareResources);
-    },
-    searchSimple: async (session: AuthLoggedAccount, query: string) => {
-      const api = `/mediacentre/signets/search?query=${query}`;
-      const resources = await fetchJSONWithCache(api);
-      return resourcesAdapter(resources);
     },
   },
   textbooks: {
