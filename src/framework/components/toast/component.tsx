@@ -117,8 +117,9 @@ function ToastCard(params: ToastParams) {
     () => ({
       onTouchStart: onPause,
       onTouchEnd: onResume,
+      testID: params.props.testID,
     }),
-    [onPause, onResume],
+    [onPause, onResume, params.props.testID],
   );
 
   return (
