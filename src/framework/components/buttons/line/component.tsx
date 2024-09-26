@@ -43,6 +43,7 @@ export const LineButton = ({
   loading = false,
   showArrow = true,
   textStyle,
+  testID,
 }: {
   title: string;
   icon?: string;
@@ -54,6 +55,7 @@ export const LineButton = ({
   loading?: boolean;
   showArrow?: boolean;
   textStyle?: TextStyle;
+  testID?: string;
 }) => {
   const Container = onPress ? TouchableOpacity : View;
 

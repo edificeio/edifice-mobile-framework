@@ -238,7 +238,9 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
       try {
         await tryUpdateProfile(isModifyingEmail ? { email } : { mobile });
         navigation.navigate(userRouteNames.home);
-        Toast.showSuccess(I18n.get(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'));
+        Toast.showSuccess(I18n.get(isModifyingEmail ? 'auth-change-email-edit-toast' : 'auth-change-mobile-edit-toast'), {
+          testID: 'account-notification-message',
+        });
       } catch {
         Toast.showError(I18n.get('auth-mfa-error-text'));
       }

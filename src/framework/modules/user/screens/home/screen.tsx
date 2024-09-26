@@ -70,6 +70,7 @@ export const computeNavBar = ({
     navigation,
     route,
     title: I18n.get('user-profile-myaccount'),
+    titleTestID:'account-title'
   }),
   headerShadowVisible: false,
 });
@@ -130,10 +131,10 @@ function useProfileAvatarFeature(session: UserHomeScreenPrivateProps['session'])
   return React.useMemo(() => {
     return !userProfilePicture ? (
       <TouchableOpacity onPress={() => navigation.navigate(userRouteNames.profile, {})}>
-        <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" />
+        <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" testID='account-user-image' />
       </TouchableOpacity>
     ) : (
-      <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" />
+      <Avatar sourceOrId={userProfilePicture} size={Size.xxl} id="" testID='account-user-image' />
     );
   }, [navigation, userProfilePicture]);
 }
@@ -148,8 +149,8 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
   return React.useMemo(
     () => (
       <>
-        <HeadingXSText style={styles.userInfoName}>{session?.user.displayName}</HeadingXSText>
-        <SmallBoldText style={{ color: theme.color.profileTypes[session?.user.type!] }}>
+        <HeadingXSText style={styles.userInfoName} testID='account-username'>{session?.user.displayName}</HeadingXSText>
+        <SmallBoldText style={{ color: theme.color.profileTypes[session?.user.type!] }} testID='account-profil-type'>
           {I18n.get(`user-profiletypes-${session?.user.type}`.toLowerCase())}
         </SmallBoldText>
         <SecondaryButton
@@ -158,6 +159,7 @@ function useProfileMenuFeature(session: UserHomeScreenPrivateProps['session']) {
             navigation.navigate(userRouteNames.profile, {});
           }}
           style={styles.userInfoButton}
+          testID='account-see-profil'
         />
       </>
     ),
@@ -305,7 +307,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
     () => (
       <>
         <View style={styles.section}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-configuration')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle} testID='account-configuration'>{I18n.get('user-page-configuration')}</HeadingSText>
           <ButtonLineGroup>
             <LineButton
               title={I18n.get('user-pushnotifssettings-title')}
@@ -313,6 +315,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
               icon='ui-notif'
+              testID='account-notifications'
             />
             {!isFederated ? (
               <LineButton
@@ -321,6 +324,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 title={I18n.get('user-page-editpassword')}
                 onPress={() => editUserInformation(ModificationType.PASSWORD)}
                 icon='ui-lock'
+                testID='account-change-password'
               />
             ) : null}
             {canEditPersonalInfo ? (
@@ -331,6 +335,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                   title={I18n.get('user-page-editemail')}
                   onPress={() => editUserInformation(ModificationType.EMAIL)}
                   icon='ui-mail'
+                  testID='account-change-email'
                 />
                 <LineButton
                   loading={currentLoadingMenu === ModificationType.MOBILE}
@@ -338,6 +343,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                   title={I18n.get('user-page-editmobile')}
                   onPress={() => editUserInformation(ModificationType.MOBILE)}
                   icon='ui-smartphone'
+                  testID='account-change-phone'
                 />
               </>
             ) : null}
@@ -346,6 +352,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               title={I18n.get('user-page-editlang')}
               onPress={() => navigation.navigate(userRouteNames.lang, {})}
               icon="ui-globe"
+              testID='account-change-language'
             />
             {isWithinXmasPeriod ? (
               <LineButton
@@ -359,7 +366,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
           </ButtonLineGroup>
         </View>
         <View style={[styles.section, styles.sectionLast]}>
-          <HeadingSText style={styles.sectionTitle}>{I18n.get('user-page-others')}</HeadingSText>
+          <HeadingSText style={styles.sectionTitle} testID='account-others'>{I18n.get('user-page-others')}</HeadingSText>
           <ButtonLineGroup>
             {showHelpCenter ? (
               <LineButton
@@ -368,6 +375,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                   openHelpCenter();
                 }}
                 icon="ui-question"
+                testID='account-help'
               />
             ) : null}
             {showWhoAreWe ? (
@@ -377,6 +385,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                   navigation.navigate(userRouteNames.whoAreWe, {});
                 }}
                 icon="ui-edifice"
+                testID='account-who-are-we'
               />
             ) : null}
             {showSplashads && session?.platform.name ? (
@@ -396,6 +405,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 navigation.navigate(userRouteNames.legalNotice, {});
               }}
               icon="ui-checklist"
+              testID='account-legal'
             />
           </ButtonLineGroup>
         </View>
@@ -494,7 +504,7 @@ function useAccountsFeature(
 
   return React.useMemo(() => {
     return canManageAccounts && accountsArray.length === 1 ? (
-      <AddAccountButton action={addAccount} style={styles.accountButton} />
+      <AddAccountButton action={addAccount} style={styles.accountButton} testID='account-add-account' />
     ) : accountsArray.length > 1 ? (
       <>
         <ChangeAccountButton action={showAccountList} style={styles.accountButton} />
@@ -549,6 +559,7 @@ function useLogoutFeature(handleLogout: UserHomeScreenPrivateProps['handleLogout
         action={doLogout}
         loading={isLoggingOut}
         iconLeft="ui-logout"
+        testID='account-logout'
       />
     );
   }, [doLogout, isLoggingOut]);
@@ -600,7 +611,7 @@ function useVersionFeature(setDebugVisible, scrollViewRef) {
   return React.useMemo(() => {
     return (
       <TouchableOpacity onLongPress={toggleVersionDetails}>
-        <SmallBoldText style={styles.version}>
+        <SmallBoldText style={styles.version} testID='account-version-number'>
           {I18n.get('user-page-versionnumber')} {useVersionFeature.versionNumber}
         </SmallBoldText>
       </TouchableOpacity>
