@@ -70,9 +70,9 @@ interface ISearchContentProps {
   isFetching: boolean;
   resources: Resource[];
   searchState: SearchState;
-  addFavorite: (id: string, resource: Resource) => any;
+  addFavorite: (resource: Resource) => any;
   onCancelSearch: () => void;
-  removeFavorite: (id: string, source: Source) => any;
+  removeFavorite: (resource: Resource) => any;
 }
 
 const resourceMatchesFilters = (resource: Resource, filters: ISearchFilters) => {

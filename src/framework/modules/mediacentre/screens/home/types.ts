@@ -25,6 +25,7 @@ export interface MediacentreHomeScreenNavParams {}
 export interface MediacentreHomeScreenProps {}
 
 export interface MediacentreHomeScreenStoreProps {
+  favoriteUids: string[];
   isFetchingSearch: boolean;
   search: Resource[];
   sections: ResourceSection[];

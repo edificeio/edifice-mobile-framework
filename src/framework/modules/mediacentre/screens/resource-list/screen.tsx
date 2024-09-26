@@ -11,7 +11,7 @@ import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { addFavoriteAction, removeFavoriteAction } from '~/framework/modules/mediacentre/actions';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
-import { Resource, Source } from '~/framework/modules/mediacentre/model';
+import { Resource } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -35,18 +35,20 @@ export const computeNavBar = ({
 });
 
 const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPrivateProps) => {
+  const isResourceFavorite = (uid: string): boolean => props.favoriteUids.includes(uid);
+
   const handleAddFavorite = async (resource: Resource) => {
     try {
-      await props.tryAddFavorite(resource.id, resource);
+      await props.tryAddFavorite(resource);
       Toast.showSuccess(I18n.get('mediacentre-resourcelist-favorite-added'));
     } catch {
       Toast.showError(I18n.get('mediacentre-resourcelist-error-text'));
     }
   };
 
-  const handleRemoveFavorite = async (resourceId: string, source: Source) => {
+  const handleRemoveFavorite = async (resource: Resource) => {
     try {
-      await props.tryRemoveFavorite(resourceId, source);
+      await props.tryRemoveFavorite(resource);
       Toast.showSuccess(I18n.get('mediacentre-resourcelist-favorite-removed'));
     } catch {
       Toast.showError(I18n.get('mediacentre-resourcelist-error-text'));
@@ -57,8 +59,9 @@ const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPriva
     <ResourceCard
       variant="default"
       resource={item}
+      isFavorite={isResourceFavorite(item.uid)}
       onAddFavorite={() => handleAddFavorite(item)}
-      onRemoveFavorite={() => handleRemoveFavorite(item.id, item.source)}
+      onRemoveFavorite={() => handleRemoveFavorite(item)}
     />
   );
 
@@ -77,11 +80,12 @@ const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPriva
 
 export default connect(
   (state: IGlobalState) => {
-    const { search } = moduleConfig.getState(state);
+    const mediacentreState = moduleConfig.getState(state);
     const session = getSession();
 
     return {
-      isFetching: search.isFetching,
+      favoriteUids: mediacentreState.favorites.data.map(r => r.uid),
+      isFetching: mediacentreState.search.isFetching,
       session,
     };
   },

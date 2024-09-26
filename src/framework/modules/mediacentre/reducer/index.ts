@@ -4,25 +4,28 @@
 import { combineReducers } from 'redux';
 
 import { Reducers } from '~/app/store';
+import { MediacentreResources, Resource } from '~/framework/modules/mediacentre/model';
+import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
-import { MediacentreResources, Resource } from './model';
-import moduleConfig from './module-config';
+import favorites, { FavoritesStateData } from './favorites';
 
 interface MediacentreReduxStateData {
+  favorites: FavoritesStateData;
   resources: MediacentreResources;
   search: Resource[];
 }
 
 export interface MediacentreReduxState {
+  favorites: AsyncState<FavoritesStateData>;
   resources: AsyncState<MediacentreResources>;
   search: AsyncState<Resource[]>;
 }
 
 const initialState: MediacentreReduxStateData = {
+  favorites: [],
   resources: {
     externals: [],
-    favorites: [],
     signets: [],
     textbooks: [],
   },
@@ -30,17 +33,14 @@ const initialState: MediacentreReduxStateData = {
 };
 
 export const actionTypes = {
-  addFavorite: createAsyncActionTypes(moduleConfig.namespaceActionType('ADD_FAVORITE')),
-  fetchFavorites: createAsyncActionTypes(moduleConfig.namespaceActionType('FETCH_FAVORITES')),
   fetchResources: createAsyncActionTypes(moduleConfig.namespaceActionType('FETCH_RESOURCES')),
-  removeFavorite: createAsyncActionTypes(moduleConfig.namespaceActionType('REMOVE_FAVORITE')),
   search: createAsyncActionTypes(moduleConfig.namespaceActionType('SEARCH')),
 };
 
 const reducer = combineReducers({
-  favorites: createSessionAsyncReducer(initialState.resources.favorites, actionTypes.fetchFavorites),
-  search: createSessionAsyncReducer(initialState.search, actionTypes.search),
   resources: createSessionAsyncReducer(initialState.resources, actionTypes.fetchResources),
+  search: createSessionAsyncReducer(initialState.search, actionTypes.search),
+  favorites,
 });
 Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;

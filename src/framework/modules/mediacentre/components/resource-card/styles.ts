@@ -63,7 +63,4 @@ export const defaultStyles = StyleSheet.create({
     flex: 1,
     color: theme.ui.text.light,
   },
-  sourceImage: {
-    alignSelf: 'flex-end',
-  },
 });

@@ -1,4 +1,4 @@
-import { Resource, SectionType, Source } from '~/framework/modules/mediacentre/model';
+import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 
 export type ResourceSection = {
   iconName: string;
@@ -7,7 +7,8 @@ export type ResourceSection = {
 };
 
 export type ResourceListProps = ResourceSection & {
+  isResourceFavorite: (uid: string) => boolean;
   onAddFavorite: (resource: Resource) => void;
-  onRemoveFavorite: (id: string, source: Source) => void;
+  onRemoveFavorite: (resource: Resource) => void;
   openResourceList: (resources: Resource[], title: string) => void;
 };

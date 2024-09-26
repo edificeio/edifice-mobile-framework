@@ -1,6 +1,6 @@
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { Resource, Source } from '~/framework/modules/mediacentre/model';
-import { fetchJSONWithCache } from '~/infra/fetchWithCache';
+import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
 type BackendResource = {
   id: string;
@@ -33,6 +33,22 @@ function transformArray(array: string[]) {
   return array;
 }
 
+const resourceAdapter = (data: BackendResource): Resource => {
+  const id = data.source === Source.SIGNET ? data.id : data._id ?? data.id;
+  return {
+    authors: data.owner_name ?? data.authors,
+    editors: data.editors,
+    id,
+    image: data.image,
+    levels: transformArray(data.levels),
+    link: (data.link ?? data.url) as string,
+    source: data.source ?? Source.SIGNET,
+    title: data.title,
+    types: data.document_types ?? ['livre numérique'],
+    uid: data.structure_uai ? data.id + data.structure_uai : id,
+  };
+};
+
 const resourcesAdapter: (data: BackendResource[]) => Resource[] = data => {
   const resources = [] as Resource[];
   for (const resource of data) {
@@ -51,7 +67,6 @@ const resourcesAdapter: (data: BackendResource[]) => Resource[] = data => {
       disciplines: resource.disciplines,
       levels: transformArray(resource.levels),
       user: resource.user,
-      favorite: resource.favorite,
       structure_uai: resource.structure_uai,
       orientation: resource.orientation,
       owner_id: resource.owner_id,
@@ -75,30 +90,22 @@ export const mediacentreService = {
   favorites: {
     get: async (session: AuthLoggedAccount) => {
       const api = '/mediacentre/favorites';
-      const res = await fetchJSONWithCache(api);
-      if (!Array.isArray(res.data)) return [];
-      const favorites = resourcesAdapter(res.data);
-      for (const resource of favorites) {
-        resource.favorite = true;
-      }
-      return favorites;
+      const { data: favorites } = (await fetchJSONWithCache(api)) as { data: BackendResource[] };
+      if (!Array.isArray(favorites)) return [];
+      return favorites.map(resourceAdapter);
     },
-    add: async (session: AuthLoggedAccount, id: string, resource: Resource) => {
-      const api = `/mediacentre/favorites?id=${id}`;
-      const res: any = resource;
-      if (resource.source === Source.SIGNET) {
-        res.id = Number(resource.id);
-      }
-      await fetchJSONWithCache(api, {
+    add: async (session: AuthLoggedAccount, resource: Resource) => {
+      const api = `/mediacentre/favorites?id=${resource.id}`;
+      return signedFetch(`${session.platform.url}${api}`, {
         method: 'POST',
-        body: JSON.stringify(res),
-      });
+        body: JSON.stringify(resource),
+      }) as Promise<any>;
     },
     remove: async (session: AuthLoggedAccount, id: string, source: Source) => {
       const api = `/mediacentre/favorites?id=${id}&source=${source}`;
-      await fetchJSONWithCache(api, {
+      return signedFetch(`${session.platform.url}${api}`, {
         method: 'DELETE',
-      });
+      }) as Promise<any>;
     },
   },
   search: {

@@ -6,6 +6,7 @@ import { ThunkAction } from 'redux-thunk';
 import { assertSession } from '~/framework/modules/auth/reducer';
 import { MediacentreResources, Resource, Source } from '~/framework/modules/mediacentre/model';
 import { actionTypes } from '~/framework/modules/mediacentre/reducer';
+import { actions as favoritesActions } from '~/framework/modules/mediacentre/reducer/favorites';
 import { mediacentreService } from '~/framework/modules/mediacentre/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
@@ -14,13 +15,12 @@ export const fetchResourcesAction = (): ThunkAction<Promise<MediacentreResources
   try {
     const session = assertSession();
     dispatch(resourcesActionsCreators.request());
-    const [externals, favorites, signets, textbooks] = await Promise.all([
+    const [externals, signets, textbooks] = await Promise.all([
       mediacentreService.search.getSimple(session, [Source.GAR], '.*'),
-      mediacentreService.favorites.get(session),
       mediacentreService.signets.get(session),
       mediacentreService.textbooks.get(session),
     ]);
-    const resources = { externals, favorites, signets, textbooks };
+    const resources = { externals, signets, textbooks };
     dispatch(resourcesActionsCreators.receipt(resources));
     return resources;
   } catch (e) {
@@ -29,45 +29,41 @@ export const fetchResourcesAction = (): ThunkAction<Promise<MediacentreResources
   }
 };
 
-export const fetchFavoritesActionsCreators = createAsyncActionCreators(actionTypes.fetchFavorites);
 export const fetchFavoritesAction = (): ThunkAction<Promise<Resource[]>, any, any, any> => async (dispatch, getState) => {
   try {
     const session = assertSession();
-    dispatch(fetchFavoritesActionsCreators.request());
+    dispatch(favoritesActions.request());
     const favorites = await mediacentreService.favorites.get(session);
-    dispatch(fetchFavoritesActionsCreators.receipt(favorites));
+    dispatch(favoritesActions.receipt(favorites));
     return favorites;
   } catch (e) {
-    dispatch(fetchFavoritesActionsCreators.error(e as Error));
-    throw e;
+    dispatch(favoritesActions.error(e as Error));
   }
 };
 
-export const addFavoriteActionsCreators = createAsyncActionCreators(actionTypes.addFavorite);
 export const addFavoriteAction =
-  (resourceId: string, resource: Resource): ThunkAction<Promise<void>, any, any, any> =>
+  (resource: Resource): ThunkAction<Promise<void>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
-      dispatch(addFavoriteActionsCreators.request());
-      await mediacentreService.favorites.add(session, resourceId, resource);
-      dispatch(fetchFavoritesActionsCreators.receipt(resourceId));
+      dispatch(favoritesActions.addRequest());
+      await mediacentreService.favorites.add(session, resource);
+      dispatch(favoritesActions.addReceipt(resource));
     } catch (e) {
-      dispatch(addFavoriteActionsCreators.error(e as Error));
+      dispatch(favoritesActions.addError(e as Error));
     }
   };
 
-export const removeFavoriteActionsCreators = createAsyncActionCreators(actionTypes.removeFavorite);
 export const removeFavoriteAction =
-  (resourceId: string, source: Source): ThunkAction<Promise<void>, any, any, any> =>
+  (resource: Resource): ThunkAction<Promise<void>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
-      dispatch(removeFavoriteActionsCreators.request());
-      await mediacentreService.favorites.remove(session, resourceId, source);
-      dispatch(removeFavoriteActionsCreators.receipt(resourceId));
+      dispatch(favoritesActions.removeRequest());
+      await mediacentreService.favorites.remove(session, resource.id, resource.source);
+      dispatch(favoritesActions.removeReceipt(resource));
     } catch (e) {
-      dispatch(removeFavoriteActionsCreators.error(e as Error));
+      dispatch(favoritesActions.removeError(e as Error));
     }
   };
 

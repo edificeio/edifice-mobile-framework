@@ -22,7 +22,7 @@ import {
 import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
 import { ISearchBarHandle, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
 import ResourceList from '~/framework/modules/mediacentre/components/resource-list';
-import { Resource, SectionType, Source } from '~/framework/modules/mediacentre/model';
+import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { navBarOptions } from '~/framework/navigation/navBar';
@@ -49,6 +49,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
 
   const loadResources = async () => {
     try {
+      await props.tryFetchFavorites();
       await props.tryFetchResources();
     } catch {
       throw new Error();
@@ -76,21 +77,21 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
       title,
     });
 
+  const isResourceFavorite = (uid: string): boolean => props.favoriteUids.includes(uid);
+
   const handleAddFavorite = async (resource: Resource) => {
     try {
-      await props.tryAddFavorite(resource.id, resource);
+      await props.tryAddFavorite(resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-added'));
-      props.tryFetchFavorites();
     } catch {
       Toast.showError(I18n.get('mediacentre-home-error-text'));
     }
   };
 
-  const handleRemoveFavorite = async (resourceId: string, source: Source) => {
+  const handleRemoveFavorite = async (resource: Resource) => {
     try {
-      await props.tryRemoveFavorite(resourceId, source);
+      await props.tryRemoveFavorite(resource);
       Toast.showSuccess(I18n.get('mediacentre-home-favorite-removed'));
-      props.tryFetchFavorites();
     } catch {
       Toast.showError(I18n.get('mediacentre-home-error-text'));
     }
@@ -123,6 +124,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
             renderItem={({ item }) => (
               <ResourceList
                 {...item}
+                isResourceFavorite={isResourceFavorite}
                 onAddFavorite={handleAddFavorite}
                 onRemoveFavorite={handleRemoveFavorite}
                 openResourceList={openResourceList}
@@ -138,28 +140,17 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
   return <ContentLoader loadContent={loadResources} renderContent={renderResources} />;
 };
 
-const setFavorites = (resources: Resource[], favorites: string[]) => {
-  for (const resource of resources) {
-    resource.favorite = favorites.includes(String(resource.uid));
-  }
-};
-
 export default connect(
   (state: IGlobalState) => {
-    const { resources, search } = moduleConfig.getState(state);
+    const { favorites, resources, search } = moduleConfig.getState(state);
     const session = getSession();
-    const favIds = resources.data.favorites.map(favorite => String(favorite.uid));
-
-    setFavorites(resources.data.externals, favIds);
-    setFavorites(search.data, favIds);
-    setFavorites(resources.data.signets, favIds);
-    setFavorites(resources.data.textbooks, favIds);
 
     return {
+      favoriteUids: favorites.data.map(r => r.uid),
       isFetchingSearch: search.isFetching,
       search: search.data,
       sections: [
-        { type: SectionType.FAVORITES, resources: resources.data.favorites, iconName: 'ui-star-filled' },
+        { type: SectionType.FAVORITES, resources: favorites.data, iconName: 'ui-star-filled' },
         { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-book' },
         ...(!resources.data.textbooks.length
           ? [{ type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-book' }]

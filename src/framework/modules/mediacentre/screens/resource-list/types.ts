@@ -19,6 +19,7 @@ export interface MediacentreResourceListScreenProps {}
 
 export interface MediacentreResourceListScreenStoreProps {
   isFetching: boolean;
+  favoriteUids: string[];
   session?: AuthActiveAccount;
 }
 

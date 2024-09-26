@@ -17,6 +17,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   resources,
   type,
   iconName = 'ui-book',
+  isResourceFavorite,
   onAddFavorite,
   onRemoveFavorite,
   openResourceList,
@@ -25,8 +26,9 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
     <ResourceCard
       variant="preview"
       resource={item}
+      isFavorite={isResourceFavorite(item.uid)}
       onAddFavorite={() => onAddFavorite(item)}
-      onRemoveFavorite={() => onRemoveFavorite(item.id, item.source)}
+      onRemoveFavorite={() => onRemoveFavorite(item)}
     />
   );
 

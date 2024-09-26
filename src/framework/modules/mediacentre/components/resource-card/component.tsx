@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-clipboard/clipboard';
 import * as React from 'react';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
@@ -19,13 +19,12 @@ import { defaultStyles, previewStyles } from './styles';
 import { ResourceCardProps } from './types';
 
 const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
+  isFavorite,
   resource,
   variant = 'default',
   onAddFavorite,
   onRemoveFavorite,
 }) => {
-  const [isFavorite, setFavorite] = useState(resource.favorite);
-
   const handlePress = () => {
     if (resource.source === Source.SIGNET) {
       openUrl(resource.link);
@@ -40,16 +39,6 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
   const handleCopyLink = () => {
     Clipboard.setString(resource.link);
     Toast.showInfo(I18n.get('mediacentre-home-linkcopied'));
-  };
-
-  const handleAddFavorite = () => {
-    setFavorite(true);
-    onAddFavorite();
-  };
-
-  const handleRemoveFavorite = () => {
-    setFavorite(false);
-    onRemoveFavorite();
   };
 
   const renderCard = () => {
@@ -71,7 +60,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
                 <IconButton
                   icon="ui-star-filled"
                   color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
-                  action={isFavorite ? handleRemoveFavorite : handleAddFavorite}
+                  action={isFavorite ? onRemoveFavorite : onAddFavorite}
                 />
               </View>
             </View>
@@ -92,7 +81,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
             <IconButton
               icon="ui-star-filled"
               color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
-              action={isFavorite ? handleRemoveFavorite : handleAddFavorite}
+              action={isFavorite ? onRemoveFavorite : onAddFavorite}
             />
           </View>
         </View>

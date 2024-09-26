@@ -5,28 +5,20 @@ export enum Source {
 }
 
 export type Resource = {
-  id: string;
-  uid?: string;
-  title: string;
-  plain_text: string;
-  image: string;
-  types: string[];
-  source: Source;
-  link: string;
-  authors: string[];
+  authors: string | string[];
   editors: string[];
-  disciplines: string[];
+  id: string;
+  image: string;
   levels: string[];
-  user: string;
-  favorite?: boolean;
-  structure_uai?: string;
-  orientation?: boolean;
-  owner_id?: string;
+  link: string;
+  source: Source;
+  title: string;
+  types: string[];
+  uid: string;
 };
 
 export type MediacentreResources = {
   externals: Resource[];
-  favorites: Resource[];
   signets: Resource[];
   textbooks: Resource[];
 };
