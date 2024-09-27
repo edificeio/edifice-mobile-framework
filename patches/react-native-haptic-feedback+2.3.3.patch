@@ -1,0 +1,38 @@
+diff --git a/node_modules/react-native-haptic-feedback/ios/RNHapticFeedback/RNHapticFeedback.mm b/node_modules/react-native-haptic-feedback/ios/RNHapticFeedback/RNHapticFeedback.mm
+index cf75baf..db18c0f 100644
+--- a/node_modules/react-native-haptic-feedback/ios/RNHapticFeedback/RNHapticFeedback.mm
++++ b/node_modules/react-native-haptic-feedback/ios/RNHapticFeedback/RNHapticFeedback.mm
+@@ -95,16 +95,24 @@ RCT_EXPORT_METHOD(trigger:(NSString *)type options:(NSDictionary *)options)
+ }
+ 
+ -(void)generateImpactFeedback:(UIImpactFeedbackStyle)style{
+-    NSString *key = [[NSNumber numberWithInteger: style] stringValue];
+-    if (impactGeneratorMap == nil)
+-        impactGeneratorMap = [[NSMutableDictionary alloc] init];
+-    if ([impactGeneratorMap objectForKey:key] == nil){
+-        [impactGeneratorMap setValue:[[UIImpactFeedbackGenerator alloc] initWithStyle:style] forKey:key];
+-        [[impactGeneratorMap objectForKey:key] prepare];
++    try {
++        NSString *key = [[NSNumber numberWithInteger: style] stringValue];
++        if (impactGeneratorMap == nil)
++            impactGeneratorMap = [[NSMutableDictionary alloc] init];
++        UIImpactFeedbackGenerator *generator = [impactGeneratorMap objectForKey:key];
++        if (generator == nil){
++            generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:style];
++            if (generator) {
++                [generator prepare];
++                [impactGeneratorMap setValue:generator forKey:key];
++            }
++        }
++        if (generator) {
++            [generator impactOccurred];
++            [generator prepare];
++        }
++    } catch(NSException* e) {
+     }
+-    UIImpactFeedbackGenerator *generator = [impactGeneratorMap objectForKey:key];
+-    [generator impactOccurred];
+-    [generator prepare];
+ }
+ 
+ -(void)generateNotificationFeedback:(UINotificationFeedbackType)notificationType{
