@@ -4,38 +4,24 @@ import theme from '~/app/theme';
 import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const DEFAULT_CARD_MIN_HEIGHT = getScaleWidth(60);
+export const PREVIEW_CARD_WIDTH = getScaleWidth(120);
 
 export const previewStyles = StyleSheet.create({
-  mainContainer: {
-    width: getScaleWidth(120),
-    height: getScaleWidth(120),
-  },
-  upperContentContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: UI_SIZES.spacing.tiny,
-  },
-  titleText: {
-    color: theme.palette.primary.regular,
-    flexShrink: 1,
-    marginRight: UI_SIZES.spacing.tiny,
-  },
-  lowerContentContainer: {
-    flexDirection: 'row',
-  },
-  imageContainer: {
-    height: 70,
-    width: 50,
-  },
-  secondaryContainer: {
-    flex: 1,
-    justifyContent: 'space-between',
-    marginLeft: UI_SIZES.spacing.minor,
-  },
   actionsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    alignSelf: 'flex-end',
+    columnGap: UI_SIZES.spacing.minor,
+  },
+  imageContainer: {
+    flex: 1,
+    height: 'auto',
+    width: '100%',
+  },
+  mainContainer: {
+    width: PREVIEW_CARD_WIDTH,
+    height: PREVIEW_CARD_WIDTH,
+    padding: UI_SIZES.spacing.minor,
+    rowGap: UI_SIZES.spacing.tiny,
   },
 });
 

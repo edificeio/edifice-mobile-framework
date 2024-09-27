@@ -1,15 +1,18 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { I18n } from '~/app/i18n';
 import { IGlobalState } from '~/app/store';
+import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
+import { LoadingIndicator } from '~/framework/components/loading';
 import { PageView } from '~/framework/components/page';
+import SearchBar from '~/framework/components/search-bar';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
-import { addFavoriteAction, removeFavoriteAction } from '~/framework/modules/mediacentre/actions';
+import { addFavoriteAction, removeFavoriteAction, searchResourcesAction } from '~/framework/modules/mediacentre/actions';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
 import { Resource } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
@@ -30,11 +33,24 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.title,
+    title: route.params.query ? I18n.get('mediacentre-resourcelist-search') : route.params.title,
   }),
 });
 
 const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPrivateProps) => {
+  const { params } = props.route;
+  const [query, setQuery] = useState(params.query ?? '');
+  const [isSearchActive, setSearchActive] = useState<boolean>(!!params.query);
+
+  const handleSearch = () => {
+    setSearchActive(true);
+    props.trySearchResources(query);
+  };
+
+  const handleClearSearch = () => {
+    if (!params.query) setSearchActive(false);
+  };
+
   const isResourceFavorite = (uid: string): boolean => props.favoriteUids.includes(uid);
 
   const handleAddFavorite = async (resource: Resource) => {
@@ -65,12 +81,35 @@ const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPriva
     />
   );
 
+  const renderEmpty = () => {
+    if (isSearchActive) {
+      return props.isFetching ? (
+        <LoadingIndicator />
+      ) : (
+        <EmptyScreen svgImage="empty-search" title={I18n.get('mediacentre-resourcelist-emptyscreen-search')} />
+      );
+    }
+    if (!params.query)
+      return <EmptyScreen svgImage="empty-content" title={I18n.get('mediacentre-resourcelist-emptyscreen-default')} />;
+    return null;
+  };
+
   const renderList = () => {
     return (
       <FlatList
-        data={props.route.params.resources}
+        data={isSearchActive ? props.search : params.resources}
         renderItem={renderResource}
         contentContainerStyle={styles.listContentContainer}
+        ListEmptyComponent={renderEmpty}
+        ListHeaderComponent={
+          <SearchBar
+            placeholder={I18n.get('mediacentre-resourcelist-searchbar-placeholder')}
+            query={query}
+            onChangeQuery={setQuery}
+            onClear={handleClearSearch}
+            onSearch={handleSearch}
+          />
+        }
       />
     );
   };
@@ -86,6 +125,7 @@ export default connect(
     return {
       favoriteUids: mediacentreState.favorites.data.map(r => r.uid),
       isFetching: mediacentreState.search.isFetching,
+      search: mediacentreState.search.data,
       session,
     };
   },
@@ -94,6 +134,7 @@ export default connect(
       {
         tryAddFavorite: tryAction(addFavoriteAction),
         tryRemoveFavorite: tryAction(removeFavoriteAction),
+        trySearchResources: tryAction(searchResourcesAction),
       },
       dispatch,
     ),

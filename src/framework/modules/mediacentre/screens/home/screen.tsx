@@ -1,6 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -9,6 +8,7 @@ import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
+import SearchBar from '~/framework/components/search-bar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -19,8 +19,6 @@ import {
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
-import { SearchContent, SearchState } from '~/framework/modules/mediacentre/components/SearchContent';
-import { ISearchBarHandle, SearchBar } from '~/framework/modules/mediacentre/components/SearchItems';
 import ResourceList from '~/framework/modules/mediacentre/components/resource-list';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
@@ -43,9 +41,7 @@ export const computeNavBar = ({
 });
 
 const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
-  const searchBarRef = useRef<ISearchBarHandle>(null);
-  const [searchedResources, setSearchedResources] = useState<Resource[]>([]);
-  const [searchState, setSearchState] = useState<SearchState>(SearchState.NONE);
+  const [query, setQuery] = useState('');
 
   const loadResources = async () => {
     try {
@@ -56,26 +52,21 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     }
   };
 
-  useEffect(() => {
-    setSearchedResources(props.search);
-  }, [props.search]);
-
-  const onSearch = (query: string) => {
-    props.trySearchResources(query);
-    setSearchState(SearchState.SIMPLE);
-  };
-
-  const onCancelSearch = () => {
-    searchBarRef.current?.clear();
-    setSearchedResources([]);
-    setSearchState(SearchState.NONE);
-  };
-
   const openResourceList = (resources: Resource[], title: string) =>
     props.navigation.push(mediacentreRouteNames.resourceList, {
       resources,
       title,
     });
+
+  const handleSearch = () => {
+    if (query) {
+      props.trySearchResources(query);
+      props.navigation.push(mediacentreRouteNames.resourceList, {
+        query,
+        resources: [],
+      });
+    }
+  };
 
   const isResourceFavorite = (uid: string): boolean => props.favoriteUids.includes(uid);
 
@@ -104,35 +95,29 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
   const renderResources = () => {
     return (
       <PageView>
-        <View style={styles.searchContainer}>
-          <SearchBar onSubmitEditing={onSearch} ref={searchBarRef} />
-        </View>
-        {searchState !== SearchState.NONE ? (
-          <SearchContent
-            {...props}
-            resources={searchedResources}
-            searchState={searchState}
-            isFetching={props.isFetchingSearch}
-            onCancelSearch={onCancelSearch}
-            addFavorite={handleAddFavorite}
-            removeFavorite={handleRemoveFavorite}
-          />
-        ) : (
-          <FlatList
-            data={props.sections}
-            keyExtractor={item => item.sectionKey}
-            renderItem={({ item }) => (
-              <ResourceList
-                {...item}
-                isResourceFavorite={isResourceFavorite}
-                onAddFavorite={handleAddFavorite}
-                onRemoveFavorite={handleRemoveFavorite}
-                openResourceList={openResourceList}
-              />
-            )}
-            ListEmptyComponent={renderEmpty()}
-          />
-        )}
+        <FlatList
+          data={props.sections}
+          keyExtractor={item => item.sectionKey}
+          renderItem={({ item }) => (
+            <ResourceList
+              {...item}
+              isResourceFavorite={isResourceFavorite}
+              onAddFavorite={handleAddFavorite}
+              onRemoveFavorite={handleRemoveFavorite}
+              openResourceList={openResourceList}
+            />
+          )}
+          ListEmptyComponent={renderEmpty()}
+          ListHeaderComponent={
+            <SearchBar
+              placeholder={I18n.get('mediacentre-home-searchbar-placeholder')}
+              query={query}
+              onChangeQuery={setQuery}
+              onSearch={handleSearch}
+              containerStyle={styles.searchBarContainer}
+            />
+          }
+        />
       </PageView>
     );
   };
@@ -142,13 +127,11 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
 
 export default connect(
   (state: IGlobalState) => {
-    const { favorites, resources, search } = moduleConfig.getState(state);
+    const { favorites, resources } = moduleConfig.getState(state);
     const session = getSession();
 
     return {
       favoriteUids: favorites.data.map(r => r.uid),
-      isFetchingSearch: search.isFetching,
-      search: search.data,
       sections: [
         { type: SectionType.FAVORITES, resources: favorites.data, iconName: 'ui-star-filled' },
         { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-book' },

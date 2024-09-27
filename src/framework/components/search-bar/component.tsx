@@ -1,0 +1,45 @@
+import * as React from 'react';
+import { TextInput, TouchableOpacity } from 'react-native';
+
+import theme from '~/app/theme';
+import IconButton from '~/framework/components/buttons/icon';
+import { NamedSVG } from '~/framework/components/picture';
+
+import styles from './styles';
+import { SearchBarProps } from './types';
+
+export const SearchBar = (props: SearchBarProps) => {
+  const inputRef = React.useRef<TextInput>(null);
+  const borderColor = inputRef.current?.isFocused()
+    ? theme.palette.secondary.light
+    : props.query
+      ? theme.palette.grey.stone
+      : theme.palette.grey.cloudy;
+
+  const focusInput = () => inputRef.current?.focus();
+
+  const handleClear = () => {
+    props.onChangeQuery('');
+    props.onClear?.();
+  };
+
+  return (
+    <TouchableOpacity onPress={focusInput} activeOpacity={1} style={[styles.container, { borderColor }, props.containerStyle]}>
+      <NamedSVG name="ui-search" width={20} height={20} fill={theme.ui.text.regular} style={styles.searchIcon} />
+      <TextInput
+        ref={inputRef}
+        value={props.query}
+        onChangeText={props.onChangeQuery}
+        onSubmitEditing={props.onSearch}
+        placeholder={props.placeholder}
+        placeholderTextColor={theme.ui.text.light}
+        autoCapitalize="none"
+        autoCorrect={false}
+        inputMode="search"
+        returnKeyType="search"
+        style={styles.textInput}
+      />
+      {props.query.length ? <IconButton icon="ui-close" action={handleClear} style={styles.clearButton} /> : null}
+    </TouchableOpacity>
+  );
+};
