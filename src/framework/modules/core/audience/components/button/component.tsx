@@ -316,7 +316,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
                 opacity: opacityBlocReactions,
                 top: cPageY,
                 left: cPageX,
-                backgroundColor: theme.palette.complementary.red.dark,
               },
             ]}>
             {props.validReactionTypes.map((reaction, i) => {
@@ -364,7 +363,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
             opacity: isOpen === OpenReactionsMode.STANDARD ? opacityBlocReactions : 0,
             top: -HEIGHT_VIEW_REACTIONS,
             pointerEvents: isOpen ? 'auto' : 'none',
-            backgroundColor: theme.palette.complementary.blue.dark,
           },
         ]}>
         {props.validReactionTypes.map((reaction, i) => {
