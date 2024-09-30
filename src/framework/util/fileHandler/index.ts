@@ -166,6 +166,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
           compressImageMaxHeight: IMAGE_MAX_DIMENSION,
           compressImageMaxWidth: IMAGE_MAX_DIMENSION,
           compressImageQuality: IMAGE_MAX_QUALITY,
+          forceJpg: true,
           useFrontCamera: cameraOptions?.cameraType === 'front',
         }).then(image => {
           callback({
