@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-09-30 14:13:18",
-  "notes": "chore(build): strip bitcode from Zendesk SDKConfigurations due to new xcode 16 rules concerning bitcode\nrelease: 1.13.4-rc.1(1130402)",
-  "version": "1.13.4-rc.2(1130403)"
+  "last": "2024-09-30 11:58:42",
+  "notes": "update(stack): update yarn cache\nfeat(user):MB-2900 adding testIDs to profile screen\nfeat(user):MB-2900 adding testIDs to profile screen\nSquashed commit of the following:\nUpdated translations from Phrase (#166)\nrelease: 1.13.4-alpha.1(1130401)",
+  "version": "1.13.4-rc.1(1130402)"
 }
