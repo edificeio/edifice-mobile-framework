@@ -6,6 +6,7 @@ import moment from 'moment';
 import { Platform } from 'react-native';
 import DocumentPicker, { DocumentPickerResponse, PlatformTypes } from 'react-native-document-picker';
 import { DownloadDirectoryPath, UploadFileItem, copyFile, exists } from 'react-native-fs';
+import ImagePicker from 'react-native-image-crop-picker';
 import {
   Asset,
   CameraOptions,
@@ -13,7 +14,6 @@ import {
   ImagePickerResponse,
   MediaType,
   PhotoQuality,
-  launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
 
@@ -158,26 +158,25 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       await assertPermissions('camera');
       // Pick files
       await new Promise<void>((resolve, reject) => {
-        const callback = async (res: ImagePickerResponse) => {
-          if (res.didCancel) {
-            pickedFiles = [];
-            resolve();
-          } else if (!res.assets || res.errorCode) reject(res);
-          else {
-            pickedFiles = renameAssets(res.assets, 'image');
-            resolve();
-          }
+        const callback = async (res: Asset) => {
+          pickedFiles = renameAssets([res], 'image');
+          resolve();
         };
-        launchCamera(
-          {
-            mediaType: LocalFile._getImagePickerTypeArg(opts.type),
-            presentationStyle: 'fullScreen',
-            saveToPhotos: false,
-            ...compressionOptions,
-            ...cameraOptions,
-          },
-          callback,
-        );
+        ImagePicker.openCamera({
+          compressImageMaxHeight: IMAGE_MAX_DIMENSION,
+          compressImageMaxWidth: IMAGE_MAX_DIMENSION,
+          compressImageQuality: IMAGE_MAX_QUALITY,
+          useFrontCamera: cameraOptions?.cameraType === 'front',
+        }).then(image => {
+          callback({
+            fileName: image.modificationDate,
+            fileSize: image.size,
+            height: image.height,
+            type: image.mime,
+            uri: image.path,
+            width: image.width,
+          });
+        });
       });
     }
 
