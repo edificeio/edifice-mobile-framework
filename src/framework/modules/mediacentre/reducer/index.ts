@@ -9,17 +9,20 @@ import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { AsyncState, createAsyncActionTypes, createSessionAsyncReducer } from '~/framework/util/redux/async';
 
 import favorites, { FavoritesStateData } from './favorites';
+import selectedStructure, { SelectedStructureStateData } from './selectedStructure';
 
 interface MediacentreReduxStateData {
   favorites: FavoritesStateData;
   resources: MediacentreResources;
   search: Resource[];
+  selectedStructure: SelectedStructureStateData;
 }
 
 export interface MediacentreReduxState {
   favorites: AsyncState<FavoritesStateData>;
   resources: AsyncState<MediacentreResources>;
   search: AsyncState<Resource[]>;
+  selectedStructure: AsyncState<SelectedStructureStateData>;
 }
 
 const initialState: MediacentreReduxStateData = {
@@ -30,6 +33,7 @@ const initialState: MediacentreReduxStateData = {
     textbooks: [],
   },
   search: [],
+  selectedStructure: null,
 };
 
 export const actionTypes = {
@@ -41,6 +45,7 @@ const reducer = combineReducers({
   resources: createSessionAsyncReducer(initialState.resources, actionTypes.fetchResources),
   search: createSessionAsyncReducer(initialState.search, actionTypes.search),
   favorites,
+  selectedStructure,
 });
 Reducers.register(moduleConfig.reducerName, reducer);
 export default reducer;

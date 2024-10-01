@@ -1,5 +1,6 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
+import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -8,14 +9,17 @@ import { IGlobalState } from '~/app/store';
 import { EmptyScreen } from '~/framework/components/empty-screens';
 import FlatList from '~/framework/components/list/flat-list';
 import { PageView } from '~/framework/components/page';
+import DropdownPicker from '~/framework/components/pickers/dropdown';
 import SearchBar from '~/framework/components/search-bar';
 import Toast from '~/framework/components/toast';
 import { ContentLoader } from '~/framework/hooks/loader';
 import { getSession } from '~/framework/modules/auth/reducer';
 import {
   addFavoriteAction,
+  editSelectedStructureAction,
   fetchFavoritesAction,
   fetchResourcesAction,
+  fetchSelectedStructureAction,
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
@@ -41,14 +45,31 @@ export const computeNavBar = ({
 });
 
 const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [selectedStructureId, setSelectedStructureId] = useState(props.selectedStructure);
   const [query, setQuery] = useState('');
 
   const loadResources = async () => {
     try {
+      let structureId = await props.tryFetchSelectedStructure();
+      if (!structureId) {
+        if (!props.structures.length) throw new Error();
+        structureId = props.structures[0].id;
+        await props.trySelectStructure(structureId);
+      }
+      setSelectedStructureId(structureId);
       await props.tryFetchFavorites();
       await props.tryFetchResources();
     } catch {
       throw new Error();
+    }
+  };
+
+  const handleSelectStructure = async (item: { value?: string }) => {
+    try {
+      if (item.value) await props.trySelectStructure(item.value);
+    } catch {
+      Toast.showError();
     }
   };
 
@@ -109,14 +130,26 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
           )}
           ListEmptyComponent={renderEmpty()}
           ListHeaderComponent={
-            <SearchBar
-              placeholder={I18n.get('mediacentre-home-searchbar-placeholder')}
-              query={query}
-              onChangeQuery={setQuery}
-              onSearch={handleSearch}
-              containerStyle={styles.searchBarContainer}
-            />
+            <View style={styles.listHeaderContainer}>
+              {props.structures.length > 1 ? (
+                <DropdownPicker
+                  open={isDropdownOpen}
+                  value={selectedStructureId}
+                  items={props.structures.map(s => ({ label: s.name.trim(), value: s.id }))}
+                  setOpen={setDropdownOpen}
+                  setValue={setSelectedStructureId}
+                  onSelectItem={handleSelectStructure}
+                />
+              ) : null}
+              <SearchBar
+                placeholder={I18n.get('mediacentre-home-searchbar-placeholder')}
+                query={query}
+                onChangeQuery={setQuery}
+                onSearch={handleSearch}
+              />
+            </View>
           }
+          ListHeaderComponentStyle={styles.listHeaderZIndex}
         />
       </PageView>
     );
@@ -127,7 +160,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
 
 export default connect(
   (state: IGlobalState) => {
-    const { favorites, resources } = moduleConfig.getState(state);
+    const { favorites, resources, selectedStructure } = moduleConfig.getState(state);
     const session = getSession();
 
     return {
@@ -140,7 +173,9 @@ export default connect(
           : []),
         { type: SectionType.SIGNETS, resources: resources.data.signets, iconName: 'ui-bookmark' },
       ].filter(section => section.resources.length),
+      selectedStructure: selectedStructure.data,
       session,
+      structures: session?.user.structures ?? [],
     };
   },
   dispatch =>
@@ -149,8 +184,10 @@ export default connect(
         tryAddFavorite: tryAction(addFavoriteAction),
         tryFetchFavorites: tryAction(fetchFavoritesAction),
         tryFetchResources: tryAction(fetchResourcesAction),
+        tryFetchSelectedStructure: tryAction(fetchSelectedStructureAction),
         tryRemoveFavorite: tryAction(removeFavoriteAction),
         trySearchResources: tryAction(searchResourcesAction),
+        trySelectStructure: tryAction(editSelectedStructureAction),
       },
       dispatch,
     ),

@@ -7,6 +7,7 @@ import { assertSession } from '~/framework/modules/auth/reducer';
 import { MediacentreResources, Resource, Source } from '~/framework/modules/mediacentre/model';
 import { actionTypes } from '~/framework/modules/mediacentre/reducer';
 import { actions as favoritesActions } from '~/framework/modules/mediacentre/reducer/favorites';
+import { actions as selectedStructureActions } from '~/framework/modules/mediacentre/reducer/selectedStructure';
 import { mediacentreService } from '~/framework/modules/mediacentre/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
@@ -29,6 +30,24 @@ export const fetchResourcesAction = (): ThunkAction<Promise<MediacentreResources
   }
 };
 
+export const searchActionsCreators = createAsyncActionCreators(actionTypes.search);
+export const searchResourcesAction =
+  (query: string): ThunkAction<Promise<Resource[]>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(searchActionsCreators.request());
+      const resources = await mediacentreService.search.getSimple(session, [Source.GAR, Source.MOODLE, Source.SIGNET], query);
+      dispatch(searchActionsCreators.receipt(resources));
+      return resources;
+    } catch (e) {
+      dispatch(searchActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
+
+// Favorites
+
 export const fetchFavoritesAction = (): ThunkAction<Promise<Resource[]>, any, any, any> => async (dispatch, getState) => {
   try {
     const session = assertSession();
@@ -38,6 +57,7 @@ export const fetchFavoritesAction = (): ThunkAction<Promise<Resource[]>, any, an
     return favorites;
   } catch (e) {
     dispatch(favoritesActions.error(e as Error));
+    throw e;
   }
 };
 
@@ -51,6 +71,7 @@ export const addFavoriteAction =
       dispatch(favoritesActions.addReceipt(resource));
     } catch (e) {
       dispatch(favoritesActions.addError(e as Error));
+      throw e;
     }
   };
 
@@ -64,21 +85,36 @@ export const removeFavoriteAction =
       dispatch(favoritesActions.removeReceipt(resource));
     } catch (e) {
       dispatch(favoritesActions.removeError(e as Error));
+      throw e;
     }
   };
 
-export const searchActionsCreators = createAsyncActionCreators(actionTypes.search);
-export const searchResourcesAction =
-  (query: string): ThunkAction<Promise<Resource[]>, any, any, any> =>
+// Selected structure
+
+export const fetchSelectedStructureAction =
+  (): ThunkAction<Promise<string | null>, any, any, any> => async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(selectedStructureActions.request());
+      const id = await mediacentreService.selectedStructure.get(session);
+      dispatch(selectedStructureActions.receipt(id));
+      return id;
+    } catch (e) {
+      dispatch(selectedStructureActions.error(e as Error));
+      throw e;
+    }
+  };
+
+export const editSelectedStructureAction =
+  (id: string): ThunkAction<Promise<void>, any, any, any> =>
   async (dispatch, getState) => {
     try {
       const session = assertSession();
-      dispatch(searchActionsCreators.request());
-      const resources = await mediacentreService.search.getSimple(session, [Source.GAR, Source.MOODLE, Source.SIGNET], query);
-      dispatch(searchActionsCreators.receipt(resources));
-      return resources;
+      dispatch(selectedStructureActions.editRequest());
+      await mediacentreService.selectedStructure.update(session, id);
+      dispatch(selectedStructureActions.editReceipt(id));
     } catch (e) {
-      dispatch(searchActionsCreators.error(e as Error));
+      dispatch(selectedStructureActions.editError(e as Error));
       throw e;
     }
   };

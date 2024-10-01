@@ -1,9 +1,9 @@
-import { AuthLoggedAccount } from '~/framework/modules/auth/model';
+import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { Resource, Source } from '~/framework/modules/mediacentre/model';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
 type BackendResource = {
-  id: string;
+  id: string | number;
   _id?: string;
   title: string;
   plain_text: string;
@@ -24,6 +24,16 @@ type BackendResource = {
   owner_name?: string;
 };
 
+type BackendSearch = {
+  event: string;
+  state: string;
+  status: string;
+  data: {
+    source: Source;
+    resources: BackendResource[];
+  };
+}[];
+
 export function compareResources(a: Resource, b: Resource) {
   return a.title.localeCompare(b.title);
 }
@@ -34,7 +44,7 @@ function transformArray(array: string[]) {
 }
 
 const resourceAdapter = (data: BackendResource): Resource => {
-  const id = data.source === Source.SIGNET ? data.id : data._id ?? data.id;
+  const id = data._id ?? typeof data.id === 'number' ? data.id.toString() : data.id;
   return {
     authors: data.owner_name ?? data.authors,
     editors: data.editors,
@@ -49,59 +59,22 @@ const resourceAdapter = (data: BackendResource): Resource => {
   };
 };
 
-const resourcesAdapter: (data: BackendResource[]) => Resource[] = data => {
-  const resources = [] as Resource[];
-  for (const resource of data) {
-    const id = resource.source === Source.SIGNET ? resource.id : resource._id ?? resource.id;
-    const res = {
-      id,
-      uid: resource.structure_uai ? resource.id + resource.structure_uai : id,
-      title: resource.title,
-      plain_text: resource.plain_text,
-      image: resource.image,
-      types: resource.document_types || ['livre numérique'],
-      source: resource.source || Source.SIGNET,
-      link: resource.link || resource.url,
-      authors: resource.owner_name || resource.authors,
-      editors: resource.editors,
-      disciplines: resource.disciplines,
-      levels: transformArray(resource.levels),
-      user: resource.user,
-      structure_uai: resource.structure_uai,
-      orientation: resource.orientation,
-      owner_id: resource.owner_id,
-    } as Resource;
-    resources.push(res);
-  }
-  return resources.sort(compareResources);
-};
-
-const concatResources = (response: any) => {
-  let resources: any[] = [];
-  for (const res of response) {
-    if (res.data && res.data.resources) {
-      resources = resources.concat(res.data.resources);
-    }
-  }
-  return resources;
-};
-
 export const mediacentreService = {
   favorites: {
-    get: async (session: AuthLoggedAccount) => {
+    get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/favorites';
       const { data: favorites } = (await fetchJSONWithCache(api)) as { data: BackendResource[] };
       if (!Array.isArray(favorites)) return [];
       return favorites.map(resourceAdapter);
     },
-    add: async (session: AuthLoggedAccount, resource: Resource) => {
+    add: async (session: AuthActiveAccount, resource: Resource) => {
       const api = `/mediacentre/favorites?id=${resource.id}`;
       return signedFetch(`${session.platform.url}${api}`, {
         method: 'POST',
         body: JSON.stringify(resource),
       }) as Promise<any>;
     },
-    remove: async (session: AuthLoggedAccount, id: string, source: Source) => {
+    remove: async (session: AuthActiveAccount, id: string, source: Source) => {
       const api = `/mediacentre/favorites?id=${id}&source=${source}`;
       return signedFetch(`${session.platform.url}${api}`, {
         method: 'DELETE',
@@ -109,7 +82,7 @@ export const mediacentreService = {
     },
   },
   search: {
-    getSimple: async (session: AuthLoggedAccount, sources: Source[], query: string) => {
+    getSimple: async (session: AuthActiveAccount, sources: Source[], query: string) => {
       const jsondata = {
         event: 'search',
         state: 'PLAIN_TEXT',
@@ -119,24 +92,47 @@ export const mediacentreService = {
         },
       };
       const api = `/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`;
-      const response = await fetchJSONWithCache(api);
-      return resourcesAdapter(concatResources(response));
+      const response = (await fetchJSONWithCache(api)) as BackendSearch;
+      return response.flatMap(s => [...s.data.resources]).map(resourceAdapter);
+    },
+  },
+  selectedStructure: {
+    get: async (session: AuthActiveAccount) => {
+      const api = `/userbook/preference/selectedStructure`;
+      const { preference } = (await fetchJSONWithCache(api)) as { preference: string };
+      return preference.replaceAll('"', '');
+    },
+    update: async (session: AuthActiveAccount, id: string) => {
+      const api = `/userbook/preference/selectedStructure`;
+      return signedFetch(`${session.platform.url}${api}`, {
+        method: 'PUT',
+        body: JSON.stringify(id),
+      }) as Promise<any>;
     },
   },
   signets: {
-    get: async (session: AuthLoggedAccount) => {
-      const signetsResponse = await fetchJSONWithCache('/mediacentre/signets');
-      const mysignetsResponse = await fetchJSONWithCache('/mediacentre/mysignets');
-      return resourcesAdapter(signetsResponse.data.signets.resources)
-        .concat(resourcesAdapter(mysignetsResponse))
-        .sort(compareResources);
+    get: async (session: AuthActiveAccount) => {
+      const response = (await fetchJSONWithCache('/mediacentre/signets')) as {
+        data: {
+          signets: {
+            resources: BackendResource[];
+          };
+        };
+      };
+      const signets = response.data.signets.resources;
+      const mysignets = (await fetchJSONWithCache('/mediacentre/mysignets')) as BackendResource[];
+      return signets.concat(mysignets.filter(ms => !signets.some(s => s.id === ms.id.toString()))).map(resourceAdapter);
     },
   },
   textbooks: {
-    get: async (session: AuthLoggedAccount) => {
+    get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/textbooks';
-      const res = await fetchJSONWithCache(api);
-      return resourcesAdapter(res.data.textbooks);
+      const response = (await fetchJSONWithCache(api)) as {
+        data: {
+          textbooks: BackendResource[];
+        };
+      };
+      return response.data.textbooks.map(resourceAdapter);
     },
   },
 };
