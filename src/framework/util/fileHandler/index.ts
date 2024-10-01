@@ -51,8 +51,7 @@ export function formatBytes(bytes, decimals = 2) {
 const processImage = async (pic: Asset) => {
   if (!pic.uri) return;
   try {
-    let result;
-    await ImageResizer.createResizedImage(
+    const response = await ImageResizer.createResizedImage(
       pic.uri,
       IMAGE_MAX_DIMENSION,
       IMAGE_MAX_DIMENSION,
@@ -65,25 +64,19 @@ const processImage = async (pic: Asset) => {
         mode: 'contain',
         onlyScaleDown: false,
       },
-    )
-      .then(response => {
-        result = {
-          fileName: `${moment().format('YYYYMMDD-HHmmss')}.jpg`,
-          fileSize: response.size,
-          height: response.height,
-          type: 'image/jpg',
-          uri: response.uri,
-          width: response.width,
-        };
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    return result;
-  } catch (error) {
-    console.log(error, 'Unable to resize the photo');
-    return undefined;
+    );
+    return {
+      fileName: `${moment().format('YYYYMMDD-HHmmss')}.jpg`,
+      fileSize: response.size,
+      height: response.height,
+      type: 'image/jpg',
+      uri: response.uri,
+      width: response.width,
+    };
+  } catch (err) {
+    console.error('Image resizing failed: ', (err as Error).message);
   }
+  return undefined;
 };
 
 /**
