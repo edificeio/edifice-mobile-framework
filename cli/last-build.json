@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-09-30 15:31:10",
-  "notes": "Revert \"release: 1.13.4-rc.2(1130403)\"\nrelease: 1.13.4-rc.2(1130403)\nchore(build): strip bitcode from Zendesk SDKConfigurations due to new xcode 16 rules concerning bitcode\nrelease: 1.13.4-rc.1(1130402)",
-  "version": "1.13.4-rc.2(1130403)"
+  "last": "2024-10-01 15:00:47",
+  "notes": "refacto(image): review image compression code\nchore(compression): clean processImage function\nMerge branch 'dev/1.13.4' of github.com:edificeio/edifice-mobile-framework into dev/1.13.4\nfix(compression): MB-2936 , fix compression and uplad pic on android\nfix(debug): Debug options always enabled fix\nfix(audience): remove background color in audience\nMerge branch 'dev/1.13.4' of github.com:edificeio/edifice-mobile-framework into dev/1.13.4\nfix(filehandler): MB-2936 , fix import from camera on android\nrelease: 1.13.4-rc.2(1130403)",
+  "version": "1.13.4-rc.3(1130404)"
 }
