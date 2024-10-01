@@ -308,7 +308,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
               onPress={() => {
                 navigation.navigate(userRouteNames.notifPrefs, {});
               }}
-              icon='ui-notif'
+              icon="ui-notif"
             />
             {!isFederated ? (
               <LineButton
@@ -316,7 +316,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 disabled={!!currentLoadingMenu}
                 title={I18n.get('user-page-editpassword')}
                 onPress={() => editUserInformation(ModificationType.PASSWORD)}
-                icon='ui-lock'
+                icon="ui-lock"
               />
             ) : null}
             {canEditPersonalInfo ? (
@@ -326,14 +326,14 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                   disabled={!!currentLoadingMenu}
                   title={I18n.get('user-page-editemail')}
                   onPress={() => editUserInformation(ModificationType.EMAIL)}
-                  icon='ui-mail'
+                  icon="ui-mail"
                 />
                 <LineButton
                   loading={currentLoadingMenu === ModificationType.MOBILE}
                   disabled={!!currentLoadingMenu}
                   title={I18n.get('user-page-editmobile')}
                   onPress={() => editUserInformation(ModificationType.MOBILE)}
-                  icon='ui-smartphone'
+                  icon="ui-smartphone"
                 />
               </>
             ) : null}
@@ -385,7 +385,7 @@ function useAccountMenuFeature(session: UserHomeScreenPrivateProps['session'], f
                 }}
                 icon="ui-megaphone"
               />
-            ) : null} 
+            ) : null}
             <LineButton
               title={I18n.get('user-legalnotice-title')}
               onPress={() => {
@@ -560,13 +560,13 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
   const currentPlatform = session?.platform.displayName;
   const navigation = useNavigation<NavigationProp<UserNavigationParams>>();
   return React.useMemo(() => {
-    if (debugVisible && appConf.isDebugEnabled)
+    if (debugVisible)
       return (
         <>
           <SmallBoldText style={styles.version}>
             {`${useVersionDetailsFeature.versionType} (${useVersionDetailsFeature.buildNumber}) – ${useVersionDetailsFeature.versionOverride} – ${currentPlatform} - ${useVersionDetailsFeature.os} ${useVersionDetailsFeature.osVersion} - ${useVersionDetailsFeature.deviceModel}`}
           </SmallBoldText>
-          {appConf.isDevOrAlpha ? (
+          {appConf.isDebugEnabled ? (
             <>
               <View style={styles.section}>
                 <HeadingSText style={styles.sectionTitle}>Debug</HeadingSText>
