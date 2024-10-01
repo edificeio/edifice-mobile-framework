@@ -66,6 +66,7 @@
     "scaffold": "run(){ node cli/scaffold.js $@; }; run"
   },
   "dependencies": {
+    "@bam.tech/react-native-image-resizer": "3.0.10",
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.11.4",
     "@flyerhq/react-native-android-uri-path": "2.3.0",

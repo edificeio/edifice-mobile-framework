@@ -1,6 +1,7 @@
 /**
  * File Manager
  */
+import ImageResizer from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Platform } from 'react-native';
@@ -13,11 +14,9 @@ import {
   ImageLibraryOptions,
   ImagePickerResponse,
   MediaType,
-  PhotoQuality,
   launchImageLibrary,
 } from 'react-native-image-picker';
 
-import { getExtension } from '~/framework/util/file';
 import { assertPermissions } from '~/framework/util/permissions';
 
 import { openDocument } from './actions';
@@ -35,13 +34,7 @@ namespace LocalFile {
 }
 
 export const IMAGE_MAX_DIMENSION = 1440;
-export const IMAGE_MAX_QUALITY: PhotoQuality = 0.8;
-
-const compressionOptions = {
-  maxHeight: IMAGE_MAX_DIMENSION,
-  maxWidth: IMAGE_MAX_DIMENSION,
-  quality: IMAGE_MAX_QUALITY,
-};
+export const IMAGE_MAX_QUALITY = 80;
 
 export function formatBytes(bytes, decimals = 2) {
   if (!+bytes) return '0 Bytes';
@@ -55,17 +48,42 @@ export function formatBytes(bytes, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-const renameAssets = (assets: Asset[], type: LocalFile.IPickOptionsType) => {
-  const prefix = moment().format('YYYYMMDD-HHmmss');
-  const renamedAssets = assets.map((asset, index) => {
-    let ext = getExtension(asset.fileName);
-    if (type === 'image') ext = '.jpg';
-    return {
-      ...asset,
-      fileName: `${prefix}${index > 0 ? `-${index}` : ''}${ext ?? ''}`,
-    };
-  });
-  return renamedAssets;
+const processImage = async (pic: Asset) => {
+  if (!pic.uri) return;
+  try {
+    let result;
+    await ImageResizer.createResizedImage(
+      pic.uri,
+      IMAGE_MAX_DIMENSION,
+      IMAGE_MAX_DIMENSION,
+      'JPEG',
+      IMAGE_MAX_QUALITY,
+      0,
+      undefined,
+      false,
+      {
+        mode: 'contain',
+        onlyScaleDown: false,
+      },
+    )
+      .then(response => {
+        result = {
+          fileName: `${moment().format('YYYYMMDD-HHmmss')}.jpg`,
+          fileSize: response.size,
+          height: response.height,
+          type: 'image/jpg',
+          uri: response.uri,
+          width: response.width,
+        };
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    return result;
+  } catch (error) {
+    console.log(error, 'Unable to resize the photo');
+    return undefined;
+  }
 };
 
 /**
@@ -139,7 +157,7 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             resolve();
           } else if (!res.assets || res.errorCode) reject(res);
           else {
-            pickedFiles = renameAssets(res.assets, 'image');
+            pickedFiles = await Promise.all(res.assets.map(processImage));
             resolve();
           }
         };
@@ -148,7 +166,6 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
             mediaType: LocalFile._getImagePickerTypeArg(opts.type),
             selectionLimit: opts.multiple ? 0 : 1,
             presentationStyle: 'pageSheet',
-            ...compressionOptions,
             ...galeryOptions,
           },
           callback,
@@ -159,13 +176,10 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       // Pick files
       await new Promise<void>((resolve, reject) => {
         const callback = async (res: Asset) => {
-          pickedFiles = renameAssets([res], 'image');
+          pickedFiles.push(await processImage(res));
           resolve();
         };
         ImagePicker.openCamera({
-          compressImageMaxHeight: IMAGE_MAX_DIMENSION,
-          compressImageMaxWidth: IMAGE_MAX_DIMENSION,
-          compressImageQuality: IMAGE_MAX_QUALITY,
           useFrontCamera: cameraOptions?.cameraType === 'front',
         }).then(image => {
           callback({
