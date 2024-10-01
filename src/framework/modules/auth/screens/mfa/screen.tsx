@@ -308,10 +308,14 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               />
             )}
           </View>
-          <HeadingSText style={styles.title}>{texts.title}</HeadingSText>
-          <SmallText style={styles.contentSent}>{texts.messageSent}</SmallText>
-          <SmallText style={styles.content}>{texts.message}</SmallText>
-          <View pointerEvents="box-none" style={styles.codeFieldContainer}>
+          <HeadingSText style={styles.title} testID="email-code-title">
+            {texts.title}
+          </HeadingSText>
+          <View testID="email-code-subtitle">
+            <SmallText style={styles.contentSent}>{texts.messageSent}</SmallText>
+            <SmallText style={styles.content}>{texts.message}</SmallText>
+          </View>
+          <View pointerEvents="box-none" style={styles.codeFieldContainer} testID="email-code">
             <CodeField
               {...codeFieldProps}
               ref={codeFieldRef}
@@ -359,17 +363,22 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
                   width={33}
                   height={33}
                 />
-                <BodyText style={[styles.codeStateText, { color: codeStateColor }]}>{texts.feedback}</BodyText>
+                <BodyText style={[styles.codeStateText, { color: codeStateColor }]} testID="email-code-error">
+                  {texts.feedback}
+                </BodyText>
               </>
             ) : null}
           </View>
         </View>
         <View style={styles.resendContainer}>
-          <SmallText style={styles.issueText}>{I18n.get('auth-mfa-issue')}</SmallText>
+          <SmallText style={styles.issueText} testID="email-code-issues">
+            {I18n.get('auth-mfa-issue')}
+          </SmallText>
           <TouchableOpacity
             style={[styles.resendButton, { opacity: resendOpacity }]}
             disabled={isResendInactive}
-            onPress={onResendCode}>
+            onPress={onResendCode}
+            testID="email-code-send-again">
             <Picture
               type="NamedSvg"
               name="pictos-redo"
