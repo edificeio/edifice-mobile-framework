@@ -66,6 +66,7 @@
     "scaffold": "run(){ node cli/scaffold.js $@; }; run"
   },
   "dependencies": {
+    "@bam.tech/react-native-image-resizer": "3.0.10",
     "@emotion/native": "11.11.0",
     "@emotion/react": "11.11.4",
     "@flyerhq/react-native-android-uri-path": "2.3.0",
@@ -142,6 +143,7 @@
     "react-native-gesture-handler": "2.15.0",
     "react-native-global-props": "1.1.5",
     "react-native-haptic-feedback": "2.2.0",
+    "react-native-image-crop-picker": "0.41.2",
     "react-native-image-pan-zoom": "2.1.12",
     "react-native-image-picker": "7.1.1",
     "react-native-keyboard-avoiding-scroll-view": "1.0.1",
