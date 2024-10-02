@@ -36,7 +36,7 @@ export type AsyncPagedActionCreators<DataType extends Array<any>> = {
 export const createAsyncPagedActionTypes: (prefixUpperCase: string) => AsyncPagedActionTypes = (prefixUpperCase: string) =>
   ({
     ...createAsyncActionTypes(prefixUpperCase),
-  } as AsyncPagedActionTypes);
+  }) as AsyncPagedActionTypes;
 
 export const createAsyncPagedActionCreators: <DataType extends Array<any>>(
   actionTypes: AsyncPagedActionTypes,

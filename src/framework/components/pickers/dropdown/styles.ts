@@ -96,8 +96,8 @@ export const getToggleStyle = (
           borderColor: isOpened
             ? theme.palette.primary.light
             : isItemSelected
-            ? theme.palette.grey.graphite
-            : theme.palette.grey.cloudy,
+              ? theme.palette.grey.graphite
+              : theme.palette.grey.cloudy,
         },
         style,
       ],

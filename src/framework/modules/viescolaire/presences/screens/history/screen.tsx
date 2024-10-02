@@ -270,7 +270,7 @@ export default connect(
     return {
       children:
         userType === AccountType.Relative
-          ? getFlattenedChildren(session?.user.children)?.filter(child => child.classesNames.length) ?? []
+          ? (getFlattenedChildren(session?.user.children)?.filter(child => child.classesNames.length) ?? [])
           : undefined,
       classes: session?.user.classes,
       events: getRecentEvents(presencesState.statistics.data, presencesState.absenceStatements.data),

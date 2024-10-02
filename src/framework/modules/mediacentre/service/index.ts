@@ -39,7 +39,7 @@ function transformArray(array: string[]) {
 const resourcesAdapter: (data: IBackendResourceList) => IResourceList = data => {
   const resources = [] as IResource[];
   for (const resource of data) {
-    const id = resource.source === Source.SIGNET ? resource.id : resource._id ?? resource.id;
+    const id = resource.source === Source.SIGNET ? resource.id : (resource._id ?? resource.id);
     const res = {
       id,
       uid: resource.structure_uai ? resource.id + resource.structure_uai : id,
