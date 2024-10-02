@@ -181,7 +181,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             {expandable && expanded ? (
               <TertiaryButton
                 style={[styles.lessButton, styles.moreLessButton, { backgroundColor: messageTint.pale }]}
-                text="Voir moins"
+                text={I18n.get('textpreview-seeless')}
                 contentColor={theme.ui.text.regular}
                 action={this.toggleExpand.bind(this)}
               />
@@ -202,7 +202,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
                 <Rect x="-1" y="0" width="3" height="1" fill="url(#grad)" />
               </Svg>
               <TertiaryButton
-                text="Voir plus"
+                text={I18n.get('textpreview-seemore')}
                 contentColor={theme.ui.text.regular}
                 action={this.toggleExpand.bind(this)}
                 style={styles.moreLessButton}
