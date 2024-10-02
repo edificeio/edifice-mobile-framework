@@ -29,6 +29,7 @@ const initialState: MediacentreReduxStateData = {
   favorites: [],
   resources: {
     externals: [],
+    pins: [],
     signets: [],
     textbooks: [],
   },

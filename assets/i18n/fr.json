@@ -790,6 +790,7 @@
   "mediacentre-resourcelist-searchbar-placeholder": "Rechercher une ressource",
   "mediacentre-sectiontype-externalresources": "Ressources",
   "mediacentre-sectiontype-favorites": "Mes favoris",
+  "mediacentre-sectiontype-pins": "Découvrez ces ressources !",
   "mediacentre-sectiontype-signets": "Derniers signets ajoutés",
   "mediacentre-sectiontype-textbooks": "Manuels",
   "mediaplayer-error-connection-text": "Un problème est survenu. Nous n'arrivons pas à afficher la page. Veuillez vérifier votre connexion réseau ou réessayer plus tard.",

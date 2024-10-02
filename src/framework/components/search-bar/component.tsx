@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useRef, useState } from 'react';
 import { TextInput, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
@@ -9,8 +9,9 @@ import styles from './styles';
 import { SearchBarProps } from './types';
 
 export const SearchBar = (props: SearchBarProps) => {
-  const inputRef = React.useRef<TextInput>(null);
-  const borderColor = inputRef.current?.isFocused()
+  const inputRef = useRef<TextInput>(null);
+  const [isFocused, setFocused] = useState(false);
+  const borderColor = isFocused
     ? theme.palette.secondary.light
     : props.query
       ? theme.palette.grey.stone
@@ -23,6 +24,10 @@ export const SearchBar = (props: SearchBarProps) => {
     props.onClear?.();
   };
 
+  const handleFocus = () => setFocused(true);
+
+  const handleBlur = () => setFocused(false);
+
   return (
     <TouchableOpacity onPress={focusInput} activeOpacity={1} style={[styles.container, { borderColor }, props.containerStyle]}>
       <NamedSVG name="ui-search" width={20} height={20} fill={theme.ui.text.regular} style={styles.searchIcon} />
@@ -31,6 +36,8 @@ export const SearchBar = (props: SearchBarProps) => {
         value={props.query}
         onChangeText={props.onChangeQuery}
         onSubmitEditing={props.onSearch}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholder={props.placeholder}
         placeholderTextColor={theme.ui.text.light}
         autoCapitalize="none"

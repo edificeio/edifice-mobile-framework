@@ -7,14 +7,14 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
-import { BodyText, SmallText } from '~/framework/components/text';
+import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { Source } from '~/framework/modules/mediacentre/model';
 import { openUrl } from '~/framework/util/linking';
 import { Image } from '~/framework/util/media';
 
-import { defaultStyles, previewStyles } from './styles';
+import { defaultStyles, pinStyles, previewStyles } from './styles';
 import { ResourceCardProps } from './types';
 
 const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
@@ -41,6 +41,17 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
   };
 
   const renderCard = () => {
+    if (variant === 'pin')
+      return (
+        <TouchCardWithoutPadding onPress={handlePress} style={pinStyles.mainContainer}>
+          <Image source={{ uri: resource.image }} style={pinStyles.imageContainer} resizeMode="contain" />
+          <View style={pinStyles.rightContainer}>
+            <SmallText numberOfLines={1}>{resource.title}</SmallText>
+            <CaptionText numberOfLines={2}>{resource.pinned_description}</CaptionText>
+          </View>
+        </TouchCardWithoutPadding>
+      );
+
     if (variant === 'preview')
       return (
         <TouchCardWithoutPadding onPress={handlePress} style={previewStyles.mainContainer}>

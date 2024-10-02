@@ -1,9 +1,9 @@
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 
 export type ResourceSection = {
-  iconName: string;
   resources: Resource[];
   type: SectionType;
+  iconName?: string;
 };
 
 export type ResourceListProps = ResourceSection & {

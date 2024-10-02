@@ -22,6 +22,8 @@ type BackendResource = {
   orientation?: boolean;
   owner_id?: string;
   owner_name?: string;
+  pinned_title?: string;
+  pinned_description?: string;
 };
 
 type BackendSearch = {
@@ -52,8 +54,9 @@ const resourceAdapter = (data: BackendResource): Resource => {
     image: data.image,
     levels: transformArray(data.levels),
     link: (data.link ?? data.url) as string,
+    pinned_description: data.pinned_description,
     source: data.source ?? Source.SIGNET,
-    title: data.title,
+    title: data.pinned_title ?? data.title,
     types: data.document_types ?? ['livre numérique'],
     uid: data.structure_uai ? data.id + data.structure_uai : id,
   };
@@ -79,6 +82,20 @@ export const mediacentreService = {
       return signedFetch(`${session.platform.url}${api}`, {
         method: 'DELETE',
       }) as Promise<any>;
+    },
+  },
+  globalResources: {
+    get: async (session: AuthActiveAccount) => {
+      const api = '/mediacentre/global/resources';
+      const response = (await fetchJSONWithCache(api)) as BackendSearch;
+      return response.flatMap(s => [...s.data.resources]).map(resourceAdapter);
+    },
+  },
+  pins: {
+    get: async (session: AuthActiveAccount, structureId: string) => {
+      const api = `/mediacentre/structures/${structureId}/pins`;
+      const resources = (await fetchJSONWithCache(api)) as BackendResource[];
+      return resources.map(resourceAdapter);
     },
   },
   search: {
@@ -125,8 +142,8 @@ export const mediacentreService = {
     },
   },
   textbooks: {
-    get: async (session: AuthActiveAccount) => {
-      const api = '/mediacentre/textbooks';
+    get: async (session: AuthActiveAccount, structureId: string) => {
+      const api = `/mediacentre/textbooks/refresh?structureIds=${structureId}`;
       const response = (await fetchJSONWithCache(api)) as {
         data: {
           textbooks: BackendResource[];

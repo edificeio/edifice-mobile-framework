@@ -59,7 +59,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
       }
       setSelectedStructureId(structureId);
       await props.tryFetchFavorites();
-      await props.tryFetchResources();
+      await props.tryFetchResources(structureId);
     } catch {
       throw new Error();
     }
@@ -67,7 +67,12 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
 
   const handleSelectStructure = async (item: { value?: string }) => {
     try {
-      if (item.value) await props.trySelectStructure(item.value);
+      const structureId = item.value;
+
+      if (structureId) {
+        await props.trySelectStructure(structureId);
+        await props.tryFetchResources(structureId);
+      }
     } catch {
       Toast.showError();
     }
@@ -166,11 +171,10 @@ export default connect(
     return {
       favoriteUids: favorites.data.map(r => r.uid),
       sections: [
+        { type: SectionType.PINS, resources: resources.data.pins },
         { type: SectionType.FAVORITES, resources: favorites.data, iconName: 'ui-star-filled' },
         { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-book' },
-        ...(!resources.data.textbooks.length
-          ? [{ type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-book' }]
-          : []),
+        { type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-class' },
         { type: SectionType.SIGNETS, resources: resources.data.signets, iconName: 'ui-bookmark' },
       ].filter(section => section.resources.length),
       selectedStructure: selectedStructure.data,

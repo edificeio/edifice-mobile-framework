@@ -12,23 +12,27 @@ import { mediacentreService } from '~/framework/modules/mediacentre/service';
 import { createAsyncActionCreators } from '~/framework/util/redux/async';
 
 export const resourcesActionsCreators = createAsyncActionCreators(actionTypes.fetchResources);
-export const fetchResourcesAction = (): ThunkAction<Promise<MediacentreResources>, any, any, any> => async (dispatch, getState) => {
-  try {
-    const session = assertSession();
-    dispatch(resourcesActionsCreators.request());
-    const [externals, signets, textbooks] = await Promise.all([
-      mediacentreService.search.getSimple(session, [Source.GAR], '.*'),
-      mediacentreService.signets.get(session),
-      mediacentreService.textbooks.get(session),
-    ]);
-    const resources = { externals, signets, textbooks };
-    dispatch(resourcesActionsCreators.receipt(resources));
-    return resources;
-  } catch (e) {
-    dispatch(resourcesActionsCreators.error(e as Error));
-    throw e;
-  }
-};
+export const fetchResourcesAction =
+  (structureId: string): ThunkAction<Promise<MediacentreResources>, any, any, any> =>
+  async (dispatch, getState) => {
+    try {
+      const session = assertSession();
+      dispatch(resourcesActionsCreators.request());
+      let [externals, pins, signets, textbooks] = await Promise.all([
+        mediacentreService.search.getSimple(session, [Source.GAR], '.*'),
+        mediacentreService.pins.get(session, structureId),
+        mediacentreService.signets.get(session),
+        mediacentreService.textbooks.get(session, structureId),
+      ]);
+      if (!externals.length) externals = await mediacentreService.globalResources.get(session);
+      const resources = { externals, pins, signets, textbooks };
+      dispatch(resourcesActionsCreators.receipt(resources));
+      return resources;
+    } catch (e) {
+      dispatch(resourcesActionsCreators.error(e as Error));
+      throw e;
+    }
+  };
 
 export const searchActionsCreators = createAsyncActionCreators(actionTypes.search);
 export const searchResourcesAction =

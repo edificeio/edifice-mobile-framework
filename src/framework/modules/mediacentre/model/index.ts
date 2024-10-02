@@ -15,10 +15,12 @@ export type Resource = {
   title: string;
   types: string[];
   uid: string;
+  pinned_description?: string;
 };
 
 export type MediacentreResources = {
   externals: Resource[];
+  pins: Resource[];
   signets: Resource[];
   textbooks: Resource[];
 };
@@ -26,6 +28,7 @@ export type MediacentreResources = {
 export enum SectionType {
   EXTERNAL_RESOURCES = 'externalresources',
   FAVORITES = 'favorites',
+  PINS = 'pins',
   SIGNETS = 'signets',
   TEXTBOOKS = 'textbooks',
 }
