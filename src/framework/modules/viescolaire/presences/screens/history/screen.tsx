@@ -59,7 +59,7 @@ const PresencesHistoryScreen = (props: PresencesHistoryScreenPrivateProps) => {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'statistics', title: I18n.get('presences-history-tab-statistics'), icon: 'ui-trending-up' },
-    { key: 'history', title: I18n.get('presences-history-tab-history'), icon: 'ui-upcoming' },
+    { key: 'history', title: I18n.get('presences-history-tab-history'), icon: 'ui-forgoing' },
   ]);
   const [loadingState, setLoadingState] = React.useState(props.initialLoadingState ?? AsyncPagedLoadingState.PRISTINE);
   const loadingRef = React.useRef<AsyncPagedLoadingState>();

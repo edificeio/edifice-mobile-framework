@@ -65,6 +65,7 @@ const imports = {
   'ui-flag': async () => import('ASSETS/icons/uiIcons/flag.svg'),
   'ui-folder': async () => import('ASSETS/icons/uiIcons/folder.svg'),
   'ui-folderMove': async () => import('ASSETS/icons/uiIcons/folderMove.svg'),
+  'ui-forgoing': async () => import('ASSETS/icons/uiIcons/forgoing.svg'),
   'ui-forgoing-check': async () => import('ASSETS/icons/uiIcons/forgoing-check.svg'),
   'ui-forgoing-error': async () => import('ASSETS/icons/uiIcons/forgoing-error.svg'),
   'ui-fullScreen': async () => import('ASSETS/icons/uiIcons/fullScreen.svg'),
