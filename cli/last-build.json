@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-01 15:00:47",
-  "notes": "refacto(image): review image compression code\nchore(compression): clean processImage function\nMerge branch 'dev/1.13.4' of github.com:edificeio/edifice-mobile-framework into dev/1.13.4\nfix(compression): MB-2936 , fix compression and uplad pic on android\nfix(debug): Debug options always enabled fix\nfix(audience): remove background color in audience\nMerge branch 'dev/1.13.4' of github.com:edificeio/edifice-mobile-framework into dev/1.13.4\nfix(filehandler): MB-2936 , fix import from camera on android\nrelease: 1.13.4-rc.2(1130403)",
-  "version": "1.13.4-rc.3(1130404)"
+  "last": "2024-10-03 19:37:55",
+  "notes": "fix(push): MB-2957, add UNAVAILABLE to possible POST_NOTIFICATIONS permission request\nfix(timeline): MOZO-2955 fix signatue flickering when reload flash messages on android\nchore(flash-message): fix i18n wordings\nfix(audience): MB-2883, MB-2954, fix scroll bug in audience and clean code\nfix(user): MB-2952, always show version details\nrelease: 1.13.4-rc.3(1130404)",
+  "version": "1.13.4-rc.4(1130405)"
 }
