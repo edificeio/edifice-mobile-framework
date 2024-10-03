@@ -175,7 +175,7 @@ export class TimelineFlashMessage extends React.PureComponent<ITimelineFlashMess
             />
           </RNScrollView>
           <View style={styles.postContent}>
-            {(!expandable && signature) || expanded ? (
+            {(expandable === false && signature) || expanded ? (
               <SmallItalicText style={styles.signature}>{signature ?? ''}</SmallItalicText>
             ) : null}
             {expandable && expanded ? (

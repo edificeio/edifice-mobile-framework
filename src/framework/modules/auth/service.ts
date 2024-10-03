@@ -564,7 +564,7 @@ export async function manageFirebaseToken(platform: Platform) {
     console.debug('manageFirebaseToken - registerFCMToken');
     if (RNPlatform.OS === 'android') {
       const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-      if (result === RESULTS.GRANTED) {
+      if (result === RESULTS.GRANTED || result === RESULTS.UNAVAILABLE) {
         await fcm.registerFCMToken();
       }
     } else {
