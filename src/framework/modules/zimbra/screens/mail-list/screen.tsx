@@ -251,7 +251,6 @@ const ZimbraMailListScreen = (props: ZimbraMailListScreenPrivateProps) => {
       if (!session) throw new Error();
       await zimbraService.mails.toggleUnread(session, ids, unread);
       setSelectedMails([]);
-      console.log(mails, 'test lea 3');
       setMails(
         mails.map(mail => ({
           ...mail,
