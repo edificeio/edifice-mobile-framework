@@ -9,16 +9,13 @@ module.exports = {
   },
   extends: [
     '@react-native',
-    'airbnb',
-    'airbnb-typescript',
+    '@react-native-community',
     'eslint:recommended',
     'prettier',
-    'prettier/react',
-    'universe/native',
     'plugin:import/typescript',
     'plugin:prettier/recommended',
     'plugin:react/recommended',
-    'standard-with-typescript',
+    'plugin:@typescript-eslint/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {

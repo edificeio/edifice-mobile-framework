@@ -14,11 +14,10 @@ import { NavBarAction } from '~/framework/components/navigation';
 import { PageView } from '~/framework/components/page';
 import { BodyText } from '~/framework/components/text';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
-import { LogData, MenuData } from '~/framework/modules/user/screens/debug/log/types';
+import { LogData, MenuData, LogScreenPrivateProps } from '~/framework/modules/user/screens/debug/log/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
 import styles from './styles';
-import { LogScreenPrivateProps } from './types';
 
 const exportLogFile = async () => {
   try {

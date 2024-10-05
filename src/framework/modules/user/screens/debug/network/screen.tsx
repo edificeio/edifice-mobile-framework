@@ -4,9 +4,9 @@ import NetworkLogger from 'react-native-network-logger';
 
 import { PageView } from '~/framework/components/page';
 import { UserNavigationParams, userRouteNames } from '~/framework/modules/user/navigation';
+import type { NetworkScreenPrivateProps } from '~/framework/modules/user/screens/debug/network/types';
 import { navBarOptions } from '~/framework/navigation/navBar';
 
-import type { NetworkScreenPrivateProps } from '~/framework/modules/user/screens/debug/network/types';
 import styles from './styles';
 
 export const computeNavBar = ({

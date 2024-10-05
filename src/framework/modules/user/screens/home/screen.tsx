@@ -572,14 +572,14 @@ function useVersionDetailsFeature(session: UserHomeScreenPrivateProps['session']
                 <HeadingSText style={styles.sectionTitle}>Debug</HeadingSText>
                 <ButtonLineGroup>
                   <LineButton
-                    title={'Network Log'}
+                    title="Network Log"
                     icon="ui-print"
                     onPress={() => {
                       navigation.navigate(userRouteNames.network, {});
                     }}
                   />
                   <LineButton
-                    title={'Debug Log'}
+                    title="Debug Log"
                     icon="ui-print"
                     onPress={() => {
                       navigation.navigate(userRouteNames.log, {});

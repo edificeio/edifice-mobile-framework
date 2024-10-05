@@ -4,6 +4,7 @@
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Alert, Platform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import { DownloadDirectoryPath, UploadFileItem, copyFile, exists } from 'react-native-fs';
 import {
@@ -15,13 +16,12 @@ import {
   launchImageLibrary,
 } from 'react-native-image-picker';
 
-import { getExtension } from '~/framework/util/file';
-import { assertPermissions } from '~/framework/util/permissions';
-
-import DeviceInfo from 'react-native-device-info';
 import { I18n } from '~/app/i18n';
 import { ImagePicked } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
+import { getExtension } from '~/framework/util/file';
+import { assertPermissions } from '~/framework/util/permissions';
+
 import { openDocument } from './actions';
 
 export interface IPickOptions {

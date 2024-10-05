@@ -1,6 +1,6 @@
 import { I18n } from '~/app/i18n';
-
 import { LocalFile } from '~/framework/util/fileHandler';
+
 import { MenuPickerActionProps } from './types';
 
 export default function documentAction(props: MenuPickerActionProps & { synchrone?: boolean }) {

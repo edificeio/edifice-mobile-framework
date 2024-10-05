@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 import theme from '~/app/theme';
 import { UI_SIZES, getScaleWidth } from '~/framework/components/constants';
 const diameter = getScaleWidth(200);

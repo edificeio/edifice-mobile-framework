@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { ImagePicked } from '~/framework/components/menus/actions';
 import { Trackers } from '~/framework/util/tracker';
 import { ContentUri } from '~/types/contentUri';
 
-import { ImagePicked } from '~/framework/components/menus/actions';
 import { ILocalAttachment } from './Attachment';
 import { AttachmentGroup } from './AttachmentGroup';
 import { AttachmentGroupImages } from './AttachmentGroupImages';

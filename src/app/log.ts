@@ -66,7 +66,7 @@ export namespace Log {
   }
 
   export async function contentsAsArray(): Promise<string[]> {
-    let logs: string[] = [];
+    const logs: string[] = [];
 
     try {
       const contents = await RNFS.readFile(logFilePath);
