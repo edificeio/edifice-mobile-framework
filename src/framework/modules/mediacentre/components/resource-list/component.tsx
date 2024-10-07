@@ -32,13 +32,13 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
     />
   );
 
-  const handlePressShowAll = () => openResourceList(resources, I18n.get(`mediacentre-sectiontype-${type}`));
+  const handlePressShowAll = () => openResourceList(resources, I18n.get(`mediacentre-section-${type}`));
 
   return (
     <View>
       <TouchableOpacity onPress={handlePressShowAll} style={styles.headerContainer}>
         {iconName ? <NamedSVG name={iconName} fill={theme.palette.primary.regular} width={20} /> : null}
-        <BodyText style={{ color: theme.palette.primary.regular }}>{I18n.get(`mediacentre-sectiontype-${type}`)}</BodyText>
+        <BodyText style={{ color: theme.palette.primary.regular }}>{I18n.get(`mediacentre-section-${type}`)}</BodyText>
         <NamedSVG name="ui-rafterRight" fill={theme.palette.primary.regular} width={20} height={20} />
       </TouchableOpacity>
       <FlatList

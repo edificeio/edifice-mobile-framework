@@ -37,7 +37,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
 
   const handleCopyLink = () => {
     Clipboard.setString(resource.link);
-    Toast.showInfo(I18n.get('mediacentre-home-linkcopied'));
+    Toast.showInfo(I18n.get('mediacentre-resourcecard-linkcopied'));
   };
 
   const renderCard = () => {
