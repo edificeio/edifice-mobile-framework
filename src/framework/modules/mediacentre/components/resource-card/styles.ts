@@ -35,6 +35,12 @@ export const defaultStyles = StyleSheet.create({
 });
 
 export const pinStyles = StyleSheet.create({
+  actionsContainer: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+    columnGap: UI_SIZES.spacing.minor,
+    marginTop: 'auto',
+  },
   rightContainer: {
     flex: 1,
     flexDirection: 'column',

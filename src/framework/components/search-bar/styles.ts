@@ -28,6 +28,8 @@ export default StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.minor,
     color: theme.ui.text.regular,
     ...TextSizeStyle.Medium,
+  },
+  textInputIOS: {
     lineHeight: 0, // fixes ios alignment
   },
 });

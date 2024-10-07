@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     paddingVertical: UI_SIZES.spacing.small,
   },
   bodyContainer: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     columnGap: UI_SIZES.spacing.minor,
@@ -96,8 +97,8 @@ export const getToggleStyle = (
           borderColor: isOpened
             ? theme.palette.primary.light
             : isItemSelected
-            ? theme.palette.grey.graphite
-            : theme.palette.grey.cloudy,
+              ? theme.palette.grey.graphite
+              : theme.palette.grey.cloudy,
         },
         style,
       ],

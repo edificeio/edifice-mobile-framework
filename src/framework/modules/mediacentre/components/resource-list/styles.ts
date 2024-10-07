@@ -16,4 +16,7 @@ export default StyleSheet.create({
     columnGap: UI_SIZES.spacing.small,
     padding: UI_SIZES.spacing.small,
   },
+  listFooterContainer: {
+    alignSelf: 'center',
+  },
 });

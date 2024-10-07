@@ -48,6 +48,14 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
           <View style={pinStyles.rightContainer}>
             <SmallText numberOfLines={1}>{resource.title}</SmallText>
             <CaptionText numberOfLines={2}>{resource.pinned_description}</CaptionText>
+            <View style={pinStyles.actionsContainer}>
+              <IconButton icon="ui-copy" color={theme.palette.primary.regular} action={handleCopyLink} />
+              <IconButton
+                icon="ui-star-filled"
+                color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
+                action={isFavorite ? onRemoveFavorite : onAddFavorite}
+              />
+            </View>
           </View>
         </TouchCardWithoutPadding>
       );

@@ -36,10 +36,6 @@ type BackendSearch = {
   };
 }[];
 
-export function compareResources(a: Resource, b: Resource) {
-  return a.title.localeCompare(b.title);
-}
-
 const transformArray = (array: string[] | [number, string][]): string[] =>
   array.map((value: string | [number, string]) => (Array.isArray(value) ? value[1] : value));
 

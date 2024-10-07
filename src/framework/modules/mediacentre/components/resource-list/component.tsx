@@ -3,6 +3,7 @@ import { TouchableOpacity, View } from 'react-native';
 
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
+import TertiaryButton from '~/framework/components/buttons/tertiary';
 import FlatList from '~/framework/components/list/flat-list';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText } from '~/framework/components/text';
@@ -46,6 +47,16 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
         renderItem={renderResource}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContentContainer}
+        ListFooterComponent={
+          resources.length >= 8 ? (
+            <TertiaryButton
+              text={I18n.get('mediacentre-home-resourcesection-action')}
+              iconRight="ui-rafterRight"
+              action={handlePressShowAll}
+            />
+          ) : null
+        }
+        ListFooterComponentStyle={styles.listFooterContainer}
       />
     </View>
   );

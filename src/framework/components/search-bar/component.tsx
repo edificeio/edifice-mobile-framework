@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { TextInput, TouchableOpacity } from 'react-native';
+import { Platform, TextInput, TouchableOpacity } from 'react-native';
 
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
@@ -44,7 +44,7 @@ export const SearchBar = (props: SearchBarProps) => {
         autoCorrect={false}
         inputMode="search"
         returnKeyType="search"
-        style={styles.textInput}
+        style={[styles.textInput, Platform.OS === 'ios' && styles.textInputIOS]}
       />
       {props.query.length ? <IconButton icon="ui-close" action={handleClear} style={styles.clearButton} /> : null}
     </TouchableOpacity>
