@@ -1,5 +1,5 @@
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -14,9 +14,12 @@ import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
 import { addFavoriteAction, removeFavoriteAction, searchResourcesAction } from '~/framework/modules/mediacentre/actions';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
-import { Resource } from '~/framework/modules/mediacentre/model';
+import ResourceFilterList from '~/framework/modules/mediacentre/components/resource-filter-list';
+import { Resource, ResourceFilters } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
+import { MediacentreFilterScreenNavParams } from '~/framework/modules/mediacentre/screens/filter';
+import { checkResourceMatchesFilters, getActiveFilterCount, getFilters } from '~/framework/modules/mediacentre/util/filter';
 import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
@@ -41,15 +44,27 @@ const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPriva
   const { params } = props.route;
   const [query, setQuery] = useState(params.query ?? '');
   const [isSearchActive, setSearchActive] = useState<boolean>(!!params.query);
+  const [filters, setFilters] = useState<ResourceFilters>(getFilters(params.resources));
 
-  const handleSearch = () => {
+  useEffect(() => {
+    if (isSearchActive) setFilters(getFilters(props.search));
+  }, [props.search]);
+
+  const handleSearch = async () => {
     setSearchActive(true);
-    props.trySearchResources(query);
+    const resources = await props.trySearchResources(query);
+    setFilters(getFilters(resources));
   };
 
   const handleClearSearch = () => {
-    if (!params.query) setSearchActive(false);
+    if (!params.query) {
+      setSearchActive(false);
+      setFilters(getFilters(params.resources));
+    }
   };
+
+  const openFilter = (navParams: MediacentreFilterScreenNavParams) =>
+    props.navigation.push(mediacentreRouteNames.filter, { ...navParams });
 
   const isResourceFavorite = (uid: string): boolean => props.favoriteUids.includes(uid);
 
@@ -95,21 +110,27 @@ const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPriva
   };
 
   const renderList = () => {
+    const resources = isSearchActive ? props.search : params.resources;
+
     return (
       <FlatList
-        data={isSearchActive ? props.search : params.resources}
+        data={getActiveFilterCount(filters) ? resources.filter(r => checkResourceMatchesFilters(r, filters)) : resources}
         renderItem={renderResource}
         contentContainerStyle={styles.listContentContainer}
         ListEmptyComponent={renderEmpty}
         ListHeaderComponent={
-          <SearchBar
-            placeholder={I18n.get('mediacentre-resourcelist-searchbar-placeholder')}
-            query={query}
-            onChangeQuery={setQuery}
-            onClear={handleClearSearch}
-            onSearch={handleSearch}
-          />
+          <>
+            <SearchBar
+              placeholder={I18n.get('mediacentre-resourcelist-searchbar-placeholder')}
+              query={query}
+              onChangeQuery={setQuery}
+              onClear={handleClearSearch}
+              onSearch={handleSearch}
+            />
+            <ResourceFilterList filters={filters} onChange={setFilters} openFilter={openFilter} />
+          </>
         }
+        ListHeaderComponentStyle={styles.listHeaderContainer}
       />
     );
   };

@@ -7,4 +7,8 @@ export default StyleSheet.create({
     rowGap: UI_SIZES.spacing.medium,
     padding: UI_SIZES.spacing.medium,
   },
+  listHeaderContainer: {
+    zIndex: 99,
+    rowGap: UI_SIZES.spacing.small,
+  },
 });

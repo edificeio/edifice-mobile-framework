@@ -14,8 +14,8 @@ type BackendResource = {
   url?: string;
   authors: string[];
   editors: string[];
-  disciplines: string[];
-  levels: string[];
+  disciplines?: string[] | [number, string][];
+  levels: string[] | [number, string][];
   user: string;
   favorite?: boolean;
   structure_uai?: string;
@@ -40,15 +40,14 @@ export function compareResources(a: Resource, b: Resource) {
   return a.title.localeCompare(b.title);
 }
 
-function transformArray(array: string[]) {
-  array = array.map(value => (Array.isArray(value) && value.length > 1 ? value[1] : value));
-  return array;
-}
+const transformArray = (array: string[] | [number, string][]): string[] =>
+  array.map((value: string | [number, string]) => (Array.isArray(value) ? value[1] : value));
 
 const resourceAdapter = (data: BackendResource): Resource => {
   const id = data._id ?? typeof data.id === 'number' ? data.id.toString() : data.id;
   return {
     authors: data.owner_name ?? data.authors,
+    disciplines: data.disciplines ? transformArray(data.disciplines) : [],
     editors: data.editors,
     id,
     image: data.image,
@@ -110,6 +109,7 @@ export const mediacentreService = {
       };
       const api = `/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`;
       const response = (await fetchJSONWithCache(api)) as BackendSearch;
+      if (response[0]?.status !== 'ok') return [];
       return response.flatMap(s => [...s.data.resources]).map(resourceAdapter);
     },
   },

@@ -6,6 +6,7 @@ export enum Source {
 
 export type Resource = {
   authors: string | string[];
+  disciplines: string[];
   editors: string[];
   id: string;
   image: string;
@@ -32,3 +33,15 @@ export enum SectionType {
   SIGNETS = 'signets',
   TEXTBOOKS = 'textbooks',
 }
+
+export type ResourceFilter = {
+  name: string;
+  isActive: boolean;
+};
+
+export type ResourceFilters = {
+  disciplines: ResourceFilter[];
+  levels: ResourceFilter[];
+  sources: ResourceFilter[];
+  types: ResourceFilter[];
+};
