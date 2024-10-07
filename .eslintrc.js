@@ -29,6 +29,7 @@ module.exports = {
   rules: {
     'prettier/prettier': ['warn'],
     '@typescript-eslint/naming-convention': ['error'],
+    '@typescript-eslint/no-explicit-any': 'off',
     'ft-flow/boolean-style': [2, 'boolean'],
     'import/extensions': [
       'error',
