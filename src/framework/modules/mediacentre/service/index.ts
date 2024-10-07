@@ -83,6 +83,7 @@ export const mediacentreService = {
     get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/global/resources';
       const response = (await fetchJSONWithCache(api)) as BackendSearch;
+      if (response[0]?.status !== 'ok') return [];
       return response.flatMap(s => [...s.data.resources]).map(resourceAdapter);
     },
   },
@@ -112,7 +113,8 @@ export const mediacentreService = {
   selectedStructure: {
     get: async (session: AuthActiveAccount) => {
       const api = `/userbook/preference/selectedStructure`;
-      const { preference } = (await fetchJSONWithCache(api)) as { preference: string };
+      const { preference } = (await fetchJSONWithCache(api)) as { preference?: string };
+      if (!preference) return null;
       return preference.replaceAll('"', '');
     },
     update: async (session: AuthActiveAccount, id: string) => {
