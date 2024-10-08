@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-03 15:03:56",
-  "notes": "feat(mediacentre): AMV2-645 add pins section, fetch resources by structure\nfeat(mediacentre): AMV2-652 add structure dropdown\nfeat(mediacentre): AMV2-649 enhance home screen, redirect to resource list on search\nfeat(mediacentre): simplify favorites, update state with actions handlers instead of refetch\nfeat(mediacentre): AMV2-644 add resource list screen\nfeat(mediacentre): render home screen using loader hook, remove sources parsing, regroup fetch actions\nfeat(mediacentre): AMV2-646 change resource sections logic, add resource list component\nrefactor(mediacentre): rename types\nrefactor(mediacentre): change home screen architecture\nfeat(mediacentre): AMV2-647 remove advanced search\nSquashed commit of the following:\nSquashed commit of the following:\nSquashed commit of the following:\nSquashed commit of the following:\nSquashed commit of the following:\nupdate(yarn): yarn cache update\nSquashed commit of the following:",
-  "version": "1.13.5-alpha.2(1130502)"
+  "last": "2024-10-08 16:42:17",
+  "notes": "feat(mediacentre): AMV2-645 add highlight text to pin resources\nfeat(mediacentre): AMV2-649 change section icons\nfix(mediacentre): AMV2-652 handle empty backend response on unset selected structure\nfeat(i18n): change mediacentre keys\nfeat(mediacentre): AMV2-646 add footer to resource list component\nfix(push): MB-2961, remove permissions check when unregistering FCM token\nfeat(mediacentre): AMV2-651 add resource list filtering\nchore(i18n): change phrase auto sync branch to dev/1.13.5\nSquashed commit of the following:\nrelease: 1.13.5-alpha.2(1130502)",
+  "version": "1.13.5-alpha.3(1130503)"
 }
