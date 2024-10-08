@@ -3,7 +3,6 @@ import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@reac
 import moment from 'moment';
 import React from 'react';
 import { Alert, AlertButton, Keyboard, Platform, StyleSheet } from 'react-native';
-import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -39,6 +38,7 @@ import { handleRemoveConfirmNavigationEvent } from '~/framework/navigation/helpe
 import { navBarOptions, navBarTitle } from '~/framework/navigation/navBar';
 import { IDistantFile, LocalFile, SyncedFileWithId } from '~/framework/util/fileHandler';
 import { IUploadCallbaks } from '~/framework/util/fileHandler/service';
+import { Asset } from '~/framework/util/fileHandler/types';
 import { isEmpty } from '~/framework/util/object';
 import { Trackers } from '~/framework/util/tracker';
 

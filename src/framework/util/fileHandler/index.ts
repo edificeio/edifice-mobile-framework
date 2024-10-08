@@ -1,26 +1,20 @@
 /**
  * File Manager
  */
+import ImageResizer, { Response } from '@bam.tech/react-native-image-resizer';
 import getPath from '@flyerhq/react-native-android-uri-path';
 import moment from 'moment';
 import { Alert, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import { DownloadDirectoryPath, UploadFileItem, copyFile, exists } from 'react-native-fs';
-import {
-  Asset,
-  CameraOptions,
-  ImagePickerResponse,
-  PhotoQuality,
-  launchCamera,
-  launchImageLibrary,
-} from 'react-native-image-picker';
+import ImagePicker, { Image } from 'react-native-image-crop-picker';
+import { assertPermissions } from '~/framework/util/permissions';
+import { Asset } from './types';
 
 import { I18n } from '~/app/i18n';
 import { ImagePicked } from '~/framework/components/menus/actions';
 import toast from '~/framework/components/toast';
-import { getExtension } from '~/framework/util/file';
-import { assertPermissions } from '~/framework/util/permissions';
 
 import { openDocument } from './actions';
 
@@ -37,25 +31,39 @@ namespace LocalFile {
 }
 
 export const IMAGE_MAX_DIMENSION = 1440;
-export const IMAGE_MAX_QUALITY: PhotoQuality = 0.8;
+export const IMAGE_MAX_QUALITY = 80;
 
-const compressionOptions = {
-  maxHeight: IMAGE_MAX_DIMENSION,
-  maxWidth: IMAGE_MAX_DIMENSION,
-  quality: IMAGE_MAX_QUALITY,
+const processImage = async (pic: Image) => {
+  try {
+    const response: Response = await ImageResizer.createResizedImage(
+      pic.path,
+      IMAGE_MAX_DIMENSION,
+      IMAGE_MAX_DIMENSION,
+      'JPEG',
+      IMAGE_MAX_QUALITY,
+      0,
+      undefined,
+      false,
+      {
+        mode: 'contain',
+        onlyScaleDown: false,
+      },
+    );
+    return {
+      ...response,
+      fileSize: response.size,
+      fileName: `${moment().format('YYYYMMDD-HHmmss')}.jpg`,
+      name: `${moment().format('YYYYMMDD-HHmmss')}.jpg`,
+      type: 'image/jpeg',
+      originalPath: response.path,
+    } as Asset;
+  } catch (err) {
+    console.error('Image resizing failed: ', (err as Error).message);
+  }
 };
 
-const renameAssets = (assets: Asset[], type: LocalFile.IPickOptionsType) => {
-  const prefix = moment().format('YYYYMMDD-HHmmss');
-  const renamedAssets = assets.map((asset, index) => {
-    let ext = getExtension(asset.fileName);
-    if (type === 'image') ext = '.jpg';
-    return {
-      ...asset,
-      fileName: `${prefix}${index > 0 ? `-${index}` : ''}${ext ?? ''}`,
-    };
-  });
-  return renamedAssets;
+const processImages = (pics: Image[]) => {
+  return Promise.all(pics.map(pic => processImage(pic)));
 };
 
 /**
@@ -113,30 +121,14 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
   }
 
   static async pickFromGallery(callback, multiple: boolean, synchrone, callbackOnce) {
-    let pickedFiles: (DocumentPickerResponse | Asset)[] = [];
+    let pickedFiles: Asset[] = [];
     try {
       await assertPermissions('galery.read');
-      await new Promise<void>((resolve, reject) => {
-        const callback = async (res: ImagePickerResponse) => {
-          if (res.didCancel) {
-            pickedFiles = [];
-            resolve();
-          } else if (!res.assets || res.errorCode) reject(res);
-          else {
-            pickedFiles = renameAssets(res.assets, 'image');
-            resolve();
-          }
-        };
-        launchImageLibrary(
-          {
-            mediaType: 'mixed',
-            selectionLimit: multiple ? 0 : 1,
-            presentationStyle: 'pageSheet',
-            ...compressionOptions,
-          },
-          callback,
-        );
+      const pics = await ImagePicker.openPicker({
+        multiple,
       });
+
+      pickedFiles = await processImages(pics);
 
       const res: LocalFile[] = pickedFiles.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
 
@@ -150,7 +142,8 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
       const images = res.filter(item => !item.filetype.startsWith('video/'));
 
       await this.imageCallback(images, callback, synchrone, callbackOnce);
-    } catch {
+    } catch (e) {
+      console.error(e);
       Alert.alert(
         I18n.get('gallery-readpermissionblocked-title'),
         I18n.get('gallery-readpermissionblocked-text', { appName: DeviceInfo.getApplicationName() }),
@@ -158,34 +151,16 @@ export class LocalFile implements LocalFile.CustomUploadFileItem {
     }
   }
 
-  static async pickFromCamera(callback, cameraOptions?: Omit<CameraOptions, 'mediaType'>, synchrone?, callbackOnce?) {
-    let pickedFile: (DocumentPickerResponse | Asset)[] = [];
+  static async pickFromCamera(callback, useFrontCamera?: boolean, synchrone?: boolean, callbackOnce?: boolean) {
     try {
+      let pickedFile: Asset[] = [];
       await assertPermissions('camera');
-      await new Promise<void>((resolve, reject) => {
-        const callback = async (res: ImagePickerResponse) => {
-          if (res.didCancel) {
-            pickedFile = [];
-            resolve();
-          } else if (!res.assets || res.errorCode) reject(res);
-          else {
-            pickedFile = renameAssets(res.assets, 'image');
-            resolve();
-          }
-        };
-        launchCamera(
-          {
-            mediaType: 'mixed',
-            presentationStyle: 'fullScreen',
-            saveToPhotos: false,
-            ...compressionOptions,
-            ...cameraOptions,
-          },
-          callback,
-        );
+      const pic = await ImagePicker.openCamera({
+        useFrontCamera,
       });
+      const compressPic = (await processImage(pic)) as Asset;
+      pickedFile = [compressPic];
       const image: LocalFile[] = pickedFile.map(f => new LocalFile(f, { _needIOSReleaseSecureAccess: false }));
-
       await this.imageCallback(image, callback, synchrone, callbackOnce);
     } catch {
       Alert.alert(

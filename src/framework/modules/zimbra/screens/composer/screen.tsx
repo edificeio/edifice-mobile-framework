@@ -2,7 +2,6 @@ import { CommonActions, NavigationProp, ParamListBase, UNSTABLE_usePreventRemove
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { Alert, Platform, ScrollView, TextInput, View } from 'react-native';
-import { Asset } from 'react-native-image-picker';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -34,6 +33,7 @@ import { tryAction } from '~/framework/util/redux/actions';
 import { Trackers } from '~/framework/util/tracker';
 import HtmlContentView from '~/ui/HtmlContentView';
 
+import { Asset } from '~/framework/util/fileHandler/types';
 import styles from './styles';
 import { ZimbraComposerScreenDispatchProps, ZimbraComposerScreenPrivateProps } from './types';
 
