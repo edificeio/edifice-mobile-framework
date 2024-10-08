@@ -173,8 +173,8 @@ export default connect(
       sections: [
         { type: SectionType.PINS, resources: resources.data.pins },
         { type: SectionType.FAVORITES, resources: favorites.data, iconName: 'ui-star-filled' },
-        { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-book' },
-        { type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-class' },
+        { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-toga' },
+        { type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-laptop' },
         { type: SectionType.SIGNETS, resources: resources.data.signets, iconName: 'ui-bookmark' },
       ].filter(section => section.resources.length),
       selectedStructure: selectedStructure.data,
