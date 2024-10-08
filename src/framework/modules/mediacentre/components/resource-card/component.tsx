@@ -7,6 +7,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
+import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
 import { getSession } from '~/framework/modules/auth/reducer';
@@ -44,18 +45,28 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
     if (variant === 'pin')
       return (
         <TouchCardWithoutPadding onPress={handlePress} style={pinStyles.mainContainer}>
-          <Image source={{ uri: resource.image }} style={pinStyles.imageContainer} resizeMode="contain" />
-          <View style={pinStyles.rightContainer}>
-            <SmallText numberOfLines={1}>{resource.title}</SmallText>
-            <CaptionText numberOfLines={2}>{resource.pinned_description}</CaptionText>
-            <View style={pinStyles.actionsContainer}>
-              <IconButton icon="ui-copy" color={theme.palette.primary.regular} action={handleCopyLink} />
-              <IconButton
-                icon="ui-star-filled"
-                color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
-                action={isFavorite ? onRemoveFavorite : onAddFavorite}
-              />
+          <View style={pinStyles.topContainer}>
+            <Image source={{ uri: resource.image }} style={pinStyles.imageContainer} resizeMode="contain" />
+            <View style={pinStyles.rightContainer}>
+              <SmallText numberOfLines={1}>{resource.title}</SmallText>
+              {resource.pinnedDescription ? <CaptionText numberOfLines={2}>{resource.pinnedDescription}</CaptionText> : null}
             </View>
+          </View>
+          <View style={pinStyles.lowerContainer}>
+            {!resource.highlightPin ? (
+              <View style={pinStyles.highlightContainer}>
+                <NamedSVG name="ui-sparkle" fill={theme.ui.text.light} width={12} height={12} />
+                <CaptionText numberOfLines={1} style={pinStyles.lightText}>
+                  {I18n.get('mediacentre-resourcecard-highlight')}
+                </CaptionText>
+              </View>
+            ) : null}
+            <IconButton icon="ui-copy" color={theme.palette.primary.regular} action={handleCopyLink} />
+            <IconButton
+              icon="ui-star-filled"
+              color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
+              action={isFavorite ? onRemoveFavorite : onAddFavorite}
+            />
           </View>
         </TouchCardWithoutPadding>
       );

@@ -16,7 +16,8 @@ export type Resource = {
   title: string;
   types: string[];
   uid: string;
-  pinned_description?: string;
+  pinnedDescription?: string;
+  highlightPin?: boolean;
 };
 
 export type MediacentreResources = {

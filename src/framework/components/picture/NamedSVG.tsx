@@ -129,6 +129,7 @@ const imports = {
   }),
   'ui-skills': async () => import('ASSETS/icons/uiIcons/skills.svg'),
   'ui-smartphone': async () => import('ASSETS/icons/uiIcons/smartphone.svg'),
+  'ui-sparkle': async () => import('ASSETS/icons/uiIcons/sparkle.svg'),
   'ui-star-filled': async () => import('ASSETS/icons/uiIcons/star-filled.svg'),
   'ui-subscript': async () => import('ASSETS/icons/uiIcons/subscript.svg'),
   'ui-success_fill': async () => import('ASSETS/icons/uiIcons/success_fill.svg'),

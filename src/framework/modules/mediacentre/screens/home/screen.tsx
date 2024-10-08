@@ -138,6 +138,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
             <View style={styles.listHeaderContainer}>
               {props.structures.length > 1 ? (
                 <DropdownPicker
+                  variant="standard"
                   open={isDropdownOpen}
                   value={selectedStructureId}
                   items={props.structures.map(s => ({ label: s.name.trim(), value: s.id }))}
@@ -155,6 +156,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
             </View>
           }
           ListHeaderComponentStyle={styles.listHeaderZIndex}
+          contentContainerStyle={styles.listContentContainer}
         />
       </PageView>
     );
@@ -171,7 +173,7 @@ export default connect(
     return {
       favoriteUids: favorites.data.map(r => r.uid),
       sections: [
-        { type: SectionType.PINS, resources: resources.data.pins },
+        { type: SectionType.PINS, resources: resources.data.pins, iconName: 'ui-flag' },
         { type: SectionType.FAVORITES, resources: favorites.data, iconName: 'ui-star-filled' },
         { type: SectionType.TEXTBOOKS, resources: resources.data.textbooks, iconName: 'ui-toga' },
         { type: SectionType.EXTERNAL_RESOURCES, resources: resources.data.externals, iconName: 'ui-laptop' },

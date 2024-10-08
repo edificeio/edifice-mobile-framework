@@ -5,7 +5,7 @@ import { getScaleWidth, UI_SIZES } from '~/framework/components/constants';
 
 export const DEFAULT_CARD_MIN_HEIGHT = getScaleWidth(60);
 export const PIN_CARD_HEIGHT = getScaleWidth(100);
-export const PIN_CARD_WIDTH = getScaleWidth(180);
+export const PIN_CARD_WIDTH = getScaleWidth(190);
 export const PREVIEW_CARD_WIDTH = getScaleWidth(120);
 
 export const defaultStyles = StyleSheet.create({
@@ -35,24 +35,36 @@ export const defaultStyles = StyleSheet.create({
 });
 
 export const pinStyles = StyleSheet.create({
-  actionsContainer: {
+  highlightContainer: {
     flexDirection: 'row',
-    alignSelf: 'flex-end',
+    flexShrink: 1,
+    alignItems: 'center',
+    columnGap: UI_SIZES.spacing.tiny,
+    marginRight: 'auto',
+  },
+  imageContainer: {
+    width: getScaleWidth(60),
+  },
+  lightText: {
+    flexShrink: 1,
+    color: theme.ui.text.light,
+  },
+  lowerContainer: {
+    flexDirection: 'row',
     columnGap: UI_SIZES.spacing.minor,
-    marginTop: 'auto',
+  },
+  mainContainer: {
+    width: PIN_CARD_WIDTH,
+    height: PIN_CARD_HEIGHT,
+    padding: UI_SIZES.spacing.minor,
   },
   rightContainer: {
     flex: 1,
     flexDirection: 'column',
   },
-  imageContainer: {
-    width: getScaleWidth(60),
-  },
-  mainContainer: {
+  topContainer: {
+    flex: 1,
     flexDirection: 'row',
-    width: PIN_CARD_WIDTH,
-    height: PIN_CARD_HEIGHT,
-    padding: UI_SIZES.spacing.minor,
     columnGap: UI_SIZES.spacing.minor,
   },
 });
