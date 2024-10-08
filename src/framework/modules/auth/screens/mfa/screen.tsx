@@ -42,6 +42,7 @@ import {
   AuthMFAScreenPrivateProps,
   AuthMFAScreenStoreProps,
   CodeState,
+  MFATestIds,
   PageTexts,
   ResendResponse,
 } from './types';
@@ -156,6 +157,33 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           messageSent: `${I18n.get('auth-mfa-message-sent')} ${mobile}.`,
           resendToast: I18n.get('auth-mfa-toast'),
           title: I18n.get('auth-mfa-title'),
+        };
+
+  const testIds: MFATestIds = isEmailMFA
+    ? {
+        title: 'email-code-title',
+        subtitle: 'email-code-subtitle',
+        code: 'email-code',
+        codeError: 'email-code-error',
+        codeIssues: 'email-code-issues',
+        resend: 'email-code-send-again',
+      }
+    : isMobileMFA
+      ? {
+          title: 'phone-code-title',
+          subtitle: 'phone-code-subtitle',
+          code: 'phone-code',
+          codeError: 'phone-code-error',
+          codeIssues: 'phone-code-issues',
+          resend: 'phone-code-send-again',
+        }
+      : {
+          title: '',
+          subtitle: '',
+          code: '',
+          codeError: '',
+          codeIssues: '',
+          resend: '',
         };
 
   const setResendTimer = () => {
@@ -308,14 +336,14 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
               />
             )}
           </View>
-          <HeadingSText style={styles.title} testID="email-code-title">
+          <HeadingSText style={styles.title} testID={testIds.title}>
             {texts.title}
           </HeadingSText>
-          <View testID="email-code-subtitle">
+          <View testID={testIds.subtitle}>
             <SmallText style={styles.contentSent}>{texts.messageSent}</SmallText>
             <SmallText style={styles.content}>{texts.message}</SmallText>
           </View>
-          <View pointerEvents="box-none" style={styles.codeFieldContainer} testID="email-code">
+          <View pointerEvents="box-none" style={styles.codeFieldContainer} testID={testIds.code}>
             <CodeField
               {...codeFieldProps}
               ref={codeFieldRef}
@@ -363,7 +391,7 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
                   width={33}
                   height={33}
                 />
-                <BodyText style={[styles.codeStateText, { color: codeStateColor }]} testID="email-code-error">
+                <BodyText style={[styles.codeStateText, { color: codeStateColor }]} testID={testIds.codeError}>
                   {texts.feedback}
                 </BodyText>
               </>
@@ -371,14 +399,14 @@ const AuthMFAScreen = (props: AuthMFAScreenPrivateProps) => {
           </View>
         </View>
         <View style={styles.resendContainer}>
-          <SmallText style={styles.issueText} testID="email-code-issues">
+          <SmallText style={styles.issueText} testID={testIds.codeIssues}>
             {I18n.get('auth-mfa-issue')}
           </SmallText>
           <TouchableOpacity
             style={[styles.resendButton, { opacity: resendOpacity }]}
             disabled={isResendInactive}
             onPress={onResendCode}
-            testID="email-code-send-again">
+            testID={testIds.resend}>
             <Picture
               type="NamedSvg"
               name="pictos-redo"
