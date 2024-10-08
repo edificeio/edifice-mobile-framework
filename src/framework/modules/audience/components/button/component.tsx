@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import DefaultButton from '~/framework/components/buttons/default';
-import { UI_SIZES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { ScrollContext } from '~/framework/components/scrollView';
 import { CaptionBoldText } from '~/framework/components/text';
@@ -16,27 +15,19 @@ import styles from './styles';
 import { AudienceReactButtonAllProps } from './types';
 
 const REACTION_ICON_SIZE = 30;
-const HEIGHT_VIEW_REACTIONS = REACTION_ICON_SIZE + UI_SIZES.spacing.medium * 2 + UI_SIZES.border.thin * 2;
-
-enum OpenReactionsMode {
-  MODAL,
-  STANDARD,
-}
+const HEIGHT_VIEW_REACTIONS = REACTION_ICON_SIZE + styles.reactionsIcon.paddingVertical * 2 + styles.reactions.borderWidth * 2;
+const WIDTH_ONE_REACTION = REACTION_ICON_SIZE + styles.reactionsIcon.paddingHorizontal * 2;
+const WIDTH_VIEW_REACTIONS = WIDTH_ONE_REACTION * 4 + styles.reactions.borderWidth * 2;
 
 const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
   const { userReaction } = props;
-  const [isOpen, setIsOpen] = React.useState<OpenReactionsMode | undefined>(undefined);
-  const [isLongTouch, setIsLongTouch] = React.useState<boolean>(false);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [itemSelected, setItemSelected] = React.useState<null | string>(null);
+  const [longPressTimeout, setLongPressTimeout] = React.useState(null);
 
-  //View reactions component infos
   let component = React.useRef(null);
-  const [cHeight, setHeight] = React.useState<number>(0);
-  const [cWidth, setWidth] = React.useState<number>(0);
   const [cPageX, setPageX] = React.useState<number>(0);
   const [cPageY, setPageY] = React.useState<number>(0);
-
-  const [reactionWidth, setReactionWidth] = React.useState<number>(0);
 
   const scrollRef = React.useContext(ScrollContext);
   const opacityBlocReactions = React.useRef(new Animated.Value(0)).current;
@@ -56,10 +47,10 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     };
     return acc;
   }, {});
-  const numberOfReactions = props.validReactionTypes.length;
 
-  const showReactions = (mode: OpenReactionsMode) => {
-    setIsOpen(mode);
+  const showReactions = () => {
+    setIsOpen(true);
+
     Animated.timing(opacityBlocReactions, {
       toValue: 1,
       duration: 150,
@@ -108,7 +99,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
         useNativeDriver: true,
       }).start();
     }, 200);
-    setTimeout(() => setIsOpen(undefined), 400);
+    setTimeout(() => setIsOpen(false), 400);
   };
 
   const animReactButton = () => {
@@ -126,9 +117,10 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     ]).start();
   };
 
-  const openReactions = (mode: OpenReactionsMode) => {
+  const openReactions = () => {
+    setLongPressTimeout(null);
     Feedback.actionDone();
-    if (!isOpen) showReactions(mode);
+    if (!isOpen) showReactions();
     else hideReactions();
   };
 
@@ -233,12 +225,12 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     onPanResponderMove: (evt, gestureState) => {
       if (
         gestureState.moveY >= cPageY &&
-        gestureState.moveY <= cPageY + cHeight &&
+        gestureState.moveY <= cPageY + HEIGHT_VIEW_REACTIONS &&
         gestureState.moveX >= cPageX &&
-        gestureState.moveX <= cPageX + cWidth
+        gestureState.moveX <= cPageX + WIDTH_VIEW_REACTIONS
       ) {
         const x = gestureState.moveX - cPageX;
-        const targetIndex = Math.floor(x / reactionWidth);
+        const targetIndex = Math.floor(x / WIDTH_ONE_REACTION);
 
         zoomOnItem(props.validReactionTypes[targetIndex]);
       } else {
@@ -257,29 +249,22 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     },
   });
 
-  let timerLongTouch;
-
   const onTouchStartButton = () => {
+    if (isOpen) return;
     component.measure((x, y, width, height, pageX, pageY) => {
-      setHeight(height);
-      setWidth(width);
       setPageX(pageX);
-      setPageY(pageY);
-      setReactionWidth(width / numberOfReactions);
+      setPageY(pageY - HEIGHT_VIEW_REACTIONS);
     });
-    timerLongTouch = setTimeout(() => {
-      setIsLongTouch(true);
-      openReactions(OpenReactionsMode.STANDARD);
-    }, 500);
+    const timerLongTouch = setTimeout(() => {
+      openReactions();
+    }, 300);
+    setLongPressTimeout(timerLongTouch);
   };
   const onTouchEndButton = () => {
-    if (!isLongTouch) {
-      clearTimeout(timerLongTouch);
+    if (longPressTimeout) {
+      clearTimeout(longPressTimeout);
       if (userReaction) deleteReaction();
-      else openReactions(OpenReactionsMode.MODAL);
-    } else {
-      hideReactions();
-      setIsLongTouch(false);
+      else openReactions();
     }
   };
 
@@ -287,15 +272,15 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
     return (
       <Animated.View
         style={[styles.buttonView, { transform: [{ scale: scaleReactionButton }] }]}
-        onTouchStart={!isOpen ? onTouchStartButton : () => {}}
+        onTouchStart={onTouchStartButton}
         onTouchEnd={onTouchEndButton}
+        ref={view => (component = view)}
         {...panResponder.panHandlers}>
         <DefaultButton
           text={I18n.get(userReaction ? `audience-${userReaction.toLowerCase()}` : 'audience-reactbutton')}
           iconLeft={userReaction ? userReaction.toLowerCase() : 'ui-reaction'}
           contentColor={theme.palette.grey.black}
           style={styles.button}
-          action={() => {}}
         />
       </Animated.View>
     );
@@ -303,17 +288,15 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
 
   return (
     <View>
-      <Modal transparent animationType="fade" visible={isOpen === OpenReactionsMode.MODAL} onRequestClose={hideReactions}>
+      <Modal transparent animationType="fade" visible={isOpen} onRequestClose={hideReactions}>
         <TouchableOpacity style={styles.flex1} activeOpacity={1} onPress={hideReactions}>
           <Animated.View
-            ref={view => (component = view)}
             style={[
               styles.reactions,
               {
                 opacity: opacityBlocReactions,
                 top: cPageY,
                 left: cPageX,
-                backgroundColor: theme.palette.complementary.red.dark,
               },
             ]}>
             {props.validReactionTypes.map((reaction, i) => {
@@ -327,7 +310,7 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
                     style={[
                       styles.reactionsTextView,
                       {
-                        left: i * (cWidth / 4),
+                        left: i * (WIDTH_VIEW_REACTIONS / 4),
                         opacity: animationReactions[reaction].textOpacity,
                       },
                     ]}>
@@ -353,52 +336,6 @@ const AudienceReactButton = (props: AudienceReactButtonAllProps) => {
           </Animated.View>
         </TouchableOpacity>
       </Modal>
-      <Animated.View
-        ref={view => (component = view)}
-        style={[
-          styles.reactions,
-          {
-            opacity: isOpen === OpenReactionsMode.STANDARD ? opacityBlocReactions : 0,
-            top: -HEIGHT_VIEW_REACTIONS,
-            pointerEvents: isOpen ? 'auto' : 'none',
-            backgroundColor: theme.palette.complementary.blue.dark,
-          },
-        ]}>
-        {props.validReactionTypes.map((reaction, i) => {
-          const rotate = animationReactions[reaction].rotate.interpolate({
-            inputRange: [-6, 0, 6],
-            outputRange: ['-6deg', '0deg', '6deg'],
-          });
-          return (
-            <>
-              <Animated.View
-                style={[
-                  styles.reactionsTextView,
-                  {
-                    left: i * (cWidth / numberOfReactions),
-                    opacity: animationReactions[reaction].textOpacity,
-                  },
-                ]}>
-                <CaptionBoldText style={styles.reactionsText}>{I18n.get(`audience-${reaction.toLowerCase()}`)}</CaptionBoldText>
-              </Animated.View>
-              <Animated.View
-                key={reaction}
-                style={{
-                  transform: [
-                    { translateY: animationReactions[reaction].transform },
-                    { scale: animationReactions[reaction].scale },
-                    { rotate },
-                  ],
-                  opacity: animationReactions[reaction].opacity,
-                }}>
-                <TouchableOpacity style={styles.reactionsIcon} onPress={() => postReaction(reaction)}>
-                  <NamedSVG name={reaction.toLowerCase()} width={REACTION_ICON_SIZE} height={REACTION_ICON_SIZE} />
-                </TouchableOpacity>
-              </Animated.View>
-            </>
-          );
-        })}
-      </Animated.View>
       {renderReactButton()}
     </View>
   );
