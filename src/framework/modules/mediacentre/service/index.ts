@@ -116,8 +116,10 @@ export const mediacentreService = {
       };
       const api = `/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`;
       const response = (await fetchJSONWithCache(api)) as BackendSearch;
-      if (response[0]?.status !== 'ok') return [];
-      return response.flatMap(s => [...s.data.resources]).map(resourceAdapter);
+      return response
+        .filter(r => r.status === 'ok')
+        .flatMap(s => [...s.data.resources])
+        .map(resourceAdapter);
     },
   },
   selectedStructure: {

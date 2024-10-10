@@ -91,6 +91,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
         query,
         resources: [],
       });
+      setQuery('');
     }
   };
 
