@@ -151,6 +151,7 @@ const imports = {
   'ui-user': async () => import('ASSETS/icons/uiIcons/user.svg'),
   'ui-users': async () => import('ASSETS/icons/uiIcons/users.svg'),
   'ui-userSearch': async () => import('ASSETS/icons/uiIcons/userSearch.svg'),
+  'ui-userSearchColorized': async () => import('ASSETS/icons/uiIcons/userSearchColorized.svg'),
   'ui-video': async () => import('ASSETS/icons/uiIcons/video.svg'),
   'ui-walk': async () => import('ASSETS/icons/uiIcons/walk.svg'),
   'ui-warning': async () => import('ASSETS/icons/uiIcons/warning.svg'),
