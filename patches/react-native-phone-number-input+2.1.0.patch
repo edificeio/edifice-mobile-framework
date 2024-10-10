@@ -174,7 +174,6 @@ index b89c388..f3151cf 100644
 +    return undefined;
 +  }
 +};
-\ No newline at end of file
 diff --git a/node_modules/react-native-phone-number-input/lib/styles.d.ts b/node_modules/react-native-phone-number-input/lib/styles.d.ts
 index c6bd19e..4fc1080 100644
 --- a/node_modules/react-native-phone-number-input/lib/styles.d.ts

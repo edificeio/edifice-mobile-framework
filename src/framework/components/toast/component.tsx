@@ -134,6 +134,7 @@ function ToastCard(params: ToastParams) {
       shadow
       style={styles.container}
       icon={params.props.picture}
+      testID={params.props.testID}
     />
   );
 }
