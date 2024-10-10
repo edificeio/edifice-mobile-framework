@@ -7,6 +7,7 @@ export type ResourceSection = {
 };
 
 export type ResourceListProps = ResourceSection & {
+  disableShowAll?: boolean;
   isResourceFavorite: (uid: string) => boolean;
   onAddFavorite: (resource: Resource) => void;
   onRemoveFavorite: (resource: Resource) => void;

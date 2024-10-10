@@ -14,6 +14,7 @@ import styles from './styles';
 import { ResourceListProps } from './types';
 
 const ResourceList: React.FunctionComponent<ResourceListProps> = ({
+  disableShowAll = false,
   resources,
   type,
   iconName,
@@ -22,6 +23,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   onRemoveFavorite,
   openResourceList,
 }) => {
+  const headingColor = disableShowAll ? theme.ui.text.regular : theme.palette.primary.regular;
   const renderResource = ({ item }: { item: Resource }) => (
     <ResourceCard
       variant={type === SectionType.PINS ? 'pin' : 'preview'}
@@ -36,10 +38,10 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
 
   return (
     <View>
-      <TouchableOpacity onPress={handlePressShowAll} style={styles.headerContainer}>
-        {iconName ? <NamedSVG name={iconName} fill={theme.palette.primary.regular} width={20} /> : null}
-        <BodyText style={{ color: theme.palette.primary.regular }}>{I18n.get(`mediacentre-section-${type}`)}</BodyText>
-        <NamedSVG name="ui-rafterRight" fill={theme.palette.primary.regular} width={20} height={20} />
+      <TouchableOpacity onPress={handlePressShowAll} disabled={disableShowAll} style={styles.headerContainer}>
+        {iconName ? <NamedSVG name={iconName} fill={headingColor} width={20} /> : null}
+        <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-section-${type}`)}</BodyText>
+        {!disableShowAll ? <NamedSVG name="ui-rafterRight" fill={headingColor} width={20} height={20} /> : null}
       </TouchableOpacity>
       <FlatList
         horizontal
@@ -48,7 +50,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContentContainer}
         ListFooterComponent={
-          resources.length >= 8 ? (
+          resources.length >= 8 && !disableShowAll ? (
             <TertiaryButton
               text={I18n.get('mediacentre-home-resourcesection-action')}
               iconRight="ui-rafterRight"

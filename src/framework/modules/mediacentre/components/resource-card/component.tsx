@@ -7,6 +7,7 @@ import { I18n } from '~/app/i18n';
 import theme from '~/app/theme';
 import IconButton from '~/framework/components/buttons/icon';
 import { TouchCardWithoutPadding } from '~/framework/components/card/base';
+import { UI_STYLES } from '~/framework/components/constants';
 import { NamedSVG } from '~/framework/components/picture';
 import { BodyText, CaptionText, SmallText } from '~/framework/components/text';
 import Toast from '~/framework/components/toast';
@@ -49,7 +50,11 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
             <Image source={{ uri: resource.image }} style={pinStyles.imageContainer} resizeMode="contain" />
             <View style={pinStyles.rightContainer}>
               <SmallText numberOfLines={1}>{resource.title}</SmallText>
-              {resource.pinnedDescription ? <CaptionText numberOfLines={2}>{resource.pinnedDescription}</CaptionText> : null}
+              {resource.pinnedDescription ? (
+                <CaptionText numberOfLines={2} style={UI_STYLES.flexShrink1}>
+                  {resource.pinnedDescription}
+                </CaptionText>
+              ) : null}
             </View>
           </View>
           <View style={pinStyles.lowerContainer}>

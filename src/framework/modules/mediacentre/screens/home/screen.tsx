@@ -24,6 +24,7 @@ import {
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
 import ResourceList from '~/framework/modules/mediacentre/components/resource-list';
+import { ResourceSection } from '~/framework/modules/mediacentre/components/resource-list/types';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
@@ -124,16 +125,17 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
       <PageView>
         <FlatList
           data={props.sections}
-          keyExtractor={item => item.sectionKey}
-          renderItem={({ item }) => (
+          renderItem={({ item }: { item: ResourceSection }) => (
             <ResourceList
               {...item}
+              disableShowAll={item.type === SectionType.PINS}
               isResourceFavorite={isResourceFavorite}
               onAddFavorite={handleAddFavorite}
               onRemoveFavorite={handleRemoveFavorite}
               openResourceList={openResourceList}
             />
           )}
+          keyExtractor={(item: ResourceSection) => item.type}
           ListEmptyComponent={renderEmpty()}
           ListHeaderComponent={
             <View style={styles.listHeaderContainer}>
