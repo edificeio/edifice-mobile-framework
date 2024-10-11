@@ -26,6 +26,7 @@ type BackendResource = {
   levels: string[] | [number, string][];
   user: string;
   favorite?: boolean;
+  is_textbook?: boolean;
   structure_uai?: string;
   orientation?: boolean;
   owner_id?: string;
@@ -57,6 +58,7 @@ const resourceAdapter = (data: BackendResource): Resource => {
     highlightPin: data.structure_owner ? mainStructureIds.includes(data.structure_owner) : false,
     id,
     image: data.image,
+    isTextbook: data.is_textbook,
     levels: transformArray(data.levels),
     link: (data.link ?? data.url) as string,
     pinnedDescription: data.pinned_description,

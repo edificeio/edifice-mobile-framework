@@ -16,6 +16,7 @@ export type Resource = {
   title: string;
   types: string[];
   uid: string;
+  isTextbook?: boolean;
   pinnedDescription?: string;
   highlightPin?: boolean;
 };
