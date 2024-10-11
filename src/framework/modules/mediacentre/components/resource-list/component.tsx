@@ -24,6 +24,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   openResourceList,
 }) => {
   const headingColor = disableShowAll ? theme.ui.text.regular : theme.palette.primary.regular;
+
   const renderResource = ({ item }: { item: Resource }) => (
     <ResourceCard
       variant={type === SectionType.PINS ? 'pin' : 'preview'}
@@ -34,13 +35,13 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
     />
   );
 
-  const handlePressShowAll = () => openResourceList(resources, I18n.get(`mediacentre-section-${type}`));
+  const handlePressShowAll = () => openResourceList(resources, I18n.get(`mediacentre-resourcelist-section-${type}`));
 
   return (
     <View>
       <TouchableOpacity onPress={handlePressShowAll} disabled={disableShowAll} style={styles.headerContainer}>
         {iconName ? <NamedSVG name={iconName} fill={headingColor} width={20} /> : null}
-        <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-section-${type}`)}</BodyText>
+        <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-home-section-${type}`)}</BodyText>
         {!disableShowAll ? <NamedSVG name="ui-rafterRight" fill={headingColor} width={20} height={20} /> : null}
       </TouchableOpacity>
       <FlatList
