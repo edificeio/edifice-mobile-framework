@@ -39,6 +39,15 @@ type BackendSearch = {
   };
 }[];
 
+type BackendGlobalResources = {
+  event: string;
+  state: string;
+  status: string;
+  data: {
+    global: BackendResource[];
+  };
+};
+
 const transformArray = (array: string[] | [number, string][]): string[] =>
   array.map((value: string | [number, string]) => (Array.isArray(value) ? value[1] : value));
 
@@ -93,9 +102,9 @@ export const mediacentreService = {
   globalResources: {
     get: async (session: AuthActiveAccount) => {
       const api = '/mediacentre/global/resources';
-      const response = (await fetchJSONWithCache(api)) as BackendSearch;
-      if (response[0]?.status !== 'ok') return [];
-      return response.flatMap(s => [...s.data.resources]).map(resourceAdapter);
+      const response = (await fetchJSONWithCache(api)) as BackendGlobalResources;
+      if (response.status !== 'ok') return [];
+      return response.data.global.map(resourceAdapter);
     },
   },
   pins: {
