@@ -2,14 +2,6 @@ import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { Resource, Source } from '~/framework/modules/mediacentre/model';
 import { fetchJSONWithCache, signedFetch } from '~/infra/fetchWithCache';
 
-const mainStructureIds = [
-  '80231ab1-bed5-427d-ba36-f1929b2d6a7e',
-  '3201efe3-9d35-43b5-b858-9a0f73356f8d',
-  '045402fd-0f7b-4e25-9f18-17544c74c238',
-  '0b2c3691-71be-46c8-b28d-14f1daec46ed',
-  '319622be-f4de-4e66-b7b8-1aa2f5262e66',
-];
-
 type BackendResource = {
   id: string | number;
   _id?: string;
@@ -25,15 +17,16 @@ type BackendResource = {
   disciplines?: string[] | [number, string][];
   levels: string[] | [number, string][];
   user: string;
+  archived?: boolean;
   favorite?: boolean;
   is_textbook?: boolean;
+  is_parent?: boolean;
   structure_uai?: string;
   orientation?: boolean;
   owner_id?: string;
   owner_name?: string;
   pinned_title?: string;
   pinned_description?: string;
-  structure_owner?: string;
 };
 
 type BackendSearch = {
@@ -55,16 +48,22 @@ const resourceAdapter = (data: BackendResource): Resource => {
     authors: data.owner_name ?? data.authors,
     disciplines: data.disciplines ? transformArray(data.disciplines) : [],
     editors: data.editors,
-    highlightPin: data.structure_owner ? mainStructureIds.includes(data.structure_owner) : false,
     id,
     image: data.image,
+    isParent: data.is_parent,
     isTextbook: data.is_textbook,
     levels: transformArray(data.levels),
     link: (data.link ?? data.url) as string,
     pinnedDescription: data.pinned_description,
     source: data.source ?? Source.SIGNET,
+    themes:
+      data.source === Source.SIGNET
+        ? data.orientation || data.document_types?.includes('Orientation')
+          ? ['Orientation et découverte des métiers']
+          : ['Sans thématique']
+        : undefined,
     title: data.pinned_title ?? data.title,
-    types: data.document_types ?? ['livre numérique'],
+    types: data.document_types?.filter(value => value !== 'Orientation') ?? ['livre numérique'],
     uid: data.structure_uai ? data.id + data.structure_uai : id,
   };
 };
@@ -150,7 +149,9 @@ export const mediacentreService = {
       };
       const signets = response.data.signets.resources;
       const mysignets = (await fetchJSONWithCache('/mediacentre/mysignets')) as BackendResource[];
-      return signets.concat(mysignets.filter(ms => !signets.some(s => s.id === ms.id.toString()))).map(resourceAdapter);
+      return signets
+        .concat(mysignets.filter(ms => !signets.some(s => s.id === ms.id.toString()) && !ms.archived))
+        .map(resourceAdapter);
     },
   },
   textbooks: {

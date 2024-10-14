@@ -79,10 +79,10 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     }
   };
 
-  const openResourceList = (resources: Resource[], title: string) =>
+  const openResourceList = (resources: Resource[], section: SectionType) =>
     props.navigation.push(mediacentreRouteNames.resourceList, {
       resources,
-      title,
+      section,
     });
 
   const handleSearch = () => {

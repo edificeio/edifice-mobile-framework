@@ -16,9 +16,10 @@ export type Resource = {
   title: string;
   types: string[];
   uid: string;
+  isParent?: boolean;
   isTextbook?: boolean;
   pinnedDescription?: string;
-  highlightPin?: boolean;
+  themes?: string[];
 };
 
 export type MediacentreResources = {
@@ -45,5 +46,6 @@ export type ResourceFilters = {
   disciplines: ResourceFilter[];
   levels: ResourceFilter[];
   sources: ResourceFilter[];
+  themes: ResourceFilter[];
   types: ResourceFilter[];
 };

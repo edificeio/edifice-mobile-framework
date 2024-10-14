@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { AuthActiveAccount } from '~/framework/modules/auth/model';
 import { addFavoriteAction, removeFavoriteAction, searchResourcesAction } from '~/framework/modules/mediacentre/actions';
-import { Resource } from '~/framework/modules/mediacentre/model';
+import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 
 export interface MediacentreResourceListScreenDispatchProps {
@@ -14,7 +14,7 @@ export interface MediacentreResourceListScreenDispatchProps {
 export interface MediacentreResourceListScreenNavParams {
   resources: Resource[];
   query?: string;
-  title?: string;
+  section?: SectionType;
 }
 
 export interface MediacentreResourceListScreenProps {}

@@ -68,7 +68,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
             </View>
           </View>
           <View style={pinStyles.lowerContainer}>
-            {!resource.highlightPin ? (
+            {resource.isParent ? (
               <View style={pinStyles.highlightContainer}>
                 <NamedSVG name="ui-sparkle" fill={theme.ui.text.light} width={12} height={12} />
                 <CaptionText numberOfLines={1} style={pinStyles.lightText}>
@@ -76,7 +76,12 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
                 </CaptionText>
               </View>
             ) : null}
-            <IconButton icon="ui-copy" color={theme.palette.primary.regular} action={handleCopyLink} />
+            <IconButton
+              icon="ui-copy"
+              color={theme.palette.primary.regular}
+              action={handleCopyLink}
+              style={pinStyles.copyActionContainer}
+            />
             <IconButton
               icon="ui-star-filled"
               color={isFavorite ? theme.palette.complementary.yellow.regular : theme.palette.grey.grey}
@@ -107,7 +112,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
         <Image source={{ uri: resource.image }} style={defaultStyles.imageContainer} />
         <View style={defaultStyles.innerContainer}>
           <View style={defaultStyles.titleContainer}>
-            <BodyText numberOfLines={2} style={UI_STYLES.flexShrink1}>
+            <BodyText numberOfLines={2} style={defaultStyles.titleText}>
               {resource.title}
             </BodyText>
             {renderTypeIcon()}

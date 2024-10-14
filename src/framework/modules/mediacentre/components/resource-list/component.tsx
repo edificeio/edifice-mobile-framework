@@ -35,7 +35,7 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
     />
   );
 
-  const handlePressShowAll = () => openResourceList(resources, I18n.get(`mediacentre-resourcelist-section-${type}`));
+  const handlePressShowAll = () => openResourceList(resources, type);
 
   return (
     <View>
