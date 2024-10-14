@@ -10,9 +10,11 @@ import {
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
-import { ResourceSection } from '~/framework/modules/mediacentre/components/resource-list/types';
+import { ResourceSectionProps } from '~/framework/modules/mediacentre/components/resource-section/types';
 import { MediacentreResources, Resource } from '~/framework/modules/mediacentre/model';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
+
+export type Section = Pick<ResourceSectionProps, 'resources' | 'type' | 'iconName'>;
 
 export interface MediacentreHomeScreenDispatchProps {
   tryAddFavorite: (...args: Parameters<typeof addFavoriteAction>) => Promise<void>;
@@ -30,7 +32,7 @@ export interface MediacentreHomeScreenProps {}
 
 export interface MediacentreHomeScreenStoreProps {
   favoriteUids: string[];
-  sections: ResourceSection[];
+  sections: Section[];
   selectedStructure: string | null;
   structures: UserStructureWithClasses[];
   session?: AuthActiveAccount;

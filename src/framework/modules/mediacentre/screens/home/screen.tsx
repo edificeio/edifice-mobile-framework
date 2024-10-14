@@ -23,8 +23,7 @@ import {
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
-import ResourceList from '~/framework/modules/mediacentre/components/resource-list';
-import { ResourceSection } from '~/framework/modules/mediacentre/components/resource-list/types';
+import ResourceSection from '~/framework/modules/mediacentre/components/resource-section';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
@@ -32,7 +31,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps } from './types';
+import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps, Section } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -125,8 +124,8 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
       <PageView>
         <FlatList
           data={props.sections}
-          renderItem={({ item }: { item: ResourceSection }) => (
-            <ResourceList
+          renderItem={({ item }: { item: Section }) => (
+            <ResourceSection
               {...item}
               disableShowAll={item.type === SectionType.PINS}
               isResourceFavorite={isResourceFavorite}
@@ -135,7 +134,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
               openResourceList={openResourceList}
             />
           )}
-          keyExtractor={(item: ResourceSection) => item.type}
+          keyExtractor={(item: Section) => item.type}
           ListEmptyComponent={renderEmpty()}
           ListHeaderComponent={
             <View style={styles.listHeaderContainer}>

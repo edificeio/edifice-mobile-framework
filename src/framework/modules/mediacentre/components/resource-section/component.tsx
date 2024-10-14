@@ -11,9 +11,9 @@ import ResourceCard from '~/framework/modules/mediacentre/components/resource-ca
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 
 import styles from './styles';
-import { ResourceListProps } from './types';
+import { ResourceSectionProps } from './types';
 
-const ResourceList: React.FunctionComponent<ResourceListProps> = ({
+const ResourceSection: React.FunctionComponent<ResourceSectionProps> = ({
   disableShowAll = false,
   resources,
   type,
@@ -65,4 +65,4 @@ const ResourceList: React.FunctionComponent<ResourceListProps> = ({
   );
 };
 
-export default ResourceList;
+export default ResourceSection;
