@@ -15,7 +15,7 @@ import { getSession } from '~/framework/modules/auth/reducer';
 import { addFavoriteAction, removeFavoriteAction, searchResourcesAction } from '~/framework/modules/mediacentre/actions';
 import ResourceCard from '~/framework/modules/mediacentre/components/resource-card';
 import ResourceFilterList from '~/framework/modules/mediacentre/components/resource-filter-list';
-import { Resource, ResourceFilters } from '~/framework/modules/mediacentre/model';
+import { Resource, ResourceFilters, SectionType } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
 import { MediacentreFilterScreenNavParams } from '~/framework/modules/mediacentre/screens/filter';
@@ -36,7 +36,9 @@ export const computeNavBar = ({
   ...navBarOptions({
     navigation,
     route,
-    title: route.params.query ? I18n.get('mediacentre-resourcelist-search') : route.params.title,
+    title: route.params.query
+      ? I18n.get('mediacentre-resourcelist-search')
+      : I18n.get(`mediacentre-resourcelist-section-${route.params.section}`),
   }),
 });
 
@@ -127,7 +129,12 @@ const MediacentreResourceListScreen = (props: MediacentreResourceListScreenPriva
               onClear={handleClearSearch}
               onSearch={handleSearch}
             />
-            <ResourceFilterList filters={filters} onChange={setFilters} openFilter={openFilter} />
+            <ResourceFilterList
+              filters={filters}
+              showThemeFilters={params.section === SectionType.SIGNETS}
+              onChange={setFilters}
+              openFilter={openFilter}
+            />
           </>
         }
         ListHeaderComponentStyle={styles.listHeaderContainer}

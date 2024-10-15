@@ -3,6 +3,7 @@ import { MediacentreFilterScreenNavParams } from '~/framework/modules/mediacentr
 
 export type ResourceFilterListProps = {
   filters: ResourceFilters;
+  showThemeFilters?: boolean;
   onChange: (filters: ResourceFilters) => void;
   openFilter: (params: MediacentreFilterScreenNavParams) => void;
 };

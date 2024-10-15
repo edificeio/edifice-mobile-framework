@@ -25,6 +25,7 @@ export const fetchResourcesAction =
         mediacentreService.textbooks.get(session, structureId),
       ]);
       if (!externals.length) externals = await mediacentreService.globalResources.get(session);
+      externals = externals.filter(r => !r.isTextbook);
       const resources = { externals, pins, signets, textbooks };
       dispatch(resourcesActionsCreators.receipt(resources));
       return resources;

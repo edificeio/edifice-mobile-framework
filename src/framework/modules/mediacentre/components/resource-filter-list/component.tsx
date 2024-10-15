@@ -10,12 +10,19 @@ import FilterButton from './filter-button';
 import styles from './styles';
 import { ResourceFilterListProps } from './types';
 
-const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({ filters, onChange, openFilter }) => {
-  const hasFilter = filters.disciplines.length || filters.levels.length || filters.sources.length || filters.types.length;
+const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({
+  filters,
+  showThemeFilters = true,
+  onChange,
+  openFilter,
+}) => {
+  const hasFilter = Object.values(filters).some(v => v.length >= 2);
 
   const handleChangeSources = (sources: ResourceFilter[]) => onChange({ ...filters, sources });
 
   const handleChangeTypes = (types: ResourceFilter[]) => onChange({ ...filters, types });
+
+  const handleChangeThemes = (themes: ResourceFilter[]) => onChange({ ...filters, themes });
 
   const handleChangeLevels = (levels: ResourceFilter[]) => onChange({ ...filters, levels });
 
@@ -44,6 +51,18 @@ const ResourceFilterList: React.FunctionComponent<ResourceFilterListProps> = ({ 
               title: I18n.get('mediacentre-resourcelist-filter-types'),
               filters: filters.types,
               onChange: handleChangeTypes,
+            })
+          }
+        />
+      ) : null}
+      {filters.themes.length > 1 && showThemeFilters ? (
+        <FilterButton
+          text={I18n.get('mediacentre-resourcelist-filter-themes')}
+          action={() =>
+            openFilter({
+              title: I18n.get('mediacentre-resourcelist-filter-themes'),
+              filters: filters.themes,
+              onChange: handleChangeThemes,
             })
           }
         />

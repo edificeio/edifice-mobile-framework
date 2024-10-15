@@ -42,6 +42,12 @@ const MediacentreFilterScreen = (props: MediacentreFilterScreenPrivateProps) => 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
+  const checkAllItems = () => {
+    const active = !data.every(f => f.isActive);
+
+    setData(data.map(f => ({ ...f, isActive: active })));
+  };
+
   const checkItem = (name: string) => {
     const newItems = data.slice();
     const itemIndex = newItems.findIndex(item => item.name === name);
@@ -60,7 +66,22 @@ const MediacentreFilterScreen = (props: MediacentreFilterScreenPrivateProps) => 
   };
 
   const renderList = () => {
-    return <FlatList data={data} renderItem={renderItem} />;
+    return (
+      <FlatList
+        data={data}
+        renderItem={renderItem}
+        ListHeaderComponent={
+          data.length >= 2 ? (
+            <CheckboxButton
+              onPress={checkAllItems}
+              title="mediacentre-filter-all"
+              checked={data.every(f => f.isActive)}
+              partialyChecked={data.some(f => f.isActive) && data.some(f => !f.isActive)}
+            />
+          ) : null
+        }
+      />
+    );
   };
 
   return <PageView>{renderList()}</PageView>;

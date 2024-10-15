@@ -23,7 +23,7 @@ import {
   removeFavoriteAction,
   searchResourcesAction,
 } from '~/framework/modules/mediacentre/actions';
-import ResourceList from '~/framework/modules/mediacentre/components/resource-list';
+import ResourceSection from '~/framework/modules/mediacentre/components/resource-section';
 import { Resource, SectionType } from '~/framework/modules/mediacentre/model';
 import moduleConfig from '~/framework/modules/mediacentre/module-config';
 import { MediacentreNavigationParams, mediacentreRouteNames } from '~/framework/modules/mediacentre/navigation';
@@ -31,7 +31,7 @@ import { navBarOptions } from '~/framework/navigation/navBar';
 import { tryAction } from '~/framework/util/redux/actions';
 
 import styles from './styles';
-import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps } from './types';
+import { MediacentreHomeScreenDispatchProps, MediacentreHomeScreenPrivateProps, Section } from './types';
 
 export const computeNavBar = ({
   navigation,
@@ -78,10 +78,10 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
     }
   };
 
-  const openResourceList = (resources: Resource[], title: string) =>
+  const openResourceList = (resources: Resource[], section: SectionType) =>
     props.navigation.push(mediacentreRouteNames.resourceList, {
       resources,
-      title,
+      section,
     });
 
   const handleSearch = () => {
@@ -91,6 +91,7 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
         query,
         resources: [],
       });
+      setQuery('');
     }
   };
 
@@ -123,16 +124,17 @@ const MediacentreHomeScreen = (props: MediacentreHomeScreenPrivateProps) => {
       <PageView>
         <FlatList
           data={props.sections}
-          keyExtractor={item => item.sectionKey}
-          renderItem={({ item }) => (
-            <ResourceList
+          renderItem={({ item }: { item: Section }) => (
+            <ResourceSection
               {...item}
+              disableShowAll={item.type === SectionType.PINS}
               isResourceFavorite={isResourceFavorite}
               onAddFavorite={handleAddFavorite}
               onRemoveFavorite={handleRemoveFavorite}
               openResourceList={openResourceList}
             />
           )}
+          keyExtractor={(item: Section) => item.type}
           ListEmptyComponent={renderEmpty()}
           ListHeaderComponent={
             <View style={styles.listHeaderContainer}>
