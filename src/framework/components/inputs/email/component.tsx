@@ -15,6 +15,7 @@ const EmailInput = (props: TextInputProps) => {
       onChangeText={props.onChangeText}
       returnKeyType="send"
       testID={props.testID}
+      onBlur={props.onBlur}
     />
   );
 };

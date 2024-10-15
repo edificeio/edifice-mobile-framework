@@ -1,6 +1,6 @@
 import styled from '@emotion/native';
-import * as React from 'react';
-import { Pressable, View } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Platform, Pressable, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -17,7 +17,13 @@ import { ActivationFormModel, ValueChangeArgs } from '~/framework/modules/auth/c
 import { IActivationError, PlatformAuthContext } from '~/framework/modules/auth/model';
 import { Loading } from '~/ui/Loading';
 
-import PhoneInput from 'react-native-phone-number-input';
+import PhoneInput, {
+  Country,
+  CountryCode,
+  getFormattedNumber,
+  isMobileNumber,
+  isValidNumber,
+} from 'react-native-phone-number-input';
 import theme from '~/app/theme';
 import AlertCard from '~/framework/components/alert';
 import InputContainer from '~/framework/components/inputs/container';
@@ -25,6 +31,10 @@ import EmailInput from '~/framework/components/inputs/email/component';
 import PasswordInput from '~/framework/components/inputs/password';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { NamedSVG } from '~/framework/components/picture';
+import toast from '~/framework/components/toast';
+import { ValidatorBuilder } from '~/utils/form';
+import { EmailState } from '../../screens/change-email/types';
+import { MobileState } from '../../screens/change-mobile/types';
 import styles from './newStyles';
 import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
 
@@ -39,7 +49,7 @@ const keyboardPageViewScrollViewProps = { showsVerticalScrollIndicator: false, b
 const ButtonWrapper = styled.View<{ error: any; typing: boolean }>();
 
 const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuthContext }) => {
-  const [state, setState] = React.useState<ActivationScreenState>({
+  const [state, setState] = useState<ActivationScreenState>({
     typing: false,
     acceptCGU: false,
     activationState: 'IDLE',
@@ -53,7 +63,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
 
   const { /*navigation, */ route, context, trySubmit } = props;
   const { password, confirmPassword, mail, phone, acceptCGU, typing, error, activationState } = state;
-  const { platform } = route.params;
+  const platform = route.params.platform;
   const formModel = new ActivationFormModel({
     ...context,
     phoneRequired: context?.mandatory?.phone ?? false,
@@ -67,11 +77,19 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
   const isSubmitLoading = activationState === 'RUNNING';
   const cguUrl = props.legalUrls?.cgu;
   const usercharterUrl = props.legalUrls?.userCharter;
-  const mountedRef = React.useRef<boolean>(false);
 
-  const passwordRules = React.useMemo(
+  const mountedRef = useRef<boolean>(false);
+  const [region, setRegion] = useState<CountryCode>('FR');
+  const onSetRegion = useCallback((code: Country) => setRegion(code.cca2), [setRegion]);
+  const [mobileState, setMobileState] = useState<MobileState>(MobileState.PRISTINE);
+  const isMobileStateClean = mobileState === MobileState.STALE || mobileState === MobileState.PRISTINE;
+  const [emailState, setEmailState] = useState<EmailState>(EmailState.PRISTINE);
+  const isEmailStatePristine = emailState === EmailState.PRISTINE;
+
+  const passwordRules = useMemo(
     () => (
       <View style={styles.infos}>
+        {/** icon à renommer */}
         <NamedSVG name="ui-userSearchColorized" />
         {/**
          * clés i18n a rajouter pour les 2 textes ici + dépendances
@@ -85,18 +103,83 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
     [],
   );
 
-  /**
-   * Triggers setState on first render
-   */
-  React.useEffect(() => {
-    mountedRef.current = true;
-
-    return () => {
-      mountedRef.current = false;
+  const onFieldChange = (key: IFields) => {
+    return (valueChange: ValueChangeArgs<string>) => {
+      setState(prevState => ({
+        ...prevState,
+        [key]: valueChange.value,
+      }));
     };
+  };
+
+  const doOpenLegalUrls = (title: string, url?: string) => {
+    openPDFReader({ src: url, title });
+  };
+
+  const getIsValidMobileNumberForRegion = useCallback(
+    (toVerify: string) => {
+      try {
+        // Returns whether number is valid for selected region and an actual mobile number
+        const isValidNumberForRegion = isValidNumber(toVerify, region);
+        const isValidMobileNumber = isMobileNumber(toVerify, region);
+        return isValidNumberForRegion && isValidMobileNumber;
+      } catch {
+        // Returns false in case of format error (string is too short, isn't recognized as a phone number, etc.)
+        return false;
+      }
+    },
+    [region],
+  );
+
+  const verifyAndFormatPhoneNumber = useCallback(
+    (phoneNumber: string) => {
+      // First, we clean the number by trimming - and . characters (generally used as separators)
+      const phoneNumberCleaned = phoneNumber.replaceAll(/[-.]+/g, '');
+      const isValidMobileNumberForRegion = getIsValidMobileNumberForRegion(phoneNumberCleaned);
+      const mobileNumberFormatted = getFormattedNumber(phoneNumberCleaned, region);
+      if (isValidMobileNumberForRegion && mobileNumberFormatted) {
+        setMobileState(MobileState.PRISTINE);
+        setState(prevState => ({
+          ...prevState,
+          phone: mobileNumberFormatted,
+        }));
+        return true;
+      }
+      // Exit if mobile is not valid
+      if (!isValidMobileNumberForRegion || !mobileNumberFormatted) {
+        setMobileState(MobileState.MOBILE_FORMAT_INVALID);
+        return false;
+      }
+    },
+    [getIsValidMobileNumberForRegion, region],
+  );
+
+  const onPhoneInputBlur = useCallback(() => verifyAndFormatPhoneNumber(state.phone), [verifyAndFormatPhoneNumber, state.phone]);
+
+  const verifyEmail = useCallback((toVerify: string) => {
+    // Exit if email is not valid
+    const verifiedEmail = new ValidatorBuilder().withEmail().build<string>().isValid(toVerify);
+    if (verifiedEmail) return true;
+    if (!verifiedEmail) {
+      setEmailState(EmailState.EMAIL_FORMAT_INVALID);
+      return false;
+    }
   }, []);
 
+  const onMailInputBlur = useCallback(() => verifyEmail(state.mail), [verifyEmail, state.mail]);
+
   const doActivation = async () => {
+    const isPhoneValid = verifyAndFormatPhoneNumber(state.phone);
+    if (!isPhoneValid) {
+      toast.showError(I18n.get('auth-change-mobile-error-text')); // MESSAGE A CHANGER
+      return;
+    }
+
+    const isMailValid = verifyEmail(state.mail);
+    if (!isMailValid) {
+      toast.showError(I18n.get('auth-change-email-error-text')); // MESSAGE A CHANGER
+      return;
+    }
     try {
       console.log('platform ------>', route.params.platform);
       console.log('Staaaaaaaate BEFORE ---->', state);
@@ -123,18 +206,16 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
     // }
   };
 
-  const onFieldChange = (key: IFields) => {
-    return (valueChange: ValueChangeArgs<string>) => {
-      setState(prevState => ({
-        ...prevState,
-        [key]: valueChange.value,
-      }));
-    };
-  };
+  /**
+   * Triggers setState on first render
+   */
+  useEffect(() => {
+    mountedRef.current = true;
 
-  const doOpenLegalUrls = (title: string, url?: string) => {
-    openPDFReader({ src: url, title });
-  };
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   return (
     <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
@@ -198,12 +279,22 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
             testID: 'check', // testID à remettre
           }}
           input={
-            <EmailInput
-              style={styles.emailInput}
-              value={mail}
-              onChangeText={formModel.email.changeCallback(onFieldChange('mail'))}
-              placeholder="Saisir l'adresse mail"
-            />
+            <>
+              <EmailInput
+                style={[
+                  styles.emailInput,
+                  { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
+                ]}
+                value={mail}
+                onChangeText={formModel.email.changeCallback(onFieldChange('mail'))}
+                placeholder="Saisir l'adresse mail"
+                onBlur={onMailInputBlur}
+              />
+              {/** test id */}
+              <CaptionItalicText style={styles.errorText} testID="">
+                {isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
+              </CaptionItalicText>
+            </>
           }
         />
 
@@ -220,35 +311,28 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
                 placeholder={I18n.get('auth-change-mobile-placeholder')}
                 // ref={phoneInputRef}
                 value={phone}
-                // defaultCode={region}
+                defaultCode={region}
                 layout="third"
                 onChangeText={formModel.phone.changeCallback(onFieldChange('phone'))}
-                onChangeCountry={() => console.log('onSetRegion phone')}
-                // containerStyle={[
-                //   { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
-                //   styles.input,
-                // ]}
-                // containerStyle={[{ borderColor: theme.palette.grey.cloudy }, styles.input]}
-                containerStyle={[{ borderColor: theme.palette.grey.cloudy }, styles.phoneInput]}
+                onChangeCountry={onSetRegion}
+                containerStyle={[
+                  { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
+                  // styles.input,
+                  styles.phoneInput,
+                ]}
                 flagButtonStyle={styles.flagButton}
                 codeTextStyle={styles.flagCode}
-                // textContainerStyle={[
-                //   styles.inputTextContainer,
-                //   {
-                //     borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
-                //   },
-                // ]}
                 textContainerStyle={[
                   styles.inputTextContainer,
                   {
-                    borderColor: theme.palette.grey.cloudy,
+                    borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular,
                   },
                 ]}
                 textInputStyle={styles.inputTextInput}
-                // flagSize={Platform.select({
-                //   ios: UI_SIZES.dimensions.width.larger,
-                //   android: UI_SIZES.dimensions.width.medium,
-                // })}
+                flagSize={Platform.select({
+                  ios: UI_SIZES.dimensions.width.larger,
+                  android: UI_SIZES.dimensions.width.medium,
+                })}
                 drowDownImage={
                   <NamedSVG style={styles.dropDownArrow} name="ui-rafterDown" fill={theme.ui.text.regular} width={12} height={12} />
                 }
@@ -270,11 +354,11 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
                   keyboardType: 'phone-pad',
                   inputMode: 'tel',
                   placeholderTextColor: theme.palette.grey.stone,
+                  onBlur: onPhoneInputBlur,
                 }}
               />
               <CaptionItalicText style={styles.errorText} testID="phone-new-error">
-                {/* {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')} */}
-                {I18n.get('common-space')}
+                {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
               </CaptionItalicText>
             </>
           }

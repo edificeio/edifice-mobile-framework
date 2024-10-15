@@ -1,7 +1,7 @@
 import { RouteProp, useIsFocused } from '@react-navigation/native';
 import type { NativeStackNavigationOptions, NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useCallback, useState } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
@@ -25,7 +25,6 @@ import { isEmpty } from '~/framework/util/object';
 import { tryAction } from '~/framework/util/redux/actions';
 import { ValidatorBuilder } from '~/utils/form';
 
-import EmailInput from '~/framework/components/inputs/email/component';
 import styles from './styles';
 import { AuthChangeEmailScreenDispatchProps, AuthChangeEmailScreenPrivateProps, EmailState, PageTexts } from './types';
 
@@ -165,7 +164,7 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             styles.inputWrapper,
             { borderColor: isEmailStatePristine ? theme.palette.grey.stone : theme.palette.status.failure.regular },
           ]}>
-          {/* <TextInput
+          <TextInput
             autoCorrect={false}
             autoCapitalize="none"
             keyboardType="email-address"
@@ -175,15 +174,6 @@ const AuthChangeEmailScreen = (props: AuthChangeEmailScreenPrivateProps) => {
             value={email}
             onChangeText={onChangeEmail}
             returnKeyType="send"
-            {...(!isEmailEmpty ? { onSubmitEditing: onSendEmail } : {})}
-            testID="email-field"
-          /> */}
-          <EmailInput
-            style={styles.input}
-            onChangeText={onChangeEmail}
-            value={email}
-            placeholder={I18n.get('auth-change-email-placeholder')}
-            placeholderTextColor={theme.palette.grey.graphite}
             {...(!isEmailEmpty ? { onSubmitEditing: onSendEmail } : {})}
             testID="email-field"
           />
