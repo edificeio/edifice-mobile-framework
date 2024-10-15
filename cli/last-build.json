@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-08 16:42:17",
-  "notes": "feat(mediacentre): AMV2-645 add highlight text to pin resources\nfeat(mediacentre): AMV2-649 change section icons\nfix(mediacentre): AMV2-652 handle empty backend response on unset selected structure\nfeat(i18n): change mediacentre keys\nfeat(mediacentre): AMV2-646 add footer to resource list component\nfix(push): MB-2961, remove permissions check when unregistering FCM token\nfeat(mediacentre): AMV2-651 add resource list filtering\nchore(i18n): change phrase auto sync branch to dev/1.13.5\nSquashed commit of the following:\nrelease: 1.13.5-alpha.2(1130502)",
-  "version": "1.13.5-alpha.3(1130503)"
+  "last": "2024-10-15 12:56:52",
+  "notes": "fix(mediacentre): change global resources mapping\nrefactor(mediacentre): rename ResourceList component to ResourceSection\nfeat(mediacentre): AMV2-653 add themes filters, add check all button to filter screen\nchore(build): remove zendesk specific workaround\nfeat(mediacentre): AMV2-651 add type icon to resource card\nfeat(i18n): AMV2-643 add mediacentre keys\nfeat(mediacentre): AMV2-645 disable pins section show all, enhance resource card layout\nfix(mediacentre): AMV2-647 filter out data with ko status from search\nupdate(stack): yarn cache update\nUpdated translations from Phrase (#167)\nfix(zimbra): MO-440 remove html tags from signature\nrelease: 1.13.5-alpha.3(1130503)",
+  "version": "1.13.5-alpha.4(1130504)"
 }
