@@ -7,6 +7,8 @@ export const getSourceFilter = (resource: Resource): string => {
   switch (resource.source) {
     case Source.GAR:
       return resource.isTextbook ? 'Manuels' : 'Ressources';
+    case Source.GLOBAL_RESOURCE:
+      return 'Ressources globales';
     case Source.MOODLE:
       return 'Parcours Moodle';
     case Source.SIGNET:
