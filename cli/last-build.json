@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-15 12:56:52",
-  "notes": "fix(mediacentre): change global resources mapping\nrefactor(mediacentre): rename ResourceList component to ResourceSection\nfeat(mediacentre): AMV2-653 add themes filters, add check all button to filter screen\nchore(build): remove zendesk specific workaround\nfeat(mediacentre): AMV2-651 add type icon to resource card\nfeat(i18n): AMV2-643 add mediacentre keys\nfeat(mediacentre): AMV2-645 disable pins section show all, enhance resource card layout\nfix(mediacentre): AMV2-647 filter out data with ko status from search\nupdate(stack): yarn cache update\nUpdated translations from Phrase (#167)\nfix(zimbra): MO-440 remove html tags from signature\nrelease: 1.13.5-alpha.3(1130503)",
-  "version": "1.13.5-alpha.4(1130504)"
+  "last": "2024-10-16 17:03:35",
+  "notes": "update(stack): yarn cache update\nfeat(mediacentre): AMV2-645 enhance resource card layout\nUpdated translations from Phrase (#170)\nRevert \"fix(zimbra): MO-440 remove html tags from signature\"\nfix(mediacentre): add global resource source and filter value\nrelease: 1.13.5-alpha.4(1130504)",
+  "version": "1.13.5-rc.1(1130505)"
 }
