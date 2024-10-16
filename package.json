@@ -57,7 +57,8 @@
     "prepare-major": "node cli/prepare-build.js major",
     "prepare-minor": "node cli/prepare-build.js minor",
     "prepare-rev": "node cli/prepare-build.js rev",
-    "prettier": "npx prettier --write src/**/*.*",
+    "prettier-all": "npx prettier src/**/*.*",
+    "prettier-fix": "npx prettier --write src/**/*.*",
     "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && react-native start --reset-cache",
     "scaffold": "run(){ node cli/scaffold.js $@; }; run",
     "ts-fix": "tsc --noEmit"
