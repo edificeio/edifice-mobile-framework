@@ -25,7 +25,6 @@ export default StyleSheet.create({
   },
   emailInput: {
     paddingHorizontal: UI_SIZES.spacing.medium,
-    marginBottom: UI_SIZES.spacing.medium,
     fontSize: TextSizeStyle.Medium.fontSize,
     lineHeight: undefined,
   },
@@ -45,7 +44,10 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.spacing.medium,
     marginBottom: UI_SIZES.spacing.small,
   },
-  inputContainer: { marginVertical: UI_SIZES.spacing.minor },
+  inputContainer: {
+    marginVertical: UI_SIZES.spacing.large,
+  },
+
   page: {
     padding: UI_SIZES.spacing.big,
     backgroundColor: theme.palette.grey.white,
@@ -55,11 +57,16 @@ export default StyleSheet.create({
     borderRadius: UI_SIZES.radius.medium,
     alignSelf: 'stretch',
   },
+  phoneInputContainer: {
+    marginTop: UI_SIZES.spacing.minor,
+    marginBottom: UI_SIZES.spacing.small,
+  },
+  pwdContainer: {},
   pressable: { flexGrow: 1 },
   safeArea: { flex: 1, backgroundColor: theme.ui.background.card },
 
   /**
-   * STYLES FROM PHONE INPUT : BEGINNING --------------------------------------------------
+   * STYLES ONLY USED FOR PHONE INPUT FROM HERE
    */
   dropDownArrow: {
     marginLeft: -UI_SIZES.spacing.tiny, // Hack to compensate fixed margins in the trid-party package

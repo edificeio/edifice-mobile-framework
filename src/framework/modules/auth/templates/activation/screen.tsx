@@ -73,6 +73,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
   const isNotValid = !acceptCGU || !formModel.validate({ ...state });
   const errorKey = formModel.firstErrorKey({ ...state });
   const errorText = errorKey ? I18n.get(errorKey) : error;
+  // const errorText = errorKey ? 'truthy key' : 'falsy key';
   const hasErrorKey = !!errorText;
   const isSubmitLoading = activationState === 'RUNNING';
   const cguUrl = props.legalUrls?.cgu;
@@ -88,19 +89,20 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
 
   const passwordRules = useMemo(
     () => (
-      <View style={styles.infos}>
-        {/** icon à renommer */}
-        <NamedSVG name="ui-userSearchColorized" />
-        {/**
-         * clés i18n a rajouter pour les 2 textes ici + dépendances
-         */}
-        <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
-        <SmallText style={styles.infosSubText} testID="change-password-rules">
-          Choisissez votre mot de passe et renseigner vos données personnelles pour sécuriser votre compte.
-        </SmallText>
-      </View>
+      <>
+        {context.passwordRegexI18nActivation?.[I18n.getLanguage()] ? (
+          <AlertCard
+            type="info"
+            // clé i18n a ajouter ici
+            // text={context.passwordRegexI18nActivation[I18n.getLanguage()]}
+            text={'Le mot de passe doit contenir au moins 8 caractères dont au moins une majuscule, une minuscule et un chiffre.'}
+            style={styles.alertCard}
+            testID="activation-password-rules"
+          />
+        ) : null}
+      </>
     ),
-    [],
+    [context.passwordRegexI18nActivation],
   );
 
   const onFieldChange = (key: IFields) => {
@@ -108,6 +110,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
       setState(prevState => ({
         ...prevState,
         [key]: valueChange.value,
+        typing: true,
       }));
     };
   };
@@ -154,8 +157,6 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
     [getIsValidMobileNumberForRegion, region],
   );
 
-  const onPhoneInputBlur = useCallback(() => verifyAndFormatPhoneNumber(state.phone), [verifyAndFormatPhoneNumber, state.phone]);
-
   const verifyEmail = useCallback((toVerify: string) => {
     // Exit if email is not valid
     const verifiedEmail = new ValidatorBuilder().withEmail().build<string>().isValid(toVerify);
@@ -167,6 +168,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
   }, []);
 
   const onMailInputBlur = useCallback(() => verifyEmail(state.mail), [verifyEmail, state.mail]);
+  const onPhoneInputBlur = useCallback(() => verifyAndFormatPhoneNumber(state.phone), [verifyAndFormatPhoneNumber, state.phone]);
 
   const doActivation = async () => {
     const isPhoneValid = verifyAndFormatPhoneNumber(state.phone);
@@ -207,7 +209,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
   };
 
   /**
-   * Triggers setState on first render
+   * Triggers form's setState on first render
    */
   useEffect(() => {
     mountedRef.current = true;
@@ -220,32 +222,30 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
   return (
     <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
       <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
+        <View style={styles.infos}>
+          {/** clés i18n titre + renommer image */}
+          <NamedSVG name="ui-userSearchColorized" />
+          <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
+          <SmallText style={styles.infosSubText}>
+            Choisissez votre mot de passe et renseigner vos données personnelles pour sécuriser votre compte.
+          </SmallText>
+        </View>
         {passwordRules}
-        {context.passwordRegexI18nActivation?.[I18n.getLanguage()] ? (
-          <AlertCard
-            type="info"
-            // clé i18n a ajouter ici
-            text={'Le mot de passe doit contenir au moins 8 caractères dont au moins une majuscule, une minuscule et un chiffre.'}
-            style={styles.alertCard}
-          />
-        ) : null}
         <InputContainer
-          style={styles.inputContainer}
           label={{
             text: 'Mot de passe', // clé i18N
             icon: 'ui-lock',
-            testID: 'check', // testID à remettre
           }}
           input={
             <PasswordInput
-              placeholder={I18n.get('auth-changepassword-placeholder')}
+              placeholder={I18n.get('auth-changepassword-placeholder')} // clé i18n
               showIconCallback
-              // showError={() => console.log('ERROR PWD')}
+              showError={formModel.showPasswordError(password)}
+              annotation={formModel.showPasswordError(password) ? errorText : ''}
               value={password}
               onChangeText={formModel.password.changeCallback(onFieldChange('password'))}
-              annotation=" "
-              testID="check" // testID à remettre
-              testIDToggle="check" // testID à remettre
+              testID="activation-password"
+              testIDToggle="activation-see-password"
             />
           }
         />
@@ -255,28 +255,25 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
           label={{
             text: 'Confirmer le mot de passe', // clé i18N
             icon: 'ui-lock',
-            testID: 'check', // testID à remettre
           }}
           input={
             <PasswordInput
-              placeholder={I18n.get('auth-changepassword-placeholder')}
+              placeholder={I18n.get('auth-changepassword-placeholder')} // clé i18n
               showIconCallback
-              // showError={() => console.log('ERROR PWD')}
+              showError={formModel.showConfirmError(confirmPassword)}
+              annotation={formModel.showConfirmError(confirmPassword) ? errorText : ''}
               value={confirmPassword}
               onChangeText={formModel.confirm.changeCallback(onFieldChange('confirmPassword'))}
-              annotation=" "
-              testID="check" // testID à remettre
-              testIDToggle="check" // testID à remettre
+              testID="activation-confirmed-password"
+              testIDToggle="activation-see-confirmed-password"
             />
           }
         />
 
         <InputContainer
-          style={styles.inputContainer}
           label={{
             text: 'Adresse mail', // clé i18N
             icon: 'ui-mail',
-            testID: 'check', // testID à remettre
           }}
           input={
             <>
@@ -289,9 +286,9 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
                 onChangeText={formModel.email.changeCallback(onFieldChange('mail'))}
                 placeholder="Saisir l'adresse mail"
                 onBlur={onMailInputBlur}
+                testID="activation-email"
               />
-              {/** test id */}
-              <CaptionItalicText style={styles.errorText} testID="">
+              <CaptionItalicText style={styles.errorText}>
                 {isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
               </CaptionItalicText>
             </>
@@ -299,17 +296,15 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
         />
 
         <InputContainer
-          style={styles.inputContainer}
+          style={styles.phoneInputContainer}
           label={{
             text: 'Téléphone mobile', // clé i18N
             icon: 'ui-smartphone',
-            testID: 'check', // testID à remettre
           }}
           input={
             <>
               <PhoneInput
                 placeholder={I18n.get('auth-change-mobile-placeholder')}
-                // ref={phoneInputRef}
                 value={phone}
                 defaultCode={region}
                 layout="third"
@@ -317,7 +312,6 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
                 onChangeCountry={onSetRegion}
                 containerStyle={[
                   { borderColor: isMobileStateClean ? theme.palette.grey.cloudy : theme.palette.status.failure.regular },
-                  // styles.input,
                   styles.phoneInput,
                 ]}
                 flagButtonStyle={styles.flagButton}
@@ -355,9 +349,10 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
                   inputMode: 'tel',
                   placeholderTextColor: theme.palette.grey.stone,
                   onBlur: onPhoneInputBlur,
+                  testID: 'activation-phone',
                 }}
               />
-              <CaptionItalicText style={styles.errorText} testID="phone-new-error">
+              <CaptionItalicText style={styles.errorText}>
                 {isMobileStateClean ? I18n.get('common-space') : I18n.get('auth-change-mobile-error-invalid')}
               </CaptionItalicText>
             </>
@@ -373,14 +368,17 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
               }))
             }
             customContainerStyle={{ marginRight: UI_SIZES.spacing.minor }}
+            testID="activation-accept-legal-condition"
           />
-          <View style={styles.cguText}>
+          <View style={styles.cguText} testID="activation-legal-condition">
             <SmallText>{I18n.get('auth-activation-cgu-accept')}</SmallText>
-            <SmallActionText onPress={() => doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}>
+            <SmallActionText
+              onPress={() => doOpenLegalUrls(I18n.get('user-legalnotice-usercharter'), usercharterUrl)}
+              testID="activation-user-charter">
               {I18n.get('auth-activation-usercharter')}
             </SmallActionText>
             <SmallText>{I18n.get('auth-activation-cgu-accept-and')}</SmallText>
-            <SmallActionText onPress={() => doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)}>
+            <SmallActionText onPress={() => doOpenLegalUrls(I18n.get('auth-activation-cgu'), cguUrl)} testID="activation-cgu">
               {I18n.get('auth-activation-cgu')}
             </SmallActionText>
           </View>
@@ -394,6 +392,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
             disabled={isNotValid}
             text={I18n.get('auth-activation-activate')}
             loading={isSubmitLoading}
+            testID="activation-activate"
           />
         </ButtonWrapper>
       </Pressable>
