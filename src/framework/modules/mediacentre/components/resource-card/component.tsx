@@ -61,7 +61,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
             <View style={pinStyles.rightContainer}>
               <SmallText numberOfLines={1}>{resource.title}</SmallText>
               {resource.pinnedDescription ? (
-                <CaptionText numberOfLines={2} style={UI_STYLES.flexShrink1}>
+                <CaptionText numberOfLines={1} style={UI_STYLES.flexShrink1}>
                   {resource.pinnedDescription}
                 </CaptionText>
               ) : null}
@@ -112,7 +112,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
         <Image source={{ uri: resource.image }} style={defaultStyles.imageContainer} />
         <View style={defaultStyles.innerContainer}>
           <View style={defaultStyles.titleContainer}>
-            <BodyText numberOfLines={2} style={defaultStyles.titleText}>
+            <BodyText numberOfLines={2} style={UI_STYLES.flexShrink1}>
               {resource.title}
             </BodyText>
             {renderTypeIcon()}

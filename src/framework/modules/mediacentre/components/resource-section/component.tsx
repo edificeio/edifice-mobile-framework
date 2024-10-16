@@ -41,7 +41,7 @@ const ResourceSection: React.FunctionComponent<ResourceSectionProps> = ({
     <View>
       <TouchableOpacity onPress={handlePressShowAll} disabled={disableShowAll} style={styles.headerContainer}>
         {iconName ? <NamedSVG name={iconName} fill={headingColor} width={20} /> : null}
-        <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-home-section-${type}`)}</BodyText>
+        <BodyText style={{ color: headingColor }}>{I18n.get(`mediacentre-sectiontype-${type}`)}</BodyText>
         {!disableShowAll ? <NamedSVG name="ui-rafterRight" fill={headingColor} width={20} height={20} /> : null}
       </TouchableOpacity>
       <FlatList

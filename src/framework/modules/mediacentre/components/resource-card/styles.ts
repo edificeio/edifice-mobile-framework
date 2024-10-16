@@ -53,10 +53,6 @@ export const defaultStyles = StyleSheet.create({
     flexDirection: 'row',
     flexShrink: 1,
   },
-  titleText: {
-    flexShrink: 1,
-    lineHeight: undefined,
-  },
 });
 
 export const pinStyles = StyleSheet.create({

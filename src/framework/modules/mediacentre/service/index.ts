@@ -89,7 +89,7 @@ export const mediacentreService = {
       const api = `/mediacentre/favorites?id=${resource.id}`;
       return signedFetch(`${session.platform.url}${api}`, {
         method: 'POST',
-        body: JSON.stringify(resource),
+        body: JSON.stringify({ ...resource, is_textbook: resource.isTextbook }),
       }) as Promise<any>;
     },
     remove: async (session: AuthActiveAccount, id: string, source: Source) => {
