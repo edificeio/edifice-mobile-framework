@@ -1,11 +1,9 @@
-import { decode } from 'html-entities';
 import moment from 'moment';
 
 import { AuthLoggedAccount } from '~/framework/modules/auth/model';
 import { IFolder, IMail, IQuota, IRecipient, ISignature } from '~/framework/modules/zimbra/model';
 import { IDistantFileWithId, LocalFile } from '~/framework/util/fileHandler';
 import fileHandlerService from '~/framework/util/fileHandler/service';
-import { extractTextFromHtml } from '~/framework/util/htmlParser/content';
 import { fetchJSONWithCache } from '~/infra/fetchWithCache';
 
 const BLANK_SUBJECT = '(Aucun objet)';
@@ -174,7 +172,7 @@ const signatureAdapter = (data: IBackendSignature): ISignature => {
   const preference = JSON.parse(data.preference);
   return {
     preference: {
-      signature: extractTextFromHtml(decode(preference.signature)) as string,
+      signature: preference.signature,
       useSignature: preference.useSignature,
     },
     zimbraENTSignatureExists: data.zimbraENTSignatureExists,
