@@ -41,8 +41,8 @@
     "i18n-dynamic": "grep --recursive \"I18n.get(\\`\" ./src",
     "i18n-unused": "node cli/i18n.js unused",
     "ios": "react-native run-ios",
-    "lint-all": "eslint ./src --ext .js,.jsx,.ts,.tsx",
-    "lint-fix": "eslint ./src --ext .js,.jsx,.ts,.tsx",
+    "lint-all": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint-fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "override": "node cli/override.js -l",
     "override-local": "node cli/override.js --local -l",
     "override-silent": "node cli/override.js -v --no-i $CONFIG_TO",
@@ -59,7 +59,8 @@
     "prepare-rev": "node cli/prepare-build.js rev",
     "prettier": "npx prettier --write src/**/*.*",
     "start": "rm -rf ./ios/.xcode.env.local && watchman watch-del-all && react-native start --reset-cache",
-    "scaffold": "run(){ node cli/scaffold.js $@; }; run"
+    "scaffold": "run(){ node cli/scaffold.js $@; }; run",
+    "ts-fix": "tsc --noEmit"
   },
   "dependencies": {
     "@bam.tech/react-native-image-resizer": "3.0.10",
@@ -203,6 +204,8 @@
     "@babel/preset-env": "7.25.8",
     "@babel/preset-typescript": "7.25.7",
     "@babel/runtime": "7.25.7",
+    "@commitlint/cli": "19.5.0",
+    "@commitlint/config-conventional": "19.5.0",
     "@jumpn/react-native-jetifier": "0.1.4",
     "@nicolo-ribaudo/semver-v6": "6.3.3",
     "@react-native-community/eslint-config": "3.2.0",
@@ -236,12 +239,16 @@
     "eslint-plugin-flowtype": "8.0.3",
     "eslint-plugin-ft-flow": "3.0.11",
     "eslint-plugin-import": "2.31.0",
+    "eslint-plugin-import-order-autofix": "0.8.3",
     "eslint-plugin-jest": "28.8.3",
     "eslint-plugin-jsx-a11y": "6.10.0",
+    "eslint-plugin-no-inline-styles": "1.0.5",
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-react": "7.37.1",
     "eslint-plugin-react-hooks": "4.6.2",
     "eslint-plugin-react-native": "4.1.0",
+    "eslint-plugin-sort-destructure-keys": "2.0.0",
+    "eslint-plugin-sort-keys-fix": "1.1.2",
     "husky": "9.1.6",
     "jest": "29.7.0",
     "lint-staged": "15.2.10",
@@ -263,18 +270,21 @@
     "@react-native-community/cli-platform-android": "14.1.1"
   },
   "eslintIgnore": [
+    ".eslintrc.js",
     "__tests__",
     "__overrides__",
     "__stashSpec__",
+    "lib/",
+    "node_modules/",
     "scaffolder",
-    "src/app/override",
-    ".eslintrc.js"
+    "src/app/override"
   ],
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "node cli/remove-console.js",
       "prettier --write",
-      "eslint --fix"
+      "eslint --fix",
+      "tsc --noEmit"
     ]
   },
   "ode": {
