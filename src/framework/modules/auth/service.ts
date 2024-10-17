@@ -598,17 +598,7 @@ export async function removeFirebaseTokenWithAccount(account: AuthLoggedAccount)
   try {
     const fcm = new FcmService(account.platform);
     console.debug('removeFirebaseTokenWithAccount - unregisterFCMToken');
-    if (RNPlatform.OS === 'android') {
-      const result = await request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS);
-      if (result === RESULTS.GRANTED) {
-        await fcm.unregisterFCMTokenWithAccount(account);
-      }
-    } else {
-      const authorizationStatus = await messaging().requestPermission();
-      if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-        await fcm.unregisterFCMTokenWithAccount(account);
-      }
-    }
+    await fcm.unregisterFCMTokenWithAccount(account);
   } catch (err) {
     if (err instanceof Error.ErrorWithType) throw err;
     else throw new global.Error('Firebase unregister error', { cause: err });
