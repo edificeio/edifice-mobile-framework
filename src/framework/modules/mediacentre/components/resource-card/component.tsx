@@ -112,7 +112,7 @@ const ResourceCard: React.FunctionComponent<ResourceCardProps> = ({
         <Image source={{ uri: resource.image }} style={defaultStyles.imageContainer} />
         <View style={defaultStyles.innerContainer}>
           <View style={defaultStyles.titleContainer}>
-            <BodyText numberOfLines={2} style={UI_STYLES.flexShrink1}>
+            <BodyText numberOfLines={1} style={UI_STYLES.flexShrink1}>
               {resource.title}
             </BodyText>
             {renderTypeIcon()}
