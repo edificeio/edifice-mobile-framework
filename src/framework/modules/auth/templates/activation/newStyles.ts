@@ -47,7 +47,6 @@ export default StyleSheet.create({
   inputContainer: {
     marginVertical: UI_SIZES.spacing.large,
   },
-
   page: {
     padding: UI_SIZES.spacing.big,
     backgroundColor: theme.palette.grey.white,
@@ -61,12 +60,10 @@ export default StyleSheet.create({
     marginTop: UI_SIZES.spacing.minor,
     marginBottom: UI_SIZES.spacing.small,
   },
-  pwdContainer: {},
   pressable: { flexGrow: 1 },
   safeArea: { flex: 1, backgroundColor: theme.ui.background.card },
-
   /**
-   * STYLES ONLY USED FOR PHONE INPUT FROM HERE
+   * Styles below are exclusively used for PhoneInput
    */
   dropDownArrow: {
     marginLeft: -UI_SIZES.spacing.tiny, // Hack to compensate fixed margins in the trid-party package

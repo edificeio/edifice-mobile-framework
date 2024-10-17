@@ -10,7 +10,7 @@ const EmailInput = (props: TextInputProps) => {
       keyboardType="email-address"
       placeholder={props.placeholder}
       placeholderTextColor={props.placeholderTextColor}
-      style={props.style} // pas sur la
+      style={props.style}
       value={props.value}
       onChangeText={props.onChangeText}
       returnKeyType="send"

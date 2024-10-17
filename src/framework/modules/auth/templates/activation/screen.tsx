@@ -32,9 +32,9 @@ import PasswordInput from '~/framework/components/inputs/password';
 import { openPDFReader } from '~/framework/components/pdf/pdf-reader';
 import { NamedSVG } from '~/framework/components/picture';
 import toast from '~/framework/components/toast';
+import { MobileState } from '~/framework/modules/auth//screens/change-mobile';
+import { EmailState } from '~/framework/modules/auth/screens/change-email';
 import { ValidatorBuilder } from '~/utils/form';
-import { EmailState } from '../../screens/change-email/types';
-import { MobileState } from '../../screens/change-mobile/types';
 import styles from './newStyles';
 import { ActivationScreenProps, ActivationScreenState, IFields } from './types';
 
@@ -61,7 +61,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
     phone: '',
   });
 
-  const { /*navigation, */ route, context, trySubmit } = props;
+  const { route, context, trySubmit } = props;
   const { password, confirmPassword, mail, phone, acceptCGU, typing, error, activationState } = state;
   const platform = route.params.platform;
   const formModel = new ActivationFormModel({
@@ -223,7 +223,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
     <KeyboardPageView scrollable scrollViewProps={keyboardPageViewScrollViewProps} safeArea style={styles.page}>
       <Pressable onPress={() => formModel.blur()} style={styles.pressable}>
         <View style={styles.infos}>
-          {/** clés i18n titre + renommer image */}
+          {/** clés i18n titre + renommer image + comment on gère une icone a 3 couleurs */}
           <NamedSVG name="ui-userSearchColorized" />
           <HeadingSText style={styles.infosText}>Bienvenue sur NEO !</HeadingSText>
           <SmallText style={styles.infosSubText}>
@@ -289,6 +289,7 @@ const ActivationScreen = (props: ActivationScreenProps & { context: PlatformAuth
                 testID="activation-email"
               />
               <CaptionItalicText style={styles.errorText}>
+                {/** clé i18n a changer */}
                 {isEmailStatePristine ? I18n.get('common-space') : I18n.get('auth-change-email-error-invalid')}
               </CaptionItalicText>
             </>
