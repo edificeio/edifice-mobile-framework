@@ -125,7 +125,14 @@ export const mediacentreService = {
         },
       };
       const api = `/mediacentre/search?jsondata=${JSON.stringify(jsondata)}`;
-      const response = (await fetchJSONWithCache(api)) as BackendSearch;
+      const controller = new AbortController();
+      const abort = setTimeout(() => {
+        controller.abort();
+      }, 5000);
+      const response = (await fetchJSONWithCache(api, {
+        signal: controller.signal,
+      })) as BackendSearch;
+      clearTimeout(abort);
       return response
         .filter(r => r.status === 'ok')
         .flatMap(s => [...s.data.resources])
