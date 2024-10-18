@@ -1,6 +1,6 @@
 {
   "WARNING": "¡¡¡ USED AND UPDATED BY prepare-build.js - DO NOT EDIT MANUALLY !!!",
-  "last": "2024-10-16 17:03:35",
-  "notes": "update(stack): yarn cache update\nfeat(mediacentre): AMV2-645 enhance resource card layout\nUpdated translations from Phrase (#170)\nRevert \"fix(zimbra): MO-440 remove html tags from signature\"\nfix(mediacentre): add global resource source and filter value\nrelease: 1.13.5-alpha.4(1130504)",
-  "version": "1.13.5-rc.1(1130505)"
+  "last": "2024-10-18 13:19:36",
+  "notes": "fix(push): review firebase token removal\nfix(mediacentre): AMV2-647 set 5s timeout to search\nfix(push): MB-2961, avoid calling permissions when unregistering FCM token\nfix(mediacentre): AMV2-646 change condition to fetch global resources\nrelease: 1.13.5-rc.1(1130505)",
+  "version": "1.13.5-rc.2(1130506)"
 }
