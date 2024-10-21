@@ -39,6 +39,8 @@ export interface IHtmlContentViewProps extends ViewProps {
   onDownloadAll?: () => void;
 }
 
+/// INUTILE
+
 interface IHtmlContentViewState {
   loading?: boolean; // Is resource loading?
   done?: boolean; // Is content fully loaded?

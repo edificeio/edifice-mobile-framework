@@ -29,7 +29,7 @@ import {
 } from '~/framework/modules/timeline/actions';
 import TimelineNotification from '~/framework/modules/timeline/components/notification';
 import TimelineSpace from '~/framework/modules/timeline/components/space';
-import { TimelineFlashMessage } from '~/framework/modules/timeline/components/timeline-flash-message';
+import TimelineFlashMessage from '~/framework/modules/timeline/components/timeline-flash-message';
 import moduleConfig from '~/framework/modules/timeline/module-config';
 import { ITimelineNavigationParams, timelineRouteNames } from '~/framework/modules/timeline/navigation';
 import { FlashMessagesStateData, IEntcoreFlashMessage } from '~/framework/modules/timeline/reducer/flash-messages';
