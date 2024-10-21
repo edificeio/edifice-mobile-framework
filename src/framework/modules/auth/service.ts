@@ -43,6 +43,7 @@ import {
   credentialsAreLoginPassword,
   credentialsAreSaml,
 } from './model';
+import { getSession } from './reducer';
 
 export interface IUserRequirements {
   forceChangePassword?: boolean;
@@ -485,17 +486,27 @@ export class FcmService {
 
   async unregisterFCMToken(token: string | null = null) {
     try {
+      const account = getSession();
+      if (!account) {
+        console.error('FcmService - unregisterFCMToken - ERROR - No account');
+        return;
+      }
       if (!token) {
         token = await messaging().getToken();
       }
       if (token) {
-        await signedFetch(`${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`, {
-          method: 'delete',
-        });
+        const req = OAuth2RessourceOwnerPasswordClient.signRequestWithToken(
+          OAuth2RessourceOwnerPasswordClient.convertTokenToOldObjectSyntax(account.tokens),
+          `${this.platform.url}/timeline/pushNotif/fcmToken?fcmToken=${token}`,
+          {
+            method: 'delete',
+          },
+        );
+        await fetch(req);
         this._removeTokenFromDeleteQueue(token);
         console.debug('FcmService - unregisterFCMToken - OK - ', token);
       } else {
-        console.debug('FcmService - unregisterFCMToken - NO TOKEN');
+        console.debug('FcmService - unregisterFCMToken - NO TOKEN - ');
       }
     } catch (err) {
       console.error('FcmService - unregisterFCMToken - ERROR - ', (err as Error).message);
